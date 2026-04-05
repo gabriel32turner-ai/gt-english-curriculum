@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GT · A2.2 · M1 · S3 — Company Transformations</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0F1923;--s1:#141F2B;--s2:#1A2840;--bd:rgba(255,255,255,0.07);
+  --ac:#F97316;--ac2:#FB923C;--gold:#C9922A;--green:#00E676;--red:#FF1F5C;
+  --cyan:#00CFFF;--violet:#8B5CF6;
+  --txt:#E4E4E4;--mt:rgba(228,228,228,0.5);--dim:rgba(228,228,228,0.25);
+}
+*{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif;font-size:14px;line-height:1.65}
+.prog{height:2px;background:var(--ac);position:fixed;top:0;left:0;z-index:300;transition:width .1s}
+.hdr{background:var(--s1);border-bottom:1px solid var(--bd);padding:16px 32px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:200}
+.brand{display:flex;align-items:center;gap:10px}
+.dot{width:7px;height:7px;background:var(--ac);border-radius:50%}
+.bname{font-family:'Syne',sans-serif;font-weight:800;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:#fff}
+.bsub{font-size:10px;color:var(--dim)}
+.hdr-r{display:flex;align-items:center;gap:10px}
+.badge{border:1px solid var(--ac);color:var(--ac);padding:4px 10px;font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase}
+.sbadge{background:rgba(249,115,22,.12);color:var(--ac2);padding:4px 10px;font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase}
+.mode-btn{background:transparent;border:1px solid rgba(255,255,255,.15);color:var(--mt);padding:5px 14px;font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;transition:all .2s}
+.mode-btn:hover{border-color:var(--ac);color:var(--ac)}
+body.student-mode .mode-btn{background:rgba(249,115,22,.1);border-color:var(--ac);color:var(--ac)}
+.hero{padding:48px 32px 36px;border-bottom:1px solid var(--bd);max-width:960px;margin:0 auto}
+.h-meta{font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--ac);margin-bottom:12px}
+.h-title{font-family:'Syne',sans-serif;font-size:56px;font-weight:800;line-height:.92;color:#fff;margin-bottom:16px}
+.h-title em{color:var(--ac);font-style:normal}
+.h-sub{font-size:14px;color:var(--mt);max-width:440px;line-height:1.6;margin-bottom:24px}
+.h-chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{background:var(--s1);border:1px solid var(--bd);padding:5px 12px;font-size:11px;color:var(--mt)}.chip strong{color:var(--txt)}
+.snav{background:var(--s1);border-bottom:1px solid var(--bd);padding:0 32px;display:flex;overflow-x:auto}
+.sni{padding:13px 16px;font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--dim);text-decoration:none;border-bottom:2px solid transparent;transition:all .18s;white-space:nowrap}
+.sni:hover{color:var(--txt);border-bottom-color:rgba(249,115,22,.35)}.sni.active{color:var(--ac);border-bottom-color:var(--ac)}
+.sec-outer{border-bottom:1px solid var(--bd)}
+.sec{padding:44px 32px;max-width:960px;margin:0 auto}
+.sec-hd{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:28px}
+.sec-lbl{font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--ac);margin-bottom:5px}
+.sec-title{font-family:'Syne',sans-serif;font-size:24px;font-weight:800;color:#fff}
+.sec-time{border:1px solid rgba(249,115,22,.25);color:var(--ac);padding:4px 10px;font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;white-space:nowrap}
+body.student-mode .sec-time{display:none}
+
+/* RAPID FIRE */
+.rf-intro{font-size:13px;color:var(--mt);margin-bottom:20px;line-height:1.6}
+.rf-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:20px}
+.rf-card{background:var(--s1);border:1px solid var(--bd);padding:16px;cursor:pointer;transition:all .2s}
+.rf-card:hover{border-color:rgba(249,115,22,.3)}.rf-card.answered{border-color:rgba(0,230,118,.3);background:rgba(0,230,118,.04)}
+.rf-n{font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--ac);margin-bottom:7px}
+.rf-q{font-size:13.5px;color:var(--txt);line-height:1.5;font-weight:500}
+.rf-h{font-size:11px;color:var(--mt);margin-top:4px;font-style:italic}
+.rf-tick{float:right;font-size:14px;color:var(--green);opacity:0;transition:opacity .2s}
+.rf-card.answered .rf-tick{opacity:1}
+/* Timer */
+.timer-block{background:var(--s1);border:1px solid rgba(249,115,22,.2);padding:18px 22px;display:flex;align-items:center;gap:20px}
+.timer-display{position:relative;width:72px;height:72px;flex-shrink:0}
+.timer-svg{width:72px;height:72px;transform:rotate(-90deg)}
+.timer-track{fill:none;stroke:var(--s2);stroke-width:5}
+.timer-arc{fill:none;stroke:var(--ac);stroke-width:5;stroke-linecap:round;stroke-dasharray:188.5;stroke-dashoffset:0;transition:stroke-dashoffset .1s linear,stroke .3s}
+.timer-num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:#fff}
+.timer-controls{flex:1}
+.timer-lbl{font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--ac);margin-bottom:4px}
+.timer-current{font-size:13.5px;color:#fff;font-weight:500;min-height:22px;margin-bottom:6px}
+.timer-status{font-size:11.5px;color:var(--mt);font-style:italic;min-height:18px;margin-bottom:10px}
+.timer-btns{display:flex;gap:8px}
+.tbtn{border:none;padding:6px 16px;font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;transition:all .2s}
+.tbtn-s{background:var(--ac);color:#000}.tbtn-s:hover{background:var(--ac2)}.tbtn-s:disabled{opacity:.5;cursor:default}
+.tbtn-r{background:transparent;border:1px solid rgba(255,255,255,.15);color:var(--mt)}.tbtn-r:hover{border-color:var(--ac);color:var(--ac)}
+
+/* VOCAB */
+.v-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;margin-bottom:14px}
+.vc{background:var(--s1);padding:16px 14px;display:flex;flex-direction:column;gap:3px;border:1px solid var(--bd);transition:border-color .18s}
+.vc:hover{border-color:rgba(249,115,22,.3)}
+.vw{font-family:'Syne',sans-serif;font-size:13px;font-weight:800;color:#fff}
+.vtype{font-size:9px;font-family:'Syne',sans-serif;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--dim);margin-top:1px}
+.vp{font-size:10.5px;color:var(--ac2)}
+.vdef{font-size:11.5px;color:var(--mt);line-height:1.45;margin-top:2px}
+.vex{font-size:11px;color:rgba(251,146,60,.85);font-style:italic;line-height:1.4;margin-top:3px;border-left:2px solid rgba(249,115,22,.3);padding-left:7px}
+.spk{margin-top:8px;background:rgba(249,115,22,.08);border:1px solid rgba(249,115,22,.2);color:var(--ac2);padding:4px 10px;font-size:12px;cursor:pointer;align-self:flex-start;transition:all .15s}
+.spk:hover{background:rgba(249,115,22,.18)}
+
+/* FLIP CARDS */
+.flip-grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.flip-wrap{height:175px;perspective:800px;cursor:pointer}
+.flip-inner{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform .5s cubic-bezier(.4,0,.2,1)}
+.flip-wrap.on .flip-inner{transform:rotateY(180deg)}
+.ff,.fb-c{position:absolute;width:100%;height:100%;backface-visibility:hidden}
+.ff{background:var(--s1);border:1px solid var(--bd);overflow:hidden}
+.ff img{width:100%;height:100%;object-fit:cover;opacity:.58}
+.ff-lbl{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,.9));padding:10px 12px}
+.ff-lbl span{font-family:'Syne',sans-serif;font-size:13px;font-weight:800;color:#fff}
+.ff-badge{position:absolute;top:8px;left:10px;background:rgba(249,115,22,.15);border:1px solid rgba(249,115,22,.3);color:var(--ac);padding:3px 8px;font-family:'Syne',sans-serif;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px}
+.fb-c{background:var(--s2);border:1px solid rgba(249,115,22,.25);transform:rotateY(180deg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;padding:14px;text-align:center}
+.fb-word{font-family:'Syne',sans-serif;font-size:15px;font-weight:800;color:#fff;margin-bottom:2px}
+.fb-ut{font-family:'Syne',sans-serif;font-size:10px;font-weight:700;color:var(--ac);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px}
+.fb-ex{font-size:11px;color:var(--mt);font-style:italic;line-height:1.4}
+.fb-would{font-size:10px;color:var(--violet);margin-top:3px;font-style:normal}
+.flip-hint{font-size:11px;color:var(--dim);margin-bottom:14px}
+
+/* ═══ TRANSFORMATION BOARD ═══ */
+.tb-wrap{background:var(--s1);border:1px solid rgba(249,115,22,.2);padding:24px;margin-top:14px}
+.tb-tag{font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--ac);margin-bottom:4px}
+.tb-sub{font-size:12px;color:var(--mt);margin-bottom:18px}
+.tb-cols{display:grid;grid-template-columns:1fr auto 1fr;gap:0;margin-bottom:14px;align-items:stretch}
+.tb-col{background:var(--s2);border:1px solid var(--bd);padding:12px}
+.tb-before .tb-col-hd{color:var(--mt)}.tb-now .tb-col-hd{color:var(--ac)}
+.tb-col-hd{font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid var(--bd);text-align:center}
+.tb-arrow{display:flex;align-items:center;justify-content:center;width:32px;font-size:18px;color:var(--dim)}
+.tb-items{display:flex;flex-direction:column;gap:5px;min-height:80px}
+.tb-card{background:var(--bg);border:1px solid var(--bd);padding:8px 12px;font-size:12px;color:var(--txt);cursor:grab;user-select:none;line-height:1.4;transition:all .15s}
+.tb-card:hover{border-color:rgba(249,115,22,.3)}
+.tb-card.placed-before{border-color:rgba(228,228,228,.2);background:rgba(228,228,228,.03)}
+.tb-card.placed-now{border-color:rgba(249,115,22,.3);background:rgba(249,115,22,.05)}
+.tb-card .tc-type{font-family:'Syne',sans-serif;font-size:9px;font-weight:700;color:var(--dim);display:block;margin-bottom:2px;text-transform:uppercase;letter-spacing:1px}
+.tb-card.placed-before .tc-type{color:var(--mt)}
+.tb-card.placed-now .tc-type{color:var(--ac)}
+.tb-tray{background:var(--bg);border:1px dashed var(--bd);padding:12px;margin-bottom:12px}
+.tb-tray-lbl{font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--dim);margin-bottom:8px}
+.tb-tray-cards{display:flex;flex-wrap:wrap;gap:6px;min-height:36px}
+/* Grammar badge on card */
+.tb-grammar-note{font-size:10px;margin-top:4px;font-style:normal}
+.note-used{color:var(--ac)}.note-would{color:var(--violet)}.note-both{color:var(--green)}
+.tb-note{font-size:12px;color:var(--mt);font-style:italic;margin-top:10px}
+/* Legend */
+.tb-legend{display:flex;gap:14px;margin-top:8px;padding-top:8px;border-top:1px solid var(--bd);flex-wrap:wrap}
+.tb-leg-item{font-size:11px;display:flex;align-items:center;gap:5px}
+.tb-leg-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+
+/* GRAMMAR */
+.gram-blk{background:var(--s1);border:1px solid var(--bd);padding:22px 26px;margin-bottom:2px}
+.gram-lbl{font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--ac);margin-bottom:14px}
+.gram-tbl{width:100%;border-collapse:collapse;margin-bottom:14px}
+.gram-tbl th{background:var(--s2);padding:8px 14px;text-align:left;font-family:'Syne',sans-serif;font-size:8.5px;letter-spacing:2px;text-transform:uppercase;color:var(--dim);border-bottom:1px solid rgba(249,115,22,.2)}
+.gram-tbl td{padding:9px 14px;border-bottom:1px solid var(--bd);font-size:13px;vertical-align:top;line-height:1.5}
+.gram-tbl tr:last-child td{border-bottom:none}
+.g-ut{color:var(--ac);font-weight:700}.g-wd{color:var(--violet);font-weight:700}.g-no{color:var(--red);font-weight:700}
+.ex{color:var(--ac2);font-style:italic}.ex-wd{color:var(--violet);font-style:italic}
+.rule-box{background:rgba(249,115,22,.05);border-left:3px solid var(--ac);padding:12px 18px;margin-bottom:14px;font-size:13px;color:var(--txt);line-height:1.7}
+.rule-box strong{color:var(--ac2)}
+.would-box{background:rgba(139,92,246,.05);border-left:3px solid var(--violet);padding:12px 18px;margin-bottom:14px;font-size:13px;color:var(--txt);line-height:1.7}
+.would-box strong{color:var(--violet)}
+.err-blk{background:rgba(255,31,92,.04);border:1px solid rgba(255,31,92,.15);padding:16px 20px;margin-bottom:2px}
+.err-title{font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--red);margin-bottom:12px}
+.err-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:6px}
+.err-x{font-size:12.5px;color:rgba(255,100,100,.85)}.arr{color:var(--dim)}.err-ok{font-size:12.5px;color:var(--green)}
+
+/* ACTIVITY */
+.act{background:var(--bg);border:1px solid rgba(201,146,42,.2);padding:22px 26px;margin-top:2px}
+.act-lbl{font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold);margin-bottom:4px}
+.act-inst{font-size:12px;color:var(--mt);margin-bottom:16px;margin-top:4px}
+.q-row{margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid var(--bd)}
+.q-row:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
+.q-text{font-size:13.5px;color:var(--txt);margin-bottom:10px}
+.opts{display:flex;gap:6px;flex-wrap:wrap}
+.opt{background:var(--s2);border:1px solid var(--bd);color:var(--txt);padding:5px 14px;font-family:'DM Sans',sans-serif;font-size:12.5px;cursor:pointer;transition:all .15s}
+.opt:hover:not([disabled]){border-color:rgba(249,115,22,.4);color:#fff}
+.opt.correct{background:rgba(0,230,118,.1);border-color:var(--green);color:var(--green)}
+.opt.wrong{background:rgba(255,31,92,.08);border-color:var(--red);color:rgba(255,100,100,.9)}
+.tf-row2{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--bd);flex-wrap:wrap;gap:8px}
+.tf-row2:last-child{border-bottom:none}
+.tf-stmt{font-size:13px;color:var(--txt);flex:1;line-height:1.5}
+.tf-btns{display:flex;gap:6px}
+.tf-btn{padding:5px 14px;font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;border:1px solid var(--bd);background:var(--bg);color:var(--mt);transition:all .15s}
+.tf-btn.correct{background:rgba(0,230,118,.1);border-color:var(--green);color:var(--green)}
+.tf-btn.wrong{background:rgba(255,31,92,.07);border-color:var(--red);color:rgba(255,100,100,.9)}
+.drag-act{background:var(--bg);border:1px solid rgba(201,146,42,.2);padding:22px 26px;margin-top:2px}
+.reorder-list{list-style:none;display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
+.reorder-item{background:var(--s2);border:1px solid var(--bd);padding:10px 14px;cursor:grab;display:flex;align-items:center;gap:10px;font-size:13px;color:var(--txt);user-select:none}
+.reorder-item.dragging{opacity:.4;border-color:var(--ac)}
+.drag-handle{color:var(--dim);font-size:14px}
+.check-order-btn{background:transparent;border:1px solid rgba(249,115,22,.3);color:var(--ac2);padding:7px 18px;font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;transition:all .2s}
+.check-order-btn:hover{background:rgba(249,115,22,.1);border-color:var(--ac)}
+.order-fb{font-size:12.5px;margin-top:8px;min-height:18px}
+.order-fb.ok{color:var(--green)}.order-fb.err{color:var(--red)}
+
+/* READING — Magazine Interview */
+.mag-card{background:var(--s1);border:1px solid var(--bd);overflow:hidden;margin-bottom:18px}
+.mag-header{background:linear-gradient(135deg,rgba(249,115,22,.12) 0%,rgba(249,115,22,.03) 100%);padding:20px 26px;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:16px}
+.mag-av{width:56px;height:56px;border-radius:50%;object-fit:cover;border:2px solid rgba(249,115,22,.4)}
+.mag-name{font-family:'Syne',sans-serif;font-size:15px;font-weight:800;color:#fff}
+.mag-role{font-size:12px;color:var(--mt);margin-top:2px}
+.mag-tag{font-family:'Syne',sans-serif;font-size:8px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--ac);background:rgba(249,115,22,.08);border:1px solid rgba(249,115,22,.2);padding:3px 8px;margin-left:auto;white-space:nowrap}
+.mag-kw{background:rgba(249,115,22,.04);border:1px solid rgba(249,115,22,.15);padding:9px 14px;margin:16px 26px 0;font-size:12px;color:var(--mt)}
+.mag-kw strong{color:var(--ac2)}
+.mag-body{padding:16px 26px 26px;font-size:14px;line-height:1.95;color:var(--txt)}
+.mag-body p{margin-bottom:14px}.mag-body p:last-child{margin-bottom:0}
+.qa-q-line{font-weight:700;color:#fff;font-style:normal}
+.qa-a-line{color:var(--txt)}
+.kut{color:var(--ac);font-weight:700}
+.kwd{color:var(--violet);font-weight:700}
+.kneg{color:var(--red);font-weight:700}
+.ksp{color:var(--cyan);font-weight:700}
+.know{color:var(--green);font-weight:600}
+.ktime{color:var(--gold);font-weight:600}
+
+/* PLAYER */
+.player{background:var(--s1);border:1px solid var(--bd);padding:22px 26px;margin-bottom:18px}
+.pl-top{display:flex;align-items:center;gap:16px;margin-bottom:16px}
+.pl-ico{width:44px;height:44px;background:rgba(249,115,22,.1);border:1px solid rgba(249,115,22,.22);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.pl-title{font-family:'Syne',sans-serif;font-size:14px;font-weight:800;color:#fff;margin-bottom:2px}
+.pl-meta{font-size:11px;color:var(--mt)}
+.pl-ph{background:var(--bg);border:1px dashed rgba(255,255,255,.1);padding:16px 20px;text-align:center}
+.pl-ph p{font-size:11.5px;color:var(--dim);line-height:1.7}.pl-ph code{color:var(--gold);font-size:10.5px}
+.script-toggle{display:flex;align-items:center;gap:6px;cursor:pointer;margin-top:14px;width:fit-content}
+.script-toggle span{font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim);transition:color .2s}
+.script-toggle:hover span{color:var(--txt)}
+.script-box{display:none;background:var(--bg);border:1px solid var(--bd);padding:18px 22px;margin-top:10px;font-size:12.5px;color:var(--mt);line-height:1.85;font-style:italic}
+.script-box.open{display:block}
+.script-note{font-size:10px;color:var(--dim);margin-top:10px;font-style:normal}
+
+/* WRAP-UP */
+.wu2-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px;margin-bottom:2px}
+.wu2-card{background:var(--s1);padding:22px 26px;border:1px solid var(--bd)}
+.wu2-h{font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--ac);margin-bottom:14px}
+.checklist{list-style:none;display:flex;flex-direction:column;gap:8px}
+.checklist li{display:flex;align-items:flex-start;gap:10px;font-size:13px;color:var(--mt);cursor:pointer;padding:3px 0}
+.checklist li:hover{color:var(--txt)}.checklist li.done{color:var(--green)}
+.cb{width:15px;height:15px;border:1.5px solid var(--bd);flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center;font-size:9px;transition:all .2s}
+.checklist li.done .cb{background:var(--green);border-color:var(--green);color:#000}
+.key-item{background:var(--bg);border:1px solid var(--bd);padding:10px 14px;margin-bottom:6px}
+.ki-lbl{font-size:9px;color:var(--dim);font-family:'Syne',sans-serif;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:5px}
+.ki-txt{font-size:13px;color:var(--txt);line-height:1.65}
+
+/* ROLE-PLAY SPEAKING */
+.sp-box{background:rgba(249,115,22,.03);border:1px solid rgba(249,115,22,.18);padding:20px 26px;margin-top:2px}
+.sp-lbl{font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--ac2);margin-bottom:6px}
+.sp-type{font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:rgba(249,115,22,.4);margin-bottom:10px}
+.sp-prompt{font-size:15px;color:#fff;font-style:italic;line-height:1.55;margin-bottom:12px}
+.sp-guide{font-size:12.5px;color:var(--mt);line-height:1.7;margin-bottom:12px}
+.rp-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.rp-card{border:1px solid rgba(249,115,22,.18);padding:16px 18px}
+.rp-role{font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--ac2);margin-bottom:10px}
+.rp-lines{display:flex;flex-direction:column;gap:6px}
+.rp-line{font-size:12.5px;color:var(--txt);line-height:1.5;padding-left:10px;border-left:2px solid rgba(249,115,22,.3)}
+.rp-key{color:var(--ac2);font-weight:700}.rp-wd{color:var(--violet);font-weight:700}
+.gto{background:rgba(201,146,42,.03);border:1px solid rgba(201,146,42,.12);padding:18px 22px;margin-top:2px}
+.gto-lbl{font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.gto-lbl::before{content:'★';font-size:10px}
+.gto-txt{font-size:12.5px;color:rgba(201,146,42,.8);line-height:1.7}
+.gto-txt strong{color:var(--gold)}
+.next-box{background:rgba(201,146,42,.04);border:1px solid rgba(201,146,42,.15);padding:14px 22px;display:flex;align-items:center;gap:14px;margin-top:2px}
+.next-lbl{font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);white-space:nowrap}
+.next-txt{font-size:13px;color:rgba(201,146,42,.8)}
+.tn{border-top:1px solid rgba(201,146,42,.12);margin-top:20px}
+.tn-toggle{width:100%;background:rgba(201,146,42,.04);border:1px solid rgba(201,146,42,.12);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(201,146,42,.7);transition:all .18s}
+.tn-toggle:hover{background:rgba(201,146,42,.08);color:var(--gold)}
+.tn-arrow{transition:transform .25s}.tn-toggle.open .tn-arrow{transform:rotate(180deg)}
+.tn-body{display:none}.tn-body.open{display:block}
+.tn-capa{padding:14px 18px;border-bottom:1px solid rgba(255,255,255,.04)}.tn-capa:last-child{border-bottom:none}
+.tn-cl{font-family:'Syne',sans-serif;font-size:8.5px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:7px}
+.tn-c1 .tn-cl{color:rgba(0,207,255,.8)}.tn-c2 .tn-cl{color:rgba(255,31,92,.7)}.tn-c3 .tn-cl{color:rgba(201,146,42,.8)}
+.tn-txt{font-size:12.5px;color:var(--mt);line-height:1.7}
+.tn-txt ul{padding-left:16px;display:flex;flex-direction:column;gap:3px}
+.teacher-only{display:block}body.student-mode .teacher-only{display:none!important}
+.ftr{background:var(--s1);border-top:1px solid var(--bd);padding:18px 32px;display:flex;justify-content:space-between;align-items:center}
+.fb{font-family:'Syne',sans-serif;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim)}
+@media(max-width:860px){
+  .hero,.sec{padding:32px 20px}.snav{padding:0 20px}.hdr{padding:14px 20px}.h-title{font-size:36px}
+  .v-grid,.rf-grid,.flip-grid-3{grid-template-columns:repeat(2,1fr)}
+  .tb-cols{grid-template-columns:1fr}.tb-arrow{display:none}.wu2-grid,.rp-grid{grid-template-columns:1fr}
+  .timer-block{flex-direction:column;align-items:flex-start}
+}
+</style>
+</head>
+<body>
+<div class="prog" id="prog"></div>
+
+<header class="hdr">
+  <div class="brand"><div class="dot"></div><div><div class="bname">Gabriel Turner · English Training</div><div class="bsub">Celaya, Guanajuato · México</div></div></div>
+  <div class="hdr-r"><button class="mode-btn" id="modeBtn" onclick="toggleMode()">👁 Student Mode</button><div class="sbadge">M1 · S3</div><div class="badge">A2.2</div></div>
+</header>
+
+<div class="hero">
+  <div class="h-meta">Module 1 · Habits Then &amp; Now · Session 3 of 5</div>
+  <div class="h-title">Company<br><em>Transformations</em></div>
+  <p class="h-sub">"Would" as a formal alternative to "used to" for past habits. Describing how companies and workplaces have changed.</p>
+  <div class="h-chips">
+    <span class="chip"><strong>Grammar:</strong> would for past habits · states vs actions · used to vs would</span>
+    <span class="chip"><strong>Vocab:</strong> expand · merge · outsource · headquarters · leadership · policy</span>
+    <span class="chip"><strong>Time:</strong> 60 min</span>
+  </div>
+</div>
+
+<nav class="snav">
+  <a class="sni" href="#s1">§1 Warm-Up</a><a class="sni" href="#s2">§2 Vocabulary</a>
+  <a class="sni" href="#s3">§3 Visual Vocab</a><a class="sni" href="#s4">§4 Grammar</a>
+  <a class="sni" href="#s5">§5 Reading</a><a class="sni" href="#s6">§6 Listening</a><a class="sni" href="#s7">§7 Wrap-Up</a>
+</nav>
+
+<!-- §1 WARM-UP — RAPID FIRE + TIMER -->
+<div class="sec-outer" id="s1"><section class="sec">
+  <div class="sec-hd"><div><div class="sec-lbl">§ 01</div><div class="sec-title">Warm-Up — Rapid Fire</div></div><div class="sec-time">5–8 min</div></div>
+  <p class="rf-intro"><strong>S1 + S2 review at speed.</strong> Click the card when you've answered. 30 seconds per question. ⚡</p>
+  <div class="rf-grid">
+    <div class="rf-card" onclick="markRF(this)"><div class="rf-n">Q1 <span class="rf-tick">✓</span></div><div class="rf-q">Say 3 things you USED TO do at your previous company. Full sentences.</div><div class="rf-h">Used to + base verb — no "use to" or "used to + ing"</div></div>
+    <div class="rf-card" onclick="markRF(this)"><div class="rf-n">Q2 <span class="rf-tick">✓</span></div><div class="rf-q">What routine did you use to have at work that has completely changed?</div><div class="rf-h">Vocabulary from S2: routine · habit · colleague · deadline</div></div>
+    <div class="rf-card" onclick="markRF(this)"><div class="rf-n">Q3 <span class="rf-tick">✓</span></div><div class="rf-q">Name ONE specific event in your career using Simple Past. (When? What happened?)</div><div class="rf-h">Simple Past — NOT "used to". Specific date or moment.</div></div>
+    <div class="rf-card" onclick="markRF(this)"><div class="rf-n">Q4 <span class="rf-tick">✓</span></div><div class="rf-q">How has your COMPANY changed in the last 5 years? Think about the company — not just your role.</div><div class="rf-h">Think big: structure, technology, size, markets, culture</div></div>
+    <div class="rf-card" onclick="markRF(this)"><div class="rf-n">Q5 <span class="rf-tick">✓</span></div><div class="rf-q">True or False? "Would" can be used for past habits, just like "used to".</div><div class="rf-h">Hint: today's grammar. What do you think?</div></div>
+    <div class="rf-card" onclick="markRF(this)"><div class="rf-n">Q6 <span class="rf-tick">✓</span></div><div class="rf-q">"I used to be the CEO." Can you replace "used to" with "would" here? Why or why not?</div><div class="rf-h">Think about the difference between states and actions.</div></div>
+  </div>
+
+  <div class="timer-block">
+    <div class="timer-display">
+      <svg class="timer-svg" viewBox="0 0 72 72"><circle class="timer-track" cx="36" cy="36" r="30"/><circle class="timer-arc" id="timerArc" cx="36" cy="36" r="30"/></svg>
+      <div class="timer-num" id="timerNum">30</div>
+    </div>
+    <div class="timer-controls">
+      <div class="timer-lbl">⏱ 30-second timer per question</div>
+      <div class="timer-current" id="timerQ">—</div>
+      <div class="timer-status" id="timerStatus">Press START for Q1</div>
+      <div class="timer-btns">
+        <button class="tbtn tbtn-s" id="timerStart" onclick="startTimer()">START</button>
+        <button class="tbtn tbtn-r" onclick="resetTimer()">RESET</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="tn teacher-only">
+    <button class="tn-toggle" onclick="toggleTN(this)">📋 Teacher Notes — §1 Warm-Up <span class="tn-arrow">▼</span></button>
+    <div class="tn-body">
+      <div class="tn-capa tn-c1"><div class="tn-cl">Capa 1 · Pedagogical</div><div class="tn-txt"><ul>
+        <li>Q4 shifts from personal career to COMPANY change — sets up today's theme. If student says "I don't know how the company changed" — prompt: "Did the company grow? Add products? Open new offices? Change leadership?"</li>
+        <li>Q5 + Q6 are diagnostic for today's grammar. Expected answer to Q5: "True" (correct). Expected answer to Q6: "No — because 'be' is a state, not an action." Most students won't know this yet — it's the curiosity hook for §4.</li>
+        <li>Timer: 30 seconds. Q5 and Q6 are intentionally harder — they plant questions in the student's mind before the grammar explanation.</li>
+      </ul></div></div>
+      <div class="tn-capa tn-c2"><div class="tn-cl">Capa 2 · Engagement</div><div class="tn-txt"><ul>
+        <li>"Q6 is a trick question — there's a rule most textbooks don't explain clearly. Let's find out in §4."</li>
+      </ul></div></div>
+      <div class="tn-capa tn-c3"><div class="tn-cl">Capa 3 · Growth & Retention</div><div class="tn-txt"><ul>
+        <li>"'Would' for past habits is what separates B1-level professional English from A2. Today you cross that line."</li>
+      </ul></div></div>
+    </div>
+  </div>
+</section></div>
+
+<!-- §2 VOCABULARY -->
+<div class="sec-outer" id="s2"><section class="sec">
+  <div class="sec-hd"><div><div class="sec-lbl">§ 02</div><div class="sec-title">Vocabulary — Company Transformation</div></div><div class="sec-time">10–12 min</div></div>
+  <div class="v-grid">
+    <div class="vc"><div class="vw">expand</div><div class="vtype">verb</div><div class="vp">/ɪkˈspænd/</div><div class="vdef">To grow — into new markets, cities, or product lines</div><div class="vex">"The company used to operate locally. Now it has expanded to 12 countries."</div><button class="spk" onclick="speak('expand')">🔊</button></div>
+    <div class="vc"><div class="vw">merge</div><div class="vtype">verb</div><div class="vp">/mɜːrdʒ/</div><div class="vdef">To join with another company to form one organization</div><div class="vex">"They merged with a US firm — everything changed overnight."</div><button class="spk" onclick="speak('merge')">🔊</button></div>
+    <div class="vc"><div class="vw">outsource</div><div class="vtype">verb</div><div class="vp">/ˈaʊtsɔːrs/</div><div class="vdef">To hire an external company to do work previously done internally</div><div class="vex">"We used to have an in-house IT team — now we outsource it."</div><button class="spk" onclick="speak('outsource')">🔊</button></div>
+    <div class="vc"><div class="vw">headquarters</div><div class="vtype">noun</div><div class="vp">/ˈhedˌkwɔːrtərz/</div><div class="vdef">The main office or central location of a company</div><div class="vex">"The headquarters used to be in a small office downtown."</div><button class="spk" onclick="speak('headquarters')">🔊</button></div>
+    <div class="vc"><div class="vw">workplace</div><div class="vtype">noun</div><div class="vp">/ˈwɜːrkpleɪs/</div><div class="vdef">The environment or location where work is done</div><div class="vex">"The workplace culture would change completely after the merger."</div><button class="spk" onclick="speak('workplace')">🔊</button></div>
+    <div class="vc"><div class="vw">leadership</div><div class="vtype">noun</div><div class="vp">/ˈliːdərʃɪp/</div><div class="vdef">The people or style of management at the top of a company</div><div class="vex">"The leadership used to be very traditional — now it's more collaborative."</div><button class="spk" onclick="speak('leadership')">🔊</button></div>
+    <div class="vc"><div class="vw">policy</div><div class="vtype">noun</div><div class="vp">/ˈpɒlɪsi/</div><div class="vdef">An official rule or set of guidelines in a company</div><div class="vex">"There didn't use to be a remote work policy — now it's standard."</div><button class="spk" onclick="speak('policy')">🔊</button></div>
+    <div class="vc"><div class="vw">strategy</div><div class="vtype">noun</div><div class="vp">/ˈstrætɪdʒi/</div><div class="vdef">A long-term plan for achieving a company's goals</div><div class="vex">"The strategy used to focus on local markets — now it's global."</div><button class="spk" onclick="speak('strategy')">🔊</button></div>
+  </div>
+
+  <div class="tn teacher-only">
+    <button class="tn-toggle" onclick="toggleTN(this)">📋 Teacher Notes — §2 Vocabulary <span class="tn-arrow">▼</span></button>
+    <div class="tn-body">
+      <div class="tn-capa tn-c1"><div class="tn-cl">Capa 1 · Pedagogical</div><div class="tn-txt"><ul>
+        <li>"headquarters" — always plural in form but singular in meaning: "The headquarters IS in Chicago" (not "are"). Common error at A2.2.</li>
+        <li>"merge" — note the example uses Simple Past ("they merged") — it was a specific event. But the resulting CULTURE change = "used to" territory.</li>
+        <li>"workplace culture would change" — first appearance of "would" for past habit in the examples. Don't explain yet — just let the student read it. Address in §4.</li>
+        <li>Production task: student uses each word in a true sentence about their OWN company — past or present.</li>
+      </ul></div></div>
+      <div class="tn-capa tn-c2"><div class="tn-cl">Capa 2 · Engagement</div><div class="tn-txt"><ul>
+        <li>"Does your company outsource anything now? Did it use to do it internally? What changed?" — drives authentic production with 3 of today's vocab words in one question.</li>
+      </ul></div></div>
+      <div class="tn-capa tn-c3"><div class="tn-cl">Capa 3 · Growth & Retention</div><div class="tn-txt"><ul>
+        <li>"'Expand, merge, outsource' — these three verbs appear in every business news article about company transformation. Reading business English becomes much easier once these are automatic."</li>
+      </ul></div></div>
+    </div>
+  </div>
+</section></div>
+
+<!-- §3 VISUAL VOCAB + TRANSFORMATION BOARD -->
+<div class="sec-outer" id="s3"><section class="sec">
+  <div class="sec-hd"><div><div class="sec-lbl">§ 03</div><div class="sec-title">Visual Vocab + Transformation Board</div></div><div class="sec-time">8–10 min</div></div>
+  <p class="flip-hint">🏢 Click each card — see the word in a company transformation context. Some cards show "would" — watch for it!</p>
+
+  <div class="flip-grid-3">
+    <div class="flip-wrap" onclick="this.classList.toggle('on')"><div class="flip-inner">
+      <div class="ff"><img src="https://images.unsplash.com/photo-1521791136064-7986c2920216?w=400&q=80&fit=crop" alt="company expansion deal"><div class="ff-badge">expand</div><div class="ff-lbl"><span>growing into new markets</span></div></div>
+      <div class="fb-c"><div class="fb-word">expand</div><div class="fb-ut">used to / would</div><div class="fb-ex">"The company used to operate in one city only."</div><div class="fb-would" style="color:var(--ac)">"Now it has expanded to 12 countries."</div></div>
+    </div></div>
+    <div class="flip-wrap" onclick="this.classList.toggle('on')"><div class="flip-inner">
+      <div class="ff"><img src="https://images.unsplash.com/photo-1503428593586-e225b39bddfe?w=400&q=80&fit=crop" alt="company merger corporate"><div class="ff-badge">merge</div><div class="ff-lbl"><span>two companies become one</span></div></div>
+      <div class="fb-c"><div class="fb-word">merge</div><div class="fb-ut">Simple Past (event)</div><div class="fb-ex">"They merged with a Dallas firm in 2019."</div><div class="fb-would">Merger = specific event → Simple Past, not used to</div></div>
+    </div></div>
+    <div class="flip-wrap" onclick="this.classList.toggle('on')"><div class="flip-inner">
+      <div class="ff"><img src="https://images.unsplash.com/photo-1504868584819-f8e8b4b6d7e3?w=400&q=80&fit=crop" alt="outsourcing contracts"><div class="ff-badge">outsource</div><div class="ff-lbl"><span>external service partners</span></div></div>
+      <div class="fb-c"><div class="fb-word">outsource</div><div class="fb-ut">used to / would</div><div class="fb-ex">"We used to have in-house IT — now we outsource it."</div><div class="fb-would" style="color:var(--violet)">"We would handle everything internally before."</div></div>
+    </div></div>
+    <div class="flip-wrap" onclick="this.classList.toggle('on')"><div class="flip-inner">
+      <div class="ff"><img src="https://images.unsplash.com/photo-1521737604082-15ec9d2c7996?w=400&q=80&fit=crop" alt="leadership team meeting"><div class="ff-badge">leadership</div><div class="ff-lbl"><span>management style</span></div></div>
+      <div class="fb-c"><div class="fb-word">leadership</div><div class="fb-ut">used to (state)</div><div class="fb-ex">"The leadership used to be very hierarchical."</div><div class="fb-would" style="color:var(--red)">⚠ NOT "The leadership would be hierarchical" — state, not action</div></div>
+    </div></div>
+    <div class="flip-wrap" onclick="this.classList.toggle('on')"><div class="flip-inner">
+      <div class="ff"><img src="https://images.unsplash.com/photo-1495364141860-b0d03eccd065?w=400&q=80&fit=crop" alt="workplace policy office"><div class="ff-badge">policy</div><div class="ff-lbl"><span>company rules & guidelines</span></div></div>
+      <div class="fb-c"><div class="fb-word">policy</div><div class="fb-ut">used to / would</div><div class="fb-ex">"There didn't use to be a remote work policy."</div><div class="fb-would" style="color:var(--violet)">"Managers would review the policy every year." (action)</div></div>
+    </div></div>
+    <div class="flip-wrap" onclick="this.classList.toggle('on')"><div class="flip-inner">
+      <div class="ff"><img src="https://images.unsplash.com/photo-1541746972996-4e0b0f43e02a?w=400&q=80&fit=crop" alt="company strategy planning"><div class="ff-badge">strategy</div><div class="ff-lbl"><span>long-term company planning</span></div></div>
+      <div class="fb-c"><div class="fb-word">strategy</div><div class="fb-ut">used to (state)</div><div class="fb-ex">"The strategy used to focus on local markets only."</div><div class="fb-would" style="color:var(--violet)">"They would review the strategy every quarter." (action)</div></div>
+    </div></div>
+  </div>
+
+  <!-- ⚡ TRANSFORMATION BOARD -->
+  <div class="tb-wrap">
+    <div class="tb-tag">⚡ Engagement Resource — Company Transformation Board</div>
+    <div class="tb-sub">Think about your company (or any company you know). Drag each card to BEFORE or NOW. Then for each BEFORE card: decide whether to use "used to" alone, or if "would" also works.</div>
+
+    <div class="tb-cols">
+      <div class="tb-col tb-before">
+        <div class="tb-col-hd">⏮ BEFORE the transformation</div>
+        <div class="tb-items" id="tbBefore" ondrop="tbDrop(event,'tbBefore')" ondragover="tbAllow(event)"></div>
+      </div>
+      <div class="tb-arrow">→</div>
+      <div class="tb-col tb-now">
+        <div class="tb-col-hd">▶ NOW — after the change</div>
+        <div class="tb-items" id="tbNow" ondrop="tbDrop(event,'tbNow')" ondragover="tbAllow(event)"></div>
+      </div>
+    </div>
+
+    <div class="tb-tray">
+      <div class="tb-tray-lbl">Company aspect cards — drag to the correct period</div>
+      <div class="tb-tray-cards" id="tbTray" ondrop="tbDrop(event,'tbTray')" ondragover="tbAllow(event)"></div>
+    </div>
+
+    <div class="tb-legend teacher-only">
+      <div class="tb-leg-item"><div class="tb-leg-dot" style="background:var(--ac)"></div><span style="font-size:11px;color:var(--ac)">used to only</span> — state (be, have, feel, believe)</div>
+      <div class="tb-leg-item"><div class="tb-leg-dot" style="background:var(--violet)"></div><span style="font-size:11px;color:var(--violet)">used to OR would</span> — repeated action (meet, review, send, present)</div>
+    </div>
+
+    <div class="tb-note teacher-only">
+      💬 <strong>For each BEFORE card:</strong> Ask "Can we say this with 'would'?" If it describes a REPEATED ACTION → "Yes: 'We would review the strategy every quarter.'" If it describes a STATE (structure, culture, size) → "No: only 'used to'."
+    </div>
+  </div>
+
+  <div class="tn teacher-only">
+    <button class="tn-toggle" onclick="toggleTN(this)">📋 Teacher Notes — §3 Visual Vocab + Board <span class="tn-arrow">▼</span></button>
+    <div class="tn-body">
+      <div class="tn-capa tn-c1"><div class="tn-cl">Capa 1 · Pedagogical</div><div class="tn-txt"><ul>
+        <li>Flip cards: the "leadership" card shows the NEGATIVE example for "would" — "NOT 'would be hierarchical' — state". This is the key distinction. Read aloud and confirm understanding.</li>
+        <li>Transformation Board: the pedagogical goal is that students discover the used to/would distinction through the cards themselves. They place a card → teacher asks "used to or would?" → student attempts → teacher confirms or corrects.</li>
+        <li>State-based cards (used to only): "company was family-owned", "leadership was traditional", "headquarters was small". Action-based (both): "managers would review quarterly", "team would meet every Monday", "directors would present annually".</li>
+      </ul></div></div>
+      <div class="tn-capa tn-c2"><div class="tn-cl">Capa 2 · Engagement</div><div class="tn-txt"><ul>
+        <li>"Every card in the BEFORE column has a story. Pick your most interesting one — tell me 2 sentences: what it used to be like, and what 'would' happen regularly. Ready?"</li>
+      </ul></div></div>
+      <div class="tn-capa tn-c3"><div class="tn-cl">Capa 3 · Growth & Retention</div><div class="tn-txt"><ul>
+        <li>"This board is the difference between A2 and B1 professional English. 'Would' for past habits appears in business reports, company histories, and executive presentations."</li>
+      </ul></div></div>
+    </div>
+  </div>
+</section></div>
+
+<!-- §4 GRAMMAR -->
+<div class="sec-outer" id="s4"><section class="sec">
+  <div class="sec-hd"><div><div class="sec-lbl">§ 04</div><div class="sec-title">Grammar — Would for Past Habits</div></div><div class="sec-time">12–15 min</div></div>
+
+  <div class="gram-blk">
+    <div class="gram-lbl">Would — Formal Alternative to "Used To"</div>
+    <table class="gram-tbl">
+      <thead><tr><th>Form</th><th>Use</th><th>Company example</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><span class="g-ut">used to</span></td>
+          <td>Past habit OR past state — no longer true. Works for both actions and states.</td>
+          <td><span class="ex">"The company used to be family-owned." (state)<br>"We used to meet every Monday." (action)</span></td>
+        </tr>
+        <tr>
+          <td><span class="g-wd">would</span></td>
+          <td>Past <strong>repeated action</strong> only — more formal register. Cannot describe states.</td>
+          <td><span class="ex-wd">"We would meet every Monday." ✅ (action)<br>"The company would be family-owned." ✗ (state — wrong)</span></td>
+        </tr>
+        <tr>
+          <td><span class="g-no">would ✗</span></td>
+          <td>Never use "would" for past states: be · have · feel · believe · know · seem</td>
+          <td><span class="ex">"The HQ <span style="color:var(--red)">would be</span> in Chicago." ✗<br>→ "The HQ <span style="color:var(--ac)">used to be</span> in Chicago." ✅</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="would-box">
+      <strong>When "would" and "used to" are both possible:</strong><br>
+      ✅ "Every quarter, the directors <span style="color:var(--ac)">used to</span> present results to the board." (habit = used to)<br>
+      ✅ "Every quarter, the directors <span style="color:var(--violet)">would</span> present results to the board." (habit = would — more formal)<br><br>
+      <strong>When only "used to" works:</strong><br>
+      ✅ "The company <span style="color:var(--ac)">used to</span> be a family business." (state: "be")<br>
+      ✗ "The company <span style="color:var(--red)">would be</span> a family business." (state: cannot use "would")
+    </div>
+
+    <div class="rule-box">
+      <strong>The quick test for "would":</strong> Can you add "every day / every week / regularly / always"? And is it an action verb (not be/have/feel)?<br>
+      "They <strong>would</strong> review the strategy <strong>every quarter</strong>." → ✅ repeated action → "would" works.<br>
+      "The culture <strong>would be</strong> very formal." → ❌ "be" = state → only "used to" works.
+    </div>
+  </div>
+
+  <div class="err-blk">
+    <div class="err-title">⚠ Common Errors — S3</div>
+    <div class="err-row"><span class="err-x">❌ "The company would be very small before."</span><span class="arr">→</span><span class="err-ok">✅ The company used to be very small. ("be" = state, not action)</span></div>
+    <div class="err-row"><span class="err-x">❌ "I would have a different boss." (state: have)</span><span class="arr">→</span><span class="err-ok">✅ I used to have a different boss. ("have" = state here)</span></div>
+    <div class="err-row"><span class="err-x">❌ "Would you use to travel for work?" (question form)</span><span class="arr">→</span><span class="err-ok">✅ Did you use to travel for work? ("would" doesn't form questions this way)</span></div>
+    <div class="err-row"><span class="err-x">❌ "The team would hold meetings last month." (specific time)</span><span class="arr">→</span><span class="err-ok">✅ The team held meetings last month. (specific → Simple Past)</span></div>
+  </div>
+
+  <div class="act">
+    <div class="act-lbl">Activity 1 — Used To, Would, or Neither?</div>
+    <div class="act-inst">Choose the correct option for each sentence.</div>
+    <div class="q-row">
+      <div class="q-text">Every morning, the team <strong>___</strong> gather for a quick briefing before starting work.</div>
+      <div class="opts" id="q1">
+        <button class="opt" onclick="checkOpt(this,'would / used to','q1')">would / used to</button>
+        <button class="opt" onclick="checkOpt(this,'would / used to','q1')">only Simple Past</button>
+        <button class="opt" onclick="checkOpt(this,'would / used to','q1')">only would</button>
+      </div>
+    </div>
+    <div class="q-row">
+      <div class="q-text">The headquarters <strong>___</strong> a small office on the outskirts of the city.</div>
+      <div class="opts" id="q2">
+        <button class="opt" onclick="checkOpt(this,'used to be (not would be)','q2')">would be</button>
+        <button class="opt" onclick="checkOpt(this,'used to be (not would be)','q2')">used to be (not would be)</button>
+        <button class="opt" onclick="checkOpt(this,'used to be (not would be)','q2')">both work equally</button>
+      </div>
+    </div>
+    <div class="q-row">
+      <div class="q-text">The company <strong>___</strong> with three competitors in 2019 — now it's the market leader.</div>
+      <div class="opts" id="q3">
+        <button class="opt" onclick="checkOpt(this,'merged (Simple Past)','q3')">used to merge</button>
+        <button class="opt" onclick="checkOpt(this,'merged (Simple Past)','q3')">would merge</button>
+        <button class="opt" onclick="checkOpt(this,'merged (Simple Past)','q3')">merged (Simple Past)</button>
+      </div>
+    </div>
+    <div class="q-row">
+      <div class="q-text">The leadership <strong>___</strong> have a very formal management style — no flexibility.</div>
+      <div class="opts" id="q4">
+        <button class="opt" onclick="checkOpt(this,'used to','q4')">would</button>
+        <button class="opt" onclick="checkOpt(this,'used to','q4')">used to</button>
+        <button class="opt" onclick="checkOpt(this,'used to','q4')">both are equally correct</button>
+      </div>
+    </div>
+    <div class="q-row">
+      <div class="q-text">Directors <strong>___</strong> present quarterly results to the full company — it was a company tradition.</div>
+      <div class="opts" id="q5">
+        <button class="opt" onclick="checkOpt(this,'used to / would','q5')">used to / would</button>
+        <button class="opt" onclick="checkOpt(this,'used to / would','q5')">only Simple Past</button>
+        <button class="opt" onclick="checkOpt(this,'used to / would','q5')">only used to</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="act" style="margin-top:2px">
+    <div class="act-lbl">Activity 2 — True or False: Would Rules</div>
+    <div class="act-inst" style="margin-top:4px">Is this statement about the grammar correct?</div>
+    <div class="tf-row2"><span class="tf-stmt">"Would" can replace "used to" in all cases — they are always interchangeable.</span>
+      <div class="tf-btns"><button class="tf-btn" onclick="checkTF(this,false,'t1')">TRUE</button><button class="tf-btn" onclick="checkTF(this,true,'t1')">FALSE</button></div>
+    </div>
+    <div class="tf-row2"><span class="tf-stmt">"Would" cannot be used with state verbs like be, have, feel, or know to express past habits.</span>
+      <div class="tf-btns"><button class="tf-btn" onclick="checkTF(this,true,'t2')">TRUE</button><button class="tf-btn" onclick="checkTF(this,false,'t2')">FALSE</button></div>
+    </div>
+    <div class="tf-row2"><span class="tf-stmt">"Would" for past habits is more formal than "used to" and is often found in business writing.</span>
+      <div class="tf-btns"><button class="tf-btn" onclick="checkTF(this,true,'t3')">TRUE</button><button class="tf-btn" onclick="checkTF(this,false,'t3')">FALSE</button></div>
+    </div>
+    <div class="tf-row2"><span class="tf-stmt">"The company would merge in 2019" is a correct use of "would" for past habits.</span>
+      <div class="tf-btns"><button class="tf-btn" onclick="checkTF(this,false,'t4')">TRUE</button><button class="tf-btn" onclick="checkTF(this,true,'t4')">FALSE</button></div>
+    </div>
+  </div>
+
+  <div class="tn teacher-only">
+    <button class="tn-toggle" onclick="toggleTN(this)">📋 Teacher Notes — §4 Grammar <span class="tn-arrow">▼</span></button>
+    <div class="tn-body">
+      <div class="tn-capa tn-c1"><div class="tn-cl">Capa 1 · Pedagogical</div><div class="tn-txt"><ul>
+        <li>Q4: "leadership used to have a formal style" — "have" here is a state (possession of a quality). "Would have" is also acceptable in some contexts but sounds unnatural here. Teach: when in doubt about states, default to "used to".</li>
+        <li>T4: "would merge in 2019" — specific date = Simple Past, not a habit. "Would" for past habits requires a repeated pattern, not a one-time event. Reinforce the S2 rule: specific date → Simple Past.</li>
+        <li>After activities: oral practice — teacher describes a past company situation, student must say whether "would" is possible or not, and produce the sentence.</li>
+      </ul></div></div>
+      <div class="tn-capa tn-c2"><div class="tn-cl">Capa 2 · Engagement</div><div class="tn-txt"><ul>
+        <li>"Restate one sentence from Q1-Q5 but about YOUR company — using 'would' if possible."</li>
+      </ul></div></div>
+      <div class="tn-capa tn-c3"><div class="tn-cl">Capa 3 · Growth & Retention</div><div class="tn-txt"><ul>
+        <li>"In B1 business writing, 'would' appears frequently in company histories: 'The CEO would review all proposals personally before the restructuring.' You now have this form."</li>
+      </ul></div></div>
+    </div>
+  </div>
+</section></div>
+
+<!-- §5 READING — Magazine Interview -->
+<div class="sec-outer" id="s5"><section class="sec">
+  <div class="sec-hd"><div><div class="sec-lbl">§ 05</div><div class="sec-title">Reading — A Company That Changed Everything</div></div><div class="sec-time">8–10 min</div></div>
+
+  <div class="mag-card">
+    <div class="mag-header">
+      <img class="mag-av" src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=120&q=80&fit=crop" alt="Sofía Ramírez">
+      <div><div class="mag-name">Sofía Ramírez</div><div class="mag-role">Director of Transformation · Grupo Alante · Dallas</div></div>
+      <div class="mag-tag">Magazine Interview</div>
+    </div>
+    <div class="mag-kw"><strong>Watch for:</strong> used to (orange) · would (violet) · Simple Past events (cyan) · present contrast (green)</div>
+    <div class="mag-body">
+      <p><span class="qa-q-line">Q: Grupo Alante has changed significantly in the last decade. What was the company like before?</span></p>
+      <p><span class="qa-a-line">When I <span class="ksp">joined</span> in 2012, it was a completely different organization. The company <span class="kut">used to be</span> a family business with one headquarters and about 80 employees. We <span class="kwd">would meet</span> every Monday morning in a single conference room — all departments together. The director <span class="kwd">would walk</span> through each team's results personally. It was very personal, very traditional.</span></p>
+
+      <p><span class="qa-q-line">Q: What were the biggest habits or policies that changed?</span></p>
+      <p><span class="qa-a-line">The leadership <span class="kut">used to have</span> a very hierarchical style — every decision went to the top. Employees <span class="kneg">didn't use to</span> make independent decisions. The strategy <span class="kut">used to focus</span> exclusively on the local market. We <span class="kwd">would outsource</span> almost nothing — everything was done in-house.</span></p>
+
+      <p><span class="qa-q-line">Q: What caused the transformation?</span></p>
+      <p><span class="qa-a-line">The company <span class="ksp">merged</span> with a US firm in 2016. That single event <span class="ksp">changed</span> everything. We <span class="ksp">expanded</span> from one city to twelve countries in four years. The headquarters <span class="ksp">moved</span> to Dallas. The leadership style <span class="ksp">shifted</span> — suddenly people had autonomy and responsibility at every level.</span></p>
+
+      <p><span class="qa-q-line">Q: What does the company look like now?</span></p>
+      <p><span class="qa-a-line"><span class="know">Nowadays</span>, we <span class="know">have</span> a remote work policy that <span class="kneg">didn't use to</span> exist. We <span class="know">outsource</span> our IT and logistics. Leadership is distributed — I <span class="know">lead</span> a team of directors across three continents. We <span class="know">expand</span> into a new market every 18 months. The strategy that <span class="kut">used to be</span> local is now global.</span></p>
+
+      <p><span class="qa-q-line">Q: What do you miss about the old company?</span></p>
+      <p><span class="qa-a-line">Honestly? I miss the simplicity. The team <span class="kwd">would have</span> lunch together every Friday. We all knew each other by name. Now we have 4,000 employees. You <span class="kut">used to feel</span> the company was a family. <span class="know">These days</span>, it feels more like a corporation. Both have their advantages.</span></p>
+    </div>
+  </div>
+
+  <div class="act" style="margin-top:0">
+    <div class="act-lbl">Comprehension — Used To, Would &amp; Simple Past</div>
+    <div class="act-inst" style="margin-top:4px">Answer using information from the interview.</div>
+    <div class="q-row">
+      <div class="q-text">What did the director use to do every Monday at Grupo Alante?</div>
+      <div class="opts" id="rq1">
+        <button class="opt" onclick="checkOpt(this,'Walk through each team\u0027s results personally','rq1')">Review the global strategy</button>
+        <button class="opt" onclick="checkOpt(this,'Walk through each team\u0027s results personally','rq1')">Walk through each team's results personally</button>
+        <button class="opt" onclick="checkOpt(this,'Walk through each team\u0027s results personally','rq1')">Present to international clients</button>
+      </div>
+    </div>
+    <div class="q-row">
+      <div class="q-text">What specific event started the company's transformation?</div>
+      <div class="opts" id="rq2">
+        <button class="opt" onclick="checkOpt(this,'The merger with a US firm in 2016','rq2')">The company used to expand</button>
+        <button class="opt" onclick="checkOpt(this,'The merger with a US firm in 2016','rq2')">The merger with a US firm in 2016</button>
+        <button class="opt" onclick="checkOpt(this,'The merger with a US firm in 2016','rq2')">Sofía Ramírez joined as director</button>
+      </div>
+    </div>
+    <div style="margin-top:14px">
+      <div class="tf-row2"><span class="tf-stmt">"The team would have lunch together every Friday" — "would" is used correctly here because it describes a repeated action.</span>
+        <div class="tf-btns"><button class="tf-btn" onclick="checkTF(this,true,'r1')">TRUE</button><button class="tf-btn" onclick="checkTF(this,false,'r1')">FALSE</button></div>
+      </div>
+      <div class="tf-row2"><span class="tf-stmt">The company used to have a very decentralized, autonomous leadership style.</span>
+        <div class="tf-btns"><button class="tf-btn" onclick="checkTF(this,false,'r2')">TRUE</button><button class="tf-btn" onclick="checkTF(this,true,'r2')">FALSE</button></div>
+      </div>
+      <div class="tf-row2"><span class="tf-stmt">Nowadays Grupo Alante outsources its IT and logistics.</span>
+        <div class="tf-btns"><button class="tf-btn" onclick="checkTF(this,true,'r3')">TRUE</button><button class="tf-btn" onclick="checkTF(this,false,'r3')">FALSE</button></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="gto teacher-only">
+    <div class="gto-lbl">GT Originals — Would in Business Writing</div>
+    <div class="gto-txt">"The director <strong>would walk</strong> through each team's results personally" — this is the kind of sentence that appears in company annual reports, executive biographies, and business case studies. It's more formal and literary than "used to walk". At A2.2, introducing "would" makes students sound significantly more sophisticated in written English — even with the same meaning.</div>
+  </div>
+
+  <div class="tn teacher-only">
+    <button class="tn-toggle" onclick="toggleTN(this)">📋 Teacher Notes — §5 Reading <span class="tn-arrow">▼</span></button>
+    <div class="tn-body">
+      <div class="tn-capa tn-c1"><div class="tn-cl">Capa 1 · Pedagogical</div><div class="tn-txt"><ul>
+        <li>Color-coded grammar: orange = used to, violet = would, cyan = Simple Past events, green = present contrast. Ask student: "How many 'would' examples are in the text?" (Answer: would meet, would walk, would outsource, would have = 4)</li>
+        <li>All 4 "would" examples describe repeated actions — never states. Point this out explicitly after reading.</li>
+        <li>RQ2 tests S2 grammar: "The merger with a US firm in 2016" = specific event = Simple Past, NOT used to. If student says "the company used to expand" — address: expand was the result, the merger was the event.</li>
+      </ul></div></div>
+      <div class="tn-capa tn-c2"><div class="tn-cl">Capa 2 · Engagement</div><div class="tn-txt"><ul>
+        <li>"Has your company ever had a major transformation like Grupo Alante? What used to be different? What's the same? Was there a specific event that changed everything?"</li>
+      </ul></div></div>
+      <div class="tn-capa tn-c3"><div class="tn-cl">Capa 3 · Growth & Retention</div><div class="tn-txt"><ul>
+        <li>"Sofía's interview is the template for §7's role-play. You'll describe YOUR company's transformation using the same structure — with used to, would, and Simple Past for the change event."</li>
+      </ul></div></div>
+    </div>
+  </div>
+</section></div>
+
+<!-- §6 LISTENING -->
+<div class="sec-outer" id="s6"><section class="sec">
+  <div class="sec-hd"><div><div class="sec-lbl">§ 06</div><div class="sec-title">Listening — How the Company Used to Work</div></div><div class="sec-time">10–12 min</div></div>
+  <div class="player">
+    <div class="pl-top">
+      <div class="pl-ico">🎧</div>
+      <div><div class="pl-title">Director Monologue — Company Before &amp; After</div>
+      <div class="pl-meta">A2.2 · M1 · S3 · Single speaker · ~90 seconds · American English · used to + would</div></div>
+    </div>
+    <div class="pl-ph"><p>🔈 <strong style="color:var(--txt)">Audio placeholder.</strong> Replace with Google Drive embed.<br>ElevenLabs voice: <code>Sarah</code> · Rate: 0.84 · Stability: 0.6</p></div>
+    <div class="script-toggle" onclick="toggleScript()"><span id="sc-lbl">▶ Show ElevenLabs Script</span></div>
+    <div class="script-box" id="sc-box">
+      <p>I joined this company fifteen years ago, when it was a very different place. Back then, it used to be a small, family-owned business. We would all meet in the same room every Monday morning. The CEO would personally review every major decision. It used to feel like a team of friends, not a corporation.<br><br>
+      The workplace used to be very traditional. Employees would arrive at eight, leave at five, and there was no flexibility. There didn't use to be any remote work policy. The strategy used to focus on one product line and one market — the local region.<br><br>
+      Then the company merged with an American group in 2017. That changed everything. We expanded from 150 employees to over 2,000. The headquarters moved to Dallas. The leadership structure changed completely.<br><br>
+      Nowadays, teams would no longer all fit in one room. We outsource a lot of our operations. People work from different cities, different countries. The strategy is now global.<br><br>
+      Do I miss the old way? Sometimes. I used to know everyone's name. We would celebrate birthdays in the office, share lunch, talk about our families. These days, I manage people I've never met in person. It's efficient — but it's different. You used to feel a sense of belonging that's harder to find now.</p>
+      <p class="script-note">⏱ Target: 85–95 sec · Voice: Sarah · Speed: 0.84 · City: Dallas · Mix of used to + would</p>
+    </div>
+  </div>
+
+  <div class="act" style="margin-top:0">
+    <div class="act-lbl">Listening Activities — Used To, Would &amp; Simple Past</div>
+    <div class="act-inst" style="margin-top:4px">Listen carefully — identify the grammar form, not just the content.</div>
+    <div class="q-row">
+      <div class="q-text">What would the CEO do personally before the transformation?</div>
+      <div class="opts" id="lq1">
+        <button class="opt" onclick="checkOpt(this,'Review every major decision personally','lq1')">Present results to clients</button>
+        <button class="opt" onclick="checkOpt(this,'Review every major decision personally','lq1')">Review every major decision personally</button>
+        <button class="opt" onclick="checkOpt(this,'Review every major decision personally','lq1')">Organize the Monday meetings</button>
+      </div>
+    </div>
+    <div class="q-row">
+      <div class="q-text">What was the specific event that started the transformation? (Simple Past)</div>
+      <div class="opts" id="lq2">
+        <button class="opt" onclick="checkOpt(this,'The company merged with an American group in 2017','lq2')">The company used to expand internationally</button>
+        <button class="opt" onclick="checkOpt(this,'The company merged with an American group in 2017','lq2')">The company merged with an American group in 2017</button>
+        <button class="opt" onclick="checkOpt(this,'The company merged with an American group in 2017','lq2')">The headquarters would move to Dallas</button>
+      </div>
+    </div>
+    <div style="margin-top:14px">
+      <div class="tf-row2"><span class="tf-stmt">Before the transformation, there used to be a flexible remote work policy.</span>
+        <div class="tf-btns"><button class="tf-btn" onclick="checkTF(this,false,'l1')">TRUE</button><button class="tf-btn" onclick="checkTF(this,true,'l1')">FALSE</button></div>
+      </div>
+      <div class="tf-row2"><span class="tf-stmt">The speaker says they would celebrate birthdays together in the office before.</span>
+        <div class="tf-btns"><button class="tf-btn" onclick="checkTF(this,true,'l2')">TRUE</button><button class="tf-btn" onclick="checkTF(this,false,'l2')">FALSE</button></div>
+      </div>
+      <div class="tf-row2"><span class="tf-stmt">The speaker feels completely positive about the new way of working.</span>
+        <div class="tf-btns"><button class="tf-btn" onclick="checkTF(this,false,'l3')">TRUE</button><button class="tf-btn" onclick="checkTF(this,true,'l3')">FALSE</button></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tn teacher-only">
+    <button class="tn-toggle" onclick="toggleTN(this)">📋 Teacher Notes — §6 Listening <span class="tn-arrow">▼</span></button>
+    <div class="tn-body">
+      <div class="tn-capa tn-c1"><div class="tn-cl">Capa 1 · Pedagogical</div><div class="tn-txt"><ul>
+        <li>Focus task: count how many times "would" appears (would meet, would review, would celebrate, would all fit, would no longer). Answer: 5 instances. Count "used to" separately: used to be x2, used to feel x2, used to focus, didn't use to, used to know = 7 instances.</li>
+        <li>LQ2 directly tests S2 and S3 grammar together: the merger = specific event → Simple Past. If student says "would move" — that's a specific event, not a habit. Reinforce.</li>
+        <li>L3: speaker says "it's efficient — but it's different" and "a sense of belonging that's harder to find now." Not completely positive — nuanced. Students should pick up the ambivalence.</li>
+      </ul></div></div>
+      <div class="tn-capa tn-c2"><div class="tn-cl">Capa 2 · Engagement</div><div class="tn-txt"><ul>
+        <li>"Do you relate to this speaker? Does your company feel more like a family or more like a corporation? Use 'used to' to describe how it was before."</li>
+      </ul></div></div>
+      <div class="tn-capa tn-c3"><div class="tn-cl">Capa 3 · Growth & Retention</div><div class="tn-txt"><ul>
+        <li>Homework: listen 3× and write every "would" sentence and every "used to" sentence in two separate columns. "This is also writing practice — you're producing the grammar by transcribing it."</li>
+      </ul></div></div>
+    </div>
+  </div>
+</section></div>
+
+<!-- §7 WRAP-UP -->
+<div class="sec-outer" id="s7"><section class="sec">
+  <div class="sec-hd"><div><div class="sec-lbl">§ 07</div><div class="sec-title">Wrap-Up</div></div><div class="sec-time">5 min</div></div>
+  <div class="wu2-grid">
+    <div class="wu2-card">
+      <div class="wu2-h">Today I learned…</div>
+      <ul class="checklist">
+        <li onclick="toggleCheck(this)"><div class="cb"></div><span>expand · merge · outsource · headquarters · workplace · leadership · policy · strategy.</span></li>
+        <li onclick="toggleCheck(this)"><div class="cb"></div><span>"Would" = formal alternative to "used to" for repeated ACTIONS in the past.</span></li>
+        <li onclick="toggleCheck(this)"><div class="cb"></div><span>States (be, have, feel) can only use "used to" — never "would".</span></li>
+        <li onclick="toggleCheck(this)"><div class="cb"></div><span>Company change events = Simple Past (merged, expanded, moved, shifted).</span></li>
+        <li onclick="toggleCheck(this)"><div class="cb"></div><span>I can describe a company transformation using all three forms.</span></li>
+      </ul>
+    </div>
+    <div class="wu2-card">
+      <div class="wu2-h">Key Summary</div>
+      <div>
+        <div class="key-item"><div class="ki-lbl">Actions → both</div><div class="ki-txt"><span style="color:var(--ac)">used to</span> / <span style="color:var(--violet)">would</span> meet · review · present · outsource</div></div>
+        <div class="key-item"><div class="ki-lbl">States → used to only</div><div class="ki-txt"><span style="color:var(--ac)">used to be</span> · used to have · used to feel — never "would be"</div></div>
+        <div class="key-item" style="border-color:rgba(0,207,255,.2)"><div class="ki-lbl" style="color:var(--cyan)">Change events</div><div class="ki-txt"><span style="color:var(--cyan)">merged · expanded · moved · shifted</span> → Simple Past</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ROLE-PLAY SPEAKING -->
+  <div class="sp-box">
+    <div class="sp-lbl">🗣 Speaking Challenge</div>
+    <div class="sp-type">Format: Role-Play</div>
+    <p class="sp-prompt">"You are a director being interviewed about how your company has changed. Your teacher is the journalist. Describe the transformation using used to, would, and Simple Past for the change event."</p>
+    <p class="sp-guide">Teacher asks at least 5 interview questions. Student answers in character — describing a real or imagined company transformation. Minimum 2 uses of "would" required.</p>
+    <div class="rp-grid">
+      <div class="rp-card">
+        <div class="rp-role">Director (Student) — Answers</div>
+        <div class="rp-lines">
+          <div class="rp-line">The company <span class="rp-key">used to be</span> [size/type].</div>
+          <div class="rp-line">We <span class="rp-wd">would</span> [repeated action] every [period].</div>
+          <div class="rp-line">The leadership <span class="rp-key">used to have</span> [style].</div>
+          <div class="rp-line">Then we <span style="color:var(--cyan);font-weight:700">merged / expanded / outsourced</span> [Simple Past].</div>
+          <div class="rp-line"><span class="rp-key">Nowadays</span>, the company [present reality].</div>
+        </div>
+      </div>
+      <div class="rp-card teacher-only">
+        <div class="rp-role">Journalist (Teacher) — Interview Questions</div>
+        <div class="rp-lines">
+          <div class="rp-line">"What was the company like before the transformation?"</div>
+          <div class="rp-line">"What did the team use to do regularly that has changed?"</div>
+          <div class="rp-line">"What specific event caused the transformation?"</div>
+          <div class="rp-line">"Did the leadership style use to be different?"</div>
+          <div class="rp-line">"What do you miss most about the old company culture?"</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="next-box">
+    <div class="next-lbl">Next →</div>
+    <div class="next-txt"><strong style="color:var(--gold)">S4 — Industry Changes &amp; Collocations</strong> &nbsp;·&nbsp; Collocations with "used to" · Industry-specific transformation vocabulary · Work culture contrasts</div>
+  </div>
+
+  <div class="gto teacher-only">
+    <div class="gto-lbl">GT Originals</div>
+    <div class="gto-txt">
+      <strong>The would rule in one sentence:</strong> "Would" replaces "used to" only when the verb describes a repeated HABIT or ACTION — never a state. If you're uncertain, "used to" is always safe.<br><br>
+      <strong>Practical application:</strong> In company annual reports and executive presentations, "would" creates a more authoritative, literary tone. "The board would review all proposals annually" sounds more formal than "used to review" — same meaning, different register.
+    </div>
+  </div>
+
+  <div class="tn teacher-only">
+    <button class="tn-toggle" onclick="toggleTN(this)">📋 Teacher Notes — §7 Wrap-Up <span class="tn-arrow">▼</span></button>
+    <div class="tn-body">
+      <div class="tn-capa tn-c1"><div class="tn-cl">Capa 1 · Pedagogical</div><div class="tn-txt"><ul>
+        <li>Role-play: teacher card hidden in Student Mode. The 5 journalist questions map directly to the 5 lines in the student's response scaffold — but student shouldn't read them during the role-play.</li>
+        <li>Evaluate: at least 2 correct "would" uses (action verbs, no states)? "used to be/have/feel" for states? Simple Past for the change event? If student uses "would be" — stop and correct immediately.</li>
+        <li>The role-play can be based on real information (student's actual company) or a fictional company they invent.</li>
+      </ul></div></div>
+      <div class="tn-capa tn-c2"><div class="tn-cl">Capa 2 · Engagement</div><div class="tn-txt"><ul>
+        <li>"You just described a company transformation in English — with three different grammar forms. That's what a B1 speaker does. You're already there."</li>
+      </ul></div></div>
+      <div class="tn-capa tn-c3"><div class="tn-cl">Capa 3 · Growth & Retention</div><div class="tn-txt"><ul>
+        <li>"S4 adds collocations — the natural word combinations that native speakers use with 'used to'. These make your English sound less textbook and more natural."</li>
+        <li>Upsell: "By S5, you'll give a full 3-minute career + company narrative using all grammar from M1. That's the exit task."</li>
+        <li>Testimonial trigger: "What's one sentence about your company that you'll say differently after today? Say it — using 'would'."</li>
+      </ul></div></div>
+    </div>
+  </div>
+</section></div>
+
+<footer class="ftr">
+  <div class="fb">Gabriel Turner · English Training</div>
+  <div class="fb">A2.2 · M1 · S3 · Company Transformations</div>
+  <div class="fb">GT_A2.2_M1_S3_TEACHER_v2</div>
+</footer>
+
+<script>
+window.addEventListener('scroll',()=>{const h=document.documentElement.scrollHeight-window.innerHeight;document.getElementById('prog').style.width=(window.scrollY/h*100)+'%';},{passive:true});
+function toggleMode(){const b=document.body;const btn=document.getElementById('modeBtn');b.classList.toggle('student-mode');btn.textContent=b.classList.contains('student-mode')?'📋 Teacher Mode':'👁 Student Mode';}
+function speak(t){if(!window.speechSynthesis)return;speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='en-US';u.rate=0.85;speechSynthesis.speak(u);}
+function toggleTN(btn){btn.classList.toggle('open');btn.nextElementSibling.classList.toggle('open');}
+function toggleScript(){const b=document.getElementById('sc-box');const l=document.getElementById('sc-lbl');b.classList.toggle('open');l.textContent=b.classList.contains('open')?'▼ Hide Script':'▶ Show ElevenLabs Script';}
+function toggleCheck(li){li.classList.toggle('done');li.querySelector('.cb').textContent=li.classList.contains('done')?'✓':'';}
+function markRF(card){card.classList.toggle('answered');}
+function checkOpt(btn,correct,qid){const c=document.getElementById(qid);if(c.dataset.locked)return;c.querySelectorAll('.opt').forEach(b=>{b.disabled=true;if(b.textContent.trim()===correct)b.classList.add('correct');});if(btn.textContent.trim()!==correct)btn.classList.add('wrong');c.dataset.locked='1';}
+function checkTF(btn,isCorrect,id){
+  const row=btn.closest('[id="'+id+'"]')||btn.closest('.tf-row2');
+  if(!row||row.dataset.locked)return;
+  row.querySelectorAll('.tf-btn').forEach(b=>b.disabled=true);
+  if(isCorrect){btn.classList.add('correct');}else{btn.classList.add('wrong');const sib=Array.from(row.querySelectorAll('.tf-btn')).find(b=>b!==btn);if(sib)sib.classList.add('correct');}
+  row.dataset.locked='1';
+}
+
+// ═══ RAPID FIRE TIMER ═══
+const rfQs=['Q1 — 3 things you used to do at a previous company.','Q2 — What routine used to be different at work?','Q3 — One specific career event in Simple Past.','Q4 — How has your COMPANY changed in 5 years?','Q5 — True or False: "Would" can be used for past habits?','Q6 — "I used to be CEO" — can you replace with "would"? Why?'];
+let timerInterval=null,timeLeft=30,currentQ=0,isRunning=false;
+function startTimer(){if(isRunning||currentQ>=rfQs.length)return;isRunning=true;document.getElementById('timerStart').disabled=true;document.getElementById('timerQ').textContent=rfQs[currentQ];document.getElementById('timerStatus').textContent='Answer now!';timeLeft=30;updateTimer();timerInterval=setInterval(()=>{timeLeft--;updateTimer();if(timeLeft<=0){clearInterval(timerInterval);isRunning=false;currentQ++;document.getElementById('timerStatus').textContent=currentQ>=rfQs.length?'All done! 🎯':'Press START for next question.';document.getElementById('timerStart').disabled=currentQ>=rfQs.length;if(currentQ<rfQs.length)setTimeout(()=>{document.getElementById('timerStart').disabled=false;},300);}},1000);}
+function updateTimer(){const pct=timeLeft/30;const arc=document.getElementById('timerArc');arc.style.strokeDashoffset=(1-pct)*188.5;arc.style.stroke=timeLeft<=10?'#FF1F5C':timeLeft<=20?'#C9922A':'#F97316';document.getElementById('timerNum').textContent=timeLeft;}
+function resetTimer(){clearInterval(timerInterval);isRunning=false;currentQ=0;timeLeft=30;document.getElementById('timerArc').style.strokeDashoffset=0;document.getElementById('timerArc').style.stroke='#F97316';document.getElementById('timerNum').textContent='30';document.getElementById('timerQ').textContent='—';document.getElementById('timerStatus').textContent='Press START for Q1';document.getElementById('timerStart').disabled=false;}
+
+// ═══ TRANSFORMATION BOARD ═══
+const tbItems=[
+  {id:'tb1',type:'state',text:'The company was family-owned — 3 shareholders'},
+  {id:'tb2',type:'action',text:'Directors would present results every quarter'},
+  {id:'tb3',type:'action',text:'All departments would meet in one room on Mondays'},
+  {id:'tb4',type:'state',text:'The headquarters was a small downtown office'},
+  {id:'tb5',type:'action',text:'Managers would review every decision personally'},
+  {id:'tb6',type:'state',text:'The strategy was focused on the local market only'},
+];
+function buildBoard(){
+  const tray=document.getElementById('tbTray');
+  ['tbBefore','tbNow'].forEach(id=>{document.getElementById(id).innerHTML='';});
+  tray.innerHTML='';
+  tbItems.forEach(t=>{
+    const card=document.createElement('div');
+    card.className='tb-card';card.id=t.id;card.draggable=true;
+    const label=t.type==='state'?'used to only':'used to or would';
+    const labelColor=t.type==='state'?'var(--ac)':'var(--violet)';
+    card.innerHTML=`<span class="tc-type" style="color:${labelColor}">${label}</span>${t.text}`;
+    card.addEventListener('dragstart',e=>{e.dataTransfer.setData('tbId',t.id);});
+    tray.appendChild(card);
+  });
+}
+function tbAllow(e){e.preventDefault();}
+function tbDrop(e,targetId){
+  e.preventDefault();
+  const id=e.dataTransfer.getData('tbId');
+  const card=document.getElementById(id);
+  if(!card)return;
+  card.classList.remove('placed-before','placed-now');
+  if(targetId==='tbBefore')card.classList.add('placed-before');
+  else if(targetId==='tbNow')card.classList.add('placed-now');
+  document.getElementById(targetId).appendChild(card);
+}
+buildBoard();
+
+// NAV
+const secs=document.querySelectorAll('[id^="s"]');const navis=document.querySelectorAll('.sni');
+window.addEventListener('scroll',()=>{let cur='';secs.forEach(s=>{if(window.scrollY>=s.offsetTop-130)cur=s.id;});navis.forEach(n=>n.classList.toggle('active',n.getAttribute('href')==='#'+cur));},{passive:true});
+</script>
+</body>
+</html>
