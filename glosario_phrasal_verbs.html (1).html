@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Phrasal Verbs – Gabriel Turner</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --mg:#e0185a; --mgl:#f72d72;
+  --nv:#1a1a3e; --nvm:#252560;
+  --bg:#fdf5f8; --gray:#6b7280;
+  --bd:rgba(224,24,90,.15);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+  font-family:'DM Sans',sans-serif;
+  background:var(--bg);color:var(--nv);
+  min-height:100vh;padding-bottom:40px;
+  /* iOS tap delay fix */
+  touch-action:manipulation;
+  -webkit-tap-highlight-color:transparent;
+}
+
+/* HEADER */
+.hd{background:linear-gradient(135deg,var(--nv),var(--nvm) 60%,#3a1060);
+    padding:20px 18px 22px;position:relative;overflow:hidden;}
+.hd::before{content:'';position:absolute;top:-40px;right:-40px;
+    width:180px;height:180px;border-radius:50%;
+    background:radial-gradient(circle,rgba(224,24,90,.35),transparent 70%);}
+.hrow{position:relative;z-index:1;display:flex;justify-content:space-between;align-items:center;}
+.brand{font-family:'Playfair Display',serif;color:#fff;font-size:20px;font-weight:900;}
+.brand b{color:var(--mgl);font-weight:900;}
+.sub{color:rgba(255,255,255,.4);font-size:9px;letter-spacing:2.5px;text-transform:uppercase;margin-top:3px;}
+.htitle{position:relative;z-index:1;margin-top:16px;}
+.htitle h1{font-family:'Playfair Display',serif;color:#fff;font-size:24px;font-weight:900;line-height:1.15;}
+.htitle h1 i{color:var(--mgl);font-style:normal;}
+.htitle p{color:rgba(255,255,255,.5);font-size:12px;margin-top:5px;}
+
+/* CONTROLS */
+.ctrl{position:sticky;top:0;z-index:100;
+      background:#fff;border-bottom:1.5px solid var(--bd);
+      box-shadow:0 2px 12px rgba(26,26,62,.08);
+      padding:12px 16px 10px;}
+.srch{position:relative;margin-bottom:10px;}
+.srch input{
+  width:100%;padding:11px 16px 11px 40px;
+  border:1.5px solid var(--bd);border-radius:40px;
+  font-family:'DM Sans',sans-serif;font-size:15px;
+  color:var(--nv);background:var(--bg);
+  outline:none;-webkit-appearance:none;
+}
+.srch input:focus{border-color:var(--mg);}
+.srch .ico{position:absolute;left:13px;top:50%;transform:translateY(-50%);pointer-events:none;}
+.frow{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px;align-items:center;}
+.frow::-webkit-scrollbar{display:none;}
+
+/* FILTER BUTTONS — key: no nested elements, pure <button> */
+.fbtn{
+  flex-shrink:0;
+  height:44px;
+  padding:0 18px;
+  border-radius:40px;
+  border:1.5px solid var(--bd);
+  background:transparent;
+  color:var(--gray);
+  font-family:'DM Sans',sans-serif;
+  font-size:11px;font-weight:600;
+  letter-spacing:.8px;text-transform:uppercase;
+  /* iOS critical */
+  -webkit-appearance:none;
+  cursor:pointer;
+}
+.fbtn.on{background:var(--mg);border-color:var(--mg);color:#fff;}
+.badge{flex-shrink:0;margin-left:auto;background:var(--nv);color:#fff;
+       font-size:11px;font-weight:600;padding:5px 12px;border-radius:40px;}
+
+/* CONTENT */
+.main{padding:16px 14px 32px;}
+.grp-lbl{font-size:10px;letter-spacing:2.5px;text-transform:uppercase;
+         color:var(--mg);font-weight:700;margin:24px 0 12px;
+         display:flex;align-items:center;gap:10px;}
+.grp-lbl::after{content:'';flex:1;height:1px;background:var(--bd);}
+
+/* CARD — NO overflow:hidden here (iOS bug) */
+.card{
+  background:#fff;
+  border:1.5px solid var(--bd);
+  border-radius:14px;
+  margin-bottom:12px;
+}
+.card.hide{display:none;}
+
+/* CARD HEADER — <button> tag, not div */
+.card > button.ch{
+  width:100%;
+  display:flex;justify-content:space-between;align-items:center;
+  padding:14px 16px;
+  background:linear-gradient(135deg,var(--nv),var(--nvm));
+  border:none;
+  border-radius:12px 12px 0 0;
+  cursor:pointer;
+  font-family:'Playfair Display',serif;
+  text-align:left;
+  /* iOS critical */
+  -webkit-appearance:none;
+  min-height:52px;
+}
+/* when card is closed, header has full radius */
+.card:not(.open) > button.ch{border-radius:12px;}
+.card.open > button.ch{border-radius:12px 12px 0 0;}
+.ch:active{opacity:.75;}
+
+.pvb{color:#fff;font-size:21px;font-weight:700;flex:1;text-align:left;}
+.lbg{font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+     padding:4px 10px;border-radius:20px;margin-left:10px;flex-shrink:0;}
+.lbg.learn{background:var(--mg);color:#fff;}
+.lbg.know{background:rgba(22,163,74,.2);color:#16a34a;border:1px solid rgba(22,163,74,.4);}
+.arr{color:rgba(255,255,255,.5);font-size:13px;margin-left:8px;
+     transition:transform .25s;flex-shrink:0;font-family:'DM Sans',sans-serif;}
+.card.open .arr{transform:rotate(180deg);}
+
+/* CARD BODY */
+.cb{
+  overflow:hidden;
+  max-height:0;
+  transition:max-height .3s ease;
+  border-radius:0 0 12px 12px;
+}
+.card.open .cb{max-height:1400px;}
+.card.open .ci{padding:14px 16px 16px;}
+
+.tr{font-size:13px;color:var(--gray);font-style:italic;margin-bottom:12px;line-height:1.4;}
+.ext{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;
+     color:var(--mg);margin-bottom:8px;}
+.exb{background:var(--bg);border-left:3px solid var(--mg);
+     border-radius:0 8px 8px 0;padding:10px 12px;margin-bottom:8px;}
+.exe{font-size:14px;color:var(--nv);font-weight:500;line-height:1.55;}
+.exe em{color:var(--mg);font-style:normal;font-weight:700;}
+.exn{font-size:11.5px;color:var(--gray);margin-top:4px;font-style:italic;line-height:1.4;}
+.sep{background:rgba(245,166,35,.12);border:1px solid rgba(245,166,35,.45);
+     border-radius:8px;padding:9px 12px;font-size:12px;color:#92400e;
+     margin-top:10px;display:flex;gap:7px;align-items:flex-start;line-height:1.5;}
+
+.empty{text-align:center;padding:48px 20px;color:var(--gray);display:none;}
+.empty.show{display:block;}
+.empty .ej{font-size:44px;margin-bottom:12px;}
+
+/* FOOTER */
+.ft{background:linear-gradient(135deg,var(--nv),var(--nvm));
+    padding:20px 18px;text-align:center;}
+.ftb{font-family:'Playfair Display',serif;color:#fff;font-size:16px;font-weight:700;}
+.ftb b{color:var(--mgl);}
+.fti{color:rgba(255,255,255,.45);font-size:11px;margin-top:4px;}
+</style>
+</head>
+<body>
+
+<div class="hd">
+  <div class="hrow">
+    <div>
+      <div class="brand">Gabriel <b>Turner</b></div>
+      <div class="sub">English Training</div>
+    </div>
+    <div style="color:rgba(255,255,255,.25);font-size:30px">📗</div>
+  </div>
+  <div class="htitle">
+    <h1>Phrasal Verbs <i>Industriales</i></h1>
+    <p>Glosario interactivo · Inglés para el trabajo</p>
+  </div>
+</div>
+
+<div class="ctrl">
+  <div class="srch">
+    <span class="ico">🔍</span>
+    <input type="text" id="SI" placeholder="Buscar phrasal verb…"
+           autocomplete="off" autocorrect="off" spellcheck="false">
+  </div>
+  <div class="frow">
+    <button class="fbtn on" data-f="all">Todos</button>
+    <button class="fbtn"    data-f="learn">Para aprender</button>
+    <button class="fbtn"    data-f="know">Ya debes saber</button>
+    <div class="badge" id="BG">38</div>
+  </div>
+</div>
+
+<div class="main">
+  <div class="empty" id="EM">
+    <div class="ej">🔍</div>
+    <p>Sin resultados.<br>Intenta otra búsqueda.</p>
+  </div>
+  <div class="grp-lbl" id="GL">📘 Para Aprender — B2+</div>
+  <div id="gL"></div>
+  <div class="grp-lbl" id="GK">✅ Ya Debes Saber — Base B2</div>
+  <div id="gK"></div>
+</div>
+
+<div class="ft">
+  <div class="ftb">Gabriel <b>Turner</b> English Training</div>
+  <div class="fti">📱 461 147 2119 · gabrielturner.com</div>
+</div>
+
+<script>
+const DATA = [
+  {v:"carry out",l:"learn",es:"ejecutar, llevar a cabo",
+   ex:[{e:"We need to <em>carry out</em> a full inspection before the shift starts.",n:"= realizar una inspección completa"},
+       {e:"The team will <em>carry</em> the audit <em>out</em> next week.",n:"⚡ Separable — objeto entre 'carry' y 'out'"}],
+   sep:"Separable: <strong>carry it out</strong> / <strong>carry out the task</strong>."},
+
+  {v:"set up",l:"learn",es:"establecer, configurar, poner en marcha",
+   ex:[{e:"We <em>set up</em> a new quality control system last quarter.",n:"= instalamos / implementamos"},
+       {e:"Can you <em>set</em> the machines <em>up</em> before the morning shift?",n:"⚡ Separable"}],
+   sep:"Separable: <strong>set it up</strong> / <strong>set up the system</strong>."},
+
+  {v:"break down",l:"learn",es:"descomponerse (máquina) / analizar (datos)",
+   ex:[{e:"The conveyor belt <em>broke down</em> during the night shift.",n:"= se descompuso / falló"},
+       {e:"Let's <em>break down</em> the production numbers by area.",n:"= analizar / desglosar"}],
+   sep:"En sentido de 'analizar', es separable: <strong>break the data down</strong>."},
+
+  {v:"scale up",l:"learn",es:"ampliar, escalar (producción o proceso)",
+   ex:[{e:"We plan to <em>scale up</em> production by 30% next quarter.",n:"= ampliar / aumentar la escala"}],
+   sep:"Separable: <strong>scale up production</strong> / <strong>scale it up</strong>."},
+
+  {v:"phase out",l:"learn",es:"eliminar gradualmente, retirar progresivamente",
+   ex:[{e:"The company is <em>phasing out</em> the old equipment by next year.",n:"= retirando progresivamente"},
+       {e:"They will <em>phase</em> the old process <em>out</em> in three stages.",n:"⚡ Separable"}],
+   sep:"Separable: <strong>phase out the model</strong> / <strong>phase it out</strong>."},
+
+  {v:"ramp up",l:"learn",es:"aumentar intensamente (producción, esfuerzo)",
+   ex:[{e:"We need to <em>ramp up</em> output to meet the new deadline.",n:"= acelerar / incrementar producción"}],
+   sep:"Separable: <strong>ramp up production</strong> / <strong>ramp it up</strong>."},
+
+  {v:"roll out",l:"learn",es:"lanzar, implementar (plan, producto, protocolo)",
+   ex:[{e:"The new safety protocol will be <em>rolled out</em> in Q3.",n:"= se implementará / lanzará"}],
+   sep:"Separable: <strong>roll out the plan</strong> / <strong>roll it out</strong>."},
+
+  {v:"flag up",l:"learn",es:"señalar, alertar, reportar un problema",
+   ex:[{e:"She <em>flagged up</em> a safety issue during the inspection.",n:"= señaló / alertó sobre"}],
+   sep:"Separable: <strong>flag up an issue</strong> / <strong>flag it up</strong>."},
+
+  {v:"sign off on",l:"learn",es:"aprobar formalmente, dar el visto bueno",
+   ex:[{e:"The manager needs to <em>sign off on</em> every new procedure.",n:"= dar autorización oficial"}],
+   sep:"No separable. El objeto va después de 'on'."},
+
+  {v:"hand over",l:"learn",es:"entregar, transferir (documentos, responsabilidad)",
+   ex:[{e:"Please <em>hand over</em> the incident report by end of shift.",n:"= entregar el reporte"},
+       {e:"She <em>handed</em> the project <em>over</em> to the new supervisor.",n:"⚡ Separable"}],
+   sep:"Separable: <strong>hand over the file</strong> / <strong>hand it over</strong>."},
+
+  {v:"cut back on",l:"learn",es:"reducir, recortar (gastos, horas extra)",
+   ex:[{e:"We are <em>cutting back on</em> overtime this month.",n:"= reduciendo el tiempo extra"}],
+   sep:"No separable. El objeto va después de 'on'."},
+
+  {v:"bring in",l:"learn",es:"traer, incorporar, contratar (consultor, experto)",
+   ex:[{e:"They <em>brought in</em> a specialist to solve the issue.",n:"= contrataron / llamaron a un especialista"}],
+   sep:"Separable: <strong>bring in an expert</strong> / <strong>bring them in</strong>."},
+
+  {v:"iron out",l:"learn",es:"resolver detalles o problemas menores",
+   ex:[{e:"Let's <em>iron out</em> the remaining details in tomorrow's meeting.",n:"= resolver los detalles pendientes"}],
+   sep:"Separable: <strong>iron out the details</strong> / <strong>iron them out</strong>."},
+
+  {v:"draw up",l:"learn",es:"redactar, elaborar (contrato, plan, informe)",
+   ex:[{e:"We need to <em>draw up</em> a new maintenance contract.",n:"= redactar / preparar un contrato"}],
+   sep:"Separable: <strong>draw up a plan</strong> / <strong>draw it up</strong>."},
+
+  {v:"run out of",l:"learn",es:"quedarse sin (materiales, tiempo, presupuesto)",
+   ex:[{e:"We <em>ran out of</em> raw materials before the end of the shift.",n:"= se nos acabaron las materias primas"}],
+   sep:"No separable. Preposición 'of' + objeto al final."},
+
+  {v:"look into",l:"learn",es:"investigar, analizar, examinar",
+   ex:[{e:"HR is <em>looking into</em> the safety complaint right now.",n:"= investigando / revisando"}],
+   sep:"No separable. El objeto va después de 'into'."},
+
+  {v:"put forward",l:"learn",es:"proponer, presentar (una idea, solución)",
+   ex:[{e:"She <em>put forward</em> a new approach to inventory management.",n:"= propuso / presentó"}],
+   sep:"Separable: <strong>put forward an idea</strong> / <strong>put it forward</strong>."},
+
+  {v:"deal with",l:"learn",es:"manejar, atender, gestionar",
+   ex:[{e:"Who is going to <em>deal with</em> the supplier complaint?",n:"= ¿quién va a atender el reclamo?"}],
+   sep:"No separable. El objeto va después de 'with'."},
+
+  // BASE B2
+  {v:"take over",l:"know",es:"asumir el control, hacerse cargo, adquirir",
+   ex:[{e:"He <em>took over</em> as plant manager last January.",n:"= asumió el cargo"},
+       {e:"A larger company <em>took over</em> our supplier.",n:"= adquirió / compró a nuestro proveedor"}],
+   sep:"Separable con objeto: <strong>take over the project</strong> / <strong>take it over</strong>."},
+
+  {v:"come up with",l:"know",es:"idear, proponer, encontrar una solución",
+   ex:[{e:"She <em>came up with</em> a great solution to the bottleneck.",n:"= encontró / propuso una solución"}],
+   sep:"No separable. El objeto va al final."},
+
+  {v:"follow up",l:"know",es:"dar seguimiento, volver a contactar",
+   ex:[{e:"Please <em>follow up</em> with the client about the delayed shipment.",n:"= dar seguimiento al cliente"}],
+   sep:"Separable: <strong>follow up the issue</strong> / <strong>follow it up</strong>."},
+
+  {v:"work out",l:"know",es:"funcionar, resultar / resolver un problema",
+   ex:[{e:"The new maintenance schedule <em>worked out</em> perfectly.",n:"= resultó / funcionó muy bien"},
+       {e:"Let's <em>work out</em> the logistics before the next cycle.",n:"= resolver / planificar"}],
+   sep:"Separable en sentido de 'resolver': <strong>work it out</strong>."},
+
+  {v:"find out",l:"know",es:"descubrir, averiguar, enterarse",
+   ex:[{e:"Did you <em>find out</em> what caused the delay on Line 3?",n:"= ¿averiguaste la causa?"}],
+   sep:"Separable: <strong>find out the cause</strong> / <strong>find it out</strong>."},
+
+  {v:"call off",l:"know",es:"cancelar (reunión, operación, pedido)",
+   ex:[{e:"The morning meeting was <em>called off</em> due to an emergency.",n:"= fue cancelada"}],
+   sep:"Separable: <strong>call off the meeting</strong> / <strong>call it off</strong>."},
+
+  {v:"put off",l:"know",es:"postponer, aplazar",
+   ex:[{e:"Don't <em>put off</em> the preventive maintenance check again.",n:"= no aplaces la revisión"}],
+   sep:"Separable: <strong>put off the visit</strong> / <strong>put it off</strong>."},
+
+  {v:"get back to",l:"know",es:"responder más tarde, volver a contactar",
+   ex:[{e:"I'll <em>get back to</em> you with the figures after the audit.",n:"= te respondo / te contacto después"}],
+   sep:"No separable. El objeto va después de 'to'."},
+
+  {v:"go over",l:"know",es:"revisar, repasar (datos, procedimientos)",
+   ex:[{e:"Let's <em>go over</em> the production numbers before the meeting.",n:"= repasar / revisar los números"}],
+   sep:"No separable. El objeto va después de 'over'."},
+
+  {v:"point out",l:"know",es:"señalar, indicar (un error o detalle importante)",
+   ex:[{e:"He <em>pointed out</em> an error in the shipment report.",n:"= señaló / indicó un error"}],
+   sep:"Separable: <strong>point out the mistake</strong> / <strong>point it out</strong>."},
+
+  {v:"set out",l:"know",es:"establecer, describir (objetivos, pasos)",
+   ex:[{e:"The document <em>sets out</em> the key objectives for Q2.",n:"= describe / establece los objetivos"}],
+   sep:"Separable: <strong>set out the plan</strong> / <strong>set it out</strong>."},
+
+  {v:"turn down",l:"know",es:"rechazar (oferta, propuesta, candidato)",
+   ex:[{e:"They <em>turned down</em> the supplier's revised offer.",n:"= rechazaron la oferta"}],
+   sep:"Separable: <strong>turn down the offer</strong> / <strong>turn it down</strong>."},
+
+  {v:"take on",l:"know",es:"asumir responsabilidad / contratar personal",
+   ex:[{e:"We're <em>taking on</em> new operators for the third shift.",n:"= contratando nuevos operadores"},
+       {e:"She <em>took on</em> extra responsibilities during the transition.",n:"= asumió más responsabilidades"}],
+   sep:"Separable: <strong>take on staff</strong> / <strong>take them on</strong>."},
+
+  {v:"come across",l:"know",es:"parecer, dar impresión de / encontrarse con algo",
+   ex:[{e:"He <em>comes across</em> as very professional in client meetings.",n:"= proyecta / parece muy profesional"},
+       {e:"I <em>came across</em> an old report that might help us.",n:"= encontré por casualidad"}],
+   sep:"No separable."},
+
+  {v:"keep up with",l:"know",es:"mantenerse al día, seguir el ritmo de",
+   ex:[{e:"It's hard to <em>keep up with</em> the demand during peak season.",n:"= seguir el ritmo de la demanda"}],
+   sep:"No separable."},
+
+  {v:"fall behind",l:"know",es:"atrasarse, quedar rezagado",
+   ex:[{e:"Production <em>fell behind</em> schedule by two days.",n:"= se atrasó dos días respecto al plan"}],
+   sep:"No separable."},
+
+  {v:"stand for",l:"know",es:"significar, ser las siglas de",
+   ex:[{e:"What does KPI <em>stand for</em> in this context?",n:"= ¿qué significan las siglas KPI?"}],
+   sep:"No separable."},
+
+  {v:"make up for",l:"know",es:"compensar, recuperar (tiempo, producción)",
+   ex:[{e:"We need to <em>make up for</em> the lost time before the deadline.",n:"= compensar el tiempo perdido"}],
+   sep:"No separable."},
+
+  {v:"head up",l:"know",es:"liderar, encabezar (equipo, proyecto, departamento)",
+   ex:[{e:"She <em>heads up</em> the logistics and supply chain team.",n:"= lidera / encabeza el equipo"}],
+   sep:"Separable: <strong>head up the team</strong> / <strong>head it up</strong>."},
+
+  {v:"step up",l:"know",es:"asumir más responsabilidad, responder a la altura",
+   ex:[{e:"The whole team really <em>stepped up</em> during the plant emergency.",n:"= respondieron a la altura"}],
+   sep:"No separable en este sentido."}
+];
+
+var cf = 'all';
+
+/* Build cards — cheader is a <button>, most reliable on iOS */
+DATA.forEach(function(d){
+  var card = document.createElement('div');
+  card.className = 'card';
+  card.dataset.lv = d.l;
+  card.dataset.s  = (d.v+' '+d.es).toLowerCase();
+
+  var badge = d.l==='learn'
+    ? '<span class="lbg learn">Para aprender</span>'
+    : '<span class="lbg know">Ya debes saber</span>';
+
+  var exHtml = d.ex.map(function(x){
+    return '<div class="exb"><div class="exe">'+x.e+'</div>'
+          +(x.n?'<div class="exn">'+x.n+'</div>':'')+'</div>';
+  }).join('');
+
+  var sepHtml = d.sep
+    ? '<div class="sep"><span>⚡</span><span>'+d.sep+'</span></div>'
+    : '';
+
+  /* Using <button> as the toggle element — native iOS tappable */
+  card.innerHTML =
+    '<button class="ch" type="button">'
+      +'<span class="pvb">'+d.v+'</span>'
+      +badge
+      +'<span class="arr">▼</span>'
+    +'</button>'
+    +'<div class="cb"><div class="ci">'
+      +'<div class="tr">🇪🇸 '+d.es+'</div>'
+      +'<div class="ext">Ejemplos en contexto</div>'
+      +exHtml+sepHtml
+    +'</div></div>';
+
+  card.querySelector('button.ch').onclick = function(){
+    card.classList.toggle('open');
+  };
+
+  document.getElementById(d.l==='learn'?'gL':'gK').appendChild(card);
+});
+
+/* Filter + search */
+function filter(){
+  var q = document.getElementById('SI').value.toLowerCase().trim();
+  var all = document.querySelectorAll('.card');
+  var n = 0;
+  all.forEach(function(c){
+    var show = (cf==='all'||c.dataset.lv===cf) && (!q||c.dataset.s.includes(q));
+    c.classList.toggle('hide', !show);
+    if(show) n++;
+  });
+  document.getElementById('BG').textContent = n;
+  document.getElementById('EM').className   = 'empty'+(n===0?' show':'');
+  document.getElementById('GL').style.display =
+    document.querySelectorAll('#gL .card:not(.hide)').length ? '' : 'none';
+  document.getElementById('GK').style.display =
+    document.querySelectorAll('#gK .card:not(.hide)').length ? '' : 'none';
+}
+
+/* Filter buttons */
+document.querySelectorAll('.fbtn').forEach(function(b){
+  b.onclick = function(){
+    cf = b.dataset.f;
+    document.querySelectorAll('.fbtn').forEach(function(x){ x.classList.remove('on'); });
+    b.classList.add('on');
+    document.querySelectorAll('.card.open').forEach(function(c){ c.classList.remove('open'); });
+    filter();
+  };
+});
+
+document.getElementById('SI').oninput = filter;
+
+filter();
+</script>
+</body>
+</html>
