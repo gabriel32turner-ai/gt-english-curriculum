@@ -1,0 +1,1177 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portal · Gabriel Turner - English Training</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+:root{
+  --navy:#1A1A3E;--mag:#D4006A;--bg:#F8F7F4;--bg2:#F0EFEB;--bg3:#E8E6E1;
+  --white:#fff;--txt:#1a1a1a;--txt2:#666660;--txt3:#99998F;
+  --border:rgba(0,0,0,0.07);--border2:rgba(0,0,0,0.13);
+  --r:12px;--rs:8px;
+  --green:#1a7a3a;--green-bg:#E4F5E9;
+  --red:#991B1B;--red-bg:#FEF2F2;
+  --blue:#185FA5;--blue-bg:#E6F1FB;
+}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--txt);min-height:100vh;}
+
+/* ── LOADING ── */
+#screen-loading{position:fixed;inset:0;background:var(--navy);z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:20px;transition:opacity .3s;}
+#screen-loading.hidden{opacity:0;pointer-events:none;}
+#screen-loading .spin{width:40px;height:40px;border:3px solid rgba(255,255,255,0.12);border-top-color:var(--mag);border-radius:50%;animation:spin .8s linear infinite;}
+#screen-loading .ldot{width:8px;height:8px;background:var(--mag);border-radius:50%;display:inline-block;margin-right:4px;}
+#screen-loading .lbrand{font-size:13px;font-weight:500;color:rgba(255,255,255,0.7);}
+#screen-loading .lmsg{font-size:11px;color:rgba(255,255,255,0.35);letter-spacing:.06em;margin-top:-8px;}
+
+/* ── ERROR SCREEN ── */
+#screen-error{display:none;min-height:100vh;background:var(--navy);align-items:center;justify-content:center;}
+#screen-error.active{display:flex;}
+.err-card{background:white;border-radius:16px;padding:36px;max-width:440px;text-align:center;}
+.err-card h2{font-size:16px;font-weight:500;margin-bottom:10px;color:var(--navy);}
+.err-card p{font-size:12px;color:var(--txt2);line-height:1.7;margin-bottom:16px;}
+.err-card code{display:block;background:var(--bg2);padding:10px 14px;border-radius:8px;font-size:11px;font-family:monospace;color:var(--txt);margin-bottom:16px;text-align:left;line-height:1.8;}
+
+/* ── SCREENS ── */
+.screen{display:none;min-height:100vh;}
+.screen.active{display:block;}
+
+/* ── LOGIN ── */
+.login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--navy);padding:20px;}
+.login-card{background:white;border-radius:16px;padding:40px;width:100%;max-width:400px;animation:fadeIn .3s ease;}
+.login-logo{text-align:center;margin-bottom:28px;}
+.login-dot{width:10px;height:10px;border-radius:50%;background:var(--mag);display:inline-block;margin-right:6px;}
+.login-brand{font-size:16px;font-weight:500;color:var(--navy);}
+.login-sub{font-size:11px;color:var(--txt3);text-transform:uppercase;letter-spacing:.07em;display:block;margin-top:4px;}
+.login-tabs{display:flex;gap:4px;background:var(--bg2);border-radius:8px;padding:3px;margin-bottom:24px;}
+.ltab{flex:1;padding:8px;border-radius:6px;font-size:12px;font-weight:500;border:none;background:none;cursor:pointer;color:var(--txt2);transition:all .15s;}
+.ltab.active{background:white;color:var(--navy);box-shadow:0 1px 4px rgba(0,0,0,0.1);}
+.field{margin-bottom:14px;}
+.field label{font-size:11px;font-weight:500;color:var(--txt3);text-transform:uppercase;letter-spacing:.07em;display:block;margin-bottom:5px;}
+.field input,.field select{width:100%;padding:10px 12px;border:1px solid var(--border2);border-radius:var(--rs);font-size:13px;font-family:'DM Sans',sans-serif;color:var(--txt);background:var(--bg);outline:none;transition:border-color .15s;}
+.field input:focus,.field select:focus{border-color:var(--mag);}
+.login-btn{width:100%;padding:12px;border-radius:var(--rs);background:var(--mag);color:white;border:none;font-size:14px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;margin-top:4px;}
+.login-btn:hover{background:#b8005a;}
+.login-btn:disabled{opacity:.6;cursor:not-allowed;}
+.login-err{margin-top:10px;padding:8px 12px;background:var(--red-bg);border-radius:var(--rs);font-size:12px;color:var(--red);display:none;}
+
+/* ── LAYOUT ── */
+.app-layout{display:flex;min-height:100vh;}
+.sidebar{width:235px;background:var(--navy);position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;z-index:100;overflow-y:auto;}
+.app-main{margin-left:235px;flex:1;min-width:0;}
+
+/* ── SIDEBAR ── */
+.slogo{padding:22px 18px 16px;border-bottom:1px solid rgba(255,255,255,0.07);}
+.sdot{width:7px;height:7px;border-radius:50%;background:var(--mag);display:inline-block;}
+.sbrand{font-size:11px;font-weight:500;color:rgba(255,255,255,0.92);display:block;margin-top:8px;line-height:1.4;}
+.ssub{font-size:9px;color:rgba(255,255,255,0.3);letter-spacing:.07em;text-transform:uppercase;display:block;margin-top:2px;}
+.suser-badge{margin:12px 18px;padding:8px 12px;background:rgba(255,255,255,0.06);border-radius:var(--rs);display:flex;align-items:center;gap:8px;}
+.suser-av{width:28px;height:28px;border-radius:50%;background:var(--mag);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;color:white;flex-shrink:0;}
+.suser-name{font-size:11px;font-weight:500;color:rgba(255,255,255,0.85);}
+.suser-role{font-size:9px;color:rgba(255,255,255,0.35);text-transform:uppercase;letter-spacing:.05em;}
+.snav{padding:8px;flex:1;}
+.scat{font-size:8px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,0.28);padding:0 10px;margin:12px 0 4px;display:block;}
+.sitem{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:7px;font-size:12px;color:rgba(255,255,255,0.5);cursor:pointer;border:none;background:none;width:100%;text-align:left;transition:all .14s;}
+.sitem:hover{background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.85);}
+.sitem.active{background:rgba(212,0,106,0.18);color:white;font-weight:500;}
+.sicon{width:17px;height:17px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:9px;flex-shrink:0;color:rgba(255,255,255,0.35);border:1px solid rgba(255,255,255,0.1);}
+.sitem.active .sicon{background:var(--mag);border-color:var(--mag);color:white;}
+.slogout{margin:8px;padding:8px 10px;border-radius:7px;font-size:11px;color:rgba(255,255,255,0.35);cursor:pointer;border:none;background:none;width:calc(100% - 16px);text-align:left;transition:all .14s;}
+.slogout:hover{color:rgba(255,255,255,0.6);}
+
+/* ── TOPBAR ── */
+.topbar{padding:14px 28px;border-bottom:1px solid var(--border);background:var(--white);position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;}
+.ttitle{font-size:14px;font-weight:500;}
+.tsub{font-size:11px;color:var(--txt3);margin-top:1px;}
+
+/* ── SYNC INDICATOR ── */
+.sync-indicator{display:none;align-items:center;gap:6px;font-size:11px;color:var(--txt3);}
+.sync-indicator.syncing{display:flex;}
+.sync-indicator .sync-spin{width:12px;height:12px;border:2px solid rgba(0,0,0,0.1);border-top-color:var(--mag);border-radius:50%;animation:spin .6s linear infinite;}
+.sync-indicator.saved{display:flex;color:var(--green);}
+.sync-indicator.error{display:flex;color:var(--red);}
+
+/* ── PAGE ── */
+.page{padding:28px;max-width:900px;}
+.ph{margin-bottom:22px;}
+.ph h2{font-size:19px;font-weight:500;margin-bottom:4px;}
+.ph p{font-size:12px;color:var(--txt2);line-height:1.6;}
+
+/* ── CARDS ── */
+.card{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:18px 20px;margin-bottom:14px;}
+.card-title{font-size:12px;font-weight:500;color:var(--txt3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px;}
+
+/* ── METRICS ── */
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:18px;}
+.metric{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;}
+.metric-label{font-size:11px;color:var(--txt3);margin-bottom:6px;}
+.metric-val{font-size:22px;font-weight:500;color:var(--txt);}
+.metric-sub{font-size:10px;color:var(--txt3);margin-top:2px;}
+
+/* ── PROGRESS ── */
+.prog-wrap{margin:8px 0;}
+.prog-label{display:flex;justify-content:space-between;font-size:11px;color:var(--txt2);margin-bottom:5px;}
+.prog-bar{height:6px;background:var(--bg3);border-radius:3px;overflow:hidden;}
+.prog-fill{height:100%;background:var(--mag);border-radius:3px;transition:width .4s ease;}
+
+/* ── LEVEL BADGE ── */
+.level{display:inline-flex;align-items:center;padding:3px 10px;border-radius:10px;font-size:11px;font-weight:500;}
+.level-a1{background:#EAF3DE;color:#3B6D11;}
+.level-a2{background:#E6F1FB;color:#185FA5;}
+.level-b1{background:#EEEDFE;color:#534AB7;}
+.level-b2{background:#FAEEDA;color:#854F0B;}
+.level-c1{background:#FBEAF0;color:#993556;}
+
+/* ── SESSION LIST ── */
+.session-item{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);}
+.session-item:last-child{border-bottom:none;}
+.session-date{width:80px;flex-shrink:0;}
+.session-day{font-size:13px;font-weight:500;}
+.session-time{font-size:10px;color:var(--txt3);}
+.session-body{flex:1;}
+.session-topic{font-size:13px;font-weight:500;margin-bottom:3px;}
+.session-notes{font-size:12px;color:var(--txt2);line-height:1.5;}
+.session-tag{display:inline-block;padding:1px 7px;border-radius:8px;font-size:10px;font-weight:500;margin-top:4px;}
+.tag-asistio{background:var(--green-bg);color:var(--green);}
+.tag-falto{background:var(--red-bg);color:var(--red);}
+
+/* ── TASK LIST ── */
+.task-item{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);}
+.task-item:last-child{border-bottom:none;}
+.task-check{width:16px;height:16px;border-radius:4px;border:1.5px solid var(--border2);flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;}
+.task-check.done{background:var(--green);border-color:var(--green);}
+.task-check.done::after{content:'✓';font-size:9px;color:white;}
+.task-txt{font-size:13px;line-height:1.5;}
+.task-txt.done{text-decoration:line-through;color:var(--txt3);}
+.task-due{font-size:10px;color:var(--txt3);margin-top:2px;}
+
+/* ── TABLE ── */
+.stable{width:100%;border-collapse:collapse;}
+.stable th{font-size:10px;font-weight:500;color:var(--txt3);text-transform:uppercase;letter-spacing:.06em;padding:8px 12px;border-bottom:1px solid var(--border);text-align:left;}
+.stable td{padding:10px 12px;border-bottom:1px solid var(--border);font-size:13px;}
+.stable tr:last-child td{border-bottom:none;}
+.stable tr:hover td{background:var(--bg);}
+.stable .company{font-size:11px;color:var(--txt3);}
+.action-btn{padding:4px 10px;border-radius:6px;font-size:11px;font-weight:500;border:1px solid var(--border2);background:var(--white);color:var(--txt2);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;}
+.action-btn:hover{background:var(--bg2);}
+.action-btn.primary{background:var(--mag);color:white;border-color:var(--mag);}
+.action-btn.primary:hover{background:#b8005a;}
+.action-btn:disabled{opacity:.5;cursor:not-allowed;}
+
+/* ── FORM ── */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;}
+.form-grid.full{grid-template-columns:1fr;}
+.fld label{font-size:10px;font-weight:500;color:var(--txt3);text-transform:uppercase;letter-spacing:.07em;display:block;margin-bottom:4px;}
+.fld input,.fld select,.fld textarea{width:100%;padding:8px 10px;border:1px solid var(--border2);border-radius:var(--rs);font-size:13px;font-family:'DM Sans',sans-serif;color:var(--txt);background:var(--bg);outline:none;transition:border-color .15s;}
+.fld input:focus,.fld select:focus,.fld textarea:focus{border-color:var(--mag);}
+.fld textarea{min-height:80px;resize:vertical;line-height:1.6;}
+
+/* ── MODAL ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:200;display:none;align-items:center;justify-content:center;padding:20px;}
+.modal-overlay.open{display:flex;}
+.modal{background:white;border-radius:16px;width:100%;max-width:560px;max-height:90vh;overflow-y:auto;animation:fadeIn .2s ease;}
+.modal-hdr{padding:18px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.modal-hdr h3{font-size:15px;font-weight:500;}
+.modal-close{width:28px;height:28px;border-radius:6px;border:none;background:var(--bg2);cursor:pointer;font-size:14px;}
+.modal-body{padding:22px;}
+.modal-footer{padding:14px 22px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end;}
+
+/* ── REPORT ── */
+.report-preview{background:white;border:1px solid var(--border);border-radius:var(--r);padding:32px;margin-top:16px;}
+.report-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:24px;padding-bottom:18px;border-bottom:2px solid var(--navy);}
+.report-brand{font-size:13px;font-weight:500;color:var(--navy);}
+.report-brand-sub{font-size:10px;color:var(--txt3);margin-top:2px;}
+.report-title{text-align:right;}
+.report-title h2{font-size:16px;font-weight:500;color:var(--navy);}
+.report-title p{font-size:11px;color:var(--txt3);margin-top:2px;}
+.report-section{margin-bottom:20px;}
+.report-section h3{font-size:11px;font-weight:500;color:var(--txt3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px;padding-bottom:4px;border-bottom:1px solid var(--border);}
+.report-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.report-field{padding:8px 12px;background:var(--bg);border-radius:var(--rs);}
+.report-field .rf-label{font-size:10px;color:var(--txt3);margin-bottom:2px;}
+.report-field .rf-val{font-size:13px;font-weight:500;}
+.report-sessions-table{width:100%;border-collapse:collapse;font-size:12px;}
+.report-sessions-table th{font-size:10px;color:var(--txt3);text-transform:uppercase;letter-spacing:.05em;padding:6px 10px;border-bottom:1px solid var(--border);text-align:left;}
+.report-sessions-table td{padding:7px 10px;border-bottom:1px solid var(--border);}
+.report-footer{margin-top:24px;padding-top:14px;border-top:1px solid var(--border);display:flex;justify-content:space-between;font-size:10px;color:var(--txt3);}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:20px;right:20px;background:var(--navy);color:white;padding:9px 16px;border-radius:var(--rs);font-size:12px;font-weight:500;opacity:0;transform:translateY(6px);transition:all .2s;pointer-events:none;z-index:999;}
+.toast.show{opacity:1;transform:translateY(0);}
+
+/* ── PRINT ── */
+@media print{
+  .sidebar,.topbar,.action-btn,.modal-overlay,.no-print{display:none!important;}
+  .app-main{margin-left:0!important;}
+  .report-preview{border:none;padding:0;}
+}
+@media(max-width:700px){
+  .sidebar{width:100%;min-height:auto;position:relative;}
+  .app-main{margin-left:0;}
+  .app-layout{flex-direction:column;}
+  .page{padding:16px;}
+  .form-grid{grid-template-columns:1fr;}
+  .metrics{grid-template-columns:1fr 1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ LOADING ═══ -->
+<div id="screen-loading">
+  <div class="spin"></div>
+  <div>
+    <span class="ldot"></span>
+    <span class="lbrand">Gabriel Turner · English Training</span>
+  </div>
+  <div class="lmsg">Cargando datos desde Notion...</div>
+</div>
+
+<!-- ═══ ERROR ═══ -->
+<div id="screen-error">
+  <div class="err-card">
+    <h2>⚠️ No se pudo conectar</h2>
+    <p>El portal no pudo cargar los datos. Verificá que la URL del Worker esté correctamente configurada en el código.</p>
+    <code id="err-detail">—</code>
+    <button class="action-btn primary" onclick="location.reload()">Reintentar</button>
+  </div>
+</div>
+
+<!-- ═══ LOGIN ═══ -->
+<div class="screen" id="screen-login">
+<div class="login-wrap">
+  <div class="login-card">
+    <div class="login-logo">
+      <span class="login-dot"></span>
+      <span class="login-brand">Gabriel Turner - English Training</span>
+      <span class="login-sub">Portal de seguimiento</span>
+    </div>
+    <div class="login-tabs">
+      <button class="ltab active" onclick="setLoginTab('alumno',this)">Soy alumno</button>
+      <button class="ltab" onclick="setLoginTab('maestro',this)">Soy maestro</button>
+      <button class="ltab" onclick="setLoginTab('admin',this)">Admin</button>
+    </div>
+    <div id="alumno-form">
+      <div class="field">
+        <label>Tu código de acceso</label>
+        <input type="text" id="login-codigo" maxlength="6" placeholder="ej. 481203"
+          style="letter-spacing:.2em;font-size:18px;text-align:center;font-family:monospace;"
+          onkeydown="if(event.key==='Enter')doLogin()">
+      </div>
+      <p style="font-size:11px;color:var(--txt3);text-align:center;margin:-6px 0 8px">Tu código te lo envió tu maestro por WhatsApp</p>
+    </div>
+    <div id="staff-form" style="display:none">
+      <div class="field">
+        <label>Tu nombre</label>
+        <select id="login-user">
+          <option value="">— elegí tu nombre —</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Contraseña</label>
+        <input type="password" id="login-pw" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
+      </div>
+    </div>
+    <button class="login-btn" id="login-btn" onclick="doLogin()">Entrar</button>
+    <div class="login-err" id="login-err"></div>
+  </div>
+</div>
+</div>
+
+<!-- ═══ APP ═══ -->
+<div class="screen" id="screen-app">
+<div class="app-layout">
+  <aside class="sidebar">
+    <div class="slogo">
+      <span class="sdot"></span>
+      <span class="sbrand">Gabriel Turner<br>English Training</span>
+      <span class="ssub" id="s-role-label">Portal</span>
+    </div>
+    <div class="suser-badge">
+      <div class="suser-av" id="s-av">GT</div>
+      <div>
+        <div class="suser-name" id="s-name">—</div>
+        <div class="suser-role" id="s-role">—</div>
+      </div>
+    </div>
+    <nav class="snav" id="snav"></nav>
+    <button class="slogout" onclick="logout()">← Cerrar sesión</button>
+  </aside>
+  <main class="app-main">
+    <div class="topbar">
+      <div>
+        <div class="ttitle" id="app-title">—</div>
+        <div class="tsub">Gabriel Turner - English Training</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div class="sync-indicator" id="sync-indicator">
+          <div class="sync-spin"></div>
+          <span id="sync-msg">Guardando...</span>
+        </div>
+        <div id="topbar-actions"></div>
+      </div>
+    </div>
+    <div class="page" id="app-page"></div>
+  </main>
+</div>
+</div>
+
+<div class="toast" id="toast"></div>
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <div class="modal-hdr">
+      <h3 id="modal-title">—</h3>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+    <div class="modal-footer" id="modal-footer"></div>
+  </div>
+</div>
+
+<script>
+// ════════════════════════════════════════
+// ██  CONFIGURACIÓN — pegá aquí tu URL del Worker  ██
+// ════════════════════════════════════════
+const WORKER_URL = 'https://silent-king-6ef7gt-portal.gabriel32turner.workers.dev';
+// Ejemplo: 'https://gt-portal.tu-usuario.workers.dev'
+
+// ════════════════════════════════════════
+// ESTADO GLOBAL
+// ════════════════════════════════════════
+let DATA          = { alumnos: [], maestros: [], sesiones: [], tareas: [] };
+let currentUser   = null;
+let currentRole   = null;
+let loginTab      = 'alumno';
+
+// ════════════════════════════════════════
+// CONSTANTES
+// ════════════════════════════════════════
+const LEVELS = ['A1.1','A1.2','A2.1','A2.2','B1.1','B1.2','B2.1','B2.2','C1'];
+const LEVEL_LABELS = {
+  'A1.1':'Principiante','A1.2':'Principiante+',
+  'A2.1':'Básico','A2.2':'Básico+',
+  'B1.1':'Intermedio','B1.2':'Intermedio+',
+  'B2.1':'Interm. Alto','B2.2':'Interm. Alto+',
+  'C1':'Avanzado',
+};
+const LEVEL_CLASS = {
+  'A1.1':'level-a1','A1.2':'level-a1',
+  'A2.1':'level-a2','A2.2':'level-a2',
+  'B1.1':'level-b1','B1.2':'level-b1',
+  'B2.1':'level-b2','B2.2':'level-b2',
+  'C1':'level-c1',
+};
+
+// ════════════════════════════════════════
+// INIT
+// ════════════════════════════════════════
+async function init() {
+  // Si no está configurada la URL, mostrar pantalla de error con instrucciones
+  if (!WORKER_URL || WORKER_URL === 'PLACEHOLDER') {
+    document.getElementById('err-detail').textContent =
+      'WORKER_URL no configurada.\nAbrí el archivo HTML en un editor,\nbuscá https://silent-king-6ef7gt-portal.gabriel32turner.workers.dev\ny reemplazalo con la URL de tu Worker.';
+    document.getElementById('screen-loading').classList.add('hidden');
+    document.getElementById('screen-error').classList.add('active');
+    return;
+  }
+
+  try {
+    const res  = await fetch(WORKER_URL);
+    const json = await res.json();
+    if (!json.ok) throw new Error(json.error || 'Respuesta inválida del Worker');
+
+    DATA = json.data;
+    // Normalizar booleans por si el Worker devuelve strings
+    DATA.alumnos.forEach(a  => { a.activo  = !!a.activo; });
+    DATA.sesiones.forEach(s => { s.asistio = !!s.asistio; });
+    DATA.tareas.forEach(t   => { t.hecha   = !!t.hecha; });
+
+    document.getElementById('screen-loading').classList.add('hidden');
+    document.getElementById('screen-login').classList.add('active');
+    setLoginTab('alumno', document.querySelectorAll('.ltab')[0]);
+
+  } catch (err) {
+    document.getElementById('err-detail').textContent = err.message;
+    document.getElementById('screen-loading').classList.add('hidden');
+    document.getElementById('screen-error').classList.add('active');
+  }
+}
+
+// ════════════════════════════════════════
+// GUARDAR EN NOTION (vía Worker)
+// ════════════════════════════════════════
+async function saveToNotion(body) {
+  setSyncState('syncing');
+  try {
+    const res  = await fetch(WORKER_URL, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify(body),
+    });
+    const json = await res.json();
+    if (!json.ok) throw new Error(json.error || 'Error al guardar');
+    setSyncState('saved');
+    return json; // incluye json.id si fue un addX
+  } catch (err) {
+    setSyncState('error');
+    console.error('saveToNotion error:', err.message);
+    return null;
+  }
+}
+
+function setSyncState(state) {
+  const el  = document.getElementById('sync-indicator');
+  const msg = document.getElementById('sync-msg');
+  el.className = 'sync-indicator ' + state;
+  if (state === 'syncing') msg.textContent = 'Guardando en Notion...';
+  if (state === 'saved')   { msg.textContent = '✓ Guardado'; setTimeout(() => el.className = 'sync-indicator', 2500); }
+  if (state === 'error')   { msg.textContent = '✗ Error al guardar'; setTimeout(() => el.className = 'sync-indicator', 4000); }
+}
+
+// ════════════════════════════════════════
+// AUTH
+// ════════════════════════════════════════
+function setLoginTab(tab, btn) {
+  loginTab = tab;
+  document.querySelectorAll('.ltab').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  const af  = document.getElementById('alumno-form');
+  const sf  = document.getElementById('staff-form');
+  const sel = document.getElementById('login-user');
+  if (tab === 'alumno') {
+    af.style.display = 'block'; sf.style.display = 'none';
+  } else {
+    af.style.display = 'none'; sf.style.display = 'block';
+    sel.innerHTML = '<option value="">— elegí tu nombre —</option>';
+    // Filtra de los maestros cargados desde Notion
+    const lista = tab === 'maestro'
+      ? DATA.maestros.filter(m => m.rol === 'maestro' && m.activo !== false)
+      : DATA.maestros.filter(m => m.rol === 'admin');
+    lista.forEach(m => sel.innerHTML += `<option value="${m.id}">${m.nombre}</option>`);
+  }
+}
+
+function doLogin() {
+  document.getElementById('login-err').style.display = 'none';
+
+  if (loginTab === 'alumno') {
+    const codigo = document.getElementById('login-codigo').value.trim();
+    if (!codigo) { showErr('Ingresá tu código de acceso.'); return; }
+    const alumno = DATA.alumnos.find(a => String(a.codigo) === codigo && a.activo !== false);
+    if (!alumno) { showErr('Código incorrecto. Pedíselo a tu maestro por WhatsApp.'); return; }
+    currentRole = 'alumno';
+    currentUser = alumno;
+  } else {
+    const uid = document.getElementById('login-user').value;
+    const pw  = document.getElementById('login-pw').value;
+    if (!uid) { showErr('Elegí tu nombre.'); return; }
+    const maestro = DATA.maestros.find(m => m.id === uid);
+    if (!maestro || String(maestro.password) !== pw) { showErr('Contraseña incorrecta.'); return; }
+    currentRole = loginTab;
+    currentUser = maestro;
+  }
+
+  document.getElementById('screen-login').classList.remove('active');
+  document.getElementById('screen-app').classList.add('active');
+  initApp();
+}
+
+function showErr(msg) {
+  const e = document.getElementById('login-err');
+  e.textContent = msg; e.style.display = 'block';
+  setTimeout(() => e.style.display = 'none', 3500);
+}
+
+function logout() {
+  currentUser = null; currentRole = null;
+  document.getElementById('screen-app').classList.remove('active');
+  document.getElementById('screen-login').classList.add('active');
+  document.getElementById('login-codigo').value = '';
+  document.getElementById('login-user').value   = '';
+  document.getElementById('login-pw').value     = '';
+  setLoginTab('alumno', document.querySelectorAll('.ltab')[0]);
+}
+
+// ════════════════════════════════════════
+// APP INIT
+// ════════════════════════════════════════
+function initApp() {
+  document.getElementById('s-name').textContent = currentUser.nombre;
+  document.getElementById('s-av').textContent   = currentUser.nombre.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+
+  if (currentRole === 'alumno') {
+    document.getElementById('s-role').textContent      = currentUser.tipo === 'corporativo' ? (currentUser.empresa || 'Corporativo') : 'Particular';
+    document.getElementById('s-role-label').textContent = 'Portal del alumno';
+    buildAlumnoNav(); showView('mi-progreso');
+  } else if (currentRole === 'maestro') {
+    document.getElementById('s-role').textContent      = 'Maestro';
+    document.getElementById('s-role-label').textContent = 'Panel del maestro';
+    buildMaestroNav(); showView('mis-alumnos');
+  } else {
+    document.getElementById('s-role').textContent      = 'Administrador';
+    document.getElementById('s-role-label').textContent = 'Panel admin';
+    buildAdminNav(); showView('admin-alumnos');
+  }
+}
+
+// ════════════════════════════════════════
+// NAV BUILDERS
+// ════════════════════════════════════════
+const navItem = (id, icon, label, fn) =>
+  `<button class="sitem" id="nav-${id}" onclick="${fn}">
+     <span class="sicon">${icon}</span>${label}
+   </button>`;
+
+function buildAlumnoNav() {
+  document.getElementById('snav').innerHTML = `
+    <span class="scat">Mi aprendizaje</span>
+    ${navItem('mi-progreso','↗','Mi progreso',"showView('mi-progreso')")}
+    ${navItem('mis-sesiones','≡','Mis sesiones',"showView('mis-sesiones')")}
+    ${navItem('mis-tareas','✓','Mis tareas',"showView('mis-tareas')")}`;
+}
+function buildMaestroNav() {
+  document.getElementById('snav').innerHTML = `
+    <span class="scat">Mis alumnos</span>
+    ${navItem('mis-alumnos','≡','Lista de alumnos',"showView('mis-alumnos')")}
+    ${navItem('cargar-sesion','+','Cargar sesión',"showView('cargar-sesion')")}`;
+}
+function buildAdminNav() {
+  document.getElementById('snav').innerHTML = `
+    <span class="scat">Gestión</span>
+    ${navItem('admin-alumnos','≡','Todos los alumnos',"showView('admin-alumnos')")}
+    ${navItem('admin-maestros','★','Maestros',"showView('admin-maestros')")}
+    <span class="scat">Reportes</span>
+    ${navItem('reporte-rrhh','↓','Reporte RRHH',"showView('reporte-rrhh')")}`;
+}
+
+// ════════════════════════════════════════
+// VIEW ROUTER
+// ════════════════════════════════════════
+const VIEW_TITLES = {
+  'mi-progreso':'Mi progreso','mis-sesiones':'Mis sesiones','mis-tareas':'Mis tareas',
+  'mis-alumnos':'Mis alumnos','cargar-sesion':'Cargar sesión',
+  'admin-alumnos':'Todos los alumnos','admin-maestros':'Maestros','reporte-rrhh':'Reporte RRHH'
+};
+function showView(id) {
+  document.querySelectorAll('.sitem').forEach(b => b.classList.remove('active'));
+  const nb = document.getElementById('nav-'+id);
+  if (nb) nb.classList.add('active');
+  document.getElementById('app-title').textContent       = VIEW_TITLES[id] || id;
+  document.getElementById('topbar-actions').innerHTML    = '';
+  const page = document.getElementById('app-page');
+  page.innerHTML = '';
+  const renders = {
+    'mi-progreso':    renderMiProgreso,
+    'mis-sesiones':   renderMisSesiones,
+    'mis-tareas':     renderMisTareas,
+    'mis-alumnos':    renderMisAlumnos,
+    'cargar-sesion':  renderCargarSesion,
+    'admin-alumnos':  renderAdminAlumnos,
+    'admin-maestros': renderAdminMaestros,
+    'reporte-rrhh':   renderReporteRRHH,
+  };
+  if (renders[id]) renders[id](page);
+}
+
+// ════════════════════════════════════════
+// VISTAS DEL ALUMNO
+// ════════════════════════════════════════
+function renderMiProgreso(page) {
+  const a       = currentUser;
+  const ses     = DATA.sesiones.filter(s => s.alumno === a.id);
+  const tar     = DATA.tareas.filter(t => t.alumno === a.id);
+  const asist   = ses.filter(s => s.asistio).length;
+  const hechas  = tar.filter(t => t.hecha).length;
+  const lvlIdx  = LEVELS.indexOf(a.nivel_actual);
+  const prog    = lvlIdx >= 0 ? Math.round((lvlIdx / (LEVELS.length-1)) * 100) : 0;
+
+  page.innerHTML = `
+    <div class="ph"><h2>¡Hola, ${a.nombre.split(' ')[0]}!</h2>
+      <p>Este es tu progreso en Gabriel Turner - English Training.</p></div>
+    <div class="metrics">
+      <div class="metric"><div class="metric-label">Sesiones cursadas</div>
+        <div class="metric-val">${ses.length}</div>
+        <div class="metric-sub">${asist} con asistencia</div></div>
+      <div class="metric"><div class="metric-label">Asistencia</div>
+        <div class="metric-val">${ses.length ? Math.round(asist/ses.length*100) : 0}%</div>
+        <div class="metric-sub">del total de clases</div></div>
+      <div class="metric"><div class="metric-label">Tareas</div>
+        <div class="metric-val">${hechas}/${tar.length}</div>
+        <div class="metric-sub">completadas</div></div>
+      <div class="metric"><div class="metric-label">Nivel actual</div>
+        <div class="metric-val" style="font-size:18px">${a.nivel_actual}</div>
+        <div class="metric-sub">${LEVEL_LABELS[a.nivel_actual]||''}</div></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Progreso de nivel</div>
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px;">
+        <span class="level ${LEVEL_CLASS[a.nivel_inicial]||'level-a1'}">${a.nivel_inicial} · Inicio</span>
+        <span style="font-size:12px;color:var(--txt3)">→</span>
+        <span class="level ${LEVEL_CLASS[a.nivel_actual]||'level-a1'}">${a.nivel_actual} · Hoy</span>
+      </div>
+      <div class="prog-wrap">
+        <div class="prog-label"><span>A1.1</span><span>A2</span><span>B1</span><span>B2</span><span>C1</span></div>
+        <div class="prog-bar"><div class="prog-fill" style="width:${prog}%"></div></div>
+      </div>
+    </div>
+    ${tar.filter(t=>!t.hecha).length ? `
+    <div class="card"><div class="card-title">Tareas pendientes</div>
+      ${tar.filter(t=>!t.hecha).map(t=>`
+        <div class="task-item">
+          <div class="task-check" onclick="toggleTarea('${t.id}',this)"></div>
+          <div><div class="task-txt">${t.desc}</div>
+            <div class="task-due">Entrega: ${fmtDate(t.vence)}</div></div>
+        </div>`).join('')}
+    </div>` : ''}
+    ${ses.length ? `
+    <div class="card"><div class="card-title">Última sesión</div>
+      ${renderSesionItem(ses.sort((a,b)=>b.fecha.localeCompare(a.fecha))[0])}
+    </div>` : ''}
+  `;
+}
+
+function renderMisSesiones(page) {
+  const ses = DATA.sesiones.filter(s => s.alumno === currentUser.id)
+    .sort((a,b) => b.fecha.localeCompare(a.fecha));
+  page.innerHTML = `
+    <div class="ph"><h2>Mis sesiones</h2><p>Historial completo de tus clases.</p></div>
+    <div class="card">
+      ${ses.length ? ses.map(s=>renderSesionItem(s)).join('')
+        : '<p style="color:var(--txt3);font-size:13px;padding:8px 0">Aún no hay sesiones registradas.</p>'}
+    </div>`;
+}
+
+function renderMisTareas(page) {
+  const tar    = DATA.tareas.filter(t => t.alumno === currentUser.id);
+  const pend   = tar.filter(t => !t.hecha);
+  const hechas = tar.filter(t => t.hecha);
+  page.innerHTML = `
+    <div class="ph"><h2>Mis tareas</h2><p>Tareas asignadas por tu maestro.</p></div>
+    ${pend.length ? `<div class="card"><div class="card-title">Pendientes (${pend.length})</div>
+      ${pend.map(t=>`<div class="task-item">
+        <div class="task-check" onclick="toggleTarea('${t.id}',this)"></div>
+        <div><div class="task-txt">${t.desc}</div>
+          <div class="task-due">Entrega: ${fmtDate(t.vence)}</div></div>
+      </div>`).join('')}</div>` : ''}
+    ${hechas.length ? `<div class="card"><div class="card-title">Completadas (${hechas.length})</div>
+      ${hechas.map(t=>`<div class="task-item">
+        <div class="task-check done"></div>
+        <div><div class="task-txt done">${t.desc}</div>
+          <div class="task-due">Completada ✓</div></div>
+      </div>`).join('')}</div>` : ''}
+    ${!pend.length && !hechas.length ? '<div class="card"><p style="color:var(--txt3);font-size:13px">No hay tareas asignadas todavía.</p></div>' : ''}
+  `;
+}
+
+async function toggleTarea(id, el) {
+  const t = DATA.tareas.find(t => t.id === id);
+  if (!t) return;
+  t.hecha = !t.hecha;
+  el.classList.toggle('done', t.hecha);
+  const txt = el.nextElementSibling?.querySelector('.task-txt');
+  if (txt) txt.classList.toggle('done', t.hecha);
+  showToast(t.hecha ? '✓ Tarea marcada como hecha' : 'Tarea reabierta');
+  await saveToNotion({ action: 'updateTarea', id: t.id, updates: { hecha: t.hecha } });
+}
+
+// ════════════════════════════════════════
+// VISTAS DEL MAESTRO
+// ════════════════════════════════════════
+function renderMisAlumnos(page) {
+  // El maestro solo ve sus alumnos — match por nombre del maestro
+  const mis = DATA.alumnos.filter(a => a.maestro === currentUser.nombre);
+  page.innerHTML = `
+    <div class="ph"><h2>Mis alumnos</h2><p>${mis.length} alumnos asignados.</p></div>
+    <div class="card" style="padding:0;overflow:hidden">
+      <table class="stable">
+        <thead><tr><th>Alumno</th><th>Nivel</th><th>Sesiones</th><th>Asistencia</th><th></th></tr></thead>
+        <tbody>
+          ${mis.map(a => {
+            const ses = DATA.sesiones.filter(s => s.alumno === a.id);
+            const ast = ses.filter(s => s.asistio).length;
+            return `<tr>
+              <td><div style="font-weight:500">${a.nombre}</div>
+                <div class="company">${a.empresa || 'Particular'}</div></td>
+              <td><span class="level ${LEVEL_CLASS[a.nivel_actual]||'level-a1'}">${a.nivel_actual}</span></td>
+              <td>${ses.length}</td>
+              <td>${ses.length ? Math.round(ast/ses.length*100) : 0}%</td>
+              <td style="display:flex;gap:6px;flex-wrap:wrap">
+                <button class="action-btn" onclick="verAlumnoModal('${a.id}')">Ver</button>
+                <button class="action-btn primary" onclick="abrirCargarSesion('${a.id}')">+ Sesión</button>
+              </td></tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+    </div>`;
+}
+
+function renderCargarSesion(page, alumnoIdPre) {
+  const mis = DATA.alumnos.filter(a => a.maestro === currentUser.nombre);
+  page.innerHTML = `
+    <div class="ph"><h2>Cargar sesión</h2><p>Registrá los datos de la clase que terminaste.</p></div>
+    <div class="card">
+      <div class="form-grid">
+        <div class="fld"><label>Alumno</label><select id="f-alumno">
+          <option value="">— elegí alumno —</option>
+          ${mis.map(a=>`<option value="${a.id}" ${alumnoIdPre===a.id?'selected':''}>${a.nombre}</option>`).join('')}
+        </select></div>
+        <div class="fld"><label>Fecha</label>
+          <input type="date" id="f-fecha" value="${new Date().toISOString().slice(0,10)}"></div>
+        <div class="fld"><label>Hora</label>
+          <input type="time" id="f-hora" value="09:00"></div>
+        <div class="fld"><label>¿Asistió?</label><select id="f-asistio">
+          <option value="1">Sí asistió</option>
+          <option value="0">No asistió</option>
+        </select></div>
+      </div>
+      <div class="form-grid full">
+        <div class="fld"><label>Tema trabajado</label>
+          <input type="text" id="f-tema" placeholder="ej. Past Simple — verbos irregulares"></div>
+        <div class="fld"><label>Notas del maestro</label>
+          <textarea id="f-notas" placeholder="Observaciones, puntos fuertes, áreas a mejorar..."></textarea></div>
+        <div class="fld"><label>Tarea asignada (opcional)</label>
+          <input type="text" id="f-tarea" placeholder="ej. Practicar 10 oraciones en pasado simple"></div>
+        <div class="fld"><label>Fecha de entrega de tarea</label>
+          <input type="date" id="f-tarea-fecha"></div>
+      </div>
+      <button class="action-btn primary" id="btn-guardar-sesion"
+        onclick="guardarSesion()" style="padding:10px 24px;font-size:13px">
+        Guardar sesión en Notion
+      </button>
+    </div>`;
+}
+
+function abrirCargarSesion(alumnoId) {
+  showView('cargar-sesion');
+  setTimeout(() => {
+    const sel = document.getElementById('f-alumno');
+    if (sel) sel.value = alumnoId;
+  }, 50);
+}
+
+async function guardarSesion() {
+  const alumnoId  = document.getElementById('f-alumno').value;
+  const fecha     = document.getElementById('f-fecha').value;
+  const hora      = document.getElementById('f-hora').value;
+  const tema      = document.getElementById('f-tema').value.trim();
+  const notas     = document.getElementById('f-notas').value.trim();
+  const asistio   = document.getElementById('f-asistio').value === '1';
+  const tarea     = document.getElementById('f-tarea').value.trim();
+  const tareaFecha = document.getElementById('f-tarea-fecha').value;
+
+  if (!alumnoId) { showToast('Elegí un alumno.'); return; }
+  if (!fecha)    { showToast('Ingresá la fecha.'); return; }
+  if (!tema)     { showToast('Ingresá el tema trabajado.'); return; }
+
+  const btn = document.getElementById('btn-guardar-sesion');
+  btn.disabled = true; btn.textContent = 'Guardando...';
+
+  const sesionData = {
+    alumno:  alumnoId,   // Notion UUID del alumno
+    fecha, hora, tema, notas, asistio,
+    maestro: currentUser.nombre,
+  };
+
+  const res = await saveToNotion({ action: 'addSesion', data: sesionData });
+  if (res?.id) sesionData.id = res.id;
+  else sesionData.id = 's' + Date.now();
+  DATA.sesiones.push(sesionData);
+
+  if (tarea) {
+    const tareaData = {
+      desc:    tarea,
+      alumno:  alumnoId,
+      maestro: currentUser.nombre,
+      vence:   tareaFecha || fecha,
+    };
+    const resT = await saveToNotion({ action: 'addTarea', data: tareaData });
+    if (resT?.id) tareaData.id = resT.id;
+    else tareaData.id = 't' + Date.now();
+    tareaData.hecha = false;
+    DATA.tareas.push(tareaData);
+  }
+
+  showToast('✓ Sesión guardada en Notion correctamente');
+  showView('mis-alumnos');
+}
+
+// ════════════════════════════════════════
+// VISTAS DE ADMIN
+// ════════════════════════════════════════
+function renderAdminAlumnos(page) {
+  page.innerHTML = `
+    <div class="ph"><h2>Todos los alumnos</h2>
+      <p>${DATA.alumnos.length} alumnos registrados.</p></div>
+    <div style="margin-bottom:14px">
+      <button class="action-btn primary" onclick="abrirNuevoAlumno()">+ Nuevo alumno</button>
+    </div>
+    <div class="card" style="padding:0;overflow:hidden">
+      <table class="stable">
+        <thead><tr><th>Alumno</th><th>Empresa / Tipo</th><th>Maestro</th>
+          <th>Nivel</th><th>Código</th><th>Sesiones</th><th></th></tr></thead>
+        <tbody>
+          ${DATA.alumnos.map(a => {
+            const ses = DATA.sesiones.filter(s => s.alumno === a.id);
+            return `<tr>
+              <td style="font-weight:500">${a.nombre}</td>
+              <td><div>${a.empresa||'—'}</div>
+                <div class="company">${a.tipo==='corporativo'?'Corporativo':'Particular'}</div></td>
+              <td>${a.maestro||'—'}</td>
+              <td><span class="level ${LEVEL_CLASS[a.nivel_actual]||'level-a1'}">
+                ${a.nivel_inicial} → ${a.nivel_actual}</span></td>
+              <td><span style="font-family:monospace;font-size:12px;background:var(--bg2);
+                padding:2px 8px;border-radius:6px;letter-spacing:.1em">${a.codigo||'—'}</span></td>
+              <td>${ses.length}</td>
+              <td style="display:flex;gap:6px;flex-wrap:wrap">
+                <button class="action-btn" onclick="verAlumnoModal('${a.id}')">Ver</button>
+                <button class="action-btn" onclick="abrirReporteAlumno('${a.id}')">PDF</button>
+              </td></tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+    </div>`;
+}
+
+function renderAdminMaestros(page) {
+  page.innerHTML = `
+    <div class="ph"><h2>Maestros</h2>
+      <p>${DATA.maestros.length} maestros registrados.</p></div>
+    <div style="margin-bottom:14px">
+      <button class="action-btn primary" onclick="abrirNuevoMaestro()">+ Nuevo maestro</button>
+    </div>
+    <div class="card" style="padding:0;overflow:hidden">
+      <table class="stable">
+        <thead><tr><th>Nombre</th><th>Rol</th><th>Contraseña</th>
+          <th>Alumnos</th><th>Sesiones cargadas</th></tr></thead>
+        <tbody>
+          ${DATA.maestros.map(m => {
+            const alu = DATA.alumnos.filter(a => a.maestro === m.nombre);
+            const ses = DATA.sesiones.filter(s => s.maestro === m.nombre);
+            return `<tr>
+              <td style="font-weight:500">${m.nombre}</td>
+              <td><span style="padding:2px 8px;border-radius:8px;font-size:11px;
+                background:${m.rol==='admin'?'#EEEDFE':'#E6F1FB'};
+                color:${m.rol==='admin'?'#534AB7':'#185FA5'}">
+                ${m.rol==='admin'?'Admin':'Maestro'}</span></td>
+              <td><span style="font-family:monospace;font-size:12px;
+                background:var(--bg2);padding:2px 8px;border-radius:6px">
+                ${m.password||'—'}</span></td>
+              <td>${alu.length}</td>
+              <td>${ses.length}</td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+    </div>
+    <p style="font-size:11px;color:var(--txt3);margin-top:8px">
+      Las contraseñas solo son visibles para el administrador. Compartílas por WhatsApp.
+    </p>`;
+}
+
+function renderReporteRRHH(page) {
+  const empresas = [...new Set(DATA.alumnos.filter(a=>a.empresa).map(a=>a.empresa))];
+  page.innerHTML = `
+    <div class="ph"><h2>Reporte para RRHH</h2>
+      <p>Generá el reporte mensual por empresa o por alumno.</p></div>
+    <div class="card">
+      <div class="form-grid">
+        <div class="fld"><label>Empresa</label>
+          <select id="rep-empresa" onchange="filtrarAlumnosReporte()">
+            <option value="">— todas —</option>
+            ${empresas.map(e=>`<option value="${e}">${e}</option>`).join('')}
+          </select></div>
+        <div class="fld"><label>Alumno</label>
+          <select id="rep-alumno">
+            <option value="">— todos —</option>
+            ${DATA.alumnos.map(a=>`<option value="${a.id}">${a.nombre}</option>`).join('')}
+          </select></div>
+        <div class="fld"><label>Mes</label>
+          <input type="month" id="rep-mes" value="${new Date().toISOString().slice(0,7)}"></div>
+      </div>
+      <button class="action-btn primary" onclick="generarReporte()"
+        style="padding:10px 24px;font-size:13px">Generar reporte</button>
+    </div>
+    <div id="reporte-output"></div>`;
+}
+
+function filtrarAlumnosReporte() {
+  const emp = document.getElementById('rep-empresa').value;
+  const sel = document.getElementById('rep-alumno');
+  sel.innerHTML = '<option value="">— todos —</option>';
+  const lista = emp ? DATA.alumnos.filter(a=>a.empresa===emp) : DATA.alumnos;
+  lista.forEach(a => sel.innerHTML += `<option value="${a.id}">${a.nombre}</option>`);
+}
+
+function generarReporte() {
+  const aId = document.getElementById('rep-alumno').value;
+  const mes  = document.getElementById('rep-mes').value;
+  const emp  = document.getElementById('rep-empresa').value;
+  const lista = aId ? DATA.alumnos.filter(a=>a.id===aId)
+    : emp ? DATA.alumnos.filter(a=>a.empresa===emp)
+    : DATA.alumnos;
+  document.getElementById('reporte-output').innerHTML = lista.map(a=>buildReporteHTML(a,mes)).join('');
+  document.getElementById('topbar-actions').innerHTML =
+    `<button class="action-btn primary no-print" onclick="window.print()"
+      style="display:flex;align-items:center;gap:5px">⬇ Imprimir / PDF</button>`;
+  showToast('Reporte generado. Usá Ctrl+P para guardar como PDF.');
+}
+
+function buildReporteHTML(a, mes) {
+  const ses    = DATA.sesiones.filter(s => s.alumno===a.id && s.fecha?.startsWith(mes));
+  const asist  = ses.filter(s => s.asistio).length;
+  const [y,m]  = mes.split('-');
+  const mesNom = new Date(y, m-1, 1).toLocaleString('es',{month:'long',year:'numeric'});
+  return `
+    <div class="report-preview" style="margin-bottom:24px;page-break-after:always;">
+      <div class="report-header">
+        <div>
+          <div class="report-brand">● Gabriel Turner - English Training</div>
+          <div class="report-brand-sub">gabrielturner.com · 461 147 2119</div>
+        </div>
+        <div class="report-title">
+          <h2>Reporte mensual</h2>
+          <p>${mesNom}</p>
+        </div>
+      </div>
+      <div class="report-section">
+        <h3>Datos del colaborador</h3>
+        <div class="report-grid">
+          <div class="report-field"><div class="rf-label">Nombre</div><div class="rf-val">${a.nombre}</div></div>
+          <div class="report-field"><div class="rf-label">Empresa</div><div class="rf-val">${a.empresa||'Particular'}</div></div>
+          <div class="report-field"><div class="rf-label">Nivel inicial</div><div class="rf-val">${a.nivel_inicial}</div></div>
+          <div class="report-field"><div class="rf-label">Nivel actual</div><div class="rf-val">${a.nivel_actual}</div></div>
+          <div class="report-field"><div class="rf-label">Maestro</div><div class="rf-val">${a.maestro||'—'}</div></div>
+          <div class="report-field"><div class="rf-label">Asistencia</div>
+            <div class="rf-val">${asist}/${ses.length} sesiones (${ses.length?Math.round(asist/ses.length*100):0}%)</div></div>
+        </div>
+      </div>
+      ${ses.length ? `
+      <div class="report-section">
+        <h3>Sesiones del mes</h3>
+        <table class="report-sessions-table">
+          <thead><tr><th>Fecha</th><th>Tema</th><th>Asistencia</th><th>Notas</th></tr></thead>
+          <tbody>
+            ${ses.sort((a,b)=>a.fecha.localeCompare(b.fecha)).map(s=>`
+              <tr>
+                <td>${fmtDate(s.fecha)}</td><td>${s.tema}</td>
+                <td>${s.asistio?'✓ Asistió':'✗ No asistió'}</td>
+                <td>${s.notas||'—'}</td>
+              </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>` : '<div class="report-section"><p style="font-size:12px;color:var(--txt3)">Sin sesiones este mes.</p></div>'}
+      <div class="report-section">
+        <h3>Observaciones generales</h3>
+        <div style="padding:10px 14px;background:var(--bg);border-radius:var(--rs);
+          font-size:12px;color:var(--txt2);min-height:60px;">
+          ${ses.length ? (ses[ses.length-1].notas||'Sin observaciones registradas.') : 'Sin observaciones para este período.'}
+        </div>
+      </div>
+      <div class="report-footer">
+        <span>Gabriel Turner - English Training · Celaya, Guanajuato</span>
+        <span>Generado el ${new Date().toLocaleDateString('es-MX',{day:'2-digit',month:'long',year:'numeric'})}</span>
+      </div>
+    </div>`;
+}
+
+function abrirReporteAlumno(id) {
+  showView('reporte-rrhh');
+  setTimeout(() => {
+    const el = document.getElementById('rep-alumno');
+    if (el) { el.value = id; generarReporte(); }
+  }, 50);
+}
+
+// ════════════════════════════════════════
+// MODAL — VER ALUMNO
+// ════════════════════════════════════════
+function verAlumnoModal(id) {
+  const a   = DATA.alumnos.find(a => a.id===id);
+  const ses = DATA.sesiones.filter(s => s.alumno===id).sort((a,b)=>b.fecha.localeCompare(a.fecha));
+  const tar = DATA.tareas.filter(t => t.alumno===id);
+
+  document.getElementById('modal-title').textContent = a.nombre;
+  document.getElementById('modal-body').innerHTML = `
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap">
+      <span class="level ${LEVEL_CLASS[a.nivel_inicial]||'level-a1'}">${a.nivel_inicial} inicial</span>
+      <span style="color:var(--txt3)">→</span>
+      <span class="level ${LEVEL_CLASS[a.nivel_actual]||'level-a1'}">${a.nivel_actual} actual</span>
+      <span style="margin-left:auto;font-size:12px;color:var(--txt2)">${a.empresa||'Particular'}</span>
+    </div>
+    <div style="font-size:11px;font-weight:500;color:var(--txt3);text-transform:uppercase;
+      letter-spacing:.06em;margin-bottom:8px">Últimas sesiones</div>
+    ${ses.length ? ses.slice(0,4).map(s=>renderSesionItem(s)).join('')
+      : '<p style="font-size:12px;color:var(--txt3);padding:8px 0">Sin sesiones registradas.</p>'}
+    ${tar.filter(t=>!t.hecha).length ? `
+    <div style="font-size:11px;font-weight:500;color:var(--txt3);text-transform:uppercase;
+      letter-spacing:.06em;margin:14px 0 8px">Tareas pendientes</div>
+    ${tar.filter(t=>!t.hecha).map(t=>`
+      <div style="font-size:12px;padding:6px 0;border-bottom:1px solid var(--border)">
+        • ${t.desc} <span style="color:var(--txt3)">(${fmtDate(t.vence)})</span>
+      </div>`).join('')}` : ''}
+  `;
+  document.getElementById('modal-footer').innerHTML = `
+    <button class="action-btn" onclick="closeModal()">Cerrar</button>
+    <button class="action-btn primary" onclick="closeModal();abrirCargarSesion('${id}')">+ Cargar sesión</button>
+    ${currentRole==='admin'?`<button class="action-btn" onclick="closeModal();abrirReporteAlumno('${id}')">Reporte PDF</button>`:''}
+  `;
+  document.getElementById('modal').classList.add('open');
+}
+
+// ════════════════════════════════════════
+// MODAL — NUEVO ALUMNO
+// ════════════════════════════════════════
+function abrirNuevoAlumno() {
+  document.getElementById('modal-title').textContent = 'Nuevo alumno';
+  document.getElementById('modal-body').innerHTML = `
+    <div class="form-grid">
+      <div class="fld"><label>Nombre completo</label>
+        <input type="text" id="na-nombre" placeholder="Nombre Apellido"></div>
+      <div class="fld"><label>Empresa (vacío si es particular)</label>
+        <input type="text" id="na-empresa" placeholder="Nombre de la empresa"></div>
+      <div class="fld"><label>Tipo</label><select id="na-tipo">
+        <option value="corporativo">Corporativo</option>
+        <option value="particular">Particular</option>
+      </select></div>
+      <div class="fld"><label>Nivel inicial</label><select id="na-nivel">
+        ${LEVELS.map(l=>`<option value="${l}">${l} — ${LEVEL_LABELS[l]||''}</option>`).join('')}
+      </select></div>
+      <div class="fld"><label>Maestro asignado</label><select id="na-maestro">
+        ${DATA.maestros.map(m=>`<option value="${m.nombre}">${m.nombre}</option>`).join('')}
+      </select></div>
+    </div>
+    <p style="font-size:11px;color:var(--txt3);margin-top:4px">
+      El código se genera automáticamente. Aparece en el aviso al guardar — mandáselo por WhatsApp.</p>
+  `;
+  document.getElementById('modal-footer').innerHTML = `
+    <button class="action-btn" onclick="closeModal()">Cancelar</button>
+    <button class="action-btn primary" id="btn-save-alumno" onclick="guardarNuevoAlumno()">
+      Guardar en Notion
+    </button>`;
+  document.getElementById('modal').classList.add('open');
+}
+
+async function guardarNuevoAlumno() {
+  const nombre  = document.getElementById('na-nombre').value.trim();
+  const empresa = document.getElementById('na-empresa').value.trim();
+  const tipo    = document.getElementById('na-tipo').value;
+  const nivel   = document.getElementById('na-nivel').value;
+  const maestro = document.getElementById('na-maestro').value;
+  if (!nombre) { showToast('Ingresá el nombre del alumno.'); return; }
+
+  const btn = document.getElementById('btn-save-alumno');
+  btn.disabled = true; btn.textContent = 'Guardando...';
+
+  const codigo      = String(Math.floor(100000 + Math.random() * 900000));
+  const alumnoData  = { nombre, empresa: empresa||null, tipo, nivel_inicial: nivel,
+    nivel_actual: nivel, maestro, activo: true, codigo };
+
+  const res = await saveToNotion({ action: 'addAlumno', data: alumnoData });
+  alumnoData.id = res?.id || ('a' + Date.now());
+  DATA.alumnos.push(alumnoData);
+
+  closeModal();
+  showToast(`✓ Alumno agregado. Código: ${codigo} — mandáselo por WhatsApp`);
+  renderAdminAlumnos(document.getElementById('app-page'));
+}
+
+// ════════════════════════════════════════
+// MODAL — NUEVO MAESTRO
+// ════════════════════════════════════════
+function abrirNuevoMaestro() {
+  document.getElementById('modal-title').textContent = 'Nuevo maestro';
+  document.getElementById('modal-body').innerHTML = `
+    <div class="form-grid">
+      <div class="fld"><label>Nombre completo</label>
+        <input type="text" id="nm-nombre" placeholder="Nombre Apellido"></div>
+      <div class="fld"><label>Contraseña de acceso al portal</label>
+        <input type="text" id="nm-pw" placeholder="ej. Ingles2026"></div>
+      <div class="fld"><label>Rol</label><select id="nm-rol">
+        <option value="maestro">Maestro</option>
+        <option value="admin">Admin</option>
+      </select></div>
+      <div class="fld"><label>Niveles que imparte</label>
+        <input type="text" id="nm-niveles" placeholder="ej. A1.1, A1.2, A2.1"></div>
+    </div>
+    <p style="font-size:11px;color:var(--txt3);margin-top:4px">
+      Compartí la contraseña al maestro por WhatsApp junto con el link del portal.</p>
+  `;
+  document.getElementById('modal-footer').innerHTML = `
+    <button class="action-btn" onclick="closeModal()">Cancelar</button>
+    <button class="action-btn primary" id="btn-save-maestro" onclick="guardarNuevoMaestro()">
+      Guardar en Notion
+    </button>`;
+  document.getElementById('modal').classList.add('open');
+}
+
+async function guardarNuevoMaestro() {
+  const nombre  = document.getElementById('nm-nombre').value.trim();
+  const pw      = document.getElementById('nm-pw').value.trim();
+  const rol     = document.getElementById('nm-rol').value;
+  const niveles = document.getElementById('nm-niveles').value.trim();
+  if (!nombre) { showToast('Ingresá el nombre.'); return; }
+  if (!pw)     { showToast('Ingresá una contraseña.'); return; }
+
+  const btn = document.getElementById('btn-save-maestro');
+  btn.disabled = true; btn.textContent = 'Guardando...';
+
+  const maestroData = { nombre, rol, password: pw, niveles, activo: true };
+  const res = await saveToNotion({ action: 'addMaestro', data: maestroData });
+  maestroData.id = res?.id || ('m' + Date.now());
+  DATA.maestros.push(maestroData);
+
+  closeModal();
+  showToast(`✓ Maestro "${nombre}" agregado. Contraseña: ${pw}`);
+  renderAdminMaestros(document.getElementById('app-page'));
+}
+
+function closeModal() { document.getElementById('modal').classList.remove('open'); }
+
+// ════════════════════════════════════════
+// HELPERS
+// ════════════════════════════════════════
+function renderSesionItem(s) {
+  return `<div class="session-item">
+    <div class="session-date">
+      <div class="session-day">${fmtDateShort(s.fecha)}</div>
+      <div class="session-time">${s.hora||''}</div>
+    </div>
+    <div class="session-body">
+      <div class="session-topic">${s.tema}</div>
+      ${s.notas ? `<div class="session-notes">${s.notas}</div>` : ''}
+      <span class="session-tag ${s.asistio?'tag-asistio':'tag-falto'}">
+        ${s.asistio?'Asistió':'No asistió'}</span>
+    </div>
+  </div>`;
+}
+
+function fmtDate(d) {
+  if (!d) return '—';
+  const str = String(d).slice(0,10);
+  const [y,m,day] = str.split('-');
+  const M = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+  return `${day} ${M[parseInt(m)-1]} ${y}`;
+}
+function fmtDateShort(d) {
+  if (!d) return '—';
+  const str = String(d).slice(0,10);
+  const [,m,day] = str.split('-');
+  const M = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+  return `${day} ${M[parseInt(m)-1]}`;
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3200);
+}
+
+// ── Arrancar ─────────────────────────────────────────────────
+init();
+</script>
+</body>
+</html>
