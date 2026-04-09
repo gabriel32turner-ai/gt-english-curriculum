@@ -435,7 +435,7 @@ const WORKER_URL = 'https://silent-king-6ef7gt-portal.gabriel32turner.workers.de
 // ════════════════════════════════════════
 // ESTADO GLOBAL
 // ════════════════════════════════════════
-let DATA = { alumnos:[], maestros:[], sesiones:[], tareas:[], grupos:[], asistencia:[], contactos_rh:[], empresas:[] };
+let DATA = { alumnos:[], maestros:[], sesiones:[], tareas:[], grupos:[], asistencia:[], contactos_rh:[], empresas:[], contenido:[] };
 let currentUser = null;
 let currentRole = null;
 let loginTab    = 'alumno';
@@ -484,14 +484,15 @@ async function init() {
     const json = await res.json();
     if (!json.ok) throw new Error(json.error || 'Respuesta inválida');
 
-    DATA.alumnos     = json.data.alumnos      || [];
-    DATA.maestros    = json.data.maestros     || [];
-    DATA.sesiones    = json.data.sesiones     || [];
-    DATA.tareas      = json.data.tareas       || [];
-    DATA.grupos      = json.data.grupos       || [];
-    DATA.asistencia  = json.data.asistencia   || [];
-    DATA.contactos_rh = json.data.contactos_rh || [];
-    DATA.empresas    = json.data.empresas     || [];
+    DATA.alumnos      = json.data.alumnos       || [];
+    DATA.maestros     = json.data.maestros      || [];
+    DATA.sesiones     = json.data.sesiones      || [];
+    DATA.tareas       = json.data.tareas        || [];
+    DATA.grupos       = json.data.grupos        || [];
+    DATA.asistencia   = json.data.asistencia    || [];
+    DATA.contactos_rh = json.data.contactos_rh  || [];
+    DATA.empresas     = json.data.empresas      || [];
+    DATA.contenido    = json.data.contenido     || [];
 
     DATA.alumnos.forEach(a  => { a.activo  = !!a.activo; });
     DATA.sesiones.forEach(s => { s.asistio = !!s.asistio; });
@@ -888,7 +889,7 @@ async function toggleTarea(id, el) {
 // VISTAS DEL MAESTRO — MIS GRUPOS
 // ════════════════════════════════════════
 function renderMisGrupos(page) {
-  const misGrupos = DATA.grupos.filter(g => g.maestro === currentUser.nombre && g.activo !== false);
+  const misGrupos = DATA.grupos.filter(g => (g.maestro_id === currentUser.id || g.maestro === currentUser.nombre) && g.activo !== false);
 
   page.innerHTML = `
     <div class="ph"><h2>Mis grupos</h2>
@@ -941,8 +942,8 @@ function renderMisGrupos(page) {
 // VISTAS DEL MAESTRO — CARGAR SESIÓN
 // ════════════════════════════════════════
 function renderCargarSesion(page, grupoIdPre, alumnoIdPre) {
-  const misGrupos = DATA.grupos.filter(g => g.maestro === currentUser.nombre && g.activo !== false);
-  const misAlumnos = DATA.alumnos.filter(a => a.maestro === currentUser.nombre);
+  const misGrupos = DATA.grupos.filter(g => (g.maestro_id === currentUser.id || g.maestro === currentUser.nombre) && g.activo !== false);
+  const misAlumnos = DATA.alumnos.filter(a => a.maestro_id === currentUser.id || a.maestro === currentUser.nombre);
 
   page.innerHTML = `
     <div class="ph"><h2>Cargar sesión</h2>
@@ -1132,7 +1133,8 @@ async function guardarSesionGrupal() {
     const sesInd = {
       alumno: a.id, fecha, hora, tema,
       notas: notaInd || notas, asistio,
-      maestro: currentUser.nombre, grupo_id: grupoId
+      maestro: currentUser.nombre, grupo_id: grupoId,
+      sesion_actual: a.sesion_actual ?? 1
     };
     const resI = await saveToNotion({ action:'addSesion', data:sesInd });
     sesInd.id = resI?.id || ('si'+Date.now()+a.id.slice(-4));
@@ -1182,10 +1184,16 @@ async function guardarSesionIndividual() {
   const btn = document.getElementById('btn-guardar-sesion');
   btn.disabled = true; btn.textContent = 'Guardando...';
 
-  const sesionData = { alumno:alumnoId, fecha, hora, tema, notas, asistio, maestro:currentUser.nombre };
+  const sesionData = { alumno:alumnoId, fecha, hora, tema, notas, asistio, maestro:currentUser.nombre,
+    sesion_actual: DATA.alumnos.find(a => a.id === alumnoId)?.sesion_actual ?? 1 };
   const res = await saveToNotion({ action:'addSesion', data:sesionData });
   sesionData.id = res?.id || ('s'+Date.now());
   DATA.sesiones.push(sesionData);
+  // Actualizar sesion_actual en memoria para que el filtro de contenido sea inmediato
+  if (sesionData.asistio) {
+    const al = DATA.alumnos.find(a => a.id === alumnoId);
+    if (al) al.sesion_actual = Math.min((al.sesion_actual || 1) + 1, 30);
+  }
 
   if (tarea) {
     const tareaData = { desc:tarea, alumno:alumnoId, maestro:currentUser.nombre, vence:tareaFecha||fecha };
@@ -1220,7 +1228,7 @@ function abrirCargarSesion(alumnoId) {
 // VISTAS DEL MAESTRO — LISTA ALUMNOS (INDIVIDUAL)
 // ════════════════════════════════════════
 function renderMisAlumnos(page) {
-  const mis = DATA.alumnos.filter(a => a.maestro === currentUser.nombre);
+  const mis = DATA.alumnos.filter(a => a.maestro_id === currentUser.id || a.maestro === currentUser.nombre);
   page.innerHTML = `
     <div class="ph"><h2>Mis alumnos</h2><p>${mis.length} alumnos asignados.</p></div>
     <div class="card" style="padding:0;overflow:hidden">
@@ -2874,3 +2882,4 @@ function renderEmpresaDetalle(page, empresaId) {
 </script>
 </body>
 </html>
+
