@@ -1297,6 +1297,11 @@ function renderAdminAlumnos(page) {
               <td style="display:flex;gap:6px;flex-wrap:wrap">
                 <button class="action-btn" onclick="verAlumnoModal('${a.id}')">Ver</button>
                 <button class="action-btn" onclick="abrirReporteAlumno('${a.id}')">PDF</button>
+                <button class="action-btn" onclick="abrirEditarAlumno('${a.id}')" style="background:var(--blue-bg);color:var(--blue)">Editar</button>
+                <button class="action-btn" onclick="confirmarToggleAlumno('${a.id}')"
+                  style="background:${a.activo?'var(--red-bg)':'var(--green-bg)'};color:${a.activo?'var(--red)':'var(--green)'}">
+                  ${a.activo?'Desactivar':'Activar'}
+                </button>
               </td></tr>`;
           }).join('')}
         </tbody>
@@ -1339,6 +1344,8 @@ function renderAdminGrupos(page) {
               <td style="display:flex;gap:6px;flex-wrap:wrap">
                 <button class="action-btn" onclick="verGrupoDetalle('${g.id}')">Ver</button>
                 <button class="action-btn primary" onclick="abrirAsignarAlumno('${g.id}')">+ Alumno</button>
+                <button class="action-btn" onclick="abrirEditarGrupo('${g.id}')" style="background:var(--blue-bg);color:var(--blue)">Editar</button>
+                <button class="action-btn" onclick="confirmarEliminarGrupo('${g.id}')" style="background:var(--red-bg);color:var(--red)">Eliminar</button>
               </td>
             </tr>`;
           }).join('')}
@@ -1360,7 +1367,7 @@ function renderAdminMaestros(page) {
     <div class="card" style="padding:0;overflow:hidden">
       <table class="stable">
         <thead><tr><th>Nombre</th><th>Rol</th><th>Contraseña</th>
-          <th>Grupos</th><th>Alumnos</th><th>Sesiones cargadas</th></tr></thead>
+          <th>Grupos</th><th>Alumnos</th><th>Sesiones cargadas</th><th></th></tr></thead>
         <tbody>
           ${DATA.maestros.map(m => {
             const grupos = DATA.grupos.filter(g => g.maestro === m.nombre);
@@ -1378,6 +1385,13 @@ function renderAdminMaestros(page) {
               <td>${grupos.length}</td>
               <td>${alu.length}</td>
               <td>${ses.length}</td>
+              <td style="display:flex;gap:6px">
+                <button class="action-btn" onclick="abrirEditarMaestro('${m.id}')" style="background:var(--blue-bg);color:var(--blue)">Editar</button>
+                <button class="action-btn" onclick="confirmarToggleMaestro('${m.id}')"
+                  style="background:${m.activo?'var(--red-bg)':'var(--green-bg)'};color:${m.activo?'var(--red)':'var(--green)'}">
+                  ${m.activo?'Desactivar':'Activar'}
+                </button>
+              </td>
             </tr>`;
           }).join('')}
         </tbody>
@@ -1846,8 +1860,302 @@ async function guardarNuevoMaestro() {
 function closeModal() { document.getElementById('modal').classList.remove('open'); }
 
 // ════════════════════════════════════════
-// ██  FASE 3 — MEJORAS OPERATIVAS        ██
+// ██  SPRINT 2 — ADMIN CRUD             ██
 // ════════════════════════════════════════
+
+// ── EDITAR ALUMNO ────────────────────────────────────────────
+function abrirEditarAlumno(id) {
+  const a = DATA.alumnos.find(a => a.id === id);
+  if (!a) return;
+  document.getElementById('modal-title').textContent = `Editar alumno — ${a.nombre}`;
+  document.getElementById('modal-body').innerHTML = `
+    <div class="form-grid">
+      <div class="fld span2"><label>Nombre completo</label>
+        <input type="text" id="ea-nombre" value="${a.nombre||''}"></div>
+      <div class="fld"><label>Empresa</label>
+        <input type="text" id="ea-empresa" value="${a.empresa||''}"></div>
+      <div class="fld"><label>Tipo</label><select id="ea-tipo">
+        <option value="corporativo" ${a.tipo==='corporativo'?'selected':''}>Corporativo</option>
+        <option value="particular"  ${a.tipo==='particular'?'selected':''}>Particular</option>
+      </select></div>
+      <div class="fld"><label>Nivel actual</label><select id="ea-nivel">
+        ${LEVELS.map(l=>`<option value="${l}" ${a.nivel_actual===l?'selected':''}>${l} — ${LEVEL_LABELS[l]||''}</option>`).join('')}
+      </select></div>
+      <div class="fld"><label>Maestro asignado</label><select id="ea-maestro">
+        <option value="">— sin asignar —</option>
+        ${DATA.maestros.filter(m=>m.activo!==false).map(m=>`<option value="${m.nombre}" ${a.maestro===m.nombre?'selected':''}>${m.nombre}</option>`).join('')}
+      </select></div>
+      <div class="fld"><label>Grupo</label><select id="ea-grupo">
+        <option value="">— sin grupo —</option>
+        ${DATA.grupos.map(g=>`<option value="${g.id}" ${a.grupo_id===g.id?'selected':''}>${g.nombre}</option>`).join('')}
+      </select></div>
+    </div>
+    <div style="background:var(--blue-bg);border-radius:var(--rs);padding:10px 14px;font-size:12px;color:var(--blue);margin-top:8px">
+      ℹ Los cambios se guardan en Notion inmediatamente.
+    </div>`;
+  document.getElementById('modal-footer').innerHTML = `
+    <button class="action-btn" onclick="closeModal()">Cancelar</button>
+    <button class="action-btn primary" id="btn-guardar-alumno-edit" onclick="guardarEdicionAlumno('${id}')">Guardar cambios</button>`;
+  document.getElementById('modal').classList.add('open');
+}
+
+async function guardarEdicionAlumno(id) {
+  const nombre  = document.getElementById('ea-nombre').value.trim();
+  const empresa = document.getElementById('ea-empresa').value.trim();
+  const tipo    = document.getElementById('ea-tipo').value;
+  const nivel   = document.getElementById('ea-nivel').value;
+  const maestro = document.getElementById('ea-maestro').value;
+  const grupoId = document.getElementById('ea-grupo').value;
+  if (!nombre) { showToast('El nombre no puede estar vacío.'); return; }
+
+  const btn = document.getElementById('btn-guardar-alumno-edit');
+  btn.disabled = true; btn.textContent = 'Guardando...';
+
+  await saveToNotion({ action:'updateAlumno', id, updates:{
+    nombre, empresa: empresa||null, tipo, nivel_actual: nivel,
+    maestro: maestro||null, grupo_id: grupoId||null,
+  }});
+
+  const a = DATA.alumnos.find(a => a.id === id);
+  if (a) {
+    Object.assign(a, { nombre, empresa: empresa||null, tipo, nivel_actual: nivel,
+      maestro: maestro||null, grupo_id: grupoId||null });
+    // Actualizar maestro_id en memoria
+    const m = DATA.maestros.find(m => m.nombre === maestro);
+    a.maestro_id = m ? m.id : null;
+  }
+
+  closeModal();
+  showToast(`✓ ${nombre} actualizado`);
+  renderAdminAlumnos(document.getElementById('app-page'));
+}
+
+// ── ACTIVAR / DESACTIVAR ALUMNO ───────────────────────────────
+function confirmarToggleAlumno(id) {
+  const a = DATA.alumnos.find(a => a.id === id);
+  if (!a) return;
+  const accion = a.activo ? 'desactivar' : 'activar';
+  document.getElementById('modal-title').textContent = `${a.activo?'Desactivar':'Activar'} alumno`;
+  document.getElementById('modal-body').innerHTML = `
+    <p style="font-size:13px;color:var(--txt2);line-height:1.7">
+      ¿Confirmás que querés <strong>${accion}</strong> a <strong>${a.nombre}</strong>?
+    </p>
+    <div style="background:${a.activo?'var(--red-bg)':'var(--green-bg)'};border-radius:var(--rs);
+      padding:10px 14px;font-size:12px;color:${a.activo?'var(--red)':'var(--green)'};margin-top:12px">
+      ${a.activo
+        ? '⚠ El alumno ya no podrá iniciar sesión en el portal.'
+        : '✓ El alumno podrá volver a iniciar sesión con su código.'}
+    </div>`;
+  document.getElementById('modal-footer').innerHTML = `
+    <button class="action-btn" onclick="closeModal()">Cancelar</button>
+    <button class="action-btn" id="btn-toggle-alumno"
+      style="background:${a.activo?'var(--red-bg)':'var(--green-bg)'};color:${a.activo?'var(--red)':'var(--green)'}"
+      onclick="ejecutarToggleAlumno('${id}')">
+      ${a.activo?'Sí, desactivar':'Sí, activar'}
+    </button>`;
+  document.getElementById('modal').classList.add('open');
+}
+
+async function ejecutarToggleAlumno(id) {
+  const a = DATA.alumnos.find(a => a.id === id);
+  if (!a) return;
+  const btn = document.getElementById('btn-toggle-alumno');
+  btn.disabled = true; btn.textContent = 'Guardando...';
+  const nuevoActivo = !a.activo;
+  await saveToNotion({ action:'updateAlumno', id, updates:{ activo: nuevoActivo }});
+  a.activo = nuevoActivo;
+  closeModal();
+  showToast(`✓ ${a.nombre} ${nuevoActivo?'activado':'desactivado'}`);
+  renderAdminAlumnos(document.getElementById('app-page'));
+}
+
+// ── EDITAR GRUPO ─────────────────────────────────────────────
+function abrirEditarGrupo(id) {
+  const g = DATA.grupos.find(g => g.id === id);
+  if (!g) return;
+  document.getElementById('modal-title').textContent = `Editar grupo — ${g.nombre}`;
+  document.getElementById('modal-body').innerHTML = `
+    <div class="form-grid">
+      <div class="fld span2"><label>Nombre del grupo</label>
+        <input type="text" id="eg-nombre" value="${g.nombre||''}"></div>
+      <div class="fld"><label>Empresa</label>
+        <input type="text" id="eg-empresa" value="${g.empresa||''}"></div>
+      <div class="fld"><label>Nivel</label><select id="eg-nivel">
+        ${LEVELS.map(l=>`<option value="${l}" ${g.nivel===l?'selected':''}>${l} — ${LEVEL_LABELS[l]||''}</option>`).join('')}
+      </select></div>
+      <div class="fld"><label>Maestro asignado</label><select id="eg-maestro">
+        <option value="">— sin asignar —</option>
+        ${DATA.maestros.filter(m=>m.activo!==false).map(m=>`<option value="${m.nombre}" ${g.maestro===m.nombre?'selected':''}>${m.nombre}</option>`).join('')}
+      </select></div>
+      <div class="fld"><label>Horario</label>
+        <input type="text" id="eg-horario" value="${g.horario||''}" placeholder="ej. Lunes y Miércoles 9–10 am"></div>
+      <div class="fld"><label>Sesiones contratadas</label>
+        <input type="number" id="eg-sesiones" value="${g.sesiones_contratadas||''}" min="1" placeholder="ej. 48"></div>
+    </div>`;
+  document.getElementById('modal-footer').innerHTML = `
+    <button class="action-btn" onclick="closeModal()">Cancelar</button>
+    <button class="action-btn primary" id="btn-guardar-grupo-edit" onclick="guardarEdicionGrupo('${id}')">Guardar cambios</button>`;
+  document.getElementById('modal').classList.add('open');
+}
+
+async function guardarEdicionGrupo(id) {
+  const nombre   = document.getElementById('eg-nombre').value.trim();
+  const empresa  = document.getElementById('eg-empresa').value.trim();
+  const nivel    = document.getElementById('eg-nivel').value;
+  const maestro  = document.getElementById('eg-maestro').value;
+  const horario  = document.getElementById('eg-horario').value.trim();
+  const sesiones = document.getElementById('eg-sesiones').value;
+  if (!nombre) { showToast('El nombre no puede estar vacío.'); return; }
+
+  const btn = document.getElementById('btn-guardar-grupo-edit');
+  btn.disabled = true; btn.textContent = 'Guardando...';
+
+  await saveToNotion({ action:'updateGrupo', id, updates:{
+    nombre, empresa: empresa||null, nivel,
+    maestro: maestro||null, horario: horario||null,
+    sesiones_contratadas: sesiones ? parseInt(sesiones) : null,
+  }});
+
+  const g = DATA.grupos.find(g => g.id === id);
+  if (g) {
+    Object.assign(g, { nombre, empresa: empresa||null, nivel,
+      maestro: maestro||null, horario: horario||null,
+      sesiones_contratadas: sesiones ? parseInt(sesiones) : null });
+    const m = DATA.maestros.find(m => m.nombre === maestro);
+    g.maestro_id = m ? m.id : null;
+  }
+
+  closeModal();
+  showToast(`✓ Grupo "${nombre}" actualizado`);
+  renderAdminGrupos(document.getElementById('app-page'));
+}
+
+// ── ELIMINAR GRUPO ────────────────────────────────────────────
+function confirmarEliminarGrupo(id) {
+  const g = DATA.grupos.find(g => g.id === id);
+  if (!g) return;
+  const nAlumnos = DATA.alumnos.filter(a => a.grupo_id === id).length;
+  document.getElementById('modal-title').textContent = 'Eliminar grupo';
+  document.getElementById('modal-body').innerHTML = `
+    <p style="font-size:13px;color:var(--txt2);line-height:1.7">
+      ¿Eliminar el grupo <strong>${g.nombre}</strong>?
+    </p>
+    ${nAlumnos > 0 ? `
+    <div style="background:var(--red-bg);border-radius:var(--rs);padding:10px 14px;
+      font-size:12px;color:var(--red);margin-top:12px">
+      ⚠ Este grupo tiene <strong>${nAlumnos} alumno${nAlumnos>1?'s':''}</strong> asignado${nAlumnos>1?'s':''}. 
+      Los alumnos quedarán sin grupo — no se eliminarán.
+    </div>` : `
+    <div style="background:var(--bg2);border-radius:var(--rs);padding:10px 14px;
+      font-size:12px;color:var(--txt2);margin-top:12px">
+      El grupo se archivará en Notion. Esta acción se puede revertir desde Notion si es necesario.
+    </div>`}`;
+  document.getElementById('modal-footer').innerHTML = `
+    <button class="action-btn" onclick="closeModal()">Cancelar</button>
+    <button class="action-btn" id="btn-del-grupo"
+      style="background:var(--red-bg);color:var(--red)"
+      onclick="ejecutarEliminarGrupo('${id}')">Sí, eliminar</button>`;
+  document.getElementById('modal').classList.add('open');
+}
+
+async function ejecutarEliminarGrupo(id) {
+  const g = DATA.grupos.find(g => g.id === id);
+  if (!g) return;
+  const btn = document.getElementById('btn-del-grupo');
+  btn.disabled = true; btn.textContent = 'Eliminando...';
+  await saveToNotion({ action:'deleteGrupo', id });
+  DATA.grupos = DATA.grupos.filter(g => g.id !== id);
+  // Limpiar grupo_id de alumnos que pertenecían a este grupo
+  DATA.alumnos.forEach(a => { if (a.grupo_id === id) a.grupo_id = null; });
+  closeModal();
+  showToast(`✓ Grupo "${g.nombre}" eliminado`);
+  renderAdminGrupos(document.getElementById('app-page'));
+}
+
+// ── EDITAR MAESTRO ────────────────────────────────────────────
+function abrirEditarMaestro(id) {
+  const m = DATA.maestros.find(m => m.id === id);
+  if (!m) return;
+  document.getElementById('modal-title').textContent = `Editar maestro — ${m.nombre}`;
+  document.getElementById('modal-body').innerHTML = `
+    <div class="form-grid">
+      <div class="fld span2"><label>Nombre completo</label>
+        <input type="text" id="em-nombre" value="${m.nombre||''}" disabled
+          style="opacity:.6;cursor:not-allowed" title="El nombre no se puede cambiar para no romper asignaciones existentes">
+        <p style="font-size:10px;color:var(--txt3);margin-top:3px">El nombre no se edita para mantener la integridad de las asignaciones.</p>
+      </div>
+      <div class="fld"><label>Nueva contraseña</label>
+        <input type="text" id="em-password" value="${m.password||''}" placeholder="Dejar igual si no cambia"></div>
+      <div class="fld"><label>Rol</label><select id="em-rol" disabled style="opacity:.6;cursor:not-allowed">
+        <option value="${m.rol}" selected>${m.rol==='admin'?'Administrador':'Maestro'}</option>
+      </select>
+        <p style="font-size:10px;color:var(--txt3);margin-top:3px">El rol se gestiona directamente en Notion.</p>
+      </div>
+      <div class="fld span2"><label>Niveles que imparte</label>
+        <input type="text" id="em-niveles" value="${m.niveles||''}" placeholder="ej. A1.1, A1.2, A2.1"></div>
+    </div>`;
+  document.getElementById('modal-footer').innerHTML = `
+    <button class="action-btn" onclick="closeModal()">Cancelar</button>
+    <button class="action-btn primary" id="btn-guardar-maestro-edit" onclick="guardarEdicionMaestro('${id}')">Guardar cambios</button>`;
+  document.getElementById('modal').classList.add('open');
+}
+
+async function guardarEdicionMaestro(id) {
+  const password = document.getElementById('em-password').value.trim();
+  const niveles  = document.getElementById('em-niveles').value.trim();
+  if (!password) { showToast('La contraseña no puede estar vacía.'); return; }
+
+  const btn = document.getElementById('btn-guardar-maestro-edit');
+  btn.disabled = true; btn.textContent = 'Guardando...';
+
+  await saveToNotion({ action:'updateMaestro', id, updates:{ password, niveles }});
+
+  const m = DATA.maestros.find(m => m.id === id);
+  if (m) Object.assign(m, { password, niveles });
+
+  closeModal();
+  showToast(`✓ Maestro actualizado`);
+  renderAdminMaestros(document.getElementById('app-page'));
+}
+
+// ── ACTIVAR / DESACTIVAR MAESTRO ──────────────────────────────
+function confirmarToggleMaestro(id) {
+  const m = DATA.maestros.find(m => m.id === id);
+  if (!m) return;
+  const accion = m.activo ? 'desactivar' : 'activar';
+  document.getElementById('modal-title').textContent = `${m.activo?'Desactivar':'Activar'} maestro`;
+  document.getElementById('modal-body').innerHTML = `
+    <p style="font-size:13px;color:var(--txt2);line-height:1.7">
+      ¿Confirmás que querés <strong>${accion}</strong> a <strong>${m.nombre}</strong>?
+    </p>
+    <div style="background:${m.activo?'var(--red-bg)':'var(--green-bg)'};border-radius:var(--rs);
+      padding:10px 14px;font-size:12px;color:${m.activo?'var(--red)':'var(--green)'};margin-top:12px">
+      ${m.activo
+        ? '⚠ El maestro ya no podrá iniciar sesión en el portal.'
+        : '✓ El maestro podrá volver a iniciar sesión.'}
+    </div>`;
+  document.getElementById('modal-footer').innerHTML = `
+    <button class="action-btn" onclick="closeModal()">Cancelar</button>
+    <button class="action-btn" id="btn-toggle-maestro"
+      style="background:${m.activo?'var(--red-bg)':'var(--green-bg)'};color:${m.activo?'var(--red)':'var(--green)'}"
+      onclick="ejecutarToggleMaestro('${id}')">
+      ${m.activo?'Sí, desactivar':'Sí, activar'}
+    </button>`;
+  document.getElementById('modal').classList.add('open');
+}
+
+async function ejecutarToggleMaestro(id) {
+  const m = DATA.maestros.find(m => m.id === id);
+  if (!m) return;
+  const btn = document.getElementById('btn-toggle-maestro');
+  btn.disabled = true; btn.textContent = 'Guardando...';
+  const nuevoActivo = !m.activo;
+  await saveToNotion({ action:'updateMaestro', id, updates:{ activo: nuevoActivo }});
+  m.activo = nuevoActivo;
+  closeModal();
+  showToast(`✓ ${m.nombre} ${nuevoActivo?'activado':'desactivado'}`);
+  renderAdminMaestros(document.getElementById('app-page'));
+}
 
 // ── Helper: días sin sesión ──────────────────────────────────
 function diasSinSesion(alumnoId) {
@@ -2882,4 +3190,3 @@ function renderEmpresaDetalle(page, empresaId) {
 </script>
 </body>
 </html>
-
