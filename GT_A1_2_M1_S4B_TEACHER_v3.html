@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GT · A1.2 · M1 · S4B — Imperatives in Action</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0F1923;--s1:#141F2B;--s2:#1A2840;--bd:rgba(255,255,255,0.07);
+  --ac:#8B5CF6;--ac2:#A78BFA;--gold:#C9922A;--green:#00E676;--violet:#8B5CF6;
+  --txt:#E4E4E4;--mt:rgba(228,228,228,0.5);--dim:rgba(228,228,228,0.25);
+}
+*{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif;font-size:14px;line-height:1.65}
+.prog{height:3px;background:var(--ac);position:fixed;top:0;left:0;z-index:300;transition:width .1s;box-shadow:0 0 8px rgba(139,92,246,.5)}
+.hdr{background:var(--s1);border-bottom:1px solid var(--bd);padding:16px 32px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:200;backdrop-filter:blur(10px)}
+.brand{display:flex;align-items:center;gap:10px}
+.dot{width:7px;height:7px;background:var(--ac);border-radius:50%;animation:glow 2s ease-in-out infinite}
+@keyframes glow{0%,100%{box-shadow:0 0 4px var(--ac)}50%{box-shadow:0 0 12px var(--ac),0 0 20px rgba(139,92,246,.4)}}
+.bname{font-family:'Syne',sans-serif;font-weight:800;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:#fff}
+.bsub{font-size:10px;color:var(--dim)}
+.hdr-r{display:flex;align-items:center;gap:10px}
+.badge{border:1px solid var(--ac);color:var(--ac);padding:4px 10px;font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase}
+.sbadge{background:rgba(139,92,246,.12);color:var(--ac2);padding:4px 10px;font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase}
+.mode-btn{background:transparent;border:1px solid rgba(255,255,255,.15);color:var(--mt);padding:5px 14px;font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;transition:all .2s;touch-action:manipulation}
+.mode-btn:hover{border-color:var(--ac);color:var(--ac)}
+body.student-mode .mode-btn{background:rgba(139,92,246,.12);border-color:var(--ac);color:var(--ac)}
+.mastery-banner{background:rgba(139,92,246,.07);border-bottom:1px solid rgba(139,92,246,.18);padding:6px 32px;font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--ac2);text-align:center}
+.hero{padding:48px 32px 36px;border-bottom:1px solid var(--bd);max-width:960px;margin:0 auto;background:linear-gradient(135deg,rgba(15,25,35,0.93) 0%,rgba(15,25,35,0.80) 100%),url('https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=1600&q=80&fit=crop') center/cover no-repeat}
+.h-meta{font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--ac);margin-bottom:12px}
+.h-title{font-family:'Syne',sans-serif;font-size:56px;font-weight:800;line-height:.92;color:#fff;margin-bottom:16px}
+.h-title em{color:var(--ac);font-style:normal}
+.h-sub{font-size:14px;color:var(--mt);max-width:480px;line-height:1.6;margin-bottom:24px}
+.h-chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{background:var(--s1);border:1px solid var(--bd);padding:5px 12px;font-size:11px;color:var(--mt)}.chip strong{color:var(--txt)}
+.snav{background:var(--s1);border-bottom:1px solid var(--bd);padding:0 32px;display:flex;overflow-x:auto;position:sticky;top:57px;z-index:190}
+.sni{padding:13px 16px;font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--dim);text-decoration:none;border-bottom:2px solid transparent;transition:all .18s;white-space:nowrap}
+.sni:hover{color:var(--txt);border-bottom-color:rgba(139,92,246,.35)}.sni.active{color:var(--ac);border-bottom-color:var(--ac)}
+.sec-outer{border-bottom:1px solid var(--bd)}
+.sec{padding:44px 32px;max-width:960px;margin:0 auto}
+.sec-hd{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:28px}
+.sec-lbl{font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--ac);margin-bottom:5px}
+.sec-title{font-family:'Syne',sans-serif;font-size:24px;font-weight:800;color:#fff}
+.sec-time{border:1px solid rgba(139,92,246,.25);color:var(--ac);padding:4px 10px;font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;white-space:nowrap}
+body.student-mode .sec-time{display:none}
+
+/* WARM-UP GRID */
+.wu-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:20px}
+.wu-card{background:var(--s1);border:1px solid var(--bd);padding:18px 16px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden;touch-action:manipulation}
+.wu-card:hover{border-color:rgba(139,92,246,.3);background:var(--s2)}
+.wu-card.answered{border-color:rgba(0,230,118,.3);background:rgba(0,230,118,.04)}
+.wu-n{font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--ac);margin-bottom:8px}
+.wu-situation{font-size:13px;color:var(--mt);margin-bottom:8px;font-style:italic;line-height:1.4}
+.wu-task{font-size:13.5px;color:var(--txt);font-weight:500;line-height:1.4}
+.wu-tick{position:absolute;top:10px;right:12px;font-size:18px;color:var(--green);opacity:0;transition:opacity .25s}
+.wu-card.answered .wu-tick{opacity:1}
+
+/* PHRASE CARDS */
+.phrases-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:14px}
+.phrase-card{background:var(--s1);border:1px solid var(--bd);padding:14px 16px;cursor:pointer;touch-action:manipulation;transition:border-color .15s}
+.phrase-card:hover{border-color:rgba(139,92,246,.3)}
+.phrase-card.played{border-color:rgba(139,92,246,.3);background:rgba(139,92,246,.05)}
+.ph-type{font-family:'Syne',sans-serif;font-size:8.5px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px}
+.ph-type-af{color:var(--green)}.ph-type-pol{color:var(--ac2)}.ph-type-neg{color:#FF1F5C}
+.ph-en{font-size:13.5px;font-weight:600;color:#fff;margin-bottom:3px}
+.ph-use{font-size:11px;color:rgba(201,146,42,.7);font-style:italic}
+.ph-btn{background:rgba(139,92,246,.08);border:1px solid rgba(139,92,246,.2);color:var(--ac2);padding:4px 10px;font-size:11px;cursor:pointer;margin-top:8px;font-family:'DM Sans',sans-serif;touch-action:manipulation;transition:all .15s}
+.ph-btn:hover{background:rgba(139,92,246,.2)}
+
+/* WORDWALL */
+.wordwall-wrap{background:var(--s1);border:1px solid rgba(201,146,42,.2);padding:22px 26px;margin-bottom:2px}
+.ww-lbl{font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:6px}
+.ww-title{font-family:'Syne',sans-serif;font-size:15px;font-weight:800;color:#fff;margin-bottom:14px}
+.ww-placeholder{background:rgba(201,146,42,.04);border:1px dashed rgba(201,146,42,.25);padding:24px;text-align:center;color:var(--dim);font-size:12px;margin-bottom:10px;line-height:1.7}
+.ww-inst{font-size:11.5px;color:var(--mt);line-height:1.65}
+
+/* IMPERATIVE CHALLENGE GAME */
+.imp-game{background:var(--s1);border:1px solid rgba(139,92,246,.2);padding:22px 26px;margin-bottom:2px}
+.ig-lbl{font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--ac);margin-bottom:8px}
+.ig-title{font-family:'Syne',sans-serif;font-size:15px;font-weight:800;color:#fff;margin-bottom:14px}
+.ig-round{font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(139,92,246,.5);margin-bottom:10px}
+.ig-sit{background:var(--s2);border:1px solid var(--bd);padding:14px 18px;margin-bottom:10px}
+.ig-sit-lbl{font-family:'Syne',sans-serif;font-size:8px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:5px}
+.ig-sit-txt{font-size:13.5px;color:var(--txt);font-style:italic}
+.ig-choices{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:6px}
+.ig-btn{background:var(--bg);border:1px solid var(--bd);color:var(--txt);padding:6px 14px;font-family:'DM Sans',sans-serif;font-size:12.5px;cursor:pointer;transition:all .15s;touch-action:manipulation}
+.ig-btn:hover:not([disabled]){border-color:rgba(139,92,246,.4);color:#fff}
+.ig-btn.correct{background:rgba(0,230,118,.1);border-color:var(--green);color:var(--green)}
+.ig-btn.wrong{background:rgba(139,92,246,.08);border-color:var(--ac);color:rgba(200,150,250,.9)}
+.ig-fb{font-size:12px;margin-top:6px;min-height:16px;font-style:italic;color:var(--mt)}
+.ig-fb.ok{color:var(--green)}.ig-fb.err{color:#FF6B6B}
+
+/* AUDIO */
+.player{background:var(--s1);border:1px solid var(--bd);padding:22px 26px;margin-bottom:18px}
+.pl-top{display:flex;align-items:center;gap:16px;margin-bottom:16px}
+.pl-ico{width:44px;height:44px;background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.22);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.pl-title{font-family:'Syne',sans-serif;font-size:14px;font-weight:800;color:#fff;margin-bottom:2px}
+.pl-meta{font-size:11px;color:var(--mt)}
+.pl-ph{background:var(--bg);border:1px dashed rgba(255,255,255,.1);padding:16px 20px;text-align:center}
+.pl-ph p{font-size:11.5px;color:var(--dim);line-height:1.7}.pl-ph code{color:var(--gold);font-size:10.5px}
+.script-toggle{display:flex;align-items:center;gap:6px;cursor:pointer;margin-top:14px;width:fit-content;touch-action:manipulation}
+.script-toggle span{font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim);transition:color .2s}
+.script-toggle:hover span{color:var(--txt)}
+.script-box{display:none;background:var(--bg);border:1px solid var(--bd);padding:18px 22px;margin-top:10px;font-size:12.5px;color:var(--mt);line-height:1.85;font-style:italic}
+.script-box.open{display:block}
+.script-note{font-size:10px;color:var(--dim);margin-top:10px;font-style:normal}
+
+/* ROLE PLAY */
+.rp-card{background:var(--s1);border:1px solid rgba(139,92,246,.22);padding:24px 28px;margin-bottom:14px}
+.rp-tag{font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--ac);margin-bottom:14px}
+.rp-scene{font-size:14px;color:var(--txt);line-height:1.8;margin-bottom:14px}
+.rp-roles{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.rp-role-box{background:var(--s2);border:1px solid var(--bd);padding:14px 18px}
+.rp-role-lbl{font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px}
+.rp-role-a .rp-role-lbl{color:var(--ac)}
+.rp-role-b .rp-role-lbl{color:var(--green)}
+.rp-role-info{font-size:12.5px;color:var(--mt);line-height:1.6}
+.rp-role-info strong{color:var(--txt)}
+.rp-starter{background:rgba(139,92,246,.06);border-left:3px solid var(--ac);padding:12px 18px;margin-bottom:10px;font-size:13.5px;color:#fff;font-style:italic}
+.rp-goal{font-size:12px;color:var(--mt);line-height:1.65;margin-top:6px}
+.rp-goal strong{color:var(--gold)}
+
+/* DEBATE */
+.debate-card{background:rgba(139,92,246,.03);border:1px solid rgba(139,92,246,.18);padding:22px 28px;margin-bottom:14px}
+.debate-lbl{font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--ac2);margin-bottom:8px}
+.debate-q{font-size:15px;color:#fff;font-style:italic;line-height:1.55;margin-bottom:14px}
+.debate-sides{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+.debate-side{padding:14px 18px;border:1px solid var(--bd);background:var(--s1)}
+.debate-side-lbl{font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px}
+.debate-phrases{display:flex;flex-direction:column;gap:5px}
+.debate-phrase{font-size:12px;color:var(--mt);font-style:italic}
+.sp-cards{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
+.sp-card{background:rgba(139,92,246,.07);border:1px solid rgba(139,92,246,.18);padding:5px 12px;font-size:11.5px;color:var(--ac2)}
+
+/* SELF-EVAL & WRAP-UP */
+.self-eval{background:var(--s1);border:1px solid var(--bd);padding:18px 22px;margin-top:14px}
+.se-lbl{font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--ac2);margin-bottom:14px}
+.checklist{list-style:none;display:flex;flex-direction:column;gap:8px}
+.checklist li{display:flex;align-items:flex-start;gap:10px;font-size:13px;color:var(--mt);cursor:pointer;padding:3px 0;touch-action:manipulation}
+.checklist li:hover{color:var(--txt)}.checklist li.done{color:var(--green)}
+.cb{width:15px;height:15px;border:1.5px solid var(--bd);flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center;font-size:9px;transition:all .2s}
+.checklist li.done .cb{background:var(--green);border-color:var(--green);color:#000}
+.wu2-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px;margin-bottom:2px}
+.wu2-card{background:var(--s1);padding:22px 26px;border:1px solid var(--bd)}
+.wu2-h{font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--ac);margin-bottom:14px}
+.key-item{background:var(--bg);border:1px solid var(--bd);padding:10px 14px;margin-bottom:6px}
+.ki-lbl{font-size:9px;color:var(--dim);font-family:'Syne',sans-serif;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:5px}
+.ki-txt{font-size:13px;color:var(--txt);line-height:1.65}
+.next-box{background:rgba(201,146,42,.04);border:1px solid rgba(201,146,42,.15);padding:14px 22px;display:flex;align-items:center;gap:14px;margin-top:2px}
+.next-lbl{font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);white-space:nowrap}
+.next-txt{font-size:13px;color:rgba(201,146,42,.8)}
+.gto{background:rgba(201,146,42,.03);border:1px solid rgba(201,146,42,.12);padding:18px 22px;margin-top:2px}
+.gto-lbl{font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.gto-lbl::before{content:'★';font-size:10px}
+.gto-items{display:flex;flex-wrap:wrap;gap:7px}
+.gto-item{font-size:11.5px;color:rgba(201,146,42,.75);padding:4px 10px;border:1px solid rgba(201,146,42,.14);background:rgba(201,146,42,.04)}
+.follow-box{background:rgba(201,146,42,.04);border:1px solid rgba(201,146,42,.15);padding:18px 22px;margin-bottom:14px}
+.fb-lbl{font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:12px}
+.fb-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:6px}
+.fb-item{font-size:12.5px;color:rgba(201,146,42,.82);padding:7px 12px;border:1px solid rgba(201,146,42,.14);background:rgba(201,146,42,.04);font-style:italic;line-height:1.45}
+
+/* TEACHER NOTES */
+.tn{border-top:1px solid rgba(201,146,42,.12);margin-top:20px}
+.tn-toggle{width:100%;background:rgba(201,146,42,.04);border:1px solid rgba(201,146,42,.12);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(201,146,42,.7);transition:all .18s;touch-action:manipulation}
+.tn-toggle:hover{background:rgba(201,146,42,.08);color:var(--gold)}
+.tn-arrow{transition:transform .25s}.tn-toggle.open .tn-arrow{transform:rotate(180deg)}
+.tn-body{display:none}.tn-body.open{display:block}
+.tn-capa{padding:14px 18px;border-bottom:1px solid rgba(255,255,255,.04)}.tn-capa:last-child{border-bottom:none}
+.tn-cl{font-family:'Syne',sans-serif;font-size:8.5px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:7px}
+.tn-c1 .tn-cl{color:rgba(0,207,255,.8)}.tn-c2 .tn-cl{color:rgba(167,139,250,.8)}.tn-c3 .tn-cl{color:rgba(201,146,42,.8)}
+.tn-txt{font-size:12.5px;color:var(--mt);line-height:1.7}
+.tn-txt ul{padding-left:16px;display:flex;flex-direction:column;gap:4px}
+.teacher-only{display:block}body.student-mode .teacher-only{display:none!important}
+.ftr{background:var(--s1);border-top:1px solid var(--bd);padding:18px 32px;display:flex;justify-content:space-between;align-items:center}
+.fb{font-family:'Syne',sans-serif;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim)}
+@media(max-width:860px){
+  .hero,.sec{padding:32px 20px}.snav{padding:0 20px}.hdr{padding:14px 20px}.h-title{font-size:36px}
+  .wu-grid,.phrases-grid,.rp-roles,.debate-sides,.fb-grid,.wu2-grid{grid-template-columns:repeat(2,1fr)}
+  .wu-grid,.rp-roles,.debate-sides{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body ontouchstart="">
+<div class="prog" id="prog"></div>
+
+<header class="hdr">
+  <div class="brand">
+    <div class="dot"></div>
+    <div>
+      <div class="bname">Gabriel Turner · English Training</div>
+      <div class="bsub">A1.2 · Module 1 · Session 4B</div>
+    </div>
+  </div>
+  <div class="hdr-r">
+    <span class="badge">A1.2</span>
+    <span class="sbadge">Application &amp; Mastery</span>
+    <button class="mode-btn" id="modeBtn" onclick="toggleMode()">👁 Student Mode</button>
+  </div>
+</header>
+
+<div class="mastery-banner">🏆 Session 4B · Application &amp; Mastery · Imperatives in Action — Sin tablas. Solo llamadas reales, instrucciones reales.</div>
+
+<div style="border-bottom:1px solid var(--bd)">
+<div class="hero">
+  <div class="h-meta">A1.2 · Module 1 · Session 4B · Application &amp; Mastery</div>
+  <div class="h-title">Imperatives<br><em>in Action</em></div>
+  <div class="h-sub">Ya sabes Confirm, Don't forget, Please attach — ahora úsalos para abrir llamadas internacionales, dar instrucciones reales a tu equipo y debatir sobre reglas profesionales. Sin apuntes.</div>
+  <div class="h-chips">
+    <div class="chip"><strong>Focus:</strong> Free imperative production · Real calls</div>
+    <div class="chip"><strong>60 min</strong> · Live session</div>
+    <div class="chip"><strong>A1.2</strong> · Business fluency</div>
+    <div class="chip"><strong>Mastery</strong> · No grammar reference</div>
+  </div>
+</div>
+</div>
+
+<nav class="snav">
+  <a class="sni active" href="#s1">§1 Warm-Up</a>
+  <a class="sni" href="#s2">§2 Recap</a>
+  <a class="sni" href="#s3">§3 Listening</a>
+  <a class="sni" href="#s4">§4 Game</a>
+  <a class="sni" href="#s5">§5 Role Play</a>
+  <a class="sni" href="#s6">§6 Debate</a>
+  <a class="sni" href="#s7">§7 Wrap-Up</a>
+</nav>
+
+<!-- §1 WARM-UP — SITUATION CARDS -->
+<div class="sec-outer" id="s1"><section class="sec">
+  <div class="sec-hd">
+    <div><div class="sec-lbl">§ 01</div><div class="sec-title">Warm-Up — Situation Speed Round</div></div>
+    <div class="sec-time">5 min</div>
+  </div>
+
+  <p style="font-size:13px;color:var(--mt);margin-bottom:20px;line-height:1.6"><strong style="color:var(--txt)">Sin modelo, sin tabla.</strong> El maestro lee la situación. El alumno produce el imperativo correcto INSTANTÁNEAMENTE — en el formato correcto (afirmativo, polite o negativo). Haz clic en la tarjeta cuando hayas respondido. ⚡</p>
+
+  <div class="wu-grid">
+    <div class="wu-card" onclick="this.classList.toggle('answered');this.querySelector('.wu-tick').style.opacity=this.classList.contains('answered')?1:0">
+      <div class="wu-n">S1</div>
+      <div class="wu-situation">"Your colleague forgot to attach a file."</div>
+      <div class="wu-task">→ Polite instruction</div>
+      <div class="wu-tick">✓</div>
+    </div>
+    <div class="wu-card" onclick="this.classList.toggle('answered');this.querySelector('.wu-tick').style.opacity=this.classList.contains('answered')?1:0">
+      <div class="wu-n">S2</div>
+      <div class="wu-situation">"Someone is using their phone during a meeting."</div>
+      <div class="wu-task">→ Negative imperative</div>
+      <div class="wu-tick">✓</div>
+    </div>
+    <div class="wu-card" onclick="this.classList.toggle('answered');this.querySelector('.wu-tick').style.opacity=this.classList.contains('answered')?1:0">
+      <div class="wu-n">S3</div>
+      <div class="wu-situation">"You start an international call — it's cold in Montreal."</div>
+      <div class="wu-task">→ Weather small talk opener</div>
+      <div class="wu-tick">✓</div>
+    </div>
+    <div class="wu-card" onclick="this.classList.toggle('answered');this.querySelector('.wu-tick').style.opacity=this.classList.contains('answered')?1:0">
+      <div class="wu-n">S4</div>
+      <div class="wu-situation">"The deadline is tomorrow — urgent reminder to the team."</div>
+      <div class="wu-task">→ Direct negative imperative</div>
+      <div class="wu-tick">✓</div>
+    </div>
+    <div class="wu-card" onclick="this.classList.toggle('answered');this.querySelector('.wu-tick').style.opacity=this.classList.contains('answered')?1:0">
+      <div class="wu-n">S5</div>
+      <div class="wu-situation">"You need the client to confirm receipt of a contract."</div>
+      <div class="wu-task">→ Polite imperative by email</div>
+      <div class="wu-tick">✓</div>
+    </div>
+    <div class="wu-card" onclick="this.classList.toggle('answered');this.querySelector('.wu-tick').style.opacity=this.classList.contains('answered')?1:0">
+      <div class="wu-n">S6</div>
+      <div class="wu-situation">"Someone is about to share confidential data in a group chat."</div>
+      <div class="wu-task">→ Urgent negative imperative</div>
+      <div class="wu-tick">✓</div>
+    </div>
+  </div>
+
+  <div class="tn teacher-only">
+    <button class="tn-toggle" onclick="toggleTN(this)">📋 Teacher Notes — §1 Warm-Up <span class="tn-arrow">▼</span></button>
+    <div class="tn-body">
+      <div class="tn-capa tn-c1"><div class="tn-cl">Capa 1 · Pedagogical</div><div class="tn-txt"><ul>
+        <li>Diagnóstico inmediato: ¿produce el alumno imperativos sin modelo? Los errores de S4A ("No + verb", "Please to + verb") deben haber desaparecido. Si no: pausa de 90 seg antes de continuar.</li>
+        <li>S3 (weather opener) es el más difícil: no es un imperativo — es small talk. El alumno debe reconocer el tipo de respuesta apropiada, no solo la forma gramatical.</li>
+        <li>Para S5 y S6: el alumno debe distinguir entre "Please + verb" (S5, cortés) y "Don't + verb" (S6, urgente). La misma acción (no compartir) puede requerir registros distintos.</li>
+      </ul></div></div>
+      <div class="tn-capa tn-c2"><div class="tn-cl">Capa 2 · Engagement</div><div class="tn-txt"><ul>
+        <li>"6 situaciones, 6 respuestas correctas. Sin tabla. Eso es automaticidad — así funcionas en una llamada real."</li>
+      </ul></div></div>
+      <div class="tn-capa tn-c3"><div class="tn-cl">Capa 3 · Growth &amp; Retention</div><div class="tn-txt"><ul>
+        <li>"En §5 de hoy vas a abrir una llamada completa en inglés — weather + instrucciones + cierre. Hoy construyes esa base."</li>
+      </ul></div></div>
+    </div>
+  </div>
+</section></div>
+
+<!-- §2 RECAP — PHRASE CARDS + DRILL -->
+<div class="sec-outer" id="s2"><section class="sec">
+  <div class="sec-hd">
+    <div><div class="sec-lbl">§ 02</div><div class="sec-title">Recap — Imperative Phrase Drill</div></div>
+    <div class="sec-time">7–8 min</div>
+  </div>
+
+  <div style="font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--ac2);margin-bottom:14px">Key Phrases — Click to practise</div>
+  <div class="phrases-grid">
+    <div class="phrase-card" onclick="playPhrase(this,'Please confirm receipt of the contract I sent yesterday.')">
+      <div class="ph-type ph-type-pol">Polite</div>
+      <div class="ph-en">"Please confirm receipt of the contract."</div>
+      <div class="ph-use">Uso: email formal a cliente o colega</div>
+      <button class="ph-btn">🔊 Listen</button>
+    </div>
+    <div class="phrase-card" onclick="playPhrase(this,'Don\'t forget — the deadline is tomorrow!')">
+      <div class="ph-type ph-type-neg">Negative</div>
+      <div class="ph-en">"Don't forget — the deadline is tomorrow!"</div>
+      <div class="ph-use">Uso: recordatorio urgente al equipo</div>
+      <button class="ph-btn">🔊 Listen</button>
+    </div>
+    <div class="phrase-card" onclick="playPhrase(this,'Please attach the Q2 progress report to your next update.')">
+      <div class="ph-type ph-type-pol">Polite</div>
+      <div class="ph-en">"Please attach the Q2 report to your update."</div>
+      <div class="ph-use">Uso: instrucción de tarea específica</div>
+      <button class="ph-btn">🔊 Listen</button>
+    </div>
+    <div class="phrase-card" onclick="playPhrase(this,'Please don\'t share the budget numbers outside the team.')">
+      <div class="ph-type ph-type-neg">Polite neg.</div>
+      <div class="ph-en">"Please don't share the budget numbers."</div>
+      <div class="ph-use">Uso: instrucción formal de confidencialidad</div>
+      <button class="ph-btn">🔊 Listen</button>
+    </div>
+    <div class="phrase-card" onclick="playPhrase(this,'How\'s the weather over there in Vancouver? It\'s sunny and warm here in Houston!')">
+      <div class="ph-type" style="color:var(--gold)">Small Talk</div>
+      <div class="ph-en">"How's the weather over there in ___?"</div>
+      <div class="ph-use">Uso: apertura de llamada internacional</div>
+      <button class="ph-btn">🔊 Listen</button>
+    </div>
+    <div class="phrase-card" onclick="playPhrase(this,'Send your update before the meeting — don\'t wait until the last minute.')">
+      <div class="ph-type ph-type-af">Affirmative</div>
+      <div class="ph-en">"Send your update before the meeting."</div>
+      <div class="ph-use">Uso: instrucción directa de rutina</div>
+      <button class="ph-btn">🔊 Listen</button>
+    </div>
+  </div>
+
+  <div style="background:var(--s2);border:1px solid var(--bd);padding:14px 20px;font-size:12.5px;color:var(--mt);line-height:1.7;margin-top:2px">
+    <strong style="color:var(--txt)">Error Correction Drill:</strong> El maestro dice una frase INCORRECTA (ej: "No forget the deadline" / "Please to confirm"). El alumno la corrige inmediatamente en forma correcta. Mínimo 6 errores, ritmo creciente.
+  </div>
+
+  <div class="tn teacher-only">
+    <button class="tn-toggle" onclick="toggleTN(this)">📋 Teacher Notes — §2 Recap <span class="tn-arrow">▼</span></button>
+    <div class="tn-body">
+      <div class="tn-capa tn-c1"><div class="tn-cl">Capa 1 · Pedagogical</div><div class="tn-txt"><ul>
+        <li>Error Correction Drill: los 4 errores más comunes de S4A para usar: "No forget", "Please to confirm", "You save the file please", "Don't to use". El alumno corrige instantáneamente.</li>
+        <li>Si el alumno falla en la corrección: pide que verbalice la regla antes de continuar. "¿Cuál es la regla? 'Don't + ___'" — luego continúa.</li>
+        <li>Threshold para role play: 5/6 frases correctas sin hesitar. Menos → 5 min extra de drill antes de §5.</li>
+      </ul></div></div>
+      <div class="tn-capa tn-c2"><div class="tn-cl">Capa 2 · Engagement</div><div class="tn-txt"><ul>
+        <li>"Estás corrigiendo errores que hacen tus colegas todos los días en emails a clientes internacionales. Esa es la diferencia."</li>
+      </ul></div></div>
+      <div class="tn-capa tn-c3"><div class="tn-cl">Capa 3 · Growth &amp; Retention</div><div class="tn-txt"><ul>
+        <li>"In S5 del módulo combinas imperativos + 3ª persona + ON/IN/AT en un solo monólogo de gestión de equipo. Hoy construyes la pieza final."</li>
+      </ul></div></div>
+    </div>
+  </div>
+</section></div>
+
+<!-- §3 LISTENING — CALL WITH INSTRUCTIONS -->
+<div class="sec-outer" id="s3"><section class="sec">
+  <div class="sec-hd">
+    <div><div class="sec-lbl">§ 03</div><div class="sec-title">Listening — The Monday Morning Call</div></div>
+    <div class="sec-time">10 min</div>
+  </div>
+
+  <div class="player">
+    <div class="pl-top">
+      <div class="pl-ico">🎧</div>
+      <div>
+        <div class="pl-title">International Team Call — Weather + Instructions (new context)</div>
+        <div class="pl-meta">ElevenLabs · 2 speakers · Sarah + Adam · Rate: 0.83 · ~90 sec · A1.2</div>
+      </div>
+    </div>
+    <div class="pl-ph">
+      <p>📎 Pega tu URL de Google Drive aquí.<br>
+      Convierte: reemplaza <code>/view?usp=sharing</code> → <code>/preview</code></p>
+    </div>
+    <div class="script-toggle teacher-only" onclick="toggleScript('sc1','sc1-lbl')">
+      <span id="sc1-lbl">▶ Show ElevenLabs Script</span>
+    </div>
+    <div class="script-box teacher-only" id="sc1">
+      <p><strong style="color:var(--ac2)">Sarah (manager) + Adam (Tom / new team member) · Rate: 0.83 · ~90 sec</strong></p><br>
+      <p><strong style="color:var(--ac2)">Sarah:</strong> "Good morning, everyone! Before we start — Tom, how's the weather over there in Toronto?"</p><br>
+      <p><strong style="color:var(--green)">Tom (Adam):</strong> "Hi Sarah! It's freezing here — minus twelve! How about Houston?"</p><br>
+      <p><strong style="color:var(--ac2)">Sarah:</strong> "Oh wow! It's sunny and warm here — about 78 degrees. Very different! Anyway, let's get started. I have a few instructions for the team."</p><br>
+      <p><strong style="color:var(--ac2)">Sarah:</strong> "First — please confirm the meeting with the client in Montreal. They are waiting. Send the confirmation by noon today."</p><br>
+      <p><strong style="color:var(--green)">Tom:</strong> "Got it. Confirm the meeting by noon."</p><br>
+      <p><strong style="color:var(--ac2)">Sarah:</strong> "Good. Second — don't forget to attach the updated budget to your Q2 report. Don't send the report without it."</p><br>
+      <p><strong style="color:var(--green)">Tom:</strong> "Attach the updated budget. Understood."</p><br>
+      <p><strong style="color:var(--ac2)">Sarah:</strong> "And finally — please don't share any project details with external contacts until the contract is signed. This is very important."</p><br>
+      <p><strong style="color:var(--green)">Tom:</strong> "Of course. Don't share details until the contract is signed. Will do."</p><br>
+      <p><strong style="color:var(--ac2)">Sarah:</strong> "Perfect. Any questions? Great — see you Thursday. Stay warm in Toronto!"</p>
+      <div class="script-note">ElevenLabs: Sarah (manager) + Adam (Tom, nuevo miembro del equipo). Rate 0.83. Este diálogo recicla TODOS los imperativos de S4A en contexto de llamada real con dos speakers. Tom REPITE las instrucciones — modelo de comprensión activa que el alumno practicará en §5. Graba por separado, combina. Sube a Google Drive con iframe /preview.</div>
+    </div>
+  </div>
+
+  <div style="background:var(--bg);border:1px solid rgba(201,146,42,.2);padding:22px 26px;margin-top:2px">
+    <div style="font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold);margin-bottom:4px">Listening Task — Oral Response</div>
+    <div style="font-size:12px;color:var(--mt);margin-bottom:16px;margin-top:4px">Escucha una vez. Sin escribir. El maestro pregunta — el alumno responde produciendo el imperativo que escuchó.</div>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <div style="font-size:13.5px;color:var(--txt);padding:10px 14px;border-left:3px solid var(--ac);background:rgba(139,92,246,.03)">"What is the first instruction Sarah gives? Say it exactly as she said it."</div>
+      <div style="font-size:13.5px;color:var(--txt);padding:10px 14px;border-left:3px solid var(--ac);background:rgba(139,92,246,.03)">"What should Tom attach to the Q2 report? Which imperative does Sarah use?"</div>
+      <div style="font-size:13.5px;color:var(--txt);padding:10px 14px;border-left:3px solid var(--ac);background:rgba(139,92,246,.03)">"Count the imperatives: how many were affirmative? How many negative? How many polite?"</div>
+      <div style="font-size:13.5px;color:var(--txt);padding:10px 14px;border-left:3px solid var(--ac);background:rgba(139,92,246,.03)">"Now YOU are Sarah — give your team 3 instructions from your real work this week. Use different types."</div>
+    </div>
+  </div>
+
+  <div class="tn teacher-only">
+    <button class="tn-toggle" onclick="toggleTN(this)">📋 Teacher Notes — §3 Listening <span class="tn-arrow">▼</span></button>
+    <div class="tn-body">
+      <div class="tn-capa tn-c1"><div class="tn-cl">Capa 1 · Pedagogical</div><div class="tn-txt"><ul>
+        <li>Tom REPITE las instrucciones en el audio — esto modela la práctica de confirmación activa que el alumno usará en §5 Role Play. "Got it. Confirm the meeting by noon."</li>
+        <li>Tarea 3 (conteo): afirmativas = 2 (send + attach), negativas = 2 (don't forget + don't send), polite = 1 (please confirm) + 1 polite neg (please don't share). Total: 6.</li>
+        <li>Tarea 4 es la más valiosa: el alumno produce imperativos REALES de su trabajo. Exige que use los 3 tipos (af + neg + polite).</li>
+      </ul></div></div>
+      <div class="tn-capa tn-c2"><div class="tn-cl">Capa 2 · Engagement</div><div class="tn-txt"><ul>
+        <li>"Tom repitió cada instrucción para confirmar. Eso es lo que hacen los profesionales en llamadas internacionales — confirma siempre lo que escuchas."</li>
+      </ul></div></div>
+      <div class="tn-capa tn-c3"><div class="tn-cl">Capa 3 · Growth &amp; Retention</div><div class="tn-txt"><ul>
+        <li>"En §5 tú eres Sarah. Das instrucciones REALES a tu equipo — con weather opener, mix de imperativos, y cierre. Hoy escuchaste el modelo."</li>
+      </ul></div></div>
+    </div>
+  </div>
+</section></div>
+
+<!-- §4 GAME — IMPERATIVE CHALLENGE + WORDWALL -->
+<div class="sec-outer" id="s4"><section class="sec">
+  <div class="sec-hd">
+    <div><div class="sec-lbl">§ 04</div><div class="sec-title">Game — Imperative Type Challenge</div></div>
+    <div class="sec-time">10–12 min</div>
+  </div>
+
+  <!-- WORDWALL -->
+  <div class="wordwall-wrap">
+    <div class="ww-lbl">🎮 Wordwall — External Game</div>
+    <div class="ww-title">Classify the Imperative</div>
+    <div class="ww-placeholder">
+      🔗 Inserta aquí el link o iframe del Wordwall.<br>
+      Sugerencia: <strong>"Group Sort"</strong> — 3 columnas: Affirmative / Polite / Negative<br>
+      Tarjetas: "Confirm the meeting." → Aff · "Please attach the file." → Polite · "Don't forget the deadline." → Neg · "Send the update." → Aff · "Please don't share this." → Polite Neg · "Arrive on time." → Aff · "Don't use your phone." → Neg · "Please reply by Thursday." → Polite · "Don't avoid emails." → Neg · "Follow the instructions." → Aff<br>
+      Tiempo: 60 segundos.
+    </div>
+    <div class="ww-inst">Instrucción: "Clasifica cada imperativo en su tipo. 60 segundos."</div>
+  </div>
+
+  <!-- IMPERATIVE GAME -->
+  <div class="imp-game">
+    <div class="ig-lbl">🎯 GT Oral Game — Situation → Correct Imperative</div>
+    <div class="ig-title">Lee la situación — elige el imperativo correcto</div>
+
+    <div class="ig-round">Round 1</div>
+    <div class="ig-sit">
+      <div class="ig-sit-lbl">Situation</div>
+      <div class="ig-sit-txt">"Your colleague wrote 'No forget to send the report.' What's the correct form?"</div>
+    </div>
+    <div class="ig-choices">
+      <button class="ig-btn" onclick="igCheck(this,'Don\'t forget to send the report.','ig1fb')">No forget to send the report.</button>
+      <button class="ig-btn" onclick="igCheck(this,'Don\'t forget to send the report.','ig1fb')">Don't forget to send the report.</button>
+      <button class="ig-btn" onclick="igCheck(this,'Don\'t forget to send the report.','ig1fb')">You don't forget to send the report.</button>
+    </div>
+    <div class="ig-fb" id="ig1fb"></div>
+
+    <div class="ig-round" style="margin-top:18px">Round 2</div>
+    <div class="ig-sit">
+      <div class="ig-sit-lbl">Situation</div>
+      <div class="ig-sit-txt">"An email to a client asking them to confirm attendance at a formal event. Which is most appropriate?"</div>
+    </div>
+    <div class="ig-choices">
+      <button class="ig-btn" onclick="igCheck(this,'Please confirm your attendance by Friday.','ig2fb')">Confirm your attendance by Friday.</button>
+      <button class="ig-btn" onclick="igCheck(this,'Please confirm your attendance by Friday.','ig2fb')">Please confirm your attendance by Friday.</button>
+      <button class="ig-btn" onclick="igCheck(this,'Please confirm your attendance by Friday.','ig2fb')">Please to confirm your attendance by Friday.</button>
+    </div>
+    <div class="ig-fb" id="ig2fb"></div>
+
+    <div class="ig-round" style="margin-top:18px">Round 3</div>
+    <div class="ig-sit">
+      <div class="ig-sit-lbl">Situation</div>
+      <div class="ig-sit-txt">"You want to open a video call with your contact in Montreal. It's winter there."</div>
+    </div>
+    <div class="ig-choices">
+      <button class="ig-btn" onclick="igCheck(this,'How\'s the weather over there in Montreal?','ig3fb')">Don't forget to ask about the weather.</button>
+      <button class="ig-btn" onclick="igCheck(this,'How\'s the weather over there in Montreal?','ig3fb')">How's the weather over there in Montreal?</button>
+      <button class="ig-btn" onclick="igCheck(this,'How\'s the weather over there in Montreal?','ig3fb')">Please talk about the weather first.</button>
+    </div>
+    <div class="ig-fb" id="ig3fb"></div>
+
+    <div class="ig-round" style="margin-top:18px;color:var(--gold)">Round 4 — You create</div>
+    <div style="font-size:13px;color:var(--mt);line-height:1.75">Ahora el alumno crea 4 instrucciones para su equipo REAL de trabajo — una de cada tipo: afirmativa, polite, negativa, polite negativa. El maestro evalúa: ¿forma correcta? ¿Sin "No + verb" ni "Please to + verb"?</div>
+  </div>
+
+  <div class="tn teacher-only">
+    <button class="tn-toggle" onclick="toggleTN(this)">📋 Teacher Notes — §4 Game <span class="tn-arrow">▼</span></button>
+    <div class="tn-body">
+      <div class="tn-capa tn-c1"><div class="tn-cl">Capa 1 · Pedagogical</div><div class="tn-txt"><ul>
+        <li>Round 3 es el más sofisticado: las opciones incorrectas son gramaticalmente válidas ("Don't forget to ask" es correcto) pero pragmáticamente incorrectas para ese contexto. El alumno debe distinguir.</li>
+        <li>Round 4 con datos reales: exige los 4 tipos. Si el alumno solo produce afirmativos: "Ahora dame una con Please. Ahora una con Don't."</li>
+        <li>Si el Wordwall no está disponible: el juego oral es suficiente y más valioso.</li>
+      </ul></div></div>
+      <div class="tn-capa tn-c2"><div class="tn-cl">Capa 2 · Engagement</div><div class="tn-txt"><ul>
+        <li>"Round 4: esas 4 instrucciones reales que acabas de dar — puedes usarlas en tu próxima junta de equipo en inglés. Sin cambiar nada."</li>
+      </ul></div></div>
+      <div class="tn-capa tn-c3"><div class="tn-cl">Capa 3 · Growth &amp; Retention</div><div class="tn-txt"><ul>
+        <li>"In A2 you'll add 'Could you please confirm?' and 'Would you mind attaching?' — same idea, more formal register. Today's forms are the foundation."</li>
+      </ul></div></div>
+    </div>
+  </div>
+</section></div>
+
+<!-- §5 ROLE PLAY -->
+<div class="sec-outer" id="s5"><section class="sec">
+  <div class="sec-hd">
+    <div><div class="sec-lbl">§ 05</div><div class="sec-title">Role Play — International Call Scenarios</div></div>
+    <div class="sec-time">12–15 min</div>
+  </div>
+
+  <!-- ROLE PLAY 1 -->
+  <div class="rp-card">
+    <div class="rp-tag">🎭 Role Play 1 — The Monday Morning Call (Full)</div>
+    <div class="rp-scene">Tú eres el gerente de equipo. Abres la llamada del lunes con tu colega en Canadá. Sigues el formato completo: weather opener → instrucciones → cierre.</div>
+    <div class="rp-roles">
+      <div class="rp-role-box rp-role-a">
+        <div class="rp-role-lbl">Role A — You (student / manager)</div>
+        <div class="rp-role-info">1. Abre con weather small talk (2 oraciones). 2. Da 5 instrucciones reales de tu trabajo: mix de Confirm/Please/Don't. 3. Cierra: "Please confirm receipt of these instructions." 4. Sin apuntes después de 30 seg de preparación.</div>
+      </div>
+      <div class="rp-role-box rp-role-b">
+        <div class="rp-role-lbl">Role B — Teacher (Canadian colleague)</div>
+        <div class="rp-role-info">Responde con el tiempo de la ciudad que eliges. Después de cada instrucción: repite brevemente ("Got it — I'll ___"). Haz 2 preguntas de follow-up: "What exactly should I attach?" / "By when?"</div>
+      </div>
+    </div>
+    <div class="rp-starter">"Good morning! Before we start — how's the weather over there in ___?"</div>
+    <div class="rp-goal teacher-only"><strong>Objetivo:</strong> el alumno usa los 3 tipos de imperativo (af + polite + neg), abre con small talk de clima, y cierra con una instrucción polite. Sin "No + verb" ni "Please to + verb" en ningún momento.</div>
+  </div>
+
+  <!-- ROLE PLAY 2 -->
+  <div class="rp-card">
+    <div class="rp-tag">🎭 Role Play 2 — The Office Guidelines Announcement</div>
+    <div class="rp-scene">Patricia Morales (tú) presenta las nuevas guías de oficina a un equipo nuevo. Explica las reglas usando imperativos — el equipo (el maestro) hace preguntas de clarificación.</div>
+    <div class="rp-roles">
+      <div class="rp-role-box rp-role-a">
+        <div class="rp-role-lbl">Role A — You (student / Patricia)</div>
+        <div class="rp-role-info">Da 6 instrucciones de oficina reales o basadas en el email de S4A. Mix obligatorio: 2 afirmativas + 2 polite + 2 negativas. Usa vocabulario de S4A: confirm, attach, avoid, don't share, don't be late.</div>
+      </div>
+      <div class="rp-role-box rp-role-b">
+        <div class="rp-role-lbl">Role B — Teacher (new employee)</div>
+        <div class="rp-role-info">Después de escuchar: "What happens if I'm late?" / "Can I use my phone if it's silent?" / "What exactly should I attach?" — fuerza clarificaciones usando más imperativos.</div>
+      </div>
+    </div>
+    <div class="rp-starter teacher-only">[Maestro]: "Hi Patricia! We're the new team. We'd love to hear about the office guidelines."</div>
+    <div class="rp-goal teacher-only"><strong>Objetivo:</strong> el alumno usa vocabulary de S4A (confirm, attach, avoid) + los 3 tipos de imperativo. Al responder las preguntas del maestro, produce imperativos adicionales espontáneamente.</div>
+  </div>
+
+  <div class="tn teacher-only">
+    <button class="tn-toggle" onclick="toggleTN(this)">📋 Teacher Notes — §5 Role Play <span class="tn-arrow">▼</span></button>
+    <div class="tn-body">
+      <div class="tn-capa tn-c1"><div class="tn-cl">Capa 1 · Pedagogical</div><div class="tn-txt"><ul>
+        <li>Role Play 1 usa datos REALES del trabajo del alumno. Si no sabe cómo decir una instrucción de su trabajo: "¿Cuál es la instrucción? Dímela en español y construimos juntos en inglés."</li>
+        <li>Role Play 2 recicla el email de S4A §5 como modelo — el alumno ya lo leyó y comprende el contexto. Usa eso como andamiaje.</li>
+        <li>Error más probable: el alumno abandona los imperativos al responder preguntas y regresa a "You must..." o "I want you to...". Redirige: "¿Cómo lo diría Patricia? — como imperativo."</li>
+      </ul></div></div>
+      <div class="tn-capa tn-c2"><div class="tn-cl">Capa 2 · Engagement</div><div class="tn-txt"><ul>
+        <li>"Acabas de abrir una llamada internacional completa en inglés — clima, instrucciones, cierre. Eso es exactamente lo que hacen los gerentes de empresas como la tuya con clientes en Canadá o Houston."</li>
+      </ul></div></div>
+      <div class="tn-capa tn-c3"><div class="tn-cl">Capa 3 · Growth &amp; Retention</div><div class="tn-txt"><ul>
+        <li>Upsell: "En S5 del módulo haces esto mismo pero integrando 3ª persona de S3 — 'Ana sends the report every Monday. Please confirm receipt by Friday.' Ese es el inglés de gestión completo."</li>
+      </ul></div></div>
+    </div>
+  </div>
+</section></div>
+
+<!-- §6 DEBATE -->
+<div class="sec-outer" id="s6"><section class="sec">
+  <div class="sec-hd">
+    <div><div class="sec-lbl">§ 06</div><div class="sec-title">Debate — Office Rules</div></div>
+    <div class="sec-time">8–10 min</div>
+  </div>
+
+  <div class="debate-card">
+    <div class="debate-lbl">🗣 Free Speaking — Debate</div>
+    <div class="debate-q">"Are strict office guidelines (like Patricia's email) necessary in a professional company — or do they make employees feel controlled? Defend your position using imperatives."</div>
+    <div class="debate-sides">
+      <div class="debate-side">
+        <div class="debate-side-lbl" style="color:var(--ac)">📌 Rules are necessary</div>
+        <div class="debate-phrases">
+          <div class="debate-phrase">"Please confirm all emails within 24 hours — this is professional."</div>
+          <div class="debate-phrase">"Don't use your phone during meetings — it shows respect."</div>
+          <div class="debate-phrase">"Please don't share confidential data — it protects the company."</div>
+          <div class="debate-phrase">"Follow the guidelines and the team works better."</div>
+        </div>
+      </div>
+      <div class="debate-side">
+        <div class="debate-side-lbl" style="color:var(--green)">🔄 Trust your team</div>
+        <div class="debate-phrases">
+          <div class="debate-phrase">"Don't give instructions for everything — trust people."</div>
+          <div class="debate-phrase">"Please avoid sending 10 rules in an email — it's too much."</div>
+          <div class="debate-phrase">"Don't control every detail — it kills creativity."</div>
+          <div class="debate-phrase">"Follow a few key rules, not 20 instructions."</div>
+        </div>
+      </div>
+    </div>
+    <div class="sp-cards">
+      <span class="sp-card">Please + verb (polite rule)</span>
+      <span class="sp-card">Don't + verb (prohibition)</span>
+      <span class="sp-card">Follow / Confirm / Avoid…</span>
+      <span class="sp-card">In my company, we always…</span>
+    </div>
+  </div>
+
+  <!-- OPTIONAL: WRITE YOUR OWN GUIDELINES -->
+  <div style="background:var(--s1);border:1px solid rgba(139,92,246,.22);padding:22px 28px;margin-top:2px">
+    <div style="font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--ac);margin-bottom:12px">🎤 Optional Extension — Write Your Own Office Guidelines</div>
+    <div style="font-size:15px;color:#fff;font-style:italic;line-height:1.55;margin-bottom:12px">"Write 5 guidelines for your real workplace — the rules YOU think are important. Read them aloud. Use all 3 imperative types."</div>
+    <div style="font-size:12.5px;color:var(--mt);line-height:1.7">Al menos 5 instrucciones. Al menos 1 de cada tipo (af, polite, neg). Sin ver S4A. Estas son TUS reglas reales.</div>
+  </div>
+
+  <div class="follow-box teacher-only">
+    <div class="fb-lbl">Teacher Follow-Up — After Debate</div>
+    <div class="fb-grid">
+      <div class="fb-item">"What is one rule you would add to your company's guidelines? Say it as an imperative."</div>
+      <div class="fb-item">"What rule from Patricia's email do you think is most important? Why? Use an imperative."</div>
+      <div class="fb-item">"If you were Patricia, what would you say differently? Give 2 new instructions."</div>
+      <div class="fb-item">"Describe the weather right now in Celaya + the weather in a city you know. 3 sentences."</div>
+    </div>
+  </div>
+
+  <div class="tn teacher-only">
+    <button class="tn-toggle" onclick="toggleTN(this)">📋 Teacher Notes — §6 Debate <span class="tn-arrow">▼</span></button>
+    <div class="tn-body">
+      <div class="tn-capa tn-c1"><div class="tn-cl">Capa 1 · Pedagogical</div><div class="tn-txt"><ul>
+        <li>El debate activa imperativos en discurso argumentativo — el nivel más alto de producción. Regla: el alumno DEBE usar al menos 4 imperativos en el debate. Si no los usa: "Ahora di eso mismo como instrucción — 'Please + verb'."</li>
+        <li>El maestro toma el lado opuesto y usa imperatives también — modela el uso natural en argumentación.</li>
+        <li>Follow-up Q4 (clima) cierra el ciclo de S4 — el alumno usa small talk de forma espontánea, no como ejercicio.</li>
+      </ul></div></div>
+      <div class="tn-capa tn-c2"><div class="tn-cl">Capa 2 · Engagement</div><div class="tn-txt"><ul>
+        <li>"Acabas de debatir política de empresa en inglés usando imperativos. Eso es inglés ejecutivo — no inglés de turista."</li>
+      </ul></div></div>
+      <div class="tn-capa tn-c3"><div class="tn-cl">Capa 3 · Growth &amp; Retention</div><div class="tn-txt"><ul>
+        <li>Testimonial: "Si tu director te preguntara en inglés 'What are the most important guidelines in your department?' — ¿podrías responderle con imperativos? Sí. Eso es lo que aprendiste hoy."</li>
+      </ul></div></div>
+    </div>
+  </div>
+</section></div>
+
+<!-- §7 WRAP-UP -->
+<div class="sec-outer" id="s7"><section class="sec">
+  <div class="sec-hd">
+    <div><div class="sec-lbl">§ 07</div><div class="sec-title">Wrap-Up &amp; Self-Evaluation</div></div>
+    <div class="sec-time">5 min</div>
+  </div>
+
+  <div class="wu2-grid">
+    <div class="wu2-card">
+      <div class="wu2-h">Can I do this without looking?</div>
+      <ul class="checklist">
+        <li onclick="toggleCheck(this)"><div class="cb"></div><span>I produced correct imperatives in all 6 warm-up situations.</span></li>
+        <li onclick="toggleCheck(this)"><div class="cb"></div><span>I corrected "No forget" and "Please to confirm" instantly in the drill.</span></li>
+        <li onclick="toggleCheck(this)"><div class="cb"></div><span>I understood all instructions in the listening call.</span></li>
+        <li onclick="toggleCheck(this)"><div class="cb"></div><span>I opened Role Play 1 with weather small talk + 5 instructions.</span></li>
+        <li onclick="toggleCheck(this)"><div class="cb"></div><span>I used all 3 imperative types in the debate.</span></li>
+      </ul>
+    </div>
+    <div class="wu2-card">
+      <div class="wu2-h">Module 1 Progress</div>
+      <div class="key-item">
+        <div class="ki-lbl">S1 · S2 ✓</div>
+        <div class="ki-txt">Hobbies · ON/IN/AT · Dates · Work calendar</div>
+      </div>
+      <div class="key-item">
+        <div class="ki-lbl">S3 ✓</div>
+        <div class="ki-txt">3rd person -s · Corporate verbs · Team routine</div>
+      </div>
+      <div class="key-item" style="background:rgba(139,92,246,.04);border-color:rgba(139,92,246,.2)">
+        <div class="ki-lbl" style="color:var(--ac)">S4 ✓ — Now complete</div>
+        <div class="ki-txt">Imperatives · Please + verb · Don't + verb · Weather small talk</div>
+      </div>
+      <div class="key-item">
+        <div class="ki-lbl">S5 · Coming next</div>
+        <div class="ki-txt">Module 1 Review + Exit Task — full integration S1–S4</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="self-eval">
+    <div class="se-lbl">Exit Task — Say it now, without notes</div>
+    <ul class="checklist">
+      <li onclick="toggleCheck(this)"><div class="cb"></div><span>Open a call: weather opener + 3 instructions (one each: af, polite, neg). No script.</span></li>
+      <li onclick="toggleCheck(this)"><div class="cb"></div><span>Correct instantly: "No forget" → ___ / "Please to confirm" → ___</span></li>
+      <li onclick="toggleCheck(this)"><div class="cb"></div><span>Say 2 guidelines for YOUR real company — different imperative types.</span></li>
+    </ul>
+  </div>
+
+  <div class="next-box">
+    <div class="next-lbl">Next →</div>
+    <div class="next-txt"><strong style="color:var(--gold)">S5 — Module 1 Review &amp; Exit Task</strong> &nbsp;·&nbsp; Full consolidation of S1–S4. Your complete work routine + team description + instructions in English.</div>
+  </div>
+
+  <div class="gto teacher-only">
+    <div class="gto-lbl">GT Originals — Session Close</div>
+    <div class="gto-items">
+      <div class="gto-item">🎯 Si el role play fue fluido: pide que el alumno grabe un audio en Moodle abriendo una llamada con weather + 5 instrucciones. "Ese es tu primer professional call opening."</div>
+      <div class="gto-item">📈 Si "No + verb" persistió: asigna tarea — "Escribe 6 instrucciones para tu equipo. 2 de cada tipo. Sin un solo 'No + verb'."</div>
+      <div class="gto-item">🌟 Cierre de S4: "S1 = cuándo. S2 = fechas. S3 = tu equipo. S4 = instrucciones. Tu toolkit de inglés de negocios M1 está completo. S5 lo integra todo."</div>
+    </div>
+  </div>
+
+  <div class="tn teacher-only">
+    <button class="tn-toggle" onclick="toggleTN(this)">📋 Teacher Notes — §7 Wrap-Up <span class="tn-arrow">▼</span></button>
+    <div class="tn-body">
+      <div class="tn-capa tn-c1"><div class="tn-cl">Capa 1 · Pedagogical</div><div class="tn-txt"><ul>
+        <li>Exit Task: todo oral. Si el alumno dice "No forget" en la corrección: no avances hasta que salga correcto espontáneamente. Esa es la prueba del dominio real.</li>
+        <li>Indicadores para avanzar a S5: 0 instancias de "No + verb" + 0 instancias de "Please to + verb" + weather small talk fluido.</li>
+      </ul></div></div>
+      <div class="tn-capa tn-c2"><div class="tn-cl">Capa 2 · Engagement</div><div class="tn-txt"><ul>
+        <li>"¿Cuál tipo de imperativo usas más en tu trabajo real — afirmativo, polite o negativo? ¿Por qué? Dímelo en inglés."</li>
+      </ul></div></div>
+      <div class="tn-capa tn-c3"><div class="tn-cl">Capa 3 · Growth &amp; Retention</div><div class="tn-txt"><ul>
+        <li>"S5 integra S1+S2+S3+S4 en un solo monólogo: tu rutina + tu equipo + tus fechas + tus instrucciones. Eso es inglés de gestión A1.2 completo."</li>
+        <li>Upsell: "En A2 agregas 'Could you please' y 'Would you mind' — mismo concepto, registro más formal. Hoy construiste la base."</li>
+      </ul></div></div>
+    </div>
+  </div>
+</section></div>
+
+<footer class="ftr">
+  <div class="fb">Gabriel Turner · English Training</div>
+  <div class="fb">A1.2 · M1 · S4B · Imperatives in Action</div>
+  <div class="fb">GT_A1_2_M1_S4B_TEACHER_v3</div>
+</footer>
+
+<script>
+window.addEventListener('scroll',function(){
+  var h=document.documentElement.scrollHeight-window.innerHeight;
+  document.getElementById('prog').style.width=(window.scrollY/h*100)+'%';
+},{passive:true});
+function toggleMode(){
+  var b=document.body;var btn=document.getElementById('modeBtn');
+  b.classList.toggle('student-mode');
+  btn.textContent=b.classList.contains('student-mode')?'📋 Teacher Mode':'👁 Student Mode';
+}
+function speak(t){
+  if(!window.speechSynthesis)return;
+  speechSynthesis.cancel();
+  var u=new SpeechSynthesisUtterance(t);
+  u.lang='en-US';u.rate=0.85;
+  speechSynthesis.speak(u);
+}
+function toggleTN(btn){btn.classList.toggle('open');btn.nextElementSibling.classList.toggle('open');}
+function toggleScript(boxId,lblId){
+  var b=document.getElementById(boxId);var l=document.getElementById(lblId);
+  b.classList.toggle('open');
+  l.textContent=b.classList.contains('open')?'▼ Hide Script':'▶ Show ElevenLabs Script';
+}
+function playPhrase(card,text){
+  document.querySelectorAll('.phrase-card').forEach(function(c){c.classList.remove('played');});
+  card.classList.add('played');speak(text);
+}
+function igCheck(btn,correct,fbId){
+  var container=btn.parentElement;
+  if(container.dataset.locked)return;
+  var fb=document.getElementById(fbId);
+  container.querySelectorAll('.ig-btn').forEach(function(b){
+    b.disabled=true;
+    if(b.textContent.trim()===correct)b.classList.add('correct');
+  });
+  if(btn.textContent.trim()!==correct){
+    btn.classList.add('wrong');
+    fb.textContent='✗ Not quite. The correct form is: "'+correct+'" — now say it naturally.';
+    fb.className='ig-fb err';
+  } else {
+    fb.textContent='✓ Correct! Now use this type of imperative about your own work.';
+    fb.className='ig-fb ok';
+    speak(correct);
+  }
+  container.dataset.locked='1';
+}
+function toggleCheck(li){li.classList.toggle('done');li.querySelector('.cb').textContent=li.classList.contains('done')?'✓':'';}
+var secs=document.querySelectorAll('[id^="s"]');
+var navis=document.querySelectorAll('.sni');
+window.addEventListener('scroll',function(){
+  var pos=window.scrollY+120;
+  secs.forEach(function(sec){
+    if(!sec.id||!sec.id.match(/^s\d+$/))return;
+    var top=sec.offsetTop;var bot=top+sec.offsetHeight;
+    if(pos>=top&&pos<bot){navis.forEach(function(n){n.classList.remove('active');});var link=document.querySelector('.sni[href="#'+sec.id+'"]');if(link)link.classList.add('active');}
+  });
+},{passive:true});
+</script>
+</body>
+</html>
