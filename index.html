@@ -430,7 +430,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--txt);min-
 // ════════════════════════════════════════
 // CONFIGURACIÓN
 // ════════════════════════════════════════
-const WORKER_URL = 'https://silent-king-6ef7gt-portal.gabriel32turner.workers.dev';
+const WORKER_URL = 'https://gt-portal-worker.gabriel32turner.workers.dev/';
 
 // ════════════════════════════════════════
 // ESTADO GLOBAL
@@ -659,6 +659,7 @@ function buildAlumnoNav() {
   document.getElementById('snav').innerHTML = `
     <span class="scat">Mi aprendizaje</span>
     ${navItem('mi-progreso','↗','Mi progreso',"showView('mi-progreso')")}
+    ${navItem('mi-material','📖','Material de hoy',"showView('mi-material')")}
     ${navItem('mis-sesiones','≡','Mis sesiones',"showView('mis-sesiones')")}
     ${navItem('mis-tareas','✓','Mis tareas',"showView('mis-tareas')")}`;
 }
@@ -696,7 +697,6 @@ function buildAdminNav() {
     ${navItem('admin-rh','◈','Contactos RH',"showView('admin-rh')")}
     <span class="scat">Reportes</span>
     ${navItem('reporte-rrhh','↓','Reporte RRHH',"showView('reporte-rrhh')")}`;
-  // Inyectar badge de inactividad en el item de alumnos
   const nav = document.getElementById('nav-admin-alumnos');
   if (nav && inact > 0) nav.innerHTML += badge;
 }
@@ -705,7 +705,7 @@ function buildAdminNav() {
 // VIEW ROUTER
 // ════════════════════════════════════════
 const VIEW_TITLES = {
-  'mi-progreso':'Mi progreso','mis-sesiones':'Mis sesiones','mis-tareas':'Mis tareas',
+  'mi-progreso':'Mi progreso','mi-material':'Material de hoy','mis-sesiones':'Mis sesiones','mis-tareas':'Mis tareas',
   'mis-grupos':'Mis grupos','cargar-sesion':'Cargar sesión','mis-alumnos':'Mis alumnos',
   'admin-alumnos':'Todos los alumnos','admin-grupos':'Grupos',
   'admin-maestros':'Maestros','admin-rh':'Contactos RH',
@@ -713,6 +713,7 @@ const VIEW_TITLES = {
   'reporte-rrhh':'Reporte RRHH',
   'rh-dashboard':'Mis colaboradores','rh-reporte':'Generar reporte',
   'empresas':'Empresas','empresa-detalle':'Detalle de empresa',
+  'gt-dashboard':'Dashboard GT',
 };
 
 function showView(id) {
@@ -726,6 +727,7 @@ function showView(id) {
   page.innerHTML = '';
   const renders = {
     'mi-progreso':         renderMiProgreso,
+    'mi-material':         renderMiMaterial,
     'mis-sesiones':        renderMisSesiones,
     'mis-tareas':          renderMisTareas,
     'mis-grupos':          renderMisGrupos,
@@ -741,6 +743,7 @@ function showView(id) {
     'rh-reporte':          renderRHReporte,
     'empresas':            renderEmpresas,
     'empresa-detalle':     (p) => renderEmpresaDetalle(p, _detalleEmpresaId),
+    'gt-dashboard':        renderGTDashboard,
   };
   if (renders[id]) renders[id](page);
 }
@@ -842,14 +845,227 @@ function renderMiProgreso(page) {
     </div>` : ''}`;
 }
 
+// ════════════════════════════════════════
+// VISTA ALUMNO — MIS SESIONES / MATERIAL
+// ════════════════════════════════════════
+
+// Abre una sesión HTML dentro del portal via Worker — nunca expone la URL real
+function abrirSesionAlumno(archivo, titulo) {
+  const workerUrl = WORKER_URL.replace(/\/$/, '');
+  const url = `${workerUrl}/sesion?file=${encodeURIComponent(archivo)}`;
+  const modal = document.getElementById('modal');
+  const modalTitle = document.getElementById('modal-title');
+  const modalBody  = document.getElementById('modal-body');
+  const modalFooter= document.getElementById('modal-footer');
+  modalTitle.textContent = titulo || 'Sesión';
+  modalBody.style.padding = '0';
+  modalBody.innerHTML = `
+    <iframe src="${url}"
+      style="width:100%;height:75vh;border:none;border-radius:0 0 16px 16px;"
+      sandbox="allow-scripts allow-same-origin allow-forms"
+      referrerpolicy="no-referrer">
+    </iframe>`;
+  modalFooter.innerHTML = '';
+  modal.classList.add('open');
+  // Ampliar el modal para que la sesión se vea bien
+  modal.querySelector('.modal').style.maxWidth = '1100px';
+  modal.querySelector('.modal').style.maxHeight = '95vh';
+}
+
+function renderMiMaterial(page) {
+  const a = currentUser;
+
+  // ── Posición curricular del alumno ───────────────────────
+  // 6 módulos × 10 sesiones (5 temas × Parte A + Parte B) = 60 sesiones totales
+  const SESPMOD = 10; // sesiones por módulo
+  const SESMAX  = 60; // total del nivel
+  const sesionTotal    = Math.max(1, Math.min(a.sesion_actual || 1, SESMAX));
+  const moduloActual   = Math.ceil(sesionTotal / SESPMOD);
+  const sesEnModActual = ((sesionTotal - 1) % SESPMOD) + 1;
+  const sesCompletadas = sesionTotal - 1;
+  const pctNivel       = Math.round((sesCompletadas / SESMAX) * 100);
+
+  // ── Módulos del nivel para línea de tiempo ───────────────
+  const modulosPct = Array.from({length:6}, (_,i) => {
+    const m = i + 1;
+    if (m < moduloActual) return 100;
+    if (m === moduloActual) return Math.round(((sesEnModActual-1)/SESPMOD)*100);
+    return 0;
+  });
+
+  // ── Construir línea completa de sesiones (todas, 1-30) ───
+  // Agrupa contenido de Notion por modulo+sesion para acceso rápido
+  // contenidoMap: clave = "modulo-sesion" donde sesion va del 1 al 10
+  // S1A=1, S1B=2, S2A=3, S2B=4, S3A=5, S3B=6, S4A=7, S4B=8, S5A=9, S5=10
+  const contenidoMap = {};
+  DATA.contenido.filter(ct => ct.activo !== false && ct.nivel === a.nivel_actual).forEach(ct => {
+    const key = `${ct.modulo}-${ct.sesion}`;
+    if (!contenidoMap[key]) contenidoMap[key] = ct;
+  });
+
+  // Sesión actual: contenido de hoy
+  const recursoHoy = contenidoMap[`${moduloActual}-${sesEnModActual}`];
+
+  // ── Render ───────────────────────────────────────────────
+  page.innerHTML = `
+    <div class="ph">
+      <h2>Mi material</h2>
+      <p>${a.nivel_actual} · Módulo ${moduloActual} de 6 · Sesión ${sesEnModActual} de 10</p>
+    </div>
+
+    <!-- ── Progreso del nivel ── -->
+    <div class="card" style="margin-bottom:14px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+        <div>
+          <div style="font-size:13px;font-weight:500">Progreso en ${a.nivel_actual}</div>
+          <div style="font-size:11px;color:var(--txt3);margin-top:2px">${sesCompletadas} de 60 sesiones completadas</div>
+        </div>
+        <span class="level ${LEVEL_CLASS[a.nivel_actual]||'level-a1'}">${a.nivel_actual}</span>
+      </div>
+      <div class="prog-wrap">
+        <div class="prog-label"><span>Nivel completo</span><span>${pctNivel}%</span></div>
+        <div class="prog-bar"><div class="prog-fill" style="width:${pctNivel}%"></div></div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin-top:14px">
+        ${modulosPct.map((pct,i) => {
+          const num = i+1;
+          const activo = num === moduloActual;
+          const hecho  = num < moduloActual;
+          return `<div style="text-align:center">
+            <div style="font-size:9px;color:${activo?'var(--mag)':hecho?'var(--green)':'var(--txt3)'};font-weight:${activo?'500':'400'};margin-bottom:4px;text-transform:uppercase;letter-spacing:.05em">Mód ${num}</div>
+            <div style="height:4px;border-radius:2px;background:var(--bg3);overflow:hidden">
+              <div style="height:100%;width:${pct}%;background:${activo?'var(--mag)':hecho?'var(--green)':'transparent'};border-radius:2px;"></div>
+            </div>
+            <div style="font-size:9px;color:var(--txt3);margin-top:3px">${hecho?'✓':activo?sesEnModActual+'/5':'—'}</div>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>
+
+    <!-- ── Sesión de hoy ── -->
+    <div style="font-size:10px;font-weight:500;color:var(--txt3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px">
+      Sesión de hoy — M${moduloActual} · S${sesEnModActual}
+    </div>
+    ${recursoHoy ? `
+    <div class="card" style="margin-bottom:20px;border-left:3px solid var(--mag)">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
+        <div>
+          <div style="font-size:14px;font-weight:500;margin-bottom:4px">${recursoHoy.titulo || 'Sesión ' + moduloActual + '.' + sesEnModActual}</div>
+          ${recursoHoy.descripcion ? `<div style="font-size:12px;color:var(--txt2);line-height:1.5">${recursoHoy.descripcion}</div>` : ''}
+        </div>
+        ${recursoHoy.url_recurso ? `
+        <button onclick="abrirSesionAlumno('${recursoHoy.url_recurso}','${(recursoHoy.titulo||'Sesión').replace(/'/g,"\'")}');event.stopPropagation()"
+          style="padding:10px 20px;background:var(--mag);color:white;border:none;border-radius:var(--rs);font-size:13px;font-weight:500;cursor:pointer;font-family:inherit;white-space:nowrap">
+          Abrir sesión →
+        </button>` : `
+        <span style="font-size:12px;color:var(--txt3)">Próximamente disponible</span>`}
+      </div>
+    </div>` : `
+    <div class="card" style="text-align:center;padding:28px 20px;margin-bottom:20px">
+      <div style="font-size:28px;margin-bottom:10px">📭</div>
+      <div style="font-size:13px;font-weight:500;color:var(--txt2);margin-bottom:4px">Sesión en preparación</div>
+      <div style="font-size:12px;color:var(--txt3)">Tu maestro está preparando el material. Revisa antes de tu próxima clase.</div>
+    </div>`}
+
+    <!-- ── Todas las sesiones del nivel ── -->
+    <div style="font-size:10px;font-weight:500;color:var(--txt3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px">
+      Historial de sesiones
+    </div>
+    <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:24px">
+      ${Array.from({length:60}, (_,i) => {
+        const n        = i + 1;
+        const mod      = Math.ceil(n / SESPMOD);
+        const sesInMod = ((n - 1) % SESPMOD) + 1;
+        const hecha    = n < sesionTotal;
+        const esHoy    = n === sesionTotal;
+        const futura   = n > sesionTotal;
+        const recurso  = contenidoMap[`${mod}-${sesInMod}`];
+        const titulo   = recurso ? (recurso.titulo || `M${mod} · S${sesInMod}`) : `M${mod} · S${sesInMod}`;
+        const tieneURL = recurso && recurso.url_recurso;
+
+        if (futura) return `
+        <div style="display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:var(--rs);background:var(--bg);border:1px solid var(--border);opacity:.45">
+          <div style="width:28px;height:28px;border-radius:50%;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--txt3);flex-shrink:0">🔒</div>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:12px;color:var(--txt3)">M${mod} · S${sesInMod} — ${titulo}</div>
+          </div>
+        </div>`;
+
+        const bg     = esHoy ? 'rgba(212,0,106,.04)' : 'var(--white)';
+        const border = esHoy ? 'var(--mag)' : hecha ? 'var(--green)' : 'var(--border)';
+        const icon   = esHoy ? '▶️' : hecha ? '✅' : '⬜';
+        const label  = esHoy ? '<span style="font-size:10px;font-weight:500;color:var(--mag);margin-left:6px">HOY</span>' : '';
+
+        return `
+        <div style="display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:var(--rs);background:${bg};border:1px solid ${border}">
+          <div style="font-size:18px;flex-shrink:0">${icon}</div>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:12px;font-weight:${esHoy?'500':'400'};color:var(--txt)">
+              M${mod} · S${sesInMod} — ${titulo}${label}
+            </div>
+          </div>
+          ${(hecha || esHoy) && tieneURL ? `
+          <button onclick="abrirSesionAlumno('${recurso.url_recurso}','${titulo.replace(/'/g,"\'")}');event.stopPropagation()"
+            style="padding:5px 12px;border:1px solid var(--border2);border-radius:6px;font-size:11px;font-weight:500;background:var(--white);color:var(--txt2);cursor:pointer;font-family:inherit;white-space:nowrap">
+            ${esHoy ? 'Abrir →' : 'Repasar'}
+          </button>` : ''}
+        </div>`;
+      }).join('')}
+    </div>
+
+    <!-- ── Sesiones del módulo actual ── -->
+    <div style="font-size:10px;font-weight:500;color:var(--txt3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px">
+      Módulo ${moduloActual} — progreso
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px">
+      ${Array.from({length:SESPMOD},(_,i)=>{
+        const s    = i + 1;
+        const hech = s < sesEnModActual;
+        const curr = s === sesEnModActual;
+        const tema = s % 2 === 1 ? 'S'+ Math.ceil(s/2) +'A' : 'S'+ Math.ceil(s/2) +'B';
+        return `
+        <div style="border-radius:var(--rs);padding:10px 6px;text-align:center;
+          border:1px solid ${curr?'var(--mag)':hech?'var(--green)':'var(--border)'};
+          background:${curr?'rgba(212,0,106,.05)':hech?'var(--green-bg)':'var(--bg)'}">
+          <div style="font-size:16px;margin-bottom:3px">${hech?'✅':curr?'▶️':'⬜'}</div>
+          <div style="font-size:10px;font-weight:${curr?'500':'400'};color:${curr?'var(--mag)':hech?'var(--green)':'var(--txt3)'}">
+            ${tema}
+          </div>
+        </div>`;
+      }).join('')}
+      </div>
+    </div>`;
+}
+
 function renderMisSesiones(page) {
-  const ses = DATA.sesiones.filter(s => s.alumno === currentUser.id)
-    .sort((a,b) => b.fecha.localeCompare(a.fecha));
+  const todasSes = DATA.sesiones.filter(s => s.alumno === currentUser.id)
+    .sort((a,b) => (b.fecha||'').localeCompare(a.fecha||''));
+  const speakingSes = todasSes.filter(s => s.tipo === 'speaking_lab');
+  const regularSes  = todasSes.filter(s => s.tipo !== 'speaking_lab');
+
   page.innerHTML = `
     <div class="ph"><h2>Mis sesiones</h2><p>Historial completo de tus clases.</p></div>
-    <div class="card">
-      ${ses.length ? ses.map(s=>renderSesionItem(s)).join('')
+    <div class="card" style="margin-bottom:16px">
+      <div class="card-title">Sesiones regulares</div>
+      ${regularSes.length ? regularSes.map(s=>renderSesionItem(s)).join('')
         : '<p style="color:var(--txt3);font-size:13px;padding:8px 0">Aún no hay sesiones registradas.</p>'}
+    </div>
+    <div class="card">
+      <div class="card-title" style="display:flex;align-items:center;gap:8px">
+        <span>🎙 Speaking Lab</span>
+        <span style="font-size:11px;color:var(--txt3);font-weight:400">${speakingSes.length} sesión${speakingSes.length!==1?'es':''}</span>
+      </div>
+      ${speakingSes.length ? speakingSes.map(s=>`
+        <div style="display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)">
+          <span style="font-size:18px;flex-shrink:0">🎙</span>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:13px;font-weight:500;color:var(--txt)">${(s.tema||'').replace('🎙 Speaking Lab: ','')}</div>
+            <div style="font-size:11px;color:var(--txt3);margin-top:2px">${fmtDate(s.fecha)} · ${s.maestro||''}</div>
+            ${s.notas ? `<div style="font-size:12px;color:var(--txt2);margin-top:4px">${s.notas}</div>` : ''}
+          </div>
+          <span style="font-size:10px;padding:2px 8px;background:var(--blue-bg);color:var(--blue);border-radius:20px;white-space:nowrap;flex-shrink:0">Speaking Lab</span>
+        </div>`).join('')
+        : '<p style="color:var(--txt3);font-size:13px;padding:8px 0">Aún no hay sesiones de Speaking Lab registradas.</p>'}
     </div>`;
 }
 
@@ -939,6 +1155,36 @@ function renderMisGrupos(page) {
 }
 
 // ════════════════════════════════════════
+// HELPER — Opciones de sesión de contenido para el formulario de carga
+// ════════════════════════════════════════
+// Genera el HTML de <option> leyendo DATA.contenido en tiempo de ejecución.
+// Se llama dentro de un template literal de innerHTML, por lo que no puede
+// contener expresiones ${} directamente — se resuelve como llamada de función.
+function buildContenidoOptions(nivelFiltro) {
+  return DATA.contenido
+    .filter(ct => ct.activo !== false && (!nivelFiltro || ct.nivel === nivelFiltro))
+    .sort((a, b) => {
+      // Ordenar por nivel → módulo → sesión
+      const lvlA = String(a.nivel||''), lvlB = String(b.nivel||'');
+      if (lvlA !== lvlB) return lvlA.localeCompare(lvlB);
+      const mA = Number(a.modulo||0), mB = Number(b.modulo||0);
+      if (mA !== mB) return mA - mB;
+      return Number(a.sesion||0) - Number(b.sesion||0);
+    })
+    .map(ct => {
+      // value = número global de sesión para que guardarSesionGrupal pueda
+      // calcular el avance de sesion_actual correctamente.
+      // El número global = (módulo-1)*10 + sesión_en_módulo
+      const mod = Number(ct.modulo||1);
+      const ses = Number(ct.sesion||1);
+      const global = (mod - 1) * 10 + ses;
+      const label = [ct.nivel, `M${mod}`, ct.titulo || `Sesión ${ses}`].join(' · ');
+      return `<option value="${global}" data-nivel="${ct.nivel||''}" data-modulo="${mod}" data-sesion="${ses}">${label}</option>`;
+    })
+    .join('');
+}
+
+// ════════════════════════════════════════
 // VISTAS DEL MAESTRO — CARGAR SESIÓN
 // ════════════════════════════════════════
 function renderCargarSesion(page, grupoIdPre, alumnoIdPre) {
@@ -951,6 +1197,35 @@ function renderCargarSesion(page, grupoIdPre, alumnoIdPre) {
     <div class="itabs">
       <button class="itab active" id="itab-grupal" onclick="switchSesionTab('grupal')">Grupal</button>
       <button class="itab" id="itab-individual" onclick="switchSesionTab('individual')">Individual</button>
+      <button class="itab" id="itab-speaking" onclick="switchSesionTab('speaking')">🎙 Speaking Lab</button>
+    </div>
+    <div id="tab-speaking-content" style="display:none">
+      <div class="card">
+        <div style="font-size:12px;color:var(--txt2);margin-bottom:14px;padding:10px 14px;background:var(--blue-bg);border-radius:var(--rs);border-left:3px solid var(--blue)">
+          Registrá una sesión de Speaking Lab como evidencia. No avanza el contador de sesiones regulares del alumno.
+        </div>
+        <div class="form-grid">
+          <div class="fld"><label>Grupo</label>
+            <select id="fsp-grupo">
+              <option value="">— elegí grupo —</option>
+              ${misGrupos.map(g=>`<option value="${g.id}">${g.nombre}</option>`).join('')}
+            </select></div>
+          <div class="fld"><label>Fecha</label>
+            <input type="date" id="fsp-fecha" value="${new Date().toISOString().slice(0,10)}"></div>
+          <div class="fld"><label>Hora</label>
+            <input type="time" id="fsp-hora" value="09:00"></div>
+          <div class="fld"><label>Tema de Speaking Lab</label>
+            <input type="text" id="fsp-tema" placeholder="ej. Airbnb vs Hotels"></div>
+        </div>
+        <div class="form-grid full">
+          <div class="fld"><label>Notas del maestro (opcional)</label>
+            <textarea id="fsp-notas" placeholder="Fluidez observada, vocabulario destacado, puntos a mejorar..."></textarea></div>
+        </div>
+        <button class="action-btn primary" id="btn-guardar-speaking"
+          onclick="guardarSpeakingLab()" style="padding:10px 24px;font-size:13px">
+          Registrar Speaking Lab
+        </button>
+      </div>
     </div>
     <div id="tab-grupal-content">
       ${misGrupos.length ? `
@@ -967,6 +1242,12 @@ function renderCargarSesion(page, grupoIdPre, alumnoIdPre) {
             <input type="time" id="fg-hora" value="09:00"></div>
           <div class="fld"><label>Tema trabajado</label>
             <input type="text" id="fg-tema" placeholder="ej. Past Simple — verbos irregulares"></div>
+          <div class="fld"><label>Sesión impartida</label>
+            <select id="fg-sesion">
+              <option value="">— elegí sesión —</option>
+              ${buildContenidoOptions()}
+            </select>
+          </div>
         </div>
         <div class="form-grid full">
           <div class="fld"><label>Notas generales del maestro</label>
@@ -1000,6 +1281,12 @@ function renderCargarSesion(page, grupoIdPre, alumnoIdPre) {
             <option value="1">Sí asistió</option>
             <option value="0">No asistió</option>
           </select></div>
+          <div class="fld"><label>Sesión impartida</label>
+            <select id="f-sesion">
+              <option value="">— elegí sesión —</option>
+              ${buildContenidoOptions()}
+            </select>
+          </div>
         </div>
         <div class="form-grid full">
           <div class="fld"><label>Tema trabajado</label>
@@ -1036,8 +1323,50 @@ function renderCargarSesion(page, grupoIdPre, alumnoIdPre) {
 function switchSesionTab(tab) {
   document.getElementById('itab-grupal').classList.toggle('active', tab==='grupal');
   document.getElementById('itab-individual').classList.toggle('active', tab==='individual');
+  document.getElementById('itab-speaking').classList.toggle('active', tab==='speaking');
   document.getElementById('tab-grupal-content').style.display   = tab==='grupal'     ? 'block' : 'none';
   document.getElementById('tab-individual-content').style.display = tab==='individual' ? 'block' : 'none';
+  document.getElementById('tab-speaking-content').style.display  = tab==='speaking'   ? 'block' : 'none';
+}
+
+// ── Guardar Speaking Lab ─────────────────────────────────────
+async function guardarSpeakingLab() {
+  const grupoId = document.getElementById('fsp-grupo').value;
+  const fecha   = document.getElementById('fsp-fecha').value;
+  const hora    = document.getElementById('fsp-hora').value;
+  const tema    = document.getElementById('fsp-tema').value.trim();
+  const notas   = document.getElementById('fsp-notas').value.trim();
+
+  if (!grupoId) { showToast('Elegí un grupo.'); return; }
+  if (!fecha)   { showToast('Ingresá la fecha.'); return; }
+  if (!tema)    { showToast('Ingresá el tema de Speaking Lab.'); return; }
+
+  const alumnos = DATA.alumnos.filter(a => a.grupo_id === grupoId);
+  if (!alumnos.length) { showToast('El grupo no tiene alumnos.'); return; }
+
+  const btn = document.getElementById('btn-guardar-speaking');
+  btn.disabled = true; btn.textContent = 'Registrando...';
+
+  // Guardar una sesión por alumno marcada como speaking_lab — no modifica sesion_actual
+  for (const a of alumnos) {
+    const sesData = {
+      alumno: a.id, fecha, hora,
+      tema: '🎙 Speaking Lab: ' + tema,
+      notas: notas || '',
+      asistio: true,
+      maestro: currentUser.nombre,
+      grupo_id: grupoId,
+      tipo: 'speaking_lab'
+    };
+    const res = await saveToNotion({ action:'addSesion', data:sesData });
+    sesData.id = res?.id || ('sp'+Date.now()+a.id.slice(-4));
+    DATA.sesiones.push(sesData);
+  }
+
+  btn.disabled = false; btn.textContent = 'Registrar Speaking Lab';
+  showToast('✓ Speaking Lab registrado para ' + alumnos.length + ' alumnos');
+  document.getElementById('fsp-tema').value = '';
+  document.getElementById('fsp-notas').value = '';
 }
 
 // ── Lista de asistencia dinámica ──────────────────────────────
@@ -1104,9 +1433,11 @@ async function guardarSesionGrupal() {
   const tarea      = document.getElementById('fg-tarea').value.trim();
   const tareaFecha = document.getElementById('fg-tarea-fecha').value;
 
+  const sesionImpartida = parseInt(document.getElementById('fg-sesion')?.value || '0');
   if (!grupoId) { showToast('Elegí un grupo.'); return; }
   if (!fecha)   { showToast('Ingresá la fecha.'); return; }
   if (!tema)    { showToast('Ingresá el tema trabajado.'); return; }
+  if (!sesionImpartida) { showToast('Elegí la sesión impartida.'); return; }
 
   const alumnos = DATA.alumnos.filter(a => a.grupo_id === grupoId);
   if (!alumnos.length) { showToast('El grupo no tiene alumnos.'); return; }
@@ -1130,15 +1461,24 @@ async function guardarSesionGrupal() {
     const notaInd  = notaEl ? notaEl.value.trim() : '';
 
     // Sesión individual (para que el alumno la vea en su portal)
+    const sesActual = a.sesion_actual ?? 1;
     const sesInd = {
       alumno: a.id, fecha, hora, tema,
       notas: notaInd || notas, asistio,
       maestro: currentUser.nombre, grupo_id: grupoId,
-      sesion_actual: a.sesion_actual ?? 1
+      sesion_actual: sesActual
     };
     const resI = await saveToNotion({ action:'addSesion', data:sesInd });
     sesInd.id = resI?.id || ('si'+Date.now()+a.id.slice(-4));
     DATA.sesiones.push(sesInd);
+
+    // Avanzar sesion_actual si asistió — se establece en la sesión impartida + 1
+    if (asistio) {
+      const nuevaSesion = Math.min(sesionImpartida + 1, 60);
+      await saveToNotion({ action:'updateAlumno', id:a.id, updates:{ sesion_actual: nuevaSesion } });
+      const alumnoRef = DATA.alumnos.find(x => x.id === a.id);
+      if (alumnoRef) alumnoRef.sesion_actual = nuevaSesion;
+    }
 
     // Registro de asistencia grupal
     const asistRec = {
@@ -1177,22 +1517,28 @@ async function guardarSesionIndividual() {
   const tarea      = document.getElementById('f-tarea').value.trim();
   const tareaFecha = document.getElementById('f-tarea-fecha-ind').value;
 
+  const sesionImpartidaI = parseInt(document.getElementById('f-sesion')?.value || '0');
   if (!alumnoId) { showToast('Elegí un alumno.'); return; }
   if (!fecha)    { showToast('Ingresá la fecha.'); return; }
   if (!tema)     { showToast('Ingresá el tema trabajado.'); return; }
+  if (!sesionImpartidaI) { showToast('Elegí la sesión impartida.'); return; }
 
   const btn = document.getElementById('btn-guardar-sesion');
   btn.disabled = true; btn.textContent = 'Guardando...';
 
+  const alumnoRef  = DATA.alumnos.find(a => a.id === alumnoId);
+  const sesActualI = alumnoRef?.sesion_actual ?? 1;
   const sesionData = { alumno:alumnoId, fecha, hora, tema, notas, asistio, maestro:currentUser.nombre,
-    sesion_actual: DATA.alumnos.find(a => a.id === alumnoId)?.sesion_actual ?? 1 };
+    sesion_actual: sesActualI };
   const res = await saveToNotion({ action:'addSesion', data:sesionData });
   sesionData.id = res?.id || ('s'+Date.now());
   DATA.sesiones.push(sesionData);
   // Actualizar sesion_actual en memoria para que el filtro de contenido sea inmediato
-  if (sesionData.asistio) {
-    const al = DATA.alumnos.find(a => a.id === alumnoId);
-    if (al) al.sesion_actual = Math.min((al.sesion_actual || 1) + 1, 30);
+  // Avanzar sesion_actual si asistió — se guarda en Notion
+  if (asistio && alumnoRef) {
+    const nuevaSesionI = Math.min(sesionImpartidaI + 1, 60);
+    await saveToNotion({ action:'updateAlumno', id:alumnoId, updates:{ sesion_actual: nuevaSesionI } });
+    alumnoRef.sesion_actual = nuevaSesionI;
   }
 
   if (tarea) {
@@ -3187,6 +3533,191 @@ function renderEmpresaDetalle(page, empresaId) {
           padding:10px 14px;border:1px solid var(--border);line-height:1.7">${e.notas}</div>` : ''}
     </div>` : ''}`;
 }
+// ════════════════════════════════════════
+// GT DASHBOARD — eliminado (v11)
+// ════════════════════════════════════════
+function renderGTDashboard(page) {
+  page.innerHTML = '<div class="card"><p style="font-size:13px;color:var(--txt3)">Dashboard desactivado.</p></div>';
+}
+function _renderGTDashboard_DISABLED(page) {
+  const hoy        = new Date().toISOString().slice(0,10);
+  const alumnos    = DATA.alumnos.filter(a => a.activo !== false);
+  const empresas   = DATA.empresas.filter(e => e.estatus === 'Activo' || e.estatus === 'activo');
+  const maestros   = DATA.maestros.filter(m => m.activo !== false && (m.rol === 'maestro' || m.rol === 'admin'));
+  const sesiones   = DATA.sesiones;
+  const inactivos  = countInactivos();
+
+  const sesionesSemana = (() => {
+    const hace7 = new Date(); hace7.setDate(hace7.getDate()-7);
+    const hace7str = hace7.toISOString().slice(0,10);
+    return sesiones.filter(s => s.fecha >= hace7str && s.fecha <= hoy).length;
+  })();
+
+  const leadsPipeline = DATA.empresas.filter(e =>
+    e.estatus && !['Activo','activo','Descartado','descartado'].includes(e.estatus)
+  );
+
+  const kpi = (label, val, sub, color) => `
+    <div style="background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;">
+      <div style="font-size:10px;color:var(--txt3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px">${label}</div>
+      <div style="font-size:24px;font-weight:500;color:${color||'var(--txt)'}">${val}</div>
+      <div style="font-size:11px;color:var(--txt3);margin-top:3px">${sub}</div>
+    </div>`;
+
+  const areaCard = (num, nombre, estado, tareas, color, vista) => {
+    const dotColor = estado==='activo'?'var(--green)':estado==='progreso'?'#d97706':'#ccc';
+    const clickable = vista ? 'cursor:pointer' : 'cursor:default';
+    const clickEvt  = vista ? `onclick="event.stopPropagation();showView('${vista}')"` : '';
+    return `<div style="background:var(--white);border:1px solid var(--border);border-left:3px solid ${color};border-radius:var(--r);padding:14px 16px;${clickable}" ${clickEvt}>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+        <span style="font-size:10px;font-weight:500;color:${color};text-transform:uppercase;letter-spacing:.06em">${num}</span>
+        <div style="width:7px;height:7px;border-radius:50%;background:${dotColor}"></div>
+      </div>
+      <div style="font-size:13px;font-weight:500;margin-bottom:8px">${nombre}</div>
+      <div style="font-size:11px;color:var(--txt3);line-height:1.6">${tareas}</div>
+    </div>`;
+  };
+
+  const checkId = 'gtcheck_' + Date.now();
+
+  const checkItems = [
+    'Prospección LinkedIn (3–5 DMs)',
+    'Seguimiento a leads sin respuesta',
+    'Publicar en LinkedIn',
+    'Revisar reporte de sesiones',
+    'Actualizar KPIs',
+    'Confirmar sesiones próxima semana',
+    'Revisar disponibilidad de maestros',
+  ];
+
+  page.innerHTML = `
+  <div style="padding:4px 0 24px">
+
+    <!-- ── KPIs ── -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:20px">
+      ${kpi('Empresas B2B', empresas.length, 'Meta: 15 empresas', empresas.length>=15?'var(--green)':'#d97706')}
+      ${kpi('Alumnos activos', alumnos.length, 'Todos los niveles', 'var(--navy)')}
+      ${kpi('Maestros', maestros.length, 'En equipo activo', 'var(--navy)')}
+      ${kpi('Sesiones esta semana', sesionesSemana, 'Últimos 7 días', 'var(--navy)')}
+      ${kpi('Inactivos +14d', inactivos, 'Requieren seguimiento', inactivos>0?'var(--red)':'var(--green)')}
+      ${kpi('Leads en pipeline', leadsPipeline.length, 'Por cerrar', leadsPipeline.length>0?'#d97706':'var(--txt3)')}
+    </div>
+
+    <!-- ── PIPELINE B2B ── -->
+    <div class="card" style="margin-bottom:14px">
+      <div class="card-title">Pipeline B2B</div>
+      <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px">
+        ${['Contacto','Diagnóstico','Propuesta','Seguimiento','Cerrado'].map(etapa => {
+          const normalize = s => (s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+          const count = etapa === 'Cerrado'
+            ? empresas.length
+            : DATA.empresas.filter(e => normalize(e.estatus) === normalize(etapa)).length;
+          const isActive = etapa === 'Cerrado';
+          return `
+          <div style="text-align:center;padding:12px 8px;border-radius:var(--rs);
+            background:${isActive?'var(--green-bg)':'var(--bg)'};
+            border:1px solid ${isActive?'var(--green)':'var(--border)'}">
+            <div style="font-size:20px;font-weight:500;color:${isActive?'var(--green)':'var(--txt)'}">${count}</div>
+            <div style="font-size:10px;color:${isActive?'var(--green)':'var(--txt3)'};margin-top:3px;text-transform:uppercase;letter-spacing:.05em">${etapa}</div>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>
+
+    <!-- ── ÁREAS DEL SISTEMA ── -->
+    <div style="font-size:10px;font-weight:500;color:var(--txt3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px">
+      10 áreas del sistema
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px">
+      ${areaCard('01','LinkedIn — Proyecto independiente','progreso','Prospección activa · Contenido semanal','#7F77DD','')}
+      ${areaCard('02','Redes sociales','gris','Calendario editorial · Canales activos','#1D9E75','')}
+      ${areaCard('03','Contenido y recursos','progreso','Lead magnets · Banco de recursos','#EF9F27','')}
+      ${areaCard('04','Ventas B2B','progreso',empresas.length+' empresas activas · Meta: 15','#D85A30','empresas')}
+      ${areaCard('05','Clases particulares y grupos','activo',alumnos.length+' alumnos · '+maestros.length+' maestros','#378ADD','admin-alumnos')}
+      ${areaCard('06','Precios y servicios','activo','$800–$3,700 MXN · Revisión pendiente','#1D9E75','')}
+      ${areaCard('07','Currículo y metodología','progreso','B1.1–B1.2 · Speaking día 1','#7F77DD','')}
+      ${areaCard('08','Sesiones y reportes','activo',sesionesSemana+' sesiones esta semana','#7F77DD','admin-productividad')}
+      ${areaCard('09','Equipo de maestros','progreso',maestros.length+' maestros activos','#EF9F27','admin-maestros')}
+    </div>
+
+    <!-- ── CHECKLIST SEMANAL + ALERTAS ── -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+
+      <div class="card">
+        <div class="card-title">Checklist semanal</div>
+        <div id="${checkId}">
+          ${checkItems.map((t,i) => `
+          <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)"
+            onclick="gtToggleCheck('${checkId}-${i}')">
+            <div id="${checkId}-${i}" style="width:16px;height:16px;border-radius:4px;border:1.5px solid var(--border2);
+              flex-shrink:0;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s"></div>
+            <span id="${checkId}-${i}-txt" style="font-size:12px;color:var(--txt)">${t}</span>
+          </div>`).join('')}
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Alertas</div>
+        ${inactivos > 0 ? `
+        <div style="background:var(--red-bg);border-radius:var(--rs);padding:10px 14px;margin-bottom:10px;cursor:pointer"
+          onclick="showView('admin-alumnos')">
+          <div style="font-size:12px;font-weight:500;color:var(--red);margin-bottom:2px">
+            ${inactivos} alumno${inactivos>1?'s':''} sin clase en +14 días
+          </div>
+          <div style="font-size:11px;color:var(--red)">Clic para ver → Todos los alumnos</div>
+        </div>` : `
+        <div style="background:var(--green-bg);border-radius:var(--rs);padding:10px 14px;margin-bottom:10px">
+          <div style="font-size:12px;font-weight:500;color:var(--green)">Sin alertas de inactividad</div>
+        </div>`}
+        ${leadsPipeline.length > 0 ? `
+        <div style="background:#FAEEDA;border-radius:var(--rs);padding:10px 14px;margin-bottom:10px;cursor:pointer"
+          onclick="showView('empresas')">
+          <div style="font-size:12px;font-weight:500;color:#854F0B;margin-bottom:2px">
+            ${leadsPipeline.length} empresa${leadsPipeline.length>1?'s':''} en pipeline sin cerrar
+          </div>
+          <div style="font-size:11px;color:#854F0B">Clic para ver → Empresas</div>
+        </div>` : ''}
+        <div style="margin-top:8px">
+          <div style="font-size:10px;color:var(--txt3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Accesos rápidos</div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px">
+            <button class="action-btn" onclick="showView('admin-alumnos')">Alumnos</button>
+            <button class="action-btn" onclick="showView('empresas')">Empresas</button>
+            <button class="action-btn" onclick="showView('admin-maestros')">Maestros</button>
+            <button class="action-btn" onclick="showView('admin-productividad')">Productividad</button>
+            <button class="action-btn" onclick="showView('reporte-rrhh')">Reporte</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>`;
+}
+// ════════════════════════════════════════
+// FIN PORTAL v11
+// ════════════════════════════════════════
+function gtToggleCheck(id) {
+  const box = document.getElementById(id);
+  const txt = document.getElementById(id+'-txt');
+  if (!box) return;
+  const on = box.dataset.checked === '1';
+  if (on) {
+    box.dataset.checked = '0';
+    box.style.background  = '';
+    box.style.borderColor = 'rgba(0,0,0,0.13)';
+    box.style.color       = '';
+    box.innerHTML         = '';
+    if (txt) { txt.style.textDecoration = 'none'; txt.style.color = 'var(--txt)'; }
+  } else {
+    box.dataset.checked = '1';
+    box.style.background  = '#1a7a3a';
+    box.style.borderColor = '#1a7a3a';
+    box.style.color       = 'white';
+    box.style.fontSize    = '9px';
+    box.innerHTML         = '✓';
+    if (txt) { txt.style.textDecoration = 'line-through'; txt.style.color = 'var(--txt3)'; }
+  }
+}
+
 </script>
 </body>
 </html>
