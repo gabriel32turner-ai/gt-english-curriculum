@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Portal · Gabriel Turner - English Training</title>
+<title>Portal · Gabriel Turner - English Training · v13</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
@@ -358,6 +358,19 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--txt);min-
       </div>
       <p style="font-size:11px;color:var(--txt3);text-align:center;margin:-6px 0 8px">Tu código te lo envió tu maestro por WhatsApp</p>
     </div>
+    <div id="maestro-code-form" style="display:none">
+      <div class="field">
+        <label>Tu código de maestro</label>
+        <input type="text" id="login-maestro-codigo" maxlength="4" placeholder="ej. 4812"
+          style="letter-spacing:.2em;font-size:18px;text-align:center;font-family:monospace;"
+          onkeydown="if(event.key==='Enter')doLogin()">
+      </div>
+      <div class="field">
+        <label>Contraseña</label>
+        <input type="password" id="login-maestro-pw" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
+      </div>
+      <p style="font-size:11px;color:var(--txt3);text-align:center;margin:-6px 0 8px">Tu código de 4 dígitos te lo envió el administrador</p>
+    </div>
     <div id="staff-form" style="display:none">
       <div class="field">
         <label>Tu nombre</label>
@@ -551,16 +564,20 @@ function setLoginTab(tab, btn) {
   if (btn) btn.classList.add('active');
   const af  = document.getElementById('alumno-form');
   const sf  = document.getElementById('staff-form');
+  const mf  = document.getElementById('maestro-code-form');
   const sel = document.getElementById('login-user');
+
+  af.style.display = 'none'; sf.style.display = 'none'; mf.style.display = 'none';
+
   if (tab === 'alumno') {
-    af.style.display = 'block'; sf.style.display = 'none';
+    af.style.display = 'block';
+  } else if (tab === 'maestro') {
+    // Maestros pueden entrar con código de 4 dígitos O con nombre+PW
+    mf.style.display = 'block';
   } else {
-    af.style.display = 'none'; sf.style.display = 'block';
+    sf.style.display = 'block';
     sel.innerHTML = '<option value="">— elegí tu nombre —</option>';
-    if (tab === 'maestro') {
-      DATA.maestros.filter(m => m.rol === 'maestro' && m.activo !== false)
-        .forEach(m => sel.innerHTML += `<option value="${m.id}">${m.nombre}</option>`);
-    } else if (tab === 'admin') {
+    if (tab === 'admin') {
       DATA.maestros.filter(m => m.rol === 'admin')
         .forEach(m => sel.innerHTML += `<option value="${m.id}">${m.nombre}</option>`);
     } else if (tab === 'rh') {
@@ -580,6 +597,23 @@ function doLogin() {
     if (!alumno) { showLoginErr('Código incorrecto. Pedíselo a tu maestro por WhatsApp.'); return; }
     currentRole = 'alumno';
     currentUser = alumno;
+  } else if (loginTab === 'maestro') {
+    // Intenta primero por código de maestro, luego por nombre+PW
+    const codigoM = document.getElementById('login-maestro-codigo').value.trim();
+    const pw      = document.getElementById('login-maestro-pw').value;
+    if (!codigoM) { showLoginErr('Ingresá tu código de maestro.'); return; }
+    if (!pw)      { showLoginErr('Ingresá tu contraseña.'); return; }
+    // Buscar por codigo_maestro (campo nuevo) o por primeros 4 dígitos del ID
+    let maestro = DATA.maestros.find(m =>
+      m.rol === 'maestro' && m.activo !== false &&
+      (String(m.codigo_maestro) === codigoM || String(m.id).replace(/-/g,'').slice(-4) === codigoM)
+    );
+    if (!maestro || String(maestro.password) !== pw) {
+      showLoginErr('Código o contraseña incorrectos.');
+      return;
+    }
+    currentRole = 'maestro';
+    currentUser = maestro;
   } else if (loginTab === 'rh') {
     const uid = document.getElementById('login-user').value;
     const pw  = document.getElementById('login-pw').value;
@@ -615,6 +649,8 @@ function logout() {
   document.getElementById('screen-app').classList.remove('active');
   document.getElementById('screen-login').classList.add('active');
   document.getElementById('login-codigo').value = '';
+  const cm = document.getElementById('login-maestro-codigo'); if (cm) cm.value = '';
+  const mp = document.getElementById('login-maestro-pw');    if (mp) mp.value = '';
   document.getElementById('login-user').value   = '';
   document.getElementById('login-pw').value     = '';
   setLoginTab('alumno', document.querySelectorAll('.ltab')[0]);
@@ -643,7 +679,7 @@ function initApp() {
   } else {
     document.getElementById('s-role').textContent       = 'Administrador';
     document.getElementById('s-role-label').textContent = 'Panel admin';
-    buildAdminNav(); showView('admin-alumnos');
+    buildAdminNav(); showView('gt-dashboard');
   }
 }
 
@@ -693,6 +729,7 @@ function buildAdminNav() {
     ${navItem('admin-maestros','★','Maestros',"showView('admin-maestros')")}
     ${navItem('admin-productividad','▦','Productividad',"showView('admin-productividad')")}
     <span class="scat">Negocio</span>
+    ${navItem('gt-dashboard','◉','Dashboard GT',"showView('gt-dashboard')")}
     ${navItem('empresas','🏢','Empresas',"showView('empresas')")}
     ${navItem('admin-rh','◈','Contactos RH',"showView('admin-rh')")}
     <span class="scat">Reportes</span>
@@ -1105,7 +1142,14 @@ async function toggleTarea(id, el) {
 // VISTAS DEL MAESTRO — MIS GRUPOS
 // ════════════════════════════════════════
 function renderMisGrupos(page) {
-  const misGrupos = DATA.grupos.filter(g => (g.maestro_id === currentUser.id || (g.maestro||'').trim().toLowerCase() === (currentUser.nombre||'').trim().toLowerCase()) && g.activo !== false);
+  // Match robusto: por maestro_id (UUID), por nombre normalizado, o por codigo_maestro
+  const normStr = s => (s||'').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+  const misGrupos = DATA.grupos.filter(g => {
+    if (g.activo === false) return false;
+    if (g.maestro_id && g.maestro_id === currentUser.id) return true;
+    if (normStr(g.maestro) === normStr(currentUser.nombre)) return true;
+    return false;
+  });
 
   page.innerHTML = `
     <div class="ph"><h2>Mis grupos</h2>
@@ -1188,8 +1232,17 @@ function buildContenidoOptions(nivelFiltro) {
 // VISTAS DEL MAESTRO — CARGAR SESIÓN
 // ════════════════════════════════════════
 function renderCargarSesion(page, grupoIdPre, alumnoIdPre) {
-  const misGrupos = DATA.grupos.filter(g => (g.maestro_id === currentUser.id || (g.maestro||'').trim().toLowerCase() === (currentUser.nombre||'').trim().toLowerCase()) && g.activo !== false);
-  const misAlumnos = DATA.alumnos.filter(a => a.maestro_id === currentUser.id || (a.maestro||'').trim().toLowerCase() === (currentUser.nombre||'').trim().toLowerCase());
+  const normStr = s => (s||'').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+  const misGrupos = DATA.grupos.filter(g => {
+    if (g.activo === false) return false;
+    if (g.maestro_id && g.maestro_id === currentUser.id) return true;
+    if (normStr(g.maestro) === normStr(currentUser.nombre)) return true;
+    return false;
+  });
+  const misAlumnos = DATA.alumnos.filter(a =>
+    (a.maestro_id && a.maestro_id === currentUser.id) ||
+    normStr(a.maestro) === normStr(currentUser.nombre)
+  );
 
   page.innerHTML = `
     <div class="ph"><h2>Cargar sesión</h2>
@@ -2159,6 +2212,7 @@ async function guardarNuevoAlumno() {
 // ════════════════════════════════════════
 function abrirNuevoMaestro() {
   document.getElementById('modal-title').textContent = 'Nuevo maestro';
+  const codigoMaestro = String(Math.floor(1000 + Math.random() * 9000));
   document.getElementById('modal-body').innerHTML = `
     <div class="form-grid">
       <div class="fld"><label>Nombre completo</label>
@@ -2172,8 +2226,14 @@ function abrirNuevoMaestro() {
       <div class="fld"><label>Niveles que imparte</label>
         <input type="text" id="nm-niveles" placeholder="ej. A1.1, A1.2, A2.1"></div>
     </div>
-    <p style="font-size:11px;color:var(--txt3);margin-top:4px">
-      Compartí la contraseña al maestro por WhatsApp junto con el link del portal.</p>`;
+    <div style="background:var(--blue-bg);border-radius:var(--rs);padding:12px 14px;font-size:12px;color:var(--blue);margin-top:4px">
+      <div style="font-weight:500;margin-bottom:4px">🔑 Código de acceso del maestro (generado automáticamente)</div>
+      <div style="font-family:monospace;font-size:20px;letter-spacing:.2em;font-weight:500">${codigoMaestro}</div>
+      <div style="font-size:11px;margin-top:4px;opacity:.7">Enviá este código + contraseña al maestro por WhatsApp.</div>
+      <input type="hidden" id="nm-codigo" value="${codigoMaestro}">
+    </div>
+    <p style="font-size:11px;color:var(--txt3);margin-top:8px">
+      El maestro entra con código de 4 dígitos + contraseña en la pestaña "Maestro" del login.</p>`;
   document.getElementById('modal-footer').innerHTML = `
     <button class="action-btn" onclick="closeModal()">Cancelar</button>
     <button class="action-btn primary" id="btn-save-maestro" onclick="guardarNuevoMaestro()">
@@ -2193,13 +2253,14 @@ async function guardarNuevoMaestro() {
   const btn = document.getElementById('btn-save-maestro');
   btn.disabled = true; btn.textContent = 'Guardando...';
 
-  const maestroData = { nombre, rol, password:pw, niveles, activo:true };
+  const codigoMaestro = document.getElementById('nm-codigo')?.value || String(Math.floor(1000 + Math.random() * 9000));
+  const maestroData = { nombre, rol, password:pw, niveles, activo:true, codigo_maestro: codigoMaestro };
   const res = await saveToNotion({ action:'addMaestro', data:maestroData });
   maestroData.id = res?.id || ('m'+Date.now());
   DATA.maestros.push(maestroData);
 
   closeModal();
-  showToast(`✓ Maestro "${nombre}" agregado. Contraseña: ${pw}`);
+  showToast(`✓ Maestro "${nombre}" agregado. Código: ${codigoMaestro} · PW: ${pw}`);
   renderAdminMaestros(document.getElementById('app-page'));
 }
 
@@ -3092,7 +3153,7 @@ function renderAdminRH(page) {
       <table class="stable">
         <thead><tr>
           <th>Nombre</th><th>Empresa</th><th>Email</th>
-          <th>Contraseña</th><th>Colaboradores</th><th>Estado</th>
+          <th>Contraseña</th><th>Colaboradores</th><th>Estado</th><th>Acciones</th>
         </tr></thead>
         <tbody>
           ${lista.map(c => {
@@ -3110,6 +3171,10 @@ function renderAdminRH(page) {
                   color:${c.activo!==false?'var(--green)':'var(--txt3)'}">
                   ${c.activo!==false?'Activo':'Inactivo'}
                 </span>
+              </td>
+              <td style="display:flex;gap:4px">
+                <button class="action-btn" onclick="abrirEditarContactoRH('${c.id}')">Editar</button>
+                <button class="action-btn" onclick="confirmarToggleRH('${c.id}')">${c.activo!==false?'Desactivar':'Activar'}</button>
               </td>
             </tr>`;
           }).join('')}
@@ -3537,7 +3602,195 @@ function renderEmpresaDetalle(page, empresaId) {
 // GT DASHBOARD — eliminado (v11)
 // ════════════════════════════════════════
 function renderGTDashboard(page) {
-  page.innerHTML = '<div class="card"><p style="font-size:13px;color:var(--txt3)">Dashboard desactivado.</p></div>';
+  const hoy        = new Date().toISOString().slice(0,10);
+  const alumnos    = DATA.alumnos.filter(a => a.activo !== false);
+  const empresas   = DATA.empresas.filter(e => e.estatus === 'Activo' || e.estatus === 'activo');
+  const maestros   = DATA.maestros.filter(m => m.activo !== false && (m.rol === 'maestro' || m.rol === 'admin'));
+  const sesiones   = DATA.sesiones;
+  const inactivos  = countInactivos();
+
+  const sesionesSemana = (() => {
+    const hace7 = new Date(); hace7.setDate(hace7.getDate()-7);
+    const hace7str = hace7.toISOString().slice(0,10);
+    return sesiones.filter(s => s.fecha >= hace7str && s.fecha <= hoy).length;
+  })();
+
+  const leadsPipeline = DATA.empresas.filter(e =>
+    e.estatus && !['Activo','activo','Descartado','descartado'].includes(e.estatus)
+  );
+
+  // ── MRR estimado ─────────────────────────────────────────────
+  const gruposActivos = DATA.grupos.filter(g => g.activo !== false);
+  const mrr = gruposActivos.reduce((sum, g) => {
+    const nAlumnos = DATA.alumnos.filter(a => a.grupo_id === g.id && a.activo !== false).length;
+    const precio = Number(g.precio_mensual || 0);
+    return sum + (precio > 0 ? precio : nAlumnos * 1500);
+  }, 0);
+  const mrrLabel = mrr > 0 ? `$${mrr.toLocaleString('es-MX')}` : '—';
+
+  // ── Grupos cerca de renovación (≥ 80% sesiones usadas) ───────
+  const alertasRenovacion = gruposActivos.filter(g => {
+    if (!g.sesiones_contratadas) return false;
+    const usadas = DATA.sesiones.filter(s => s.grupo_id === g.id && s.tipo === 'grupal').length;
+    return usadas / g.sesiones_contratadas >= 0.8;
+  });
+
+  const kpi = (label, val, sub, color) => `
+    <div style="background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;">
+      <div style="font-size:10px;color:var(--txt3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px">${label}</div>
+      <div style="font-size:24px;font-weight:500;color:${color||'var(--txt)'}">${val}</div>
+      <div style="font-size:11px;color:var(--txt3);margin-top:3px">${sub}</div>
+    </div>`;
+
+  const areaCard = (num, nombre, estado, tareas, color, vista) => {
+    const dotColor = estado==='activo'?'var(--green)':estado==='progreso'?'#d97706':'#ccc';
+    const clickable = vista ? 'cursor:pointer' : 'cursor:default';
+    const clickEvt  = vista ? `onclick="event.stopPropagation();showView('${vista}')"` : '';
+    return `<div style="background:var(--white);border:1px solid var(--border);border-left:3px solid ${color};border-radius:var(--r);padding:14px 16px;${clickable}" ${clickEvt}>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+        <span style="font-size:10px;font-weight:500;color:${color};text-transform:uppercase;letter-spacing:.06em">${num}</span>
+        <div style="width:7px;height:7px;border-radius:50%;background:${dotColor}"></div>
+      </div>
+      <div style="font-size:13px;font-weight:500;margin-bottom:8px">${nombre}</div>
+      <div style="font-size:11px;color:var(--txt3);line-height:1.6">${tareas}</div>
+    </div>`;
+  };
+
+  const checkId = 'gtcheck_' + Date.now();
+  const checkItems = [
+    'Prospección LinkedIn (3–5 DMs)',
+    'Seguimiento a leads sin respuesta',
+    'Publicar en LinkedIn',
+    'Revisar reporte de sesiones',
+    'Actualizar KPIs',
+    'Confirmar sesiones próxima semana',
+    'Revisar disponibilidad de maestros',
+  ];
+
+  page.innerHTML = `
+  <div style="padding:4px 0 24px">
+
+    <!-- ── KPIs ── -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:20px">
+      ${kpi('MRR estimado', mrrLabel, 'Grupos activos × precio', 'var(--green)')}
+      ${kpi('Empresas B2B', empresas.length, 'Meta: 15 empresas', empresas.length>=15?'var(--green)':'#d97706')}
+      ${kpi('Alumnos activos', alumnos.length, 'Todos los niveles', 'var(--navy)')}
+      ${kpi('Maestros', maestros.length, 'En equipo activo', 'var(--navy)')}
+      ${kpi('Sesiones esta semana', sesionesSemana, 'Últimos 7 días', 'var(--navy)')}
+      ${kpi('Inactivos +14d', inactivos, 'Requieren seguimiento', inactivos>0?'var(--red)':'var(--green)')}
+    </div>
+
+    <!-- ── ALERTAS DE RENOVACIÓN ── -->
+    ${alertasRenovacion.length ? `
+    <div class="card" style="border-left:3px solid #d97706;margin-bottom:14px">
+      <div class="card-title" style="color:#854F0B">⚠ Grupos cerca de renovación (≥ 80% sesiones usadas)</div>
+      ${alertasRenovacion.map(g => {
+        const usadas = DATA.sesiones.filter(s => s.grupo_id === g.id && s.tipo === 'grupal').length;
+        const pct = Math.round(usadas / g.sesiones_contratadas * 100);
+        return `<div style="display:flex;align-items:center;gap:12px;padding:7px 0;border-bottom:1px solid var(--border)">
+          <div style="flex:1;font-size:13px;font-weight:500">${g.nombre}</div>
+          <div style="font-size:12px;color:#854F0B">${usadas}/${g.sesiones_contratadas} sesiones (${pct}%)</div>
+          <div style="width:80px;height:5px;background:var(--bg3);border-radius:3px;overflow:hidden">
+            <div style="width:${pct}%;height:100%;background:#d97706;border-radius:3px"></div>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>` : ''}
+
+    <!-- ── PIPELINE B2B ── -->
+    <div class="card" style="margin-bottom:14px">
+      <div class="card-title">Pipeline B2B</div>
+      <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px">
+        ${['Contacto','Diagnóstico','Propuesta','Seguimiento','Cerrado'].map(etapa => {
+          const normalize = s => (s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+          const count = etapa === 'Cerrado'
+            ? empresas.length
+            : DATA.empresas.filter(e => normalize(e.estatus) === normalize(etapa)).length;
+          const isActive = etapa === 'Cerrado';
+          return `
+          <div style="text-align:center;padding:12px 8px;border-radius:var(--rs);
+            background:${isActive?'var(--green-bg)':'var(--bg)'};
+            border:1px solid ${isActive?'var(--green)':'var(--border)'}">
+            <div style="font-size:20px;font-weight:500;color:${isActive?'var(--green)':'var(--txt)'}">${count}</div>
+            <div style="font-size:10px;color:${isActive?'var(--green)':'var(--txt3)'};margin-top:3px;text-transform:uppercase;letter-spacing:.05em">${etapa}</div>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>
+
+    <!-- ── ÁREAS DEL SISTEMA ── -->
+    <div style="font-size:10px;font-weight:500;color:var(--txt3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px">
+      Áreas del sistema
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px">
+      ${areaCard('01','LinkedIn — Proyecto independiente','progreso','Prospección activa · Contenido semanal','#7F77DD','')}
+      ${areaCard('02','Redes sociales','gris','Calendario editorial · Canales activos','#1D9E75','')}
+      ${areaCard('03','Contenido y recursos','progreso','Lead magnets · Banco de recursos','#EF9F27','')}
+      ${areaCard('04','Ventas B2B','progreso',empresas.length+' empresas activas · Meta: 15','#D85A30','empresas')}
+      ${areaCard('05','Clases particulares y grupos','activo',alumnos.length+' alumnos · '+maestros.length+' maestros','#378ADD','admin-alumnos')}
+      ${areaCard('06','Precios y servicios','activo','MRR estimado: '+mrrLabel+' · Revisión pendiente','#1D9E75','')}
+      ${areaCard('07','Currículo y metodología','progreso','B1.1–B1.2 · Speaking Lab activo','#7F77DD','')}
+      ${areaCard('08','Sesiones y reportes','activo',sesionesSemana+' sesiones esta semana','#7F77DD','admin-productividad')}
+      ${areaCard('09','Equipo de maestros','progreso',maestros.length+' maestros activos','#EF9F27','admin-maestros')}
+    </div>
+
+    <!-- ── CHECKLIST SEMANAL + ALERTAS ── -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+      <div class="card">
+        <div class="card-title">Checklist semanal</div>
+        <div id="${checkId}">
+          ${checkItems.map((t,i) => `
+          <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)"
+            onclick="gtToggleCheck('${checkId}-${i}')">
+            <div id="${checkId}-${i}" style="width:16px;height:16px;border-radius:4px;border:1.5px solid var(--border2);
+              flex-shrink:0;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s"></div>
+            <span id="${checkId}-${i}-txt" style="font-size:12px;color:var(--txt)">${t}</span>
+          </div>`).join('')}
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Alertas</div>
+        ${alertasRenovacion.length ? `
+        <div style="background:#FAEEDA;border-radius:var(--rs);padding:10px 14px;margin-bottom:10px;cursor:pointer"
+          onclick="showView('admin-grupos')">
+          <div style="font-size:12px;font-weight:500;color:#854F0B;margin-bottom:2px">
+            ${alertasRenovacion.length} grupo${alertasRenovacion.length>1?'s':''} cerca de renovación
+          </div>
+          <div style="font-size:11px;color:#854F0B">Clic para ver → Grupos</div>
+        </div>` : ''}
+        ${inactivos > 0 ? `
+        <div style="background:var(--red-bg);border-radius:var(--rs);padding:10px 14px;margin-bottom:10px;cursor:pointer"
+          onclick="showView('admin-alumnos')">
+          <div style="font-size:12px;font-weight:500;color:var(--red);margin-bottom:2px">
+            ${inactivos} alumno${inactivos>1?'s':''} sin clase en +14 días
+          </div>
+          <div style="font-size:11px;color:var(--red)">Clic para ver → Todos los alumnos</div>
+        </div>` : `
+        <div style="background:var(--green-bg);border-radius:var(--rs);padding:10px 14px;margin-bottom:10px">
+          <div style="font-size:12px;font-weight:500;color:var(--green)">Sin alertas de inactividad</div>
+        </div>`}
+        ${leadsPipeline.length > 0 ? `
+        <div style="background:#FAEEDA;border-radius:var(--rs);padding:10px 14px;margin-bottom:10px;cursor:pointer"
+          onclick="showView('empresas')">
+          <div style="font-size:12px;font-weight:500;color:#854F0B;margin-bottom:2px">
+            ${leadsPipeline.length} empresa${leadsPipeline.length>1?'s':''} en pipeline sin cerrar
+          </div>
+          <div style="font-size:11px;color:#854F0B">Clic para ver → Empresas</div>
+        </div>` : ''}
+        <div style="margin-top:8px">
+          <div style="font-size:10px;color:var(--txt3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Accesos rápidos</div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px">
+            <button class="action-btn" onclick="showView('admin-alumnos')">Alumnos</button>
+            <button class="action-btn" onclick="showView('empresas')">Empresas</button>
+            <button class="action-btn" onclick="showView('admin-maestros')">Maestros</button>
+            <button class="action-btn" onclick="showView('admin-productividad')">Productividad</button>
+            <button class="action-btn" onclick="showView('reporte-rrhh')">Reporte</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>`;
 }
 function _renderGTDashboard_DISABLED(page) {
   const hoy        = new Date().toISOString().slice(0,10);
@@ -3693,7 +3946,76 @@ function _renderGTDashboard_DISABLED(page) {
   </div>`;
 }
 // ════════════════════════════════════════
-// FIN PORTAL v11
+// MODAL — EDITAR / TOGGLE CONTACTO RH
+// ════════════════════════════════════════
+function abrirEditarContactoRH(id) {
+  const c = DATA.contactos_rh.find(c => c.id === id);
+  if (!c) return;
+  document.getElementById('modal-title').textContent = `Editar contacto RH — ${c.nombre}`;
+  document.getElementById('modal-body').innerHTML = `
+    <div class="form-grid">
+      <div class="fld span2"><label>Nombre completo</label>
+        <input type="text" id="erh-nombre" value="${c.nombre||''}"></div>
+      <div class="fld"><label>Email (opcional)</label>
+        <input type="email" id="erh-email" value="${c.email||''}"></div>
+      <div class="fld"><label>Contraseña de acceso</label>
+        <input type="text" id="erh-pw" value="${c.password||''}"></div>
+    </div>`;
+  document.getElementById('modal-footer').innerHTML = `
+    <button class="action-btn" onclick="closeModal()">Cancelar</button>
+    <button class="action-btn primary" onclick="guardarEdicionRH('${id}')">Guardar cambios</button>`;
+  document.getElementById('modal').classList.add('open');
+}
+
+async function guardarEdicionRH(id) {
+  const nombre = document.getElementById('erh-nombre').value.trim();
+  const email  = document.getElementById('erh-email').value.trim();
+  const pw     = document.getElementById('erh-pw').value.trim();
+  if (!nombre) { showToast('El nombre no puede estar vacío.'); return; }
+  if (!pw)     { showToast('La contraseña no puede estar vacía.'); return; }
+  await saveToNotion({ action:'updateContactoRH', id, updates:{ nombre, email:email||null, password:pw } });
+  const c = DATA.contactos_rh.find(c => c.id === id);
+  if (c) Object.assign(c, { nombre, email:email||null, password:pw });
+  closeModal();
+  showToast('✓ Contacto RH actualizado');
+  renderAdminRH(document.getElementById('app-page'));
+}
+
+function confirmarToggleRH(id) {
+  const c = DATA.contactos_rh.find(c => c.id === id);
+  if (!c) return;
+  const accion = c.activo !== false ? 'desactivar' : 'activar';
+  document.getElementById('modal-title').textContent = `${c.activo!==false?'Desactivar':'Activar'} contacto RH`;
+  document.getElementById('modal-body').innerHTML = `
+    <p style="font-size:13px;color:var(--txt2);line-height:1.7">
+      ¿Confirmás que querés <strong>${accion}</strong> a <strong>${c.nombre}</strong>?
+    </p>
+    <div style="background:${c.activo!==false?'var(--red-bg)':'var(--green-bg)'};border-radius:var(--rs);
+      padding:10px 14px;font-size:12px;color:${c.activo!==false?'var(--red)':'var(--green)'};margin-top:12px">
+      ${c.activo!==false ? '⚠ El contacto ya no podrá iniciar sesión.' : '✓ El contacto podrá volver a iniciar sesión.'}
+    </div>`;
+  document.getElementById('modal-footer').innerHTML = `
+    <button class="action-btn" onclick="closeModal()">Cancelar</button>
+    <button class="action-btn" onclick="ejecutarToggleRH('${id}')"
+      style="background:${c.activo!==false?'var(--red-bg)':'var(--green-bg)'};color:${c.activo!==false?'var(--red)':'var(--green)'}">
+      Sí, ${accion}
+    </button>`;
+  document.getElementById('modal').classList.add('open');
+}
+
+async function ejecutarToggleRH(id) {
+  const c = DATA.contactos_rh.find(c => c.id === id);
+  if (!c) return;
+  const nuevoActivo = c.activo === false;
+  await saveToNotion({ action:'updateContactoRH', id, updates:{ activo: nuevoActivo } });
+  c.activo = nuevoActivo;
+  closeModal();
+  showToast(`✓ ${c.nombre} ${nuevoActivo?'activado':'desactivado'}`);
+  renderAdminRH(document.getElementById('app-page'));
+}
+
+// ════════════════════════════════════════
+// FIN SPRINT 4 FIXES
 // ════════════════════════════════════════
 function gtToggleCheck(id) {
   const box = document.getElementById(id);
