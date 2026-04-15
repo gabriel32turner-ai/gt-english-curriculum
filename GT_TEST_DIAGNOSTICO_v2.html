@@ -1,0 +1,1314 @@
+<!--
+  DIAGNÓSTICO DE INGLÉS — GABRIEL TURNER ENGLISH TRAINING
+  Versión: 2.0
+  Última edición: abril 2026
+
+  ANTES DE PUBLICAR:
+  1. Pegar el webhook real en const WEBHOOK_URL (línea ~520)
+  2. Verificar que el WhatsApp 524611472119 sea el correcto
+  3. Subir a Netlify Drop o hosting de preferencia
+
+  MANTENIMIENTO:
+  - Para editar preguntas: buscar el array QS al inicio del <script>
+  - Para editar copy de niveles: buscar el objeto LEVELDATA
+  - Para editar CTAs y mensajes WhatsApp: buscar funciones buildWhatsAppMsg*
+-->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diagnóstico de inglés profesional — Gabriel Turner English Training</title>
+<meta name="description" content="Descubre tu nivel de inglés MCER en 8 minutos. 40 preguntas, resultado al instante, plan personalizado para profesionistas.">
+<meta property="og:title" content="Diagnóstico de inglés profesional — Gabriel Turner English Training">
+<meta property="og:description" content="40 preguntas. 8 niveles MCER. Resultado al instante con tu plan personalizado.">
+<meta property="og:image" content="https://gabrielturner.com/og-diagnostico.jpg">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --magenta: #D4006A;
+  --magenta-light: #FF4D9E;
+  --magenta-pale: rgba(212,0,106,0.08);
+  --navy: #1A1A3E;
+  --navy-mid: #252560;
+  --off-white: #fdf5f8;
+  --gray: #6b7280;
+  --border: rgba(212,0,106,0.18);
+  --green: #16a34a;
+  --white: #fff;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+  font-family:'DM Sans',sans-serif;
+  background:var(--off-white);
+  color:var(--navy);
+  min-height:100vh;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* ── SCREEN SWITCHING ── */
+.screen{display:none;}
+.screen.active{display:block;}
+
+/* ── SHARED HEADER ── */
+.gt-header{
+  background:linear-gradient(135deg,var(--navy) 0%,var(--navy-mid) 55%,#3a1060 100%);
+  padding:28px 32px 24px;
+  position:relative;
+  overflow:hidden;
+}
+.gt-header::before{
+  content:'';position:absolute;top:-50px;right:-50px;
+  width:220px;height:220px;border-radius:50%;
+  background:radial-gradient(circle,rgba(212,0,106,0.3) 0%,transparent 70%);
+}
+.gt-header::after{
+  content:'';position:absolute;bottom:-60px;left:25%;
+  width:160px;height:160px;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,77,158,0.18) 0%,transparent 70%);
+}
+.gt-header-inner{position:relative;z-index:1;display:flex;align-items:center;gap:14px;}
+.gt-logo{
+  width:48px;height:48px;border-radius:12px;
+  background:var(--magenta);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Playfair Display',serif;font-size:18px;font-weight:900;
+  color:#fff;flex-shrink:0;
+}
+.gt-brand-text .name{
+  font-family:'Playfair Display',serif;color:#fff;
+  font-size:20px;font-weight:900;line-height:1;
+}
+.gt-brand-text .name span{color:var(--magenta-light);}
+.gt-brand-text .sub{
+  color:rgba(255,255,255,0.45);font-size:10px;
+  letter-spacing:2.5px;text-transform:uppercase;margin-top:3px;
+}
+
+/* ── WELCOME SCREEN ── */
+#screen-welcome{
+  max-width:600px;margin:0 auto;padding:0 16px 60px;
+}
+.welcome-hero{
+  background:linear-gradient(135deg,var(--navy) 0%,var(--navy-mid) 55%,#3a1060 100%);
+  margin:-1px;padding:48px 32px 40px;
+  position:relative;overflow:hidden;text-align:center;
+}
+.welcome-hero::before{
+  content:'';position:absolute;top:-60px;right:-60px;
+  width:260px;height:260px;border-radius:50%;
+  background:radial-gradient(circle,rgba(212,0,106,0.35) 0%,transparent 70%);
+}
+.welcome-hero::after{
+  content:'';position:absolute;bottom:-70px;left:20%;
+  width:180px;height:180px;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,77,158,0.2) 0%,transparent 70%);
+}
+.welcome-hero-inner{position:relative;z-index:1;}
+.hero-logo{
+  width:64px;height:64px;border-radius:16px;
+  background:var(--magenta);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Playfair Display',serif;font-size:24px;font-weight:900;
+  color:#fff;margin:0 auto 20px;
+}
+.welcome-hero h1{
+  font-family:'Playfair Display',serif;
+  color:#fff;font-size:32px;font-weight:900;line-height:1.15;
+  margin-bottom:12px;
+}
+.welcome-hero h1 em{color:var(--magenta-light);font-style:normal;}
+.welcome-hero p{
+  color:rgba(255,255,255,0.65);font-size:15px;
+  line-height:1.6;max-width:400px;margin:0 auto 28px;
+}
+.info-pills{
+  display:flex;justify-content:center;flex-wrap:wrap;gap:10px;
+}
+.info-pill{
+  background:rgba(255,255,255,0.1);
+  border:1px solid rgba(255,255,255,0.2);
+  color:#fff;font-size:12px;font-weight:500;
+  padding:7px 16px;border-radius:40px;
+}
+
+.welcome-form{
+  background:#fff;
+  border-radius:0 0 20px 20px;
+  padding:36px 32px 40px;
+  box-shadow:0 20px 60px rgba(26,26,62,0.1);
+}
+.form-title{
+  font-size:13px;font-weight:600;color:var(--gray);
+  letter-spacing:1.5px;text-transform:uppercase;
+  margin-bottom:22px;
+}
+.field{margin-bottom:18px;}
+.field label{
+  display:block;font-size:13px;font-weight:600;
+  color:var(--navy);margin-bottom:7px;
+}
+.field input[type="text"],
+.field input[type="email"]{
+  width:100%;padding:13px 16px;
+  border:1.5px solid var(--border);
+  border-radius:10px;
+  font-family:'DM Sans',sans-serif;font-size:14px;
+  color:var(--navy);background:#fff;
+  transition:border-color .2s,box-shadow .2s;
+  outline:none;
+}
+.field input:focus{
+  border-color:var(--magenta);
+  box-shadow:0 0 0 3px rgba(212,0,106,0.1);
+}
+.field input.error{border-color:#ef4444;}
+.field .field-hint{
+  font-size:11px;color:var(--gray);margin-top:5px;
+}
+.checkbox-row{
+  display:flex;align-items:flex-start;gap:10px;
+  margin-top:20px;cursor:pointer;
+}
+.checkbox-row input[type="checkbox"]{
+  width:18px;height:18px;accent-color:var(--magenta);
+  flex-shrink:0;margin-top:2px;cursor:pointer;
+}
+.checkbox-row span{font-size:12.5px;color:var(--gray);line-height:1.5;}
+.btn-primary{
+  display:block;width:100%;
+  background:var(--magenta);color:#fff;
+  font-family:'DM Sans',sans-serif;font-size:15px;font-weight:600;
+  padding:16px;border:none;border-radius:12px;
+  cursor:pointer;margin-top:24px;
+  transition:background .2s,transform .15s,box-shadow .2s;
+  min-height:52px;
+}
+.btn-primary:hover:not(:disabled){
+  background:#b5005a;
+  box-shadow:0 8px 24px rgba(212,0,106,0.3);
+  transform:translateY(-1px);
+}
+.btn-primary:disabled{
+  background:rgba(212,0,106,0.35);cursor:not-allowed;
+}
+.welcome-trust{
+  display:flex;justify-content:center;gap:20px;
+  margin-top:20px;flex-wrap:wrap;
+}
+.trust-item{
+  display:flex;align-items:center;gap:6px;
+  font-size:11.5px;color:var(--gray);
+}
+
+/* ── TEST SCREEN ── */
+#screen-test{
+  max-width:640px;margin:0 auto;padding:0 16px 60px;
+}
+.test-progress-wrap{
+  background:#fff;
+  border-bottom:1px solid var(--border);
+  padding:16px 20px;
+  position:sticky;top:0;z-index:10;
+}
+.progress-meta{
+  display:flex;justify-content:space-between;
+  align-items:center;margin-bottom:10px;
+}
+.progress-label{
+  font-size:11px;font-weight:600;color:var(--gray);
+  letter-spacing:1.5px;text-transform:uppercase;
+}
+.progress-counter{
+  font-size:13px;font-weight:600;color:var(--navy);
+}
+.progress-bar-outer{
+  height:6px;background:var(--magenta-pale);
+  border-radius:99px;overflow:hidden;
+}
+.progress-bar-inner{
+  height:100%;background:var(--magenta);
+  border-radius:99px;
+  transition:width .4s ease;
+}
+.section-badge{
+  display:inline-block;
+  background:var(--magenta);color:#fff;
+  font-size:10px;font-weight:700;letter-spacing:1px;
+  padding:3px 10px;border-radius:40px;
+  margin-top:8px;
+}
+
+.test-card{
+  background:#fff;
+  border-radius:18px;
+  margin-top:20px;
+  overflow:hidden;
+  box-shadow:0 10px 40px rgba(26,26,62,0.08);
+  animation:fadeUp .3s ease both;
+}
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(16px);}
+  to{opacity:1;transform:translateY(0);}
+}
+.test-card-head{
+  background:var(--magenta-pale);
+  border-bottom:1px solid var(--border);
+  padding:14px 24px;
+  display:flex;align-items:center;gap:10px;
+}
+.q-num{
+  width:30px;height:30px;
+  background:var(--magenta);border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:12px;font-weight:700;color:#fff;flex-shrink:0;
+}
+.q-ctx{font-size:12px;color:var(--gray);font-weight:500;}
+.test-card-body{padding:28px 24px 24px;}
+.q-text{
+  font-size:17px;font-weight:600;color:var(--navy);
+  line-height:1.5;margin-bottom:24px;
+}
+.q-text mark{
+  background:transparent;
+  color:var(--magenta);text-decoration:underline dotted;
+}
+.options{display:grid;gap:10px;}
+.opt-btn{
+  width:100%;text-align:left;
+  padding:14px 18px;
+  border:1.5px solid var(--border);
+  border-radius:12px;
+  font-family:'DM Sans',sans-serif;font-size:14px;
+  color:var(--navy);background:#fff;
+  cursor:pointer;
+  transition:border-color .2s,background .2s,transform .1s;
+  display:flex;align-items:center;gap:12px;
+  min-height:52px;
+}
+.opt-btn:hover{
+  border-color:var(--magenta);
+  background:var(--magenta-pale);
+}
+.opt-btn.selected{
+  border-color:var(--magenta);
+  background:var(--magenta-pale);
+  font-weight:600;
+}
+.opt-btn.correct{
+  border-color:var(--green);
+  background:rgba(22,163,74,0.08);
+  color:var(--green);font-weight:600;
+}
+.opt-btn.wrong{
+  border-color:#ef4444;
+  background:rgba(239,68,68,0.08);
+  color:#dc2626;
+}
+.opt-letter{
+  width:24px;height:24px;border-radius:50%;
+  background:rgba(26,26,62,0.08);
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:700;color:var(--navy);flex-shrink:0;
+  transition:background .2s,color .2s;
+}
+.opt-btn.selected .opt-letter{background:var(--magenta);color:#fff;}
+.opt-btn.correct .opt-letter{background:var(--green);color:#fff;}
+.opt-btn.wrong .opt-letter{background:#ef4444;color:#fff;}
+
+.test-nav{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:20px 24px;border-top:1px solid var(--border);
+  background:#fff;
+}
+.btn-nav{
+  padding:11px 24px;border-radius:10px;
+  font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;
+  cursor:pointer;transition:all .2s;min-height:44px;
+}
+.btn-exit{
+  border:1.5px solid var(--border);
+  background:#fff;color:var(--gray);
+}
+.btn-exit:hover{border-color:var(--navy);color:var(--navy);}
+.btn-next{
+  border:none;background:var(--magenta);color:#fff;
+  opacity:.4;pointer-events:none;
+}
+.btn-next.enabled{opacity:1;pointer-events:all;}
+.btn-next.enabled:hover{background:#b5005a;transform:translateY(-1px);}
+
+/* ── EXIT MODAL ── */
+.modal-overlay{
+  display:none;position:fixed;inset:0;
+  background:rgba(26,26,62,0.55);
+  z-index:100;align-items:center;justify-content:center;
+  padding:20px;
+}
+.modal-overlay.open{display:flex;}
+.modal-box{
+  background:#fff;border-radius:20px;
+  padding:36px 32px;max-width:380px;width:100%;
+  text-align:center;animation:fadeUp .25s ease;
+}
+.modal-box h3{
+  font-family:'Playfair Display',serif;
+  font-size:22px;color:var(--navy);margin-bottom:10px;
+}
+.modal-box p{font-size:14px;color:var(--gray);line-height:1.6;margin-bottom:28px;}
+.modal-actions{display:flex;flex-direction:column;gap:10px;}
+.btn-modal-primary{
+  padding:14px;background:var(--magenta);color:#fff;
+  border:none;border-radius:10px;
+  font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;
+  cursor:pointer;min-height:48px;
+}
+.btn-modal-secondary{
+  padding:14px;background:#fff;color:var(--navy);
+  border:1.5px solid var(--border);border-radius:10px;
+  font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;
+  cursor:pointer;min-height:48px;
+}
+.btn-modal-secondary:hover{border-color:var(--navy);}
+
+/* ── RESULT SCREEN ── */
+#screen-result{
+  max-width:640px;margin:0 auto;padding:0 16px 60px;
+}
+.result-hero{
+  background:linear-gradient(135deg,var(--navy) 0%,var(--navy-mid) 55%,#3a1060 100%);
+  padding:40px 32px 36px;
+  text-align:center;position:relative;overflow:hidden;
+}
+.result-hero::before{
+  content:'';position:absolute;top:-50px;right:-50px;
+  width:220px;height:220px;border-radius:50%;
+  background:radial-gradient(circle,rgba(212,0,106,0.3) 0%,transparent 70%);
+}
+.result-hero-inner{position:relative;z-index:1;}
+.result-greeting{
+  color:rgba(255,255,255,0.55);font-size:14px;margin-bottom:12px;
+}
+.level-badge{
+  display:inline-block;
+  background:var(--magenta);color:#fff;
+  font-family:'Playfair Display',serif;
+  font-size:42px;font-weight:900;
+  padding:16px 36px;border-radius:20px;
+  margin-bottom:16px;
+  box-shadow:0 8px 32px rgba(212,0,106,0.4);
+}
+.level-name{
+  font-family:'Playfair Display',serif;
+  color:#fff;font-size:26px;font-weight:700;
+  margin-bottom:10px;
+}
+.level-desc{
+  color:rgba(255,255,255,0.6);font-size:14px;
+  line-height:1.65;max-width:420px;margin:0 auto;
+}
+.partial-tag{
+  display:inline-block;margin-bottom:14px;
+  background:rgba(255,200,0,0.2);border:1px solid rgba(255,200,0,0.4);
+  color:#ffd700;font-size:11px;font-weight:600;
+  padding:4px 14px;border-radius:40px;letter-spacing:1px;
+}
+
+.result-section{
+  background:#fff;border-radius:16px;
+  margin-top:16px;padding:28px 24px;
+  box-shadow:0 4px 20px rgba(26,26,62,0.06);
+}
+.result-section-title{
+  font-size:10px;font-weight:700;letter-spacing:2.5px;
+  text-transform:uppercase;color:var(--magenta);
+  margin-bottom:20px;
+}
+
+/* Score ring */
+.score-wrap{
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  margin-bottom:24px;
+}
+.score-ring{width:130px;height:130px;position:relative;}
+.score-ring svg{transform:rotate(-90deg);}
+.score-ring-num{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+}
+.score-big{
+  font-family:'Playfair Display',serif;
+  font-size:30px;font-weight:900;color:var(--magenta);line-height:1;
+}
+.score-den{font-size:13px;color:var(--gray);}
+
+/* Section bars */
+.section-bars{display:grid;gap:12px;}
+.sbar-row{display:grid;grid-template-columns:60px 1fr 32px;gap:8px;align-items:center;}
+.sbar-label{font-size:11px;font-weight:600;color:var(--navy);}
+.sbar-track{height:8px;background:var(--magenta-pale);border-radius:99px;overflow:hidden;}
+.sbar-fill{height:100%;background:var(--magenta);border-radius:99px;transition:width .8s ease;}
+.sbar-pct{font-size:11px;font-weight:600;color:var(--gray);text-align:right;}
+
+/* Bullet lists */
+.bullet-list{display:grid;gap:10px;}
+.bullet-item{
+  display:flex;align-items:flex-start;gap:12px;
+  font-size:14px;line-height:1.55;color:var(--navy);
+}
+.bullet-dot{
+  width:22px;height:22px;border-radius:50%;
+  background:linear-gradient(135deg,var(--magenta),#a0004e);
+  display:flex;align-items:center;justify-content:center;
+  font-size:10px;color:#fff;font-weight:700;flex-shrink:0;margin-top:1px;
+}
+.bullet-dot.unlock{background:linear-gradient(135deg,#252560,#1A1A3E);}
+
+/* Program card */
+.program-card{
+  border:2px solid var(--magenta);
+  border-radius:14px;overflow:hidden;
+}
+.program-card-head{
+  background:linear-gradient(135deg,var(--navy),var(--navy-mid));
+  padding:18px 20px;
+}
+.program-card-head .prog-name{
+  font-family:'Playfair Display',serif;
+  color:#fff;font-size:20px;font-weight:700;
+}
+.program-card-head .prog-dur{
+  color:rgba(255,255,255,0.5);font-size:12px;margin-top:4px;
+}
+.program-card-body{padding:20px;}
+.program-card-body .prog-copy{
+  font-size:13.5px;color:var(--gray);line-height:1.6;margin-bottom:14px;
+}
+.prog-price{
+  font-family:'Playfair Display',serif;
+  font-size:24px;font-weight:900;color:var(--magenta);
+}
+.prog-price span{font-family:'DM Sans',sans-serif;font-size:13px;font-weight:400;color:var(--gray);}
+
+/* CTAs */
+.cta-stack{display:flex;flex-direction:column;gap:12px;margin-top:16px;}
+.cta-btn{
+  display:block;width:100%;
+  padding:16px 20px;border-radius:12px;
+  font-family:'DM Sans',sans-serif;font-size:15px;font-weight:600;
+  text-align:center;cursor:pointer;text-decoration:none;
+  transition:all .2s;min-height:52px;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+}
+.cta-primary{background:var(--magenta);color:#fff;border:none;}
+.cta-primary:hover{background:#b5005a;box-shadow:0 8px 24px rgba(212,0,106,0.3);transform:translateY(-2px);}
+.cta-secondary{background:#fff;color:var(--navy);border:2px solid var(--navy);}
+.cta-secondary:hover{background:var(--navy);color:#fff;}
+.cta-text{
+  background:none;border:none;
+  color:var(--magenta);font-size:13.5px;font-weight:500;
+  text-decoration:underline;cursor:pointer;
+  font-family:'DM Sans',sans-serif;
+}
+.cta-text:hover{color:#b5005a;}
+
+/* Responsive */
+@media(max-width:480px){
+  .welcome-hero h1{font-size:26px;}
+  .welcome-form{padding:28px 20px 32px;}
+  .test-card-body{padding:22px 18px 18px;}
+  .test-nav{padding:16px 18px;}
+  .q-text{font-size:15px;}
+  .result-hero{padding:32px 20px 28px;}
+  .level-badge{font-size:34px;padding:12px 28px;}
+  .level-name{font-size:22px;}
+  .result-section{padding:22px 18px;}
+  .sbar-row{grid-template-columns:52px 1fr 28px;}
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════
+     WELCOME SCREEN
+══════════════════════════════════════════ -->
+<div id="screen-welcome" class="screen active">
+  <div style="max-width:600px;margin:0 auto;">
+    <div class="welcome-hero">
+      <div class="welcome-hero-inner">
+        <div class="hero-logo">GT</div>
+        <h1>Diagnóstico de<br><em>inglés profesional</em></h1>
+        <p>40 preguntas. 8 niveles. Resultado al instante con tu nivel MCER y un plan personalizado de Gabriel.</p>
+        <div class="info-pills">
+          <div class="info-pill">⏱ 8–10 min</div>
+          <div class="info-pill">📊 8 niveles MCER</div>
+          <div class="info-pill">🎯 Resultado al instante</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="welcome-form">
+      <div class="form-title">Tus datos para recibir el resultado</div>
+
+      <div class="field">
+        <label for="f-nombre">Nombre completo</label>
+        <input type="text" id="f-nombre" placeholder="Ej. María González López" autocomplete="name">
+      </div>
+      <div class="field">
+        <label for="f-email">Email corporativo</label>
+        <input type="email" id="f-email" placeholder="tu@empresa.com" autocomplete="email">
+        <div class="field-hint">Aquí recibirás tu resultado detallado.</div>
+      </div>
+      <div class="field">
+        <label for="f-empresa">Empresa donde trabajas</label>
+        <input type="text" id="f-empresa" placeholder="Ej. HAINBUCH México (o escribe Independiente)">
+      </div>
+      <div class="field">
+        <label for="f-cargo">Cargo / puesto actual</label>
+        <input type="text" id="f-cargo" placeholder="Ej. Gerente de Compras">
+      </div>
+
+      <label class="checkbox-row">
+        <input type="checkbox" id="f-consent">
+        <span>Acepto recibir mi resultado y recursos de Gabriel Turner — English Training por este medio.</span>
+      </label>
+
+      <button class="btn-primary" id="btn-start" disabled>Comenzar diagnóstico →</button>
+
+      <div class="welcome-trust">
+        <div class="trust-item">✅ 31 referencias en LinkedIn</div>
+        <div class="trust-item">🏭 +10 empresas activas</div>
+        <div class="trust-item">🔒 Datos 100% privados</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     TEST SCREEN
+══════════════════════════════════════════ -->
+<div id="screen-test" class="screen">
+  <div style="max-width:640px;margin:0 auto;">
+    <div class="test-progress-wrap">
+      <div class="progress-meta">
+        <span class="progress-label" id="prog-section">Nivel A1.1</span>
+        <span class="progress-counter" id="prog-counter">1 / 40</span>
+      </div>
+      <div class="progress-bar-outer">
+        <div class="progress-bar-inner" id="prog-bar" style="width:2.5%"></div>
+      </div>
+      <div><span class="section-badge" id="prog-badge">A1.1 — Básico</span></div>
+    </div>
+
+    <div class="test-card">
+      <div class="test-card-head">
+        <div class="q-num" id="q-num">1</div>
+        <div class="q-ctx" id="q-ctx">Contexto</div>
+      </div>
+      <div class="test-card-body">
+        <div class="q-text" id="q-text">Pregunta</div>
+        <div class="options" id="options-wrap"></div>
+      </div>
+      <div class="test-nav">
+        <button class="btn-nav btn-exit" id="btn-exit-test">Salir</button>
+        <button class="btn-nav btn-next" id="btn-next">Siguiente →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     RESULT SCREEN
+══════════════════════════════════════════ -->
+<div id="screen-result" class="screen">
+  <div id="result-inner" style="max-width:640px;margin:0 auto;">
+
+    <div class="result-hero">
+      <div class="result-hero-inner">
+        <div id="partial-tag-wrap"></div>
+        <div class="result-greeting" id="res-greeting">Hola, Usuario —</div>
+        <div class="level-badge" id="res-badge">B1.2</div>
+        <div class="level-name" id="res-level-name">Intermedio sólido</div>
+        <div class="level-desc" id="res-level-desc">Descripción del nivel.</div>
+      </div>
+    </div>
+
+    <!-- Score + barras -->
+    <div class="result-section">
+      <div class="result-section-title">Tu puntuación</div>
+      <div class="score-wrap">
+        <div class="score-ring">
+          <svg width="130" height="130" viewBox="0 0 130 130">
+            <circle cx="65" cy="65" r="54" fill="none" stroke="var(--magenta-pale)" stroke-width="10"/>
+            <circle id="score-circle" cx="65" cy="65" r="54" fill="none" stroke="var(--magenta)"
+              stroke-width="10" stroke-linecap="round"
+              stroke-dasharray="339" stroke-dashoffset="339"/>
+          </svg>
+          <div class="score-ring-num">
+            <div class="score-big" id="score-num">0</div>
+            <div class="score-den">/ 40</div>
+          </div>
+        </div>
+      </div>
+      <div class="section-bars" id="section-bars"></div>
+    </div>
+
+    <!-- Lo que ya puedes hacer -->
+    <div class="result-section">
+      <div class="result-section-title">Lo que ya puedes hacer</div>
+      <div class="bullet-list" id="cando-list"></div>
+    </div>
+
+    <!-- Lo que vas a desbloquear -->
+    <div class="result-section">
+      <div class="result-section-title">Lo que vas a desbloquear con GT</div>
+      <div class="bullet-list" id="unlock-list"></div>
+    </div>
+
+    <!-- Programa recomendado -->
+    <div class="result-section">
+      <div class="result-section-title">Tu programa recomendado</div>
+      <div class="program-card">
+        <div class="program-card-head">
+          <div class="prog-name" id="prog-name">Programa Foundation</div>
+          <div class="prog-dur" id="prog-dur">5 a 7 meses</div>
+        </div>
+        <div class="program-card-body">
+          <div class="prog-copy" id="prog-copy">Copy del programa.</div>
+          <div class="prog-price">Desde $790 MXN <span>/ persona / mes</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CTAs -->
+    <div class="result-section">
+      <div class="result-section-title">¿Qué sigue?</div>
+      <div class="cta-stack">
+        <a href="#" class="cta-btn cta-primary" id="cta-diagnostico" onclick="ctaClick('diagnostico',event)">
+          📅 Agendar mi diagnóstico de 30 min con Gabriel
+        </a>
+        <a href="#" class="cta-btn cta-secondary" id="cta-propuesta" onclick="ctaClick('propuesta',event)">
+          📄 Recibir mi propuesta personalizada por email
+        </a>
+        <a href="https://gabrielturner.com" target="_blank" class="cta-btn"
+          style="color:var(--magenta);text-decoration:underline;font-size:13.5px;font-weight:500;padding:10px;"
+          onclick="ctaClick('metodologia',event)">
+          Conocer la metodología GT →
+        </a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     EXIT MODAL
+══════════════════════════════════════════ -->
+<div class="modal-overlay" id="exit-modal">
+  <div class="modal-box">
+    <h3>¿Salir del diagnóstico?</h3>
+    <p>Puedes ver tu resultado parcial con las preguntas que ya respondiste, o continuar para obtener un diagnóstico más preciso.</p>
+    <div class="modal-actions">
+      <button class="btn-modal-primary" onclick="showPartialResult()">Ver resultado parcial</button>
+      <button class="btn-modal-secondary" onclick="closeModal()">Continuar el diagnóstico</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════
+// PREGUNTAS — array QS
+// ans = índice 0-based de la respuesta correcta en opts[]
+// ══════════════════════════════════════════
+const QS = [
+  // ── A1.1 ──────────────────────────────────────────────
+  { level:'A1.1', ctx:'Presentación con cliente nuevo',
+    q:'My name ___ Ana Torres. I work at HAINBUCH México.',
+    opts:['am','is','are','be'], ans:1 },
+  { level:'A1.1', ctx:'Información de contacto',
+    q:'What ___ your phone number?',
+    opts:['are','is','be','am'], ans:1 },
+  { level:'A1.1', ctx:'Agendar una reunión',
+    q:'Can we meet ___ Monday at 10 a.m.?',
+    opts:['in','at','on','for'], ans:2 },
+  { level:'A1.1', ctx:'Llamada con proveedor internacional',
+    q:'___ you work in the logistics department?',
+    opts:['Are','Do','Does','Is'], ans:1 },
+  { level:'A1.1', ctx:'Saludo profesional con cliente',
+    q:'Nice to ___ you, Mr. Reynolds.',
+    opts:['see','know','meet','find'], ans:2 },
+
+  // ── A1.2 ──────────────────────────────────────────────
+  { level:'A1.2', ctx:'Presentación en reunión de equipo',
+    q:'I ___ in the purchasing department at Sigma.',
+    opts:['works','work','working','worked'], ans:1 },
+  { level:'A1.2', ctx:'Horario de oficina',
+    q:'The office opens ___ 8:30 every morning.',
+    opts:['in','on','at','by'], ans:2 },
+  { level:'A1.2', ctx:'Mensaje a colega por chat interno',
+    q:'___ you free tomorrow afternoon for a quick call?',
+    opts:['Do','Are','Is','Have'], ans:1 },
+  { level:'A1.2', ctx:'Solicitud interna',
+    q:'Please send ___ the updated report before noon.',
+    opts:['I','me','my','mine'], ans:1 },
+  { level:'A1.2', ctx:'Agenda semanal de equipo',
+    q:'We have a team meeting ___ Friday morning.',
+    opts:['on','in','at','to'], ans:0 },
+
+  // ── A2.1 ──────────────────────────────────────────────
+  { level:'A2.1', ctx:'Email a proveedor',
+    q:'I ___ like to receive your quotation by this Friday.',
+    opts:['would','will','am','could'], ans:0 },
+  { level:'A2.1', ctx:'Llamada de seguimiento a cliente',
+    q:"I'm calling ___ ask about the status of our order.",
+    opts:['for','to','that','by'], ans:1 },
+  { level:'A2.1', ctx:'Email de seguimiento',
+    q:'___ you received my previous email about the shipment?',
+    opts:['Do','Did','Have','Are'], ans:2 },
+  { level:'A2.1', ctx:'Negociación básica de precio',
+    q:'The price is too high. Can you offer ___ discount?',
+    opts:['a','an','the','some'], ans:0 },
+  { level:'A2.1', ctx:'Reunión de equipo',
+    q:'___ we discuss the delivery schedule first?',
+    opts:['Would','Should','Can','Must'], ans:2 },
+
+  // ── A2.2 ──────────────────────────────────────────────
+  { level:'A2.2', ctx:'Reporte semanal de ventas',
+    q:'Last week, we ___ 200 units to our client in Monterrey.',
+    opts:['ship','ships','shipped','shipping'], ans:2 },
+  { level:'A2.2', ctx:'Proceso de control de calidad',
+    q:'All parts ___ checked carefully before leaving the factory.',
+    opts:['is','are','be','was'], ans:1 },
+  { level:'A2.2', ctx:'Solicitud de apoyo a colega',
+    q:'Could you ___ me with this document, please?',
+    opts:['help','helping','to help','helped'], ans:0 },
+  { level:'A2.2', ctx:'Correo de disculpa a cliente',
+    q:"I'm sorry for ___ late with the delivery report.",
+    opts:['be','been','being','to be'], ans:2 },
+  { level:'A2.2', ctx:'Presentación de resultados del mes',
+    q:'Sales ___ by 12% compared to last quarter.',
+    opts:['increased','increasing','increase','to increase'], ans:0 },
+
+  // ── B1.1 ──────────────────────────────────────────────
+  { level:'B1.1', ctx:'Negociación con proveedor',
+    q:'If we increase the order volume, ___ you consider a 10% discount?',
+    opts:['do','would','will','are'], ans:1 },
+  { level:'B1.1', ctx:'Reunión de dirección',
+    q:'We need to ___ costs without affecting product quality.',
+    opts:['reduce','reduction','reducing','reduced'], ans:0 },
+  { level:'B1.1', ctx:'Reporte mensual de operaciones',
+    q:'The production line ___ down twice this month due to equipment failure.',
+    opts:['went','has gone','goes','had gone'], ans:1 },
+  { level:'B1.1', ctx:'Email urgente a cliente',
+    q:'We ___ looking into the issue and will update you by end of day.',
+    opts:['is','are','was','were'], ans:1 },
+  { level:'B1.1', ctx:'Llamada de seguimiento comercial',
+    q:'I wanted to follow ___ on the proposal I sent last week.',
+    opts:['on','up','out','in'], ans:1 },
+
+  // ── B1.2 ──────────────────────────────────────────────
+  { level:'B1.2', ctx:'Proceso de auditoría interna',
+    q:'All documents ___ reviewed by the compliance team before submission.',
+    opts:['are','will be','must be','have been'], ans:2 },
+  { level:'B1.2', ctx:'Email de negociación',
+    q:'We would appreciate it if you ___ your decision by Friday.',
+    opts:['confirm','confirmed','will confirm','confirming'], ans:1 },
+  { level:'B1.2', ctx:'Reporte de operaciones — planta',
+    q:'The new equipment ___ since last November with no major issues.',
+    opts:['is operating','operated','has been operating','operates'], ans:2 },
+  { level:'B1.2', ctx:'Presentación ejecutiva de resultados',
+    q:'The figures clearly show that our market share ___ steadily over the past year.',
+    opts:['is growing','has grown','grew','will grow'], ans:1 },
+  { level:'B1.2', ctx:'Reunión con cliente internacional',
+    q:'___ you had a chance to review our updated proposal?',
+    opts:['Did','Have','Had','Do'], ans:1 },
+
+  // ── B2.1 ──────────────────────────────────────────────
+  { level:'B2.1', ctx:'Negociación de contrato avanzada',
+    q:"We're willing to move forward, ___ the payment terms are adjusted.",
+    opts:['although','provided that','even though','despite'], ans:1 },
+  { level:'B2.1', ctx:'Reunión de dirección — expresión idiomática',
+    q:'Before we proceed, we need to ___ the bottom of the supply chain delays.',
+    opts:['find','reach','get to','arrive at'], ans:2 },
+  { level:'B2.1', ctx:'Correo formal a CEO del cliente',
+    q:'Regarding your concerns, we have taken the ___ to restructure the delivery timeline.',
+    opts:['liberty','initiative','decision','freedom'], ans:1 },
+  { level:'B2.1', ctx:'Análisis de escenario — reunión ejecutiva',
+    q:'The proposal ___ received positively had we presented it a quarter earlier.',
+    opts:['would have been','will have been','would be','had been'], ans:0 },
+  { level:'B2.1', ctx:'Negociación de precio — nivel avanzado',
+    q:"We'd be open to a volume discount, ___ the contract covers a 12-month period.",
+    opts:['as long as','even if','unless','although'], ans:0 },
+
+  // ── B2.2 ──────────────────────────────────────────────
+  { level:'B2.2', ctx:'Reunión ejecutiva — vocabulario financiero',
+    q:'The board expects the new division to be ___ within 18 months of launch.',
+    opts:['profitable','profit','profiting','profitability'], ans:0 },
+  { level:'B2.2', ctx:'Análisis de riesgos — reunión de dirección',
+    q:'The incident ___ have been prevented had the team followed the safety protocol.',
+    opts:['should','could','would','might'], ans:2 },
+  { level:'B2.2', ctx:'Correo ejecutivo formal de alto nivel',
+    q:'We ___ appreciate your prompt response, as this is a time-sensitive matter.',
+    opts:['greatly','deeply','highly','strongly'], ans:0 },
+  { level:'B2.2', ctx:'Cierre de negociación larga',
+    q:'After months of discussion, both parties finally reached a ___.',
+    opts:['middle ground','central point','half agreement','midpoint'], ans:0 },
+  { level:'B2.2', ctx:'Presentación ante consejo directivo',
+    q:'We must ensure all financial data is ___ verified before the board presentation.',
+    opts:['thoroughly','through','thorough','though'], ans:0 },
+];
+
+// ══════════════════════════════════════════
+// DATOS POR NIVEL — LEVELDATA
+// ══════════════════════════════════════════
+const LEVELDATA = {
+  'A1.1': {
+    name: 'Principiante',
+    desc: 'Puedes usar frases básicas de presentación e intercambiar información esencial en contexto laboral.',
+    cando: [
+      'Presentarte con tu nombre, empresa y cargo en inglés',
+      'Dar y entender información de contacto básica',
+      'Saludar y despedirte de forma profesional',
+      'Seguir instrucciones sencillas si te hablan despacio',
+    ],
+    unlock: [
+      'Participar en juntas breves con proveedores internacionales',
+      'Escribir correos sencillos de seguimiento sin usar traductor',
+      'Presentar tu área y funciones con fluidez básica',
+    ],
+    program: 'Programa Foundation',
+    duration: '5 a 7 meses',
+    programCopy: 'Ideal para quienes parten desde cero o tienen bases muy básicas. Construimos el vocabulario laboral desde el día uno, con enfoque en hablar.',
+  },
+  'A1.2': {
+    name: 'Principiante activo',
+    desc: 'Manejas vocabulario cotidiano de oficina y puedes comunicar necesidades simples en tu entorno de trabajo.',
+    cando: [
+      'Hablar de tu rutina y tareas diarias en el trabajo',
+      'Entender instrucciones simples en inglés',
+      'Pedir y dar información básica sobre horarios',
+      'Mantener conversaciones muy breves con colegas internacionales',
+    ],
+    unlock: [
+      'Escribir correos de seguimiento básicos a clientes o proveedores',
+      'Participar activamente en reuniones con agenda en inglés',
+      'Describir tus procesos de trabajo con claridad',
+    ],
+    program: 'Programa Foundation',
+    duration: '5 a 7 meses',
+    programCopy: 'Tienes las bases — el siguiente paso es activarlas. Trabajamos en fluidez oral desde la primera clase, con situaciones de tu entorno real.',
+  },
+  'A2.1': {
+    name: 'Básico funcional',
+    desc: 'Te comunicas en situaciones laborales rutinarias con frases estructuradas y vocabulario de negocio básico.',
+    cando: [
+      'Escribir correos cortos de solicitud o seguimiento',
+      'Entender conversaciones simples sobre pedidos y entregas',
+      'Expresar preferencias y necesidades básicas en inglés',
+      'Hablar de experiencias pasadas en contexto laboral',
+    ],
+    unlock: [
+      'Conducir llamadas breves con clientes o proveedores en inglés',
+      'Redactar reportes sencillos de actividad con datos reales',
+      'Negociar condiciones básicas de precios y fechas de entrega',
+    ],
+    program: 'Programa Foundation',
+    duration: '5 a 7 meses',
+    programCopy: 'Estás a medio camino del nivel independiente. Con práctica oral enfocada y vocabulario de negocio, llegas a B1 en menos de 6 meses.',
+  },
+  'A2.2': {
+    name: 'Pre-intermedio',
+    desc: 'Te desenvuelves en situaciones laborales comunes: pedidos, reportes básicos y coordinación con equipos internacionales.',
+    cando: [
+      'Describir procesos de producción o servicio en inglés',
+      'Escribir correos de disculpa o aclaración a clientes',
+      'Reportar resultados simples con datos numéricos',
+      'Pedir ayuda o aclaraciones en reuniones de trabajo',
+    ],
+    unlock: [
+      'Conducir reuniones de seguimiento de proyectos en inglés',
+      'Negociar condiciones básicas de contrato',
+      'Presentar resultados mensuales ante equipo internacional',
+    ],
+    program: 'Programa Foundation',
+    duration: '4 a 6 meses',
+    programCopy: 'Estás muy cerca del nivel independiente. Con el enfoque correcto, pasas a B1 en 4 a 6 meses — y la diferencia se siente desde la primera semana.',
+  },
+  'B1.1': {
+    name: 'Intermedio en desarrollo',
+    desc: 'Participas en la mayoría de situaciones laborales en inglés, aunque aún dependes del contexto para sostener conversaciones largas.',
+    cando: [
+      'Participar en reuniones de trabajo con cierta fluidez',
+      'Escribir correos formales de seguimiento y propuestas',
+      'Expresar condiciones simples y negociar precios básicos',
+      'Entender el hilo general de presentaciones en inglés',
+    ],
+    unlock: [
+      'Liderar reuniones en inglés con proveedores o clientes internacionales',
+      'Negociar contratos con argumentos claros y sin bloqueos',
+      'Presentar propuestas comerciales ante dirección en inglés',
+    ],
+    program: 'Programa Business Communication',
+    duration: '4 a 6 meses',
+    programCopy: 'Tu nivel ya te permite trabajar en inglés. En GT refinamos tu precisión, velocidad y vocabulario ejecutivo para que nadie note la diferencia.',
+  },
+  'B1.2': {
+    name: 'Intermedio sólido',
+    desc: 'Te comunicas con fluidez aceptable en reuniones, correos y llamadas. Tu área de mejora es la precisión y la velocidad bajo presión.',
+    cando: [
+      'Redactar reportes en inglés con vocabulario técnico de tu área',
+      'Explicar procesos usando estructuras formales y voz pasiva',
+      'Hacer preguntas estratégicas en negociaciones',
+      'Mantener conversaciones laborales fluidas por más de 10 minutos',
+    ],
+    unlock: [
+      'Conducir negociaciones complejas con autonomía y confianza',
+      'Representar a tu empresa en eventos o ferias internacionales',
+      'Comunicarte con ejecutivos internacionales sin preparación previa',
+    ],
+    program: 'Programa Business Communication',
+    duration: '3 a 5 meses',
+    programCopy: 'Eres funcional — el siguiente nivel es ser percibido como profesional nativo. En GT pulimos el idioma para que tu inglés sea tan sólido como tu trabajo.',
+  },
+  'B2.1': {
+    name: 'Intermedio avanzado',
+    desc: 'Te expresas con claridad y confianza en casi cualquier situación profesional. Manejas vocabulario ejecutivo y expresiones idiomáticas.',
+    cando: [
+      'Participar en negociaciones avanzadas con argumentos sólidos',
+      'Usar expresiones idiomáticas de negocio de forma natural',
+      'Escribir reportes ejecutivos y propuestas formales en inglés',
+      'Adaptarte a distintos acentos y ritmos de conversación',
+    ],
+    unlock: [
+      'Liderar equipos multiculturales en inglés sin fricción',
+      'Participar en juntas de directivos internacionales con autoridad',
+      'Representar a tu empresa con inglés de nivel ejecutivo',
+    ],
+    program: 'Programa Executive',
+    duration: '3 a 4 meses',
+    programCopy: 'Tu inglés ya es una ventaja competitiva. En GT lo llevamos a nivel ejecutivo: precisión, autoridad y naturalidad en cualquier contexto de negocios.',
+  },
+  'B2.2': {
+    name: 'Avanzado profesional',
+    desc: 'Operas en inglés con nivel ejecutivo. Tu comunicación es precisa, natural y efectiva en cualquier contexto de alto nivel.',
+    cando: [
+      'Presentar ante consejos directivos internacionales con confianza',
+      'Negociar contratos con vocabulario legal y financiero avanzado',
+      'Liderar conversaciones de alto nivel sin esfuerzo visible',
+      'Escribir comunicados ejecutivos con estilo profesional de primer nivel',
+    ],
+    unlock: [
+      'Alcanzar nivel C1 y operar con fluidez en contextos nativos',
+      'Presentar ante inversionistas y socios internacionales',
+      'Posicionarte como perfil bilingüe ejecutivo en tu industria',
+    ],
+    program: 'Programa Executive',
+    duration: '2 a 3 meses',
+    programCopy: 'Estás en el nivel más alto. En GT afinamos los últimos detalles para que tu inglés abra puertas de nivel C1: presentaciones, pitch ante inversión y liderazgo global.',
+  },
+};
+
+const LEVEL_NAMES = ['A1.1','A1.2','A2.1','A2.2','B1.1','B1.2','B2.1','B2.2'];
+const SECTION_LABELS = {
+  'A1.1':'A1.1 — Básico',
+  'A1.2':'A1.2 — Básico+',
+  'A2.1':'A2.1 — Elemental',
+  'A2.2':'A2.2 — Pre-intermedio',
+  'B1.1':'B1.1 — Intermedio',
+  'B1.2':'B1.2 — Intermedio+',
+  'B2.1':'B2.1 — Avanzado',
+  'B2.2':'B2.2 — Avanzado+',
+};
+
+// ══════════════════════════════════════════
+// TODO: pegar webhook JotForm/Zapier antes de publicar
+// ══════════════════════════════════════════
+const WEBHOOK_URL = 'PEGAR_AQUI_WEBHOOK_JOTFORM_O_ZAPIER';
+
+// ── Estado global ──
+let userData = { nombre:'', email:'', empresa:'', cargo:'' };
+let currentQ  = 0;
+let answers   = new Array(40).fill(null); // índice de opción elegida
+let isPartial = false;
+
+// ══════════════════════════════════════════
+// ALGORITMO DE NIVEL — tolerante
+// El nivel es la sección más alta donde:
+//   a) ratio de esa sección >= 0.6
+//   b) promedio de secciones previas >= 0.5
+// Si ninguna cumple, default A1.1
+// ══════════════════════════════════════════
+function detectLevel(scores) {
+  const ratios = LEVEL_NAMES.map(l => scores[l] / 5);
+  let detected = 'A1.1';
+  for (let i = 0; i < LEVEL_NAMES.length; i++) {
+    if (ratios[i] < 0.6) continue;
+    if (i === 0) { detected = LEVEL_NAMES[i]; continue; }
+    const prevAvg = ratios.slice(0, i).reduce((a,b) => a+b, 0) / i;
+    if (prevAvg >= 0.5) detected = LEVEL_NAMES[i];
+  }
+  return detected;
+}
+
+function getScores() {
+  const s = {};
+  LEVEL_NAMES.forEach(l => s[l] = 0);
+  QS.forEach((q, i) => {
+    if (answers[i] !== null && answers[i] === q.ans) s[q.level]++;
+  });
+  return s;
+}
+
+function totalAnswered() {
+  return answers.filter(a => a !== null).length;
+}
+
+// ══════════════════════════════════════════
+// WHATSAPP MESSAGES
+// ══════════════════════════════════════════
+function buildWhatsAppMsgDiagnostico(nivel, score) {
+  const txt = `Hola Gabriel, acabo de hacer el diagnóstico de inglés y obtuve nivel *${nivel}* (${score}/40 puntos). Te comparto mis datos:\n\n- Nombre: ${userData.nombre}\n- Empresa: ${userData.empresa}\n- Cargo: ${userData.cargo}\n- Email: ${userData.email}\n\nMe gustaría agendar los 30 minutos de diagnóstico contigo. ¿Cuándo tienes disponibilidad?`;
+  return 'https://wa.me/524611472119?text=' + encodeURIComponent(txt);
+}
+
+function buildWhatsAppMsgPropuesta(nivel, score) {
+  const txt = `Hola Gabriel, hice el diagnóstico y obtuve nivel *${nivel}* (${score}/40). Me gustaría recibir una propuesta personalizada por email.\n\n- Nombre: ${userData.nombre}\n- Empresa: ${userData.empresa}\n- Cargo: ${userData.cargo}\n- Email: ${userData.email}`;
+  return 'https://wa.me/524611472119?text=' + encodeURIComponent(txt);
+}
+
+// ══════════════════════════════════════════
+// WEBHOOK SEND (no bloqueante)
+// ══════════════════════════════════════════
+async function sendWebhook(ctaClicked, nivel, scores, score) {
+  if (WEBHOOK_URL === 'PEGAR_AQUI_WEBHOOK_JOTFORM_O_ZAPIER') return;
+  try {
+    await fetch(WEBHOOK_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        fecha: new Date().toISOString(),
+        nombre: userData.nombre,
+        email: userData.email,
+        empresa: userData.empresa,
+        cargo: userData.cargo,
+        nivel_detectado: nivel,
+        nivel_nombre: LEVELDATA[nivel].name,
+        score_total: score,
+        score_por_seccion: scores,
+        respondidas: totalAnswered(),
+        parcial: isPartial,
+        cta_clickeado: ctaClicked,
+      }),
+    });
+  } catch (_) { /* silencioso */ }
+}
+
+// ══════════════════════════════════════════
+// CTA CLICK
+// ══════════════════════════════════════════
+function ctaClick(type, e) {
+  e.preventDefault();
+  const scores = getScores();
+  const nivel  = detectLevel(scores);
+  const score  = Object.values(scores).reduce((a,b) => a+b, 0);
+
+  sendWebhook(type, nivel, scores, score); // async, no bloquea
+
+  let url;
+  if (type === 'diagnostico') url = buildWhatsAppMsgDiagnostico(nivel, score);
+  else if (type === 'propuesta') url = buildWhatsAppMsgPropuesta(nivel, score);
+  else url = 'https://gabrielturner.com';
+
+  window.open(url, '_blank');
+}
+
+// ══════════════════════════════════════════
+// WELCOME FORM VALIDATION
+// ══════════════════════════════════════════
+function isValidEmail(v) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim());
+}
+function checkForm() {
+  const nombre  = document.getElementById('f-nombre').value.trim();
+  const email   = document.getElementById('f-email').value.trim();
+  const empresa = document.getElementById('f-empresa').value.trim();
+  const cargo   = document.getElementById('f-cargo').value.trim();
+  const consent = document.getElementById('f-consent').checked;
+  const ok = nombre && isValidEmail(email) && empresa && cargo && consent;
+  document.getElementById('btn-start').disabled = !ok;
+}
+
+['f-nombre','f-email','f-empresa','f-cargo'].forEach(id => {
+  document.getElementById(id).addEventListener('input', checkForm);
+});
+document.getElementById('f-consent').addEventListener('change', checkForm);
+
+document.getElementById('btn-start').addEventListener('click', () => {
+  userData.nombre  = document.getElementById('f-nombre').value.trim();
+  userData.email   = document.getElementById('f-email').value.trim();
+  userData.empresa = document.getElementById('f-empresa').value.trim();
+  userData.cargo   = document.getElementById('f-cargo').value.trim();
+  isPartial = false;
+  currentQ  = 0;
+  answers   = new Array(40).fill(null);
+  showScreen('test');
+  renderQuestion();
+});
+
+// ══════════════════════════════════════════
+// SCREEN SWITCHING
+// ══════════════════════════════════════════
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + id).classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ══════════════════════════════════════════
+// RENDER QUESTION
+// ══════════════════════════════════════════
+function renderQuestion() {
+  const q    = QS[currentQ];
+  const pct  = ((currentQ) / 40) * 100;
+  const lvl  = q.level;
+
+  document.getElementById('prog-section').textContent = 'Nivel ' + lvl;
+  document.getElementById('prog-counter').textContent = (currentQ + 1) + ' / 40';
+  document.getElementById('prog-bar').style.width     = Math.max(pct, 2) + '%';
+  document.getElementById('prog-badge').textContent   = SECTION_LABELS[lvl];
+  document.getElementById('q-num').textContent        = currentQ + 1;
+  document.getElementById('q-ctx').textContent        = q.ctx;
+
+  // Highlight blank
+  document.getElementById('q-text').innerHTML = q.q.replace('___', '<mark>___</mark>');
+
+  // Options
+  const wrap = document.getElementById('options-wrap');
+  wrap.innerHTML = '';
+  const letters = ['A','B','C','D'];
+  q.opts.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'opt-btn';
+    btn.innerHTML = `<div class="opt-letter">${letters[i]}</div><span>${opt}</span>`;
+    btn.addEventListener('click', () => selectOption(i));
+    if (answers[currentQ] === i) btn.classList.add('selected');
+    wrap.appendChild(btn);
+  });
+
+  // Next button state
+  const nextBtn = document.getElementById('btn-next');
+  nextBtn.textContent = currentQ === 39 ? 'Ver mi resultado →' : 'Siguiente →';
+  nextBtn.classList.toggle('enabled', answers[currentQ] !== null);
+}
+
+function selectOption(idx) {
+  answers[currentQ] = idx;
+  document.querySelectorAll('.opt-btn').forEach((btn, i) => {
+    btn.classList.toggle('selected', i === idx);
+  });
+  document.getElementById('btn-next').classList.add('enabled');
+}
+
+document.getElementById('btn-next').addEventListener('click', () => {
+  if (answers[currentQ] === null) return;
+  if (currentQ < 39) {
+    currentQ++;
+    renderQuestion();
+  } else {
+    buildResult(false);
+    showScreen('result');
+  }
+});
+
+document.getElementById('btn-exit-test').addEventListener('click', () => {
+  document.getElementById('exit-modal').classList.add('open');
+});
+
+function closeModal() {
+  document.getElementById('exit-modal').classList.remove('open');
+}
+
+function showPartialResult() {
+  closeModal();
+  isPartial = true;
+  buildResult(true);
+  showScreen('result');
+}
+
+// Click outside modal to close
+document.getElementById('exit-modal').addEventListener('click', (e) => {
+  if (e.target === e.currentTarget) closeModal();
+});
+
+// ══════════════════════════════════════════
+// BUILD RESULT SCREEN
+// ══════════════════════════════════════════
+function buildResult(partial) {
+  const scores = getScores();
+  const nivel  = detectLevel(scores);
+  const data   = LEVELDATA[nivel];
+  const score  = Object.values(scores).reduce((a,b) => a+b, 0);
+  const total  = partial ? totalAnswered() : 40;
+
+  // Hero
+  document.getElementById('partial-tag-wrap').innerHTML =
+    partial ? '<div class="partial-tag">⚠ Resultado parcial — ' + total + ' preguntas respondidas</div>' : '';
+  document.getElementById('res-greeting').textContent = 'Hola, ' + userData.nombre + ' —';
+  document.getElementById('res-badge').textContent    = nivel;
+  document.getElementById('res-level-name').textContent = data.name;
+  document.getElementById('res-level-desc').textContent = data.desc;
+
+  // Score ring
+  const circ = 2 * Math.PI * 54; // r=54 → 339.29
+  const ratio = score / 40;
+  document.getElementById('score-circle').style.strokeDashoffset = circ * (1 - ratio);
+  document.getElementById('score-num').textContent = score;
+
+  // Section bars
+  const barsWrap = document.getElementById('section-bars');
+  barsWrap.innerHTML = '';
+  LEVEL_NAMES.forEach(l => {
+    const pct = Math.round((scores[l] / 5) * 100);
+    const row = document.createElement('div');
+    row.className = 'sbar-row';
+    row.innerHTML = `
+      <div class="sbar-label">${l}</div>
+      <div class="sbar-track"><div class="sbar-fill" style="width:${pct}%"></div></div>
+      <div class="sbar-pct">${pct}%</div>`;
+    barsWrap.appendChild(row);
+  });
+
+  // Can-do
+  const candoEl = document.getElementById('cando-list');
+  candoEl.innerHTML = '';
+  data.cando.forEach(c => {
+    candoEl.innerHTML += `<div class="bullet-item">
+      <div class="bullet-dot">✓</div><span>${c}</span></div>`;
+  });
+
+  // Unlock
+  const unlockEl = document.getElementById('unlock-list');
+  unlockEl.innerHTML = '';
+  data.unlock.forEach(u => {
+    unlockEl.innerHTML += `<div class="bullet-item">
+      <div class="bullet-dot unlock">→</div><span>${u}</span></div>`;
+  });
+
+  // Program
+  document.getElementById('prog-name').textContent = data.program;
+  document.getElementById('prog-dur').textContent  = data.duration;
+  document.getElementById('prog-copy').textContent = data.programCopy;
+
+  // CTAs href
+  document.getElementById('cta-diagnostico').href = buildWhatsAppMsgDiagnostico(nivel, score);
+  document.getElementById('cta-propuesta').href   = buildWhatsAppMsgPropuesta(nivel, score);
+
+  // Animate ring after short delay
+  setTimeout(() => {
+    document.getElementById('score-circle').style.transition = 'stroke-dashoffset 1.2s ease';
+  }, 100);
+}
+</script>
+</body>
+</html>
