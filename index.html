@@ -360,16 +360,15 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--txt);min-
     </div>
     <div id="maestro-code-form" style="display:none">
       <div class="field">
-        <label>Código de maestro <span style="color:var(--txt3);font-weight:400">(o deja vacío y usa tu nombre abajo)</span></label>
-        <input type="text" id="login-maestro-codigo" maxlength="40" placeholder="ej. 4812 — opcional"
-          style="letter-spacing:.1em;font-size:15px;text-align:center;font-family:monospace;"
-          onkeydown="if(event.key==='Enter')doLogin()">
+        <label>Tu nombre</label>
+        <select id="login-maestro-nombre">
+          <option value="">— elegí tu nombre —</option>
+        </select>
       </div>
       <div class="field">
         <label>Contraseña</label>
         <input type="password" id="login-maestro-pw" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
       </div>
-      <p style="font-size:11px;color:var(--txt3);text-align:center;margin:-6px 0 8px">Maestros existentes: deja el código vacío e ingresa solo tu contraseña</p>
     </div>
     <div id="staff-form" style="display:none">
       <div class="field">
@@ -572,8 +571,11 @@ function setLoginTab(tab, btn) {
   if (tab === 'alumno') {
     af.style.display = 'block';
   } else if (tab === 'maestro') {
-    // Maestros pueden entrar con código de 4 dígitos O con nombre+PW
     mf.style.display = 'block';
+    const sel = document.getElementById('login-maestro-nombre');
+    sel.innerHTML = '<option value="">— elegí tu nombre —</option>';
+    DATA.maestros.filter(m => m.rol === 'maestro' && m.activo !== false)
+      .forEach(m => sel.innerHTML += `<option value="${m.id}">${m.nombre}</option>`);
   } else {
     sf.style.display = 'block';
     sel.innerHTML = '<option value="">— elegí tu nombre —</option>';
@@ -598,39 +600,13 @@ function doLogin() {
     currentRole = 'alumno';
     currentUser = alumno;
   } else if (loginTab === 'maestro') {
-    const codigoM = document.getElementById('login-maestro-codigo').value.trim();
-    const pw      = document.getElementById('login-maestro-pw').value;
-    if (!pw) { showLoginErr('Ingresá tu contraseña.'); return; }
-
-    let maestro = null;
-
-    if (codigoM) {
-      // Buscar por código de 4 dígitos
-      maestro = DATA.maestros.find(m =>
-        m.rol === 'maestro' && m.activo !== false &&
-        (String(m.codigo_maestro) === codigoM || String(m.id).replace(/-/g,'').slice(-4) === codigoM)
-      );
-    }
-
-    // Fallback: si no hay código o no encontró, buscar por nombre exacto
-    if (!maestro && codigoM) {
-      maestro = DATA.maestros.find(m =>
-        m.rol === 'maestro' && m.activo !== false &&
-        m.nombre.trim().toLowerCase() === codigoM.trim().toLowerCase()
-      );
-    }
-
-    // Fallback final: buscar solo por contraseña entre todos los maestros activos
-    if (!maestro) {
-      maestro = DATA.maestros.find(m =>
-        m.rol === 'maestro' && m.activo !== false &&
-        String(m.password) === pw
-      );
-    }
-
-    if (!maestro || String(maestro.password) !== pw) {
-      showLoginErr('Código o contraseña incorrectos.');
-      return;
+    const uid = document.getElementById('login-maestro-nombre').value;
+    const pw  = document.getElementById('login-maestro-pw').value;
+    if (!uid) { showLoginErr('Elegí tu nombre.'); return; }
+    if (!pw)  { showLoginErr('Ingresá tu contraseña.'); return; }
+    const maestro = DATA.maestros.find(m => m.id === uid);
+    if (!maestro || String(maestro.password).trim() !== pw.trim()) {
+      showLoginErr('Contraseña incorrecta.'); return;
     }
     currentRole = 'maestro';
     currentUser = maestro;
@@ -670,6 +646,8 @@ function logout() {
   document.getElementById('screen-app').classList.remove('active');
   document.getElementById('screen-login').classList.add('active');
   document.getElementById('login-codigo').value = '';
+  document.getElementById('login-maestro-nombre') && (document.getElementById('login-maestro-nombre').value = '');
+  document.getElementById('login-maestro-pw') && (document.getElementById('login-maestro-pw').value = '');
   const cm = document.getElementById('login-maestro-codigo'); if (cm) cm.value = '';
   const mp = document.getElementById('login-maestro-pw');    if (mp) mp.value = '';
   document.getElementById('login-user').value   = '';
