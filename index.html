@@ -360,16 +360,16 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--txt);min-
     </div>
     <div id="maestro-code-form" style="display:none">
       <div class="field">
-        <label>Tu código de maestro</label>
-        <input type="text" id="login-maestro-codigo" maxlength="4" placeholder="ej. 4812"
-          style="letter-spacing:.2em;font-size:18px;text-align:center;font-family:monospace;"
+        <label>Código de maestro <span style="color:var(--txt3);font-weight:400">(o deja vacío y usa tu nombre abajo)</span></label>
+        <input type="text" id="login-maestro-codigo" maxlength="40" placeholder="ej. 4812 — opcional"
+          style="letter-spacing:.1em;font-size:15px;text-align:center;font-family:monospace;"
           onkeydown="if(event.key==='Enter')doLogin()">
       </div>
       <div class="field">
         <label>Contraseña</label>
         <input type="password" id="login-maestro-pw" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
       </div>
-      <p style="font-size:11px;color:var(--txt3);text-align:center;margin:-6px 0 8px">Tu código de 4 dígitos te lo envió el administrador</p>
+      <p style="font-size:11px;color:var(--txt3);text-align:center;margin:-6px 0 8px">Maestros existentes: deja el código vacío e ingresa solo tu contraseña</p>
     </div>
     <div id="staff-form" style="display:none">
       <div class="field">
@@ -598,16 +598,36 @@ function doLogin() {
     currentRole = 'alumno';
     currentUser = alumno;
   } else if (loginTab === 'maestro') {
-    // Intenta primero por código de maestro, luego por nombre+PW
     const codigoM = document.getElementById('login-maestro-codigo').value.trim();
     const pw      = document.getElementById('login-maestro-pw').value;
-    if (!codigoM) { showLoginErr('Ingresá tu código de maestro.'); return; }
-    if (!pw)      { showLoginErr('Ingresá tu contraseña.'); return; }
-    // Buscar por codigo_maestro (campo nuevo) o por primeros 4 dígitos del ID
-    let maestro = DATA.maestros.find(m =>
-      m.rol === 'maestro' && m.activo !== false &&
-      (String(m.codigo_maestro) === codigoM || String(m.id).replace(/-/g,'').slice(-4) === codigoM)
-    );
+    if (!pw) { showLoginErr('Ingresá tu contraseña.'); return; }
+
+    let maestro = null;
+
+    if (codigoM) {
+      // Buscar por código de 4 dígitos
+      maestro = DATA.maestros.find(m =>
+        m.rol === 'maestro' && m.activo !== false &&
+        (String(m.codigo_maestro) === codigoM || String(m.id).replace(/-/g,'').slice(-4) === codigoM)
+      );
+    }
+
+    // Fallback: si no hay código o no encontró, buscar por nombre exacto
+    if (!maestro && codigoM) {
+      maestro = DATA.maestros.find(m =>
+        m.rol === 'maestro' && m.activo !== false &&
+        m.nombre.trim().toLowerCase() === codigoM.trim().toLowerCase()
+      );
+    }
+
+    // Fallback final: buscar solo por contraseña entre todos los maestros activos
+    if (!maestro) {
+      maestro = DATA.maestros.find(m =>
+        m.rol === 'maestro' && m.activo !== false &&
+        String(m.password) === pw
+      );
+    }
+
     if (!maestro || String(maestro.password) !== pw) {
       showLoginErr('Código o contraseña incorrectos.');
       return;
@@ -629,7 +649,8 @@ function doLogin() {
     const pw  = document.getElementById('login-pw').value;
     if (!uid) { showLoginErr('Elegí tu nombre.'); return; }
     const maestro = DATA.maestros.find(m => m.id === uid);
-    if (!maestro || String(maestro.password) !== pw) { showLoginErr('Contraseña incorrecta.'); return; }
+    if (!maestro) { showLoginErr('Usuario no encontrado.'); return; }
+    if (String(maestro.password).trim() !== pw.trim()) { showLoginErr('Contraseña incorrecta.'); return; }
     currentRole = loginTab;
     currentUser = maestro;
   }
