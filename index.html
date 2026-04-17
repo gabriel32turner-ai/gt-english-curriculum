@@ -1336,14 +1336,12 @@ function switchSesionTab(tab) {
 // ════════════════════════════════════════
 function renderAbrirSesion(page) {
   // Obtener todas las sesiones disponibles (contenido)
-  const sesionesDisponibles = DATA.contenido.filter(c => c.activo !== false);
-  
-  const nivelActual = currentUser.niveles || '';
+  const sesionesDisponibles = DATA.contenido.filter(c => c.activo !== false && c.url_recurso);
   
   if (!sesionesDisponibles.length) {
     page.innerHTML = `
       <div class="ph"><h2>Abrir sesión</h2><p>Seleccioná una sesión para proyectar en clase.</p></div>
-      <div class="card"><p style="font-size:13px;color:var(--txt3)">No hay sesiones disponibles todavía.</p></div>`;
+      <div class="card"><p style="font-size:13px;color:var(--txt3)">No hay sesiones disponibles todavía. A medida que crees sesiones en Notion, aparecerán aquí.</p></div>`;
     return;
   }
 
@@ -1371,19 +1369,9 @@ function renderAbrirSesion(page) {
     sesiones.forEach(s => {
       const modulo = s.modulo || '—';
       const sesion = s.sesion || '—';
-      const tipo = s.tipo || 'regular';
+      const tipo = (s.tipo || '').toLowerCase();
       const etiqueta = tipo === 'speaking' ? '🎙 Speaking' : `M${modulo}·S${sesion}`;
-      
-      // Generar nombre de archivo basado en tipo
-      let filename = '';
-      if (tipo === 'speaking') {
-        // GT_SPEAKING_{NIVEL}_{TEMA}_{VERSION}.html
-        const tema = (s.titulo || 'SessionTitle').replace(/[^a-zA-Z0-9]/g, '');
-        filename = `GT_SPEAKING_${nivel}_${tema}_v1.html`;
-      } else {
-        // GT_{NIVEL}_M{MODULO}_S{SESION}{PARTE}_TEACHER_v3.html
-        filename = `GT_${nivel}_M${modulo}_S${sesion}A_TEACHER_v3.html`;
-      }
+      const url = s.url_recurso;
       
       html += `
       <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--bg2);border-radius:var(--rs);border:1px solid var(--border)">
@@ -1391,7 +1379,7 @@ function renderAbrirSesion(page) {
           <div style="font-size:13px;font-weight:500;color:var(--txt)">${s.titulo || s.descripcion || 'Sesión'}</div>
           <div style="font-size:11px;color:var(--txt3);margin-top:2px">${etiqueta}</div>
         </div>
-        <button class="action-btn" onclick="abrirSesionHTML('${filename}')" style="font-size:12px;padding:6px 14px;white-space:nowrap">
+        <button class="action-btn" onclick="abrirSesionHTML('${url.replace(/'/g, "\\'")}')" style="font-size:12px;padding:6px 14px;white-space:nowrap">
           ▶ Abrir
         </button>
       </div>`;
@@ -1403,11 +1391,14 @@ function renderAbrirSesion(page) {
   page.innerHTML = html;
 }
 
-// Función para abrir la sesión en una pestaña nueva desde GitHub Pages
-function abrirSesionHTML(filename) {
-  const url = `https://gabriel32turner-ai.github.io/gt-english-curriculum/${filename}`;
+// Función para abrir la sesión en una pestaña nueva directamente desde la URL de Notion
+function abrirSesionHTML(url) {
+  if (!url || url.length < 10) {
+    showToast('✗ URL de sesión no disponible');
+    return;
+  }
   window.open(url, '_blank');
-  showToast(`✓ Abriendo ${filename}...`);
+  showToast('✓ Abriendo sesión...');
 }
 
 // ── Guardar Speaking Lab ─────────────────────────────────────
