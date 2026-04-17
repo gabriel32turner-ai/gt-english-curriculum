@@ -479,6 +479,46 @@ const LEVEL_CLASS = {
   'C1':'level-c1',
 };
 
+// ── Agentes ElevenLabs ────────────────────────────────────────
+const AGENTS = [
+  {
+    id: 'a',
+    nombre: 'Job Interview',
+    nivel: 'Intermedio',
+    nivel_cls: 'level-b1',
+    emoji: '💼',
+    color: 'var(--blue)',
+    color_bg: 'var(--blue-bg)',
+    descripcion: 'Entrevista laboral simulada con 7–10 preguntas reales. El agente juega el rol de recruiter. Recibe feedback inmediato al terminar.',
+    url: 'https://elevenlabs.io/app/talk-to?agent_id=agent_3301kpecddkdek4a13am5nc4k8je&branch_id=agtbrch_4601kpecdeeff9k879wf1hnx44ab',
+    minNivel: 'A2.2',
+  },
+  {
+    id: 'b',
+    nombre: 'Executive Meeting',
+    nivel: 'Avanzado',
+    nivel_cls: 'level-b2',
+    emoji: '🎯',
+    color: '#534AB7',
+    color_bg: '#EEEDFE',
+    descripcion: 'Presenta tu estrategia a la junta directiva. Responde preguntas difíciles bajo presión en un entorno ejecutivo real.',
+    url: 'https://elevenlabs.io/app/talk-to?agent_id=agent_0101kpecsxkhenyrhj1hfpg3dnnm&branch_id=agtbrch_8401kpecsyd9ebbah007mkx1jnya',
+    minNivel: 'A2.2',
+  },
+  {
+    id: 'c',
+    nombre: 'Production Issues',
+    nivel: 'Profesional',
+    nivel_cls: 'level-b1',
+    emoji: '🛠️',
+    color: '#854F0B',
+    color_bg: '#FAEEDA',
+    descripcion: 'Cliente externo reporta un problema crítico en producción. Practica escuchar, entender y resolver bajo presión.',
+    url: 'https://elevenlabs.io/app/talk-to?agent_id=agent_0601kpecz0mdevztfk99zvpyvb4m&branch_id=agtbrch_0001kpecz1cqetnvap3p5dh850z1',
+    minNivel: 'A2.2',
+  },
+];
+
 // ════════════════════════════════════════
 // INIT
 // ════════════════════════════════════════
@@ -677,13 +717,23 @@ const navItem = (id, icon, label, fn) =>
      <span class="sicon">${icon}</span>${label}
    </button>`;
 
+function nivelTieneAgentes(nivel) {
+  // Acceso a Agentes AI: A2.2 en adelante (índice ≥ 3 en el array LEVELS)
+  const idx = LEVELS.indexOf(nivel);
+  return idx >= LEVELS.indexOf('A2.2');
+}
+
 function buildAlumnoNav() {
+  const tieneAgentes = nivelTieneAgentes(currentUser.nivel_actual);
   document.getElementById('snav').innerHTML = `
     <span class="scat">Mi aprendizaje</span>
     ${navItem('mi-progreso','↗','Mi progreso',"showView('mi-progreso')")}
     ${navItem('mi-material','📖','Material de hoy',"showView('mi-material')")}
     ${navItem('mis-sesiones','≡','Mis sesiones',"showView('mis-sesiones')")}
-    ${navItem('mis-tareas','✓','Mis tareas',"showView('mis-tareas')")}`;
+    ${navItem('mis-tareas','✓','Mis tareas',"showView('mis-tareas')")}
+    ${tieneAgentes ? `
+    <span class="scat">Práctica 24/7</span>
+    ${navItem('agentes-ai','🤖','Agentes AI',"showView('agentes-ai')")}` : ''}`;
 }
 
 function buildMaestroNav() {
@@ -693,7 +743,9 @@ function buildMaestroNav() {
     ${navItem('cargar-sesion','+','Cargar sesión',"showView('cargar-sesion')")}
     ${navItem('abrir-sesion','▶','Abrir sesión',"showView('abrir-sesion')")}
     <span class="scat">Individual</span>
-    ${navItem('mis-alumnos','≡','Lista de alumnos',"showView('mis-alumnos')")}`;
+    ${navItem('mis-alumnos','≡','Lista de alumnos',"showView('mis-alumnos')")}
+    <span class="scat">Práctica</span>
+    ${navItem('agentes-ai','🤖','Agentes AI',"showView('agentes-ai')")}`;
 }
 
 function buildRHNav() {
@@ -719,7 +771,9 @@ function buildAdminNav() {
     ${navItem('empresas','🏢','Empresas',"showView('empresas')")}
     ${navItem('admin-rh','◈','Contactos RH',"showView('admin-rh')")}
     <span class="scat">Reportes</span>
-    ${navItem('reporte-rrhh','↓','Reporte RRHH',"showView('reporte-rrhh')")}`;
+    ${navItem('reporte-rrhh','↓','Reporte RRHH',"showView('reporte-rrhh')")}
+    <span class="scat">Práctica</span>
+    ${navItem('agentes-ai','🤖','Agentes AI',"showView('agentes-ai')")}`;
   const nav = document.getElementById('nav-admin-alumnos');
   if (nav && inact > 0) nav.innerHTML += badge;
 }
@@ -737,6 +791,7 @@ const VIEW_TITLES = {
   'rh-dashboard':'Mis colaboradores','rh-reporte':'Generar reporte',
   'empresas':'Empresas','empresa-detalle':'Detalle de empresa',
   'gt-dashboard':'Dashboard GT',
+  'agentes-ai':'Agentes de práctica AI',
 };
 
 function showView(id) {
@@ -768,6 +823,7 @@ function showView(id) {
     'empresas':            renderEmpresas,
     'empresa-detalle':     (p) => renderEmpresaDetalle(p, _detalleEmpresaId),
     'gt-dashboard':        renderGTDashboard,
+    'agentes-ai':          renderAgentesAI,
   };
   if (renders[id]) renders[id](page);
 }
@@ -3829,6 +3885,91 @@ function gtToggleCheck(id) {
     if (txt) { txt.style.textDecoration = 'line-through'; txt.style.color = 'var(--txt3)'; }
   }
 }
+// ════════════════════════════════════════
+// AGENTES AI — ELEVENLABS
+// ════════════════════════════════════════
+function renderAgentesAI(page) {
+  const esAlumno = currentRole === 'alumno';
+  const nivelActual = esAlumno ? (currentUser.nivel_actual || 'A1.1') : 'C1';
+
+  // Para alumnos: solo agentes a los que tienen acceso
+  const agentesDisponibles = AGENTS.filter(a => {
+    const idxMin = LEVELS.indexOf(a.minNivel);
+    const idxUser = LEVELS.indexOf(nivelActual);
+    return idxUser >= idxMin;
+  });
+
+  page.innerHTML = `
+    <div class="ph">
+      <h2>Agentes de práctica 24/7</h2>
+      <p>Practica inglés empresarial con agentes IA en tiempo real. Sin horarios, sin esperas.</p>
+    </div>
+
+    ${esAlumno && agentesDisponibles.length === 0 ? `
+    <div class="card" style="border-left:3px solid var(--amber);background:var(--amber-bg)">
+      <p style="font-size:13px;color:var(--amber)">
+        🔒 Los agentes de práctica están disponibles a partir de nivel <strong>A2.2</strong>.
+        Tu nivel actual es <strong>${nivelActual}</strong>. ¡Sigue avanzando!
+      </p>
+    </div>` : ''}
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:16px;margin-bottom:24px">
+      ${agentesDisponibles.map(a => `
+      <div style="background:white;border:1px solid var(--border);border-radius:var(--r);
+        padding:24px;cursor:pointer;transition:border-color .2s,box-shadow .2s;animation:slideIn .3s ease"
+        onmouseover="this.style.borderColor='${a.color}';this.style.boxShadow='0 4px 16px rgba(0,0,0,0.08)'"
+        onmouseout="this.style.borderColor='var(--border)';this.style.boxShadow=''"
+        onclick="abrirAgente('${a.id}')">
+        <div style="width:48px;height:48px;border-radius:10px;background:${a.color_bg};
+          display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:14px">
+          ${a.emoji}
+        </div>
+        <div style="font-size:15px;font-weight:500;margin-bottom:6px">${a.nombre}</div>
+        <span style="display:inline-block;padding:3px 10px;border-radius:6px;font-size:10px;
+          font-weight:500;background:${a.color_bg};color:${a.color};margin-bottom:10px">
+          ${a.nivel}
+        </span>
+        <p style="font-size:12px;color:var(--txt2);line-height:1.6;margin-bottom:16px">${a.descripcion}</p>
+        <button style="width:100%;padding:10px;border-radius:var(--rs);border:none;
+          font-size:12px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;
+          background:${a.color_bg};color:${a.color};transition:all .15s"
+          onmouseover="this.style.background='${a.color}';this.style.color='white'"
+          onmouseout="this.style.background='${a.color_bg}';this.style.color='${a.color}'"
+          onclick="event.stopPropagation();abrirAgente('${a.id}')">
+          Abrir práctica →
+        </button>
+      </div>`).join('')}
+    </div>
+
+    <div class="card">
+      <div class="card-title">¿Cómo funciona?</div>
+      <p style="font-size:12px;color:var(--txt2);line-height:1.9">
+        <strong>1. Elige un agente</strong> → Se abre en nueva pestaña (ElevenLabs)<br>
+        <strong>2. Habla en inglés</strong> → El agente responde en tiempo real con voz natural<br>
+        <strong>3. Recibe feedback</strong> → Análisis automático al terminar la conversación<br>
+        <strong>4. Regresa y practica</strong> → Cuantas veces quieras, cuando quieras
+      </p>
+    </div>`;
+}
+
+function abrirAgente(id) {
+  const agente = AGENTS.find(a => a.id === id);
+  if (!agente) return;
+  // Verificar acceso si es alumno
+  if (currentRole === 'alumno') {
+    const idxMin  = LEVELS.indexOf(agente.minNivel);
+    const idxUser = LEVELS.indexOf(currentUser.nivel_actual);
+    if (idxUser < idxMin) {
+      showToast(`🔒 Disponible desde nivel ${agente.minNivel}`);
+      return;
+    }
+  }
+  window.open(agente.url, '_blank');
+}
+
+// ════════════════════════════════════════
+// FIN PORTAL GT v19
+// ════════════════════════════════════════
 
 </script>
 </body>
