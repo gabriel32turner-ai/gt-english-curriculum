@@ -1,0 +1,1410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>GT · B1.2 · M1 · S1A — How I Would Handle That</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0F1923;--s1:#141F2B;--s2:#1A2840;--bd:rgba(255,255,255,.07);
+  --ac:#34D399;--ac2:#6EE7B7;--gold:#C9922A;--green:#00E676;--red:#FF1F5C;
+  --cyan:#00CFFF;--violet:#8B5CF6;
+  --txt:#E4E4E4;--mt:rgba(228,228,228,.5);--dim:rgba(228,228,228,.25);
+}
+*{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif;font-size:14px;line-height:1.65}
+
+/* PROGRESS — v3 fix: 3px + box-shadow */
+.prog{height:3px;background:var(--ac);position:fixed;top:0;left:0;z-index:300;transition:width .1s;box-shadow:0 0 8px rgba(52,211,153,.5)}
+
+/* HEADER */
+.hdr{background:var(--s1);border-bottom:1px solid var(--bd);padding:16px 32px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:200;backdrop-filter:blur(8px)}
+.brand{display:flex;align-items:center;gap:10px}
+.dot{width:7px;height:7px;background:var(--ac);border-radius:50%;animation:glow 2s ease-in-out infinite}
+@keyframes glow{0%,100%{box-shadow:0 0 4px var(--ac)}50%{box-shadow:0 0 12px var(--ac),0 0 20px rgba(52,211,153,.4)}}
+.bname{font-family:'Syne',sans-serif;font-weight:800;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:#fff}
+/* v3 fix: bsub = nivel · módulo · sesión */
+.bsub{font-size:10px;color:var(--dim)}
+/* v3 fix: hdr-r order = badge → sbadge → mode-btn */
+.hdr-r{display:flex;align-items:center;gap:10px}
+.badge{border:1px solid var(--ac);color:var(--ac);padding:4px 10px;font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase}
+.sbadge{background:rgba(52,211,153,.12);color:var(--ac2);padding:4px 10px;font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase}
+.mode-btn{background:transparent;border:1px solid rgba(255,255,255,.15);color:var(--mt);padding:5px 14px;font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;transition:all .2s;touch-action:manipulation}
+.mode-btn:hover{border-color:var(--ac);color:var(--ac)}
+/* v3 fix: body.student-mode (not body.student) */
+body.student-mode .mode-btn{background:rgba(52,211,153,.1);border-color:var(--ac);color:var(--ac)}
+
+/* DISCOVERY BANNER */
+.discovery-banner{background:rgba(52,211,153,.07);border-bottom:1px solid rgba(52,211,153,.15);padding:6px 32px;font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--ac2);text-align:center}
+
+/* HERO — v3 fix: background gradient + url() instead of <img> tag */
+.hero{padding:48px 32px 36px;border-bottom:1px solid var(--bd);max-width:960px;margin:0 auto;background:linear-gradient(135deg,rgba(15,25,35,0.94) 0%,rgba(15,25,35,0.80) 100%),url('https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=1600&q=80&fit=crop') center/cover no-repeat}
+.h-meta{font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--ac);margin-bottom:12px}
+.h-title{font-family:'Syne',sans-serif;font-size:56px;font-weight:800;line-height:.92;color:#fff;margin-bottom:16px}
+.h-title em{color:var(--ac);font-style:normal}
+.h-sub{font-size:14px;color:var(--mt);max-width:500px;line-height:1.6;margin-bottom:24px;font-style:italic}
+.h-chips{display:flex;gap:8px;flex-wrap:wrap}
+.hchip{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);padding:3px 12px;font-size:11px;color:rgba(255,255,255,.5)}
+
+/* NAV — v3 fix: sticky top:57px z-index:190 */
+.snav{background:var(--s1);border-bottom:1px solid var(--bd);padding:0 32px;display:flex;overflow-x:auto;position:sticky;top:57px;z-index:190}
+.sni{padding:13px 16px;font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--dim);text-decoration:none;border-bottom:2px solid transparent;transition:all .18s;white-space:nowrap}
+.sni:hover{color:var(--txt);border-bottom-color:rgba(52,211,153,.35)}.sni.active{color:var(--ac);border-bottom-color:var(--ac)}
+
+/* SECTION SHELL */
+.sec-outer{border-bottom:1px solid var(--bd)}
+.sec{padding:44px 32px;max-width:960px;margin:0 auto}
+.sec-hd{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:28px}
+.sec-lbl{font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--ac);margin-bottom:5px}
+.sec-title{font-family:'Syne',sans-serif;font-size:24px;font-weight:800;color:#fff}
+.sec-sub{font-size:12px;color:var(--mt);margin-top:2px}
+.sec-time{border:1px solid rgba(52,211,153,.25);color:var(--ac);padding:4px 10px;font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;white-space:nowrap}
+body.student-mode .sec-time{display:none}
+
+/* SCENARIO BOX */
+.scenario-box{background:var(--s1);border:1px solid var(--bd);border-left:3px solid var(--ac);padding:22px 24px;margin-bottom:18px}
+.sc-tag{font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--ac);margin-bottom:8px}
+.sc-text{font-size:15px;color:#fff;font-weight:500;line-height:1.65;font-style:italic}
+.sc-prompt{font-size:13px;color:var(--ac2);margin-top:10px;border-left:2px solid rgba(52,211,153,.3);padding-left:10px;line-height:1.6}
+.follow-box{background:rgba(201,146,42,.04);border:1px solid rgba(201,146,42,.15);padding:16px 20px;margin-bottom:16px}
+.follow-lbl{font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.follow-lbl::before{content:'📌'}
+.follow-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.follow-item{font-size:12.5px;color:rgba(201,146,42,.82);padding:8px 12px;border:1px solid rgba(201,146,42,.14);background:rgba(201,146,42,.04);font-style:italic}
+
+/* TIMER */
+.timer-bar{background:var(--s1);border:1px solid rgba(52,211,153,.2);padding:14px 18px;display:flex;align-items:center;gap:16px;margin-top:14px}
+.t-arc{position:relative;width:56px;height:56px;flex-shrink:0}
+.t-svg{width:56px;height:56px;transform:rotate(-90deg)}
+.t-track{fill:none;stroke:var(--s2);stroke-width:5}
+.t-fill{fill:none;stroke:var(--ac);stroke-width:5;stroke-linecap:round;stroke-dasharray:145;stroke-dashoffset:0;transition:stroke-dashoffset .1s linear,stroke .3s}
+.t-num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:15px;font-weight:800;color:#fff}
+.t-info{flex:1}
+.t-lbl{font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--ac);margin-bottom:3px}
+.t-q{font-size:13px;color:#fff;font-weight:500;min-height:20px;margin-bottom:3px}
+.t-status{font-size:11px;color:var(--mt);font-style:italic;margin-bottom:8px}
+.t-btns{display:flex;gap:8px}
+.tbtn{padding:5px 14px;font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;border:none;cursor:pointer;touch-action:manipulation}
+.tbtn-go{background:var(--ac);color:#000}.tbtn-go:hover{background:var(--ac2)}
+.tbtn-r{background:transparent;border:1px solid rgba(255,255,255,.14);color:var(--mt)}.tbtn-r:hover{border-color:var(--ac);color:var(--ac)}
+.tbtn:disabled{opacity:.4;cursor:default}
+.tbtn-gold{background:var(--gold);color:#000}.tbtn-gold:hover{opacity:.88}
+
+/* VOCAB */
+.v-divider{display:flex;align-items:center;gap:10px;margin:16px 0 10px}
+.v-line{flex:1;height:1px;background:var(--bd)}
+.v-label{font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--dim);white-space:nowrap}
+.v-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:2px}
+.vc{background:var(--s1);padding:13px 11px;display:flex;flex-direction:column;gap:3px;border:1px solid var(--bd);transition:border-color .18s}
+.vc:hover{border-color:rgba(52,211,153,.3)}
+.vc.noun-c{border-top:2px solid rgba(52,211,153,.4)}
+.vc.verb-c{border-left:2px solid rgba(0,207,255,.35)}
+.vw{font-family:'Syne',sans-serif;font-size:12px;font-weight:800;color:#fff;line-height:1.2}
+.vp{font-size:10px;color:var(--ac2);font-style:italic;margin-top:1px}
+.vc.verb-c .vp{color:rgba(0,207,255,.7)}
+.vdef{font-size:10.5px;color:var(--mt);line-height:1.4;margin-top:2px}
+.vex{font-size:10px;color:rgba(52,211,153,.8);font-style:italic;border-left:2px solid rgba(52,211,153,.25);padding-left:6px;margin-top:3px;line-height:1.4}
+.vc.verb-c .vex{color:rgba(0,207,255,.7);border-left-color:rgba(0,207,255,.22)}
+.spk{margin-top:6px;background:rgba(52,211,153,.07);border:1px solid rgba(52,211,153,.18);color:var(--ac2);padding:3px 8px;font-size:11px;cursor:pointer;align-self:flex-start;touch-action:manipulation}
+.spk:hover{background:rgba(52,211,153,.15)}
+.vc.verb-c .spk{background:rgba(0,207,255,.06);border-color:rgba(0,207,255,.18);color:rgba(0,207,255,.8)}
+
+/* COLLOQUIAL */
+.coll-wrap{background:rgba(52,211,153,.04);border:1px solid rgba(52,211,153,.18);padding:16px 18px;margin-top:20px}
+.coll-lbl{font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--ac);margin-bottom:12px}
+.coll-list{display:flex;flex-direction:column;gap:7px}
+.coll-item{background:var(--s1);border:1px solid var(--bd);padding:10px 14px;display:flex;align-items:flex-start;gap:12px;transition:border-color .15s}
+.coll-item:hover{border-color:rgba(52,211,153,.3)}
+.coll-spk{flex-shrink:0;background:rgba(52,211,153,.08);border:1px solid rgba(52,211,153,.2);color:var(--ac);padding:4px 8px;font-size:11px;font-family:'Syne',sans-serif;font-weight:700;cursor:pointer;white-space:nowrap;line-height:1;touch-action:manipulation}
+.coll-phrase{font-size:13px;color:var(--ac2);font-weight:600;font-style:italic;margin-bottom:3px}
+.coll-ctx{font-size:11px;color:var(--mt);line-height:1.5}
+.coll-ctx em{font-style:normal;color:rgba(255,255,255,.7)}
+
+/* FLIP CARDS — VISUAL VOCAB */
+.flip-hint{font-size:11px;color:var(--dim);margin-bottom:14px}
+.flip-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+.flip-wrap{height:170px;perspective:800px;cursor:pointer;touch-action:manipulation}
+.flip-inner{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform .5s cubic-bezier(.4,0,.2,1)}
+.flip-wrap.on .flip-inner{transform:rotateY(180deg)}
+.ff,.fb{position:absolute;width:100%;height:100%;backface-visibility:hidden}
+.ff{background:var(--s1);border:1px solid var(--bd);overflow:hidden}
+.ff img{width:100%;height:100%;object-fit:cover;opacity:.5}
+.ff-lbl{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,.92));padding:10px}
+.ff-lbl span{font-family:'Syne',sans-serif;font-size:13px;font-weight:800;color:#fff}
+.ff-badge{position:absolute;top:8px;left:8px;background:rgba(52,211,153,.15);border:1px solid rgba(52,211,153,.3);color:var(--ac);padding:2px 8px;font-family:'Syne',sans-serif;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px}
+.fb{background:var(--s2);border:1px solid rgba(52,211,153,.25);transform:rotateY(180deg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:14px;text-align:center}
+.fb-word{font-family:'Syne',sans-serif;font-size:13px;font-weight:800;color:#fff;margin-bottom:2px}
+.fb-sub{font-size:10px;color:var(--ac2);font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px}
+.fb-txt{font-size:10.5px;color:var(--mt);font-style:italic;line-height:1.5}
+
+/* ACHIEVEMENT GENERATOR — OBLIGATORIO SESIÓN A */
+.gen-wrap{background:var(--s1);border:1px solid rgba(52,211,153,.2);padding:26px 24px;margin-top:14px;display:flex;flex-direction:column;align-items:center;gap:18px}
+.gen-tag{font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--ac);text-align:center}
+.gen-sub{font-size:12px;color:var(--mt);text-align:center}
+.gen-display{width:100%;max-width:540px;min-height:80px;background:var(--s2);border:2px solid rgba(52,211,153,.3);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:16px 24px;text-align:center;cursor:pointer;transition:all .3s;box-shadow:0 0 20px rgba(52,211,153,.08)}
+.gen-display:hover{box-shadow:0 0 30px rgba(52,211,153,.18);border-color:var(--ac)}
+.gen-type{font-family:'Syne',sans-serif;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--ac);opacity:0;transition:opacity .3s}
+.gen-type.show{opacity:1}
+.gen-prompt{font-size:15px;color:#fff;line-height:1.5;opacity:0;transition:opacity .3s .05s}
+.gen-prompt.show{opacity:1}
+.gen-hint{font-size:12px;color:var(--mt);font-style:italic;opacity:0;transition:opacity .3s .1s}
+.gen-hint.show{opacity:1}
+.gen-btn{background:var(--ac);border:none;color:#fff;padding:10px 28px;font-family:'Syne',sans-serif;font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all .2s;touch-action:manipulation}
+.gen-btn:hover{background:var(--ac2)}
+.gen-score{font-size:12px;color:var(--dim);font-family:'Syne',sans-serif;font-weight:700;letter-spacing:1px}
+
+/* SPINNING WHEEL */
+.wheel-wrap{background:var(--s1);border:1px solid rgba(52,211,153,.2);padding:22px;margin-top:14px;display:grid;grid-template-columns:260px 1fr;gap:24px;align-items:start}
+.wheel-tag{font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--ac);margin-bottom:6px}
+.wheel-left{display:flex;flex-direction:column;align-items:center;gap:12px}
+#wheelCanvas{border-radius:50%;box-shadow:0 0 32px rgba(52,211,153,.12)}
+.wheel-btn{background:var(--ac);color:#000;border:none;padding:9px 28px;font-family:'Syne',sans-serif;font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all .2s;width:100%;touch-action:manipulation}
+.wheel-btn:hover{background:var(--ac2)}
+.wheel-btn:disabled{opacity:.4;cursor:default}
+.wheel-right{display:flex;flex-direction:column;gap:10px}
+.wheel-instructions{font-size:12px;color:var(--mt);line-height:1.6;margin-bottom:4px}
+.wheel-scenario-box{background:var(--bg);border:1px solid rgba(52,211,153,.25);padding:14px 16px;min-height:80px;display:none}
+.wheel-scenario-box.show{display:block}
+.wsb-lbl{font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--ac);margin-bottom:8px}
+.wsb-txt{font-size:14px;color:#fff;font-weight:500;line-height:1.55;margin-bottom:8px}
+.wsb-prompt{font-size:12px;color:var(--ac2);font-style:italic;border-left:2px solid rgba(52,211,153,.3);padding-left:8px;line-height:1.5}
+.wheel-score-row{display:flex;align-items:center;gap:10px;margin-top:4px}
+.ws-n{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;color:var(--ac);line-height:1;transition:all .3s}
+.ws-n.bump{transform:scale(1.25);color:var(--green)}
+.ws-lbl{font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--dim)}
+.wheel-mark-btns{display:flex;gap:8px;margin-top:6px}
+.wbtn{border:none;padding:6px 16px;font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;transition:all .2s;touch-action:manipulation}
+.wbtn-ok{background:var(--green);color:#000}.wbtn-ok:hover{opacity:.88}
+.wbtn-skip{background:transparent;border:1px solid rgba(255,31,92,.25);color:rgba(255,100,100,.6)}.wbtn-skip:hover{border-color:var(--red);color:var(--red)}
+.wbtn:disabled{opacity:.35;cursor:default}
+
+/* GRAMMAR */
+.gram-visual{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:14px}
+.gvk{padding:14px 16px;border:1px solid var(--bd);position:relative;overflow:hidden}
+.gvk::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px}
+.gvk.g1::before{background:var(--ac)}.gvk.g2::before{background:var(--cyan)}.gvk.g3::before{background:var(--gold)}.gvk.g4::before{background:var(--red)}
+.gvk-wm{position:absolute;right:-4px;top:50%;transform:translateY(-50%);font-size:48px;opacity:.05;font-family:'Syne',sans-serif;font-weight:800;pointer-events:none}
+.gvk-lbl{font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px}
+.gvk.g1 .gvk-lbl{color:var(--ac)}.gvk.g2 .gvk-lbl{color:var(--cyan)}.gvk.g3 .gvk-lbl{color:var(--gold)}.gvk.g4 .gvk-lbl{color:rgba(255,31,92,.8)}
+.gvk-ex{font-size:12px;font-style:italic;line-height:1.55}
+.gvk.g1 .gvk-ex{color:rgba(52,211,153,.85)}.gvk.g2 .gvk-ex{color:rgba(0,207,255,.8)}.gvk.g3 .gvk-ex{color:rgba(201,146,42,.85)}.gvk.g4 .gvk-ex{color:rgba(255,100,100,.8)}
+
+/* CONTRAST BLOCK — OBLIGATORIO SESIÓN A: 2nd Cond vs 1st Cond */
+.contrast-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px;margin-bottom:14px}
+.ct-col{background:var(--s1);border:1px solid var(--bd);padding:16px 18px}
+.ct-col.c1{border-top:2px solid var(--cyan)}.ct-col.c2{border-top:2px solid var(--ac)}
+.ct-hdr{font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:10px}
+.ct-col.c1 .ct-hdr{color:var(--cyan)}.ct-col.c2 .ct-hdr{color:var(--ac)}
+/* v3: contrast-col items using standard classes */
+.contrast-col-lbl{font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:10px}
+.contrast-col.pp .contrast-col-lbl{color:var(--ac)}
+.contrast-col.sp .contrast-col-lbl{color:#A78BFA}
+.contrast-item{font-size:12.5px;color:var(--mt);line-height:1.7;margin-bottom:6px;padding-left:12px;border-left:2px solid var(--bd)}
+.contrast-col.pp .contrast-item{border-left-color:rgba(52,211,153,.3)}
+.contrast-col.sp .contrast-item{border-left-color:rgba(167,139,250,.3)}
+.ct-li{font-size:12.5px;color:var(--mt);padding:5px 0;border-bottom:1px solid var(--bd);line-height:1.5}
+.ct-li:last-child{border-bottom:none}.ct-li strong{color:var(--txt)}
+.rule-box{background:rgba(52,211,153,.04);border-left:3px solid var(--ac);padding:12px 16px;margin-bottom:14px;font-size:13px;color:var(--txt);line-height:1.7}
+.rule-box strong{color:var(--ac2)}
+.err-blk{background:rgba(255,31,92,.04);border:1px solid rgba(255,31,92,.15);padding:14px 18px;margin-bottom:14px}
+.err-title{font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--red);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.err-row{display:flex;gap:8px;align-items:flex-start;flex-wrap:wrap;margin-bottom:6px;font-size:12.5px;line-height:1.55}
+.err-x{color:rgba(255,100,100,.85)}.arr{color:var(--dim)}.err-ok{color:var(--green)}
+.err-note{font-size:11px;color:var(--dim);font-style:italic;margin-top:2px}
+
+/* ACTIVITIES */
+.act{background:var(--bg);border:1px solid rgba(201,146,42,.22);padding:20px 24px;margin-top:2px}
+.act-lbl{font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold);margin-bottom:4px}
+.act-inst{font-size:12px;color:var(--mt);margin:4px 0 14px}
+.q-row{margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid var(--bd)}
+.q-row:last-child{border:none;margin-bottom:0;padding-bottom:0}
+.q-text{font-size:13.5px;color:var(--txt);margin-bottom:8px}
+.opts{display:flex;gap:6px;flex-wrap:wrap}
+.opt{background:var(--s2);border:1px solid var(--bd);color:var(--txt);padding:5px 13px;font-family:'DM Sans',sans-serif;font-size:12.5px;cursor:pointer;transition:all .15s;touch-action:manipulation}
+.opt:hover:not([disabled]){border-color:rgba(52,211,153,.4);color:#fff}
+.opt.correct{background:rgba(0,230,118,.1);border-color:var(--green);color:var(--green)}
+.opt.wrong{background:rgba(255,31,92,.07);border-color:var(--red);color:rgba(255,100,100,.9)}
+
+/* DRAG & DROP */
+.drag-container{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
+.drag-item{background:var(--s2);border:1px solid var(--bd);color:var(--txt);padding:9px 14px;font-size:13px;cursor:pointer;transition:all .2s;user-select:none;touch-action:manipulation}
+.drag-item:hover{border-color:rgba(52,211,153,.3)}
+.drag-item.selected{border-color:var(--ac);background:rgba(52,211,153,.06);color:#fff;box-shadow:0 0 0 1px rgba(52,211,153,.3)}
+.drag-check-btn{background:var(--s1);border:1px solid rgba(201,146,42,.35);color:var(--gold);padding:7px 20px;font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;cursor:pointer;touch-action:manipulation}
+.drag-check-btn:hover{background:rgba(201,146,42,.08)}
+.drag-result{font-family:'Syne',sans-serif;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:6px 14px;display:inline-block;margin-top:8px}
+.drag-result.ok{background:rgba(0,230,118,.1);color:var(--green);border:1px solid rgba(0,230,118,.25)}
+.drag-result.bad{background:rgba(255,31,92,.07);color:var(--red);border:1px solid rgba(255,31,92,.2)}
+
+/* TRUE / FALSE — v3 style (tf-row2 compatible) */
+.tf-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--bd);flex-wrap:wrap;gap:8px}
+.tf-row:last-child{border-bottom:none}
+.tf-stmt{font-size:13px;color:var(--txt);flex:1;line-height:1.5}
+.tf-btns{display:flex;gap:6px}
+.tf-btn{padding:5px 14px;font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;border:1px solid var(--bd);background:var(--bg);color:var(--mt);transition:all .15s;touch-action:manipulation}
+.tf-btn:hover:not([disabled]){border-color:rgba(255,255,255,.2);color:var(--txt)}
+.tf-btn.correct{background:rgba(0,230,118,.1);border-color:var(--green);color:var(--green)}
+.tf-btn.wrong{background:rgba(255,31,92,.07);border-color:var(--red);color:rgba(255,100,100,.9)}
+
+/* READING */
+.rc{background:var(--s1);border:1px solid var(--bd);margin-bottom:14px}
+.rc-hd{position:relative;height:100px;overflow:hidden}
+.rc-hd-img{width:100%;height:100%;object-fit:cover;filter:brightness(.3) saturate(.6);display:block}
+.rc-overlay{position:absolute;inset:0;display:flex;align-items:center;padding:0 22px;gap:14px;background:linear-gradient(90deg,rgba(15,25,35,.92) 42%,transparent)}
+.rc-av{width:52px;height:52px;border-radius:50%;object-fit:cover;border:2px solid rgba(52,211,153,.4);flex-shrink:0}
+.rc-name{font-family:'Syne',sans-serif;font-size:14px;font-weight:800;color:#fff}
+.rc-role{font-size:11.5px;color:var(--mt);margin-top:2px}
+.rc-tag{font-family:'Syne',sans-serif;font-size:8px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--ac);background:rgba(52,211,153,.08);border:1px solid rgba(52,211,153,.2);padding:3px 8px;margin-left:auto;white-space:nowrap}
+.rc-body{padding:22px 26px;font-size:13.5px;line-height:1.9;color:var(--txt)}
+.rc-body h4{font-family:'Syne',sans-serif;font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--ac2);margin:16px 0 8px}
+.rc-body h4:first-child{margin-top:0}
+.rc-body p{margin-bottom:10px}.rc-body p:last-child{margin-bottom:0}
+.rc-kw{background:rgba(52,211,153,.04);border:1px solid rgba(52,211,153,.15);padding:9px 14px;margin-bottom:14px;font-size:12px;color:var(--mt)}
+.rc-kw strong{color:var(--ac2)}
+/* reading color classes */
+.kppc{color:var(--ac);font-weight:600}
+.kpp{color:var(--cyan);font-weight:600}
+.kcol{color:var(--ac2);font-weight:600;background:rgba(52,211,153,.08);padding:0 3px}
+
+/* PLAYER / LISTENING */
+.player{background:var(--s1);border:1px solid var(--bd);margin-bottom:18px;overflow:hidden}
+.pl-banner{width:100%;height:90px;object-fit:cover;filter:brightness(.32) saturate(.55);display:block}
+.pl-body{padding:18px 22px}
+.pl-top{display:flex;align-items:center;gap:14px;margin-bottom:14px}
+.pl-ico{width:42px;height:42px;background:rgba(52,211,153,.1);border:1px solid rgba(52,211,153,.22);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.pl-title{font-family:'Syne',sans-serif;font-size:14px;font-weight:800;color:#fff;margin-bottom:2px}
+.pl-meta{font-size:11px;color:var(--mt)}
+.pl-ph{background:var(--bg);border:1px dashed rgba(255,255,255,.1);padding:14px 18px;text-align:center}
+.pl-ph p{font-size:11.5px;color:var(--dim);line-height:1.7}.pl-ph code{color:var(--gold);font-size:10.5px}
+.script-btn{cursor:pointer;margin-top:12px;width:fit-content;touch-action:manipulation}
+.script-btn span{font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim)}
+.script-btn:hover span{color:var(--txt)}
+.script-box{display:none;background:var(--bg);border:1px solid var(--bd);padding:16px 20px;margin-top:10px;font-size:12.5px;color:var(--mt);line-height:1.85}
+.script-box.open{display:block}
+.sc-spk{font-family:'Syne',sans-serif;font-size:9px;font-weight:800;letter-spacing:2px;text-transform:uppercase;padding:6px 0 2px}
+.sc-spk.morgan{color:var(--ac)}.sc-spk.alex{color:var(--cyan)}
+.sc-note{font-size:10px;color:var(--dim);margin-top:10px;font-style:normal;border-top:1px solid var(--bd);padding-top:8px}
+
+/* WRAP-UP */
+.fcw-wrap{margin-bottom:18px;padding:22px 26px;background:var(--s1);border:1px solid rgba(52,211,153,.18)}
+.fcw-hd{font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--ac);margin-bottom:5px}
+.fcw-sub{font-size:12px;color:var(--mt);margin-bottom:16px}
+.fcw-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+.fcw-card{height:120px;perspective:600px;cursor:pointer;touch-action:manipulation}
+.fcw-inner{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform .4s cubic-bezier(.4,0,.2,1)}
+.fcw-card.on .fcw-inner{transform:rotateY(180deg)}
+.fcw-front,.fcw-back{position:absolute;width:100%;height:100%;backface-visibility:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:10px;text-align:center}
+.fcw-front{background:var(--s2);border:1px solid var(--bd)}
+.fcw-front-word{font-family:'Syne',sans-serif;font-size:12px;font-weight:800;color:#fff;line-height:1.3}
+.fcw-front-hint{font-size:9px;color:var(--dim);margin-top:5px;letter-spacing:1px;text-transform:uppercase;font-family:'Syne',sans-serif}
+.fcw-back{background:rgba(52,211,153,.06);border:1px solid rgba(52,211,153,.22);transform:rotateY(180deg)}
+.fcw-back-def{font-size:11px;color:var(--mt);font-style:italic;line-height:1.45;margin-bottom:5px}
+.fcw-back-ex{font-size:11px;color:var(--ac2);font-style:italic;line-height:1.4;border-top:1px solid var(--bd);padding-top:5px}
+.wu2-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px;margin-bottom:2px}
+.wu2-card{background:var(--s1);padding:22px 26px;border:1px solid var(--bd)}
+.wu2-h{font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--ac);margin-bottom:14px}
+.checklist{list-style:none;display:flex;flex-direction:column;gap:8px}
+.checklist li{display:flex;align-items:flex-start;gap:10px;font-size:13px;color:var(--mt);cursor:pointer;padding:3px 0;touch-action:manipulation}
+.checklist li:hover{color:var(--txt)}.checklist li.done{color:var(--green)}
+.cb{width:15px;height:15px;border:1.5px solid var(--bd);flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center;font-size:9px;transition:all .2s}
+.checklist li.done .cb{background:var(--green);border-color:var(--green);color:#000}
+.key-item{display:flex;align-items:flex-start;gap:10px;background:var(--bg);border:1px solid var(--bd);padding:10px 14px;margin-bottom:6px}
+.ki-icon{font-size:16px;flex-shrink:0;margin-top:1px}
+.ki-lbl{font-size:9px;color:var(--dim);font-family:'Syne',sans-serif;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px}
+.ki-txt{font-size:13px;color:var(--txt);line-height:1.55}
+.wordwall-wrap{background:var(--s1);border:1px solid rgba(201,146,42,.2);padding:22px 26px;margin-bottom:2px}
+.ww-lbl{font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:6px}
+.ww-title{font-family:'Syne',sans-serif;font-size:15px;font-weight:800;color:#fff;margin-bottom:14px}
+.ww-placeholder{background:rgba(201,146,42,.04);border:1px dashed rgba(201,146,42,.25);padding:24px;text-align:center;color:var(--dim);font-size:12px;margin-bottom:10px}
+.ww-inst{font-size:12px;color:var(--mt);line-height:1.6}
+.sp-box{background:rgba(52,211,153,.03);border:1px solid rgba(52,211,153,.18);padding:20px 26px;margin-top:2px}
+.sp-lbl{font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--ac2);margin-bottom:6px}
+.sp-type{font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:rgba(52,211,153,.4);margin-bottom:10px}
+.sp-prompt{font-size:15px;color:#fff;font-style:italic;line-height:1.55;margin-bottom:14px}
+.cd-timer{background:var(--bg);border:1px solid rgba(52,211,153,.2);padding:14px 18px;display:flex;align-items:center;gap:16px;margin-bottom:12px}
+.cd-arc{position:relative;width:68px;height:68px;flex-shrink:0}
+.cd-svg{width:68px;height:68px;transform:rotate(-90deg)}
+.cd-track{fill:none;stroke:var(--s2);stroke-width:5}
+.cd-fill{fill:none;stroke:var(--gold);stroke-width:5;stroke-linecap:round;stroke-dasharray:188;stroke-dashoffset:0;transition:stroke-dashoffset .1s linear,stroke .3s}
+.cd-num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:16px;font-weight:800;color:#fff}
+.cd-info{flex:1}
+.cd-lbl{font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:3px}
+.cd-phase{font-size:13px;color:#fff;font-weight:500;min-height:20px;margin-bottom:3px}
+.cd-hint{font-size:11px;color:var(--mt);font-style:italic;margin-bottom:8px}
+.sp-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.sp-chip{background:rgba(52,211,153,.07);border:1px solid rgba(52,211,153,.18);padding:5px 12px;font-size:11.5px;color:var(--ac2);cursor:pointer;transition:all .15s;touch-action:manipulation}
+.sp-chip:hover{background:rgba(52,211,153,.14)}
+.model-btn{background:transparent;border:1px solid rgba(0,230,118,.2);color:rgba(0,230,118,.7);padding:8px 14px;font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;width:100%;text-align:left;display:flex;align-items:center;gap:8px;touch-action:manipulation;margin-bottom:6px}
+.model-btn::before{content:"▶";font-size:8px;transition:transform .2s}.model-btn.open::before{transform:rotate(90deg)}
+.model-content{display:none;background:rgba(0,230,118,.04);border:1px solid rgba(0,230,118,.15);padding:12px 16px;margin-bottom:10px;font-size:12.5px;color:rgba(0,230,118,.85);line-height:1.75}
+.model-content.show{display:block}
+.next-box{background:rgba(0,207,255,.04);border:1px solid rgba(0,207,255,.15);padding:12px 18px;display:flex;align-items:center;gap:12px;margin-top:2px}
+.next-lbl{font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--cyan);white-space:nowrap}
+.next-txt{font-size:12.5px;color:rgba(0,207,255,.8)}
+.gto{background:rgba(201,146,42,.03);border:1px solid rgba(201,146,42,.12);padding:16px 18px;margin-top:2px}
+.gto-lbl{font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.gto-lbl::before{content:"★";font-size:10px}
+.gto-txt{font-size:12px;color:rgba(201,146,42,.8);line-height:1.7}.gto-txt strong{color:var(--gold)}
+
+/* TEACHER NOTES */
+.tn{border-top:1px solid rgba(201,146,42,.12);margin-top:20px}
+.tn-toggle{width:100%;background:rgba(201,146,42,.04);border:1px solid rgba(201,146,42,.12);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(201,146,42,.7);transition:all .18s;touch-action:manipulation}
+.tn-toggle:hover{background:rgba(201,146,42,.08);color:var(--gold)}
+.tn-arrow{transition:transform .25s}.tn-toggle.open .tn-arrow{transform:rotate(180deg)}
+.tn-body{display:none}.tn-body.open{display:block}
+.tn-capa{padding:12px 16px;border-bottom:1px solid rgba(255,255,255,.04)}.tn-capa:last-child{border-bottom:none}
+.tn-cl{font-family:'Syne',sans-serif;font-size:8.5px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:6px}
+.tn-c1 .tn-cl{color:rgba(0,207,255,.8)}.tn-c2 .tn-cl{color:rgba(255,31,92,.7)}.tn-c3 .tn-cl{color:rgba(201,146,42,.8)}
+.tn-txt{font-size:12px;color:var(--mt);line-height:1.7}.tn-txt ul{padding-left:14px;display:flex;flex-direction:column;gap:3px}
+.teacher-only{display:block}
+/* v3 fix: body.student-mode */
+body.student-mode .teacher-only{display:none!important}
+
+/* FOOTER */
+.ftr{background:var(--s1);border-top:1px solid var(--bd);padding:18px 32px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+.fb{font-family:'Syne',sans-serif;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim)}
+
+@media(max-width:860px){
+  .hero,.sec{padding:32px 16px}.snav{padding:0 16px}.hdr{padding:14px 16px}.ftr{padding:14px 16px}
+  .h-title{font-size:36px}
+  .wu2-grid,.contrast-grid,.gram-visual{grid-template-columns:1fr}
+  .v-grid{grid-template-columns:repeat(2,1fr)}
+  .flip-grid{grid-template-columns:repeat(2,1fr)}
+  .fcw-grid{grid-template-columns:repeat(2,1fr)}
+  .wheel-wrap{grid-template-columns:1fr}
+  .follow-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body ontouchstart="">
+<div class="prog" id="prog"></div>
+
+<!-- HEADER — v3 fix: badge→sbadge→mode-btn order, bsub corrected -->
+<header class="hdr">
+  <div class="brand"><div class="dot"></div><div><div class="bname">Gabriel Turner · English Training</div><div class="bsub">B1.2 · Module 1 · Session 1A</div></div></div>
+  <div class="hdr-r">
+    <div class="badge">B1.2</div>
+    <div class="sbadge">M1 · S1A</div>
+    <button class="mode-btn" id="modeBtn" onclick="toggleMode()">👁 Student Mode</button>
+  </div>
+</header>
+
+<!-- DISCOVERY BANNER -->
+<div class="discovery-banner">⚡ Discovery Session — 2nd Conditional for Hypotheticals &amp; Dilemmas · Session 1A of 10</div>
+
+<!-- HERO — v3 fix: background gradient + url() -->
+<div class="hero">
+  <div class="h-meta">Module 1 · How I Would Handle That · Session 1A of 10 — Discovery &amp; Drill</div>
+  <div class="h-title">How I Would<br><em>Handle That</em></div>
+  <p class="h-sub">"If I were in that situation — what would I actually do?" The 2nd conditional gives you the language for every hypothetical that matters.</p>
+  <div class="h-chips">
+    <span class="hchip">B1.2</span><span class="hchip">50/50 Business · Daily Life</span><span class="hchip">60 min</span><span class="hchip">2nd Conditional · Intensive</span><span class="hchip">🎰 Dilemma Roulette</span>
+  </div>
+</div>
+
+<!-- NAV — v3 fix: sticky top:57px z-index:190 -->
+<nav class="snav">
+  <a class="sni" href="#s1">§1 Warm-Up</a>
+  <a class="sni" href="#s2">§2 Vocabulary</a>
+  <a class="sni" href="#s3">§3 Visual Vocab</a>
+  <a class="sni" href="#s4">§4 Grammar</a>
+  <a class="sni" href="#s5">§5 Reading</a>
+  <a class="sni" href="#s6">§6 Listening</a>
+  <a class="sni" href="#s7">§7 Wrap-Up</a>
+</nav>
+
+<!-- §1 WARM-UP -->
+<div class="sec-outer" id="s1"><section class="sec">
+  <div class="sec-hd">
+    <div><div class="sec-lbl">§ 01</div><div class="sec-title">Warm-Up — Scenario</div><div class="sec-sub">Critical professional dilemma · Surface the 2nd conditional before any explicit teaching</div></div>
+    <div class="sec-time">5–8 min</div>
+  </div>
+
+  <div class="scenario-box">
+    <div class="sc-tag">📍 Scenario — Ethical Dilemma at Work</div>
+    <div class="sc-text">Your manager asks you to send a client report that contains a calculation error — an error that makes the results look better than they actually are. The client presentation is in two hours. Your manager says: "Nobody will notice. Just send it."</div>
+    <div class="sc-prompt">What would you do? Would you send the report? Would you push back? Would you say something to the client directly? — Answer freely. Don't worry about grammar. Just respond in English as if this were happening right now.</div>
+  </div>
+
+  <div class="follow-box teacher-only">
+    <div class="follow-lbl">Teacher Follow-Up — Pick 2 based on student response</div>
+    <div class="follow-grid">
+      <div class="follow-item">"What would you say to your manager — exact words?"</div>
+      <div class="follow-item">"If the client discovered the error later, what would happen to you?"</div>
+      <div class="follow-item">"Would your answer change if you were more senior? Why?"</div>
+      <div class="follow-item">"What would a colleague you respect do in this situation?"</div>
+    </div>
+  </div>
+
+  <div class="timer-bar">
+    <div class="t-arc"><svg class="t-svg" viewBox="0 0 56 56"><circle class="t-track" cx="28" cy="28" r="23"/><circle class="t-fill" id="tArc" cx="28" cy="28" r="23"/></svg><div class="t-num" id="tNum">30</div></div>
+    <div class="t-info">
+      <div class="t-lbl">⏱ 30-second spontaneous response timer</div>
+      <div class="t-q" id="tQ">—</div>
+      <div class="t-status" id="tStatus">Press START when student begins speaking</div>
+      <div class="t-btns">
+        <button class="tbtn tbtn-go" id="tStart" onclick="startT()">START</button>
+        <button class="tbtn tbtn-r" onclick="resetT()">RESET</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="tn teacher-only">
+    <button class="tn-toggle" onclick="toggleTN(this)">📋 Teacher Notes — §1 Warm-Up <span class="tn-arrow">▼</span></button>
+    <div class="tn-body">
+      <div class="tn-capa tn-c1"><div class="tn-cl">Capa 1 · Pedagogical</div><div class="tn-txt"><ul>
+        <li>Key diagnostic: Does the student say "I would..." or "I will..." spontaneously? If they say "I will" — note it. Do NOT correct yet. After their answer, write on the board: "What WOULD you do?" and ask: "Which form do you notice I used?" — Let grammar emerge from meaning.</li>
+        <li>Common B1.2 spontaneous errors: "If I am in this situation I will..." (1st conditional for hypothetical), "I would to push back" (would + to), "If I would have time I would talk to him" (would in if-clause). Note all for grammar section.</li>
+        <li>Do NOT over-correct in §1. This is a diagnostic. Your job is to listen and note what grammar they attempt.</li>
+        <li>Timing: If student gives a long, detailed response — note their language. If they freeze at 20 seconds — say: "If this happened to you — first instinct. Go." That phrasing is itself a 2nd conditional prompt.</li>
+      </ul></div></div>
+      <div class="tn-capa tn-c2"><div class="tn-cl">Capa 2 · Engagement</div><div class="tn-txt"><ul>
+        <li>"This scenario actually happens. Frequently. I need your real instinct — not the corporate-safe answer. What would YOU actually do?"</li>
+        <li>If student immediately says "I would send it" — push: "Really? And if the client found out? Walk me through that."</li>
+        <li>If student is very diplomatic: "Give me a yes or no first. Then explain."</li>
+      </ul></div></div>
+      <div class="tn-capa tn-c3"><div class="tn-cl">Capa 3 · Growth &amp; Retention</div><div class="tn-txt"><ul>
+        <li>"By §7 today, you will be able to argue both sides of this dilemma — in English — using the 2nd conditional, hedging language, and at least two of the five colloquial phrases we cover. That's what B1.2 sounds like."</li>
+        <li>Upsell trigger: "Every professional at your level — engineers, coordinators, managers — faces moments like this. The ones who navigate them confidently in English are the ones who move up. That's exactly what M1 builds."</li>
+      </ul></div></div>
+    </div>
+  </div>
+</section></div>
+
+<!-- §2 VOCABULARY -->
+<div class="sec-outer" id="s2"><section class="sec">
+  <div class="sec-hd">
+    <div><div class="sec-lbl">§ 02</div><div class="sec-title">Vocabulary — Dilemmas &amp; Decisions</div><div class="sec-sub">10 nouns · 10 verbs · 5 colloquial phrases · All embedded in 2nd conditional</div></div>
+    <div class="sec-time">10–12 min</div>
+  </div>
+
+  <div class="v-divider"><div class="v-line"></div><div class="v-label">10 Nouns — Difficult Situations</div><div class="v-line"></div></div>
+  <div class="v-grid">
+    <div class="vc noun-c"><div class="vw">dilemma</div><div class="vp">/dɪˈlemə/</div><div class="vdef">A situation in which every option has a significant cost</div><div class="vex">"If I faced this dilemma, I would prioritize transparency."</div><button class="spk" onclick="speak('dilemma')">🔊</button></div>
+    <div class="vc noun-c"><div class="vw">accountability</div><div class="vp">/əˌkaʊntəˈbɪlɪti/</div><div class="vdef">The state of being responsible for your decisions and their consequences</div><div class="vex">"If I stayed silent, accountability would still fall on me."</div><button class="spk" onclick="speak('accountability')">🔊</button></div>
+    <div class="vc noun-c"><div class="vw">transparency</div><div class="vp">/trænsˈpærənsi/</div><div class="vdef">Being open and honest with the information others need</div><div class="vex">"If we chose transparency, client trust would increase."</div><button class="spk" onclick="speak('transparency')">🔊</button></div>
+    <div class="vc noun-c"><div class="vw">integrity</div><div class="vp">/ɪnˈtegrɪti/</div><div class="vdef">The quality of being honest and having strong moral principles</div><div class="vex">"If I acted with integrity, I would push back — even if it cost me."</div><button class="spk" onclick="speak('integrity')">🔊</button></div>
+    <div class="vc noun-c"><div class="vw">tension</div><div class="vp">/ˈtenʃən/</div><div class="vdef">A state of stress or conflict between people or priorities</div><div class="vex">"If the tension continued, it would damage the whole team."</div><button class="spk" onclick="speak('tension')">🔊</button></div>
+    <div class="vc noun-c"><div class="vw">pressure</div><div class="vp">/ˈpreʃər/</div><div class="vdef">The force applied to compel someone to act in a certain way</div><div class="vex">"If the pressure became too great, I would speak to HR."</div><button class="spk" onclick="speak('pressure')">🔊</button></div>
+    <div class="vc noun-c"><div class="vw">confrontation</div><div class="vp">/ˌkɒnfrənˈteɪʃən/</div><div class="vdef">A direct and often hostile meeting between people in conflict</div><div class="vex">"If a confrontation happened publicly, I would defuse it immediately."</div><button class="spk" onclick="speak('confrontation')">🔊</button></div>
+    <div class="vc noun-c"><div class="vw">credibility</div><div class="vp">/ˌkredɪˈbɪlɪti/</div><div class="vdef">The quality of being trusted and believed by others</div><div class="vex">"If I dropped the ball here, my credibility would suffer."</div><button class="spk" onclick="speak('credibility')">🔊</button></div>
+    <div class="vc noun-c"><div class="vw">leadership</div><div class="vp">/ˈliːdəʃɪp/</div><div class="vdef">The ability to guide, influence, and make decisions for others</div><div class="vex">"If I were in a leadership position, I would address this head-on."</div><button class="spk" onclick="speak('leadership')">🔊</button></div>
+    <div class="vc noun-c"><div class="vw">consequences</div><div class="vp">/ˈkɒnsɪkwənsɪz/</div><div class="vdef">The results or effects of an action or decision</div><div class="vex">"If I sent the report, the consequences would be serious."</div><button class="spk" onclick="speak('consequences')">🔊</button></div>
+  </div>
+
+  <div class="v-divider"><div class="v-line"></div><div class="v-label">10 Verbs — Actions Under Pressure</div><div class="v-line"></div></div>
+  <div class="v-grid">
+    <div class="vc verb-c"><div class="vw">handle</div><div class="vp">/ˈhændəl/</div><div class="vdef">To manage or deal with a difficult situation skillfully</div><div class="vex">"If I handled this calmly, the outcome would be different."</div><button class="spk" onclick="speak('handle')">🔊</button></div>
+    <div class="vc verb-c"><div class="vw">escalate</div><div class="vp">/ˈeskəleɪt/</div><div class="vdef">To bring a problem to a higher level of authority</div><div class="vex">"If I escalated this to HR, they would have to investigate."</div><button class="spk" onclick="speak('escalate')">🔊</button></div>
+    <div class="vc verb-c"><div class="vw">navigate</div><div class="vp">/ˈnævɪɡeɪt/</div><div class="vdef">To find your way through a complex or difficult situation</div><div class="vex">"If I navigated this carefully, trust would be maintained."</div><button class="spk" onclick="speak('navigate')">🔊</button></div>
+    <div class="vc verb-c"><div class="vw">address</div><div class="vp">/əˈdres/</div><div class="vdef">To deal with a problem or situation directly</div><div class="vex">"If I addressed this early, it would not escalate further."</div><button class="spk" onclick="speak('address')">🔊</button></div>
+    <div class="vc verb-c"><div class="vw">mediate</div><div class="vp">/ˈmiːdieɪt/</div><div class="vdef">To help two parties in conflict reach an agreement</div><div class="vex">"If I mediated the conflict, both sides would feel heard."</div><button class="spk" onclick="speak('mediate')">🔊</button></div>
+    <div class="vc verb-c"><div class="vw">defuse</div><div class="vp">/diːˈfjuːz/</div><div class="vdef">To make a tense or dangerous situation calmer</div><div class="vex">"If I defused this now, the relationship would still be salvageable."</div><button class="spk" onclick="speak('defuse')">🔊</button></div>
+    <div class="vc verb-c"><div class="vw">push back</div><div class="vp">/pʊʃ bæk/</div><div class="vdef">To resist or challenge something you disagree with</div><div class="vex">"If I pushed back firmly, my position would be clearer."</div><button class="spk" onclick="speak('push back')">🔊</button></div>
+    <div class="vc verb-c"><div class="vw">set boundaries</div><div class="vp">/set ˈbaʊndəriz/</div><div class="vdef">To define what you will and will not accept from others</div><div class="vex">"If I set clear boundaries, the team would respect them."</div><button class="spk" onclick="speak('set boundaries')">🔊</button></div>
+    <div class="vc verb-c"><div class="vw">speak up</div><div class="vp">/spiːk ʌp/</div><div class="vdef">To say what you think, even when it feels risky</div><div class="vex">"If I spoke up in that meeting, the truth would come out."</div><button class="spk" onclick="speak('speak up')">🔊</button></div>
+    <div class="vc verb-c"><div class="vw">confront</div><div class="vp">/kənˈfrʌnt/</div><div class="vdef">To face a problem or person directly and without avoidance</div><div class="vex">"If I confronted him directly, we would resolve this faster."</div><button class="spk" onclick="speak('confront')">🔊</button></div>
+  </div>
+
+  <div class="coll-wrap">
+    <div class="coll-lbl">💬 5 Colloquial Phrases — Professional English in Action</div>
+    <div class="coll-list">
+      <div class="coll-item"><button class="coll-spk" onclick="speak('drop the ball')">🔊</button><div><div class="coll-phrase">"drop the ball"</div><div class="coll-ctx">To fail to complete something you were responsible for. — <em>"If I dropped the ball on this report, I would lose the client's trust permanently."</em></div></div></div>
+      <div class="coll-item"><button class="coll-spk" onclick="speak('bite the bullet')">🔊</button><div><div class="coll-phrase">"bite the bullet"</div><div class="coll-ctx">To do something difficult or unpleasant you have been avoiding. — <em>"If I had to confront my manager, I would just bite the bullet and do it."</em></div></div></div>
+      <div class="coll-item"><button class="coll-spk" onclick="speak('play it by ear')">🔊</button><div><div class="coll-phrase">"play it by ear"</div><div class="coll-ctx">To decide what to do as a situation develops, without a fixed plan. — <em>"If the conversation got tense, I would play it by ear and adapt."</em></div></div></div>
+      <div class="coll-item"><button class="coll-spk" onclick="speak('rock the boat')">🔊</button><div><div class="coll-phrase">"rock the boat"</div><div class="coll-ctx">To do or say something that disturbs a stable or comfortable situation. — <em>"If I spoke up right now, I would rock the boat — but maybe that's necessary."</em></div></div></div>
+      <div class="coll-item"><button class="coll-spk" onclick="speak('throw someone under the bus')">🔊</button><div><div class="coll-phrase">"throw (someone) under the bus"</div><div class="coll-ctx">To blame someone else unfairly to avoid taking responsibility. — <em>"If I threw my colleague under the bus, I would save myself — but destroy the relationship."</em></div></div></div>
+    </div>
+  </div>
+
+  <div class="tn teacher-only">
+    <button class="tn-toggle" onclick="toggleTN(this)">📋 Teacher Notes — §2 Vocabulary <span class="tn-arrow">▼</span></button>
+    <div class="tn-body">
+      <div class="tn-capa tn-c1"><div class="tn-cl">Capa 1 · Pedagogical</div><div class="tn-txt"><ul>
+        <li>All examples embed 2nd conditional deliberately — pre-teach the structure through meaning before the grammar section. Ask student: "What grammatical pattern do you notice in every example sentence?" If they spot "if + past, would" — excellent.</li>
+        <li>Vocab production challenge: pick 3 words (1 noun + 1 verb + 1 phrase). Make one 2nd conditional sentence with each. All three must describe a real situation from their professional life. 45 seconds.</li>
+        <li>"push back" — emphasize this is professional English. "I pushed back on that decision" sounds assertive and credible. Not aggressive. Essential vocabulary for any B1.2 professional.</li>
+        <li>"set boundaries" — often used in the first person: "I need to set boundaries here." Give student a chance to use it about a real situation at work.</li>
+      </ul></div></div>
+      <div class="tn-capa tn-c2"><div class="tn-cl">Capa 2 · Engagement</div><div class="tn-txt"><ul>
+        <li>"Which 3 of these 20 words describe something you are dealing with at work right now — not hypothetically, but actually? Tell me using one sentence each."</li>
+        <li>For colloquial phrases: "Use 'bite the bullet' in a real sentence about something you have been avoiding at work. Go."</li>
+      </ul></div></div>
+      <div class="tn-capa tn-c3"><div class="tn-cl">Capa 3 · Growth &amp; Retention</div><div class="tn-txt"><ul>
+        <li>"These phrases — 'drop the ball', 'bite the bullet', 'rock the boat' — appear in international business meetings, performance reviews, and executive feedback. Producing them naturally is the difference between B1.2 and B2."</li>
+        <li>Retention hook: "Pick your favorite phrase from this section. Use it once more before the end of today's class. I will note it."</li>
+      </ul></div></div>
+    </div>
+  </div>
+</section></div>
+
+<!-- §3 VISUAL VOCAB + DILEMMA ROULETTE -->
+<div class="sec-outer" id="s3"><section class="sec">
+  <div class="sec-hd">
+    <div><div class="sec-lbl">§ 03</div><div class="sec-title">Visual Vocab + 🎰 Dilemma Roulette</div><div class="sec-sub">8 flip cards · workplace tension scenarios · Dilemma Roulette engagement resource</div></div>
+    <div class="sec-time">8–10 min</div>
+  </div>
+
+  <p class="flip-hint">💼 Flip each card — real workplace tension on front, 2nd conditional context on back.</p>
+
+  <div class="flip-grid">
+    <div class="flip-wrap" onclick="this.classList.toggle('on')"><div class="flip-inner">
+      <div class="ff"><img src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=400&q=80&fit=crop" alt="difficult conversation"><div class="ff-badge">Noun</div><div class="ff-lbl"><span>Dilemma →</span></div></div>
+      <div class="fb"><div class="fb-word">Dilemma</div><div class="fb-sub">No easy answer</div><div class="fb-txt"><em>"If I faced this dilemma at work, I would prioritize transparency over comfort."</em><br><br>⚠ No correct option — only better ones.</div></div>
+    </div></div>
+    <div class="flip-wrap" onclick="this.classList.toggle('on')"><div class="flip-inner">
+      <div class="ff"><img src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=400&q=80&fit=crop" alt="team tension"><div class="ff-badge">Noun</div><div class="ff-lbl"><span>Conflict →</span></div></div>
+      <div class="fb"><div class="fb-word">Conflict</div><div class="fb-sub">Serious disagreement</div><div class="fb-txt"><em>"If this conflict continued, I would mediate before it escalated to management."</em><br><br>✅ Naming it is the first step.</div></div>
+    </div></div>
+    <div class="flip-wrap" onclick="this.classList.toggle('on')"><div class="flip-inner">
+      <div class="ff"><img src="https://images.unsplash.com/photo-1541746972996-4e0b0f43e02a?w=400&q=80&fit=crop" alt="accountability meeting"><div class="ff-badge">Noun</div><div class="ff-lbl"><span>Accountability →</span></div></div>
+      <div class="fb"><div class="fb-word">Accountability</div><div class="fb-sub">Owning your decisions</div><div class="fb-txt"><em>"If I stayed silent about this error, accountability would still fall on me."</em><br><br>⚠ Silence is also a choice.</div></div>
+    </div></div>
+    <div class="flip-wrap" onclick="this.classList.toggle('on')"><div class="flip-inner">
+      <div class="ff"><img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&q=80&fit=crop" alt="integrity professional"><div class="ff-badge">Noun</div><div class="ff-lbl"><span>Integrity →</span></div></div>
+      <div class="fb"><div class="fb-word">Integrity</div><div class="fb-sub">Doing right when no one watches</div><div class="fb-txt"><em>"If I acted with integrity here, I would push back — even if it cost me."</em><br><br>✅ Not easy. That's why it matters.</div></div>
+    </div></div>
+    <div class="flip-wrap" onclick="this.classList.toggle('on')"><div class="flip-inner">
+      <div class="ff"><img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80&fit=crop" alt="escalation management"><div class="ff-badge">Verb</div><div class="ff-lbl"><span>Escalate →</span></div></div>
+      <div class="fb"><div class="fb-word">Escalate</div><div class="fb-sub">Bring to higher authority</div><div class="fb-txt"><em>"If I escalated this to senior management, they would have to address it."</em><br><br>⚠ Escalating ≠ weakness. Know when.</div></div>
+    </div></div>
+    <div class="flip-wrap" onclick="this.classList.toggle('on')"><div class="flip-inner">
+      <div class="ff"><img src="https://images.unsplash.com/photo-1556761175-4b46a572b786?w=400&q=80&fit=crop" alt="push back discussion"><div class="ff-badge">Verb</div><div class="ff-lbl"><span>Push Back →</span></div></div>
+      <div class="fb"><div class="fb-word">Push Back</div><div class="fb-sub">Resist with reason</div><div class="fb-txt"><em>"If I pushed back on this decision, the manager would need a strong justification."</em><br><br>✅ Assertive ≠ aggressive.</div></div>
+    </div></div>
+    <div class="flip-wrap" onclick="this.classList.toggle('on')"><div class="flip-inner">
+      <div class="ff"><img src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=400&q=80&fit=crop" alt="defuse situation"><div class="ff-badge">Verb</div><div class="ff-lbl"><span>Defuse →</span></div></div>
+      <div class="fb"><div class="fb-word">Defuse</div><div class="fb-sub">Reduce the tension</div><div class="fb-txt"><em>"If I defused this argument now, the relationship would still be salvageable."</em><br><br>✅ Act fast. Tension compounds.</div></div>
+    </div></div>
+    <div class="flip-wrap" onclick="this.classList.toggle('on')"><div class="flip-inner">
+      <div class="ff"><img src="https://images.unsplash.com/photo-1552664730-d307ca884978?w=400&q=80&fit=crop" alt="mediation team"><div class="ff-badge">Verb</div><div class="ff-lbl"><span>Mediate →</span></div></div>
+      <div class="fb"><div class="fb-word">Mediate</div><div class="fb-sub">Help both sides agree</div><div class="fb-txt"><em>"If I mediated this conflict, both sides would feel heard — and trusted."</em><br><br>✅ Mediator = asset, not neutral.</div></div>
+    </div></div>
+  </div>
+
+  <!-- DILEMMA ROULETTE WHEEL — Engagement Resource OBLIGATORIO SESIÓN A (reemplaza gen-wrap para B1.2) -->
+  <div class="wheel-wrap">
+    <div style="grid-column:1/-1">
+      <div class="wheel-tag">🎰 Dilemma Roulette — Engagement Resource</div>
+      <p style="font-size:12px;color:var(--mt);margin-bottom:14px">Spin the wheel — land on a real workplace dilemma. Student must respond: <em>"If I were in this situation, I would..."</em> — Teacher marks ✓ when 2nd conditional is used correctly with real content from the scenario.</p>
+    </div>
+    <div class="wheel-left">
+      <canvas id="wheelCanvas" width="240" height="240"></canvas>
+      <button class="wheel-btn" id="wheelBtn" onclick="spinWheel()">🎰 SPIN</button>
+    </div>
+    <div class="wheel-right">
+      <div class="wheel-scenario-box" id="wScenarioBox">
+        <div class="wsb-lbl">🎯 Dilemma</div>
+        <div class="wsb-txt" id="wScenarioTxt">—</div>
+        <div class="wsb-prompt" id="wPrompt">—</div>
+      </div>
+      <div class="wheel-instructions" id="wInstructions">
+        The wheel lands on one of 8 professional dilemmas.<br>For each, the student must:<br>
+        1. React: "If I were in this situation, I would..."<br>
+        2. Use at least one vocab word from §2<br>
+        3. Defend their position if challenged<br><br>
+        <em class="teacher-only">Teacher: mark ✓ 2nd Cond only when structure is correct AND content is substantive.</em>
+      </div>
+      <div class="wheel-score-row teacher-only">
+        <div><div class="ws-lbl">2nd Cond ✓</div><div style="display:flex;align-items:baseline;gap:4px"><span class="ws-n" id="wsScore">0</span><span style="color:var(--dim);font-family:'Syne',sans-serif;font-size:14px"> / spins</span></div></div>
+        <div style="flex:1;height:5px;background:var(--bg);overflow:hidden;margin:0 12px"><div id="wsBar" style="height:100%;background:linear-gradient(90deg,var(--ac),var(--ac2));width:0;transition:width .4s ease"></div></div>
+        <div class="wheel-mark-btns"><button class="wbtn wbtn-ok" id="wOk" onclick="wMark(true)" disabled>✓ Correct</button><button class="wbtn wbtn-skip" id="wSkip" onclick="wMark(false)" disabled>Skip</button></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tn teacher-only">
+    <button class="tn-toggle" onclick="toggleTN(this)">📋 Teacher Notes — §3 Visual Vocab + Roulette <span class="tn-arrow">▼</span></button>
+    <div class="tn-body">
+      <div class="tn-capa tn-c1"><div class="tn-cl">Capa 1 · Pedagogical</div><div class="tn-txt"><ul>
+        <li>Spin 3–4 times minimum. Mark ✓ only when the 2nd conditional is structurally correct AND semantically rich. "I would handle it" = insufficient. "If I were in this situation, I would speak with the person directly and then escalate if needed" = ✓✓.</li>
+        <li>If student reverts to present simple ("I handle it" / "I tell him") — pause. "Hypothetically — this hasn't happened yet. How would you handle it?" The word "would" is the cue.</li>
+        <li>If student uses "If I would..." — note it. This is the #1 error for B1.2. Do NOT correct mid-roulette. Address it in §4 error block.</li>
+      </ul></div></div>
+      <div class="tn-capa tn-c2"><div class="tn-cl">Capa 2 · Engagement</div><div class="tn-txt"><ul>
+        <li>"Spin and react. I want your gut answer in the 2nd conditional. No preparation — just English."</li>
+        <li>After 3 spins: "Which scenario is most similar to something you have dealt with at work? Tell me. Use 'If I were in that situation' to start."</li>
+        <li>Challenge: "Now argue the opposite. If you said you would escalate, now tell me why you would NOT."</li>
+      </ul></div></div>
+      <div class="tn-capa tn-c3"><div class="tn-cl">Capa 3 · Growth &amp; Retention</div><div class="tn-txt"><ul>
+        <li>"These 8 dilemmas happen to professionals at every level — from coordinator to director. The people who navigate them confidently in English are the ones who advance."</li>
+      </ul></div></div>
+    </div>
+  </div>
+</section></div>
+
+<!-- §4 GRAMMAR — 2ND CONDITIONAL -->
+<div class="sec-outer" id="s4"><section class="sec">
+  <div class="sec-hd">
+    <div><div class="sec-lbl">§ 04</div><div class="sec-title">Grammar — 2nd Conditional</div><div class="sec-sub">If + simple past · would + base verb · Hypotheticals, dilemmas, and "what if" thinking</div></div>
+    <div class="sec-time">15–18 min</div>
+  </div>
+
+  <!-- STRUCTURAL TABLE -->
+  <div class="gram-visual">
+    <div class="gvk g1">
+      <div class="gvk-lbl">Affirmative</div><div class="gvk-wm">+</div>
+      <div class="gvk-ex">If + subject + <strong>past simple</strong>, subject + <strong>would</strong> + base verb<br><br>"If I <strong>had</strong> more authority, I <strong>would address</strong> this directly."<br>"If she <strong>were</strong> in charge, she <strong>would set</strong> clearer boundaries."</div>
+    </div>
+    <div class="gvk g2">
+      <div class="gvk-lbl">Negative</div><div class="gvk-wm">−</div>
+      <div class="gvk-ex">If + subject + <strong>did not</strong> + base verb, subject + <strong>would not</strong> + base verb<br><br>"If I <strong>did not speak up</strong>, the problem <strong>would not go</strong> away."<br>"If they <strong>did not escalate</strong>, it <strong>would not be</strong> resolved."</div>
+    </div>
+    <div class="gvk g3">
+      <div class="gvk-lbl">Question Form</div><div class="gvk-wm">?</div>
+      <div class="gvk-ex"><strong>Would</strong> + subject + base verb + if + subject + past simple?<br><br>"<strong>Would</strong> you escalate if you <strong>discovered</strong> this?"<br>"<strong>Would</strong> she push back if the manager <strong>asked</strong> her to lie?"</div>
+    </div>
+    <div class="gvk g4">
+      <div class="gvk-lbl">Special: "were" (formal)</div><div class="gvk-wm">!</div>
+      <div class="gvk-ex">Use <strong>"were"</strong> for all subjects in formal writing and advanced speaking.<br><br>"If I <strong>were</strong> you, I would bite the bullet."<br>"If he <strong>were</strong> more transparent, the team would trust him more."</div>
+    </div>
+  </div>
+
+  <!-- CONTRAST BLOCK — OBLIGATORIO SESIÓN A: 1st vs 2nd Conditional -->
+  <p style="font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--mt);margin-bottom:10px">⚡ CRITICAL CONTRAST — Know Which Conditional to Use</p>
+  <div class="contrast-grid">
+    <div class="ct-col c1">
+      <div class="ct-hdr">1st Conditional — Real / Likely</div>
+      <div class="ct-li"><strong>Structure:</strong> If + present simple, will + base verb</div>
+      <div class="ct-li"><strong>Meaning:</strong> This is possible. It might actually happen.</div>
+      <div class="ct-li"><strong>Example:</strong> "If I <em>have</em> time tomorrow, I <em>will call</em> HR." → (I probably will have time)</div>
+      <div class="ct-li"><strong>Context:</strong> Real plans, realistic scenarios, near future</div>
+    </div>
+    <div class="ct-col c2">
+      <div class="ct-hdr">2nd Conditional — Hypothetical / Unlikely</div>
+      <div class="ct-li"><strong>Structure:</strong> If + past simple, would + base verb</div>
+      <div class="ct-li"><strong>Meaning:</strong> This is imaginary, unlikely, or contrary to current reality.</div>
+      <div class="ct-li"><strong>Example:</strong> "If I <em>had</em> time, I <em>would call</em> HR." → (I don't have time — this is hypothetical)</div>
+      <div class="ct-li"><strong>Context:</strong> Dilemmas, "what if" thinking, advice, imaginary situations</div>
+    </div>
+  </div>
+
+  <div class="rule-box">
+    💡 <strong>Key signal:</strong> When you say "what would you do if...?" — you are always in the 2nd conditional. The "if" + past simple tells the listener: <strong>this is hypothetical</strong>. The "would" in the main clause delivers the imaginary consequence. These two parts work together — never separate them.
+  </div>
+
+  <!-- ERROR BLOCK -->
+  <div class="err-blk">
+    <div class="err-title">⚠ B1.2 Common Errors — 2nd Conditional</div>
+    <div class="err-row"><span class="err-x">❌ "If I would have more time, I would call you."</span><span class="arr">→</span><span class="err-ok">✅ "If I <strong>had</strong> more time, I would call you."</span></div>
+    <div class="err-note">"Would" NEVER goes in the if-clause. The if-clause uses past simple only.</div>
+    <div class="err-row" style="margin-top:10px"><span class="err-x">❌ "If I am you, I would push back."</span><span class="arr">→</span><span class="err-ok">✅ "If I <strong>were</strong> you, I would push back."</span></div>
+    <div class="err-note">Use "were" after "if" for all subjects in formal or advanced contexts.</div>
+    <div class="err-row" style="margin-top:10px"><span class="err-x">❌ "If I speak up, he would get angry." (mixing tenses)</span><span class="arr">→</span><span class="err-ok">✅ "If I <strong>spoke</strong> up, he would get angry."</span></div>
+    <div class="err-note">Both clauses must match: past simple in if-clause, would in main clause. No mixing.</div>
+  </div>
+
+  <!-- ACTIVITY 1 — MC -->
+  <div class="act">
+    <div class="act-lbl">🎯 Activity 1 — Multiple Choice</div>
+    <div class="act-inst">Choose the correct form to complete each 2nd conditional sentence.</div>
+    <div class="q-row" id="q1">
+      <div class="q-text">If I _____ more authority at work, I would push back on that decision.</div>
+      <div class="opts">
+        <button class="opt" onclick="checkOpt(this,'had','q1')">have</button>
+        <button class="opt" onclick="checkOpt(this,'had','q1')">would have</button>
+        <button class="opt" onclick="checkOpt(this,'had','q1')">had</button>
+        <button class="opt" onclick="checkOpt(this,'had','q1')">having</button>
+      </div>
+    </div>
+    <div class="q-row" id="q2">
+      <div class="q-text">If she _____ in my position, she would handle the conflict very differently.</div>
+      <div class="opts">
+        <button class="opt" onclick="checkOpt(this,'were','q2')">is</button>
+        <button class="opt" onclick="checkOpt(this,'were','q2')">were</button>
+        <button class="opt" onclick="checkOpt(this,'were','q2')">would be</button>
+        <button class="opt" onclick="checkOpt(this,'were','q2')">has been</button>
+      </div>
+    </div>
+    <div class="q-row" id="q3">
+      <div class="q-text">If we _____ the conflict now, the tension would escalate significantly.</div>
+      <div class="opts">
+        <button class="opt" onclick="checkOpt(this,'did not address','q3')">would not address</button>
+        <button class="opt" onclick="checkOpt(this,'did not address','q3')">do not address</button>
+        <button class="opt" onclick="checkOpt(this,'did not address','q3')">did not address</button>
+        <button class="opt" onclick="checkOpt(this,'did not address','q3')">will not address</button>
+      </div>
+    </div>
+    <div class="q-row" id="q4">
+      <div class="q-text">Which sentence is a correct 2nd conditional?</div>
+      <div class="opts" style="flex-direction:column;gap:5px">
+        <button class="opt" onclick="checkOpt(this,'If I spoke up he would be angry.','q4')">If I speak up, he would be angry.</button>
+        <button class="opt" onclick="checkOpt(this,'If I spoke up he would be angry.','q4')">If I spoke up, he will be angry.</button>
+        <button class="opt" onclick="checkOpt(this,'If I spoke up he would be angry.','q4')">If I spoke up, he would be angry.</button>
+        <button class="opt" onclick="checkOpt(this,'If I spoke up he would be angry.','q4')">If I would speak up, he would be angry.</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ACTIVITY 2 — DRAG & DROP -->
+  <div class="act" style="margin-top:8px">
+    <div class="act-lbl">🔀 Activity 2 — Build the Sentence</div>
+    <div class="act-inst">Tap the fragments in the correct order to build a complete 2nd conditional sentence. Tap two items to swap them. Press CHECK when ready.</div>
+    <div class="drag-container" id="dragQ1">
+      <div class="drag-item" onclick="selectDragItem(this)">I would speak up</div>
+      <div class="drag-item" onclick="selectDragItem(this)">If my boss asked me</div>
+      <div class="drag-item" onclick="selectDragItem(this)">immediately.</div>
+      <div class="drag-item" onclick="selectDragItem(this)">to lie to a client,</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+      <button class="drag-check-btn" onclick="checkOrder(document.getElementById('dragQ1'),['If my boss asked me','to lie to a client,','I would speak up','immediately.'])">CHECK ORDER</button>
+      <button class="drag-check-btn" onclick="resetDrag('dragQ1')" style="border-color:rgba(255,255,255,.12);color:var(--mt)">RESET</button>
+      <div id="dragResult1"></div>
+    </div>
+  </div>
+
+  <div class="tn teacher-only">
+    <button class="tn-toggle" onclick="toggleTN(this)">📋 Teacher Notes — §4 Grammar <span class="tn-arrow">▼</span></button>
+    <div class="tn-body">
+      <div class="tn-capa tn-c1"><div class="tn-cl">Capa 1 · Pedagogical</div><div class="tn-txt"><ul>
+        <li>B1.2 grammar protocol: referential, not drill-heavy. Student should discover the structure from meaning (§1, §3) before this section confirms it explicitly.</li>
+        <li>Activity 1 Q4 is the diagnostic: if student clicks "If I would speak up..." — they have the #1 error. Address it directly: "What does 'would' communicate? Intention. Does the if-clause communicate intention or condition? Condition. So — would belongs in the main clause, not the if-clause."</li>
+        <li>Drag &amp; drop: the sentence is intentionally connected to the §1 warm-up scenario. If student pauses, say: "Remember the scenario from §1? This is that situation — in 2nd conditional form."</li>
+      </ul></div></div>
+      <div class="tn-capa tn-c2"><div class="tn-cl">Capa 2 · Engagement</div><div class="tn-txt"><ul>
+        <li>"Now you have the full architecture. Every answer you gave in §1 and §3 — we can now rebuild it correctly. Take your best answer from the roulette and improve it using what you see in the structure table."</li>
+        <li>Challenge: "Make 3 original 2nd conditional sentences about your actual job. All three must use vocabulary from §2. Go."</li>
+      </ul></div></div>
+      <div class="tn-capa tn-c3"><div class="tn-cl">Capa 3 · Growth &amp; Retention</div><div class="tn-txt"><ul>
+        <li>"The 2nd conditional is the grammar of senior decision-making. 'What would you do if...?' is the question every interview panel and performance review asks."</li>
+        <li>Upsell: "In S1B, you will use this structure in a live role-play where you are the manager. The language you just learned becomes your tool — not an exercise."</li>
+      </ul></div></div>
+    </div>
+  </div>
+</section></div>
+
+<!-- §5 READING -->
+<div class="sec-outer" id="s5"><section class="sec">
+  <div class="sec-hd">
+    <div><div class="sec-lbl">§ 05</div><div class="sec-title">Reading — A Workplace Dilemma Article</div><div class="sec-sub">HBR-style corporate article · 2nd conditional throughout · Discourse markers + hedging language</div></div>
+    <div class="sec-time">8–10 min</div>
+  </div>
+
+  <div class="rc">
+    <div class="rc-hd">
+      <img class="rc-hd-img" src="https://images.unsplash.com/photo-1573497620053-ea5300f94f21?w=1200&q=80&fit=crop" alt="professional leadership article">
+      <div class="rc-overlay">
+        <img class="rc-av" src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=200&q=80&fit=crop" alt="Dr Elena Torres">
+        <div><div class="rc-name">Dr. Elena M. Torres</div><div class="rc-role">Organizational Leadership · Applied Series</div></div>
+        <div class="rc-tag">HBR Leadership</div>
+      </div>
+    </div>
+    <div class="rc-body">
+      <h4>What Would You Do? A Framework for Navigating Workplace Dilemmas</h4>
+      <p>Every professional, at some point, faces a moment where they must choose between what is easy and what is right. These moments — ethical dilemmas, impossible deadlines, uncomfortable confrontations — define careers. According to recent Gallup research, <span class="kpp">however</span>, most professionals <span class="kcol">avoid</span> difficult conversations rather than address them directly.</p>
+      <h4>The Hypothetical Framework</h4>
+      <p>Consider this scenario: <span class="kppc">if your manager asked you to omit critical risk data from a client report, what would you do?</span> Organizational psychologists argue that transparency, <span class="kpp">however</span> uncomfortable, protects both team integrity and long-term professional credibility. <span class="kppc">If professionals practiced hypothetical decision-making — that is, if they regularly asked themselves "what would I do if this happened?" — they would be significantly better equipped when a real dilemma arrived.</span></p>
+      <p><span class="kpp">That being said</span>, speaking up is rarely straightforward. <span class="kppc">If someone pushed back on your concerns, how would you navigate that?</span> <span class="kpp">On the other hand</span>, silence has its own consequences. <span class="kppc">If you chose not to act, accountability would eventually fall somewhere — and it might fall on you.</span> <span class="kcol">Dropping the ball</span> on an ethical issue is not neutral. It is a decision.</p>
+      <h4>The Language of Difficult Decisions</h4>
+      <p><span class="kpp">Perhaps</span> the most important professional skill is not the decision itself — it is the ability to articulate it clearly. Saying <em>"I would escalate this to HR"</em> or <em>"I would address it with the client directly"</em> requires both grammatical precision and personal clarity. Notice that all the questions above use the same structure: <span class="kppc">if + past simple, would + base verb</span>. This is not accidental.</p>
+      <p>Leaders who think in hypotheticals — <em>"What would I do if...?"</em> — are better prepared when real situations arise. Integrity, the ability to <span class="kcol">defuse</span> tension, and knowing when to <span class="kcol">push back</span> are not personality traits. <span class="kpp">Although</span> they feel natural in some people, they are learnable skills. And like all skills, they improve with deliberate practice — even if that practice is hypothetical.</p>
+      <p style="border-top:1px solid var(--bd);padding-top:12px;font-style:italic;color:var(--ac2)">"The most effective professionals prioritize one question above all: <strong>What would I do if I knew no one was watching?</strong> That answer defines your professional character."</p>
+    </div>
+  </div>
+
+  <div class="rc-kw"><strong>Color key:</strong> <span class="kppc">2nd conditional (green)</span> &nbsp;·&nbsp; <span class="kpp">discourse markers (cyan)</span> &nbsp;·&nbsp; <span class="kcol">vocabulary from §2 (teal bg)</span></div>
+
+  <!-- MC -->
+  <div class="act">
+    <div class="act-lbl">📖 Reading Comprehension — Multiple Choice</div>
+    <div class="act-inst">Choose the best answer based on the article.</div>
+    <div class="q-row" id="rq1">
+      <div class="q-text">According to the article, what do most professionals do when facing difficult conversations?</div>
+      <div class="opts">
+        <button class="opt" onclick="checkOpt(this,'They avoid them rather than address them directly.','rq1')">They enjoy the challenge and engage directly.</button>
+        <button class="opt" onclick="checkOpt(this,'They avoid them rather than address them directly.','rq1')">They avoid them rather than address them directly.</button>
+        <button class="opt" onclick="checkOpt(this,'They avoid them rather than address them directly.','rq1')">They immediately escalate to HR.</button>
+        <button class="opt" onclick="checkOpt(this,'They avoid them rather than address them directly.','rq1')">They always prioritize transparency first.</button>
+      </div>
+    </div>
+    <div class="q-row" id="rq2">
+      <div class="q-text">What does the article say about thinking hypothetically — "What would I do if...?"</div>
+      <div class="opts">
+        <button class="opt" onclick="checkOpt(this,'It prepares professionals to handle real dilemmas more effectively.','rq2')">It creates more anxiety and is not recommended.</button>
+        <button class="opt" onclick="checkOpt(this,'It prepares professionals to handle real dilemmas more effectively.','rq2')">It only works for senior-level leaders.</button>
+        <button class="opt" onclick="checkOpt(this,'It prepares professionals to handle real dilemmas more effectively.','rq2')">It prepares professionals to handle real dilemmas more effectively.</button>
+        <button class="opt" onclick="checkOpt(this,'It prepares professionals to handle real dilemmas more effectively.','rq2')">It replaces the need to actually make decisions.</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TRUE / FALSE -->
+  <div class="act" style="margin-top:8px">
+    <div class="act-lbl">✅ True or False</div>
+    <div class="act-inst">Mark each statement True or False based on the article.</div>
+    <div class="tf-row" id="rtf1">
+      <span class="tf-stmt">The article says that integrity is a personality trait you are born with — it cannot be learned.</span>
+      <div class="tf-btns"><button class="tf-btn" onclick="checkTF(this,false,'rtf1')">TRUE</button><button class="tf-btn" onclick="checkTF(this,true,'rtf1')">FALSE</button></div>
+    </div>
+    <div class="tf-row" id="rtf2">
+      <span class="tf-stmt">According to the article, choosing to stay silent in a difficult situation is itself a type of decision.</span>
+      <div class="tf-btns"><button class="tf-btn" onclick="checkTF(this,true,'rtf2')">TRUE</button><button class="tf-btn" onclick="checkTF(this,false,'rtf2')">FALSE</button></div>
+    </div>
+    <div class="tf-row" id="rtf3">
+      <span class="tf-stmt">The article uses the phrase "drop the ball" to describe successfully completing a difficult task.</span>
+      <div class="tf-btns"><button class="tf-btn" onclick="checkTF(this,false,'rtf3')">TRUE</button><button class="tf-btn" onclick="checkTF(this,true,'rtf3')">FALSE</button></div>
+    </div>
+    <div class="tf-row" id="rtf4">
+      <span class="tf-stmt">The final quote in the article suggests that professional character is defined by what you would do without external observation.</span>
+      <div class="tf-btns"><button class="tf-btn" onclick="checkTF(this,true,'rtf4')">TRUE</button><button class="tf-btn" onclick="checkTF(this,false,'rtf4')">FALSE</button></div>
+    </div>
+  </div>
+
+  <div class="tn teacher-only">
+    <button class="tn-toggle" onclick="toggleTN(this)">📋 Teacher Notes — §5 Reading <span class="tn-arrow">▼</span></button>
+    <div class="tn-body">
+      <div class="tn-capa tn-c1"><div class="tn-cl">Capa 1 · Pedagogical</div><div class="tn-txt"><ul>
+        <li>Before the questions, ask student: "Find one 2nd conditional example in the text. Read it aloud. Now tell me which part is the if-clause and which is the main clause." — active grammar recognition.</li>
+        <li>TF3 is a trap (the phrase "drop the ball" means to FAIL, not to succeed). Students who read casually may answer TRUE. If they do: "Let's go back and find the phrase in the text. Read the full sentence around it."</li>
+        <li>Key discourse markers to highlight: "however," "that being said," "on the other hand," "perhaps," "although." Ask student to use one in their own sentence.</li>
+      </ul></div></div>
+      <div class="tn-capa tn-c2"><div class="tn-cl">Capa 2 · Engagement</div><div class="tn-txt"><ul>
+        <li>"Read the final quote: 'What would I do if I knew no one was watching?' Answer that question. Right now. About your current job. In the 2nd conditional."</li>
+      </ul></div></div>
+      <div class="tn-capa tn-c3"><div class="tn-cl">Capa 3 · Growth &amp; Retention</div><div class="tn-txt"><ul>
+        <li>"This article uses exactly the language you will need to write professional emails, navigate performance conversations, and participate in international meetings."</li>
+      </ul></div></div>
+    </div>
+  </div>
+</section></div>
+
+<!-- §6 LISTENING -->
+<div class="sec-outer" id="s6"><section class="sec">
+  <div class="sec-hd">
+    <div><div class="sec-lbl">§ 06</div><div class="sec-title">Listening — A Tough Call</div><div class="sec-sub">Two managers discuss a real ethical dilemma · Natural pace · 2nd conditional in authentic dialogue</div></div>
+    <div class="sec-time">10–12 min</div>
+  </div>
+
+  <div class="player">
+    <img class="pl-banner" src="https://images.unsplash.com/photo-1556761175-4b46a572b786?w=1200&q=80&fit=crop" alt="two professionals in discussion">
+    <div class="pl-body">
+      <div class="pl-top">
+        <div class="pl-ico">🎙</div>
+        <div><div class="pl-title">A Tough Call — Morgan &amp; Alex</div><div class="pl-meta">Two managers · Ethical dilemma · ~120 sec · ElevenLabs Sarah · Rate 0.92 · B1.2 Natural Pace</div></div>
+      </div>
+      <div class="pl-ph"><p>🔊 Replace with ElevenLabs audio iframe before class<br><code>Drive link → /view → /preview · iframe width="100%" height="80" allow="autoplay"</code></p></div>
+      <!-- v3 fix: toggleScript with proper arguments -->
+      <div class="script-btn" onclick="toggleScript('sc-box','sc-lbl')"><span id="sc-lbl">▶ Show ElevenLabs Script (Teacher Only)</span></div>
+      <div class="script-box teacher-only" id="sc-box">
+        <div class="sc-spk morgan">MORGAN</div>
+        Alex, I want to run something by you — hypothetically. <span class="kppc">If you discovered that someone on your team was inflating expenses to cover project overruns, what would you do?</span>
+        <div class="sc-spk alex">ALEX</div>
+        Honestly? <span class="kppc">I would not react immediately. I think the first thing I would do is gather all the facts.</span> I would not want to escalate without being completely sure.
+        <div class="sc-spk morgan">MORGAN</div>
+        I hear you. <span class="kpp">But</span> — <span class="kppc">if you waited too long and it came out later, you would own that silence.</span> That is your accountability right there.
+        <div class="sc-spk alex">ALEX</div>
+        You have a point. <span class="kpp">That being said</span>, <span class="kppc">if I confronted the person directly before speaking to HR, I might create more tension than necessary.</span> I think I would set up a private conversation first — just to hear their side.
+        <div class="sc-spk morgan">MORGAN</div>
+        That is reasonable. <span class="kpp">But</span> — and this is the hard part — <span class="kppc">if that person pushed back and said you were wrong, how would you handle that?</span>
+        <div class="sc-spk alex">ALEX</div>
+        <span class="kppc">If they pushed back, I would stay calm.</span> I would say: I have the numbers in front of me. I am not here to accuse — I am here to address this together. <span class="kppc">If we could not resolve it privately, I would escalate to management.</span>
+        <div class="sc-spk morgan">MORGAN</div>
+        That is how I would handle it too. No drama, but no silence either. <span style="color:var(--ac2)">Biting the bullet</span> is not comfortable — but it is the right move. Integrity means acting even when it costs you something.
+        <div class="sc-spk alex">ALEX</div>
+        Exactly. And <span class="kppc">if I were in your position — knowing you — you would already be on the phone with HR.</span>
+        <div class="sc-spk morgan">MORGAN</div>
+        Probably. <span class="kppc">I would not let it sit.</span> <span class="kpp">But</span> I see your point about facts first. Maybe we both have something to learn here.
+        <div class="sc-spk alex">ALEX</div>
+        The real dilemma is not the numbers. It is figuring out how much transparency you owe different people at different times.
+        <div class="sc-note">Teacher note: 2nd conditional highlighted in green. Discourse markers in cyan. 8 2nd conditional instances total. Voice: ElevenLabs Sarah · Rate 0.92</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MC QUESTIONS -->
+  <div class="act">
+    <div class="act-lbl">🎧 Listening Comprehension — Multiple Choice</div>
+    <div class="act-inst">Choose the best answer based on what you heard.</div>
+    <div class="q-row" id="lq1">
+      <div class="q-text">What would Alex do FIRST if he discovered the inflated expenses?</div>
+      <div class="opts">
+        <button class="opt" onclick="checkOpt(this,'Gather all the facts before taking action.','lq1')">Call HR immediately without speaking to anyone.</button>
+        <button class="opt" onclick="checkOpt(this,'Gather all the facts before taking action.','lq1')">Gather all the facts before taking action.</button>
+        <button class="opt" onclick="checkOpt(this,'Gather all the facts before taking action.','lq1')">Confront the person in a team meeting.</button>
+        <button class="opt" onclick="checkOpt(this,'Gather all the facts before taking action.','lq1')">Send an email to senior management.</button>
+      </div>
+    </div>
+    <div class="q-row" id="lq2">
+      <div class="q-text">What does Morgan believe about staying silent when you know something is wrong?</div>
+      <div class="opts">
+        <button class="opt" onclick="checkOpt(this,'It means taking ownership of that silence as accountability.','lq2')">It is sometimes the smartest professional choice.</button>
+        <button class="opt" onclick="checkOpt(this,'It means taking ownership of that silence as accountability.','lq2')">It means taking ownership of that silence as accountability.</button>
+        <button class="opt" onclick="checkOpt(this,'It means taking ownership of that silence as accountability.','lq2')">It is usually the right choice in corporate environments.</button>
+        <button class="opt" onclick="checkOpt(this,'It means taking ownership of that silence as accountability.','lq2')">It protects the team from unnecessary conflict.</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TRUE / FALSE -->
+  <div class="act" style="margin-top:8px">
+    <div class="act-lbl">✅ True or False</div>
+    <div class="act-inst">Mark each statement True or False based on the listening.</div>
+    <div class="tf-row" id="ltf1">
+      <span class="tf-stmt">Alex says his first step would be to send an email to HR directly, without speaking to the employee.</span>
+      <div class="tf-btns"><button class="tf-btn" onclick="checkTF(this,false,'ltf1')">TRUE</button><button class="tf-btn" onclick="checkTF(this,true,'ltf1')">FALSE</button></div>
+    </div>
+    <div class="tf-row" id="ltf2">
+      <span class="tf-stmt">Morgan uses the colloquial phrase "biting the bullet" to describe doing something uncomfortable but necessary.</span>
+      <div class="tf-btns"><button class="tf-btn" onclick="checkTF(this,true,'ltf2')">TRUE</button><button class="tf-btn" onclick="checkTF(this,false,'ltf2')">FALSE</button></div>
+    </div>
+    <div class="tf-row" id="ltf3">
+      <span class="tf-stmt">At the end of the conversation, Morgan and Alex agree that they both have something to learn from each other's approach.</span>
+      <div class="tf-btns"><button class="tf-btn" onclick="checkTF(this,true,'ltf3')">TRUE</button><button class="tf-btn" onclick="checkTF(this,false,'ltf3')">FALSE</button></div>
+    </div>
+  </div>
+
+  <div class="tn teacher-only">
+    <button class="tn-toggle" onclick="toggleTN(this)">📋 Teacher Notes — §6 Listening <span class="tn-arrow">▼</span></button>
+    <div class="tn-body">
+      <div class="tn-capa tn-c1"><div class="tn-cl">Capa 1 · Pedagogical</div><div class="tn-txt"><ul>
+        <li>This recording has 8 2nd conditional instances at a challenging, natural pace (0.92 rate). For B1.2, a second listen is standard — not a sign of weakness. After first listen: MC questions. After second listen: TF + discussion.</li>
+        <li>TF1 is a trap: Alex says he would set up a PRIVATE CONVERSATION first, not email HR. Students who listen for "HR" may mark TRUE because HR is mentioned — but not in the order they assume.</li>
+        <li>Post-listening discussion: "Which manager would you be more like — Morgan or Alex? Why? Use the 2nd conditional to explain."</li>
+      </ul></div></div>
+      <div class="tn-capa tn-c2"><div class="tn-cl">Capa 2 · Engagement</div><div class="tn-txt"><ul>
+        <li>"Count the 2nd conditional sentences you hear — without looking at the script. How many did you catch?" (Answer: 8.)</li>
+        <li>After the audio: "Alex says the real dilemma is figuring out 'how much transparency you owe different people at different times.' Do you agree? Give me your answer in the 2nd conditional."</li>
+      </ul></div></div>
+      <div class="tn-capa tn-c3"><div class="tn-cl">Capa 3 · Growth &amp; Retention</div><div class="tn-txt"><ul>
+        <li>"Notice how natural 'biting the bullet' sounds in Morgan's line. That is B1.2 vocabulary integration — not inserted, not explained — just used. That is your target for §7."</li>
+        <li>Upsell: "In S1B, you will play Morgan OR Alex in a live role-play — same scenario, same dilemma — but you generate the language without the audio support."</li>
+      </ul></div></div>
+    </div>
+  </div>
+</section></div>
+
+<!-- §7 WRAP-UP -->
+<div class="sec-outer" id="s7"><section class="sec">
+  <div class="sec-hd">
+    <div><div class="sec-lbl">§ 07</div><div class="sec-title">Wrap-Up</div><div class="sec-sub">GT Flashcard Wall · Today I Learned · 2nd Conditional Summary · Speaking Challenge · Next Session</div></div>
+    <div class="sec-time">5 min</div>
+  </div>
+
+  <!-- GT FLASHCARD WALL -->
+  <div class="fcw-wrap">
+    <div class="fcw-hd">GT Flashcard Wall — 10 Key Cards · M1 S1A</div>
+    <div class="fcw-sub">Tap each card. Front = word. Back = definition + 2nd conditional example. Do all 10 before class ends.</div>
+    <div class="fcw-grid">
+      <div class="fcw-card" onclick="this.classList.toggle('on')"><div class="fcw-inner"><div class="fcw-front"><div class="fcw-front-word">dilemma</div><div class="fcw-front-hint">tap to reveal</div></div><div class="fcw-back"><div class="fcw-back-def">A situation where every option has a serious cost.</div><div class="fcw-back-ex">"If I faced this dilemma, I would ask management directly."</div></div></div></div>
+      <div class="fcw-card" onclick="this.classList.toggle('on')"><div class="fcw-inner"><div class="fcw-front"><div class="fcw-front-word">accountability</div><div class="fcw-front-hint">tap to reveal</div></div><div class="fcw-back"><div class="fcw-back-def">Owning your decisions and their consequences.</div><div class="fcw-back-ex">"If I stayed silent, I would lose accountability in the team."</div></div></div></div>
+      <div class="fcw-card" onclick="this.classList.toggle('on')"><div class="fcw-inner"><div class="fcw-front"><div class="fcw-front-word">transparency</div><div class="fcw-front-hint">tap to reveal</div></div><div class="fcw-back"><div class="fcw-back-def">Being open and honest about what others need to know.</div><div class="fcw-back-ex">"If we prioritized transparency, trust would increase."</div></div></div></div>
+      <div class="fcw-card" onclick="this.classList.toggle('on')"><div class="fcw-inner"><div class="fcw-front"><div class="fcw-front-word">integrity</div><div class="fcw-front-hint">tap to reveal</div></div><div class="fcw-back"><div class="fcw-back-def">Doing the right thing even when it is costly.</div><div class="fcw-back-ex">"If I acted with integrity, I would push back on that."</div></div></div></div>
+      <div class="fcw-card" onclick="this.classList.toggle('on')"><div class="fcw-inner"><div class="fcw-front"><div class="fcw-front-word">handle</div><div class="fcw-front-hint">tap to reveal</div></div><div class="fcw-back"><div class="fcw-back-def">To manage a difficult situation with skill.</div><div class="fcw-back-ex">"If I handled this calmly, the outcome would be different."</div></div></div></div>
+      <div class="fcw-card" onclick="this.classList.toggle('on')"><div class="fcw-inner"><div class="fcw-front"><div class="fcw-front-word">escalate</div><div class="fcw-front-hint">tap to reveal</div></div><div class="fcw-back"><div class="fcw-back-def">To bring a problem to a higher level of authority.</div><div class="fcw-back-ex">"If I escalated this to HR, they would have to act."</div></div></div></div>
+      <div class="fcw-card" onclick="this.classList.toggle('on')"><div class="fcw-inner"><div class="fcw-front"><div class="fcw-front-word">push back</div><div class="fcw-front-hint">tap to reveal</div></div><div class="fcw-back"><div class="fcw-back-def">To resist or challenge something you disagree with.</div><div class="fcw-back-ex">"If I pushed back firmly, my position would be clearer."</div></div></div></div>
+      <div class="fcw-card" onclick="this.classList.toggle('on')"><div class="fcw-inner"><div class="fcw-front"><div class="fcw-front-word">speak up</div><div class="fcw-front-hint">tap to reveal</div></div><div class="fcw-back"><div class="fcw-back-def">To say what you think, even when it feels risky.</div><div class="fcw-back-ex">"If I spoke up in that meeting, the team would know the truth."</div></div></div></div>
+      <div class="fcw-card" onclick="this.classList.toggle('on')"><div class="fcw-inner"><div class="fcw-front"><div class="fcw-front-word">defuse</div><div class="fcw-front-hint">tap to reveal</div></div><div class="fcw-back"><div class="fcw-back-def">To make a tense situation calmer.</div><div class="fcw-back-ex">"If I defused this now, the relationship would survive."</div></div></div></div>
+      <div class="fcw-card" onclick="this.classList.toggle('on')"><div class="fcw-inner"><div class="fcw-front"><div class="fcw-front-word">bite the bullet</div><div class="fcw-front-hint">tap to reveal</div></div><div class="fcw-back"><div class="fcw-back-def">To do something difficult you have been avoiding.</div><div class="fcw-back-ex">"If I had to confront my manager, I would bite the bullet."</div></div></div></div>
+    </div>
+  </div>
+
+  <!-- TODAY I LEARNED + KEY SUMMARY -->
+  <div class="wu2-grid">
+    <div class="wu2-card">
+      <div class="wu2-h">✅ Today I Learned — Tap to Check Off</div>
+      <ul class="checklist">
+        <li onclick="toggleCL(this)"><span class="cb"></span>The 2nd conditional structure: If + past simple, would + base verb</li>
+        <li onclick="toggleCL(this)"><span class="cb"></span>The difference between 1st conditional (real) and 2nd conditional (hypothetical)</li>
+        <li onclick="toggleCL(this)"><span class="cb"></span>Why "would" NEVER goes in the if-clause</li>
+        <li onclick="toggleCL(this)"><span class="cb"></span>10 nouns and 10 verbs for difficult professional situations</li>
+        <li onclick="toggleCL(this)"><span class="cb"></span>5 colloquial phrases: drop the ball, bite the bullet, play it by ear, rock the boat, throw under the bus</li>
+        <li onclick="toggleCL(this)"><span class="cb"></span>When to use "were" instead of "was" in formal 2nd conditional</li>
+      </ul>
+    </div>
+    <div class="wu2-card">
+      <div class="wu2-h">📐 2nd Conditional — Key Summary</div>
+      <div class="key-item"><span class="ki-icon">🔑</span><div><div class="ki-lbl">Structure</div><div class="ki-txt"><strong>If</strong> + subject + <strong>past simple,</strong> subject + <strong>would</strong> + base verb</div></div></div>
+      <div class="key-item"><span class="ki-icon">📌</span><div><div class="ki-lbl">Key Rule #1</div><div class="ki-txt"><strong>would</strong> NEVER appears in the if-clause — only in the main clause.</div></div></div>
+      <div class="key-item"><span class="ki-icon">📌</span><div><div class="ki-lbl">Key Rule #2</div><div class="ki-txt">Use <strong>were</strong> (not was) after "if" in formal contexts for all subjects.</div></div></div>
+      <div class="key-item"><span class="ki-icon">⚡</span><div><div class="ki-lbl">Real vs Hypothetical</div><div class="ki-txt">1st conditional = possible reality. 2nd conditional = imaginary or contrary to fact.</div></div></div>
+    </div>
+  </div>
+
+  <!-- WORDWALL -->
+  <div class="wordwall-wrap teacher-only">
+    <div class="ww-lbl">🎮 Wordwall — Practice Game</div>
+    <div class="ww-title">How I Would Handle That — Interactive Review</div>
+    <div class="ww-placeholder"><!-- WORDWALL_EMBED_PLACEHOLDER --><br>📌 Replace with Wordwall embed code before class — Match activity: vocab words from §2 with definitions</div>
+    <div class="ww-inst">Recommended activity type: <strong>Match Up</strong> — 10 vocabulary words matched to definitions. Set timer to 2 minutes for competitive energy.</div>
+  </div>
+
+  <!-- SPEAKING CHALLENGE -->
+  <div class="sp-box">
+    <div class="sp-lbl">🗣 Speaking Challenge — S1A Exit Task</div>
+    <div class="sp-type">FORMAT: DEBATE — Hypothetical Reasoning · 2-minute timed response</div>
+    <div class="sp-prompt">"If you discovered that your colleague was lying on their resume — a degree they don't actually have — would you tell HR? Defend your position using hypothetical reasoning and at least two colloquial phrases from today."</div>
+
+    <div class="cd-timer">
+      <div class="cd-arc"><svg class="cd-svg" viewBox="0 0 68 68"><circle class="cd-track" cx="34" cy="34" r="30"/><circle class="cd-fill" id="cdFill" cx="34" cy="34" r="30"/></svg><div class="cd-num" id="cdNum">2:00</div></div>
+      <div class="cd-info">
+        <div class="cd-lbl">⏱ 2-Minute Speaking Timer</div>
+        <div class="cd-phase" id="cdPhase">Ready — press START when student begins</div>
+        <div class="cd-hint" id="cdHint">2nd conditional × 3 · 2 colloquial phrases · defend a position · no notes</div>
+        <div class="t-btns">
+          <button class="tbtn-gold tbtn" onclick="startCD()" id="cdBtn">▶ START</button>
+          <button class="tbtn tbtn-r" onclick="resetCD()">RESET</button>
+        </div>
+      </div>
+    </div>
+
+    <button class="model-btn teacher-only" onclick="toggleModel(this)">▶ Show B1.2 Model Answer A — Would Report (reveal AFTER student speaks)</button>
+    <div class="model-content teacher-only">"Honestly — if I found out my colleague lied about their degree, I would not go to HR immediately. I would bite the bullet and talk to them directly first. I would say: 'I need to address something with you privately.' If they acknowledged it, I would give them the chance to fix it — go to management themselves. That being said, if the lie directly affected their ability to do the job safely, I would not play it by ear. I would escalate immediately. I would not throw them under the bus publicly — but I also would not drop the ball on something this serious. If I were in their position, I would want someone to give me that chance."</div>
+
+    <button class="model-btn teacher-only" style="margin-top:6px" onclick="toggleModel(this)">▶ Show B1.2 Model Answer B — Would Not Report Immediately (reveal AFTER student speaks)</button>
+    <div class="model-content teacher-only">"This is a real dilemma. If I discovered this, I think I would navigate it very carefully. I would not rock the boat without thinking through the consequences first. If the lie had nothing to do with their ability to do the job — a minor thing — I would probably stay quiet. On the other hand, if it were a safety certification or a medical license — something critical — I would bite the bullet. I would go to HR. Even if it damaged the relationship. I am not sure that makes me a good colleague. But if integrity means anything, it means acting even when it is uncomfortable — and that is what I would do."</div>
+
+    <div class="sp-chips">
+      <span class="sp-chip" onclick="speak('If I were in this situation I would')">If I were in this situation, I would…</span>
+      <span class="sp-chip" onclick="speak('On the other hand')">On the other hand…</span>
+      <span class="sp-chip" onclick="speak('That being said')">That being said…</span>
+      <span class="sp-chip" onclick="speak('I would bite the bullet')">I would bite the bullet…</span>
+      <span class="sp-chip" onclick="speak('I would not rock the boat')">I would not rock the boat…</span>
+      <span class="sp-chip" onclick="speak('If I were in their position')">If I were in their position…</span>
+    </div>
+  </div>
+
+  <div class="next-box">
+    <div class="next-lbl">💬 Next →</div>
+    <div class="next-txt"><strong style="color:var(--ac)">S1B — I'd Handle It Like This (Application &amp; Mastery)</strong> &nbsp;·&nbsp; Live role-play: you are the manager · Same dilemmas, same grammar, free production · No scaffolding · Model answers become your baseline</div>
+  </div>
+
+  <div class="gto teacher-only">
+    <div class="gto-lbl">GT Originals — S1A Exit Notes</div>
+    <div class="gto-txt"><strong>The 2-minute debate timer:</strong> Start it AFTER the student has said their first full sentence — not before. This prevents over-prepared openings and forces real improvisation for the middle and end. If student finishes under 90 seconds: "Now argue the opposite. Same 2nd conditional, opposite position. Go."<br><br><strong>Model answers:</strong> Reveal only ONE model answer — the one that contrasts most with the student's answer. "Your approach was X. Here's the other side. Where do you agree?" This creates critical thinking, not imitation.<br><br><strong>B1.2 benchmark:</strong> 3+ correct 2nd conditionals + 2 colloquial phrases + a defended position = S1A passed. Note the count. If student hits 2/3 — S1B warm-up starts there.<br><br><strong>Upsell trigger:</strong> "Say one sentence — the most honest one you have — about a real dilemma you are currently navigating at work. Use the 2nd conditional. Right now, no notes." That sentence is the testimonial.</div>
+  </div>
+
+  <div class="tn teacher-only">
+    <button class="tn-toggle" onclick="toggleTN(this)">📋 Teacher Notes — §7 Wrap-Up <span class="tn-arrow">▼</span></button>
+    <div class="tn-body">
+      <div class="tn-capa tn-c1"><div class="tn-cl">Capa 1 · Pedagogical</div><div class="tn-txt"><ul>
+        <li>Benchmark: 3+ correct 2nd conditional instances + 2 colloquial phrases in 2 minutes = S1A passed at B1.2 standard. If student reaches 2 out of 3 criteria — note for S1B warm-up.</li>
+        <li>Model answers: show the version that contrasts most with student response. Ask: "What would you keep from this model? What would you change?"</li>
+        <li>Flashcard wall: do not skip. Even if time is tight, do 5 cards minimum. The ritual of the GT Flashcard Wall is part of the product identity.</li>
+      </ul></div></div>
+      <div class="tn-capa tn-c2"><div class="tn-cl">Capa 2 · Engagement</div><div class="tn-txt"><ul>
+        <li>"You just debated one of the most uncomfortable professional situations — in English, with hypothetical reasoning, with colloquial language — in two minutes. That is what B1.2 English sounds like when it works."</li>
+        <li>Closing ritual: "Give me one sentence. The most honest one. About a real dilemma at work right now. 2nd conditional. No notes. Go."</li>
+      </ul></div></div>
+      <div class="tn-capa tn-c3"><div class="tn-cl">Capa 3 · Growth &amp; Retention</div><div class="tn-txt"><ul>
+        <li>Upsell: "S1B next week takes everything from today and removes the scaffolding. You will be the manager — live role-play, no script, no model to follow. The question is: will you be ready? Based on today? Yes."</li>
+        <li>Testimonial trigger: "Say it again — your honest 2nd conditional sentence about your real work situation. I want to hear it clean, no hesitation. That sentence proves to you that B1.2 is already happening." → If student nails it: pause. "That. That's your testimonial."</li>
+        <li>Retention prompt (optional): "This week, when a difficult situation comes up at work — ask yourself: 'What would I do if...' Finish that sentence in English, in your head."</li>
+      </ul></div></div>
+    </div>
+  </div>
+</section></div>
+
+<!-- FOOTER — v3 fix: guiones bajos, v3 -->
+<footer class="ftr">
+  <div class="fb">Gabriel Turner · English Training</div>
+  <div class="fb">B1.2 · M1 · S1A · How I Would Handle That</div>
+  <div class="fb">GT_B1_2_M1_S1A_TEACHER_v3</div>
+</footer>
+
+<script>
+/* ─── SCROLL PROGRESS — v3 fix: var, function(){} */
+window.addEventListener('scroll',function(){
+  var h=document.documentElement.scrollHeight-window.innerHeight;
+  if(h>0)document.getElementById('prog').style.width=(window.scrollY/h*100)+'%';
+},{passive:true});
+
+/* ─── ACTIVE NAV — v3 standard system */
+var secs=document.querySelectorAll('[id^="s"]');
+var navis=document.querySelectorAll('.sni');
+window.addEventListener('scroll',function(){
+  var pos=window.scrollY+120;
+  secs.forEach(function(sec){
+    if(!sec.id||!sec.id.match(/^s\d+$/))return;
+    var top=sec.offsetTop;
+    var bot=top+sec.offsetHeight;
+    if(pos>=top&&pos<bot){
+      navis.forEach(function(n){n.classList.remove('active');});
+      var link=document.querySelector('.sni[href="#'+sec.id+'"]');
+      if(link)link.classList.add('active');
+    }
+  });
+},{passive:true});
+
+/* ─── MODE TOGGLE — v3 fix: body.student-mode */
+function toggleMode(){
+  var b=document.body;
+  var btn=document.getElementById('modeBtn');
+  b.classList.toggle('student-mode');
+  btn.textContent=b.classList.contains('student-mode')?'📋 Teacher Mode':'👁 Student Mode';
+}
+
+/* ─── SPEECH SYNTHESIS */
+function speak(t){
+  if(!window.speechSynthesis)return;
+  speechSynthesis.cancel();
+  var u=new SpeechSynthesisUtterance(t);
+  u.lang='en-US';u.rate=0.88;
+  speechSynthesis.speak(u);
+}
+
+/* ─── TEACHER NOTES TOGGLE */
+function toggleTN(btn){
+  btn.classList.toggle('open');
+  btn.nextElementSibling.classList.toggle('open');
+}
+
+/* ─── SCRIPT TOGGLE — v3 fix: with arguments */
+function toggleScript(boxId,lblId){
+  var b=document.getElementById(boxId);
+  var l=document.getElementById(lblId);
+  b.classList.toggle('open');
+  l.textContent=b.classList.contains('open')?'▼ Hide ElevenLabs Script':'▶ Show ElevenLabs Script (Teacher Only)';
+}
+
+/* ─── CHECKLIST */
+function toggleCL(li){
+  li.classList.toggle('done');
+  li.querySelector('.cb').textContent=li.classList.contains('done')?'✓':'';
+}
+
+/* ─── MODEL ANSWER REVEAL */
+function toggleModel(el){
+  el.classList.toggle('open');
+  el.nextElementSibling.classList.toggle('show');
+}
+
+/* ─── MC ACTIVITY */
+function checkOpt(btn,correct,qid){
+  var c=document.getElementById(qid);
+  if(!c||c.dataset.locked)return;
+  c.querySelectorAll('.opt').forEach(function(b){
+    b.disabled=true;
+    if(b.textContent.trim()===correct)b.classList.add('correct');
+  });
+  if(btn.textContent.trim()!==correct)btn.classList.add('wrong');
+  c.dataset.locked='1';
+}
+
+/* ─── TRUE / FALSE — v3 fix: uses btn.closest('.tf-row') */
+function checkTF(btn,ok,id){
+  var row=document.getElementById(id)||btn.closest('.tf-row');
+  if(!row||row.dataset.locked)return;
+  row.querySelectorAll('.tf-btn').forEach(function(b){b.disabled=true;});
+  if(ok){
+    btn.classList.add('correct');
+  }else{
+    btn.classList.add('wrong');
+    var sib=Array.from(row.querySelectorAll('.tf-btn')).find(function(b){return b!==btn;});
+    if(sib)sib.classList.add('correct');
+  }
+  row.dataset.locked='1';
+}
+
+/* ─── DRAG & DROP (click-based) */
+var selectedItem=null;
+function selectDragItem(el){
+  var container=el.parentElement;
+  if(container.dataset.locked)return;
+  if(selectedItem===el){selectedItem.classList.remove('selected');selectedItem=null;return;}
+  if(selectedItem&&selectedItem.parentElement===container){
+    var items=[].slice.call(container.children);
+    var si=items.indexOf(selectedItem),ti=items.indexOf(el);
+    if(si<ti)container.insertBefore(selectedItem,el.nextSibling);
+    else container.insertBefore(selectedItem,el);
+    selectedItem.classList.remove('selected');selectedItem=null;
+  }else{
+    if(selectedItem)selectedItem.classList.remove('selected');
+    selectedItem=el;el.classList.add('selected');
+  }
+}
+function checkOrder(containerEl,correct){
+  if(containerEl.dataset.locked)return;
+  var items=[].slice.call(containerEl.querySelectorAll('.drag-item'));
+  var resultEl=document.getElementById('dragResult'+containerEl.id.replace('dragQ',''));
+  var allRight=true;
+  items.forEach(function(item,i){
+    if(item.textContent.trim()===correct[i]){item.style.borderColor='#00E676';item.style.color='#00E676';}
+    else{item.style.borderColor='#FF1F5C';item.style.color='rgba(255,100,100,.9)';allRight=false;}
+  });
+  containerEl.dataset.locked='1';
+  if(resultEl){resultEl.className='drag-result '+(allRight?'ok':'bad');resultEl.textContent=allRight?'✓ Correct Order!':'✗ Not quite — review and reset.';}
+}
+function resetDrag(containerId){
+  var c=document.getElementById(containerId);
+  if(!c)return;
+  delete c.dataset.locked;
+  var items=[].slice.call(c.querySelectorAll('.drag-item'));
+  items.forEach(function(item){item.style.borderColor='';item.style.color='';item.classList.remove('selected');});
+  var resultEl=document.getElementById('dragResult'+containerId.replace('dragQ',''));
+  if(resultEl){resultEl.className='drag-result';resultEl.textContent='';}
+  if(selectedItem&&selectedItem.parentElement===c){selectedItem=null;}
+}
+
+/* ─── WARM-UP TIMER */
+var tQs=[
+  'Q1 — Your manager asks you to send a report with an error that makes results look better. What would you do?',
+  'Q2 — If you discovered your colleague was taking credit for your work, what would you say?',
+  'Q3 — If you were offered a promotion that required you to compromise your values, what would you do?',
+  'Q4 — If you had to choose between meeting the deadline and being transparent about a problem — which would you choose?'
+];
+var tInt=null,tLeft=30,tIdx=0,tRun=false;
+function startT(){
+  if(tRun||tIdx>=tQs.length)return;
+  tRun=true;
+  document.getElementById('tStart').disabled=true;
+  document.getElementById('tQ').textContent=tQs[tIdx];
+  document.getElementById('tStatus').textContent='Respond now — 2nd conditional!';
+  tLeft=30;updT();
+  tInt=setInterval(function(){
+    tLeft--;updT();
+    if(tLeft<=0){
+      clearInterval(tInt);tRun=false;tIdx++;
+      document.getElementById('tStatus').textContent=tIdx>=tQs.length?'All done! 🎯':'Press START for next scenario.';
+      document.getElementById('tStart').disabled=tIdx>=tQs.length;
+      if(tIdx<tQs.length)setTimeout(function(){document.getElementById('tStart').disabled=false;},200);
+    }
+  },1000);
+}
+function updT(){
+  var p=tLeft/30;
+  var arc=document.getElementById('tArc');
+  arc.style.strokeDashoffset=(1-p)*145;
+  arc.style.stroke=tLeft<=10?'#FF1F5C':tLeft<=20?'#C9922A':'#34D399';
+  document.getElementById('tNum').textContent=tLeft;
+}
+function resetT(){
+  clearInterval(tInt);tRun=false;tIdx=0;tLeft=30;
+  document.getElementById('tArc').style.strokeDashoffset=0;
+  document.getElementById('tArc').style.stroke='#34D399';
+  document.getElementById('tNum').textContent='30';
+  document.getElementById('tQ').textContent='—';
+  document.getElementById('tStatus').textContent='Press START when student begins speaking';
+  document.getElementById('tStart').disabled=false;
+}
+
+/* ─── 2-MIN SPEAKING COUNTDOWN */
+var cdInt=null,cdLeft=120,cdRun=false;
+var cdPhases=[
+  {t:90,label:'Position + 2nd Conditional × 1',hint:"Start: 'If I discovered this, I would...' — state your position clearly"},
+  {t:30,label:"⚡ Final push — colloquial + defend",hint:"'That being said...' / 'I would bite the bullet...' — close with conviction"}
+];
+function startCD(){
+  if(cdRun)return;cdRun=true;
+  document.getElementById('cdBtn').disabled=true;
+  cdLeft=120;updCD();
+  cdInt=setInterval(function(){
+    cdLeft--;updCD();
+    if(cdLeft<=0){
+      clearInterval(cdInt);cdRun=false;
+      document.getElementById('cdPhase').textContent='⏱ Time is up!';
+      document.getElementById('cdHint').textContent='How many 2nd conditional sentences did you produce?';
+      document.getElementById('cdBtn').disabled=false;
+    }
+  },1000);
+}
+function updCD(){
+  var p=cdLeft/120;
+  var fill=document.getElementById('cdFill');
+  fill.style.strokeDashoffset=(1-p)*188;
+  fill.style.stroke=cdLeft<=20?'#FF1F5C':'#C9922A';
+  var m=Math.floor(cdLeft/60),s=cdLeft%60;
+  document.getElementById('cdNum').textContent=m+':'+(s<10?'0':'')+s;
+  var phase=cdPhases.find(function(ph){return cdLeft>ph.t;});
+  if(!phase)phase=cdPhases[cdPhases.length-1];
+  document.getElementById('cdPhase').textContent=phase.label;
+  document.getElementById('cdHint').textContent=phase.hint;
+}
+function resetCD(){
+  clearInterval(cdInt);cdRun=false;cdLeft=120;
+  document.getElementById('cdFill').style.strokeDashoffset=0;
+  document.getElementById('cdFill').style.stroke='#C9922A';
+  document.getElementById('cdNum').textContent='2:00';
+  document.getElementById('cdPhase').textContent='Ready — press START when student begins';
+  document.getElementById('cdHint').textContent='2nd conditional × 3 · 2 colloquial phrases · defend a position · no notes';
+  document.getElementById('cdBtn').disabled=false;
+}
+
+/* ─── DILEMMA ROULETTE WHEEL */
+var dilScenarios=[
+  {short:'The Unethical Report',full:'Your manager asks you to omit critical risk data from a client presentation to make the project look more successful than it actually is.',prompt:'If you were in this situation, what would you do? Would you send the report? Would you push back? What would happen if you refused?'},
+  {short:'The Credit Thief',full:'Your manager presents your idea — the one you shared privately two days ago — in a senior leadership meeting as if it were their own. No credit to you.',prompt:'If this happened to you, how would you handle it? Would you address it directly? Would you escalate? What would you say?'},
+  {short:'The Resume Lie',full:'You discover that a close colleague — someone you genuinely like and respect — lied about their university degree on their resume.',prompt:'If you discovered this, would you tell HR? Would you confront your colleague first? What if keeping silent made you complicit?'},
+  {short:'The Pay Gap',full:'You accidentally see an open spreadsheet showing that your colleague earns 30% more than you for the exact same role and level of experience.',prompt:'If you found out your salary was unfair, how would you navigate that conversation with your manager? What would you actually say?'},
+  {short:'The Impossible Deadline',full:'Your boss gives you 48 hours to complete a project that realistically requires at least two full weeks of focused work.',prompt:'If you received this deadline, what would you do? Would you say something? How would you address the tension without damaging the relationship?'},
+  {short:'The Difficult Client',full:'A key client threatens to cancel a major contract unless you personally guarantee results that you know are not achievable with the current resources.',prompt:'If a client threatened this, what would you do? Would you speak up to your management? Would you tell the client the truth? How would you handle it?'},
+  {short:'The Open Argument',full:'Two of your team members begin arguing openly and loudly in front of an important external client. You are the most senior person in the room.',prompt:'If this happened right now, how would you defuse the situation in the moment? What would you do afterward with both team members?'},
+  {short:'The Whistleblower',full:'You discover convincing evidence that your company has been misreporting financial data to investors. You have the documents. No one else knows you found them.',prompt:'If you discovered this, what would you do? Would you escalate internally? Go outside? Stay silent? What would happen if you acted on this?'}
+];
+var wheelColors=['#34D399','#00CFFF','#C9922A','#8B5CF6','#34D399','#00CFFF','#C9922A','#8B5CF6'];
+var wAngle=0,wSpinning=false,wSpins=0,wScore=0,wLanded=null;
+var wCanvas=document.getElementById('wheelCanvas');
+var wCtx=wCanvas.getContext('2d');
+function drawWheel(){
+  var cx=120,cy=120,r=110,seg=(Math.PI*2)/dilScenarios.length;
+  wCtx.clearRect(0,0,240,240);
+  dilScenarios.forEach(function(s,i){
+    var sa=wAngle+i*seg,ea=sa+seg;
+    wCtx.beginPath();wCtx.moveTo(cx,cy);wCtx.arc(cx,cy,r,sa,ea);wCtx.closePath();
+    wCtx.fillStyle=wheelColors[i];wCtx.fill();
+    wCtx.strokeStyle='rgba(15,25,35,.7)';wCtx.lineWidth=2;wCtx.stroke();
+    wCtx.save();wCtx.translate(cx,cy);wCtx.rotate(sa+seg/2);
+    wCtx.textAlign='right';wCtx.fillStyle='rgba(0,0,0,.75)';
+    wCtx.font='bold 9px DM Sans, sans-serif';
+    var label=dilScenarios[i].short.split(' ').slice(0,2).join(' ');
+    wCtx.fillText(label,r-8,4);wCtx.restore();
+  });
+  wCtx.beginPath();wCtx.arc(cx,cy,22,0,Math.PI*2);
+  wCtx.fillStyle='#0F1923';wCtx.fill();
+  wCtx.strokeStyle='#34D399';wCtx.lineWidth=2;wCtx.stroke();
+  wCtx.fillStyle='#34D399';wCtx.font='bold 9px Syne, sans-serif';
+  wCtx.textAlign='center';wCtx.textBaseline='middle';wCtx.fillText('SPIN',cx,cy);
+  wCtx.beginPath();wCtx.moveTo(cx,cy-r-2);wCtx.lineTo(cx-9,cy-r+14);wCtx.lineTo(cx+9,cy-r+14);
+  wCtx.closePath();wCtx.fillStyle='#FF1F5C';wCtx.fill();
+}
+drawWheel();
+function spinWheel(){
+  if(wSpinning)return;
+  wSpinning=true;
+  document.getElementById('wheelBtn').disabled=true;
+  document.getElementById('wOk').disabled=true;
+  document.getElementById('wSkip').disabled=true;
+  document.getElementById('wScenarioBox').classList.remove('show');
+  document.getElementById('wInstructions').style.display='none';
+  var extra=(6+Math.random()*4)*Math.PI*2;
+  var randomIdx=Math.floor(Math.random()*dilScenarios.length);
+  var segAngle=(Math.PI*2)/dilScenarios.length;
+  var target=wAngle+extra+(randomIdx*segAngle);
+  var start=Date.now(),dur=4000+Math.random()*1000,startA=wAngle;
+  function anim(){
+    var elapsed=Date.now()-start,progress=Math.min(elapsed/dur,1);
+    var eased=1-Math.pow(1-progress,4);
+    wAngle=startA+(target-startA)*eased;
+    drawWheel();
+    if(progress<1){requestAnimationFrame(anim);}else{
+      wSpinning=false;wSpins++;
+      var norm=((wAngle%(Math.PI*2))+(Math.PI*2))%(Math.PI*2);
+      var pointer=(Math.PI*2-norm+Math.PI*1.5)%(Math.PI*2);
+      wLanded=Math.floor(pointer/(Math.PI*2)*dilScenarios.length)%dilScenarios.length;
+      var sc=dilScenarios[wLanded];
+      document.getElementById('wScenarioTxt').textContent=sc.full;
+      document.getElementById('wPrompt').textContent=sc.prompt;
+      document.getElementById('wScenarioBox').classList.add('show');
+      document.getElementById('wheelBtn').disabled=false;
+      document.getElementById('wOk').disabled=false;
+      document.getElementById('wSkip').disabled=false;
+    }
+  }
+  requestAnimationFrame(anim);
+}
+function wMark(ok){
+  if(ok){
+    wScore++;
+    var sv=document.getElementById('wsScore');sv.textContent=wScore;
+    sv.classList.add('bump');setTimeout(function(){sv.classList.remove('bump');},300);
+  }
+  var pct=Math.min(wScore/(wSpins||1)*100,100);
+  document.getElementById('wsBar').style.width=pct+'%';
+  document.getElementById('wOk').disabled=true;document.getElementById('wSkip').disabled=true;
+  document.getElementById('wScenarioBox').classList.remove('show');
+  document.getElementById('wInstructions').style.display='block';
+  document.getElementById('wInstructions').innerHTML='✓ Spun <strong>'+wSpins+'</strong> times &nbsp;·&nbsp; 2nd Cond Confirmed: <strong>'+wScore+'</strong> &nbsp;·&nbsp; <em style="color:var(--ac2)">Spin again →</em>';
+}
+</script>
+</body>
+</html>
