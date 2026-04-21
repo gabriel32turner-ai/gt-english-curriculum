@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Portal GT · v19 — Gabriel Turner English Training</title>
+<title>Portal GT · v22 — Gabriel Turner English Training</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
@@ -330,7 +330,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--txt);min-
     <span class="ldot"></span>
     <span class="lbrand">Gabriel Turner · English Training</span>
   </div>
-  <div class="lmsg">Portal GT v19 · cargando...</div>
+  <div class="lmsg">Portal GT v22 · cargando...</div>
 </div>
 
 <!-- ═══ ERROR ═══ -->
@@ -438,8 +438,8 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--txt);min-
 
 <script>
 // ════════════════════════════════════════
-// PORTAL GT v19 — 4 ROLES: ALUMNO / MAESTRO / ADMIN / RH EMPRESA
-// Restaurado desde v13. Basado en Cloudflare Worker + Notion.
+// PORTAL GT v22 — 4 ROLES: ALUMNO / MAESTRO / ADMIN / RH EMPRESA
+// Fix: Microlab sessions + URL directa desde Notion + fix 404.
 // ════════════════════════════════════════
 const WORKER_URL = 'https://gt-portal-worker.gabriel32turner.workers.dev/';
 
@@ -824,6 +824,7 @@ function buildMaestroNav() {
     <span class="scat">Grupos</span>
     ${navItem('mis-grupos','⊞','Mis grupos',"showView('mis-grupos')")}
     ${navItem('cargar-sesion','+','Cargar sesión',"showView('cargar-sesion')")}
+    <span class="scat">Material</span>
     ${navItem('abrir-sesion','▶','Abrir sesión',"showView('abrir-sesion')")}
     <span class="scat">Individual</span>
     ${navItem('mis-alumnos','≡','Lista de alumnos',"showView('mis-alumnos')")}
@@ -866,7 +867,7 @@ function buildAdminNav() {
 // ════════════════════════════════════════
 const VIEW_TITLES = {
   'mi-progreso':'Mi progreso','mi-material':'Material de hoy','mis-sesiones':'Mis sesiones','mis-tareas':'Mis tareas',
-  'mis-grupos':'Mis grupos','cargar-sesion':'Cargar sesión','abrir-sesion':'Abrir sesión','mis-alumnos':'Mis alumnos',
+  'mis-grupos':'Mis grupos','cargar-sesion':'Cargar sesión','abrir-sesion':'Abrir sesión · Regular / Speaking / Microlab','mis-alumnos':'Mis alumnos',
   'admin-alumnos':'Todos los alumnos','admin-grupos':'Grupos',
   'admin-maestros':'Maestros','admin-rh':'Contactos RH',
   'admin-productividad':'Productividad del equipo',
@@ -1494,13 +1495,14 @@ function switchSesionTab(tab) {
 
 // ════════════════════════════════════════
 // ABRIR SESIÓN — Nueva vista para maestro
+// Soporta: Regular, Speaking Lab, Microlab
 // ════════════════════════════════════════
+let _abrirSesionFiltroTipo = 'todos';
+let _abrirSesionFiltroNivel = '';
+
 function renderAbrirSesion(page) {
-  // Obtener todas las sesiones disponibles (contenido)
   const sesionesDisponibles = DATA.contenido.filter(c => c.activo !== false);
-  
-  const nivelActual = currentUser.niveles || '';
-  
+
   if (!sesionesDisponibles.length) {
     page.innerHTML = `
       <div class="ph"><h2>Abrir sesión</h2><p>Seleccioná una sesión para proyectar en clase.</p></div>
@@ -1508,67 +1510,127 @@ function renderAbrirSesion(page) {
     return;
   }
 
+  // Detectar tipo de sesión por nombre/URL
+  function detectTipo(s) {
+    const t = (s.titulo || s.descripcion || '').toLowerCase();
+    const u = (s.url_recurso || '').toLowerCase();
+    if (t.includes('microlab') || u.includes('MICROLAB') || u.includes('microlab')) return 'microlab';
+    if (t.includes('speaking') || u.includes('SPEAKING') || u.includes('speaking')) return 'speaking';
+    return 'regular';
+  }
+
+  // Filtrar por tipo y nivel
+  let filtradas = sesionesDisponibles;
+  if (_abrirSesionFiltroTipo !== 'todos') {
+    filtradas = filtradas.filter(s => detectTipo(s) === _abrirSesionFiltroTipo);
+  }
+  if (_abrirSesionFiltroNivel) {
+    filtradas = filtradas.filter(s => s.nivel === _abrirSesionFiltroNivel);
+  }
+
   // Agrupar por nivel
   const porNivel = {};
-  sesionesDisponibles.forEach(s => {
+  filtradas.forEach(s => {
     if (!porNivel[s.nivel]) porNivel[s.nivel] = [];
     porNivel[s.nivel].push(s);
   });
 
   const nivelesOrden = ['A1.1','A1.2','A2.1','A2.2','B1.1','B1.2','B2.1','B2.2'];
-  
+
+  // Contar por tipo para badges
+  const contTipo = { todos:sesionesDisponibles.length, regular:0, speaking:0, microlab:0 };
+  sesionesDisponibles.forEach(s => { contTipo[detectTipo(s)]++; });
+
+  // Niveles disponibles
+  const nivelesDisp = [...new Set(filtradas.map(s=>s.nivel))].filter(Boolean).sort();
+
   let html = `
-    <div class="ph"><h2>Abrir sesión</h2><p>Seleccioná una sesión para proyectar. Se abrirá en una pestaña nueva.</p></div>`;
-  
+    <div class="ph"><h2>Abrir sesión</h2><p>Seleccioná una sesión para proyectar. Se abrirá en una pestaña nueva.</p></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px">
+      <div class="itabs">
+        <button class="itab ${_abrirSesionFiltroTipo==='todos'?'active':''}" onclick="_abrirSesionFiltroTipo='todos';renderAbrirSesion(document.getElementById('app-page'))">Todos (${contTipo.todos})</button>
+        ${contTipo.regular ? `<button class="itab ${_abrirSesionFiltroTipo==='regular'?'active':''}" onclick="_abrirSesionFiltroTipo='regular';renderAbrirSesion(document.getElementById('app-page'))">📐 Regular (${contTipo.regular})</button>` : ''}
+        ${contTipo.speaking ? `<button class="itab ${_abrirSesionFiltroTipo==='speaking'?'active':''}" onclick="_abrirSesionFiltroTipo='speaking';renderAbrirSesion(document.getElementById('app-page'))">🎙 Speaking (${contTipo.speaking})</button>` : ''}
+        ${contTipo.microlab ? `<button class="itab ${_abrirSesionFiltroTipo==='microlab'?'active':''}" onclick="_abrirSesionFiltroTipo='microlab';renderAbrirSesion(document.getElementById('app-page'))">🔬 Microlab (${contTipo.microlab})</button>` : ''}
+      </div>
+      <select style="padding:6px 10px;border:1px solid var(--border2);border-radius:var(--rs);font-size:12px;font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--txt)" onchange="_abrirSesionFiltroNivel=this.value;renderAbrirSesion(document.getElementById('app-page'))">
+        <option value="">Todos los niveles</option>
+        ${nivelesOrden.filter(n => sesionesDisponibles.some(s=>s.nivel===n)).map(n => `<option value="${n}" ${_abrirSesionFiltroNivel===n?'selected':''}>${n}</option>`).join('')}
+      </select>
+    </div>`;
+
+  if (!filtradas.length) {
+    html += `<div class="card"><p style="font-size:13px;color:var(--txt3)">No hay sesiones con este filtro.</p></div>`;
+    page.innerHTML = html;
+    return;
+  }
+
   nivelesOrden.forEach(nivel => {
     if (!porNivel[nivel]) return;
     const sesiones = porNivel[nivel];
-    
+    const cls = LEVEL_CLASS[nivel] || 'level-a1';
+
     html += `
     <div class="card" style="margin-bottom:16px">
-      <div class="card-title">${nivel}</div>
+      <div class="card-title" style="display:flex;align-items:center;gap:8px">
+        <span class="level ${cls}">${nivel}</span>
+        <span style="font-size:11px;color:var(--txt3)">${sesiones.length} sesión${sesiones.length>1?'es':''}</span>
+      </div>
       <div style="display:grid;gap:8px">`;
-    
+
     sesiones.forEach(s => {
-      const modulo = s.modulo || '—';
-      const sesion = s.sesion || '—';
-      const tipo = s.tipo || 'regular';
-      const etiqueta = tipo === 'speaking' ? '🎙 Speaking' : `M${modulo}·S${sesion}`;
-      
-      // Generar nombre de archivo basado en tipo
-      let filename = '';
-      if (tipo === 'speaking') {
-        // GT_SPEAKING_{NIVEL}_{TEMA}_{VERSION}.html
-        const tema = (s.titulo || 'SessionTitle').replace(/[^a-zA-Z0-9]/g, '');
-        filename = `GT_SPEAKING_${nivel}_${tema}_v1.html`;
-      } else {
-        // GT_{NIVEL}_M{MODULO}_S{SESION}{PARTE}_TEACHER_v3.html
-        filename = `GT_${nivel}_M${modulo}_S${sesion}A_TEACHER_v3.html`;
-      }
-      
+      const tipo = detectTipo(s);
+      let etiqueta = '';
+      let emoji = '📐';
+      if (tipo === 'microlab') { etiqueta = '🔬 Microlab'; emoji = '🔬'; }
+      else if (tipo === 'speaking') { etiqueta = '🎙 Speaking'; emoji = '🎙'; }
+      else { etiqueta = `M${s.modulo||'—'}·S${s.sesion||'—'}`; emoji = '📐'; }
+
+      // Usar URL directa de Notion si existe, si no construir fallback
+      const urlDirecta = s.url_recurso || '';
+      const nombre = (s.titulo || s.descripcion || 'Sesión').replace(/🔬 Microlab: |🎙 Speaking: /g, '');
+      const escapedUrl = urlDirecta.replace(/'/g, "\\'");
+
       html += `
       <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--bg2);border-radius:var(--rs);border:1px solid var(--border)">
         <div style="flex:1;min-width:0">
-          <div style="font-size:13px;font-weight:500;color:var(--txt)">${s.titulo || s.descripcion || 'Sesión'}</div>
+          <div style="font-size:13px;font-weight:500;color:var(--txt)">${nombre}</div>
           <div style="font-size:11px;color:var(--txt3);margin-top:2px">${etiqueta}</div>
         </div>
-        <button class="action-btn" onclick="abrirSesionHTML('${filename}')" style="font-size:12px;padding:6px 14px;white-space:nowrap">
+        <button class="action-btn" onclick="abrirSesionDirecta('${escapedUrl}','${nombre}')" style="font-size:12px;padding:6px 14px;white-space:nowrap">
           ▶ Abrir
         </button>
       </div>`;
     });
-    
+
     html += `</div></div>`;
   });
 
   page.innerHTML = html;
 }
 
-// Función para abrir la sesión en una pestaña nueva desde GitHub Pages
+// Abrir sesión usando URL directa de Notion/Contenido (fix 404)
+function abrirSesionDirecta(url, nombre) {
+  if (url) {
+    window.open(url, '_blank');
+    showToast('✓ Abriendo ' + nombre + '...');
+  } else {
+    showToast('⚠ Esta sesión no tiene URL asignada. Verificá el contenido en Notion.');
+  }
+}
+
+// Función legacy — fallback por si algo la invoca
 function abrirSesionHTML(filename) {
-  const url = `https://gabriel32turner-ai.github.io/gt-english-curriculum/${filename}`;
+  // Intentar detectar el repo correcto basado en el nombre del archivo
+  let baseUrl = 'https://gabriel32turner-ai.github.io/';
+  if (filename.includes('MICROLAB') || filename.includes('SPEAKING')) {
+    baseUrl += 'EXTRAS/';
+  } else {
+    baseUrl += 'gt-english-curriculum/';
+  }
+  const url = baseUrl + filename;
   window.open(url, '_blank');
-  showToast(`✓ Abriendo ${filename}...`);
+  showToast('✓ Abriendo ' + filename + '...');
 }
 
 // ── Guardar Speaking Lab ─────────────────────────────────────
