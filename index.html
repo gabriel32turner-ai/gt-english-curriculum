@@ -1609,10 +1609,23 @@ function renderAbrirSesion(page) {
   page.innerHTML = html;
 }
 
-// Abrir sesión usando URL directa de Notion/Contenido (fix 404)
+// Resolver URL completa desde lo que tenga Contenido en Notion
+function resolverURLSesion(raw) {
+  if (!raw) return '';
+  const val = raw.trim();
+  // Si ya es URL completa, usarla directo
+  if (val.startsWith('http://') || val.startsWith('https://')) return val;
+  // Si es solo un filename, construir la URL basada en el repo correcto
+  const base = 'https://gabriel32turner-ai.github.io/';
+  if (val.includes('MICROLAB') || val.includes('SPEAKING')) return base + 'EXTRAS/' + val;
+  return base + 'gt-english-curriculum/' + val;
+}
+
+// Abrir sesión usando URL de Notion/Contenido (fix 404)
 function abrirSesionDirecta(url, nombre) {
-  if (url) {
-    window.open(url, '_blank');
+  const resolved = resolverURLSesion(url);
+  if (resolved) {
+    window.open(resolved, '_blank');
     showToast('✓ Abriendo ' + nombre + '...');
   } else {
     showToast('⚠ Esta sesión no tiene URL asignada. Verificá el contenido en Notion.');
@@ -1621,14 +1634,7 @@ function abrirSesionDirecta(url, nombre) {
 
 // Función legacy — fallback por si algo la invoca
 function abrirSesionHTML(filename) {
-  // Intentar detectar el repo correcto basado en el nombre del archivo
-  let baseUrl = 'https://gabriel32turner-ai.github.io/';
-  if (filename.includes('MICROLAB') || filename.includes('SPEAKING')) {
-    baseUrl += 'EXTRAS/';
-  } else {
-    baseUrl += 'gt-english-curriculum/';
-  }
-  const url = baseUrl + filename;
+  const url = resolverURLSesion(filename);
   window.open(url, '_blank');
   showToast('✓ Abriendo ' + filename + '...');
 }
