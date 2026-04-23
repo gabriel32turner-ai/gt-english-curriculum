@@ -2,12 +2,8 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="theme-color" content="#1A1A3E">
-<title>Portal GT · v22 — Gabriel Turner English Training</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portal GT · v23 — Gabriel Turner English Training</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
@@ -315,53 +311,13 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--txt);min-
   .report-preview{border:none;padding:0;}
 }
 @media(max-width:700px){
-  /* Layout */
-  .sidebar{width:100%;min-height:auto;position:relative;display:none;}
-  .sidebar.mob-open{display:flex;}
+  .sidebar{width:100%;min-height:auto;position:relative;}
   .app-main{margin-left:0;}
   .app-layout{flex-direction:column;}
-  .page{padding:14px;}
-
-  /* Forms */
+  .page{padding:16px;}
   .form-grid{grid-template-columns:1fr;}
   .metrics{grid-template-columns:1fr 1fr;}
   .fld.span2{grid-column:span 1;}
-
-  /* Touch targets — mínimo 44px de alto para iOS */
-  .action-btn{padding:9px 14px;font-size:12px;min-height:36px;}
-  .login-btn{padding:14px;font-size:15px;}
-  .ltab{padding:10px 8px;}
-  .sitem{padding:10px 12px;font-size:13px;}
-
-  /* Tablas — scroll horizontal en móvil */
-  .card{overflow-x:auto;}
-  .stable{min-width:480px;}
-
-  /* Modal full-width en móvil */
-  .modal{border-radius:12px 12px 0 0;max-width:100%!important;margin-top:auto;}
-  .modal-overlay{align-items:flex-end;padding:0;}
-
-  /* Topbar compacta */
-  .topbar{padding:10px 14px;}
-  .ttitle{font-size:13px;}
-
-  /* Grupo cards */
-  .grupo-actions{flex-direction:column;}
-  .emp-grid{grid-template-columns:1fr;}
-  .prod-grid{grid-template-columns:1fr;}
-}
-/* Mob nav toggle button — visible solo en móvil */
-#mob-nav-toggle{
-  display:none;
-  position:fixed;bottom:20px;right:20px;z-index:300;
-  width:48px;height:48px;border-radius:50%;
-  background:var(--navy);color:white;border:none;
-  font-size:20px;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,0.3);
-  align-items:center;justify-content:center;
-  font-family:'DM Sans',sans-serif;
-}
-@media(max-width:700px){
-  #mob-nav-toggle{display:flex;}
 }
 </style>
 </head>
@@ -374,7 +330,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--txt);min-
     <span class="ldot"></span>
     <span class="lbrand">Gabriel Turner · English Training</span>
   </div>
-  <div class="lmsg">Portal GT v22 · cargando...</div>
+  <div class="lmsg">Portal GT v23 · cargando...</div>
 </div>
 
 <!-- ═══ ERROR ═══ -->
@@ -407,8 +363,6 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--txt);min-
         <label>Tu código de acceso</label>
         <input type="text" id="login-codigo" maxlength="6" placeholder="ej. 481203"
           style="letter-spacing:.2em;font-size:18px;text-align:center;font-family:monospace;"
-          inputmode="numeric" pattern="[0-9]*"
-          autocomplete="one-time-code" autocorrect="off" autocapitalize="off" spellcheck="false"
           onkeydown="if(event.key==='Enter')doLogin()">
       </div>
       <p style="font-size:11px;color:var(--txt3);text-align:center;margin:-6px 0 8px">Tu código te lo envió tu maestro por WhatsApp</p>
@@ -422,9 +376,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--txt);min-
       </div>
       <div class="field">
         <label>Contraseña</label>
-        <input type="password" id="login-pw" placeholder="••••••••"
-        autocomplete="current-password" autocorrect="off" autocapitalize="off"
-        onkeydown="if(event.key==='Enter')doLogin()">
+        <input type="password" id="login-pw" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
       </div>
     </div>
     <button class="login-btn" id="login-btn" onclick="doLogin()">Entrar</button>
@@ -473,7 +425,6 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--txt);min-
 </div>
 
 <div class="toast" id="toast"></div>
-<button id="mob-nav-toggle" onclick="toggleMobNav()" aria-label="Menú">☰</button>
 <div class="modal-overlay" id="modal">
   <div class="modal">
     <div class="modal-hdr">
@@ -487,8 +438,10 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--txt);min-
 
 <script>
 // ════════════════════════════════════════
-// PORTAL GT v22 — 4 ROLES: ALUMNO / MAESTRO / ADMIN / RH EMPRESA
+// PORTAL GT v23 — 4 ROLES: ALUMNO / MAESTRO / ADMIN / RH EMPRESA
 // Restaurado desde v13. Basado en Cloudflare Worker + Notion.
+// v22: Fix 404 sesiones, filtros robustos alumno, max sesion 60
+// v23: Fix código crudo (url_recurso desde Notion, no auto-generar filenames)
 // ════════════════════════════════════════
 const WORKER_URL = 'https://gt-portal-worker.gabriel32turner.workers.dev/';
 
@@ -664,7 +617,7 @@ async function init() {
     return;
   }
   try {
-    const res  = await fetchWithTimeout(WORKER_URL, {}, 15000);
+    const res  = await fetch(WORKER_URL);
     const json = await res.json();
     if (!json.ok) throw new Error(json.error || 'Respuesta inválida');
 
@@ -701,11 +654,11 @@ async function init() {
 async function saveToNotion(body) {
   setSyncState('syncing');
   try {
-    const res  = await fetchWithTimeout(WORKER_URL, {
+    const res  = await fetch(WORKER_URL, {
       method: 'POST',
       headers: { 'Content-Type':'application/json' },
       body: JSON.stringify(body),
-    }, 12000);
+    });
     const json = await res.json();
     if (!json.ok) throw new Error(json.error || 'Error al guardar');
     setSyncState('saved');
@@ -957,23 +910,30 @@ function showView(id) {
     'gt-dashboard':        renderGTDashboard,
     'agentes-ai':          renderAgentesAI,
   };
-  if (renders[id]) {
-    try {
-      renders[id](page);
-    } catch(e) {
-      console.error('Error renderizando vista "' + id + '":', e);
-      page.innerHTML = `<div class="card"><p style="font-size:13px;color:var(--red)">⚠ Error al cargar esta sección. Recargá la página o reportá el problema.<br><code style="font-size:11px;color:var(--txt3)">${e.message}</code></p></div>`;
-    }
-  }
+  if (renders[id]) renders[id](page);
 }
 
 // ════════════════════════════════════════
 // VISTAS DEL ALUMNO
 // ════════════════════════════════════════
+// Compara si una sesión/tarea pertenece a un alumno — por ID o por nombre (compatibilidad registros viejos)
+function sesionEsDeAlumno(s, a) {
+  if (!s.alumno) return false;
+  if (s.alumno === a.id) return true;
+  if (a.nombre && s.alumno.trim().toLowerCase() === a.nombre.trim().toLowerCase()) return true;
+  return false;
+}
+function tareaEsDeAlumno(t, a) {
+  if (!t.alumno) return false;
+  if (t.alumno === a.id) return true;
+  if (a.nombre && t.alumno.trim().toLowerCase() === a.nombre.trim().toLowerCase()) return true;
+  return false;
+}
+
 function renderMiProgreso(page) {
   const a      = currentUser;
-  const ses    = DATA.sesiones.filter(s => s.alumno === a.id);
-  const tar    = DATA.tareas.filter(t => t.alumno === a.id);
+  const ses    = DATA.sesiones.filter(s => sesionEsDeAlumno(s, a));
+  const tar    = DATA.tareas.filter(t => tareaEsDeAlumno(t, a));
   const asist  = ses.filter(s => s.asistio).length;
   const hechas = tar.filter(t => t.hecha).length;
   const lvlIdx = LEVELS.indexOf(a.nivel_actual);
@@ -1068,15 +1028,19 @@ function renderMiProgreso(page) {
 // VISTA ALUMNO — MIS SESIONES / MATERIAL
 // ════════════════════════════════════════
 
-// Abre una sesión HTML del alumno — abre en GitHub Pages en pestaña nueva
-// "archivo" puede ser una URL completa o solo el nombre de archivo
+// Abre una sesión HTML dentro del portal via Worker — nunca expone la URL real
 function abrirSesionAlumno(archivo, titulo) {
-  let url = archivo;
-  // Si no es una URL completa, construirla con la base de GitHub Pages
-  if (archivo && !archivo.startsWith('http')) {
-    url = `https://gabriel32turner-ai.github.io/gt-english-curriculum/${archivo}`;
+  // La url_recurso de Notion es la URL completa del archivo HTML.
+  // La abrimos en una nueva pestaña directamente — no pasa por el Worker.
+  if (!archivo) { showToast('⚠️ Esta sesión no tiene material disponible aún.'); return; }
+  // Si es una URL absoluta (empieza con http), abrir directamente
+  if (/^https?:\/\//i.test(archivo)) {
+    window.open(archivo, '_blank', 'noopener');
+  } else {
+    // Fallback: construir URL relativa desde el mismo dominio del portal
+    const base = 'https://gabriel32turner-ai.github.io/gt-english-curriculum/';
+    window.open(base + archivo, '_blank', 'noopener');
   }
-  window.open(url, '_blank');
   showToast(`✓ Abriendo: ${titulo || archivo}`);
 }
 
@@ -1101,10 +1065,10 @@ function renderMiMaterial(page) {
     return 0;
   });
 
-  // ── Construir línea completa de sesiones (todas, 1-30) ───
+  // ── Construir línea completa de sesiones (todas, 1-60) ───
   // Agrupa contenido de Notion por modulo+sesion para acceso rápido
   // contenidoMap: clave = "modulo-sesion" donde sesion va del 1 al 10
-  // S1A=1, S1B=2, S2A=3, S2B=4, S3A=5, S3B=6, S4A=7, S4B=8, S5A=9, S5=10
+  // S1A=1, S1B=2, S2A=3, S2B=4, S3A=5, S3B=6, S4A=7, S4B=8, S5A=9, S5B=10
   const contenidoMap = {};
   DATA.contenido.filter(ct => ct.activo !== false && ct.nivel === a.nivel_actual).forEach(ct => {
     const key = `${ct.modulo}-${ct.sesion}`;
@@ -1144,7 +1108,7 @@ function renderMiMaterial(page) {
             <div style="height:4px;border-radius:2px;background:var(--bg3);overflow:hidden">
               <div style="height:100%;width:${pct}%;background:${activo?'var(--mag)':hecho?'var(--green)':'transparent'};border-radius:2px;"></div>
             </div>
-            <div style="font-size:9px;color:var(--txt3);margin-top:3px">${hecho?'✓':activo?sesEnModActual+'/10':'—'}</div>
+            <div style="font-size:9px;color:var(--txt3);margin-top:3px">${hecho?'✓':activo?sesEnModActual+'/5':'—'}</div>
           </div>`;
         }).join('')}
       </div>
@@ -1225,7 +1189,7 @@ function renderMiMaterial(page) {
     <div style="font-size:10px;font-weight:500;color:var(--txt3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px">
       Módulo ${moduloActual} — progreso
     </div>
-    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:24px">
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px">
       ${Array.from({length:SESPMOD},(_,i)=>{
         const s    = i + 1;
         const hech = s < sesEnModActual;
@@ -1241,11 +1205,12 @@ function renderMiMaterial(page) {
           </div>
         </div>`;
       }).join('')}
+      </div>
     </div>`;
 }
 
 function renderMisSesiones(page) {
-  const todasSes = DATA.sesiones.filter(s => s.alumno === currentUser.id)
+  const todasSes = DATA.sesiones.filter(s => sesionEsDeAlumno(s, currentUser))
     .sort((a,b) => (b.fecha||'').localeCompare(a.fecha||''));
   const speakingSes = todasSes.filter(s => s.tipo === 'speaking_lab');
   const regularSes  = todasSes.filter(s => s.tipo !== 'speaking_lab');
@@ -1277,7 +1242,7 @@ function renderMisSesiones(page) {
 }
 
 function renderMisTareas(page) {
-  const tar    = DATA.tareas.filter(t => t.alumno === currentUser.id);
+  const tar    = DATA.tareas.filter(t => tareaEsDeAlumno(t, currentUser));
   const pend   = tar.filter(t => !t.hecha);
   const hechas = tar.filter(t => t.hecha);
   page.innerHTML = `
@@ -1540,86 +1505,82 @@ function switchSesionTab(tab) {
 // ABRIR SESIÓN — Nueva vista para maestro
 // ════════════════════════════════════════
 function renderAbrirSesion(page) {
-  // Obtener todas las sesiones disponibles con URL real
+  // Obtener todas las sesiones disponibles (contenido)
   const sesionesDisponibles = DATA.contenido.filter(c => c.activo !== false);
-
+  
   if (!sesionesDisponibles.length) {
     page.innerHTML = `
       <div class="ph"><h2>Abrir sesión</h2><p>Seleccioná una sesión para proyectar en clase.</p></div>
-      <div class="card"><p style="font-size:13px;color:var(--txt3)">No hay sesiones disponibles todavía.</p></div>`;
+      <div class="card"><p style="font-size:13px;color:var(--txt3)">No hay sesiones disponibles todavía. Agregá contenido en la base de datos Contenido de Notion.</p></div>`;
     return;
   }
 
-  // Agrupar por nivel usando el orden canónico completo (A1.1 → C1)
+  // Agrupar por nivel
   const porNivel = {};
   sesionesDisponibles.forEach(s => {
-    const nv = s.nivel || 'Sin nivel';
-    if (!porNivel[nv]) porNivel[nv] = [];
-    porNivel[nv].push(s);
+    if (!porNivel[s.nivel]) porNivel[s.nivel] = [];
+    porNivel[s.nivel].push(s);
   });
 
-  // Orden canónico + cualquier nivel extra no listado al final
-  const nivelesOrden = ['A1.1','A1.2','A2.1','A2.2','B1.1','B1.2','B2.1','B2.2','C1'];
-  const nivelesPresentes = [
-    ...nivelesOrden.filter(n => porNivel[n]),
-    ...Object.keys(porNivel).filter(n => !nivelesOrden.includes(n)).sort()
-  ];
-
+  const nivelesOrden = ['A1.1','A1.2','A2.1','A2.2','B1.1','B1.2','B2.1','B2.2'];
+  
   let html = `
-    <div class="ph"><h2>Abrir sesión</h2><p>Seleccioná una sesión para proyectar. Se abre en pestaña nueva.</p></div>`;
-
-  nivelesPresentes.forEach(nivel => {
-    const sesiones = porNivel[nivel].slice().sort((a, b) => {
-      const mA = Number(a.modulo || 0), mB = Number(b.modulo || 0);
-      if (mA !== mB) return mA - mB;
-      return Number(a.sesion || 0) - Number(b.sesion || 0);
+    <div class="ph"><h2>Abrir sesión</h2><p>Seleccioná una sesión para proyectar. Se abrirá en una pestaña nueva.</p></div>`;
+  
+  nivelesOrden.forEach(nivel => {
+    if (!porNivel[nivel]) return;
+    // Ordenar sesiones por módulo y sesión
+    const sesiones = porNivel[nivel].sort((a,b) => {
+      const ma = Number(a.modulo||0), mb = Number(b.modulo||0);
+      if (ma !== mb) return ma - mb;
+      return Number(a.sesion||0) - Number(b.sesion||0);
     });
-
-    const cls = LEVEL_CLASS[nivel] || 'level-a1';
-
+    
     html += `
     <div class="card" style="margin-bottom:16px">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
-        <span class="level ${cls}">${nivel}</span>
-        <span style="font-size:11px;color:var(--txt3)">${sesiones.length} sesión${sesiones.length!==1?'es':''}</span>
-      </div>
+      <div class="card-title">${nivel} <span style="font-size:11px;font-weight:400;color:var(--txt3);margin-left:6px">${sesiones.length} sesiones</span></div>
       <div style="display:grid;gap:8px">`;
-
+    
     sesiones.forEach(s => {
       const modulo = s.modulo || '—';
-      const sesNum = s.sesion || '—';
-      const tipo   = s.tipo || 'regular';
-      const etiqueta = tipo === 'speaking' ? '🎙 Speaking' : `M${modulo} · S${sesNum}`;
-      // Usar url_recurso real de Notion si existe; si no, construir nombre de archivo
-      const urlFinal = s.url_recurso || `GT_${nivel}_M${modulo}_S${sesNum}A_TEACHER_v3.html`;
-      const tieneUrl = !!s.url_recurso;
-
+      const sesion = s.sesion || '—';
+      const tipo = s.tipo_recurso || 'regular';
+      const etiqueta = (s.titulo||'').toLowerCase().includes('speaking') ? '🎙 Speaking' : `M${modulo}·S${sesion}`;
+      
+      // USAR url_recurso de Notion — NUNCA auto-generar nombres de archivo
+      const tieneURL = s.url_recurso && s.url_recurso.trim().length > 0;
+      const urlSafe = tieneURL ? s.url_recurso.replace(/'/g, "\\'") : '';
+      
       html += `
-      <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--bg2);border-radius:var(--rs);border:1px solid var(--border)">
+      <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--bg2);border-radius:var(--rs);border:1px solid var(--border);${!tieneURL?'opacity:.5':''}">
         <div style="flex:1;min-width:0">
           <div style="font-size:13px;font-weight:500;color:var(--txt)">${s.titulo || s.descripcion || 'Sesión'}</div>
-          <div style="font-size:11px;color:var(--txt3);margin-top:2px">${etiqueta}${!tieneUrl ? ' · <span style="color:var(--red)">⚠ sin URL</span>' : ''}</div>
+          <div style="font-size:11px;color:var(--txt3);margin-top:2px">${etiqueta}${!tieneURL?' · ⚠️ Sin URL en Notion':''}</div>
         </div>
-        <button class="action-btn" onclick="abrirSesionHTML('${urlFinal.replace(/'/g,"\\'")}')"\n          style="font-size:12px;padding:6px 14px;white-space:nowrap${!tieneUrl ? ';opacity:.5' : ''}"\n          ${!tieneUrl ? 'title="Esta sesión no tiene URL registrada en Notion"' : ''}>
+        ${tieneURL ? `
+        <button class="action-btn" onclick="abrirSesionHTML('${urlSafe}')" style="font-size:12px;padding:6px 14px;white-space:nowrap">
           ▶ Abrir
-        </button>
+        </button>` : `
+        <span style="font-size:10px;color:var(--txt3);padding:6px 10px">Pendiente</span>`}
       </div>`;
     });
-
+    
     html += `</div></div>`;
   });
 
   page.innerHTML = html;
 }
 
-// Función para abrir la sesión en una pestaña nueva desde GitHub Pages
+// Función para abrir la sesión en una pestaña nueva
 function abrirSesionHTML(urlOrFile) {
+  if (!urlOrFile) { showToast('⚠️ Esta sesión no tiene material disponible.'); return; }
   let url = urlOrFile;
-  if (urlOrFile && !urlOrFile.startsWith('http')) {
+  // Si NO es URL absoluta, construir desde GitHub Pages
+  if (!/^https?:\/\//i.test(urlOrFile)) {
     url = `https://gabriel32turner-ai.github.io/gt-english-curriculum/${urlOrFile}`;
   }
-  window.open(url, '_blank');
-  showToast('✓ Abriendo sesión...');
+  window.open(url, '_blank', 'noopener');
+  showToast(`✓ Abriendo sesión...`);
 }
 
 // ── Guardar Speaking Lab ─────────────────────────────────────
@@ -3535,41 +3496,6 @@ function showToast(msg) {
 }
 
 // ── Arrancar ──────────────────────────────────────────────────
-
-// ── Menú móvil (toggle sidebar) ───────────────────────────────
-function toggleMobNav() {
-  const sb  = document.querySelector('.sidebar');
-  const btn = document.getElementById('mob-nav-toggle');
-  if (!sb) return;
-  const open = sb.classList.toggle('mob-open');
-  btn.textContent = open ? '✕' : '☰';
-  btn.style.background = open ? 'var(--mag)' : 'var(--navy)';
-}
-// Cerrar sidebar móvil al elegir un item del nav
-document.addEventListener('click', function(e) {
-  const sb = document.querySelector('.sidebar');
-  if (!sb || !sb.classList.contains('mob-open')) return;
-  if (!sb.contains(e.target) && e.target.id !== 'mob-nav-toggle') {
-    sb.classList.remove('mob-open');
-    const btn = document.getElementById('mob-nav-toggle');
-    if (btn) { btn.textContent = '☰'; btn.style.background = 'var(--navy)'; }
-  }
-});
-
-// ── Fetch con timeout (evita loading infinito en red lenta) ───
-async function fetchWithTimeout(url, options = {}, ms = 12000) {
-  const ctrl = new AbortController();
-  const id = setTimeout(() => ctrl.abort(), ms);
-  try {
-    const res = await fetch(url, { ...options, signal: ctrl.signal });
-    clearTimeout(id);
-    return res;
-  } catch (e) {
-    clearTimeout(id);
-    throw e;
-  }
-}
-
 init();
 
 // ════════════════════════════════════════
