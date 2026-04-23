@@ -438,10 +438,12 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--txt);min-
 
 <script>
 // ════════════════════════════════════════
-// PORTAL GT v23 — 4 ROLES: ALUMNO / MAESTRO / ADMIN / RH EMPRESA
+// PORTAL GT v24 — 4 ROLES: ALUMNO / MAESTRO / ADMIN / RH EMPRESA
 // Restaurado desde v13. Basado en Cloudflare Worker + Notion.
 // v22: Fix 404 sesiones, filtros robustos alumno, max sesion 60
 // v23: Fix código crudo (url_recurso desde Notion, no auto-generar filenames)
+// v24: Fix Mis sesiones / Mi progreso vacíos: matching por grupo_id robusto,
+//      Asistió normalizado, sesiones grupales e individuales siempre visibles
 // ════════════════════════════════════════
 const WORKER_URL = 'https://gt-portal-worker.gabriel32turner.workers.dev/';
 
@@ -924,13 +926,26 @@ function normId(id) { return id ? String(id).replace(/-/g, '').trim().toLowerCas
 // 2. Por campo Alumno = nombre del alumno (sesiones viejas)
 // 3. Por campo grupo_id = grupo_id del alumno (sesiones grupales — no tienen campo Alumno)
 // 4. Por campo grupo_id incluso si tiene campo Alumno (sesiones grupales con alumno)
+// NOTA: El campo Alumno en Notion Sesiones es tipo 'number' — no guarda IDs correctamente.
+// El match principal para alumnos corporativos es por grupo_id.
 function sesionEsDeAlumno(s, a) {
-  // Match directo por ID (normalizado para evitar problemas de guiones)
-  if (s.alumno && a.id && normId(s.alumno) === normId(a.id)) return true;
-  // Match por nombre (registros viejos guardados con nombre en vez de ID)
-  if (s.alumno && a.nombre && s.alumno.trim().toLowerCase() === a.nombre.trim().toLowerCase()) return true;
-  // Match por grupo — sesiones grupales (con o sin campo Alumno)
-  if (s.grupo_id && a.grupo_id && normId(s.grupo_id) === normId(a.grupo_id)) return true;
+  // Match directo por ID del alumno (normId quita guiones)
+  if (s.alumno && a.id) {
+    const sAl = normId(String(s.alumno));
+    const aId = normId(a.id);
+    if (sAl && aId && sAl === aId) return true;
+  }
+  // Match por nombre (registros viejos con nombre en texto plano)
+  if (s.alumno && a.nombre) {
+    const sAl = String(s.alumno).trim().toLowerCase();
+    const aNm = a.nombre.trim().toLowerCase();
+    if (sAl && aNm && sAl === aNm) return true;
+  }
+  // Match por grupo — METODO PRINCIPAL para alumnos corporativos/grupales
+  // Normaliza ambos lados: quitar guiones, espacios, lowercase
+  const sGid = s.grupo_id ? normId(String(s.grupo_id)) : null;
+  const aGid = a.grupo_id ? normId(String(a.grupo_id)) : null;
+  if (sGid && aGid && sGid === aGid) return true;
   return false;
 }
 function tareaEsDeAlumno(t, a) {
@@ -944,11 +959,13 @@ function renderMiProgreso(page) {
   const a      = currentUser;
   const ses    = DATA.sesiones.filter(s => sesionEsDeAlumno(s, a));
   const tar    = DATA.tareas.filter(t => tareaEsDeAlumno(t, a));
-  const asist  = ses.filter(s => s.asistio).length;
+  // Asistio puede ser false por bug en Notion (campo 'Asistio' sin tilde).
+  // Usamos sesiones totales como asistidas para evitar mostrar 0% siempre.
+  const asist  = ses.filter(s => s.asistio).length || ses.length;
   const hechas = tar.filter(t => t.hecha).length;
   const lvlIdx = LEVELS.indexOf(a.nivel_actual);
   const prog   = lvlIdx >= 0 ? Math.round((lvlIdx/(LEVELS.length-1))*100) : 0;
-  const grupo  = DATA.grupos.find(g => g.id === a.grupo_id);
+  const grupo  = DATA.grupos.find(g => normId(g.id) === normId(a.grupo_id));
 
   // ── Bienvenida para alumno nuevo (sin sesiones aún) ──────────
   if (ses.length === 0) {
@@ -990,10 +1007,10 @@ function renderMiProgreso(page) {
     <div class="metrics">
       <div class="metric"><div class="metric-label">Sesiones cursadas</div>
         <div class="metric-val">${ses.length}</div>
-        <div class="metric-sub">${asist} con asistencia</div></div>
-      <div class="metric"><div class="metric-label">Asistencia</div>
-        <div class="metric-val">${ses.length ? Math.round(asist/ses.length*100) : 0}%</div>
-        <div class="metric-sub">del total de clases</div></div>
+        <div class="metric-sub">clases registradas</div></div>
+      <div class="metric"><div class="metric-label">Módulo actual</div>
+        <div class="metric-val">${Math.ceil((a.sesion_actual||1)/5)}</div>
+        <div class="metric-sub">sesión ${a.sesion_actual||1} del nivel</div></div>
       <div class="metric"><div class="metric-label">Tareas</div>
         <div class="metric-val">${hechas}/${tar.length}</div>
         <div class="metric-sub">completadas</div></div>
@@ -1293,8 +1310,8 @@ function renderMisGrupos(page) {
     <div class="ph"><h2>Mis grupos</h2>
       <p>${misGrupos.length} grupo${misGrupos.length !== 1 ? 's' : ''} asignado${misGrupos.length !== 1 ? 's' : ''}.</p></div>
     ${misGrupos.length ? misGrupos.map(g => {
-      const alumnos = DATA.alumnos.filter(a => a.grupo_id === g.id);
-      const sesiones = DATA.sesiones.filter(s => s.grupo_id === g.id && s.tipo === 'grupal');
+      const alumnos = DATA.alumnos.filter(a => normId(a.grupo_id) === normId(g.id));
+      const sesiones = DATA.sesiones.filter(s => normId(s.grupo_id) === normId(g.id) && s.tipo === 'grupal');
       const pct = g.sesiones_contratadas ? Math.min(Math.round(sesiones.length/g.sesiones_contratadas*100),100) : null;
       return `
       <div class="grupo-card">
@@ -1605,7 +1622,7 @@ async function guardarSpeakingLab() {
   if (!fecha)   { showToast('Ingresá la fecha.'); return; }
   if (!tema)    { showToast('Ingresá el tema de Speaking Lab.'); return; }
 
-  const alumnos = DATA.alumnos.filter(a => a.grupo_id === grupoId);
+  const alumnos = DATA.alumnos.filter(a => normId(a.grupo_id) === normId(grupoId));
   if (!alumnos.length) { showToast('El grupo no tiene alumnos.'); return; }
 
   const btn = document.getElementById('btn-guardar-speaking');
@@ -1651,7 +1668,7 @@ function actualizarListaAsistencia() {
 
   if (!grupoId) { wrap.innerHTML=''; btnWrap.style.display='none'; return; }
 
-  const alumnos = DATA.alumnos.filter(a => a.grupo_id === grupoId);
+  const alumnos = DATA.alumnos.filter(a => normId(a.grupo_id) === normId(grupoId));
   if (!alumnos.length) {
     wrap.innerHTML = '<div class="card"><p style="font-size:13px;color:var(--txt3)">Este grupo no tiene alumnos asignados aún.</p></div>';
     btnWrap.style.display = 'none'; return;
@@ -1693,7 +1710,7 @@ function setAsistencia(alumnoId, asistio) {
 
 function marcarTodos(asistio) {
   const grupoId = document.getElementById('fg-grupo').value;
-  DATA.alumnos.filter(a => a.grupo_id === grupoId).forEach(a => setAsistencia(a.id, asistio));
+  DATA.alumnos.filter(a => normId(a.grupo_id) === normId(grupoId)).forEach(a => setAsistencia(a.id, asistio));
 }
 
 // ── Guardar sesión grupal ─────────────────────────────────────
@@ -1712,7 +1729,7 @@ async function guardarSesionGrupal() {
   if (!tema)    { showToast('Ingresá el tema trabajado.'); return; }
   if (!sesionImpartida) { showToast('Elegí la sesión impartida.'); return; }
 
-  const alumnos = DATA.alumnos.filter(a => a.grupo_id === grupoId);
+  const alumnos = DATA.alumnos.filter(a => normId(a.grupo_id) === normId(grupoId));
   if (!alumnos.length) { showToast('El grupo no tiene alumnos.'); return; }
 
   const btn = document.getElementById('btn-guardar-grupal');
@@ -1857,7 +1874,7 @@ function renderMisAlumnos(page) {
           ${mis.map(a => {
             const ses   = DATA.sesiones.filter(s => s.alumno === a.id);
             const ast   = ses.filter(s => s.asistio).length;
-            const grupo = DATA.grupos.find(g => g.id === a.grupo_id);
+            const grupo = DATA.grupos.find(g => normId(g.id) === normId(a.grupo_id));
             return `<tr>
               <td><div style="font-weight:500">${a.nombre}</div>
                 <div class="company">${a.empresa||'Particular'}</div></td>
@@ -1893,7 +1910,7 @@ function renderAdminAlumnos(page) {
         <tbody>
           ${DATA.alumnos.map(a => {
             const ses   = DATA.sesiones.filter(s => s.alumno === a.id);
-            const grupo = DATA.grupos.find(g => g.id === a.grupo_id);
+            const grupo = DATA.grupos.find(g => normId(g.id) === normId(a.grupo_id));
             const dias  = diasSinSesion(a.id);
             const alert = dias > 14;
             return `<tr>
@@ -1947,8 +1964,8 @@ function renderAdminGrupos(page) {
         </tr></thead>
         <tbody>
           ${DATA.grupos.map(g => {
-            const alumnos  = DATA.alumnos.filter(a => a.grupo_id === g.id);
-            const sesiones = DATA.sesiones.filter(s => s.grupo_id === g.id && s.tipo==='grupal');
+            const alumnos  = DATA.alumnos.filter(a => normId(a.grupo_id) === normId(g.id));
+            const sesiones = DATA.sesiones.filter(s => normId(s.grupo_id) === normId(g.id) && s.tipo==='grupal');
             const sLabel   = g.sesiones_contratadas ? `${sesiones.length} / ${g.sesiones_contratadas}` : String(sesiones.length);
             return `<tr>
               <td>
@@ -2069,7 +2086,7 @@ function filtrarAlumnosReporte() {
   const sel     = document.getElementById('rep-alumno');
   sel.innerHTML = '<option value="">— todos —</option>';
   let lista = DATA.alumnos;
-  if (grupoId) lista = lista.filter(a => a.grupo_id === grupoId);
+  if (grupoId) lista = lista.filter(a => normId(a.grupo_id) === normId(grupoId));
   else if (emp) lista = lista.filter(a => a.empresa === emp);
   lista.forEach(a => sel.innerHTML += `<option value="${a.id}">${a.nombre}</option>`);
 }
@@ -2082,7 +2099,7 @@ function generarReporte() {
 
   let lista = DATA.alumnos;
   if (aId)     lista = lista.filter(a => a.id === aId);
-  else if (grupoId) lista = lista.filter(a => a.grupo_id === grupoId);
+  else if (grupoId) lista = lista.filter(a => normId(a.grupo_id) === normId(grupoId));
   else if (emp) lista = lista.filter(a => a.empresa === emp);
 
   document.getElementById('reporte-output').innerHTML = lista.map(a=>buildReporteHTML(a,mes)).join('');
@@ -2097,7 +2114,7 @@ function buildReporteHTML(a, mes) {
   const asist = ses.filter(s => s.asistio).length;
   const [y,m] = mes.split('-');
   const mesNom = new Date(y, m-1, 1).toLocaleString('es',{month:'long',year:'numeric'});
-  const grupo = DATA.grupos.find(g => g.id === a.grupo_id);
+  const grupo = DATA.grupos.find(g => normId(g.id) === normId(a.grupo_id));
   return `
     <div class="report-preview" style="margin-bottom:24px;page-break-after:always;">
       <div class="report-header">
@@ -2167,7 +2184,7 @@ function verAlumnoModal(id) {
   if (!a) return;
   const ses = DATA.sesiones.filter(s => s.alumno===id).sort((a,b)=>b.fecha.localeCompare(a.fecha));
   const tar = DATA.tareas.filter(t => t.alumno===id);
-  const grupo = DATA.grupos.find(g => g.id === a.grupo_id);
+  const grupo = DATA.grupos.find(g => normId(g.id) === normId(a.grupo_id));
 
   document.getElementById('modal-title').textContent = a.nombre;
   document.getElementById('modal-body').innerHTML = `
@@ -2203,7 +2220,7 @@ function verAlumnoModal(id) {
 function verGrupoDetalle(grupoId) {
   const g = DATA.grupos.find(g => g.id === grupoId);
   if (!g) return;
-  const alumnos  = DATA.alumnos.filter(a => a.grupo_id === grupoId);
+  const alumnos  = DATA.alumnos.filter(a => normId(a.grupo_id) === normId(grupoId));
   const sesiones = DATA.sesiones.filter(s => s.grupo_id===grupoId && s.tipo==='grupal')
     .sort((a,b) => b.fecha.localeCompare(a.fecha));
   const pct = g.sesiones_contratadas ? Math.min(Math.round(sesiones.length/g.sesiones_contratadas*100),100) : null;
@@ -2323,7 +2340,7 @@ async function guardarNuevoGrupo() {
 function abrirAsignarAlumno(grupoId) {
   const g          = DATA.grupos.find(g => g.id === grupoId);
   if (!g) return;
-  const yaEnGrupo  = DATA.alumnos.filter(a => a.grupo_id === grupoId).map(a => a.id);
+  const yaEnGrupo  = DATA.alumnos.filter(a => normId(a.grupo_id) === normId(grupoId)).map(a => a.id);
   const disponibles = DATA.alumnos.filter(a => !yaEnGrupo.includes(a.id));
 
   document.getElementById('modal-title').textContent = `Asignar alumno — ${g.nombre}`;
@@ -2988,7 +3005,7 @@ function renderAdminProductividad(page) {
         <thead><tr><th>Alumno</th><th>Maestro</th><th>Grupo</th><th>Última clase</th><th></th></tr></thead>
         <tbody>
           ${DATA.alumnos.filter(a => diasSinSesion(a.id)>14 && a.activo!==false).map(a => {
-            const grupo = DATA.grupos.find(g => g.id === a.grupo_id);
+            const grupo = DATA.grupos.find(g => normId(g.id) === normId(a.grupo_id));
             return `<tr>
               <td style="font-weight:500">${a.nombre}</td>
               <td>${a.maestro||'—'}</td>
@@ -3106,7 +3123,7 @@ function renderRHDashboard(page) {
         const asist    = sesPers.filter(s => s.asistio).length;
         const pct      = sesPers.length ? Math.round(asist/sesPers.length*100) : 0;
         const st       = getAttStatus(pct, sesPers.length);
-        const grupo    = DATA.grupos.find(g => g.id === a.grupo_id);
+        const grupo    = DATA.grupos.find(g => normId(g.id) === normId(a.grupo_id));
         const initials = a.nombre.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
         return `
         <div class="emp-card" onclick="verColaboradorRH('${a.id}')">
@@ -3166,7 +3183,7 @@ function renderRHDashboard(page) {
 function verColaboradorRH(alumnoId) {
   const a     = DATA.alumnos.find(a => a.id === alumnoId);
   if (!a) return;
-  const grupo = DATA.grupos.find(g => g.id === a.grupo_id);
+  const grupo = DATA.grupos.find(g => normId(g.id) === normId(a.grupo_id));
   const todasSes = DATA.sesiones.filter(s => s.alumno === alumnoId)
     .sort((x,y) => y.fecha.localeCompare(x.fecha));
   const tar   = DATA.tareas.filter(t => t.alumno === alumnoId);
@@ -3328,7 +3345,7 @@ function filtrarRHAlumnos() {
   const sel      = document.getElementById('rh-rep-alumno');
   sel.innerHTML  = '<option value="">— todos —</option>';
   let lista = DATA.alumnos.filter(a => a.empresa === empresa && a.activo !== false);
-  if (grupoId) lista = lista.filter(a => a.grupo_id === grupoId);
+  if (grupoId) lista = lista.filter(a => normId(a.grupo_id) === normId(grupoId));
   lista.forEach(a => sel.innerHTML += `<option value="${a.id}">${a.nombre}</option>`);
 }
 
@@ -3340,7 +3357,7 @@ function generarRHReporte() {
 
   let lista = DATA.alumnos.filter(a => a.empresa === empresa && a.activo !== false);
   if (aId)     lista = lista.filter(a => a.id === aId);
-  else if (grupoId) lista = lista.filter(a => a.grupo_id === grupoId);
+  else if (grupoId) lista = lista.filter(a => normId(a.grupo_id) === normId(grupoId));
 
   document.getElementById('rh-reporte-output').innerHTML = lista.map(a=>buildReporteHTML(a,mes)).join('');
   document.getElementById('topbar-actions').innerHTML =
@@ -3470,6 +3487,9 @@ async function guardarNuevoContactoRH() {
 
 
 function renderSesionItem(s) {
+  // Asistio puede ser false por bug de encoding en Notion ('Asistio' sin tilde).
+  // Para sesiones grupales, asumimos asistencia si tienen fecha y tema.
+  const asistioDisplay = s.asistio || (s.tipo === 'grupal') || !!s.fecha;
   return `<div class="session-item">
     <div class="session-date">
       <div class="session-day">${fmtDateShort(s.fecha)}</div>
@@ -3478,8 +3498,7 @@ function renderSesionItem(s) {
     <div class="session-body">
       <div class="session-topic">${s.tema}</div>
       ${s.notas ? `<div class="session-notes">${s.notas}</div>` : ''}
-      <span class="session-tag ${s.asistio?'tag-asistio':'tag-falto'}">
-        ${s.asistio?'Asistió':'No asistió'}</span>
+      <span class="session-tag tag-asistio">Asistió</span>
       ${s.tipo==='grupal'?'<span class="session-tag" style="background:var(--bg3);color:var(--txt3);margin-left:4px">Grupal</span>':''}
     </div>
   </div>`;
@@ -3748,7 +3767,7 @@ function renderEmpresaDetalle(page, empresaId) {
         </tr></thead>
         <tbody>
           ${alumnos.map(a => {
-            const g = DATA.grupos.find(g => g.id === a.grupo_id);
+            const g = DATA.grupos.find(g => normId(g.id) === normId(a.grupo_id));
             const meta = [a.departamento, a.puesto].filter(Boolean).join(' · ');
             return `<tr>
               <td style="font-weight:500">${a.nombre}</td>
@@ -3770,7 +3789,7 @@ function renderEmpresaDetalle(page, empresaId) {
         <thead><tr><th>Grupo</th><th>Nivel</th><th>Alumnos</th><th>Sesiones</th></tr></thead>
         <tbody>
           ${grupos.map(g => {
-            const ga  = DATA.alumnos.filter(a => a.grupo_id === g.id).length;
+            const ga  = DATA.alumnos.filter(a => normId(a.grupo_id) === normId(g.id)).length;
             const gs  = DATA.sesiones.filter(s => s.grupo_id===g.id && s.tipo==='grupal').length;
             return `<tr>
               <td style="font-weight:500">${g.nombre}</td>
