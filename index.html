@@ -916,22 +916,26 @@ function showView(id) {
 // ════════════════════════════════════════
 // VISTAS DEL ALUMNO
 // ════════════════════════════════════════
+// Normaliza un ID quitando guiones para comparaciones seguras
+function normId(id) { return id ? String(id).replace(/-/g, '').trim().toLowerCase() : ''; }
+
 // Compara si una sesión pertenece a un alumno:
 // 1. Por campo Alumno = ID del alumno (sesiones individuales nuevas)
 // 2. Por campo Alumno = nombre del alumno (sesiones viejas)
 // 3. Por campo grupo_id = grupo_id del alumno (sesiones grupales — no tienen campo Alumno)
+// 4. Por campo grupo_id incluso si tiene campo Alumno (sesiones grupales con alumno)
 function sesionEsDeAlumno(s, a) {
-  // Match directo por ID
-  if (s.alumno && s.alumno === a.id) return true;
-  // Match por nombre (registros viejos)
+  // Match directo por ID (normalizado para evitar problemas de guiones)
+  if (s.alumno && a.id && normId(s.alumno) === normId(a.id)) return true;
+  // Match por nombre (registros viejos guardados con nombre en vez de ID)
   if (s.alumno && a.nombre && s.alumno.trim().toLowerCase() === a.nombre.trim().toLowerCase()) return true;
-  // Match por grupo — sesiones grupales no tienen campo Alumno
-  if (!s.alumno && s.grupo_id && a.grupo_id && s.grupo_id === a.grupo_id) return true;
+  // Match por grupo — sesiones grupales (con o sin campo Alumno)
+  if (s.grupo_id && a.grupo_id && normId(s.grupo_id) === normId(a.grupo_id)) return true;
   return false;
 }
 function tareaEsDeAlumno(t, a) {
   if (!t.alumno) return false;
-  if (t.alumno === a.id) return true;
+  if (a.id && normId(t.alumno) === normId(a.id)) return true;
   if (a.nombre && t.alumno.trim().toLowerCase() === a.nombre.trim().toLowerCase()) return true;
   return false;
 }
