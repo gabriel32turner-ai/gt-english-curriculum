@@ -916,11 +916,17 @@ function showView(id) {
 // ════════════════════════════════════════
 // VISTAS DEL ALUMNO
 // ════════════════════════════════════════
-// Compara si una sesión/tarea pertenece a un alumno — por ID o por nombre (compatibilidad registros viejos)
+// Compara si una sesión pertenece a un alumno:
+// 1. Por campo Alumno = ID del alumno (sesiones individuales nuevas)
+// 2. Por campo Alumno = nombre del alumno (sesiones viejas)
+// 3. Por campo grupo_id = grupo_id del alumno (sesiones grupales — no tienen campo Alumno)
 function sesionEsDeAlumno(s, a) {
-  if (!s.alumno) return false;
-  if (s.alumno === a.id) return true;
-  if (a.nombre && s.alumno.trim().toLowerCase() === a.nombre.trim().toLowerCase()) return true;
+  // Match directo por ID
+  if (s.alumno && s.alumno === a.id) return true;
+  // Match por nombre (registros viejos)
+  if (s.alumno && a.nombre && s.alumno.trim().toLowerCase() === a.nombre.trim().toLowerCase()) return true;
+  // Match por grupo — sesiones grupales no tienen campo Alumno
+  if (!s.alumno && s.grupo_id && a.grupo_id && s.grupo_id === a.grupo_id) return true;
   return false;
 }
 function tareaEsDeAlumno(t, a) {
