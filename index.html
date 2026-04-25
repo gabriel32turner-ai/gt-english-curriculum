@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Portal GT · v23 — Gabriel Turner English Training</title>
+<title>Portal GT · v25 — Gabriel Turner English Training</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
@@ -438,12 +438,14 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--txt);min-
 
 <script>
 // ════════════════════════════════════════
-// PORTAL GT v24 — 4 ROLES: ALUMNO / MAESTRO / ADMIN / RH EMPRESA
+// PORTAL GT v25 — 4 ROLES: ALUMNO / MAESTRO / ADMIN / RH EMPRESA
 // Restaurado desde v13. Basado en Cloudflare Worker + Notion.
 // v22: Fix 404 sesiones, filtros robustos alumno, max sesion 60
 // v23: Fix código crudo (url_recurso desde Notion, no auto-generar filenames)
 // v24: Fix Mis sesiones / Mi progreso vacíos: matching por grupo_id robusto,
 //      Asistió normalizado, sesiones grupales e individuales siempre visibles
+// v25: Auditoría completa — Fix SESPMOD 10→9, excluir extras de contenidoMap,
+//      filtrar contenido por modulo/sesion >0, title corregido
 // ════════════════════════════════════════
 const WORKER_URL = 'https://gt-portal-worker.gabriel32turner.workers.dev/';
 
@@ -1075,9 +1077,9 @@ function renderMiMaterial(page) {
   const a = currentUser;
 
   // ── Posición curricular del alumno ───────────────────────
-  // 6 módulos × 10 sesiones (5 temas × Parte A + Parte B) = 60 sesiones totales
-  const SESPMOD = 10; // sesiones por módulo
-  const SESMAX  = 60; // total del nivel
+  // 6 módulos × 9 sesiones (4 temas × Parte A+B + S5 Quiz) = 54 sesiones totales
+  const SESPMOD = 9; // sesiones por módulo (S1A=1 S1B=2 S2A=3 S2B=4 S3A=5 S3B=6 S4A=7 S4B=8 S5=9)
+  const SESMAX  = 54; // total del nivel (6×9)
   const sesionTotal    = Math.max(1, Math.min(a.sesion_actual || 1, SESMAX));
   const moduloActual   = Math.ceil(sesionTotal / SESPMOD);
   const sesEnModActual = ((sesionTotal - 1) % SESPMOD) + 1;
@@ -1092,12 +1094,13 @@ function renderMiMaterial(page) {
     return 0;
   });
 
-  // ── Construir línea completa de sesiones (todas, 1-60) ───
+  // ── Construir línea completa de sesiones (todas, 1-54) ───
   // Agrupa contenido de Notion por modulo+sesion para acceso rápido
-  // contenidoMap: clave = "modulo-sesion" donde sesion va del 1 al 10
-  // S1A=1, S1B=2, S2A=3, S2B=4, S3A=5, S3B=6, S4A=7, S4B=8, S5A=9, S5B=10
+  // contenidoMap: clave = "modulo-sesion" donde sesion va del 1 al 9
+  // S1A=1, S1B=2, S2A=3, S2B=4, S3A=5, S3B=6, S4A=7, S4B=8, S5=9
   const contenidoMap = {};
-  DATA.contenido.filter(ct => ct.activo !== false && ct.nivel === a.nivel_actual).forEach(ct => {
+  DATA.contenido.filter(ct => ct.activo !== false && ct.nivel === a.nivel_actual
+    && ct.modulo && ct.modulo > 0 && ct.sesion && ct.sesion > 0).forEach(ct => {
     const key = `${ct.modulo}-${ct.sesion}`;
     if (!contenidoMap[key]) contenidoMap[key] = ct;
   });
@@ -1109,7 +1112,7 @@ function renderMiMaterial(page) {
   page.innerHTML = `
     <div class="ph">
       <h2>Mi material</h2>
-      <p>${a.nivel_actual} · Módulo ${moduloActual} de 6 · Sesión ${sesEnModActual} de 10</p>
+      <p>${a.nivel_actual} · Módulo ${moduloActual} de 6 · Sesión ${sesEnModActual} de ${SESPMOD}</p>
     </div>
 
     <!-- ── Progreso del nivel ── -->
@@ -1117,7 +1120,7 @@ function renderMiMaterial(page) {
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
         <div>
           <div style="font-size:13px;font-weight:500">Progreso en ${a.nivel_actual}</div>
-          <div style="font-size:11px;color:var(--txt3);margin-top:2px">${sesCompletadas} de 60 sesiones completadas</div>
+          <div style="font-size:11px;color:var(--txt3);margin-top:2px">${sesCompletadas} de ${SESMAX} sesiones completadas</div>
         </div>
         <span class="level ${LEVEL_CLASS[a.nivel_actual]||'level-a1'}">${a.nivel_actual}</span>
       </div>
@@ -1135,7 +1138,7 @@ function renderMiMaterial(page) {
             <div style="height:4px;border-radius:2px;background:var(--bg3);overflow:hidden">
               <div style="height:100%;width:${pct}%;background:${activo?'var(--mag)':hecho?'var(--green)':'transparent'};border-radius:2px;"></div>
             </div>
-            <div style="font-size:9px;color:var(--txt3);margin-top:3px">${hecho?'✓':activo?sesEnModActual+'/5':'—'}</div>
+            <div style="font-size:9px;color:var(--txt3);margin-top:3px">${hecho?'✓':activo?sesEnModActual+'/'+SESPMOD:'—'}</div>
           </div>`;
         }).join('')}
       </div>
@@ -1171,7 +1174,7 @@ function renderMiMaterial(page) {
       Historial de sesiones
     </div>
     <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:24px">
-      ${Array.from({length:60}, (_,i) => {
+      ${Array.from({length:SESMAX}, (_,i) => {
         const n        = i + 1;
         const mod      = Math.ceil(n / SESPMOD);
         const sesInMod = ((n - 1) % SESPMOD) + 1;
@@ -1216,12 +1219,13 @@ function renderMiMaterial(page) {
     <div style="font-size:10px;font-weight:500;color:var(--txt3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px">
       Módulo ${moduloActual} — progreso
     </div>
-    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(50px,1fr));gap:8px">
       ${Array.from({length:SESPMOD},(_,i)=>{
         const s    = i + 1;
         const hech = s < sesEnModActual;
         const curr = s === sesEnModActual;
-        const tema = s % 2 === 1 ? 'S'+ Math.ceil(s/2) +'A' : 'S'+ Math.ceil(s/2) +'B';
+        // S1A=1, S1B=2, S2A=3, S2B=4, S3A=5, S3B=6, S4A=7, S4B=8, S5=9
+        const tema = s === 9 ? 'S5' : (s % 2 === 1 ? 'S'+ Math.ceil(s/2) +'A' : 'S'+ Math.ceil(s/2) +'B');
         return `
         <div style="border-radius:var(--rs);padding:10px 6px;text-align:center;
           border:1px solid ${curr?'var(--mag)':hech?'var(--green)':'var(--border)'};
@@ -1361,7 +1365,8 @@ function renderMisGrupos(page) {
 // contener expresiones ${} directamente — se resuelve como llamada de función.
 function buildContenidoOptions(nivelFiltro) {
   return DATA.contenido
-    .filter(ct => ct.activo !== false && (!nivelFiltro || ct.nivel === nivelFiltro))
+    .filter(ct => ct.activo !== false && (!nivelFiltro || ct.nivel === nivelFiltro)
+      && ct.modulo && ct.modulo > 0 && ct.sesion && ct.sesion > 0)
     .sort((a, b) => {
       // Ordenar por nivel → módulo → sesión
       const lvlA = String(a.nivel||''), lvlB = String(b.nivel||'');
@@ -1373,10 +1378,10 @@ function buildContenidoOptions(nivelFiltro) {
     .map(ct => {
       // value = número global de sesión para que guardarSesionGrupal pueda
       // calcular el avance de sesion_actual correctamente.
-      // El número global = (módulo-1)*10 + sesión_en_módulo
+      // El número global = (módulo-1)*9 + sesión_en_módulo
       const mod = Number(ct.modulo||1);
       const ses = Number(ct.sesion||1);
-      const global = (mod - 1) * 10 + ses;
+      const global = (mod - 1) * 9 + ses;
       const label = [ct.nivel, `M${mod}`, ct.titulo || `Sesión ${ses}`].join(' · ');
       return `<option value="${global}" data-nivel="${ct.nivel||''}" data-modulo="${mod}" data-sesion="${ses}">${label}</option>`;
     })
@@ -1647,7 +1652,7 @@ async function guardarSpeakingLab() {
     // Avanzar sesion_actual — speaking LAB AHORA CUENTA COMO AVANCE
     const alumnoRef = DATA.alumnos.find(x => x.id === a.id);
     if (alumnoRef) {
-      const nuevaSesion = Math.min((alumnoRef.sesion_actual || 1) + 1, 60);
+      const nuevaSesion = Math.min((alumnoRef.sesion_actual || 1) + 1, 54);
       await saveToNotion({ action:'updateAlumno', id:a.id, updates:{ sesion_actual: nuevaSesion } });
       alumnoRef.sesion_actual = nuevaSesion;
     }
@@ -1764,7 +1769,7 @@ async function guardarSesionGrupal() {
 
     // Avanzar sesion_actual si asistió — se establece en la sesión impartida + 1
     if (asistio) {
-      const nuevaSesion = Math.min(sesionImpartida + 1, 60);
+      const nuevaSesion = Math.min(sesionImpartida + 1, 54);
       await saveToNotion({ action:'updateAlumno', id:a.id, updates:{ sesion_actual: nuevaSesion } });
       const alumnoRef = DATA.alumnos.find(x => x.id === a.id);
       if (alumnoRef) alumnoRef.sesion_actual = nuevaSesion;
@@ -1826,7 +1831,7 @@ async function guardarSesionIndividual() {
   // Actualizar sesion_actual en memoria para que el filtro de contenido sea inmediato
   // Avanzar sesion_actual si asistió — se guarda en Notion
   if (asistio && alumnoRef) {
-    const nuevaSesionI = Math.min(sesionImpartidaI + 1, 60);
+    const nuevaSesionI = Math.min(sesionImpartidaI + 1, 54);
     await saveToNotion({ action:'updateAlumno', id:alumnoId, updates:{ sesion_actual: nuevaSesionI } });
     alumnoRef.sesion_actual = nuevaSesionI;
   }
@@ -4147,7 +4152,7 @@ function abrirAgente(id) {
 }
 
 // ════════════════════════════════════════
-// FIN PORTAL GT v19
+// FIN PORTAL GT v25
 // ════════════════════════════════════════
 
 </script>
