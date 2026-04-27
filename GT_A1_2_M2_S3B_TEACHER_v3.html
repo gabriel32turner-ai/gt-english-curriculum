@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GT · A1.2 · M2 · S3B — Stock Check: Application &amp; Mastery</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#080808;--s1:#111111;--s2:#181818;--bd:rgba(255,255,255,0.07);
+  --ac:#8B5CF6;--ac2:#A78BFA;--cyan:#00CFFF;--gold:#FFB800;
+  --green:#00E676;--red:#FF1F5C;--txt:#E2E2E2;--mt:rgba(226,226,226,0.48);--dim:rgba(226,226,226,0.25);
+}
+*{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif;font-size:14px;line-height:1.65}
+.prog{height:3px;background:var(--ac);position:fixed;top:0;left:0;z-index:300;width:0;transition:width .1s;box-shadow:0 0 10px rgba(139,92,246,.6)}
+.hdr{background:var(--s1);border-bottom:1px solid var(--bd);padding:16px 32px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:200;backdrop-filter:blur(10px)}
+.brand{display:flex;align-items:center;gap:10px}
+.dot{width:7px;height:7px;background:var(--ac);border-radius:50%;animation:glow 2s ease-in-out infinite}
+@keyframes glow{0%,100%{box-shadow:0 0 4px var(--ac)}50%{box-shadow:0 0 14px var(--ac),0 0 22px rgba(139,92,246,.4)}}
+.bname{font-family:'Syne',sans-serif;font-weight:800;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:#fff}
+.bsub{font-size:10px;color:var(--dim)}
+.hdr-r{display:flex;align-items:center;gap:10px}
+.badge{border:1px solid var(--ac);color:var(--ac);padding:4px 10px;font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase}
+.sbadge{background:rgba(139,92,246,.12);color:var(--ac2);padding:4px 10px;font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase}
+.mode-btn{background:transparent;border:1px solid rgba(255,255,255,.15);color:var(--mt);padding:5px 14px;font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;transition:all .2s;touch-action:manipulation}
+.mode-btn:hover{border-color:var(--ac);color:var(--ac)}
+body.student-mode .mode-btn{background:rgba(139,92,246,.1);border-color:var(--ac);color:var(--ac)}
+body.student-mode .teacher-only{display:none!important}
+body.student-mode .sec-time{display:none}
+/* MASTERY BANNER */
+.mastery-banner{background:rgba(139,92,246,.07);border-bottom:1px solid rgba(139,92,246,.22);padding:7px 32px;font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--ac2);text-align:center}
+/* SECTION BANNERS */
+.sec-banner{width:100%;height:96px;position:relative;overflow:hidden;margin-bottom:22px;border:1px solid var(--bd)}
+.sec-banner img{width:100%;height:100%;object-fit:cover;filter:brightness(.28) saturate(.65);display:block}
+.sec-banner-overlay{position:absolute;inset:0;background:linear-gradient(90deg,rgba(8,8,8,.88) 0%,transparent 65%);display:flex;align-items:center;padding:0 24px;gap:14px}
+.sbo-icon{font-size:26px;flex-shrink:0}
+.sbo-text .sbo-lbl{font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--ac);margin-bottom:3px}
+.sbo-text .sbo-title{font-family:'Syne',sans-serif;font-size:14px;font-weight:800;color:#fff;line-height:1.3}
+.sbo-badge{background:var(--ac);color:#fff;font-family:'Syne',sans-serif;font-size:8px;font-weight:800;letter-spacing:2px;padding:3px 10px;text-transform:uppercase;margin-left:auto;flex-shrink:0}
+/* HERO */
+.hero{padding:52px 32px 40px;border-bottom:1px solid var(--bd);max-width:960px;margin:0 auto;background:linear-gradient(135deg,rgba(8,8,8,.96) 0%,rgba(8,8,8,.68) 100%),url('https://images.unsplash.com/photo-1553413077-190dd305871c?w=1600&q=80&fit=crop') center/cover no-repeat;position:relative;overflow:hidden}
+.hero-ghost{position:absolute;right:-10px;bottom:-30px;font-family:'Syne',sans-serif;font-size:200px;font-weight:800;color:rgba(139,92,246,0.04);line-height:1;pointer-events:none;user-select:none}
+.h-meta{font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--ac);margin-bottom:12px}
+.h-title{font-family:'Syne',sans-serif;font-size:52px;font-weight:800;line-height:.92;color:#fff;margin-bottom:16px}
+.h-title em{color:var(--ac);font-style:normal}
+.h-sub{font-size:14px;color:var(--mt);max-width:500px;line-height:1.65;margin-bottom:24px}
+.h-chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{background:var(--s1);border:1px solid var(--bd);padding:5px 12px;font-size:11px;color:var(--mt)}.chip strong{color:var(--txt)}
+/* NAV */
+.snav{background:var(--s1);border-bottom:1px solid var(--bd);padding:0 32px;display:flex;overflow-x:auto;position:sticky;top:57px;z-index:190;scrollbar-width:none}
+.snav::-webkit-scrollbar{display:none}
+.sni{padding:13px 16px;font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--dim);text-decoration:none;border-bottom:2px solid transparent;transition:all .18s;white-space:nowrap}
+.sni:hover{color:var(--txt);border-bottom-color:rgba(139,92,246,.35)}.sni.active{color:var(--ac);border-bottom-color:var(--ac)}
+/* SECTIONS */
+.sec-outer{border-bottom:1px solid var(--bd)}
+.sec{padding:44px 32px;max-width:960px;margin:0 auto}
+.sec-hd{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:24px}
+.sec-lbl{font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--ac);margin-bottom:5px}
+.sec-title{font-family:'Syne',sans-serif;font-size:24px;font-weight:800;color:#fff}
+.sec-title em{color:var(--ac);font-style:normal}
+.sec-time{border:1px solid rgba(139,92,246,.25);color:var(--ac);padding:4px 10px;font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;white-space:nowrap}
+/* PICTURE PROMPT */
+.pic-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
+.pic-card{position:relative;height:205px;cursor:pointer;overflow:hidden;border:2px solid transparent;transition:all .25s;touch-action:manipulation}
+.pic-card:hover{border-color:rgba(139,92,246,.45);transform:translateY(-2px)}
+.pic-card.picked{border-color:var(--ac);box-shadow:0 0 24px rgba(139,92,246,.2)}
+.pic-card img{width:100%;height:100%;object-fit:cover;opacity:.65;transition:opacity .2s}
+.pic-card:hover img,.pic-card.picked img{opacity:.88}
+.pic-num{position:absolute;top:8px;left:10px;background:var(--ac);color:#fff;font-family:'Syne',sans-serif;font-size:9px;font-weight:800;padding:3px 9px;letter-spacing:1px;text-transform:uppercase}
+.pic-label{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(8,8,8,.9));padding:12px 14px;font-size:12px;color:#fff;font-family:'Syne',sans-serif;font-weight:700}
+.pic-picked-badge{position:absolute;top:8px;right:10px;background:var(--ac);color:#fff;font-family:'Syne',sans-serif;font-size:8px;font-weight:800;padding:2px 8px;display:none;letter-spacing:1px}
+.pic-card.picked .pic-picked-badge{display:block}
+.pic-q{background:var(--s1);border:1px solid rgba(139,92,246,.2);border-left:4px solid var(--ac);padding:14px 20px;font-size:13px;color:var(--txt);line-height:1.7;margin-bottom:14px}
+.pic-q strong{color:var(--ac2)}
+/* RECAP FLIP CARDS */
+.recap-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:18px}
+.rc{height:155px;perspective:700px;cursor:pointer;touch-action:manipulation}
+.rc-inner{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform .5s cubic-bezier(.4,0,.2,1)}
+.rc.on .rc-inner{transform:rotateY(180deg)}
+.rc-f,.rc-b{position:absolute;width:100%;height:100%;backface-visibility:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:12px;text-align:center}
+.rc-f{background:var(--s1);border:1px solid var(--bd);transition:border-color .2s}
+.rc:hover .rc-f{border-color:rgba(139,92,246,.35)}
+.rc-f-num{font-family:'Syne',sans-serif;font-size:26px;font-weight:800;color:rgba(139,92,246,.15);line-height:1;margin-bottom:8px}
+.rc-f-lbl{font-family:'Syne',sans-serif;font-size:11px;font-weight:700;color:#fff;line-height:1.3}
+.rc-f-hint{font-size:9px;color:var(--dim);margin-top:8px;letter-spacing:1px;text-transform:uppercase;font-family:'Syne',sans-serif}
+.rc-b{background:rgba(139,92,246,.07);border:1px solid rgba(139,92,246,.28);transform:rotateY(180deg)}
+.rc-b-ans{font-family:'Syne',sans-serif;font-size:11px;font-weight:800;color:var(--ac);line-height:1.5;margin-bottom:6px}
+.rc-b-ex{font-size:10px;color:var(--mt);font-style:italic;line-height:1.4}
+/* WORDWALL */
+.ww-wrap{background:var(--s1);border:1px solid rgba(139,92,246,.2);padding:22px 26px;margin-bottom:14px}
+.ww-lbl{font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--ac);margin-bottom:6px}
+.ww-title{font-family:'Syne',sans-serif;font-size:14px;font-weight:800;color:#fff;margin-bottom:14px}
+.ww-placeholder{background:var(--bg);border:1px dashed rgba(139,92,246,.25);padding:20px;text-align:center;font-size:12px;color:var(--dim);line-height:1.8;margin-bottom:10px}
+.ww-inst{font-size:11.5px;color:var(--mt);line-height:1.7}
+/* GRAMMAR RELAY GAME */
+.relay-wrap{background:var(--s1);border:1px solid rgba(0,207,255,.2);padding:22px 26px;margin-bottom:14px;margin-top:10px}
+.relay-lbl{font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--cyan);margin-bottom:8px}
+.relay-title{font-family:'Syne',sans-serif;font-size:15px;font-weight:800;color:#fff;margin-bottom:12px}
+.relay-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+.relay-card{background:var(--s2);border:1px solid var(--bd);padding:14px 12px;cursor:pointer;touch-action:manipulation;transition:all .2s;text-align:center;min-height:110px;display:flex;flex-direction:column;justify-content:center;position:relative;overflow:hidden}
+.relay-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,transparent 60%,rgba(139,92,246,.06));opacity:0;transition:opacity .2s}
+.relay-card:hover::before{opacity:1}
+.relay-card:hover{border-color:rgba(139,92,246,.4);transform:translateY(-2px)}
+.relay-card.revealed{border-color:var(--ac);background:rgba(139,92,246,.07)}
+.relay-card.revealed .relay-q{display:none}.relay-card.revealed .relay-a{display:block}
+.relay-cat{font-size:8px;color:var(--ac);font-family:'Syne',sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:6px;background:rgba(139,92,246,.12);padding:2px 8px;display:inline-block}
+.relay-q{font-size:12.5px;font-weight:700;color:#fff;font-family:'Syne',sans-serif;line-height:1.35;margin-top:4px}
+.relay-a{display:none;font-size:11px;color:var(--ac2);line-height:1.55}
+/* DIALOGUE BUILDER */
+.dlg-wrap{background:var(--s1);border:1px solid var(--bd);padding:24px 28px;margin-bottom:14px}
+.dlg-lbl{font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--ac);margin-bottom:14px}
+.dlg-title{font-family:'Syne',sans-serif;font-size:16px;font-weight:800;color:#fff;margin-bottom:10px}
+.dlg-ctx{font-size:13px;color:var(--mt);line-height:1.7;margin-bottom:18px;padding:12px 16px;background:rgba(139,92,246,.04);border-left:3px solid rgba(139,92,246,.3)}
+.dlg-lines{display:flex;flex-direction:column;gap:14px}
+.dlg-line{display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:flex-start}
+.dlg-speaker{font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:4px 10px;flex-shrink:0;margin-top:2px}
+.dlg-speaker.a{background:rgba(0,207,255,.1);color:var(--cyan);border:1px solid rgba(0,207,255,.25)}
+.dlg-speaker.b{background:rgba(139,92,246,.12);color:var(--ac2);border:1px solid rgba(139,92,246,.28)}
+.dlg-text{font-size:13px;color:var(--txt);line-height:1.65}
+.dlg-text .blank{display:inline-block;background:rgba(139,92,246,.1);border-bottom:2px solid var(--ac);min-width:80px;color:var(--ac2);padding:0 6px;font-weight:700;cursor:pointer;transition:background .15s;touch-action:manipulation}
+.dlg-text .blank:hover{background:rgba(139,92,246,.2)}
+.dlg-text .blank.filled{background:rgba(0,230,118,.08);border-color:var(--green);color:var(--green)}
+.dlg-text .blank.filled-wrong{background:rgba(255,31,92,.08);border-color:var(--red);color:rgba(255,100,100,.9)}
+.dlg-word-bank{display:flex;flex-wrap:wrap;gap:8px;padding:16px 20px;background:rgba(255,184,0,.04);border:1px solid rgba(255,184,0,.16);margin-top:14px}
+.dlg-word-lbl{font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);width:100%;margin-bottom:6px}
+.dlg-word{background:var(--s2);border:1px solid var(--bd);color:var(--txt);padding:6px 14px;font-size:13px;cursor:pointer;transition:all .15s;touch-action:manipulation;font-family:'DM Sans',sans-serif}
+.dlg-word:hover{border-color:rgba(139,92,246,.4);color:var(--ac2)}
+.dlg-word.used{opacity:.35;cursor:not-allowed;text-decoration:line-through}
+.dlg-check-btn{background:var(--ac);border:none;color:#fff;padding:9px 22px;font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;touch-action:manipulation;margin-top:14px;transition:all .2s}
+.dlg-check-btn:hover{background:var(--ac2)}
+.dlg-feedback{display:none;padding:10px 14px;font-size:12.5px;margin-top:8px;line-height:1.6}
+.dlg-feedback.show{display:block}
+.dlg-feedback.ok{background:rgba(0,230,118,.08);border:1px solid rgba(0,230,118,.3);color:var(--green)}
+.dlg-feedback.partial{background:rgba(255,184,0,.06);border:1px solid rgba(255,184,0,.25);color:var(--gold)}
+/* ROLE PLAY */
+.rp-hero{width:100%;height:130px;position:relative;overflow:hidden;margin-bottom:18px;border:1px solid var(--bd)}
+.rp-hero img{width:100%;height:100%;object-fit:cover;filter:brightness(.28) saturate(.6);display:block}
+.rp-hero-overlay{position:absolute;inset:0;display:flex;align-items:flex-end;padding:18px 24px;background:linear-gradient(transparent,rgba(8,8,8,.92))}
+.rp-hero-lbl{font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--ac);margin-bottom:4px}
+.rp-hero-title{font-family:'Syne',sans-serif;font-size:17px;font-weight:800;color:#fff}
+.rp-ctx{font-size:13px;color:var(--mt);line-height:1.75;margin-bottom:18px;padding:14px 18px;background:rgba(139,92,246,.04);border-left:3px solid rgba(139,92,246,.3)}
+.rp-cards{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
+.rp-card{background:var(--s2);border:1px solid var(--bd);overflow:hidden}
+.rp-card-img{width:100%;height:85px;object-fit:cover;opacity:.38;display:block;filter:saturate(.55)}
+.rp-card-body{padding:14px 16px}
+.rp-card-lbl{font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--dim);margin-bottom:9px}
+.rp-card-lbl.buyer{color:var(--ac)}.rp-card-lbl.sup{color:rgba(0,207,255,.7)}
+.rp-line{font-size:12.5px;color:var(--txt);padding:6px 0;border-bottom:1px solid rgba(255,255,255,.04);line-height:1.55}
+.rp-line:last-child{border-bottom:none}
+.rp-line strong{color:var(--ac2)}.rp-line em{color:var(--gold);font-style:normal}
+.rp-scripts{display:flex;flex-direction:column;gap:8px;margin-top:14px}
+.rp-script-item{background:var(--bg);border:1px solid rgba(139,92,246,.15);padding:10px 14px;display:flex;align-items:flex-start;gap:10px;font-size:12.5px;color:var(--mt);line-height:1.55}
+.rp-script-icon{font-size:16px;flex-shrink:0}
+.rp-challenge{background:rgba(255,184,0,.04);border:1px solid rgba(255,184,0,.2);padding:16px 20px;margin-top:14px}
+.rp-ch-lbl{font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:8px}
+.rp-ch-p{font-size:13px;color:var(--mt);line-height:1.65}
+/* FCW */
+.fcw-wrap{background:var(--s1);border:1px solid rgba(139,92,246,.18);padding:22px 26px;margin-bottom:14px}
+.fcw-hd{font-family:'Syne',sans-serif;font-size:11px;font-weight:800;color:#fff;margin-bottom:4px}
+.fcw-sub{font-size:12px;color:var(--mt);margin-bottom:18px}
+.fcw-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+.fcw{height:140px;perspective:700px;cursor:pointer;touch-action:manipulation}
+.fcw-inner{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform .5s cubic-bezier(.4,0,.2,1)}
+.fcw.on .fcw-inner{transform:rotateY(180deg)}
+.fcw-f,.fcw-b{position:absolute;width:100%;height:100%;backface-visibility:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:12px;text-align:center}
+.fcw-f{background:var(--s2);border:1px solid var(--bd);transition:border-color .2s}
+.fcw:hover .fcw-f{border-color:rgba(139,92,246,.35)}
+.fcw-f-word{font-family:'Syne',sans-serif;font-size:12px;font-weight:800;color:#fff;line-height:1.3;margin-bottom:8px}
+.fcw-f-hint{font-size:9px;color:var(--dim);letter-spacing:1px;text-transform:uppercase;font-family:'Syne',sans-serif}
+.fcw-b{background:rgba(139,92,246,.07);border:1px solid rgba(139,92,246,.25);transform:rotateY(180deg)}
+.fcw-b-def{font-family:'Syne',sans-serif;font-size:12px;font-weight:800;color:var(--ac);margin-bottom:6px;line-height:1.3}
+.fcw-b-ex{font-size:10px;color:var(--mt);font-style:italic;line-height:1.45}
+/* SPEAKING */
+.sp-wrap{background:rgba(139,92,246,.03);border:1px solid rgba(139,92,246,.18);padding:26px 28px;margin-bottom:2px}
+.sp-lbl{font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--ac2);margin-bottom:4px}
+.sp-title{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:#fff;margin-bottom:6px}
+.sp-sub{font-size:12px;color:var(--mt);margin-bottom:22px;line-height:1.6}
+.sp-q-list{display:flex;flex-direction:column;gap:10px;margin-bottom:20px}
+.sp-q{background:var(--s1);border:1px solid rgba(139,92,246,.15);padding:14px 18px}
+.sp-q-num{font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--ac);margin-bottom:5px}
+.sp-q-text{font-size:13.5px;color:#fff;line-height:1.6;margin-bottom:6px}
+.sp-q-hint{font-size:11.5px;color:rgba(139,92,246,.55);font-style:italic}
+.sp-challenge{background:rgba(255,184,0,.04);border:1px solid rgba(255,184,0,.2);padding:16px 20px;margin-top:4px}
+.sp-ch-lbl{font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:8px}
+.sp-ch-prompt{font-size:14px;color:#fff;font-style:italic;line-height:1.55;margin-bottom:8px}
+.sp-ch-guide{font-size:12px;color:var(--mt);line-height:1.65}
+/* WRAP-UP */
+.wu2-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px;margin-bottom:2px}
+.wu2-card{background:var(--s1);padding:22px 26px;border:1px solid var(--bd)}
+.wu2-h{font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--ac);margin-bottom:14px}
+.checklist{list-style:none;display:flex;flex-direction:column;gap:8px}
+.checklist li{display:flex;align-items:flex-start;gap:10px;font-size:13px;color:var(--mt);cursor:pointer;padding:3px 0;touch-action:manipulation;transition:color .15s}
+.checklist li:hover{color:var(--txt)}.checklist li.done{color:var(--green)}
+.cb{width:16px;height:16px;border:1px solid var(--bd);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--green);margin-top:2px;transition:all .2s}
+.checklist li.done .cb{background:var(--green);color:#000;border-color:var(--green)}
+.next-box{background:rgba(139,92,246,.04);border:1px solid rgba(139,92,246,.18);padding:18px 24px;margin-top:2px}
+.next-lbl{font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--ac);margin-bottom:6px}
+.next-txt{font-size:13px;color:var(--mt);line-height:1.7}
+/* ACTS */
+.act{background:var(--bg);border:1px solid rgba(255,184,0,.2);padding:22px 26px;margin-top:2px}
+.act-lbl{font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold);margin-bottom:4px}
+.act-inst{font-size:12px;color:var(--mt);margin-bottom:14px;margin-top:4px;line-height:1.6}
+.q-row{margin-bottom:13px;padding-bottom:13px;border-bottom:1px solid var(--bd)}
+.q-row:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
+.q-text{font-size:13px;color:var(--txt);margin-bottom:9px;line-height:1.5}.q-text strong{color:var(--gold)}
+.opts{display:flex;gap:6px;flex-wrap:wrap}
+.opt{background:var(--s2);border:1px solid var(--bd);color:var(--txt);padding:6px 14px;font-family:'DM Sans',sans-serif;font-size:12.5px;cursor:pointer;transition:all .15s;touch-action:manipulation}
+.opt:hover:not([disabled]){border-color:rgba(139,92,246,.45);color:var(--ac2)}
+.opt.correct{background:rgba(0,230,118,.1);border-color:var(--green);color:var(--green)}
+.opt.wrong{background:rgba(255,31,92,.08);border-color:var(--red);color:rgba(255,100,100,.9)}
+/* TN */
+.tn{margin-top:14px}
+.tn-toggle{background:rgba(139,92,246,.06);border:1px solid rgba(139,92,246,.18);color:var(--ac2);padding:8px 16px;font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;gap:8px;width:100%;touch-action:manipulation;transition:all .2s}
+.tn-toggle:hover{background:rgba(139,92,246,.1)}
+.tn-arrow{margin-left:auto;transition:transform .2s}
+.tn-toggle.open .tn-arrow{transform:rotate(180deg)}
+.tn-body{display:none;border:1px solid rgba(139,92,246,.18);border-top:none;padding:18px 20px;flex-direction:column;gap:10px}
+.tn-body.open{display:flex}
+.tn-capa{padding:14px 18px;border:1px solid rgba(255,255,255,.05)}
+.tn-cl{font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px}
+.tn-c1 .tn-cl{color:var(--cyan)}.tn-c2 .tn-cl{color:#FF9BE2}.tn-c3 .tn-cl{color:var(--gold)}
+.tn-txt ul{padding-left:18px;display:flex;flex-direction:column;gap:7px}
+.tn-txt ul li{font-size:12.5px;color:var(--mt);line-height:1.7}
+.tn-txt ul li strong{color:var(--txt)}
+.ftr{background:var(--s1);border-top:1px solid var(--bd);padding:18px 32px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+.fb-f{font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--dim)}
+</style>
+</head>
+<body ontouchstart="">
+<div class="prog" id="prog"></div>
+
+<header class="hdr">
+  <div class="brand"><div class="dot"></div><div><div class="bname">Gabriel Turner · English Training</div><div class="bsub">A1.2 · Module 2 · Session 3B</div></div></div>
+  <div class="hdr-r"><span class="badge">A1.2</span><span class="sbadge">Application &amp; Mastery</span><button class="mode-btn" id="modeBtn" onclick="toggleMode()">👁 Student Mode</button></div>
+</header>
+
+<div class="mastery-banner">🏆 Session 3B · Application &amp; Mastery · Is There Any Stock? — Sin grammar nueva. some / any / How much / How many en conversación real.</div>
+
+<div style="border-bottom:1px solid var(--bd)">
+<div class="hero">
+  <div class="hero-ghost">✓</div>
+  <div class="h-meta">A1.2 · Module 2 · Session 3B · Application &amp; Mastery</div>
+  <div class="h-title">Stock Check<br><em>In Action</em></div>
+  <div class="h-sub">Wordwall vocab race, grammar relay game, fill-in dialogue, procurement role play. No new grammar — some / any / How much / How many in real workplace conversations.</div>
+  <div class="h-chips">
+    <div class="chip"><strong>No new grammar</strong> · Full application</div>
+    <div class="chip"><strong>60–65 min</strong> · A1.2 pace</div>
+    <div class="chip"><strong>Game + Dialogue + Role Play</strong></div>
+    <div class="chip"><strong>some / any / How much / How many</strong></div>
+  </div>
+</div>
+</div>
+
+<nav class="snav">
+  <a class="sni active" href="#s1">§1 Warm-Up</a>
+  <a class="sni" href="#s2">§2 Recap</a>
+  <a class="sni" href="#s3">§3 Game</a>
+  <a class="sni" href="#s4">§4 Dialogue</a>
+  <a class="sni" href="#s5">§5 Role Play</a>
+  <a class="sni" href="#s6">§6 Speaking</a>
+  <a class="sni" href="#s7">§7 Wrap-Up</a>
+</nav>
+
+<!-- ═══ §1 WARM-UP — PICTURE PROMPT ═══ -->
+<div class="sec-outer" id="s1"><section class="sec">
+  <div class="sec-hd"><div><div class="sec-lbl">§ 01</div><div class="sec-title">Warm-Up — <em>Picture Prompt: What's the Situation?</em></div></div><div class="sec-time teacher-only">5–7 min</div></div>
+
+  <div class="sec-banner">
+    <img src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=900&q=80&fit=crop" alt="warehouse stock inventory shelves">
+    <div class="sec-banner-overlay"><div class="sbo-icon">🖼</div><div class="sbo-text"><div class="sbo-lbl">Warm-Up</div><div class="sbo-title">Picture Prompt — What's the stock situation?</div></div><div class="sbo-badge">5–7 MIN</div></div>
+  </div>
+
+  <p style="font-size:13px;color:var(--mt);margin-bottom:16px;line-height:1.65"><strong style="color:var(--txt)">Choose one image.</strong> Say 2–3 sentences about the stock situation in the picture. Use: <em>some / any / How much / How many</em>. No preparation — just try!</p>
+
+  <div class="pic-grid">
+    <div class="pic-card" onclick="pickPic(this)">
+      <img src="https://images.unsplash.com/photo-1553413077-190dd305871c?w=600&q=80&fit=crop" alt="warehouse shelves full of boxes">
+      <div class="pic-num">Photo 1</div><div class="pic-label">Full Warehouse</div><div class="pic-picked-badge">SELECTED ✓</div>
+    </div>
+    <div class="pic-card" onclick="pickPic(this)">
+      <img src="https://images.unsplash.com/photo-1600880292089-90a7e086ee0c?w=600&q=80&fit=crop" alt="office empty shelves out of stock">
+      <div class="pic-num">Photo 2</div><div class="pic-label">Empty Shelves</div><div class="pic-picked-badge">SELECTED ✓</div>
+    </div>
+    <div class="pic-card" onclick="pickPic(this)">
+      <img src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=600&q=80&fit=crop" alt="procurement manager checking inventory laptop">
+      <div class="pic-num">Photo 3</div><div class="pic-label">Stock Check Call</div><div class="pic-picked-badge">SELECTED ✓</div>
+    </div>
+  </div>
+
+  <div class="pic-q">👉 <strong>Say 2–3 sentences about your photo.</strong> Photo 1: "There are some boxes in the warehouse. How many boxes are there?" · Photo 2: "There isn't any stock. We need some…" · Photo 3: "She is asking: Is there any…? How much…?"</div>
+
+  <div style="background:rgba(255,184,0,.04);border:1px solid rgba(255,184,0,.14);padding:14px 20px;font-size:12.5px;color:var(--mt);margin-top:10px;line-height:1.65">
+    <strong style="color:var(--gold)">A1.2 S3B rule:</strong> No preparation time. First sentence in 10 seconds. This is application — not study. Scaffolding hints are visible but the student should try without reading them first.
+  </div>
+
+  <div class="tn teacher-only"><button class="tn-toggle" onclick="toggleTN(this)">📋 Teacher Notes — §1 Warm-Up <span class="tn-arrow">▼</span></button><div class="tn-body">
+    <div class="tn-capa tn-c1"><div class="tn-cl">Capa 1 · Pedagogical</div><div class="tn-txt"><ul>
+      <li><strong>ACCIÓN: Señala la foto y di "Go!" — 10 segundos para la primera oración. No des tiempo de pensar. Si el alumno duda → di "Is there any stock?" y señala la foto. La pregunta lo desbloquea.</strong></li>
+      <li>Photo 2 (Empty Shelves) es la más productiva para some/any: "There isn't any stock." / "We don't have any folders." / "We need some paper." Tres estructuras en tres oraciones naturales.</li>
+      <li>Si el alumno usa "there isn't some" → recast inmediato: "Yes — there isn't ANY stock — correcto." Sin parar la conversación.</li>
+      <li>Diagnóstico rápido: ¿El alumno distingue "How much" vs "How many" espontáneamente? Si sí → S3B fluirá bien. Si no → el relay game en §3 lo consolida.</li>
+    </ul></div></div>
+    <div class="tn-capa tn-c2"><div class="tn-cl">Capa 2 · Engagement</div><div class="tn-txt"><ul>
+      <li>"Hoy no hay grammar nueva. Solo usas lo que ya tienes — some, any, How much, How many — en conversaciones reales. Más difícil y más valioso que estudiar algo nuevo."</li>
+    </ul></div></div>
+    <div class="tn-capa tn-c3"><div class="tn-cl">Capa 3 · Retención</div><div class="tn-txt"><ul>
+      <li>"Al final de esta sesión haces un role play completo de compras: tú eres el gerente de almacén recibiendo un pedido urgente en inglés por teléfono. Sin notas. Eso es el nivel A1.2 real."</li>
+    </ul></div></div>
+  </div></div>
+</section></div>
+
+<!-- ═══ §2 RECAP SPEEDRUN ═══ -->
+<div class="sec-outer" id="s2"><section class="sec">
+  <div class="sec-hd"><div><div class="sec-lbl">§ 02</div><div class="sec-title">Recap Speedrun — <em>S3A Grammar &amp; Vocabulary</em></div></div><div class="sec-time teacher-only">5 min</div></div>
+
+  <div class="sec-banner">
+    <img src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=900&q=80&fit=crop" alt="flashcards study speedrun review">
+    <div class="sec-banner-overlay"><div class="sbo-icon">⚡</div><div class="sbo-text"><div class="sbo-lbl">Recap</div><div class="sbo-title">5 cards · 5 seconds each · full sentence required</div></div><div class="sbo-badge">5 MIN</div></div>
+  </div>
+
+  <p style="font-size:11px;color:var(--dim);margin-bottom:14px">Flip each card. Answer with a FULL SENTENCE from your company or a real situation. No single-word answers at A1.2.</p>
+  <div class="recap-grid">
+    <div class="rc" onclick="this.classList.toggle('on')"><div class="rc-inner"><div class="rc-f"><div class="rc-f-num">1</div><div class="rc-f-lbl">some vs any</div><div class="rc-f-hint">when do you use each?</div></div><div class="rc-b"><div class="rc-b-ans">some → affirmative ✅<br>any → negatives &amp; questions ❓</div><div class="rc-b-ex">"We have some folders." / "Is there any paper?"</div></div></div></div>
+    <div class="rc" onclick="this.classList.toggle('on')"><div class="rc-inner"><div class="rc-f"><div class="rc-f-num">2</div><div class="rc-f-lbl">out of stock</div><div class="rc-f-hint">use it in a sentence</div></div><div class="rc-b"><div class="rc-b-ans">agotado / sin existencias</div><div class="rc-b-ex">"The ink cartridges are out of stock — we need to order more."</div></div></div></div>
+    <div class="rc" onclick="this.classList.toggle('on')"><div class="rc-inner"><div class="rc-f"><div class="rc-f-num">3</div><div class="rc-f-lbl">How much vs How many</div><div class="rc-f-hint">what's the rule?</div></div><div class="rc-b"><div class="rc-b-ans">How much → uncountable<br>How many → countable</div><div class="rc-b-ex">"How much money?" / "How many boxes?"</div></div></div></div>
+    <div class="rc" onclick="this.classList.toggle('on')"><div class="rc-inner"><div class="rc-f"><div class="rc-f-num">4</div><div class="rc-f-lbl">equipment</div><div class="rc-f-hint">countable or not?</div></div><div class="rc-b"><div class="rc-b-ans">UNCOUNTABLE — never "equipments"</div><div class="rc-b-ex">"Is there any equipment in the room?" ✅ / "Equipments" ✗</div></div></div></div>
+    <div class="rc" onclick="this.classList.toggle('on')"><div class="rc-inner"><div class="rc-f"><div class="rc-f-num">5</div><div class="rc-f-lbl">shortage</div><div class="rc-f-hint">use in a real context</div></div><div class="rc-b"><div class="rc-b-ans">escasez — when supply is not enough</div><div class="rc-b-ex">"There is a shortage of paper this month — we need to restock."</div></div></div></div>
+  </div>
+
+  <div style="background:rgba(139,92,246,.05);border:1px solid rgba(139,92,246,.18);padding:14px 18px;font-size:12.5px;color:var(--txt);line-height:1.75">
+    <strong style="color:var(--ac2)">⚡ 60-second flash drill:</strong> Teacher says a situation → student says the sentence immediately.<br>
+    <span style="color:var(--mt)">Affirmative + paper →</span> <em style="color:var(--ac2)">"There is some paper."</em> &nbsp;·&nbsp;
+    <span style="color:var(--mt)">Question + folders →</span> <em style="color:var(--ac2)">"Are there any folders?"</em> &nbsp;·&nbsp;
+    <span style="color:var(--mt)">Negative + budget →</span> <em style="color:var(--ac2)">"There isn't any budget."</em> &nbsp;·&nbsp;
+    <span style="color:var(--mt)">How much + time →</span> <em style="color:var(--ac2)">"How much time do we have?"</em> · 4 rounds. Fast.
+  </div>
+
+  <div class="tn teacher-only"><button class="tn-toggle" onclick="toggleTN(this)">📋 Teacher Notes — §2 Recap <span class="tn-arrow">▼</span></button><div class="tn-body">
+    <div class="tn-capa tn-c1"><div class="tn-cl">Capa 1 · Pedagogical</div><div class="tn-txt"><ul>
+      <li><strong>Flash drill: máximo 4 rondas, ritmo rápido. Si el alumno duda en "any" negativo → di "Remember: no → any." Una sola corrección. Sigue adelante. La velocidad es el punto — automatismo, no reflexión.</strong></li>
+      <li>Si el alumno todavía dice "How many money?" → flash drill específico: "money — much or many?" → "How much money." Una vez. Sin explicación adicional. El §3 relay game lo consolida con más práctica.</li>
+      <li>5 minutos duros. El rol play de §5 necesita tiempo real.</li>
+    </ul></div></div>
+  </div></div>
+</section></div>
+
+<!-- ═══ §3 LIVE GAME ═══ -->
+<div class="sec-outer" id="s3"><section class="sec">
+  <div class="sec-hd"><div><div class="sec-lbl">§ 03</div><div class="sec-title">Live Game — <em>Wordwall &amp; Grammar Relay</em></div></div><div class="sec-time teacher-only">10–12 min</div></div>
+
+  <div class="sec-banner">
+    <img src="https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=900&q=80&fit=crop" alt="game competition energy team">
+    <div class="sec-banner-overlay"><div class="sbo-icon">🎮</div><div class="sbo-text"><div class="sbo-lbl">Live Game</div><div class="sbo-title">Wordwall · Grammar Relay · Click to reveal</div></div><div class="sbo-badge">10–12 MIN</div></div>
+  </div>
+
+  <!-- WORDWALL -->
+  <div class="ww-wrap">
+    <div class="ww-lbl">Game 1 — 5 min · Wordwall</div>
+    <div class="ww-title">Stock &amp; Inventory Vocabulary — Match Up</div>
+    <div class="ww-placeholder">[Wordwall iframe — Match Up template]<br><br>
+    <strong>Pairs:</strong> stock→existing supply available / out of stock→agotado / in stock→disponible / shortage→escasez / warehouse→almacén / restock→reabastecer / inventory→sistema de inventario / purchase request→solicitud de compra / supplier→proveedor / quantity→cantidad<br><br>
+    Round 1: normal speed · Round 2: beat your time</div>
+    <div class="ww-inst">Maestro comparte pantalla. Para 1 a 1: alumno intenta batir su tiempo en ronda 2. Para grupos: primer equipo en completar gana.</div>
+  </div>
+
+  <!-- GRAMMAR RELAY GAME -->
+  <div style="margin-top:8px">
+    <div style="font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:10px">Game 2 — 5–6 min · Grammar Relay</div>
+    <p style="font-size:13px;color:var(--mt);margin-bottom:14px">Toca cada carta → responde en ORACIÓN COMPLETA. A1.2: frases cortas, respuesta inmediata, correcto o incorrecto.</p>
+    <div class="relay-grid">
+      <div class="relay-card" onclick="this.classList.toggle('revealed')"><div class="relay-cat">SOME or ANY?</div><div class="relay-q">Negative sentence + paper</div><div class="relay-a">"There isn't <strong>any</strong> paper left." ← negative = any</div></div>
+      <div class="relay-card" onclick="this.classList.toggle('revealed')"><div class="relay-cat">MUCH or MANY?</div><div class="relay-q">Question + folders</div><div class="relay-a">"How <strong>many</strong> folders do we have?" ← countable = many</div></div>
+      <div class="relay-card" onclick="this.classList.toggle('revealed')"><div class="relay-cat">SOME or ANY?</div><div class="relay-q">Affirmative + equipment</div><div class="relay-a">"We have <strong>some</strong> equipment available." ← affirmative = some</div></div>
+      <div class="relay-card" onclick="this.classList.toggle('revealed')"><div class="relay-cat">MUCH or MANY?</div><div class="relay-q">Question + money</div><div class="relay-a">"How <strong>much</strong> money is in the budget?" ← uncountable = much</div></div>
+      <div class="relay-card" onclick="this.classList.toggle('revealed')"><div class="relay-cat">SOME or ANY?</div><div class="relay-q">Question + stock</div><div class="relay-a">"Is there <strong>any</strong> stock left?" ← question = any</div></div>
+      <div class="relay-card" onclick="this.classList.toggle('revealed')"><div class="relay-cat">MUCH or MANY?</div><div class="relay-q">Question + suppliers</div><div class="relay-a">"How <strong>many</strong> suppliers does your company have?" ← countable = many</div></div>
+      <div class="relay-card" onclick="this.classList.toggle('revealed')"><div class="relay-cat">FIND THE ERROR</div><div class="relay-q">"There are some equipments."</div><div class="relay-a">"There is some <strong>equipment</strong>." ← equipment = uncountable, no plural!</div></div>
+      <div class="relay-card" onclick="this.classList.toggle('revealed')"><div class="relay-cat">FIND THE ERROR</div><div class="relay-q">"Is there some paper?"</div><div class="relay-a">"Is there <strong>any</strong> paper?" ← questions = any, not some</div></div>
+      <div class="relay-card" onclick="this.classList.toggle('revealed')"><div class="relay-cat">SOME or ANY?</div><div class="relay-q">Affirmative + folders + office</div><div class="relay-a">"There are <strong>some</strong> folders in the office." ← affirmative = some</div></div>
+      <div class="relay-card" onclick="this.classList.toggle('revealed')"><div class="relay-cat">MUCH or MANY?</div><div class="relay-q">Question + time</div><div class="relay-a">"How <strong>much</strong> time do we have before the delivery?" ← time = uncountable</div></div>
+      <div class="relay-card" onclick="this.classList.toggle('revealed')"><div class="relay-cat">BUILD IT</div><div class="relay-q">Make a negative sentence: ink / cartridges</div><div class="relay-a">"There aren't <strong>any</strong> ink cartridges in stock." ✅</div></div>
+      <div class="relay-card" onclick="this.classList.toggle('revealed')"><div class="relay-cat">⭐ CHALLENGE</div><div class="relay-q">Use some + any + How many in 3 sentences about your company.</div><div class="relay-a">e.g. "We have some paper. There isn't any ink. How many suppliers do we have?" — Any 3 correct sentences accepted.</div></div>
+    </div>
+  </div>
+
+  <div class="tn teacher-only"><button class="tn-toggle" onclick="toggleTN(this)">📋 Teacher Notes — §3 Game <span class="tn-arrow">▼</span></button><div class="tn-body">
+    <div class="tn-capa tn-c1"><div class="tn-cl">Capa 1 · Pedagogical</div><div class="tn-txt"><ul>
+      <li><strong>Grammar Relay: 12 cartas, 5–6 minutos. Ritmo rápido — no más de 30 segundos por carta. Las cartas de error (FIND THE ERROR) son las más valiosas: el alumno tiene que identificar Y corregir, no solo elegir.</strong></li>
+      <li>Carta Challenge al final: si el alumno produce 3 oraciones correctas usando some/any/How many naturalmente → CELEBRA con especificidad: "You used 'some', 'any', and 'How many' all correctly in 3 seconds. That's A1.2 mastery."</li>
+      <li>Si "How many money?" aparece aquí todavía → corrección directa una sola vez. Si aparece de nuevo → marcar para §6 speaking follow-up.</li>
+    </ul></div></div>
+    <div class="tn-capa tn-c2"><div class="tn-cl">Capa 2 · Engagement</div><div class="tn-txt"><ul>
+      <li>"Las cartas de error son las más importantes — porque esos son exactamente los errores que un proveedor americano va a notar en tu inglés. Hoy los eliminas."</li>
+    </ul></div></div>
+  </div></div>
+</section></div>
+
+<!-- ═══ §4 DIALOGUE BUILDER ═══ -->
+<div class="sec-outer" id="s4"><section class="sec">
+  <div class="sec-hd"><div><div class="sec-lbl">§ 04</div><div class="sec-title">Dialogue — <em>Fill the Blanks: Stock Check Call</em></div></div><div class="sec-time teacher-only">10–12 min</div></div>
+
+  <div class="sec-banner">
+    <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=900&q=80&fit=crop" alt="office phone call professional dialogue">
+    <div class="sec-banner-overlay"><div class="sbo-icon">💬</div><div class="sbo-text"><div class="sbo-lbl">Dialogue</div><div class="sbo-title">Fill the Blanks — Stock Check Call · some / any / How much / How many</div></div><div class="sbo-badge">10–12 MIN</div></div>
+  </div>
+  <img style="width:100%;height:130px;object-fit:cover;opacity:.32;display:block;margin-bottom:18px;border:1px solid var(--bd);filter:saturate(.6)" src="https://images.unsplash.com/photo-1567226475328-9d6baaf565cf?w=960&q=80&fit=crop" alt="dialogue conversation office phone procurement">
+
+  <!-- FILL-IN DIALOGUE -->
+  <div class="dlg-wrap">
+    <div class="dlg-lbl">Complete the Dialogue — Click a blank, then click a word from the bank</div>
+    <div class="dlg-title">Emergency Stock Check — Solaris Manufacturing</div>
+    <div class="dlg-ctx">It's Monday morning. Mónica Herrera (Procurement) calls Roberto (Warehouse) because they need supplies urgently. Fill in the blanks with the correct word from the bank.</div>
+
+    <div class="dlg-lines">
+      <div class="dlg-line">
+        <span class="dlg-speaker a">MÓNICA</span>
+        <div class="dlg-text">Good morning, Roberto. Is there <span class="blank" id="b1" onclick="fillBlank('b1')">___</span> paper left in the storeroom?</div>
+      </div>
+      <div class="dlg-line">
+        <span class="dlg-speaker b">ROBERTO</span>
+        <div class="dlg-text">Yes, there is <span class="blank" id="b2" onclick="fillBlank('b2')">___</span> paper — about 80 reams. But there aren't <span class="blank" id="b3" onclick="fillBlank('b3')">___</span> ink cartridges. We're completely out of stock.</div>
+      </div>
+      <div class="dlg-line">
+        <span class="dlg-speaker a">MÓNICA</span>
+        <div class="dlg-text"><span class="blank" id="b4" onclick="fillBlank('b4')">___</span> cartridges do we need to order?</div>
+      </div>
+      <div class="dlg-line">
+        <span class="dlg-speaker b">ROBERTO</span>
+        <div class="dlg-text">I think about 25. And we also need <span class="blank" id="b5" onclick="fillBlank('b5')">___</span> folders — there aren't <span class="blank" id="b6" onclick="fillBlank('b6')">___</span> on the shelves.</div>
+      </div>
+      <div class="dlg-line">
+        <span class="dlg-speaker a">MÓNICA</span>
+        <div class="dlg-text">OK. <span class="blank" id="b7" onclick="fillBlank('b7')">___</span> money do we have in the supplies budget this month?</div>
+      </div>
+      <div class="dlg-line">
+        <span class="dlg-speaker b">ROBERTO</span>
+        <div class="dlg-text">There is <span class="blank" id="b8" onclick="fillBlank('b8')">___</span> budget left — maybe $5,000 pesos. But you need to check with finance. Is there <span class="blank" id="b9" onclick="fillBlank('b9')">___</span> urgent order we need to make today?</div>
+      </div>
+      <div class="dlg-line">
+        <span class="dlg-speaker a">MÓNICA</span>
+        <div class="dlg-text">Yes — the ink cartridges are urgent. How <span class="blank" id="b10" onclick="fillBlank('b10')">___</span> suppliers do we have for office supplies?</div>
+      </div>
+      <div class="dlg-line">
+        <span class="dlg-speaker b">ROBERTO</span>
+        <div class="dlg-text">We have <span class="blank" id="b11" onclick="fillBlank('b11')">___</span> suppliers — about three. I'll send you the list now.</div>
+      </div>
+    </div>
+
+    <div class="dlg-word-bank">
+      <div class="dlg-word-lbl">Word Bank — Click a blank first, then click the word</div>
+      <div class="dlg-word" id="w-any1" onclick="selectWord('any','w-any1')">any</div>
+      <div class="dlg-word" id="w-some1" onclick="selectWord('some','w-some1')">some</div>
+      <div class="dlg-word" id="w-any2" onclick="selectWord('any','w-any2')">any</div>
+      <div class="dlg-word" id="w-howmany" onclick="selectWord('How many','w-howmany')">How many</div>
+      <div class="dlg-word" id="w-some2" onclick="selectWord('some','w-some2')">some</div>
+      <div class="dlg-word" id="w-any3" onclick="selectWord('any','w-any3')">any</div>
+      <div class="dlg-word" id="w-howmuch" onclick="selectWord('How much','w-howmuch')">How much</div>
+      <div class="dlg-word" id="w-some3" onclick="selectWord('some','w-some3')">some</div>
+      <div class="dlg-word" id="w-any4" onclick="selectWord('any','w-any4')">any</div>
+      <div class="dlg-word" id="w-many" onclick="selectWord('many','w-many')">many</div>
+      <div class="dlg-word" id="w-some4" onclick="selectWord('some','w-some4')">some</div>
+    </div>
+    <button class="dlg-check-btn" onclick="checkDialogue()">✓ Check My Answers</button>
+    <div class="dlg-feedback" id="dlgFeedback"></div>
+  </div>
+
+  <!-- SPEAKING: Read it aloud -->
+  <div style="background:rgba(139,92,246,.05);border:1px solid rgba(139,92,246,.18);padding:14px 20px;font-size:13px;color:var(--txt);line-height:1.75;margin-top:10px">
+    🗣 <strong style="color:var(--ac2)">After checking:</strong> Read the complete dialogue out loud with the teacher. One person is Mónica, one is Roberto. Switch roles. Focus: correct pronunciation of "any" /ˈeni/ and "How much/many" at natural speed.
+  </div>
+
+  <!-- QUICK MC CONSOLIDATION -->
+  <div class="act" style="margin-top:14px">
+    <div class="act-lbl">Quick Check — 4 Questions</div>
+    <div class="act-inst">Based on the dialogue above.</div>
+    <div class="q-row"><div class="q-text"><strong>1.</strong> Is there any paper in the storeroom?</div><div class="opts" id="dq1"><button class="opt" onclick="checkOpt(this,'Yes, there is some — about 80 reams','dq1')">No, there isn't any paper</button><button class="opt" onclick="checkOpt(this,'Yes, there is some — about 80 reams','dq1')">Yes, there is some — about 80 reams</button><button class="opt" onclick="checkOpt(this,'Yes, there is some — about 80 reams','dq1')">Yes, there is any paper</button></div></div>
+    <div class="q-row"><div class="q-text"><strong>2.</strong> How many cartridges do they need to order?</div><div class="opts" id="dq2"><button class="opt" onclick="checkOpt(this,'About 25 cartridges','dq2')">About 5 cartridges</button><button class="opt" onclick="checkOpt(this,'About 25 cartridges','dq2')">About 25 cartridges</button><button class="opt" onclick="checkOpt(this,'About 25 cartridges','dq2')">About 100 cartridges</button></div></div>
+    <div class="q-row"><div class="q-text"><strong>3.</strong> How much money is left in the budget?</div><div class="opts" id="dq3"><button class="opt" onclick="checkOpt(this,'About $5,000 pesos — not confirmed','dq3')">Nothing — no budget left</button><button class="opt" onclick="checkOpt(this,'About $5,000 pesos — not confirmed','dq3')">About $5,000 pesos — not confirmed</button><button class="opt" onclick="checkOpt(this,'About $5,000 pesos — not confirmed','dq3')">$50,000 pesos — plenty</button></div></div>
+    <div class="q-row"><div class="q-text"><strong>4.</strong> How many suppliers does Roberto have for office supplies?</div><div class="opts" id="dq4"><button class="opt" onclick="checkOpt(this,'About three suppliers','dq4')">One supplier</button><button class="opt" onclick="checkOpt(this,'About three suppliers','dq4')">About three suppliers</button><button class="opt" onclick="checkOpt(this,'About three suppliers','dq4')">No suppliers — they order online</button></div></div>
+  </div>
+
+  <div class="tn teacher-only"><button class="tn-toggle" onclick="toggleTN(this)">📋 Teacher Notes — §4 Dialogue <span class="tn-arrow">▼</span></button><div class="tn-body">
+    <div class="tn-capa tn-c1"><div class="tn-cl">Capa 1 · Pedagogical</div><div class="tn-txt"><ul>
+      <li><strong>ACCIÓN: Después de verificar las respuestas, haz la lectura en voz alta OBLIGATORIA. Sin esta fase de lectura oral, el ejercicio solo trabaja comprensión — no producción. La lectura oral transforma el reconocimiento en producción.</strong></li>
+      <li>Respuestas correctas: b1=any, b2=some, b3=any, b4=How many, b5=some, b6=any, b7=How much, b8=some, b9=any, b10=many, b11=some.</li>
+      <li>Si el alumno pone "some" en b1 (pregunta) → señala: "Is there SOME paper? — ¿recuerdas la regla? Preguntas usan 'any'." Una explicación, luego sigue.</li>
+      <li>Role reading: si es sesión 1 a 1, tú haces de Mónica, el alumno de Roberto. Luego switch. Si hay grupo, parejas.</li>
+    </ul></div></div>
+    <div class="tn-capa tn-c2"><div class="tn-cl">Capa 2 · Engagement</div><div class="tn-txt"><ul>
+      <li>"Acabas de completar un diálogo real de procurement — exactamente la conversación que tienes con almacén cuando necesitas hacer un pedido urgente. En inglés. Sin notas."</li>
+    </ul></div></div>
+  </div></div>
+</section></div>
+
+<!-- ═══ §5 ROLE PLAY ═══ -->
+<div class="sec-outer" id="s5"><section class="sec">
+  <div class="sec-hd"><div><div class="sec-lbl">§ 05</div><div class="sec-title">Role Play — <em>Emergency Purchase Request</em></div></div><div class="sec-time teacher-only">12–14 min</div></div>
+
+  <div class="rp-hero">
+    <img src="https://images.unsplash.com/photo-1521791136064-7986c2920216?w=960&q=80&fit=crop" alt="office phone call procurement purchase order">
+    <div class="rp-hero-overlay">
+      <div>
+        <div class="rp-hero-lbl">Role Play · A1.2 · Scaffolding visible</div>
+        <div class="rp-hero-title">The supplier calls — your stock is critically low.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="rp-ctx">It is Tuesday morning at Solaris Manufacturing. The office supplies are critically low: no ink cartridges, only a few folders, and 50 reams of paper left. The purchasing manager (teacher) calls the warehouse manager (student) to make an urgent order. The student needs to answer all questions about stock and agree on quantities and price.</div>
+  <img style="width:100%;height:90px;object-fit:cover;opacity:.3;display:block;margin-bottom:16px;border:1px solid var(--bd);filter:saturate(.5)" src="https://images.unsplash.com/photo-1483058712412-4245e9b90334?w=960&q=80&fit=crop" alt="warehouse boxes low stock critical">
+
+  <div class="rp-cards">
+    <div class="rp-card">
+      <img class="rp-card-img" src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=600&q=80&fit=crop" alt="procurement manager calling">
+      <div class="rp-card-body">
+        <div class="rp-card-lbl buyer">YOUR ROLE — Warehouse Manager</div>
+        <div class="rp-line"><strong>Situation:</strong> You checked the storeroom this morning. You know the stock levels.</div>
+        <div class="rp-line"><strong>Stock facts:</strong> <em>Paper: 50 reams ✓ · Ink: 0 units ✗ · Folders: 8 packs ⚠ · Pens: 12 boxes ✓ · Tape: 0 rolls ✗</em></div>
+        <div class="rp-line"><strong>Your sentences:</strong> "There is some paper — about 50 reams." / "There isn't any ink." / "There are some folders, but not many."</div>
+        <div class="rp-line"><strong>You can ask:</strong> "How many cartridges do you need?" / "How much is the budget for this order?"</div>
+      </div>
+    </div>
+    <div class="rp-card">
+      <img class="rp-card-img" src="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=600&q=80&fit=crop" alt="purchasing manager office">
+      <div class="rp-card-body">
+        <div class="rp-card-lbl sup">TEACHER ROLE — Purchasing Manager</div>
+        <div class="rp-line"><strong>Open:</strong> "Good morning. I need a stock report — is there any paper left?"</div>
+        <div class="rp-line"><strong>Questions to ask:</strong></div>
+        <div class="rp-line">→ "Is there any ink in the storeroom?"</div>
+        <div class="rp-line">→ "How many folders do we have?"</div>
+        <div class="rp-line">→ "How much money can we spend on this order?"</div>
+        <div class="rp-line">→ "Are there any tape rolls left?"</div>
+        <div class="rp-line"><em>After stock check:</em> "OK — please send a purchase request for 20 cartridges and 20 packs of folders."</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SENTENCE STARTERS — visible scaffolding for A1.2 -->
+  <div style="background:rgba(255,184,0,.04);border:1px solid rgba(255,184,0,.18);padding:16px 20px;margin-bottom:14px">
+    <div style="font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:10px">📋 Sentence Starters — Use these in the role play</div>
+    <div class="rp-scripts">
+      <div class="rp-script-item"><span class="rp-script-icon">✅</span><span>"There is some [noun] — about [number]." / "There are some [nouns] — about [number]."</span></div>
+      <div class="rp-script-item"><span class="rp-script-icon">❌</span><span>"There isn't any [noun]." / "There aren't any [nouns] — we're out of stock."</span></div>
+      <div class="rp-script-item"><span class="rp-script-icon">❓</span><span>"Is there any [noun]?" / "Are there any [nouns]?" / "How many [nouns] do we need?" / "How much [uncountable] do we have?"</span></div>
+      <div class="rp-script-item"><span class="rp-script-icon">📦</span><span>"We need some [noun]." / "We need to order [number] [nouns]." / "I'll send the purchase request today."</span></div>
+    </div>
+  </div>
+
+  <div class="rp-challenge">
+    <div class="rp-ch-lbl">🎯 A1.2 Challenge — After the Role Play</div>
+    <div class="rp-ch-p">Without notes, tell the teacher: <strong>"What stock did you have? What didn't you have? What did you need to order? How many / how much?"</strong> — 4–5 sentences. This is the full recap of the role play using some, any, How much, How many spontaneously. A1.2 success = 4 correct uses of the grammar in 5 sentences.</div>
+  </div>
+
+  <div class="tn teacher-only"><button class="tn-toggle" onclick="toggleTN(this)">📋 Teacher Notes — §5 Role Play <span class="tn-arrow">▼</span></button><div class="tn-body">
+    <div class="tn-capa tn-c1"><div class="tn-cl">Capa 1 · Pedagogical</div><div class="tn-txt"><ul>
+      <li><strong>ACCIÓN: Las sentence starters son visibles — esto es A1.2, no B1.2. El alumno PUEDE mirarlas mientras habla. El objetivo no es producción libre total, sino producción CORRECTA con scaffolding. La corrección consolida el patrón.</strong></li>
+      <li>Haz las preguntas del role play a ritmo real pero claro: "Is there any ink?" — Pausa. "How many folders do we have?" — Pausa. No corras. A1.2 necesita tiempo de procesamiento.</li>
+      <li>Corrección en el role play: recast silencioso. Si el alumno dice "There isn't some ink" → tú dices "Yes — there isn't ANY ink, OK. And folders?" — No pares el rol play. Corrige y sigue.</li>
+      <li>El challenge post-RP es el momento más valioso: el alumno produce sin apoyo. 4 correctos de 5 = A1.2 mastery. Celebra con especificidad: "You said 'there isn't any ink' and 'some folders' — both correct."</li>
+    </ul></div></div>
+    <div class="tn-capa tn-c2"><div class="tn-cl">Capa 2 · Engagement</div><div class="tn-txt"><ul>
+      <li>"Acabas de hacer una llamada de compras en inglés. Verificaste el stock, reportaste lo que hay y lo que no hay, y acordaste cantidades. Eso es inglés de trabajo real, no de libro."</li>
+    </ul></div></div>
+    <div class="tn-capa tn-c3"><div class="tn-cl">Capa 3 · Retención &amp; Upsell</div><div class="tn-txt"><ul>
+      <li>"S4A y S4B siguen con el siguiente bloque de M2: describir tu empresa y sus productos completos en inglés — qué produce, cuántos empleados, qué presupuesto. Todo lo que practicaste hoy es el vocabulario de esa presentación."</li>
+    </ul></div></div>
+  </div></div>
+</section></div>
+
+<!-- ═══ §6 SPEAKING PRACTICE ═══ -->
+<div class="sec-outer" id="s6"><section class="sec">
+  <div class="sec-hd"><div><div class="sec-lbl">§ 06</div><div class="sec-title">Speaking — <em>Your Company's Stock Situation</em></div></div><div class="sec-time teacher-only">8–10 min</div></div>
+
+  <div class="sec-banner">
+    <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=900&q=80&fit=crop" alt="speaking presentation production team office">
+    <div class="sec-banner-overlay"><div class="sbo-icon">🗣</div><div class="sbo-text"><div class="sbo-lbl">Speaking</div><div class="sbo-title">Real company · Real answers · some / any / How much / How many</div></div><div class="sbo-badge">8–10 MIN</div></div>
+  </div>
+
+  <div class="sp-wrap">
+    <div class="sp-lbl">Speaking Practice — A1.2 Free Production</div>
+    <div class="sp-title">Your real company. Your real stock situation.</div>
+    <div class="sp-sub">Answer each question in full sentences using some, any, How much, or How many. The teacher marks: ✓ correct / ✗ error. Goal: 4+ correct uses in 5 questions.</div>
+
+    <div class="sp-q-list">
+      <div class="sp-q">
+        <div class="sp-q-num">Question 1 — Office Supplies Check</div>
+        <div class="sp-q-text">Is there any paper in your office right now? Are there any pens? What about folders or markers?</div>
+        <div class="sp-q-hint">💡 "Yes, there is some paper — about…" / "No, there isn't any paper." / "There are some pens but not many."</div>
+      </div>
+      <div class="sp-q">
+        <div class="sp-q-num">Question 2 — Equipment</div>
+        <div class="sp-q-text">Is there any equipment in your department that is old or broken? How many computers or screens are there in your area?</div>
+        <div class="sp-q-hint">💡 Remember: "equipment" = uncountable. "How much equipment?" / "There is some equipment but…" / "There are [number] computers."</div>
+      </div>
+      <div class="sp-q">
+        <div class="sp-q-num">Question 3 — Budget</div>
+        <div class="sp-q-text">How much money does your department spend on supplies per month — roughly? Is there any budget left right now?</div>
+        <div class="sp-q-hint">💡 "We spend about…" / "There is some budget — about $___." / "There isn't any budget left this month."</div>
+      </div>
+      <div class="sp-q">
+        <div class="sp-q-num">Question 4 — Suppliers</div>
+        <div class="sp-q-text">How many suppliers does your company work with? Are there any suppliers that have delivery problems?</div>
+        <div class="sp-q-hint">💡 "We have some suppliers — about [number]." / "There aren't any problems with most of them, but…"</div>
+      </div>
+      <div class="sp-q">
+        <div class="sp-q-num">Question 5 — A Real Stock Problem</div>
+        <div class="sp-q-text">Describe a real situation at work when there wasn't any stock or something was out of stock. What happened? What did you need to order?</div>
+        <div class="sp-q-hint">💡 Challenge: use 3 or more different structures — some / any / How much or How many — in your answer.</div>
+      </div>
+      <div class="sp-q" style="border-color:rgba(255,184,0,.3)">
+        <div class="sp-q-num" style="color:var(--gold)">⭐ Question 6 — 60-Second Stock Report (No Notes)</div>
+        <div class="sp-q-text">Give a 60-second verbal stock report about your real company or department. Include: what you have, what you don't have, quantities, and what you need to order. Your "manager" (teacher) can ask follow-up questions.</div>
+        <div class="sp-q-hint">💡 Model: "Good morning. I have some information about our stock. There is some… There isn't any… How many… do we need? We need some…"</div>
+      </div>
+    </div>
+
+    <div class="sp-challenge">
+      <div class="sp-ch-lbl">🎯 A1.2 Speaking Standard — S3 Complete</div>
+      <div class="sp-ch-prompt">"Give your full stock report for your real company. Use some, any, How much, and How many at least once each. 60 seconds maximum. No notes."</div>
+      <div class="sp-ch-guide">A1.2 success: student uses the 4 structures (some/any/How much/How many) correctly at least 4 times total, produces a coherent report without switching to Spanish, and avoids "equipments" and "How many money." That is 100% of S3 achievement.</div>
+    </div>
+  </div>
+
+  <div class="tn teacher-only"><button class="tn-toggle" onclick="toggleTN(this)">📋 Teacher Notes — §6 Speaking <span class="tn-arrow">▼</span></button><div class="tn-body">
+    <div class="tn-capa tn-c1"><div class="tn-cl">Capa 1 · Pedagogical</div><div class="tn-txt"><ul>
+      <li><strong>ACCIÓN: Para Q6, tú eres el manager. Haz PREGUNTAS mientras el alumno da su reporte: "Is there any paper?" / "How many cartridges?" — Esto convierte el monólogo en diálogo y genera más producción de some/any espontáneamente.</strong></li>
+      <li>Corrección §6: UN error de some/any → recast. DOS → corrección directa: "Remember: questions use 'any'. Try again." TRES → parar y hacer el flash drill del §2 de nuevo con ese error específico.</li>
+      <li>Estándar de éxito A1.2: 4+ usos correctos de some/any/How much/How many en 60 segundos, sin cambiar a español, sin "equipments" ni "How many money." Si el alumno alcanza esto → S3 completo.</li>
+      <li>Celebración con especificidad: "You said 'there isn't any ink' — correct. 'There is some paper' — correct. 'How many suppliers' — perfect. That's three out of four structures in 30 seconds. Excellent A1.2."</li>
+    </ul></div></div>
+    <div class="tn-capa tn-c2"><div class="tn-cl">Capa 2 · Engagement</div><div class="tn-txt"><ul>
+      <li>"Acabas de describir el stock de tu empresa real — en inglés. Con gramática correcta. Sin notas. Eso ya es inglés funcional para tu trabajo."</li>
+    </ul></div></div>
+    <div class="tn-capa tn-c3"><div class="tn-cl">Capa 3 · Retención &amp; Upsell</div><div class="tn-txt"><ul>
+      <li><strong>Trigger testimonial — MANDATORIO:</strong> "¿Qué fue lo más difícil de hoy — some vs any, How much vs How many, o el vocabulario?" — La respuesta te dice exactamente qué reforzar en S4A y cuál fue el achievement real de la sesión.</li>
+      <li>"M2 tiene 5 sesiones. En S5 presentas tu empresa completa en inglés: productos, empleados, presupuesto, inventario, proveedores. Hoy instalaste la mitad de esa presentación."</li>
+    </ul></div></div>
+  </div></div>
+</section></div>
+
+<!-- ═══ §7 WRAP-UP ═══ -->
+<div class="sec-outer" id="s7"><section class="sec">
+  <div class="sec-hd"><div><div class="sec-lbl">§ 07</div><div class="sec-title">Wrap-Up — <em>Flashcard Wall &amp; Session Close</em></div></div><div class="sec-time teacher-only">5–7 min</div></div>
+
+  <div class="sec-banner">
+    <img src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=900&q=80&fit=crop" alt="review close session wrap up">
+    <div class="sec-banner-overlay"><div class="sbo-icon">✅</div><div class="sbo-text"><div class="sbo-lbl">Wrap-Up</div><div class="sbo-title">GT Flashcard Wall — S3 Complete · Flip &amp; Say</div></div><div class="sbo-badge">RITUAL DE CIERRE</div></div>
+  </div>
+
+  <!-- FLASHCARD WALL -->
+  <div class="fcw-wrap">
+    <div class="fcw-hd">GT Flashcard Wall — S3 Complete</div>
+    <div class="fcw-sub">Flip each card. Say a complete sentence — not just the definition. Alumno produce una ORACIÓN COMPLETA antes de ver la respuesta.</div>
+    <div class="fcw-grid">
+      <div class="fcw" onclick="this.classList.toggle('on')"><div class="fcw-inner"><div class="fcw-f"><div class="fcw-f-word">some</div><div class="fcw-f-hint">when? example?</div></div><div class="fcw-b"><div class="fcw-b-def">affirmative sentences</div><div class="fcw-b-ex">"We have some paper." / "There are some folders."</div></div></div></div>
+      <div class="fcw" onclick="this.classList.toggle('on')"><div class="fcw-inner"><div class="fcw-f"><div class="fcw-f-word">any</div><div class="fcw-f-hint">when? example?</div></div><div class="fcw-b"><div class="fcw-b-def">negatives &amp; questions</div><div class="fcw-b-ex">"Is there any ink?" / "There isn't any budget left."</div></div></div></div>
+      <div class="fcw" onclick="this.classList.toggle('on')"><div class="fcw-inner"><div class="fcw-f"><div class="fcw-f-word">How much</div><div class="fcw-f-hint">use with…?</div></div><div class="fcw-b"><div class="fcw-b-def">uncountable nouns</div><div class="fcw-b-ex">"How much paper / money / time / equipment?"</div></div></div></div>
+      <div class="fcw" onclick="this.classList.toggle('on')"><div class="fcw-inner"><div class="fcw-f"><div class="fcw-f-word">How many</div><div class="fcw-f-hint">use with…?</div></div><div class="fcw-b"><div class="fcw-b-def">countable nouns (plural)</div><div class="fcw-b-ex">"How many folders / boxes / suppliers / employees?"</div></div></div></div>
+      <div class="fcw" onclick="this.classList.toggle('on')"><div class="fcw-inner"><div class="fcw-f"><div class="fcw-f-word">out of stock</div><div class="fcw-f-hint">use in sentence</div></div><div class="fcw-b"><div class="fcw-b-def">sin existencias / agotado</div><div class="fcw-b-ex">"The ink is out of stock — we need to order more."</div></div></div></div>
+      <div class="fcw" onclick="this.classList.toggle('on')"><div class="fcw-inner"><div class="fcw-f"><div class="fcw-f-word">in stock</div><div class="fcw-f-hint">use in sentence</div></div><div class="fcw-b"><div class="fcw-b-def">disponible / en existencia</div><div class="fcw-b-ex">"Good news — there are some folders in stock."</div></div></div></div>
+      <div class="fcw" onclick="this.classList.toggle('on')"><div class="fcw-inner"><div class="fcw-f"><div class="fcw-f-word">equipment</div><div class="fcw-f-hint">countable?</div></div><div class="fcw-b"><div class="fcw-b-def">UNCOUNTABLE — never "equipments"</div><div class="fcw-b-ex">"Is there any equipment?" ✅ / "Equipments" ✗</div></div></div></div>
+      <div class="fcw" onclick="this.classList.toggle('on')"><div class="fcw-inner"><div class="fcw-f"><div class="fcw-f-word">shortage</div><div class="fcw-f-hint">use in sentence</div></div><div class="fcw-b"><div class="fcw-b-def">escasez — not enough supply</div><div class="fcw-b-ex">"There is a shortage of ink — we need to restock urgently."</div></div></div></div>
+      <div class="fcw" onclick="this.classList.toggle('on')"><div class="fcw-inner"><div class="fcw-f"><div class="fcw-f-word">warehouse</div><div class="fcw-f-hint">use in sentence</div></div><div class="fcw-b"><div class="fcw-b-def">almacén / bodega</div><div class="fcw-b-ex">"How many boxes are there in the warehouse?"</div></div></div></div>
+      <div class="fcw" onclick="this.classList.toggle('on')"><div class="fcw-inner"><div class="fcw-f"><div class="fcw-f-word">restock</div><div class="fcw-f-hint">use in sentence</div></div><div class="fcw-b"><div class="fcw-b-def">reabastecer / reponer stock</div><div class="fcw-b-ex">"There isn't any paper — we need to restock today."</div></div></div></div>
+      <div class="fcw" onclick="this.classList.toggle('on')"><div class="fcw-inner"><div class="fcw-f"><div class="fcw-f-word">"Is there any…?"</div><div class="fcw-f-hint">full example?</div></div><div class="fcw-b"><div class="fcw-b-def">stock question — uncountable</div><div class="fcw-b-ex">"Is there any paper / ink / budget left?" ✅</div></div></div></div>
+      <div class="fcw" onclick="this.classList.toggle('on')"><div class="fcw-inner"><div class="fcw-f"><div class="fcw-f-word">"We need some…"</div><div class="fcw-f-hint">full example?</div></div><div class="fcw-b"><div class="fcw-b-def">purchase request — affirmative</div><div class="fcw-b-ex">"We need some folders and some cartridges urgently."</div></div></div></div>
+    </div>
+  </div>
+
+  <!-- CHECKLIST -->
+  <div class="wu2-grid">
+    <div class="wu2-card">
+      <div class="wu2-h">✅ S3 Complete — I can now…</div>
+      <ul class="checklist">
+        <li onclick="toggleCheck(this)"><div class="cb"></div>Use <strong>some</strong> in affirmative sentences about stock and supplies</li>
+        <li onclick="toggleCheck(this)"><div class="cb"></div>Use <strong>any</strong> in negative sentences and stock questions</li>
+        <li onclick="toggleCheck(this)"><div class="cb"></div>Ask "How much" for uncountable things: money, paper, time, equipment</li>
+        <li onclick="toggleCheck(this)"><div class="cb"></div>Ask "How many" for countable things: units, folders, suppliers, employees</li>
+        <li onclick="toggleCheck(this)"><div class="cb"></div>Give a stock report in English — in stock / out of stock / low stock</li>
+        <li onclick="toggleCheck(this)"><div class="cb"></div>Make a purchase request in English: "We need some… How many…?"</li>
+      </ul>
+    </div>
+    <div class="wu2-card">
+      <div class="wu2-h">🗣 Use these at work this week</div>
+      <ul class="checklist">
+        <li onclick="toggleCheck(this)"><div class="cb"></div>"Is there any paper / ink / stock left?"</li>
+        <li onclick="toggleCheck(this)"><div class="cb"></div>"Yes, there is some paper — about 50 reams."</li>
+        <li onclick="toggleCheck(this)"><div class="cb"></div>"No, there isn't any ink — we're out of stock."</li>
+        <li onclick="toggleCheck(this)"><div class="cb"></div>"How much budget do we have for this order?"</li>
+        <li onclick="toggleCheck(this)"><div class="cb"></div>"How many units / suppliers / boxes do we have?"</li>
+        <li onclick="toggleCheck(this)"><div class="cb"></div>"We need some cartridges — about 20 units."</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="next-box" style="margin-top:2px">
+    <div class="next-lbl">▶ Next Class — Session 4A · Application &amp; Discovery</div>
+    <div class="next-txt"><strong style="color:var(--ac2)">S4A — Describing Your Company</strong> &nbsp;·&nbsp; "What does your company do? How many employees does it have?" · Company structure vocabulary: department, branch, headquarters, plant · Grammar: this/that/these/those + there is/are consolidation · Speaking: your company in 5 sentences.</div>
+  </div>
+
+  <div class="tn teacher-only"><button class="tn-toggle" onclick="toggleTN(this)">📋 Teacher Notes — §7 Wrap-Up <span class="tn-arrow">▼</span></button><div class="tn-body">
+    <div class="tn-capa tn-c1"><div class="tn-cl">Capa 1 · Pedagogical</div><div class="tn-txt"><ul>
+      <li><strong>Exit ticket A1.2 — oral, 30 segundos: "Tell me one thing you have SOME of at work, and one thing there isn't ANY of." — Si el alumno produce dos oraciones correctas con some/any, S3 completo. No necesitas más verificación.</strong></li>
+      <li>Flashcard Wall: 12 cartas. Si "equipment" o "How many money" fallan → una ronda extra oral: "How much — equipment / money / paper. How many — folders / boxes / employees." 6 ejemplos, 30 segundos, rápido.</li>
+      <li>Checklist: el alumno lo hace solo. La autocorrección y la conciencia del progreso propio es más efectiva que la evaluación externa a nivel A1.2.</li>
+    </ul></div></div>
+    <div class="tn-capa tn-c2"><div class="tn-cl">Capa 2 · Engagement</div><div class="tn-txt"><ul>
+      <li>"Hiciste un rol play de compras, completaste un diálogo real, y diste un reporte de inventario — todo en inglés. S3 está completo. some / any / How much / How many ya son tuyos."</li>
+    </ul></div></div>
+    <div class="tn-capa tn-c3"><div class="tn-cl">Capa 3 · Retención &amp; Upsell</div><div class="tn-txt"><ul>
+      <li>"S4A sigue con la presentación de tu empresa: qué hace, cuántos empleados, qué departamentos, qué productos. Todo lo de hoy — some / any / How many — aparece en esa presentación. El sistema se conecta."</li>
+      <li>"Al final de M2 (S5) presentas tu empresa completa en inglés en 5 minutos. Hoy instalaste el vocabulario de inventario y el sistema de cantidades. Dos sesiones más y lo tienes completo."</li>
+    </ul></div></div>
+  </div></div>
+</section></div>
+
+<footer class="ftr">
+  <div class="fb-f">Gabriel Turner · English Training</div>
+  <div class="fb-f">A1.2 · M2 · S3B · Stock Check — Application &amp; Mastery</div>
+  <div class="fb-f">GT_A1.2_M2_S3B_TEACHER_v3</div>
+</footer>
+
+<script>
+/* PROGRESS BAR */
+window.addEventListener('scroll',function(){var h=document.documentElement.scrollHeight-window.innerHeight;if(h>0)document.getElementById('prog').style.width=(window.scrollY/h*100)+'%';},{passive:true});
+
+/* STUDENT MODE */
+function toggleMode(){var b=document.body;var btn=document.getElementById('modeBtn');b.classList.toggle('student-mode');btn.textContent=b.classList.contains('student-mode')?'📋 Teacher Mode':'👁 Student Mode';}
+
+/* SPEAK */
+function speak(t){if(!window.speechSynthesis)return;speechSynthesis.cancel();var u=new SpeechSynthesisUtterance(t);u.lang='en-US';u.rate=0.82;u.pitch=1;speechSynthesis.speak(u);}
+
+/* TN */
+function toggleTN(btn){btn.classList.toggle('open');btn.nextElementSibling.classList.toggle('open');}
+
+/* CHECKLIST */
+function toggleCheck(li){li.classList.toggle('done');li.querySelector('.cb').textContent=li.classList.contains('done')?'✓':'';}
+
+/* PICTURE PROMPT */
+function pickPic(card){document.querySelectorAll('.pic-card').forEach(function(c){c.classList.remove('picked');});card.classList.add('picked');}
+
+/* MULTIPLE CHOICE */
+function checkOpt(btn,correct,qid){
+  var c=document.getElementById(qid);
+  if(c.dataset.locked)return;
+  c.querySelectorAll('.opt').forEach(function(b){b.disabled=true;if(b.textContent.trim()===correct)b.classList.add('correct');});
+  if(btn.textContent.trim()!==correct)btn.classList.add('wrong');
+  c.dataset.locked='1';
+}
+
+/* ═══ DIALOGUE FILL-IN ═══ */
+// Correct answers for each blank
+var dlgAnswers={b1:'any',b2:'some',b3:'any',b4:'How many',b5:'some',b6:'any',b7:'How much',b8:'some',b9:'any',b10:'many',b11:'some'};
+var selectedWord=null;
+var selectedBlank=null;
+
+function fillBlank(blankId){
+  // If a word is already selected, fill this blank
+  if(selectedWord!==null){
+    var blank=document.getElementById(blankId);
+    blank.textContent=selectedWord;
+    blank.classList.remove('filled','filled-wrong');
+    // Mark used word
+    if(selectedWordEl)selectedWordEl.classList.add('used');
+    selectedWord=null;selectedWordEl=null;selectedBlank=null;
+    return;
+  }
+  // Otherwise just highlight the blank
+  document.querySelectorAll('.blank').forEach(function(b){b.style.background='rgba(139,92,246,.1)';});
+  var blank=document.getElementById(blankId);
+  blank.style.background='rgba(139,92,246,.25)';
+  selectedBlank=blankId;
+}
+
+var selectedWordEl=null;
+function selectWord(word,elId){
+  var el=document.getElementById(elId);
+  if(el.classList.contains('used'))return;
+  selectedWord=word;
+  selectedWordEl=el;
+  // Highlight selected word
+  document.querySelectorAll('.dlg-word').forEach(function(w){w.style.borderColor='';});
+  el.style.borderColor='var(--ac)';
+  // If a blank is already selected, fill it
+  if(selectedBlank){
+    var blank=document.getElementById(selectedBlank);
+    blank.textContent=word;
+    blank.classList.remove('filled','filled-wrong');
+    el.classList.add('used');
+    el.style.borderColor='';
+    selectedWord=null;selectedWordEl=null;selectedBlank=null;
+    document.querySelectorAll('.blank').forEach(function(b){b.style.background='';});
+  }
+}
+
+function checkDialogue(){
+  var total=Object.keys(dlgAnswers).length;
+  var correct=0;
+  Object.keys(dlgAnswers).forEach(function(bid){
+    var blank=document.getElementById(bid);
+    var val=blank.textContent.trim().toLowerCase();
+    var ans=dlgAnswers[bid].toLowerCase();
+    blank.classList.remove('filled','filled-wrong');
+    if(val===ans){blank.classList.add('filled');correct++;}
+    else if(val&&val!=='___'){blank.classList.add('filled-wrong');}
+  });
+  var fb=document.getElementById('dlgFeedback');
+  if(correct===total){
+    fb.className='dlg-feedback show ok';
+    fb.textContent='✓ Perfect! All '+total+' blanks are correct. Now read the dialogue out loud with your teacher — switch roles!';
+  }else if(correct>=7){
+    fb.className='dlg-feedback show partial';
+    fb.textContent='Almost! '+correct+' of '+total+' correct. Check the red blanks — remember: questions and negatives use ANY, not some.';
+  }else{
+    fb.className='dlg-feedback show partial';
+    fb.textContent=correct+' of '+total+' correct. Review: ✅ affirmative → some · ❓ question → any · ❌ negative → any. Try again!';
+  }
+  speak('Check complete.');
+}
+
+/* ACTIVE NAV */
+var navSecs=document.querySelectorAll('.sec-outer[id]');
+var navis=document.querySelectorAll('.sni');
+window.addEventListener('scroll',function(){
+  var pos=window.scrollY+120;
+  navSecs.forEach(function(sec){
+    var top=sec.offsetTop;var bot=top+sec.offsetHeight;
+    if(pos>=top&&pos<bot){
+      navis.forEach(function(n){n.classList.remove('active');});
+      var link=document.querySelector('.sni[href="#'+sec.id+'"]');
+      if(link)link.classList.add('active');
+    }
+  });
+},{passive:true});
+</script>
+</body>
+</html>
