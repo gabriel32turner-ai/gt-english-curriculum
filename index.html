@@ -1954,45 +1954,194 @@ function renderAdminAlumnos(page) {
 // VISTAS DE ADMIN — GRUPOS
 // ════════════════════════════════════════
 function renderAdminGrupos(page) {
+  const CAP = 8; // capacidad máxima por grupo (clases online)
+  const activos   = DATA.grupos.filter(g => g.activo !== false);
+  const inactivos = DATA.grupos.filter(g => g.activo === false);
+  const totalAlumnos = activos.reduce((s,g) => s + DATA.alumnos.filter(a => normId(a.grupo_id) === normId(g.id) && a.activo !== false).length, 0);
+  const totalDisp    = activos.reduce((s,g) => {
+    const n = DATA.alumnos.filter(a => normId(a.grupo_id) === normId(g.id) && a.activo !== false).length;
+    return s + Math.max(0, CAP - n);
+  }, 0);
+
+  // ── Filtro activo seleccionado (persiste en window.gfiltro)
+  const filtros = ['todos','activos','llenos','con-espacio'];
+  const fLabel  = { todos:'Todos', activos:'Activos', llenos:'Llenos', 'con-espacio':'Con espacio' };
+  if (!window.gFiltro) window.gFiltro = 'activos';
+
+  function gruposFiltrados() {
+    return DATA.grupos.filter(g => {
+      const n = DATA.alumnos.filter(a => normId(a.grupo_id) === normId(g.id) && a.activo !== false).length;
+      if (window.gFiltro === 'activos')     return g.activo !== false;
+      if (window.gFiltro === 'llenos')      return n >= CAP;
+      if (window.gFiltro === 'con-espacio') return n < CAP && g.activo !== false;
+      return true; // todos
+    });
+  }
+
+  function tarjetaGrupo(g) {
+    const alumnos   = DATA.alumnos.filter(a => normId(a.grupo_id) === normId(g.id) && a.activo !== false);
+    const sesiones  = DATA.sesiones.filter(s => normId(s.grupo_id) === normId(g.id) && s.tipo === 'grupal');
+    const n         = alumnos.length;
+    const libre     = Math.max(0, CAP - n);
+    const pctOcup   = Math.min(Math.round(n / CAP * 100), 100);
+    const pctSes    = g.sesiones_contratadas ? Math.min(Math.round(sesiones.length / g.sesiones_contratadas * 100), 100) : null;
+    const esLleno   = n >= CAP;
+    const esInactivo= g.activo === false;
+    const ocupColor = esLleno ? 'var(--red)' : n >= CAP * 0.75 ? 'var(--orange,#F97316)' : 'var(--green)';
+
+    // slots visuales (8 círculos)
+    const slots = Array.from({length: CAP}, (_, i) => {
+      const ocupado = i < n;
+      return `<div style="width:20px;height:20px;border-radius:50%;
+        background:${ocupado ? ocupColor : 'var(--bg2)'};
+        border:1.5px solid ${ocupado ? ocupColor : 'var(--border)'};
+        display:flex;align-items:center;justify-content:center;
+        font-size:9px;color:${ocupado?'#fff':'var(--txt3)'}">
+        ${ocupado ? '' : ''}
+      </div>`;
+    }).join('');
+
+    return `
+    <div class="grupo-card${esInactivo?' grupo-inactivo':''}" style="
+      background:var(--bg1);border:1.5px solid ${esLleno?'rgba(255,80,80,.25)':esInactivo?'var(--border)':'var(--border)'};
+      border-radius:var(--rs);padding:20px;display:flex;flex-direction:column;gap:14px;
+      position:relative;overflow:hidden;">
+      ${esInactivo ? `<div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--border)"></div>`
+                   : `<div style="position:absolute;top:0;left:0;right:0;height:3px;background:${ocupColor}"></div>`}
+
+      <!-- HEADER -->
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
+        <div style="flex:1;min-width:0">
+          <div style="font-weight:600;font-size:14px;color:var(--txt1);
+            white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${g.nombre}</div>
+          <div style="font-size:11px;color:var(--txt3);margin-top:2px">
+            ${g.empresa || '—'} · ${g.horario || 'Sin horario'}
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+          <span class="level ${LEVEL_CLASS[g.nivel]||'level-a1'}">${g.nivel}</span>
+          ${esInactivo ? `<span style="font-size:9px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--txt3);background:var(--bg2);padding:2px 7px;border-radius:99px">Inactivo</span>` : ''}
+        </div>
+      </div>
+
+      <!-- SLOTS VISUALES -->
+      <div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+          <span style="font-size:11px;font-weight:500;color:var(--txt2)">Ocupación</span>
+          <span style="font-size:12px;font-weight:700;color:${ocupColor}">${n}/${CAP}
+            <span style="font-weight:400;color:var(--txt3)"> · ${libre === 0 ? 'grupo lleno' : libre === 1 ? '1 lugar libre' : libre+' lugares libres'}</span>
+          </span>
+        </div>
+        <div style="display:flex;gap:5px;flex-wrap:wrap">${slots}</div>
+        <div style="height:4px;background:var(--bg2);border-radius:2px;margin-top:8px;overflow:hidden">
+          <div style="height:100%;width:${pctOcup}%;background:${ocupColor};border-radius:2px;transition:width .3s"></div>
+        </div>
+      </div>
+
+      <!-- MAESTRO + SESIONES -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div style="background:var(--bg2);border-radius:6px;padding:10px 12px">
+          <div style="font-size:9px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--txt3);margin-bottom:4px">Maestro</div>
+          <div style="font-size:12px;color:var(--txt1);font-weight:500">${g.maestro || '—'}</div>
+        </div>
+        <div style="background:var(--bg2);border-radius:6px;padding:10px 12px">
+          <div style="font-size:9px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--txt3);margin-bottom:4px">Sesiones</div>
+          <div style="font-size:12px;color:var(--txt1);font-weight:500">
+            ${sesiones.length}${g.sesiones_contratadas ? ' / '+g.sesiones_contratadas : ''}
+            ${pctSes !== null ? `<span style="color:var(--txt3);font-weight:400"> (${pctSes}%)</span>` : ''}
+          </div>
+          ${pctSes !== null ? `
+          <div style="height:3px;background:var(--bg1);border-radius:2px;margin-top:6px;overflow:hidden">
+            <div style="height:100%;width:${pctSes}%;background:var(--mag);border-radius:2px"></div>
+          </div>` : ''}
+        </div>
+      </div>
+
+      <!-- ALUMNOS LISTA COMPACTA -->
+      ${alumnos.length ? `
+      <div style="border-top:1px solid var(--border);padding-top:12px">
+        <div style="font-size:9px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--txt3);margin-bottom:8px">Alumnos</div>
+        <div style="display:flex;flex-direction:column;gap:4px">
+          ${alumnos.map(a => `
+          <div style="display:flex;align-items:center;justify-content:space-between;
+            padding:5px 8px;background:var(--bg2);border-radius:5px;gap:8px">
+            <span style="font-size:12px;color:var(--txt1);flex:1;min-width:0;
+              white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${a.nombre}</span>
+            <div style="display:flex;align-items:center;gap:4px;flex-shrink:0">
+              <span class="level ${LEVEL_CLASS[a.nivel_actual]||'level-a1'}" style="font-size:9px;padding:1px 5px">${a.nivel_actual}</span>
+              <button onclick="abrirDetalleAlumnoGrupo('${a.id}','${g.id}')"
+                style="border:none;background:var(--blue-bg);color:var(--blue);border-radius:4px;
+                padding:3px 8px;font-size:10px;cursor:pointer;font-weight:500">Ver</button>
+              <button onclick="confirmarQuitarAlumnoDeGrupo('${a.id}','${g.id}')"
+                style="border:none;background:var(--red-bg);color:var(--red);border-radius:4px;
+                padding:3px 8px;font-size:10px;cursor:pointer;font-weight:500">×</button>
+            </div>
+          </div>`).join('')}
+        </div>
+      </div>` : `
+      <div style="border-top:1px solid var(--border);padding-top:12px">
+        <p style="font-size:12px;color:var(--txt3);text-align:center">Sin alumnos asignados</p>
+      </div>`}
+
+      <!-- ACCIONES -->
+      <div style="display:flex;gap:6px;flex-wrap:wrap;border-top:1px solid var(--border);padding-top:12px">
+        <button class="action-btn primary" onclick="abrirAsignarAlumno('${g.id}')" style="flex:1;min-width:100px">+ Alumno</button>
+        <button class="action-btn" onclick="abrirEditarGrupo('${g.id}')" style="flex:1;min-width:80px;background:var(--blue-bg);color:var(--blue)">Editar</button>
+        <button class="action-btn" onclick="verGrupoDetalle('${g.id}')" style="flex:1;min-width:80px">Historial</button>
+        <button class="action-btn" onclick="confirmarEliminarGrupo('${g.id}')" style="background:var(--red-bg);color:var(--red)">🗑</button>
+      </div>
+    </div>`;
+  }
+
+  const gruposMostrar = gruposFiltrados();
+
   page.innerHTML = `
-    <div class="ph"><h2>Grupos</h2>
-      <p>${DATA.grupos.length} grupo${DATA.grupos.length !== 1 ? 's' : ''} registrado${DATA.grupos.length !== 1 ? 's' : ''}.</p></div>
-    <div style="margin-bottom:14px">
-      <button class="action-btn primary" onclick="abrirNuevoGrupo()">+ Nuevo grupo</button>
+    <!-- ENCABEZADO + KPIs -->
+    <div class="ph" style="margin-bottom:0">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap">
+        <div>
+          <h2>Panorama de Grupos</h2>
+          <p>${activos.length} grupos activos · ${totalAlumnos} alumnos · ${totalDisp} lugares disponibles</p>
+        </div>
+        <button class="action-btn primary" onclick="abrirNuevoGrupo()">+ Nuevo grupo</button>
+      </div>
     </div>
-    ${DATA.grupos.length ? `
-    <div class="card" style="padding:0;overflow:hidden">
-      <table class="stable">
-        <thead><tr>
-          <th>Grupo</th><th>Empresa</th><th>Nivel</th>
-          <th>Maestro</th><th>Alumnos</th><th>Sesiones</th><th></th>
-        </tr></thead>
-        <tbody>
-          ${DATA.grupos.map(g => {
-            const alumnos  = DATA.alumnos.filter(a => normId(a.grupo_id) === normId(g.id));
-            const sesiones = DATA.sesiones.filter(s => normId(s.grupo_id) === normId(g.id) && s.tipo==='grupal');
-            const sLabel   = g.sesiones_contratadas ? `${sesiones.length} / ${g.sesiones_contratadas}` : String(sesiones.length);
-            return `<tr>
-              <td>
-                <div style="font-weight:500">${g.nombre}</div>
-                <div class="company">${g.horario||'Sin horario'}</div>
-              </td>
-              <td>${g.empresa||'—'}</td>
-              <td><span class="level ${LEVEL_CLASS[g.nivel]||'level-a1'}">${g.nivel}</span></td>
-              <td>${g.maestro||'—'}</td>
-              <td>${alumnos.length}</td>
-              <td>${sLabel}</td>
-              <td style="display:flex;gap:6px;flex-wrap:wrap">
-                <button class="action-btn" onclick="verGrupoDetalle('${g.id}')">Ver</button>
-                <button class="action-btn primary" onclick="abrirAsignarAlumno('${g.id}')">+ Alumno</button>
-                <button class="action-btn" onclick="abrirEditarGrupo('${g.id}')" style="background:var(--blue-bg);color:var(--blue)">Editar</button>
-                <button class="action-btn" onclick="confirmarEliminarGrupo('${g.id}')" style="background:var(--red-bg);color:var(--red)">Eliminar</button>
-              </td>
-            </tr>`;
-          }).join('')}
-        </tbody>
-      </table>
-    </div>` : '<div class="card"><p style="font-size:13px;color:var(--txt3)">No hay grupos creados aún. Hacé clic en "Nuevo grupo" para empezar.</p></div>'}`;
+
+    <!-- KPI CARDS -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:20px">
+      ${[
+        { label:'Grupos activos',   val: activos.length,   color:'var(--mag)' },
+        { label:'Total alumnos',    val: totalAlumnos,     color:'var(--blue)' },
+        { label:'Lugares libres',   val: totalDisp,        color:'var(--green)' },
+        { label:'Grupos llenos',    val: activos.filter(g => DATA.alumnos.filter(a=>normId(a.grupo_id)===normId(g.id)&&a.activo!==false).length>=CAP).length, color:'var(--red)' },
+      ].map(k=>`
+        <div style="background:var(--bg1);border:1.5px solid var(--border);border-radius:var(--rs);padding:14px 16px">
+          <div style="font-size:22px;font-weight:700;color:${k.color};line-height:1">${k.val}</div>
+          <div style="font-size:10px;color:var(--txt3);margin-top:4px;font-weight:500;text-transform:uppercase;letter-spacing:.06em">${k.label}</div>
+        </div>`).join('')}
+    </div>
+
+    <!-- FILTROS -->
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:18px">
+      ${filtros.map(f=>`
+        <button onclick="window.gFiltro='${f}';renderAdminGrupos(document.getElementById('app-page'))"
+          style="padding:6px 14px;border-radius:99px;font-size:11px;font-weight:600;cursor:pointer;
+          border:1.5px solid ${window.gFiltro===f?'var(--mag)':'var(--border)'};
+          background:${window.gFiltro===f?'rgba(198,0,112,.08)':'var(--bg1)'};
+          color:${window.gFiltro===f?'var(--mag)':'var(--txt2)'}">
+          ${fLabel[f]}
+        </button>`).join('')}
+    </div>
+
+    <!-- GRID DE TARJETAS -->
+    ${gruposMostrar.length
+      ? `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:16px">
+           ${gruposMostrar.map(tarjetaGrupo).join('')}
+         </div>`
+      : `<div class="card"><p style="font-size:13px;color:var(--txt3)">
+           No hay grupos en esta categoría.
+         </p></div>`}
+  `;
 }
 
 // ════════════════════════════════════════
@@ -2713,7 +2862,89 @@ async function ejecutarEliminarGrupo(id) {
   renderAdminGrupos(document.getElementById('app-page'));
 }
 
-// ── EDITAR MAESTRO ────────────────────────────────────────────
+// ── VER DETALLE ALUMNO DESDE GRUPO ───────────────────────────
+function abrirDetalleAlumnoGrupo(alumnoId, grupoId) {
+  const a = DATA.alumnos.find(a => a.id === alumnoId);
+  const g = DATA.grupos.find(g => g.id === grupoId);
+  if (!a) return;
+  const sesiones = DATA.sesiones.filter(s => s.alumno === a.id || s.alumno === a.nombre);
+  const tareas   = DATA.tareas.filter(t => t.alumno === a.id || t.alumno === a.nombre);
+  const hechas   = tareas.filter(t => t.hecha).length;
+
+  document.getElementById('modal-title').textContent = a.nombre;
+  document.getElementById('modal-body').innerHTML = `
+    <div class="report-grid" style="margin-bottom:16px">
+      <div class="report-field"><div class="rf-label">Empresa</div><div class="rf-val">${a.empresa||'—'}</div></div>
+      <div class="report-field"><div class="rf-label">Nivel actual</div>
+        <div class="rf-val"><span class="level ${LEVEL_CLASS[a.nivel_actual]||'level-a1'}">${a.nivel_actual}</span></div></div>
+      <div class="report-field"><div class="rf-label">Maestro</div><div class="rf-val">${a.maestro||'—'}</div></div>
+      <div class="report-field"><div class="rf-label">Sesión actual</div><div class="rf-val">${a.sesion_actual || 1}</div></div>
+      <div class="report-field"><div class="rf-label">Grupo</div><div class="rf-val">${g ? g.nombre : '—'}</div></div>
+      <div class="report-field"><div class="rf-label">Código acceso</div>
+        <div class="rf-val" style="font-family:var(--mono,monospace);letter-spacing:.1em">${a.codigo||'—'}</div></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:16px">
+      <div style="background:var(--bg2);border-radius:6px;padding:12px;text-align:center">
+        <div style="font-size:20px;font-weight:700;color:var(--mag)">${sesiones.length}</div>
+        <div style="font-size:10px;color:var(--txt3);margin-top:2px;text-transform:uppercase;letter-spacing:.05em">Sesiones</div>
+      </div>
+      <div style="background:var(--bg2);border-radius:6px;padding:12px;text-align:center">
+        <div style="font-size:20px;font-weight:700;color:var(--blue)">${tareas.length}</div>
+        <div style="font-size:10px;color:var(--txt3);margin-top:2px;text-transform:uppercase;letter-spacing:.05em">Tareas</div>
+      </div>
+      <div style="background:var(--bg2);border-radius:6px;padding:12px;text-align:center">
+        <div style="font-size:20px;font-weight:700;color:var(--green)">${tareas.length ? Math.round(hechas/tareas.length*100) : 0}%</div>
+        <div style="font-size:10px;color:var(--txt3);margin-top:2px;text-transform:uppercase;letter-spacing:.05em">Cumplimiento</div>
+      </div>
+    </div>
+    ${sesiones.slice(0,4).map(s=>renderSesionItem(s)).join('') ||
+      '<p style="font-size:12px;color:var(--txt3)">Sin sesiones registradas.</p>'}`;
+
+  document.getElementById('modal-footer').innerHTML = `
+    <button class="action-btn" onclick="closeModal()">Cerrar</button>
+    <button class="action-btn" onclick="closeModal();abrirEditarAlumno('${alumnoId}')"
+      style="background:var(--blue-bg);color:var(--blue)">Editar alumno</button>
+    <button class="action-btn" onclick="closeModal();confirmarQuitarAlumnoDeGrupo('${alumnoId}','${grupoId}')"
+      style="background:var(--red-bg);color:var(--red)">Quitar del grupo</button>`;
+  document.getElementById('modal').classList.add('open');
+}
+
+// ── QUITAR ALUMNO DE GRUPO (sin eliminarlo del sistema) ───────
+function confirmarQuitarAlumnoDeGrupo(alumnoId, grupoId) {
+  const a = DATA.alumnos.find(a => a.id === alumnoId);
+  const g = DATA.grupos.find(g => g.id === grupoId);
+  if (!a || !g) return;
+  document.getElementById('modal-title').textContent = 'Quitar del grupo';
+  document.getElementById('modal-body').innerHTML = `
+    <p style="font-size:13px;color:var(--txt2);line-height:1.7">
+      ¿Quitar a <strong>${a.nombre}</strong> del grupo <strong>${g.nombre}</strong>?
+    </p>
+    <div style="background:var(--bg2);border-radius:var(--rs);padding:10px 14px;
+      font-size:12px;color:var(--txt3);margin-top:12px;line-height:1.6">
+      El alumno <strong>no se elimina</strong> del sistema — solo se desvincula del grupo.
+      Podés reasignarlo a otro grupo cuando quieras.
+    </div>`;
+  document.getElementById('modal-footer').innerHTML = `
+    <button class="action-btn" onclick="closeModal()">Cancelar</button>
+    <button class="action-btn" id="btn-quitar-alumno"
+      style="background:var(--red-bg);color:var(--red)"
+      onclick="ejecutarQuitarAlumnoDeGrupo('${alumnoId}')">Sí, quitar</button>`;
+  document.getElementById('modal').classList.add('open');
+}
+
+async function ejecutarQuitarAlumnoDeGrupo(alumnoId) {
+  const a   = DATA.alumnos.find(a => a.id === alumnoId);
+  if (!a) return;
+  const btn = document.getElementById('btn-quitar-alumno');
+  btn.disabled = true; btn.textContent = 'Guardando...';
+  await saveToNotion({ action:'updateAlumno', id:alumnoId, updates:{ grupo_id:'' } });
+  a.grupo_id = null;
+  closeModal();
+  showToast(`✓ ${a.nombre} quitado del grupo`);
+  renderAdminGrupos(document.getElementById('app-page'));
+}
+
+
 function abrirEditarMaestro(id) {
   const m = DATA.maestros.find(m => m.id === id);
   if (!m) return;
