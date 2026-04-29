@@ -2199,398 +2199,126 @@ function renderAdminAlumnos(page) {
 // ════════════════════════════════════════
 // VISTAS DE ADMIN — GRUPOS
 // ════════════════════════════════════════
-function renderAdminGrupos(page) {
-  const DEFAULT_CAP = 8;
-  const getCAP = g => g.capacidad || DEFAULT_CAP;
-  const esExclusivo = g => getCAP(g) <= 3;
+// ── HELPERS DE GRUPOS (fuera de renderAdminGrupos para evitar templates anidados) ──
+const _CAP_DEFAULT = 8;
+function _getCAP(g)       { return g.capacidad || _CAP_DEFAULT; }
+function _esExclusivo(g)  { return _getCAP(g) <= 3; }
 
-  const activos   = DATA.grupos.filter(g => g.activo !== false);
-  const inactivos = DATA.grupos.filter(g => g.activo === false);
-  const totalAlumnos = activos.reduce((s,g) => s + DATA.alumnos.filter(a => normId(a.grupo_id) === normId(g.id) && a.activo !== false).length, 0);
-  const totalDisp    = activos.reduce((s,g) => {
-    const cap = getCAP(g);
+function _gruposFiltrados() {
+  return DATA.grupos.filter(g => {
     const n   = DATA.alumnos.filter(a => normId(a.grupo_id) === normId(g.id) && a.activo !== false).length;
-    return s + Math.max(0, cap - n);
-  }, 0);
+    const cap = _getCAP(g);
+    if (window.gFiltro === 'activos')     return g.activo !== false;
+    if (window.gFiltro === 'llenos')      return n >= cap;
+    if (window.gFiltro === 'con-espacio') return n < cap && g.activo !== false;
+    if (window.gFiltro === 'exclusivos')  return _esExclusivo(g);
+    return true;
+  });
+}
 
+function _tarjetaGrupo(g) {
+  const cap       = _getCAP(g);
+  const exclusivo = _esExclusivo(g);
+  const alumnos   = DATA.alumnos.filter(a => normId(a.grupo_id) === normId(g.id) && a.activo !== false);
+  const sesiones  = DATA.sesiones.filter(s => normId(s.grupo_id) === normId(g.id) && s.tipo === 'grupal');
+  const n         = alumnos.length;
+  const libre     = Math.max(0, cap - n);
+  const pctOcup   = Math.min(Math.round(n / cap * 100), 100);
+  const pctSes    = g.sesiones_contratadas ? Math.min(Math.round(sesiones.length / g.sesiones_contratadas * 100), 100) : null;
+  const esLleno   = n >= cap;
+  const esInactivo= g.activo === false;
+  const ocupColor = esLleno ? 'var(--red)' : n >= cap * 0.75 ? 'var(--orange,#F97316)' : 'var(--green)';
+  const capLabel  = exclusivo ? (cap === 1 ? '👤 Particular' : cap === 2 ? '👥 Dúo' : '👥 Trío') : 'Cap. ' + cap;
+  const slots     = Array.from({length: cap}, function(_, i) {
+    const ocupado = i < n;
+    const title   = ocupado ? (alumnos[i] ? alumnos[i].nombre : 'Alumno') : 'Disponible';
+    const bg      = ocupado ? ocupColor : 'var(--bg2)';
+    const border  = ocupado ? ocupColor : 'var(--border)';
+    return '<div title="' + title + '" style="width:20px;height:20px;border-radius:50%;background:' + bg + ';border:1.5px solid ' + border + ';flex-shrink:0"></div>';
+  }).join('');
+  const libreLabel = esLleno ? 'grupo cerrado' : libre === 1 ? '1 lugar libre' : libre + ' lugares libres';
+  const btnAgregar = esLleno
+    ? '<button disabled style="flex:1;min-width:100px;padding:7px 10px;border-radius:var(--rs);font-size:11px;font-weight:500;border:1.5px solid var(--border);background:var(--bg2);color:var(--txt3);cursor:not-allowed">🔒 Grupo cerrado</button>'
+    : '<button class="action-btn primary" onclick="abrirAsignarAlumno(\'' + g.id + '\')" style="flex:1;min-width:100px">+ Alumno</button>';
+  const exclusivoBadge = exclusivo ? '<span style="font-size:9px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:#9333ea;background:rgba(147,51,234,.1);padding:2px 7px;border-radius:99px;border:1px solid rgba(147,51,234,.2)">' + capLabel + '</span>' : '';
+  const inactivoBadge  = esInactivo ? '<span style="font-size:9px;font-weight:600;text-transform:uppercase;color:var(--txt3);background:var(--bg2);padding:2px 7px;border-radius:99px">Inactivo</span>' : '';
+  const sesBar = pctSes !== null ? '<div style="height:3px;background:var(--bg1);border-radius:2px;margin-top:6px;overflow:hidden"><div style="height:100%;width:' + pctSes + '%;background:var(--mag);border-radius:2px"></div></div>' : '';
+  const alumnosList = alumnos.length ? alumnos.map(function(a) {
+    return '<div style="display:flex;align-items:center;justify-content:space-between;padding:5px 8px;background:var(--bg2);border-radius:5px;gap:8px">'
+      + '<span style="font-size:12px;color:var(--txt1);flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + a.nombre + '</span>'
+      + '<div style="display:flex;align-items:center;gap:4px;flex-shrink:0">'
+      + '<span class="level ' + (LEVEL_CLASS[a.nivel_actual] || 'level-a1') + '" style="font-size:9px;padding:1px 5px">' + a.nivel_actual + '</span>'
+      + '<button onclick="abrirDetalleAlumnoGrupo(\'' + a.id + '\',\'' + g.id + '\')" style="border:none;background:var(--blue-bg);color:var(--blue);border-radius:4px;padding:3px 8px;font-size:10px;cursor:pointer;font-weight:500">Ver</button>'
+      + '<button onclick="confirmarQuitarAlumnoDeGrupo(\'' + a.id + '\',\'' + g.id + '\')" style="border:none;background:var(--red-bg);color:var(--red);border-radius:4px;padding:3px 8px;font-size:10px;cursor:pointer;font-weight:500">×</button>'
+      + '</div></div>';
+  }).join('') : '<p style="font-size:12px;color:var(--txt3);text-align:center">Sin alumnos asignados</p>';
+
+  return '<div style="background:var(--bg1);border:1.5px solid ' + (esLleno ? 'rgba(255,80,80,.25)' : 'var(--border)') + ';border-radius:var(--rs);padding:20px;display:flex;flex-direction:column;gap:14px;position:relative;overflow:hidden;' + (esInactivo ? 'opacity:.7' : '') + '">'
+    + '<div style="position:absolute;top:0;left:0;right:0;height:3px;background:' + (esInactivo ? 'var(--border)' : ocupColor) + '"></div>'
+    + '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">'
+      + '<div style="flex:1;min-width:0"><div style="font-weight:600;font-size:14px;color:var(--txt1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + g.nombre + '</div>'
+      + '<div style="font-size:11px;color:var(--txt3);margin-top:2px">' + (g.empresa || '—') + ' · ' + (g.horario || 'Sin horario') + '</div></div>'
+      + '<div style="display:flex;align-items:center;gap:5px;flex-shrink:0;flex-wrap:wrap;justify-content:flex-end"><span class="level ' + (LEVEL_CLASS[g.nivel] || 'level-a1') + '">' + g.nivel + '</span>' + exclusivoBadge + inactivoBadge + '</div>'
+    + '</div>'
+    + '<div>'
+      + '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px"><span style="font-size:11px;font-weight:500;color:var(--txt2)">Ocupación</span><span style="font-size:12px;font-weight:700;color:' + ocupColor + '">' + n + '/' + cap + ' <span style="font-weight:400;color:var(--txt3)">· ' + libreLabel + '</span></span></div>'
+      + '<div style="display:flex;gap:5px;flex-wrap:wrap">' + slots + '</div>'
+      + '<div style="height:4px;background:var(--bg2);border-radius:2px;margin-top:8px;overflow:hidden"><div style="height:100%;width:' + pctOcup + '%;background:' + ocupColor + ';border-radius:2px;transition:width .3s"></div></div>'
+    + '</div>'
+    + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">'
+      + '<div style="background:var(--bg2);border-radius:6px;padding:10px 12px"><div style="font-size:9px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--txt3);margin-bottom:4px">Maestro</div><div style="font-size:12px;color:var(--txt1);font-weight:500">' + (g.maestro || '—') + '</div></div>'
+      + '<div style="background:var(--bg2);border-radius:6px;padding:10px 12px"><div style="font-size:9px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--txt3);margin-bottom:4px">Sesiones</div><div style="font-size:12px;color:var(--txt1);font-weight:500">' + sesiones.length + (g.sesiones_contratadas ? ' / ' + g.sesiones_contratadas : '') + (pctSes !== null ? ' <span style="color:var(--txt3);font-weight:400">(' + pctSes + '%)</span>' : '') + '</div>' + sesBar + '</div>'
+    + '</div>'
+    + '<div style="border-top:1px solid var(--border);padding-top:12px">'
+      + '<div style="font-size:9px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--txt3);margin-bottom:8px">Alumnos</div>'
+      + '<div style="display:flex;flex-direction:column;gap:4px">' + alumnosList + '</div>'
+    + '</div>'
+    + '<div style="display:flex;gap:6px;flex-wrap:wrap;border-top:1px solid var(--border);padding-top:12px">'
+      + btnAgregar
+      + '<button class="action-btn" onclick="abrirEditarGrupo(\'' + g.id + '\')" style="flex:1;min-width:80px;background:var(--blue-bg);color:var(--blue)">Editar</button>'
+      + '<button class="action-btn" onclick="verGrupoDetalle(\'' + g.id + '\')" style="flex:1;min-width:80px">Historial</button>'
+      + '<button class="action-btn" onclick="confirmarEliminarGrupo(\'' + g.id + '\')" style="background:var(--red-bg);color:var(--red)">🗑</button>'
+    + '</div>'
+  + '</div>';
+}
+
+function renderAdminGrupos(page) {
+  const activos      = DATA.grupos.filter(g => g.activo !== false);
+  const totalAlumnos = activos.reduce(function(s,g) { return s + DATA.alumnos.filter(function(a) { return normId(a.grupo_id) === normId(g.id) && a.activo !== false; }).length; }, 0);
+  const totalDisp    = activos.reduce(function(s,g) { var cap = _getCAP(g); var n = DATA.alumnos.filter(function(a) { return normId(a.grupo_id) === normId(g.id) && a.activo !== false; }).length; return s + Math.max(0, cap - n); }, 0);
+  const gruposLlenos = activos.filter(function(g) { return DATA.alumnos.filter(function(a) { return normId(a.grupo_id) === normId(g.id) && a.activo !== false; }).length >= _getCAP(g); }).length;
+  if (!window.gFiltro) window.gFiltro = 'activos';
+  const gruposMostrar = _gruposFiltrados();
   const filtros = ['todos','activos','llenos','con-espacio','exclusivos'];
   const fLabel  = { todos:'Todos', activos:'Activos', llenos:'Llenos', 'con-espacio':'Con espacio', exclusivos:'Exclusivos' };
-  if (!window.gFiltro) window.gFiltro = 'activos';
 
-  function gruposFiltrados() {
-    return DATA.grupos.filter(g => {
-      const n   = DATA.alumnos.filter(a => normId(a.grupo_id) === normId(g.id) && a.activo !== false).length;
-      const cap = getCAP(g);
-      if (window.gFiltro === 'activos')     return g.activo !== false;
-      if (window.gFiltro === 'llenos')      return n >= cap;
-      if (window.gFiltro === 'con-espacio') return n < cap && g.activo !== false;
-      if (window.gFiltro === 'exclusivos')  return esExclusivo(g);
-      return true;
-    });
-  }
+  var filtrosBtns = filtros.map(function(f) {
+    var activo  = window.gFiltro === f;
+    var border  = activo ? 'var(--mag)' : 'var(--border)';
+    var bg      = activo ? 'rgba(198,0,112,.08)' : 'var(--bg1)';
+    var color   = activo ? 'var(--mag)' : 'var(--txt2)';
+    return '<button onclick="window.gFiltro=\'' + f + '\';renderAdminGrupos(document.getElementById(\'app-page\'))" style="padding:6px 14px;border-radius:99px;font-size:11px;font-weight:600;cursor:pointer;border:1.5px solid ' + border + ';background:' + bg + ';color:' + color + '">' + fLabel[f] + '</button>';
+  }).join('');
 
-  function tarjetaGrupo(g) {
-    const cap       = getCAP(g);
-    const exclusivo = esExclusivo(g);
-    const alumnos   = DATA.alumnos.filter(a => normId(a.grupo_id) === normId(g.id) && a.activo !== false);
-    const sesiones  = DATA.sesiones.filter(s => normId(s.grupo_id) === normId(g.id) && s.tipo === 'grupal');
-    const n         = alumnos.length;
-    const libre     = Math.max(0, cap - n);
-    const pctOcup   = Math.min(Math.round(n / cap * 100), 100);
-    const pctSes    = g.sesiones_contratadas ? Math.min(Math.round(sesiones.length / g.sesiones_contratadas * 100), 100) : null;
-    const esLleno   = n >= cap;
-    const esInactivo= g.activo === false;
-    const ocupColor = esLleno ? 'var(--red)' : n >= cap * 0.75 ? 'var(--orange,#F97316)' : 'var(--green)';
-    const capLabel  = exclusivo
-      ? (cap === 1 ? '👤 Particular' : cap === 2 ? '👥 Dúo' : '👥 Trío')
-      : `Cap. ${cap}`;
+  var kpis = [
+    { label:'Grupos activos',  val: activos.length,                                              color:'var(--mag)'  },
+    { label:'Total alumnos',   val: totalAlumnos,                                                color:'var(--blue)' },
+    { label:'Lugares libres',  val: totalDisp,                                                   color:'var(--green)'},
+    { label:'Grupos llenos',   val: gruposLlenos,                                                color:'var(--red)'  },
+    { label:'Exclusivos',      val: activos.filter(function(g){ return _esExclusivo(g); }).length, color:'#9333ea'   },
+  ].map(function(k) {
+    return '<div style="background:var(--bg1);border:1.5px solid var(--border);border-radius:var(--rs);padding:14px 16px"><div style="font-size:22px;font-weight:700;color:' + k.color + ';line-height:1">' + k.val + '</div><div style="font-size:10px;color:var(--txt3);margin-top:4px;font-weight:500;text-transform:uppercase;letter-spacing:.06em">' + k.label + '</div></div>';
+  }).join('');
 
-    // slots visuales
-    const slots = Array.from({length: cap}, (_, i) => {
-      const ocupado = i < n;
-      return `<div title="${ocupado ? alumnos[i]?.nombre || 'Alumno' : 'Disponible'}"
-        style="width:20px;height:20px;border-radius:50%;
-        background:${ocupado ? ocupColor : 'var(--bg2)'};
-        border:1.5px solid ${ocupado ? ocupColor : 'var(--border)'};
-        flex-shrink:0;transition:background .2s"></div>`;
-    }).join('');
+  var grid = gruposMostrar.length
+    ? '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:16px">' + gruposMostrar.map(_tarjetaGrupo).join('') + '</div>'
+    : '<div class="card"><p style="font-size:13px;color:var(--txt3)">No hay grupos en esta categoría.</p></div>';
 
-    const btnAgregar = esLleno
-      ? `<button disabled style="flex:1;min-width:100px;padding:7px 10px;border-radius:var(--rs);
-           font-size:11px;font-weight:500;border:1.5px solid var(--border);
-           background:var(--bg2);color:var(--txt3);cursor:not-allowed">
-           🔒 Grupo cerrado</button>`
-      : `<button class="action-btn primary" onclick="abrirAsignarAlumno('${g.id}')" style="flex:1;min-width:100px">+ Alumno</button>`;
-
-    return `
-    <div style="background:var(--bg1);border:1.5px solid ${esLleno?'rgba(255,80,80,.25)':esInactivo?'var(--border)':'var(--border)'};
-      border-radius:var(--rs);padding:20px;display:flex;flex-direction:column;gap:14px;
-      position:relative;overflow:hidden;${esInactivo?'opacity:.7':''}">
-      <div style="position:absolute;top:0;left:0;right:0;height:3px;background:${esInactivo?'var(--border)':ocupColor}"></div>
-
-      <!-- HEADER -->
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
-        <div style="flex:1;min-width:0">
-          <div style="font-weight:600;font-size:14px;color:var(--txt1);
-            white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${g.nombre}</div>
-          <div style="font-size:11px;color:var(--txt3);margin-top:2px">
-            ${g.empresa || '—'} · ${g.horario || 'Sin horario'}
-          </div>
-        </div>
-        <div style="display:flex;align-items:center;gap:5px;flex-shrink:0;flex-wrap:wrap;justify-content:flex-end">
-          <span class="level ${LEVEL_CLASS[g.nivel]||'level-a1'}">${g.nivel}</span>
-          ${exclusivo ? `<span style="font-size:9px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;
-            color:#9333ea;background:rgba(147,51,234,.1);padding:2px 7px;border-radius:99px;
-            border:1px solid rgba(147,51,234,.2)">${capLabel}</span>` : ''}
-          ${esInactivo ? `<span style="font-size:9px;font-weight:600;text-transform:uppercase;
-            color:var(--txt3);background:var(--bg2);padding:2px 7px;border-radius:99px">Inactivo</span>` : ''}
-        </div>
-      </div>
-
-      <!-- SLOTS -->
-      <div>
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-          <span style="font-size:11px;font-weight:500;color:var(--txt2)">Ocupación</span>
-          <span style="font-size:12px;font-weight:700;color:${ocupColor}">${n}/${cap}
-            <span style="font-weight:400;color:var(--txt3)"> · ${esLleno ? 'grupo cerrado' : libre === 1 ? '1 lugar libre' : libre+' lugares libres'}</span>
-          </span>
-        </div>
-        <div style="display:flex;gap:5px;flex-wrap:wrap">${slots}</div>
-        <div style="height:4px;background:var(--bg2);border-radius:2px;margin-top:8px;overflow:hidden">
-          <div style="height:100%;width:${pctOcup}%;background:${ocupColor};border-radius:2px;transition:width .3s"></div>
-        </div>
-      </div>
-
-      <!-- MAESTRO + SESIONES -->
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-        <div style="background:var(--bg2);border-radius:6px;padding:10px 12px">
-          <div style="font-size:9px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--txt3);margin-bottom:4px">Maestro</div>
-          <div style="font-size:12px;color:var(--txt1);font-weight:500">${g.maestro || '—'}</div>
-        </div>
-        <div style="background:var(--bg2);border-radius:6px;padding:10px 12px">
-          <div style="font-size:9px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--txt3);margin-bottom:4px">Sesiones</div>
-          <div style="font-size:12px;color:var(--txt1);font-weight:500">
-            ${sesiones.length}${g.sesiones_contratadas ? ' / '+g.sesiones_contratadas : ''}
-            ${pctSes !== null ? `<span style="color:var(--txt3);font-weight:400"> (${pctSes}%)</span>` : ''}
-          </div>
-          ${pctSes !== null ? `
-          <div style="height:3px;background:var(--bg1);border-radius:2px;margin-top:6px;overflow:hidden">
-            <div style="height:100%;width:${pctSes}%;background:var(--mag);border-radius:2px"></div>
-          </div>` : ''}
-        </div>
-      </div>
-
-      <!-- ALUMNOS -->
-      ${alumnos.length ? `
-      <div style="border-top:1px solid var(--border);padding-top:12px">
-        <div style="font-size:9px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--txt3);margin-bottom:8px">Alumnos</div>
-        <div style="display:flex;flex-direction:column;gap:4px">
-          ${alumnos.map(a => `
-          <div style="display:flex;align-items:center;justify-content:space-between;
-            padding:5px 8px;background:var(--bg2);border-radius:5px;gap:8px">
-            <span style="font-size:12px;color:var(--txt1);flex:1;min-width:0;
-              white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${a.nombre}</span>
-            <div style="display:flex;align-items:center;gap:4px;flex-shrink:0">
-              <span class="level ${LEVEL_CLASS[a.nivel_actual]||'level-a1'}" style="font-size:9px;padding:1px 5px">${a.nivel_actual}</span>
-              <button onclick="abrirDetalleAlumnoGrupo('${a.id}','${g.id}')"
-                style="border:none;background:var(--blue-bg);color:var(--blue);border-radius:4px;
-                padding:3px 8px;font-size:10px;cursor:pointer;font-weight:500">Ver</button>
-              <button onclick="confirmarQuitarAlumnoDeGrupo('${a.id}','${g.id}')"
-                style="border:none;background:var(--red-bg);color:var(--red);border-radius:4px;
-                padding:3px 8px;font-size:10px;cursor:pointer;font-weight:500">×</button>
-            </div>
-          </div>`).join('')}
-        </div>
-      </div>` : `
-      <div style="border-top:1px solid var(--border);padding-top:12px">
-        <p style="font-size:12px;color:var(--txt3);text-align:center">Sin alumnos asignados</p>
-      </div>`}
-
-      <!-- ACCIONES -->
-      <div style="display:flex;gap:6px;flex-wrap:wrap;border-top:1px solid var(--border);padding-top:12px">
-        ${btnAgregar}
-        <button class="action-btn" onclick="abrirEditarGrupo('${g.id}')" style="flex:1;min-width:80px;background:var(--blue-bg);color:var(--blue)">Editar</button>
-        <button class="action-btn" onclick="verGrupoDetalle('${g.id}')" style="flex:1;min-width:80px">Historial</button>
-        <button class="action-btn" onclick="confirmarEliminarGrupo('${g.id}')" style="background:var(--red-bg);color:var(--red)">🗑</button>
-      </div>
-    </div>`;
-  }
-
-  const gruposMostrar = gruposFiltrados();
-  const gruposLlenos  = activos.filter(g => DATA.alumnos.filter(a=>normId(a.grupo_id)===normId(g.id)&&a.activo!==false).length >= getCAP(g)).length;
-
-  page.innerHTML = `
-    <div class="ph" style="margin-bottom:0">
-      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap">
-        <div>
-          <h2>Panorama de Grupos</h2>
-          <p>${activos.length} grupos activos · ${totalAlumnos} alumnos · ${totalDisp} lugares disponibles</p>
-        </div>
-        <button class="action-btn primary" onclick="abrirNuevoGrupo()">+ Nuevo grupo</button>
-      </div>
-    </div>
-
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:20px">
-      ${[
-        { label:'Grupos activos',  val: activos.length,  color:'var(--mag)' },
-        { label:'Total alumnos',   val: totalAlumnos,    color:'var(--blue)' },
-        { label:'Lugares libres',  val: totalDisp,       color:'var(--green)' },
-        { label:'Grupos llenos',   val: gruposLlenos,    color:'var(--red)' },
-        { label:'Exclusivos',      val: activos.filter(g=>esExclusivo(g)).length, color:'#9333ea' },
-      ].map(k=>`
-        <div style="background:var(--bg1);border:1.5px solid var(--border);border-radius:var(--rs);padding:14px 16px">
-          <div style="font-size:22px;font-weight:700;color:${k.color};line-height:1">${k.val}</div>
-          <div style="font-size:10px;color:var(--txt3);margin-top:4px;font-weight:500;text-transform:uppercase;letter-spacing:.06em">${k.label}</div>
-        </div>`).join('')}
-    </div>
-
-    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:18px">
-      ${filtros.map(f=>`
-        <button onclick="window.gFiltro='${f}';renderAdminGrupos(document.getElementById('app-page'))"
-          style="padding:6px 14px;border-radius:99px;font-size:11px;font-weight:600;cursor:pointer;
-          border:1.5px solid ${window.gFiltro===f?'var(--mag)':'var(--border)'};
-          background:${window.gFiltro===f?'rgba(198,0,112,.08)':'var(--bg1)'};
-          color:${window.gFiltro===f?'var(--mag)':'var(--txt2)'}">
-          ${fLabel[f]}
-        </button>`).join('')}
-    </div>
-
-    ${gruposMostrar.length
-      ? `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:16px">
-           ${gruposMostrar.map(tarjetaGrupo).join('')}
-         </div>`
-      : `<div class="card"><p style="font-size:13px;color:var(--txt3)">No hay grupos en esta categoría.</p></div>`}
-  `;
+  page.innerHTML = '<div class="ph" style="margin-bottom:0"><div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap"><div><h2>Panorama de Grupos</h2><p>' + activos.length + ' grupos activos · ' + totalAlumnos + ' alumnos · ' + totalDisp + ' lugares disponibles</p></div><button class="action-btn primary" onclick="abrirNuevoGrupo()">+ Nuevo grupo</button></div></div>'
+    + '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:20px">' + kpis + '</div>'
+    + '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:18px">' + filtrosBtns + '</div>'
+    + grid;
 }
-  const activos   = DATA.grupos.filter(g => g.activo !== false);
-  const inactivos = DATA.grupos.filter(g => g.activo === false);
-  const totalAlumnos = activos.reduce((s,g) => s + DATA.alumnos.filter(a => normId(a.grupo_id) === normId(g.id) && a.activo !== false).length, 0);
-  const totalDisp    = activos.reduce((s,g) => {
-    const n = DATA.alumnos.filter(a => normId(a.grupo_id) === normId(g.id) && a.activo !== false).length;
-    return s + Math.max(0, CAP - n);
-  }, 0);
-
-  // ── Filtro activo seleccionado (persiste en window.gfiltro)
-  const filtros = ['todos','activos','llenos','con-espacio'];
-  const fLabel  = { todos:'Todos', activos:'Activos', llenos:'Llenos', 'con-espacio':'Con espacio' };
-  if (!window.gFiltro) window.gFiltro = 'activos';
-
-  function gruposFiltrados() {
-    return DATA.grupos.filter(g => {
-      const n = DATA.alumnos.filter(a => normId(a.grupo_id) === normId(g.id) && a.activo !== false).length;
-      if (window.gFiltro === 'activos')     return g.activo !== false;
-      if (window.gFiltro === 'llenos')      return n >= CAP;
-      if (window.gFiltro === 'con-espacio') return n < CAP && g.activo !== false;
-      return true; // todos
-    });
-  }
-
-  function tarjetaGrupo(g) {
-    const alumnos   = DATA.alumnos.filter(a => normId(a.grupo_id) === normId(g.id) && a.activo !== false);
-    const sesiones  = DATA.sesiones.filter(s => normId(s.grupo_id) === normId(g.id) && s.tipo === 'grupal');
-    const n         = alumnos.length;
-    const libre     = Math.max(0, CAP - n);
-    const pctOcup   = Math.min(Math.round(n / CAP * 100), 100);
-    const pctSes    = g.sesiones_contratadas ? Math.min(Math.round(sesiones.length / g.sesiones_contratadas * 100), 100) : null;
-    const esLleno   = n >= CAP;
-    const esInactivo= g.activo === false;
-    const ocupColor = esLleno ? 'var(--red)' : n >= CAP * 0.75 ? 'var(--orange,#F97316)' : 'var(--green)';
-
-    // slots visuales (8 círculos)
-    const slots = Array.from({length: CAP}, (_, i) => {
-      const ocupado = i < n;
-      return `<div style="width:20px;height:20px;border-radius:50%;
-        background:${ocupado ? ocupColor : 'var(--bg2)'};
-        border:1.5px solid ${ocupado ? ocupColor : 'var(--border)'};
-        display:flex;align-items:center;justify-content:center;
-        font-size:9px;color:${ocupado?'#fff':'var(--txt3)'}">
-        ${ocupado ? '' : ''}
-      </div>`;
-    }).join('');
-
-    return `
-    <div class="grupo-card${esInactivo?' grupo-inactivo':''}" style="
-      background:var(--bg1);border:1.5px solid ${esLleno?'rgba(255,80,80,.25)':esInactivo?'var(--border)':'var(--border)'};
-      border-radius:var(--rs);padding:20px;display:flex;flex-direction:column;gap:14px;
-      position:relative;overflow:hidden;">
-      ${esInactivo ? `<div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--border)"></div>`
-                   : `<div style="position:absolute;top:0;left:0;right:0;height:3px;background:${ocupColor}"></div>`}
-
-      <!-- HEADER -->
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
-        <div style="flex:1;min-width:0">
-          <div style="font-weight:600;font-size:14px;color:var(--txt1);
-            white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${g.nombre}</div>
-          <div style="font-size:11px;color:var(--txt3);margin-top:2px">
-            ${g.empresa || '—'} · ${g.horario || 'Sin horario'}
-          </div>
-        </div>
-        <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
-          <span class="level ${LEVEL_CLASS[g.nivel]||'level-a1'}">${g.nivel}</span>
-          ${esInactivo ? `<span style="font-size:9px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--txt3);background:var(--bg2);padding:2px 7px;border-radius:99px">Inactivo</span>` : ''}
-        </div>
-      </div>
-
-      <!-- SLOTS VISUALES -->
-      <div>
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-          <span style="font-size:11px;font-weight:500;color:var(--txt2)">Ocupación</span>
-          <span style="font-size:12px;font-weight:700;color:${ocupColor}">${n}/${CAP}
-            <span style="font-weight:400;color:var(--txt3)"> · ${libre === 0 ? 'grupo lleno' : libre === 1 ? '1 lugar libre' : libre+' lugares libres'}</span>
-          </span>
-        </div>
-        <div style="display:flex;gap:5px;flex-wrap:wrap">${slots}</div>
-        <div style="height:4px;background:var(--bg2);border-radius:2px;margin-top:8px;overflow:hidden">
-          <div style="height:100%;width:${pctOcup}%;background:${ocupColor};border-radius:2px;transition:width .3s"></div>
-        </div>
-      </div>
-
-      <!-- MAESTRO + SESIONES -->
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-        <div style="background:var(--bg2);border-radius:6px;padding:10px 12px">
-          <div style="font-size:9px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--txt3);margin-bottom:4px">Maestro</div>
-          <div style="font-size:12px;color:var(--txt1);font-weight:500">${g.maestro || '—'}</div>
-        </div>
-        <div style="background:var(--bg2);border-radius:6px;padding:10px 12px">
-          <div style="font-size:9px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--txt3);margin-bottom:4px">Sesiones</div>
-          <div style="font-size:12px;color:var(--txt1);font-weight:500">
-            ${sesiones.length}${g.sesiones_contratadas ? ' / '+g.sesiones_contratadas : ''}
-            ${pctSes !== null ? `<span style="color:var(--txt3);font-weight:400"> (${pctSes}%)</span>` : ''}
-          </div>
-          ${pctSes !== null ? `
-          <div style="height:3px;background:var(--bg1);border-radius:2px;margin-top:6px;overflow:hidden">
-            <div style="height:100%;width:${pctSes}%;background:var(--mag);border-radius:2px"></div>
-          </div>` : ''}
-        </div>
-      </div>
-
-      <!-- ALUMNOS LISTA COMPACTA -->
-      ${alumnos.length ? `
-      <div style="border-top:1px solid var(--border);padding-top:12px">
-        <div style="font-size:9px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--txt3);margin-bottom:8px">Alumnos</div>
-        <div style="display:flex;flex-direction:column;gap:4px">
-          ${alumnos.map(a => `
-          <div style="display:flex;align-items:center;justify-content:space-between;
-            padding:5px 8px;background:var(--bg2);border-radius:5px;gap:8px">
-            <span style="font-size:12px;color:var(--txt1);flex:1;min-width:0;
-              white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${a.nombre}</span>
-            <div style="display:flex;align-items:center;gap:4px;flex-shrink:0">
-              <span class="level ${LEVEL_CLASS[a.nivel_actual]||'level-a1'}" style="font-size:9px;padding:1px 5px">${a.nivel_actual}</span>
-              <button onclick="abrirDetalleAlumnoGrupo('${a.id}','${g.id}')"
-                style="border:none;background:var(--blue-bg);color:var(--blue);border-radius:4px;
-                padding:3px 8px;font-size:10px;cursor:pointer;font-weight:500">Ver</button>
-              <button onclick="confirmarQuitarAlumnoDeGrupo('${a.id}','${g.id}')"
-                style="border:none;background:var(--red-bg);color:var(--red);border-radius:4px;
-                padding:3px 8px;font-size:10px;cursor:pointer;font-weight:500">×</button>
-            </div>
-          </div>`).join('')}
-        </div>
-      </div>` : `
-      <div style="border-top:1px solid var(--border);padding-top:12px">
-        <p style="font-size:12px;color:var(--txt3);text-align:center">Sin alumnos asignados</p>
-      </div>`}
-
-      <!-- ACCIONES -->
-      <div style="display:flex;gap:6px;flex-wrap:wrap;border-top:1px solid var(--border);padding-top:12px">
-        <button class="action-btn primary" onclick="abrirAsignarAlumno('${g.id}')" style="flex:1;min-width:100px">+ Alumno</button>
-        <button class="action-btn" onclick="abrirEditarGrupo('${g.id}')" style="flex:1;min-width:80px;background:var(--blue-bg);color:var(--blue)">Editar</button>
-        <button class="action-btn" onclick="verGrupoDetalle('${g.id}')" style="flex:1;min-width:80px">Historial</button>
-        <button class="action-btn" onclick="confirmarEliminarGrupo('${g.id}')" style="background:var(--red-bg);color:var(--red)">🗑</button>
-      </div>
-    </div>`;
-  }
-
-  const gruposMostrar = gruposFiltrados();
-
-  page.innerHTML = `
-    <!-- ENCABEZADO + KPIs -->
-    <div class="ph" style="margin-bottom:0">
-      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap">
-        <div>
-          <h2>Panorama de Grupos</h2>
-          <p>${activos.length} grupos activos · ${totalAlumnos} alumnos · ${totalDisp} lugares disponibles</p>
-        </div>
-        <button class="action-btn primary" onclick="abrirNuevoGrupo()">+ Nuevo grupo</button>
-      </div>
-    </div>
-
-    <!-- KPI CARDS -->
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:20px">
-      ${[
-        { label:'Grupos activos',   val: activos.length,   color:'var(--mag)' },
-        { label:'Total alumnos',    val: totalAlumnos,     color:'var(--blue)' },
-        { label:'Lugares libres',   val: totalDisp,        color:'var(--green)' },
-        { label:'Grupos llenos',    val: activos.filter(g => DATA.alumnos.filter(a=>normId(a.grupo_id)===normId(g.id)&&a.activo!==false).length>=CAP).length, color:'var(--red)' },
-      ].map(k=>`
-        <div style="background:var(--bg1);border:1.5px solid var(--border);border-radius:var(--rs);padding:14px 16px">
-          <div style="font-size:22px;font-weight:700;color:${k.color};line-height:1">${k.val}</div>
-          <div style="font-size:10px;color:var(--txt3);margin-top:4px;font-weight:500;text-transform:uppercase;letter-spacing:.06em">${k.label}</div>
-        </div>`).join('')}
-    </div>
-
-    <!-- FILTROS -->
-    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:18px">
-      ${filtros.map(f=>`
-        <button onclick="window.gFiltro='${f}';renderAdminGrupos(document.getElementById('app-page'))"
-          style="padding:6px 14px;border-radius:99px;font-size:11px;font-weight:600;cursor:pointer;
-          border:1.5px solid ${window.gFiltro===f?'var(--mag)':'var(--border)'};
-          background:${window.gFiltro===f?'rgba(198,0,112,.08)':'var(--bg1)'};
-          color:${window.gFiltro===f?'var(--mag)':'var(--txt2)'}">
-          ${fLabel[f]}
-        </button>`).join('')}
-    </div>
-
-    <!-- GRID DE TARJETAS -->
-    ${gruposMostrar.length
-      ? `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:16px">
-           ${gruposMostrar.map(tarjetaGrupo).join('')}
-         </div>`
-      : `<div class="card"><p style="font-size:13px;color:var(--txt3)">
-           No hay grupos en esta categoría.
-         </p></div>`}
-  `;
-}
-
 // ════════════════════════════════════════
 // VISTAS DE ADMIN — MAESTROS
 // ════════════════════════════════════════
