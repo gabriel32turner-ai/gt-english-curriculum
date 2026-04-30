@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GT · A1.2 · M3 · S1B · Getting Around for Business — Application</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --accent:#8B5CF6;--accent2:#A78BFA;--bg:#080808;--surface:#111318;--surface2:#1a1f28;
+  --border:rgba(139,92,246,0.18);--text:#F0F4F8;--muted:#8A9BB0;--danger:#FF4D6D;
+  --success:#00E5A0;--warn:#FFB347;--font-head:'Syne',sans-serif;--font-body:'DM Sans',sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:15px;line-height:1.65;min-height:100vh}
+#progressBar{position:fixed;top:0;left:0;width:0%;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent2));z-index:9999;transition:width .3s}
+.site-header{position:sticky;top:0;z-index:900;background:rgba(8,8,8,.94);backdrop-filter:blur(14px);border-bottom:1px solid var(--border);padding:0 24px}
+.header-inner{max-width:960px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:58px;gap:12px;flex-wrap:wrap}
+.header-brand{font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--accent);letter-spacing:.08em;text-transform:uppercase}
+.header-meta{font-size:12px;color:var(--muted);font-weight:500}
+.session-badge{background:rgba(255,179,71,.12);border:1px solid rgba(255,179,71,.35);color:var(--warn);font-family:var(--font-head);font-size:10px;font-weight:800;letter-spacing:.1em;padding:3px 10px;border-radius:20px;text-transform:uppercase}
+.badge-strip{display:flex;gap:6px}
+.badge-strip span{font-size:18px;opacity:.25;transition:all .4s;filter:grayscale(1);cursor:default}
+.badge-strip span.earned{opacity:1;filter:none;animation:badgePop .5s cubic-bezier(.34,1.56,.64,1)}
+@keyframes badgePop{0%{transform:scale(.4) rotate(-20deg);opacity:0}70%{transform:scale(1.25) rotate(4deg);opacity:1}100%{transform:scale(1) rotate(0)}}
+.mode-toggle{background:var(--surface2);border:1px solid var(--border);color:var(--accent);font-family:var(--font-head);font-size:11px;font-weight:700;padding:5px 12px;border-radius:6px;cursor:pointer;letter-spacing:.06em;transition:all .2s}
+.mode-toggle:hover{background:var(--accent);color:var(--bg)}
+.sticky-nav{position:sticky;top:58px;z-index:800;background:rgba(8,8,8,.9);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none}
+.sticky-nav::-webkit-scrollbar{display:none}
+.nav-inner{max-width:960px;margin:0 auto;display:flex;gap:0;padding:0 16px}
+.nav-inner a{font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:.06em;color:var(--muted);text-decoration:none;padding:10px 14px;border-bottom:2px solid transparent;white-space:nowrap;transition:all .2s}
+.nav-inner a:hover{color:var(--accent);border-color:var(--accent)}
+.main{max-width:960px;margin:0 auto;padding:32px 20px 80px}
+.section{margin-bottom:48px;border:1px solid var(--border);border-radius:16px;overflow:hidden;background:var(--surface)}
+.section-header{display:flex;align-items:center;gap:14px;padding:18px 24px;background:linear-gradient(135deg,rgba(139,92,246,.08),transparent);border-bottom:1px solid var(--border)}
+.section-number{font-family:var(--font-head);font-size:11px;font-weight:800;color:var(--accent);letter-spacing:.12em;text-transform:uppercase;background:rgba(139,92,246,.1);border:1px solid var(--border);padding:3px 10px;border-radius:20px}
+.section-title{font-family:var(--font-head);font-size:18px;font-weight:800;color:var(--text);flex:1}
+.section-time{font-size:12px;color:var(--muted);font-weight:500;background:var(--surface2);padding:3px 10px;border-radius:20px}
+.section-body{padding:24px}
+.img-card{border-radius:10px;overflow:hidden;position:relative;margin-bottom:18px}
+.img-card img{width:100%;height:180px;object-fit:cover;display:block}
+.img-overlay{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(8,8,8,.88));padding:12px 16px;font-size:13px;color:rgba(255,255,255,.85)}
+.teacher-note{background:rgba(139,92,246,.06);border-left:3px solid var(--accent);border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0;font-size:13px;color:var(--muted)}
+.teacher-note strong{color:var(--accent)}
+.student-only{display:none}
+body.student-mode .teacher-only{display:none}
+body.student-mode .student-only{display:block}
+.timer-wrap{display:flex;flex-direction:column;align-items:center;gap:10px;margin:16px 0}
+.timer-svg{transform:rotate(-90deg)}
+.timer-bg{fill:none;stroke:rgba(255,255,255,.07)}
+.timer-arc{fill:none;stroke:var(--accent);stroke-linecap:round;transition:stroke .5s}
+.timer-text{font-family:var(--font-head);font-weight:800;font-size:22px;fill:var(--text);dominant-baseline:middle;text-anchor:middle}
+.timer-label{font-size:11px;fill:var(--muted);dominant-baseline:middle;text-anchor:middle}
+.timer-btns{display:flex;gap:8px}
+.btn{font-family:var(--font-head);font-size:12px;font-weight:700;letter-spacing:.06em;padding:7px 18px;border-radius:8px;border:none;cursor:pointer;transition:all .2s}
+.btn-primary{background:var(--accent);color:var(--bg)}
+.btn-primary:hover{background:var(--accent2)}
+.btn-ghost{background:var(--surface2);border:1px solid var(--border);color:var(--muted)}
+.btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
+.hot-take-card{background:linear-gradient(135deg,rgba(255,77,109,.07),rgba(255,179,71,.04));border:1px solid rgba(255,77,109,.3);border-radius:14px;padding:24px;margin:16px 0}
+.hot-take-label{font-family:var(--font-head);font-size:11px;font-weight:800;color:var(--danger);letter-spacing:.12em;text-transform:uppercase;margin-bottom:10px}
+.hot-take-prompt{font-size:20px;font-weight:600;color:var(--text);line-height:1.4;margin-bottom:16px}
+.hot-take-rules{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px}
+.rule-pill{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:4px 12px;font-size:12px;color:var(--muted)}
+.rule-pill strong{color:var(--text)}
+.sides-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0}
+.side-card{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:18px}
+.side-label{font-family:var(--font-head);font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px}
+.side-a .side-label{color:#A78BFA}
+.side-b .side-label{color:var(--accent)}
+.side-prompt{font-size:14px;font-weight:600;color:var(--text);margin-bottom:12px;line-height:1.4}
+.side-starters{display:flex;flex-direction:column;gap:6px}
+.side-starters span{font-size:13px;color:var(--muted);font-style:italic;padding:4px 0;border-left:2px solid var(--border);padding-left:10px}
+.relay-wrap{display:flex;flex-direction:column;gap:14px;margin:16px 0}
+.relay-prompt{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:16px}
+.relay-tag{font-family:var(--font-head);font-size:10px;font-weight:700;color:var(--accent);letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px}
+.relay-input-text{font-size:16px;font-weight:600;color:var(--text);margin-bottom:6px}
+.relay-target{font-size:13px;color:var(--muted);margin-bottom:10px}
+.relay-reveal-btn{background:transparent;border:1px dashed var(--accent);color:var(--accent);font-family:var(--font-head);font-size:11px;font-weight:700;padding:5px 14px;border-radius:6px;cursor:pointer;letter-spacing:.06em;transition:all .2s}
+.relay-reveal-btn:hover{background:rgba(139,92,246,.1)}
+.relay-answer{display:none;margin-top:10px;background:rgba(0,229,160,.06);border:1px solid rgba(0,229,160,.2);border-radius:8px;padding:10px 14px;font-size:13px;color:var(--success)}
+.speed-score-bar{display:flex;justify-content:space-between;align-items:center;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:8px 16px;margin-bottom:14px}
+.speed-label{font-family:var(--font-head);font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
+.speed-val{font-family:var(--font-head);font-size:20px;font-weight:800;color:var(--accent)}
+.speed-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:14px 0}
+.speed-card{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center;cursor:pointer;transition:all .2s;min-height:70px;display:flex;flex-direction:column;justify-content:center}
+.speed-card:hover:not(.used){border-color:var(--accent);transform:translateY(-2px)}
+.speed-card.used{opacity:.4;pointer-events:none;border-color:var(--success)}
+.speed-word{font-family:var(--font-head);font-size:14px;font-weight:700;color:var(--accent)}
+.speed-hint{font-size:11px;color:var(--muted);margin-top:3px}
+.source-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0}
+.source-card{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:16px}
+.source-who{font-family:var(--font-head);font-size:11px;font-weight:700;color:var(--accent);letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px}
+.source-quote{font-size:14px;color:var(--text);font-style:italic;border-left:2px solid var(--accent);padding-left:12px;margin-bottom:12px;line-height:1.5}
+.source-task{font-size:13px;color:var(--warn);margin-bottom:10px;font-weight:500}
+.source-options{display:flex;flex-wrap:wrap;gap:6px}
+.src-btn{background:var(--surface);border:1px solid var(--border);color:var(--text);font-family:var(--font-body);font-size:13px;padding:6px 12px;border-radius:6px;cursor:pointer;transition:all .2s}
+.src-btn:hover:not(:disabled){border-color:var(--accent);color:var(--accent)}
+.src-btn.correct-ans{background:rgba(0,229,160,.15);border-color:var(--success);color:var(--success)}
+.src-btn.wrong-ans{background:rgba(255,77,109,.12);border-color:var(--danger);color:var(--danger)}
+.src-btn:disabled{cursor:not-allowed;opacity:.6}
+.src-feedback{font-size:12px;color:var(--muted);margin-top:6px;min-height:16px}
+.rating-wrap{margin:16px 0}
+.slider-row{display:flex;align-items:center;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+.rating-label{font-size:13px;color:var(--text);flex:1;min-width:180px}
+.slider-row input[type=range]{flex:1;min-width:120px;accent-color:var(--accent)}
+.rating-val{font-family:var(--font-head);font-size:18px;font-weight:800;color:var(--accent);min-width:30px;text-align:center}
+.rating-feedback{font-size:13px;color:var(--muted);margin-top:10px;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:8px}
+.lb-controls{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.lb-input{background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:7px 12px;color:var(--text);font-family:var(--font-body);font-size:13px;flex:1;min-width:100px}
+.lb-input:focus{outline:none;border-color:var(--accent)}
+.lb-pts-input{max-width:80px;flex:0}
+.lb-add-btn{background:var(--accent);border:none;color:var(--bg);font-family:var(--font-head);font-size:11px;font-weight:700;padding:7px 14px;border-radius:6px;cursor:pointer;letter-spacing:.06em}
+.lb-reset-btn{background:transparent;border:1px solid var(--border);color:var(--muted);font-family:var(--font-head);font-size:11px;font-weight:700;padding:7px 14px;border-radius:6px;cursor:pointer;letter-spacing:.06em}
+table.lb-table{width:100%;border-collapse:collapse;font-size:13px}
+table.lb-table th{background:rgba(139,92,246,.1);color:var(--accent);font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:8px 12px;text-align:left;border-bottom:1px solid var(--border)}
+table.lb-table td{padding:8px 12px;border-bottom:1px solid rgba(255,255,255,.04)}
+.lb-empty{text-align:center;color:var(--muted);font-style:italic;padding:18px}
+.badge-showcase{display:flex;gap:14px;flex-wrap:wrap;margin:16px 0}
+.badge-item{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:14px 16px;text-align:center;flex:1;min-width:120px}
+.badge-emoji{font-size:28px;display:block;margin-bottom:6px}
+.badge-name{font-family:var(--font-head);font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
+.cert-card{background:linear-gradient(135deg,rgba(139,92,246,.06),rgba(167,139,250,.03));border:2px solid var(--accent);border-radius:16px;padding:30px;text-align:center;margin:16px 0}
+.cert-title{font-family:var(--font-head);font-size:10px;font-weight:700;color:var(--accent);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px}
+.cert-main{font-family:var(--font-head);font-size:22px;font-weight:800;color:var(--text);margin-bottom:6px}
+.cert-sub{font-size:13px;color:var(--muted)}
+.cert-skills{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:14px 0}
+.cert-skill{background:rgba(139,92,246,.1);border:1px solid var(--border);border-radius:20px;padding:3px 12px;font-size:11px;color:var(--accent);font-family:var(--font-head);font-weight:700;letter-spacing:.04em}
+.cert-input{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 16px;color:var(--text);font-family:var(--font-body);font-size:15px;text-align:center;width:250px;margin:10px auto;display:block}
+.cert-input:focus{outline:none;border-color:var(--accent)}
+.cert-gen-btn{background:var(--accent);border:none;color:var(--bg);font-family:var(--font-head);font-size:12px;font-weight:800;padding:9px 22px;border-radius:8px;cursor:pointer;letter-spacing:.06em;margin-top:8px}
+.cert-result{display:none;margin-top:14px;padding:20px;background:rgba(0,229,160,.06);border:2px solid var(--success);border-radius:12px}
+.cert-name{font-family:var(--font-head);font-size:24px;font-weight:800;color:var(--success)}
+.cert-date{font-size:12px;color:var(--muted);margin-top:4px}
+.phrases-week{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:14px 0}
+.phrase-card{background:linear-gradient(135deg,rgba(139,92,246,.08),rgba(167,139,250,.04));border:1px solid var(--border);border-radius:10px;padding:14px;font-family:var(--font-head);font-size:14px;font-weight:700;color:var(--accent);text-align:center}
+.phrase-card span{display:block;font-family:var(--font-body);font-size:11px;color:var(--muted);font-weight:400;margin-top:4px}
+.win-box{margin:16px 0}
+.win-textarea{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:var(--font-body);font-size:14px;padding:12px 14px;resize:vertical;min-height:72px}
+.win-textarea:focus{outline:none;border-color:var(--accent)}
+.win-btn{margin-top:8px;background:var(--accent);border:none;color:var(--bg);font-family:var(--font-head);font-size:12px;font-weight:800;padding:9px 20px;border-radius:8px;cursor:pointer;letter-spacing:.06em}
+.win-saved{display:none;margin-top:10px;background:rgba(0,229,160,.1);border:1px solid var(--success);border-radius:8px;padding:12px 14px;font-size:14px;color:var(--success)}
+.confetti-wrap{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9000;display:none}
+.tag{display:inline-block;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:2px 8px;border-radius:20px;margin-right:4px}
+.tag-t2s{background:rgba(139,92,246,.1);color:var(--accent)}
+.tag-s2s{background:rgba(167,139,250,.12);color:#A78BFA}
+.tag-class{background:rgba(0,229,160,.1);color:var(--success)}
+.divider{border:none;border-top:1px solid var(--border);margin:18px 0}
+.site-footer{border-top:1px solid var(--border);padding:20px;display:flex;justify-content:center;gap:8px;flex-wrap:wrap}
+.level-tag{font-family:var(--font-head);font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;letter-spacing:.08em;background:var(--surface2);color:var(--muted);border:1px solid transparent}
+.level-tag.active{background:rgba(139,92,246,.1);color:var(--accent);border-color:var(--accent)}
+@media(max-width:640px){
+  .sides-grid,.source-grid,.phrases-week{grid-template-columns:1fr}
+  .speed-grid{grid-template-columns:repeat(2,1fr)}
+  .header-inner{height:auto;padding:10px 0}
+}
+</style>
+</head>
+<body>
+
+<div id="progressBar"></div>
+<div class="confetti-wrap" id="confettiWrap"></div>
+
+<!-- HEADER -->
+<header class="site-header">
+  <div class="header-inner">
+    <div>
+      <div class="header-brand">Gabriel Turner · English Training</div>
+      <div class="header-meta">A1.2 · Module 3 · Session 1B — Application &amp; Mastery <span class="session-badge">PRODUCTION</span></div>
+    </div>
+    <div class="badge-strip">
+      <span id="b1" title="Hot Start">🔥</span>
+      <span id="b2" title="Speed Demon">⚡</span>
+      <span id="b3" title="Solo Star">🎤</span>
+      <span id="b4" title="Analyst">🔍</span>
+      <span id="b5" title="My Win">🏆</span>
+    </div>
+    <button class="mode-toggle" onclick="toggleMode()">STUDENT MODE</button>
+  </div>
+</header>
+
+<!-- STICKY NAV -->
+<nav class="sticky-nav">
+  <div class="nav-inner">
+    <a href="#s1">§1 Hot Take</a>
+    <a href="#s2">§2 Pitch</a>
+    <a href="#s3">§3 Relay</a>
+    <a href="#s4">§4 Speed</a>
+    <a href="#s5">§5 Solo</a>
+    <a href="#s6">§6 Sources</a>
+    <a href="#s7">§7 Rating</a>
+    <a href="#s8">§8 Certificate</a>
+  </div>
+</nav>
+
+<main class="main">
+
+<!-- ═══════════════════════════════════════
+     §1 HOT TAKE
+════════════════════════════════════════ -->
+<section class="section" id="s1">
+  <div class="section-header">
+    <span class="section-number">§1</span>
+    <h2 class="section-title">🔥 Hot Take — Cold Start</h2>
+    <span class="section-time">5 min</span>
+  </div>
+  <div class="section-body">
+
+    <div class="img-card">
+      <img src="https://images.unsplash.com/photo-1556745757-8d76bdb6984b?w=900&q=80" alt="Airport arrivals terminal" loading="lazy">
+      <div class="img-overlay">No prep. No notes. Just speak — 60 seconds starts NOW.</div>
+    </div>
+
+    <div class="teacher-note teacher-only">
+      <strong>Regla de sesión B:</strong> El alumno habla SIN preparación. No hay tiempo para pensar. 60 segundos cold start. Esto activa todo lo aprendido en S1A bajo presión real.<br>
+      <strong>Si el alumno se detiene:</strong> "Keep going! Use any word you know. What do you see at an airport?"
+    </div>
+
+    <div class="hot-take-card">
+      <div class="hot-take-label">🔥 Hot Take — 60 seconds</div>
+      <div class="hot-take-prompt">You arrive at Querétaro Airport for a business trip to Chicago. Describe everything you do: check-in, boarding pass, gate, plane. GO!</div>
+      <div class="hot-take-rules">
+        <span class="rule-pill"><strong>60 sec</strong> max</span>
+        <span class="rule-pill"><strong>No notes</strong></span>
+        <span class="rule-pill"><strong>No Spanish</strong></span>
+        <span class="rule-pill"><strong>No pauses</strong> &gt; 5 sec</span>
+      </div>
+    </div>
+
+    <div class="timer-wrap">
+      <svg class="timer-svg" id="svgT1" width="100" height="100" viewBox="0 0 100 100">
+        <circle class="timer-bg" cx="50" cy="50" r="42" stroke-width="7"/>
+        <circle class="timer-arc" id="tArc1" cx="50" cy="50" r="42" stroke-width="7" stroke-dasharray="263.89" stroke-dashoffset="0"/>
+        <text class="timer-text" id="tText1" x="50" y="49">1:00</text>
+        <text class="timer-label" x="50" y="62">hot take</text>
+      </svg>
+      <div class="timer-btns">
+        <button class="btn btn-primary" onclick="startTimer('tArc1','tText1',60,'b1',263.89)">START</button>
+        <button class="btn btn-ghost" onclick="resetTimer('tArc1','tText1','1:00',263.89)">RESET</button>
+      </div>
+    </div>
+
+    <div class="teacher-note teacher-only">
+      <strong>Después:</strong> "What was ONE word you used that you are proud of?" → Refuerza antes de corregir. Luego señala UNA forma para mejorar.
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     §2 PITCH — ASSIGNED SIDES
+════════════════════════════════════════ -->
+<section class="section" id="s2">
+  <div class="section-header">
+    <span class="section-number">§2</span>
+    <h2 class="section-title">🎯 Pitch — Assigned Sides</h2>
+    <span class="section-time">10 min</span>
+  </div>
+  <div class="section-body">
+
+    <div class="img-card">
+      <img src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=900&q=80" alt="Two people debating at a table" loading="lazy">
+      <div class="img-overlay">You don&apos;t choose your side — you defend what you&apos;re given. Real English.</div>
+    </div>
+
+    <div class="teacher-note teacher-only">
+      <strong>Regla:</strong> El alumno NO elige su lado — tú lo asignas. Esto rompe la zona de confort.<br>
+      <strong>Topic:</strong> "It is better to receive a client at your office than to visit them at theirs."
+    </div>
+
+    <div class="sides-grid">
+      <div class="side-card side-a">
+        <div class="side-label">🟣 Side A — AGREE</div>
+        <div class="side-prompt">"Receiving clients at YOUR office is better. Defend this for 90 seconds."</div>
+        <div class="side-starters">
+          <strong style="font-size:12px;color:var(--muted);font-family:var(--font-head);letter-spacing:.06em;text-transform:uppercase">Starters:</strong>
+          <span>"I think it is better because you can help them and show them…"</span>
+          <span>"At my office, I can give them coffee, Wi-Fi, and a badge…"</span>
+          <span>"I know the meeting room and I can call my team if I need them…"</span>
+        </div>
+      </div>
+      <div class="side-card side-b">
+        <div class="side-label">🔵 Side B — DISAGREE</div>
+        <div class="side-prompt">"Visiting the CLIENT is better. Counter the other side for 90 seconds."</div>
+        <div class="side-starters">
+          <strong style="font-size:12px;color:var(--muted);font-family:var(--font-head);letter-spacing:.06em;text-transform:uppercase">Starters:</strong>
+          <span>"I don&apos;t agree. When I visit the client, I can see their office…"</span>
+          <span>"If I travel to them, they know I care about the meeting…"</span>
+          <span>"The client doesn&apos;t need to travel — it is easier for them…"</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="timer-wrap">
+      <svg class="timer-svg" id="svgT2" width="100" height="100" viewBox="0 0 100 100">
+        <circle class="timer-bg" cx="50" cy="50" r="42" stroke-width="7"/>
+        <circle class="timer-arc" id="tArc2" cx="50" cy="50" r="42" stroke-width="7" stroke-dasharray="263.89" stroke-dashoffset="0"/>
+        <text class="timer-text" id="tText2" x="50" y="49">1:30</text>
+        <text class="timer-label" x="50" y="62">per side</text>
+      </svg>
+      <div class="timer-btns">
+        <button class="btn btn-primary" onclick="startTimer('tArc2','tText2',90,null,263.89)">START</button>
+        <button class="btn btn-ghost" onclick="resetTimer('tArc2','tText2','1:30',263.89)">RESET</button>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     §3 RELAY — TRANSFORM WITHOUT SUPPORT
+════════════════════════════════════════ -->
+<section class="section" id="s3">
+  <div class="section-header">
+    <span class="section-number">§3</span>
+    <h2 class="section-title">🔄 Relay — Transform It</h2>
+    <span class="section-time">8 min</span>
+  </div>
+  <div class="section-body">
+
+    <div class="img-card">
+      <img src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=900&q=80" alt="Person writing and thinking" loading="lazy">
+      <div class="img-overlay">No support. No grammar table. Just you and the language.</div>
+    </div>
+
+    <div class="teacher-note teacher-only">
+      <strong>Instrucción:</strong> "I give you a sentence. You change it. No notes. Speak out loud." Las transformaciones usan object pronouns — target de S1A — ahora en producción espontánea.<br>
+      <strong>Dinámica:</strong> <span class="tag tag-t2s">T→S</span> — Teacher lee, alumno transforma.
+    </div>
+
+    <div class="relay-wrap">
+      <div class="relay-prompt">
+        <div class="relay-tag">Transform 1 — Replace with pronoun</div>
+        <div class="relay-input-text">"Please call the manager when the visitor arrives."</div>
+        <div class="relay-target">→ Replace "the manager" with a pronoun. Say the full sentence.</div>
+        <button class="relay-reveal-btn" onclick="revealRelay('rr1')">Show Answer</button>
+        <div class="relay-answer" id="rr1">"Please call <strong>him</strong> when the visitor arrives."</div>
+      </div>
+
+      <div class="relay-prompt">
+        <div class="relay-tag">Transform 2 — Replace with pronoun</div>
+        <div class="relay-input-text">"Can you send Mónica the Wi-Fi password?"</div>
+        <div class="relay-target">→ Replace "Mónica" with a pronoun.</div>
+        <button class="relay-reveal-btn" onclick="revealRelay('rr2')">Show Answer</button>
+        <div class="relay-answer" id="rr2">"Can you send <strong>her</strong> the Wi-Fi password?"</div>
+      </div>
+
+      <div class="relay-prompt">
+        <div class="relay-tag">Transform 3 — Replace TWO words</div>
+        <div class="relay-input-text">"Give the visitors the badges at reception."</div>
+        <div class="relay-target">→ Replace "the visitors" AND "the badges" with pronouns.</div>
+        <button class="relay-reveal-btn" onclick="revealRelay('rr3')">Show Answer</button>
+        <div class="relay-answer" id="rr3">"Give <strong>them</strong> to <strong>them</strong>." or better: "Give the badges to <strong>them</strong>." / "Give <strong>them</strong> the badges."</div>
+      </div>
+
+      <div class="relay-prompt">
+        <div class="relay-tag">Transform 4 — Fix the error</div>
+        <div class="relay-input-text">"Call to me when you arrive at the hotel."</div>
+        <div class="relay-target">→ This sentence has an error. Fix it and say it correctly.</div>
+        <button class="relay-reveal-btn" onclick="revealRelay('rr4')">Show Answer</button>
+        <div class="relay-answer" id="rr4">"Call <strong>me</strong> when you arrive at the hotel." (no "to" after "call")</div>
+      </div>
+
+      <div class="relay-prompt">
+        <div class="relay-tag">Transform 5 — Your reality</div>
+        <div class="relay-input-text">"Mónica helps the client with his luggage."</div>
+        <div class="relay-target">→ Say what YOU do when a client arrives at YOUR office.</div>
+        <button class="relay-reveal-btn" onclick="revealRelay('rr5')">Show Answer</button>
+        <div class="relay-answer" id="rr5">Open answer — student uses "I help him/her with…" + real context from their workplace.</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     §4 SPEED ROUND
+════════════════════════════════════════ -->
+<section class="section" id="s4">
+  <div class="section-header">
+    <span class="section-number">§4</span>
+    <h2 class="section-title">⚡ Speed Round — Say It Fast</h2>
+    <span class="section-time">6 min</span>
+  </div>
+  <div class="section-body">
+
+    <div class="img-card">
+      <img src="https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=900&q=80" alt="Fast-paced work environment" loading="lazy">
+      <div class="img-overlay">Click → read → say a FULL sentence. No pauses. No translation.</div>
+    </div>
+
+    <div class="teacher-note teacher-only">
+      <strong>Reglas:</strong> Alumno click → ve la palabra → produce UNA oración completa en 20 seg. 7+ tarjetas = badge ⚡.<br>
+      <strong>Ejemplo:</strong> "badge" → "Please give him a visitor badge."
+    </div>
+
+    <div class="speed-score-bar">
+      <div class="speed-label">Speed Score</div>
+      <div class="speed-val" id="speedVal">0 / 10</div>
+    </div>
+
+    <div class="speed-grid">
+      <div class="speed-card" onclick="speedClick(this)"><div class="speed-word">visitor</div><div class="speed-hint">a person who comes</div></div>
+      <div class="speed-card" onclick="speedClick(this)"><div class="speed-word">passport</div><div class="speed-hint">document for travel</div></div>
+      <div class="speed-card" onclick="speedClick(this)"><div class="speed-word">help me</div><div class="speed-hint">ask for assistance</div></div>
+      <div class="speed-card" onclick="speedClick(this)"><div class="speed-word">call her</div><div class="speed-hint">contact by phone</div></div>
+      <div class="speed-card" onclick="speedClick(this)"><div class="speed-word">delay</div><div class="speed-hint">late / not on time</div></div>
+      <div class="speed-card" onclick="speedClick(this)"><div class="speed-word">send it</div><div class="speed-hint">transfer something</div></div>
+      <div class="speed-card" onclick="speedClick(this)"><div class="speed-word">reservation</div><div class="speed-hint">hotel booking</div></div>
+      <div class="speed-card" onclick="speedClick(this)"><div class="speed-word">give them</div><div class="speed-hint">hand something over</div></div>
+      <div class="speed-card" onclick="speedClick(this)"><div class="speed-word">luggage</div><div class="speed-hint">bags for travel</div></div>
+      <div class="speed-card" onclick="speedClick(this)"><div class="speed-word">escort</div><div class="speed-hint">walk with someone</div></div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     §5 SOLO CHALLENGE
+════════════════════════════════════════ -->
+<section class="section" id="s5">
+  <div class="section-header">
+    <span class="section-number">§5</span>
+    <h2 class="section-title">🎤 Solo Challenge — 2 Minutes</h2>
+    <span class="section-time">8 min</span>
+  </div>
+  <div class="section-body">
+
+    <div class="img-card">
+      <img src="https://images.unsplash.com/photo-1573167507387-6b4b98cb7c13?w=900&q=80" alt="Professional speaking confidently at meeting" loading="lazy">
+      <div class="img-overlay">Two minutes. No notes. No help. Just you and English.</div>
+    </div>
+
+    <div class="teacher-note teacher-only">
+      <strong>Solo Challenge:</strong> El alumno habla 2 minutos continuo sobre el escenario. Sin notas, sin ayuda. El teacher solo escucha y toma notas de errores para después. Badge 🎤 al completar los 2 min.<br>
+      <strong>Si se detiene antes de 1 min:</strong> Prompt: "What else? Where is the meeting room? What do you offer?"
+    </div>
+
+    <div style="background:linear-gradient(135deg,rgba(139,92,246,.08),rgba(167,139,250,.04));border:1px solid var(--border);border-radius:14px;padding:24px;margin:16px 0">
+      <div style="font-family:var(--font-head);font-size:14px;font-weight:800;color:var(--accent);margin-bottom:10px">🎤 SOLO — 2 Minutes Nonstop</div>
+      <div style="font-size:15px;color:var(--text);line-height:1.6;margin-bottom:16px">
+        <strong>Scenario:</strong> A new client from Germany arrives at your company for the first time. You are the host. Welcome them from the front door to the meeting room. Include:
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px">
+        <span class="rule-pill"><strong>Greeting</strong></span>
+        <span class="rule-pill"><strong>Badge + sign in</strong></span>
+        <span class="rule-pill"><strong>Directions</strong></span>
+        <span class="rule-pill"><strong>Offer: water/coffee</strong></span>
+        <span class="rule-pill"><strong>Wi-Fi info</strong></span>
+        <span class="rule-pill"><strong>3+ object pronouns</strong></span>
+      </div>
+    </div>
+
+    <div class="timer-wrap">
+      <svg class="timer-svg" id="svgT3" width="110" height="110" viewBox="0 0 110 110">
+        <circle class="timer-bg" cx="55" cy="55" r="46" stroke-width="8"/>
+        <circle class="timer-arc" id="tArc3" cx="55" cy="55" r="46" stroke-width="8" stroke-dasharray="289.03" stroke-dashoffset="0"/>
+        <text class="timer-text" id="tText3" x="55" y="54">2:00</text>
+        <text class="timer-label" x="55" y="68">solo</text>
+      </svg>
+      <div class="timer-btns">
+        <button class="btn btn-primary" onclick="startTimer('tArc3','tText3',120,'b3',289.03)">START</button>
+        <button class="btn btn-ghost" onclick="resetTimer('tArc3','tText3','2:00',289.03)">RESET</button>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     §6 SOURCES — READING + ANALYSIS
+════════════════════════════════════════ -->
+<section class="section" id="s6">
+  <div class="section-header">
+    <span class="section-number">§6</span>
+    <h2 class="section-title">🔍 Source Analysis — Real Messages</h2>
+    <span class="section-time">8 min</span>
+  </div>
+  <div class="section-body">
+
+    <div class="img-card">
+      <img src="https://images.unsplash.com/photo-1586281380349-632531db7ed4?w=900&q=80" alt="Phone showing business messages" loading="lazy">
+      <div class="img-overlay">Read real messages. Understand them. Answer questions.</div>
+    </div>
+
+    <div class="teacher-note teacher-only">
+      <strong>Dinámica:</strong> Alumno lee cada cita → responde la pregunta en voz alta → click en la opción. Las preguntas abiertas no tienen respuesta correcta — solo las cerradas. <span class="tag tag-t2s">T→S</span> para análisis.
+    </div>
+
+    <div class="source-grid">
+      <div class="source-card">
+        <div class="source-who">📧 Email from reception</div>
+        <div class="source-quote">"Good morning, Mr. Chen. Welcome to Solaris. Please sign in here and I will give you a visitor badge. Can I help you with your bags?"</div>
+        <div class="source-task">❓ What does the receptionist offer to do?</div>
+        <div class="source-options">
+          <button class="src-btn" onclick="srcCheck(this,'help','sf1')">Help with bags</button>
+          <button class="src-btn" onclick="srcCheck(this,'call','sf1')">Call the manager</button>
+          <button class="src-btn" onclick="srcCheck(this,'wifi','sf1')">Give Wi-Fi password</button>
+        </div>
+        <div class="src-feedback" id="sf1"></div>
+      </div>
+
+      <div class="source-card">
+        <div class="source-who">💬 WhatsApp from colleague</div>
+        <div class="source-quote">"The client is at the lobby. Can you come and escort him to the meeting room? I am on a call. Tell him I will be there in 10 minutes."</div>
+        <div class="source-task">❓ Who should escort the client to the meeting room?</div>
+        <div class="source-options">
+          <button class="src-btn" onclick="srcCheck(this,'you','sf2')">You (the reader)</button>
+          <button class="src-btn" onclick="srcCheck(this,'coll','sf2')">The colleague</button>
+          <button class="src-btn" onclick="srcCheck(this,'client','sf2')">The client</button>
+        </div>
+        <div class="src-feedback" id="sf2"></div>
+      </div>
+
+      <div class="source-card">
+        <div class="source-who">📞 Hotel voicemail</div>
+        <div class="source-quote">"Good afternoon, this is the Fiesta Inn Querétaro. We have your reservation for two nights. Please call us to confirm your check-in time. Our number is 442-555-0190."</div>
+        <div class="source-task">❓ What does the hotel want?</div>
+        <div class="source-options">
+          <button class="src-btn" onclick="srcCheck(this,'confirm','sf3')">Confirm check-in time</button>
+          <button class="src-btn" onclick="srcCheck(this,'cancel','sf3')">Cancel the reservation</button>
+          <button class="src-btn" onclick="srcCheck(this,'pay','sf3')">Pay for the room</button>
+        </div>
+        <div class="src-feedback" id="sf3"></div>
+      </div>
+
+      <div class="source-card">
+        <div class="source-who">✈️ Airport announcement</div>
+        <div class="source-quote">"Attention passengers on flight 2847 to Chicago. There is a 45-minute delay. Please wait at gate B12. We will give you an update soon."</div>
+        <div class="source-task">❓ What happened to the flight?</div>
+        <div class="source-options">
+          <button class="src-btn" onclick="srcCheck(this,'delay','sf4')">It has a delay</button>
+          <button class="src-btn" onclick="srcCheck(this,'cancel2','sf4')">It is cancelled</button>
+          <button class="src-btn" onclick="srcCheck(this,'gate','sf4')">The gate changed</button>
+        </div>
+        <div class="src-feedback" id="sf4"></div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     §7 SELF-RATING + LEADERBOARD
+════════════════════════════════════════ -->
+<section class="section" id="s7">
+  <div class="section-header">
+    <span class="section-number">§7</span>
+    <h2 class="section-title">📊 Self-Rating &amp; Leaderboard</h2>
+    <span class="section-time">5 min</span>
+  </div>
+  <div class="section-body">
+
+    <div class="img-card">
+      <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=900&q=80" alt="Performance dashboard on screen" loading="lazy">
+      <div class="img-overlay">Honest self-assessment = faster growth. Where are YOU today?</div>
+    </div>
+
+    <div class="rating-wrap">
+      <div style="font-family:var(--font-head);font-size:12px;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:14px">Rate yourself 1–10</div>
+      <div class="slider-row">
+        <div class="rating-label">I can welcome a visitor in English</div>
+        <input type="range" min="1" max="10" value="5" id="r1" oninput="updateRating('r1','rv1')">
+        <div class="rating-val" id="rv1">5</div>
+      </div>
+      <div class="slider-row">
+        <div class="rating-label">I use object pronouns correctly (me, him, her, us, them)</div>
+        <input type="range" min="1" max="10" value="5" id="r2" oninput="updateRating('r2','rv2')">
+        <div class="rating-val" id="rv2">5</div>
+      </div>
+      <div class="slider-row">
+        <div class="rating-label">I can speak for 2 minutes about receiving a client</div>
+        <input type="range" min="1" max="10" value="5" id="r3" oninput="updateRating('r3','rv3')">
+        <div class="rating-val" id="rv3">5</div>
+      </div>
+      <div class="rating-feedback" id="rfeedback">Move the sliders ↑ to see your feedback.</div>
+    </div>
+
+    <hr class="divider">
+
+    <div style="font-family:var(--font-head);font-size:12px;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:12px">🏆 Session Leaderboard</div>
+    <div class="lb-controls">
+      <input class="lb-input" type="text" id="lbName" placeholder="Student name…">
+      <input class="lb-input lb-pts-input" type="number" id="lbPts" placeholder="pts" min="0" max="999">
+      <button class="lb-add-btn" onclick="lbAdd()">+ ADD</button>
+      <button class="lb-reset-btn" onclick="lbReset()">↺ Reset</button>
+    </div>
+    <table class="lb-table">
+      <thead><tr><th>#</th><th>Student</th><th>Points</th></tr></thead>
+      <tbody id="lbBody"><tr><td colspan="3" class="lb-empty">No students yet — add names above</td></tr></tbody>
+    </table>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     §8 CERTIFICATE + BADGE SHOWCASE
+════════════════════════════════════════ -->
+<section class="section" id="s8">
+  <div class="section-header">
+    <span class="section-number">§8</span>
+    <h2 class="section-title">🏅 Certificate + Badge Showcase</h2>
+    <span class="section-time">5 min</span>
+  </div>
+  <div class="section-body">
+
+    <div class="img-card">
+      <img src="https://images.unsplash.com/photo-1531545514256-b1400bc00f31?w=900&q=80" alt="Achievement celebration" loading="lazy">
+      <div class="img-overlay">M3 Session 1 — Complete. You can now welcome visitors in English! 🧳</div>
+    </div>
+
+    <!-- BADGE SHOWCASE -->
+    <div style="font-family:var(--font-head);font-size:12px;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:12px">🏅 Badges Earned This Session</div>
+    <div class="badge-showcase">
+      <div class="badge-item"><span class="badge-emoji">🔥</span><div class="badge-name">Hot Start</div><div style="font-size:11px;color:var(--muted);margin-top:4px">Cold start done</div></div>
+      <div class="badge-item"><span class="badge-emoji">⚡</span><div class="badge-name">Speed Demon</div><div style="font-size:11px;color:var(--muted);margin-top:4px">7+ speed cards</div></div>
+      <div class="badge-item"><span class="badge-emoji">🎤</span><div class="badge-name">Solo Star</div><div style="font-size:11px;color:var(--muted);margin-top:4px">2-min solo done</div></div>
+      <div class="badge-item"><span class="badge-emoji">🔍</span><div class="badge-name">Analyst</div><div style="font-size:11px;color:var(--muted);margin-top:4px">4 sources read</div></div>
+      <div class="badge-item"><span class="badge-emoji">🏆</span><div class="badge-name">My Win</div><div style="font-size:11px;color:var(--muted);margin-top:4px">Win saved</div></div>
+    </div>
+
+    <!-- CERTIFICATE -->
+    <div class="cert-card">
+      <div class="cert-title">Gabriel Turner · English Training</div>
+      <div class="cert-main">Session Certificate — A1.2 M3 S1</div>
+      <div class="cert-sub">Getting Around for Business — Receiving Clients &amp; Object Pronouns</div>
+      <div class="cert-skills">
+        <span class="cert-skill">Welcome visitors</span>
+        <span class="cert-skill">Object pronouns</span>
+        <span class="cert-skill">Travel vocabulary</span>
+        <span class="cert-skill">Offer help</span>
+      </div>
+      <input class="cert-input" type="text" id="certName" placeholder="Your name…">
+      <button class="cert-gen-btn" onclick="generateCert()">Generate Certificate</button>
+      <div class="cert-result" id="certResult">
+        <div class="cert-name" id="certDisplay"></div>
+        <div class="cert-date" id="certDate"></div>
+        <div style="font-size:13px;color:var(--success);margin-top:8px">✅ Session 1 of Module 3 — Completed</div>
+      </div>
+    </div>
+
+    <!-- 3 PHRASES FOR THIS WEEK -->
+    <div style="font-family:var(--font-head);font-size:12px;font-weight:700;color:var(--warn);letter-spacing:.08em;text-transform:uppercase;margin:20px 0 8px">🎯 3 Phrases for This Week</div>
+    <div class="phrases-week">
+      <div class="phrase-card">"Welcome! This way, please."<span>When any visitor arrives</span></div>
+      <div class="phrase-card">"Can I help you with that?"<span>Offer help with luggage or bags</span></div>
+      <div class="phrase-card">"Please call me if you need anything."<span>After showing someone around</span></div>
+    </div>
+
+    <!-- MY WIN TODAY -->
+    <div style="font-family:var(--font-head);font-size:12px;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin:20px 0 8px">🏆 My Win Today</div>
+    <div class="win-box">
+      <textarea class="win-textarea" id="winInput" placeholder="What was YOUR biggest win today? Write it here…"></textarea>
+      <button class="win-btn" onclick="saveWin()">Save My Win</button>
+      <div class="win-saved" id="winSaved"></div>
+    </div>
+
+  </div>
+</section>
+
+</main>
+
+<footer class="site-footer">
+  <span class="level-tag">A1.1</span>
+  <span class="level-tag active">A1.2</span>
+  <span class="level-tag">A2.1</span>
+  <span class="level-tag">A2.2</span>
+  <span class="level-tag">B1.1</span>
+  <span class="level-tag">B1.2</span>
+</footer>
+
+<script>
+/* ═══════════════════ BADGES ═══════════════════ */
+const earnedBadges = {};
+function earnBadge(id) {
+  if (earnedBadges[id]) return;
+  earnedBadges[id] = true;
+  const el = document.getElementById(id);
+  if (el) el.classList.add('earned');
+  if (Object.keys(earnedBadges).length >= 5) launchConfetti();
+}
+function launchConfetti() {
+  const w = document.getElementById('confettiWrap');
+  w.style.display = 'block';
+  for (let i = 0; i < 80; i++) {
+    const c = document.createElement('div');
+    const cols = ['#8B5CF6','#A78BFA','#FFB347','#00E5A0','#FF4D6D','#A78BFA'];
+    c.style.cssText = 'position:absolute;width:8px;height:8px;background:'+cols[i%cols.length]+';border-radius:50%;left:'+Math.random()*100+'%;top:-10px;animation:confFall '+(1.5+Math.random()*2)+'s ease-out forwards;animation-delay:'+Math.random()*.5+'s;';
+    w.appendChild(c);
+  }
+  const s = document.createElement('style');
+  s.textContent = '@keyframes confFall{0%{transform:translateY(0) rotate(0);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}';
+  document.head.appendChild(s);
+  setTimeout(() => { w.style.display = 'none'; w.innerHTML = ''; }, 4000);
+}
+
+/* ═══════════════════ TIMER ═══════════════════ */
+let timerInterval = null;
+function startTimer(arcId, textId, totalSec, badgeKey, circumference) {
+  if (timerInterval) clearInterval(timerInterval);
+  const circ = circumference || 238.76;
+  const arc = document.getElementById(arcId);
+  const txt = document.getElementById(textId);
+  let remaining = totalSec;
+  timerInterval = setInterval(() => {
+    remaining--;
+    const m = Math.floor(remaining / 60);
+    const s = remaining % 60;
+    txt.textContent = m + ':' + (s < 10 ? '0' : '') + s;
+    arc.setAttribute('stroke-dashoffset', circ * (1 - remaining / totalSec));
+    if (remaining <= 5) arc.style.stroke = '#FF4D6D';
+    if (remaining <= 0) {
+      clearInterval(timerInterval); timerInterval = null;
+      txt.textContent = '0:00';
+      arc.style.stroke = 'var(--success)';
+      if (badgeKey) earnBadge(badgeKey);
+    }
+  }, 1000);
+}
+function resetTimer(arcId, textId, label, circumference) {
+  if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+  const arc = document.getElementById(arcId);
+  const txt = document.getElementById(textId);
+  arc.setAttribute('stroke-dashoffset', '0');
+  arc.style.stroke = 'var(--accent)';
+  txt.textContent = label;
+}
+
+/* ═══════════════════ RELAY ═══════════════════ */
+function revealRelay(id) {
+  document.getElementById(id).style.display = 'block';
+}
+
+/* ═══════════════════ SPEED ROUND ═══════════════════ */
+let speedCount = 0;
+function speedClick(card) {
+  if (card.classList.contains('used')) return;
+  card.classList.add('used');
+  speedCount++;
+  document.getElementById('speedVal').textContent = speedCount + ' / 10';
+  if (speedCount >= 7) earnBadge('b2');
+}
+
+/* ═══════════════════ SOURCES ═══════════════════ */
+const srcMsgs = {
+  help:    { correct: true,  msg: '✅ Help with bags — "Can I help you with your bags?"' },
+  call:    { correct: false, msg: '❌ She doesn&apos;t mention calling the manager.' },
+  wifi:    { correct: false, msg: '❌ Wi-Fi is not mentioned in this message.' },
+  you:     { correct: true,  msg: '✅ The colleague asks YOU to escort the client.' },
+  coll:    { correct: false, msg: '❌ The colleague is on a call — they can&apos;t do it.' },
+  client:  { correct: false, msg: '❌ The client doesn&apos;t know where the meeting room is.' },
+  confirm: { correct: true,  msg: '✅ They want you to confirm your check-in time.' },
+  cancel:  { correct: false, msg: '❌ The hotel has the reservation — they don&apos;t want to cancel.' },
+  pay:     { correct: false, msg: '❌ Payment is not mentioned in the voicemail.' },
+  delay:   { correct: true,  msg: '✅ There is a 45-minute delay.' },
+  cancel2: { correct: false, msg: '❌ The flight is delayed, not cancelled.' },
+  gate:    { correct: false, msg: '❌ The gate is B12 — it didn&apos;t change.' }
+};
+let srcAnswered = 0;
+function srcCheck(btn, key, feedbackId) {
+  const btns = btn.parentElement.querySelectorAll('.src-btn');
+  btns.forEach(b => { b.disabled = true; b.classList.add('wrong-ans'); });
+  const fb = document.getElementById(feedbackId);
+  const info = srcMsgs[key];
+  if (info && info.correct) {
+    btn.classList.remove('wrong-ans');
+    btn.classList.add('correct-ans');
+    if (fb) fb.textContent = info.msg;
+  } else {
+    if (fb) fb.textContent = info ? info.msg : '❌ Not quite.';
+  }
+  srcAnswered++;
+  if (srcAnswered >= 4) earnBadge('b4');
+}
+
+/* ═══════════════════ SELF RATING ═══════════════════ */
+function updateRating(inputId, valId) {
+  const v = document.getElementById(inputId).value;
+  document.getElementById(valId).textContent = v;
+  const avg = Math.round(([...document.querySelectorAll('input[type=range]')].reduce((s,el) => s + parseInt(el.value), 0)) / 3);
+  const fb = document.getElementById('rfeedback');
+  if (avg >= 8) fb.textContent = '🌟 Excellent! You feel confident about receiving visitors in English.';
+  else if (avg >= 5) fb.textContent = '📈 Good progress! Keep practising object pronouns and travel vocabulary.';
+  else fb.textContent = '💪 You are building your skills. Review S1A vocabulary and try the solo challenge again.';
+}
+
+/* ═══════════════════ LEADERBOARD ═══════════════════ */
+let lbData = [];
+function lbAdd() {
+  const name = document.getElementById('lbName').value.trim();
+  const pts = parseInt(document.getElementById('lbPts').value) || 0;
+  if (!name) return;
+  lbData.push({ name, pts });
+  lbData.sort((a, b) => b.pts - a.pts);
+  lbRender();
+  document.getElementById('lbName').value = '';
+  document.getElementById('lbPts').value = '';
+}
+function lbReset() { lbData = []; lbRender(); }
+function lbRender() {
+  const tbody = document.getElementById('lbBody');
+  if (lbData.length === 0) { tbody.innerHTML = '<tr><td colspan="3" class="lb-empty">No students yet — add names above</td></tr>'; return; }
+  tbody.innerHTML = lbData.map((s, i) => '<tr><td style="color:var(--accent);font-weight:700">' + (i + 1) + '</td><td>' + s.name + '</td><td style="font-weight:700;color:var(--accent)">' + s.pts + '</td></tr>').join('');
+}
+
+/* ═══════════════════ CERTIFICATE ═══════════════════ */
+function generateCert() {
+  const name = document.getElementById('certName').value.trim();
+  if (!name) return;
+  document.getElementById('certDisplay').textContent = name;
+  document.getElementById('certDate').textContent = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+  document.getElementById('certResult').style.display = 'block';
+}
+
+/* ═══════════════════ MY WIN ═══════════════════ */
+function saveWin() {
+  const txt = document.getElementById('winInput').value.trim();
+  if (!txt) return;
+  const saved = document.getElementById('winSaved');
+  saved.style.display = 'block';
+  saved.textContent = '🏆 "' + txt + '" — Great job today!';
+  earnBadge('b5');
+}
+
+/* ═══════════════════ MODE TOGGLE ═══════════════════ */
+function toggleMode() {
+  document.body.classList.toggle('student-mode');
+  document.querySelector('.mode-toggle').textContent = document.body.classList.contains('student-mode') ? 'TEACHER MODE' : 'STUDENT MODE';
+}
+
+/* ═══════════════════ PROGRESS BAR ═══════════════════ */
+window.addEventListener('scroll', () => {
+  const h = document.documentElement;
+  document.getElementById('progressBar').style.width = (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100 + '%';
+});
+</script>
+</body>
+</html>

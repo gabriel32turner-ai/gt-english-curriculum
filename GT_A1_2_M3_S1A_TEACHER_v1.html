@@ -1,0 +1,1323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GT · A1.2 · M3 · S1A · Getting Around for Business</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --accent:#8B5CF6;--accent2:#A78BFA;--bg:#080808;--surface:#111318;--surface2:#1a1f28;
+  --border:rgba(139,92,246,0.18);--text:#F0F4F8;--muted:#8A9BB0;--danger:#FF4D6D;
+  --success:#00E5A0;--warn:#FFB347;--font-head:'Syne',sans-serif;--font-body:'DM Sans',sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:15px;line-height:1.65;min-height:100vh}
+#progressBar{position:fixed;top:0;left:0;width:0%;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent2));z-index:9999;transition:width .3s}
+.site-header{position:sticky;top:0;z-index:900;background:rgba(8,8,8,.92);backdrop-filter:blur(14px);border-bottom:1px solid var(--border);padding:0 24px}
+.header-inner{max-width:960px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:58px;gap:12px;flex-wrap:wrap}
+.header-brand{font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--accent);letter-spacing:.08em;text-transform:uppercase}
+.header-meta{font-size:12px;color:var(--muted);font-weight:500}
+.badge-strip{display:flex;gap:6px}
+.badge-strip span{font-size:18px;opacity:.25;transition:all .4s;filter:grayscale(1);cursor:default}
+.badge-strip span.earned{opacity:1;filter:none;animation:badgePop .5s cubic-bezier(.34,1.56,.64,1)}
+@keyframes badgePop{0%{transform:scale(.4) rotate(-20deg);opacity:0}70%{transform:scale(1.25) rotate(4deg);opacity:1}100%{transform:scale(1) rotate(0)}}
+.mode-toggle{background:var(--surface2);border:1px solid var(--border);color:var(--accent);font-family:var(--font-head);font-size:11px;font-weight:700;padding:5px 12px;border-radius:6px;cursor:pointer;letter-spacing:.06em;transition:all .2s}
+.mode-toggle:hover{background:var(--accent);color:var(--bg)}
+.sticky-nav{position:sticky;top:58px;z-index:800;background:rgba(8,8,8,.88);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none}
+.sticky-nav::-webkit-scrollbar{display:none}
+.nav-inner{max-width:960px;margin:0 auto;display:flex;gap:0;padding:0 16px}
+.nav-inner a{font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:.06em;color:var(--muted);text-decoration:none;padding:10px 14px;border-bottom:2px solid transparent;white-space:nowrap;transition:all .2s}
+.nav-inner a:hover{color:var(--accent);border-color:var(--accent)}
+.main{max-width:960px;margin:0 auto;padding:32px 20px 80px}
+.section{margin-bottom:48px;border:1px solid var(--border);border-radius:16px;overflow:hidden;background:var(--surface)}
+.section-header{display:flex;align-items:center;gap:14px;padding:18px 24px;background:linear-gradient(135deg,rgba(139,92,246,.08),transparent);border-bottom:1px solid var(--border)}
+.section-number{font-family:var(--font-head);font-size:11px;font-weight:800;color:var(--accent);letter-spacing:.12em;text-transform:uppercase;background:rgba(139,92,246,.1);border:1px solid var(--border);padding:3px 10px;border-radius:20px}
+.section-title{font-family:var(--font-head);font-size:18px;font-weight:800;color:var(--text);flex:1}
+.section-time{font-size:12px;color:var(--muted);font-weight:500;background:var(--surface2);padding:3px 10px;border-radius:20px}
+.section-body{padding:24px}
+.img-card{border-radius:10px;overflow:hidden;position:relative;margin-bottom:18px}
+.img-card img{width:100%;height:180px;object-fit:cover;display:block}
+.img-overlay{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(8,8,8,.88));padding:12px 16px;font-size:13px;color:rgba(255,255,255,.85)}
+.teacher-note{background:rgba(139,92,246,.06);border-left:3px solid var(--accent);border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0;font-size:13px;color:var(--muted)}
+.teacher-note strong{color:var(--accent)}
+.student-only{display:none}
+body.student-mode .teacher-only{display:none}
+body.student-mode .student-only{display:block}
+.warmup-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0}
+.warmup-q{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:16px;font-size:14px}
+.warmup-q .qnum{font-family:var(--font-head);font-size:10px;font-weight:800;color:var(--accent);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px}
+.warmup-q .qtext{font-weight:500;color:var(--text)}
+.timer-wrap{display:flex;flex-direction:column;align-items:center;gap:10px;margin:16px 0}
+.timer-svg{transform:rotate(-90deg)}
+.timer-bg{fill:none;stroke:rgba(255,255,255,.07)}
+.timer-arc{fill:none;stroke:var(--accent);stroke-linecap:round;transition:stroke .5s}
+.timer-text{font-family:var(--font-head);font-weight:800;font-size:22px;fill:var(--text);dominant-baseline:middle;text-anchor:middle}
+.timer-label{font-size:11px;fill:var(--muted);dominant-baseline:middle;text-anchor:middle}
+.timer-btns{display:flex;gap:8px}
+.btn{font-family:var(--font-head);font-size:12px;font-weight:700;letter-spacing:.06em;padding:7px 18px;border-radius:8px;border:none;cursor:pointer;transition:all .2s}
+.btn-primary{background:var(--accent);color:var(--bg)}
+.btn-primary:hover{background:var(--accent2)}
+.btn-ghost{background:var(--surface2);border:1px solid var(--border);color:var(--muted)}
+.btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
+.topic-card{background:linear-gradient(135deg,rgba(139,92,246,.07),rgba(167,139,250,.04));border:1px solid var(--border);border-radius:12px;padding:22px;margin:16px 0}
+.topic-card h3{font-family:var(--font-head);font-size:20px;font-weight:800;color:var(--accent);margin-bottom:6px}
+.rounds{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:14px 0}
+.round-card{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px 10px;text-align:center}
+.round-card .rnum{font-family:var(--font-head);font-size:10px;font-weight:700;color:var(--accent);letter-spacing:.1em;margin-bottom:4px}
+.round-card .rq{font-size:13px;font-weight:500}
+.model-reveal{margin-top:14px}
+.reveal-btn{background:transparent;border:1px dashed var(--accent);color:var(--accent);font-family:var(--font-head);font-size:11px;font-weight:700;padding:7px 16px;border-radius:8px;cursor:pointer;letter-spacing:.06em;transition:all .2s}
+.reveal-btn:hover{background:rgba(139,92,246,.1)}
+.model-box{display:none;margin-top:12px;background:rgba(139,92,246,.06);border:1px solid var(--border);border-radius:10px;padding:16px;font-size:14px;line-height:1.8}
+.model-box .h{color:var(--accent);font-weight:600}
+.model-box .rs{color:#A78BFA;font-weight:600}
+.model-box .col{color:var(--warn);font-weight:600}
+.vocab-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;margin:16px 0}
+.vocab-card{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:14px;cursor:pointer;transition:all .2s;display:flex;flex-direction:column;gap:4px}
+.vocab-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.vocab-word{font-family:var(--font-head);font-size:15px;font-weight:700;color:var(--accent)}
+.vocab-sound{font-size:12px;color:var(--muted);font-style:italic}
+.vocab-es{font-size:13px;color:var(--text)}
+.vocab-icon{font-size:20px}
+.speak-btn{background:rgba(139,92,246,.12);border:none;border-radius:5px;color:var(--accent);font-size:11px;padding:2px 8px;cursor:pointer;font-family:var(--font-head);font-weight:700;letter-spacing:.04em;margin-top:4px;transition:all .2s}
+.speak-btn:hover{background:rgba(139,92,246,.25)}
+.vquiz-wrap{margin:20px 0}
+.vquiz-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.vquiz-title{font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
+.vquiz-counter{font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--accent);background:rgba(139,92,246,.1);border:1px solid var(--border);padding:3px 12px;border-radius:20px}
+.progress-container{flex:1;margin:0 16px}
+.progress-track{height:6px;background:rgba(255,255,255,.07);border-radius:10px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:10px;transition:width .4s}
+.progress-label{font-size:11px;color:var(--muted);margin-top:4px;text-align:right}
+.vquiz-card{background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:26px 24px;text-align:center}
+.vquiz-word{font-family:var(--font-head);font-size:28px;font-weight:800;color:var(--accent);margin-bottom:6px;letter-spacing:.02em}
+.vquiz-sound{font-size:13px;color:var(--muted);margin-bottom:20px;font-style:italic}
+.vquiz-options{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.vquiz-opt{background:var(--surface);border:2px solid var(--border);color:var(--text);font-family:var(--font-body);font-size:14px;font-weight:500;padding:12px 8px;border-radius:10px;cursor:pointer;transition:all .2s;line-height:1.3}
+.vquiz-opt:hover:not(:disabled){border-color:var(--accent);color:var(--accent);background:rgba(139,92,246,.07)}
+.vquiz-opt.correct{background:rgba(0,229,160,.15);border-color:var(--success);color:var(--success);font-weight:700;pointer-events:none}
+.vquiz-opt.wrong{background:rgba(255,77,109,.1);border-color:var(--danger);color:var(--danger);pointer-events:none}
+.vquiz-feedback{margin-top:14px;font-size:14px;font-weight:600;min-height:22px}
+.vquiz-next{display:none;margin-top:14px;background:var(--accent);border:none;color:var(--bg);font-family:var(--font-head);font-size:12px;font-weight:800;padding:9px 22px;border-radius:8px;cursor:pointer;letter-spacing:.07em;transition:all .2s}
+.vquiz-next:hover{background:var(--accent2)}
+.vquiz-done{display:none;text-align:center;padding:24px;background:rgba(0,229,160,.07);border:1px solid var(--success);border-radius:12px;margin-top:12px}
+.vquiz-done-score{font-family:var(--font-head);font-size:36px;font-weight:800;color:var(--success)}
+.vquiz-done-msg{font-size:14px;color:var(--muted);margin-top:6px}
+.vquiz-restart{margin-top:12px;background:transparent;border:1px solid var(--accent);color:var(--accent);font-family:var(--font-head);font-size:11px;font-weight:700;padding:7px 18px;border-radius:8px;cursor:pointer;letter-spacing:.06em;transition:all .2s}
+.vquiz-restart:hover{background:rgba(139,92,246,.1)}
+.col-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0}
+.col-card{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:16px}
+.col-phrase{font-family:var(--font-head);font-size:15px;font-weight:700;color:var(--warn);margin-bottom:6px}
+.col-use{font-size:13px;color:var(--muted);margin-bottom:8px}
+.col-example{font-size:13px;font-style:italic;color:var(--text);border-left:2px solid var(--warn);padding-left:10px}
+.grammar-table-wrap{overflow-x:auto;margin:16px 0}
+table.grammar{width:100%;border-collapse:collapse;font-size:13px}
+table.grammar th{background:rgba(139,92,246,.1);color:var(--accent);font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:10px 14px;text-align:left;border-bottom:1px solid var(--border)}
+table.grammar td{padding:9px 14px;border-bottom:1px solid rgba(255,255,255,.04);vertical-align:top;color:var(--text)}
+table.grammar tr:last-child td{border-bottom:none}
+table.grammar .gram-form{color:var(--accent);font-weight:600;font-family:var(--font-head)}
+table.grammar .gram-ex{color:var(--muted);font-style:italic}
+.poll-section{margin:20px 0}
+.poll-score-bar{display:flex;justify-content:space-between;align-items:center;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:8px 16px;margin-bottom:14px}
+.poll-score-label{font-family:var(--font-head);font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
+.poll-score-val{font-family:var(--font-head);font-size:20px;font-weight:800;color:var(--accent)}
+.poll-q{margin-bottom:14px}
+.poll-q-text{font-size:14px;font-weight:600;color:var(--text);margin-bottom:8px}
+.poll-options{display:flex;flex-wrap:wrap;gap:8px}
+.poll-btn{background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:var(--font-body);font-size:13px;padding:7px 14px;border-radius:8px;cursor:pointer;transition:all .2s}
+.poll-btn:hover{border-color:var(--accent);color:var(--accent)}
+.poll-btn.correct-ans{background:rgba(0,229,160,.15);border-color:var(--success);color:var(--success)}
+.poll-btn.wrong-ans{background:rgba(255,77,109,.12);border-color:var(--danger);color:var(--danger)}
+.poll-feedback{font-size:13px;color:var(--muted);margin-top:6px;min-height:18px}
+.activity-card{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:20px;margin:14px 0}
+.activity-title{font-family:var(--font-head);font-size:14px;font-weight:800;color:var(--accent);margin-bottom:12px;letter-spacing:.04em;text-transform:uppercase}
+.activity-score{float:right;font-family:var(--font-head);font-size:16px;font-weight:800;color:var(--accent2)}
+.activity-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0}
+.act-item{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:8px;padding:10px}
+.act-options{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.act-btn{background:var(--surface);border:1px solid var(--border);color:var(--text);font-family:var(--font-body);font-size:13px;padding:6px 14px;border-radius:6px;cursor:pointer;transition:all .2s}
+.act-btn:hover:not(:disabled){border-color:var(--accent);color:var(--accent)}
+.act-btn.correct-ans{background:rgba(0,229,160,.15);border-color:var(--success);color:var(--success);pointer-events:none}
+.act-btn.wrong-ans{background:rgba(255,77,109,.12);border-color:var(--danger);color:var(--danger);pointer-events:none}
+.act-btn:disabled{cursor:not-allowed;opacity:.6}
+.act-feedback{font-size:12px;color:var(--muted);margin-top:6px;min-height:16px}
+.listening-card{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:20px;margin:16px 0}
+.audio-placeholder{display:flex;align-items:center;gap:16px;padding:16px;background:rgba(139,92,246,.05);border:1px dashed var(--border);border-radius:10px}
+.audio-icon{font-size:32px}
+.audio-title{font-family:var(--font-head);font-size:14px;font-weight:700;color:var(--text)}
+.audio-sub{font-size:12px;color:var(--muted)}
+.script-toggle{background:transparent;border:1px solid var(--border);color:var(--muted);font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:.06em;padding:7px 16px;border-radius:8px;cursor:pointer;margin:12px 0;transition:all .2s}
+.script-toggle:hover{border-color:var(--accent);color:var(--accent)}
+.script-box{display:none;background:rgba(139,92,246,.04);border:1px solid rgba(139,92,246,.15);border-radius:10px;padding:18px;font-size:13px;color:var(--text);line-height:1.9;font-style:italic;margin-top:8px}
+.listen-q{margin-bottom:12px}
+.listen-q-text{font-size:14px;font-weight:500;color:var(--text);margin-bottom:8px}
+.listen-opts{display:flex;flex-wrap:wrap;gap:8px}
+.listen-btn{background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:var(--font-body);font-size:13px;padding:7px 14px;border-radius:8px;cursor:pointer;transition:all .2s}
+.listen-btn:hover:not(:disabled){border-color:var(--accent);color:var(--accent)}
+.listen-btn.correct-ans{background:rgba(0,229,160,.15);border-color:var(--success);color:var(--success)}
+.listen-btn.wrong-ans{background:rgba(255,77,109,.12);border-color:var(--danger);color:var(--danger)}
+.listen-btn:disabled{cursor:not-allowed;opacity:.6}
+.listen-feedback{font-size:12px;color:var(--muted);margin-top:6px;min-height:16px}
+.tf-row{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px;flex-wrap:wrap}
+.tf-stmt{font-size:13px;color:var(--text);flex:1;line-height:1.5;min-width:180px}
+.tf-btns{display:flex;gap:8px;flex-shrink:0}
+.tf-btn{background:var(--surface);border:1px solid var(--border);color:var(--text);font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:.06em;padding:6px 14px;border-radius:6px;cursor:pointer;transition:all .2s}
+.tf-btn:hover:not(:disabled){border-color:var(--accent);color:var(--accent)}
+.tf-btn:disabled{cursor:not-allowed;opacity:.6}
+.debate-wrap{margin:16px 0}
+.debate-meter{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:18px}
+.meter-track{height:10px;background:rgba(255,255,255,.07);border-radius:10px;overflow:hidden;margin:10px 0}
+.meter-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:10px;transition:width .4s;width:50%}
+.meter-labels{display:flex;justify-content:space-between;font-size:12px;color:var(--muted)}
+.debate-btns{display:flex;gap:8px;margin-top:10px}
+.debate-btn-a{background:rgba(167,139,250,.15);border:1px solid #A78BFA;color:#A78BFA;font-family:var(--font-head);font-size:12px;font-weight:700;padding:6px 14px;border-radius:8px;cursor:pointer;transition:all .2s}
+.debate-btn-a:hover{background:rgba(167,139,250,.28)}
+.debate-btn-b{background:rgba(139,92,246,.12);border:1px solid var(--accent);color:var(--accent);font-family:var(--font-head);font-size:12px;font-weight:700;padding:6px 14px;border-radius:8px;cursor:pointer;transition:all .2s}
+.debate-btn-b:hover{background:rgba(139,92,246,.25)}
+.speaking-qs{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}
+.speaking-q{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px;font-size:13px}
+.speaking-q .sq-tag{font-family:var(--font-head);font-size:10px;font-weight:700;color:var(--accent);letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px}
+.dice-wrap{margin:16px 0}
+.dice-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0}
+.dice-card{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px;text-align:center;font-size:13px}
+.dice-num{font-family:var(--font-head);font-size:22px;font-weight:800;color:var(--accent);display:block}
+.badge-showcase{display:flex;gap:14px;flex-wrap:wrap;margin:16px 0}
+.badge-item{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:14px 16px;text-align:center;flex:1;min-width:130px}
+.badge-emoji{font-size:28px;display:block;margin-bottom:6px}
+.badge-name{font-family:var(--font-head);font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
+.checklist{margin:14px 0}
+.check-item{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:14px}
+.check-item:last-child{border-bottom:none}
+.check-icon{font-size:16px;margin-top:1px}
+.phrases-week{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:14px 0}
+.phrase-card{background:linear-gradient(135deg,rgba(139,92,246,.08),rgba(167,139,250,.04));border:1px solid var(--border);border-radius:10px;padding:14px;font-family:var(--font-head);font-size:14px;font-weight:700;color:var(--accent);text-align:center}
+.phrase-card span{display:block;font-family:var(--font-body);font-size:11px;color:var(--muted);font-weight:400;margin-top:4px}
+.win-box{margin:16px 0}
+.win-textarea{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:var(--font-body);font-size:14px;padding:12px 14px;resize:vertical;min-height:72px;transition:border-color .2s}
+.win-textarea:focus{outline:none;border-color:var(--accent)}
+.win-btn{margin-top:8px;background:var(--accent);border:none;color:var(--bg);font-family:var(--font-head);font-size:12px;font-weight:800;padding:9px 20px;border-radius:8px;cursor:pointer;letter-spacing:.06em;transition:all .2s}
+.win-btn:hover{background:var(--accent2)}
+.win-saved{display:none;margin-top:10px;background:rgba(0,229,160,.1);border:1px solid var(--success);border-radius:8px;padding:12px 14px;font-size:14px;color:var(--success)}
+.confetti-wrap{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9000;display:none}
+.tag{display:inline-block;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:2px 8px;border-radius:20px;margin-right:4px}
+.tag-t2s{background:rgba(139,92,246,.1);color:var(--accent)}
+.tag-s2s{background:rgba(167,139,250,.12);color:#A78BFA}
+.tag-class{background:rgba(0,229,160,.1);color:var(--success)}
+.pill{display:inline-flex;align-items:center;gap:4px;background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:4px 10px;font-size:12px;color:var(--muted)}
+.divider{border:none;border-top:1px solid var(--border);margin:18px 0}
+.place-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:16px 0}
+.place-tile{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center;cursor:pointer;transition:all .2s}
+.place-tile:hover{border-color:var(--accent);transform:translateY(-2px)}
+.place-icon{font-size:28px;margin-bottom:4px}
+.place-label{font-family:var(--font-head);font-size:12px;font-weight:700;color:var(--accent)}
+.place-sub{font-size:11px;color:var(--muted);margin-top:2px}
+.site-footer{border-top:1px solid var(--border);padding:20px;display:flex;justify-content:center;gap:8px;flex-wrap:wrap}
+.level-tag{font-family:var(--font-head);font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;letter-spacing:.08em;background:var(--surface2);color:var(--muted);border:1px solid transparent}
+.level-tag.active{background:rgba(139,92,246,.1);color:var(--accent);border-color:var(--accent)}
+@media(max-width:640px){
+  .warmup-grid,.rounds,.col-grid,.speaking-qs,.activity-grid,.phrases-week,.vocab-grid,.place-grid{grid-template-columns:1fr}
+  .header-inner{height:auto;padding:10px 0}
+  .dice-grid{grid-template-columns:repeat(2,1fr)}
+  .vquiz-options{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<div id="progressBar"></div>
+<div class="confetti-wrap" id="confettiWrap"></div>
+
+<!-- HEADER -->
+<header class="site-header">
+  <div class="header-inner">
+    <div>
+      <div class="header-brand">Gabriel Turner · English Training</div>
+      <div class="header-meta">A1.2 · Module 3 · Session 1A — Discovery &amp; Drill</div>
+    </div>
+    <div class="badge-strip">
+      <span id="b1" title="Quick Start">⚡</span>
+      <span id="b2" title="Word Power">📚</span>
+      <span id="b3" title="Grammar Pro">🎯</span>
+      <span id="b4" title="Active Listener">🎧</span>
+      <span id="b5" title="My Win">🏆</span>
+    </div>
+    <button class="mode-toggle" onclick="toggleMode()">STUDENT MODE</button>
+  </div>
+</header>
+
+<!-- STICKY NAV -->
+<nav class="sticky-nav">
+  <div class="nav-inner">
+    <a href="#s1">§1 Warm-Up</a>
+    <a href="#s2">§2 Speaking</a>
+    <a href="#s3">§3 Vocabulary</a>
+    <a href="#s4">§4 Colloquial</a>
+    <a href="#s5">§5 Grammar</a>
+    <a href="#s6">§6 Listening</a>
+    <a href="#s7">§7 Production</a>
+    <a href="#s8">§8 Wrap-Up</a>
+  </div>
+</nav>
+
+<main class="main">
+
+<!-- ═══════════════════════════════════════
+     §1 WARM-UP
+════════════════════════════════════════ -->
+<section class="section" id="s1">
+  <div class="section-header">
+    <span class="section-number">§1</span>
+    <h2 class="section-title">⚡ Warm-Up — Quick Fire</h2>
+    <span class="section-time">5 min</span>
+  </div>
+  <div class="section-body">
+
+    <div class="img-card">
+      <img src="https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=900&q=80" alt="Reception desk in a modern corporate office" loading="lazy">
+      <div class="img-overlay">📍 The front desk — where every business relationship starts</div>
+    </div>
+
+    <!-- VIDEO PLACEHOLDER — Session 1 only -->
+    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:24px;margin-bottom:18px;text-align:center">
+      <div style="font-size:40px;margin-bottom:8px">▶️</div>
+      <div style="font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--accent);letter-spacing:.06em;text-transform:uppercase">Module 3 Intro Video</div>
+      <div style="font-size:12px;color:var(--muted);margin-top:4px">Getting Around for Business — What you&apos;ll learn this module</div>
+      <!-- VIDEO: Replace with intro video URL -->
+    </div>
+
+    <div class="teacher-note teacher-only">
+      <strong>🎯 Objetivo del Warm-Up:</strong> Activar vocabulario de viaje y recepción. Verificar si los alumnos han recibido a un cliente extranjero o viajado por trabajo.<br>
+      <strong>Dinámica:</strong> Teacher→Student (ronda 1), luego Student→Student (ronda 2).<br>
+      <strong>Nota:</strong> Muchos alumnos en el Bajío reciben clientes de EE.UU., Canadá o Alemania — usar ese contexto real.
+    </div>
+
+    <div class="warmup-grid">
+      <div class="warmup-q">
+        <div class="qnum">Q1 <span class="tag tag-t2s">T→S</span></div>
+        <div class="qtext">Do you <em>travel</em> for work? Where?</div>
+      </div>
+      <div class="warmup-q">
+        <div class="qnum">Q2 <span class="tag tag-t2s">T→S</span></div>
+        <div class="qtext">Do clients or suppliers visit your <em>office</em>?</div>
+      </div>
+      <div class="warmup-q">
+        <div class="qnum">Q3 <span class="tag tag-s2s">S→S</span></div>
+        <div class="qtext">What do you say when someone arrives at your <em>reception</em>?</div>
+      </div>
+      <div class="warmup-q">
+        <div class="qnum">Q4 <span class="tag tag-s2s">S→S</span></div>
+        <div class="qtext">Do you know the English word for <em>recepción</em>, <em>credencial</em>, or <em>sala de juntas</em>?</div>
+      </div>
+    </div>
+
+    <div class="teacher-note teacher-only">
+      <strong>Layer 1 — Escucha activa:</strong> ¿Dicen "client" o "customer"? ¿Usan "to" correctamente? ("I travel to Monterrey")<br>
+      <strong>Layer 2 — Error frecuente:</strong> "I travel for the work" → no article. "I go to there" → no "to".<br>
+      <strong>Layer 3 — Extension:</strong> Si hay respuestas cortas: "What do you say to the visitor? In English?"
+    </div>
+
+    <div class="timer-wrap">
+      <svg class="timer-svg" id="svgT1" width="90" height="90" viewBox="0 0 90 90">
+        <circle class="timer-bg" cx="45" cy="45" r="38" stroke-width="6"/>
+        <circle class="timer-arc" id="tArc1" cx="45" cy="45" r="38" stroke-width="6" stroke-dasharray="238.76" stroke-dashoffset="0"/>
+        <text class="timer-text" id="tText1" x="45" y="44">1:30</text>
+        <text class="timer-label" x="45" y="57">quick fire</text>
+      </svg>
+      <div class="timer-btns">
+        <button class="btn btn-primary" onclick="startTimer('tArc1','tText1',90,'b1')">START</button>
+        <button class="btn btn-ghost" onclick="resetTimer('tArc1','tText1',90,'1:30')">RESET</button>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     §2 SPEAKING TOPIC
+════════════════════════════════════════ -->
+<section class="section" id="s2">
+  <div class="section-header">
+    <span class="section-number">§2</span>
+    <h2 class="section-title">🗣️ Speaking Topic — Receiving a Client</h2>
+    <span class="section-time">8 min</span>
+  </div>
+  <div class="section-body">
+
+    <div class="img-card">
+      <img src="https://images.unsplash.com/photo-1556761175-b413da4baf72?w=900&q=80" alt="Business handshake at office lobby" loading="lazy">
+      <div class="img-overlay">Your client just arrived. What do <strong>YOU</strong> say?</div>
+    </div>
+
+    <div class="topic-card">
+      <h3>Welcome to Our Office</h3>
+      <p style="color:var(--muted);font-size:14px;margin-bottom:12px;">A client from Chicago just arrived at reception. You need to welcome them, show them the way, and help them.</p>
+
+      <div class="rounds">
+        <div class="round-card">
+          <div class="rnum">Round 1 · 60 seg</div>
+          <div class="rq"><span class="tag tag-t2s">T→S</span> "A client arrives. Welcome them and ask for their name."</div>
+        </div>
+        <div class="round-card">
+          <div class="rnum">Round 2 · 60 seg</div>
+          <div class="rq"><span class="tag tag-s2s">S→S</span> "You are the host. Give directions to the meeting room."</div>
+        </div>
+        <div class="round-card">
+          <div class="rnum">Round 3 · 90 seg</div>
+          <div class="rq"><span class="tag tag-class">Class</span> "What do you say if the client needs water, Wi-Fi, or help with their luggage?"</div>
+        </div>
+      </div>
+
+      <div class="model-reveal">
+        <button class="reveal-btn" onclick="this.nextElementSibling.style.display='block';this.style.display='none'">▶ Reveal Model Answer (B1 level)</button>
+        <div class="model-box">
+          <strong style="color:var(--muted);font-size:11px;font-family:var(--font-head);letter-spacing:.06em;text-transform:uppercase">Model Answer</strong><br><br>
+          "<span class="col">Welcome!</span> Good morning. My name is Mónica. I&apos;m your <span class="h">host</span> today. <span class="col">This way, please.</span> The <span class="h">meeting room</span> is on the third floor. Can I help <span class="rs">you</span> with your <span class="h">luggage</span>? Can I get <span class="rs">you</span> some water or coffee? The Wi-Fi password is on the <span class="h">badge</span>. Please <span class="rs">call me</span> if you need anything."
+          <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;font-size:11px;">
+            <span style="color:var(--accent);">■ Vocabulary</span>
+            <span style="color:#A78BFA;">■ Object pronouns</span>
+            <span style="color:var(--warn);">■ Colloquial</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="teacher-note teacher-only">
+      <strong>Coaching tip:</strong> En Round 1, si el alumno solo dice "Hello, welcome" → prompt: "Good! Now ask their name: &apos;Can I have your name?&apos;" Nunca corrijas mid-utterance. Recicla al final.
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     §3 VOCABULARY
+════════════════════════════════════════ -->
+<section class="section" id="s3">
+  <div class="section-header">
+    <span class="section-number">§3</span>
+    <h2 class="section-title">📚 Vocabulary — Business Travel &amp; Reception</h2>
+    <span class="section-time">10 min</span>
+  </div>
+  <div class="section-body">
+
+    <!-- PLACE VISUAL -->
+    <div style="margin-bottom:20px">
+      <div style="font-family:var(--font-head);font-size:12px;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px">📍 Key Places in Business Travel</div>
+      <div class="place-grid">
+        <div class="place-tile" onclick="speakWord('airport')">
+          <div class="place-icon">✈️</div>
+          <div class="place-label">Airport</div>
+          <div class="place-sub">aeropuerto</div>
+        </div>
+        <div class="place-tile" onclick="speakWord('hotel')">
+          <div class="place-icon">🏨</div>
+          <div class="place-label">Hotel</div>
+          <div class="place-sub">hotel</div>
+        </div>
+        <div class="place-tile" onclick="speakWord('reception desk')">
+          <div class="place-icon">🏢</div>
+          <div class="place-label">Reception</div>
+          <div class="place-sub">recepción</div>
+        </div>
+        <div class="place-tile" onclick="speakWord('meeting room')">
+          <div class="place-icon">📋</div>
+          <div class="place-label">Meeting Room</div>
+          <div class="place-sub">sala de juntas</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="vocab-grid">
+      <div class="vocab-card" onclick="speakWord('visitor')">
+        <div class="vocab-icon">👤</div>
+        <div class="vocab-word">visitor</div>
+        <div class="vocab-sound">Suena: VÍ-si-tor</div>
+        <div class="vocab-es">visitante</div>
+        <button class="speak-btn">🔊 LISTEN</button>
+      </div>
+      <div class="vocab-card" onclick="speakWord('badge')">
+        <div class="vocab-icon">🪪</div>
+        <div class="vocab-word">badge</div>
+        <div class="vocab-sound">Suena: badch</div>
+        <div class="vocab-es">gafete / credencial</div>
+        <button class="speak-btn">🔊 LISTEN</button>
+      </div>
+      <div class="vocab-card" onclick="speakWord('host')">
+        <div class="vocab-icon">🤝</div>
+        <div class="vocab-word">host</div>
+        <div class="vocab-sound">Suena: jóust</div>
+        <div class="vocab-es">anfitrión</div>
+        <button class="speak-btn">🔊 LISTEN</button>
+      </div>
+      <div class="vocab-card" onclick="speakWord('escort')">
+        <div class="vocab-icon">🚶</div>
+        <div class="vocab-word">escort</div>
+        <div class="vocab-sound">Suena: es-CORT</div>
+        <div class="vocab-es">acompañar / escoltar</div>
+        <button class="speak-btn">🔊 LISTEN</button>
+      </div>
+      <div class="vocab-card" onclick="speakWord('sign in')">
+        <div class="vocab-icon">✍️</div>
+        <div class="vocab-word">sign in</div>
+        <div class="vocab-sound">Suena: sáin in</div>
+        <div class="vocab-es">registrarse</div>
+        <button class="speak-btn">🔊 LISTEN</button>
+      </div>
+      <div class="vocab-card" onclick="speakWord('boarding pass')">
+        <div class="vocab-icon">🎫</div>
+        <div class="vocab-word">boarding pass</div>
+        <div class="vocab-sound">Suena: BOR-ding pas</div>
+        <div class="vocab-es">pase de abordar</div>
+        <button class="speak-btn">🔊 LISTEN</button>
+      </div>
+      <div class="vocab-card" onclick="speakWord('passport')">
+        <div class="vocab-icon">🛂</div>
+        <div class="vocab-word">passport</div>
+        <div class="vocab-sound">Suena: PAS-port</div>
+        <div class="vocab-es">pasaporte</div>
+        <button class="speak-btn">🔊 LISTEN</button>
+      </div>
+      <div class="vocab-card" onclick="speakWord('reservation')">
+        <div class="vocab-icon">📞</div>
+        <div class="vocab-word">reservation</div>
+        <div class="vocab-sound">Suena: re-ser-VÉI-shon</div>
+        <div class="vocab-es">reservación</div>
+        <button class="speak-btn">🔊 LISTEN</button>
+      </div>
+      <div class="vocab-card" onclick="speakWord('luggage')">
+        <div class="vocab-icon">🧳</div>
+        <div class="vocab-word">luggage</div>
+        <div class="vocab-sound">Suena: LÓ-guech</div>
+        <div class="vocab-es">equipaje</div>
+        <button class="speak-btn">🔊 LISTEN</button>
+      </div>
+      <div class="vocab-card" onclick="speakWord('gate')">
+        <div class="vocab-icon">🚪</div>
+        <div class="vocab-word">gate</div>
+        <div class="vocab-sound">Suena: guéit</div>
+        <div class="vocab-es">puerta (de abordar)</div>
+        <button class="speak-btn">🔊 LISTEN</button>
+      </div>
+      <div class="vocab-card" onclick="speakWord('delay')">
+        <div class="vocab-icon">⏰</div>
+        <div class="vocab-word">delay</div>
+        <div class="vocab-sound">Suena: di-LÉI</div>
+        <div class="vocab-es">retraso / demora</div>
+        <button class="speak-btn">🔊 LISTEN</button>
+      </div>
+      <div class="vocab-card" onclick="speakWord('key card')">
+        <div class="vocab-icon">🔑</div>
+        <div class="vocab-word">key card</div>
+        <div class="vocab-sound">Suena: quí card</div>
+        <div class="vocab-es">tarjeta de la habitación</div>
+        <button class="speak-btn">🔊 LISTEN</button>
+      </div>
+    </div>
+
+    <!-- VOCAB QUIZ -->
+    <div class="vquiz-wrap">
+      <div class="vquiz-header">
+        <div class="vquiz-title">⚡ Vocab Quiz — Choose the Translation</div>
+        <div class="progress-container">
+          <div class="progress-track"><div class="progress-fill" id="vqProgress" style="width:0%"></div></div>
+          <div class="progress-label" id="vqLabel">0 / 12 done</div>
+        </div>
+        <div class="vquiz-counter" id="vqCounter">1 / 12</div>
+      </div>
+      <div class="vquiz-card" id="vqCard">
+        <div class="vquiz-word" id="vqWord">—</div>
+        <div class="vquiz-sound" id="vqSound">—</div>
+        <div class="vquiz-options" id="vqOptions"></div>
+        <div class="vquiz-feedback" id="vqFeedback"></div>
+        <button class="vquiz-next" id="vqNext" onclick="vqNextQuestion()">NEXT WORD →</button>
+      </div>
+      <div class="vquiz-done" id="vqDone">
+        <div class="vquiz-done-score" id="vqFinalScore">0 / 12</div>
+        <div class="vquiz-done-msg" id="vqDoneMsg">Quiz complete!</div>
+        <button class="vquiz-restart" onclick="vqInit()">↺ Try Again</button>
+      </div>
+    </div>
+
+    <div class="teacher-note teacher-only">
+      <strong>Drill de imagen:</strong> Señala los place tiles de arriba → "What is this place called in English?"<br>
+      <strong>Extension rápida:</strong> "Use &apos;badge&apos; in a sentence about YOUR office."
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     §4 COLLOQUIAL
+════════════════════════════════════════ -->
+<section class="section" id="s4">
+  <div class="section-header">
+    <span class="section-number">§4</span>
+    <h2 class="section-title">💬 Colloquial Phrases — Welcoming Visitors</h2>
+    <span class="section-time">5 min</span>
+  </div>
+  <div class="section-body">
+
+    <div class="img-card">
+      <img src="https://images.unsplash.com/photo-1553877522-43269d4ea984?w=900&q=80" alt="Professional welcoming gesture at office" loading="lazy">
+      <div class="img-overlay">The phrases that make visitors feel comfortable — learn them now</div>
+    </div>
+
+    <div class="col-grid">
+      <div class="col-card">
+        <div class="col-phrase">Welcome! This way, please.</div>
+        <div class="col-use">When: a visitor arrives at reception</div>
+        <div class="col-example">"Hi, Mr. Davis! <em>Welcome! This way, please.</em> The meeting room is on the second floor."</div>
+      </div>
+      <div class="col-card">
+        <div class="col-phrase">Can I help you with that?</div>
+        <div class="col-use">When: offering help with luggage or bags</div>
+        <div class="col-example">"You have a lot of bags. <em>Can I help you with that?</em>"</div>
+      </div>
+      <div class="col-card">
+        <div class="col-phrase">Right this way.</div>
+        <div class="col-use">When: guiding someone to a room</div>
+        <div class="col-example">"The conference room is ready. <em>Right this way.</em>"</div>
+      </div>
+      <div class="col-card">
+        <div class="col-phrase">Do you need anything?</div>
+        <div class="col-use">When: checking if the visitor is comfortable</div>
+        <div class="col-example">"Here is some water. <em>Do you need anything</em> before we start?"</div>
+      </div>
+    </div>
+
+    <div class="teacher-note teacher-only">
+      <strong>Práctica rápida:</strong> Di el contexto en español → el alumno produce la frase en inglés. Ejemplo: "Llegó un cliente a tu oficina y tiene muchas maletas. ¿Qué le dices?" → "Can I help you with that?"<br>
+      <strong>Gramática integrada:</strong> Las frases usan object pronouns (help you, help me) — target de §5. El alumno lo practica sin darse cuenta.
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     §5 GRAMMAR — Object Pronouns
+════════════════════════════════════════ -->
+<section class="section" id="s5">
+  <div class="section-header">
+    <span class="section-number">§5</span>
+    <h2 class="section-title">🎯 Grammar — Object Pronouns</h2>
+    <span class="section-time">10 min</span>
+  </div>
+  <div class="section-body">
+
+    <div class="img-card">
+      <img src="https://images.unsplash.com/photo-1600880292089-90a7e086ee0c?w=900&q=80" alt="Team exchanging documents at meeting" loading="lazy">
+      <div class="img-overlay">Grammar is a tool — use it to help people, give things, and communicate at work</div>
+    </div>
+
+    <div class="teacher-note teacher-only">
+      <strong>REGLA DE ORO §5:</strong> Esta sección es REFERENCIAL, no drilling. Lee la tabla con el alumno, da un ejemplo personal, luego activa el Poll. Nunca pidas que conjuguen fuera de contexto.<br>
+      <strong>Error #1 de mexicanos:</strong> "Call to me" → <strong>Call me</strong>. "Send to her the file" → <strong>Send her the file</strong> o <strong>Send it to her</strong>. Drill con escenarios reales.
+    </div>
+
+    <div class="grammar-table-wrap">
+      <table class="grammar">
+        <thead><tr><th>Subject</th><th>Object Pronoun</th><th>Work Example</th></tr></thead>
+        <tbody>
+          <tr><td>I</td><td class="gram-form">me</td><td class="gram-ex">Can you help me? — Call me when you arrive.</td></tr>
+          <tr><td>you</td><td class="gram-form">you</td><td class="gram-ex">I can help you. — Can I call you later?</td></tr>
+          <tr><td>he</td><td class="gram-form">him</td><td class="gram-ex">Call him at the hotel. — Send him the address.</td></tr>
+          <tr><td>she</td><td class="gram-form">her</td><td class="gram-ex">Send her the badge. — Tell her the Wi-Fi password.</td></tr>
+          <tr><td>it</td><td class="gram-form">it</td><td class="gram-ex">Send it to the client. — I need it for the meeting.</td></tr>
+          <tr><td>we</td><td class="gram-form">us</td><td class="gram-ex">Send us the files. — Can you help us?</td></tr>
+          <tr><td>they</td><td class="gram-form">them</td><td class="gram-ex">Call them before 3 PM. — Give them a badge.</td></tr>
+          <tr style="border-top:1px solid var(--accent)"><td colspan="3" style="padding-top:12px">
+            <span style="color:var(--danger);font-family:var(--font-head);font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase">⚠️ Common Error</span><br>
+            <span style="color:var(--danger)">✗ "Call <strong>to</strong> me"</span> → ✅ <strong>Call me</strong><br>
+            <span style="color:var(--danger)">✗ "Send <strong>to</strong> her the file"</span> → ✅ <strong>Send her the file</strong> / <strong>Send it to her</strong>
+          </td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- QUICK POLL -->
+    <div class="poll-section">
+      <div style="font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--accent);letter-spacing:.08em;text-transform:uppercase;margin-bottom:12px">⚡ Quick Poll — 30 pts total</div>
+      <div class="poll-score-bar">
+        <div class="poll-score-label">Poll Score</div>
+        <div class="poll-score-val" id="pollScoreVal">0 pts</div>
+      </div>
+
+      <div class="poll-q">
+        <div class="poll-q-text">1. "The client is at reception. Please call ______."</div>
+        <div class="poll-options">
+          <button class="poll-btn" onclick="checkPoll(this,'he','pq1','pf1','p1a')">he</button>
+          <button class="poll-btn" onclick="checkPoll(this,'him','pq1','pf1','p1b')">him</button>
+          <button class="poll-btn" onclick="checkPoll(this,'his','pq1','pf1','p1c')">his</button>
+        </div>
+        <div class="poll-feedback" id="pf1"></div>
+      </div>
+      <div class="poll-q">
+        <div class="poll-q-text">2. "I don&apos;t have the address. Can you send it to ______?"</div>
+        <div class="poll-options">
+          <button class="poll-btn" onclick="checkPoll(this,'I','pq2','pf2','p2a')">I</button>
+          <button class="poll-btn" onclick="checkPoll(this,'me','pq2','pf2','p2b')">me</button>
+          <button class="poll-btn" onclick="checkPoll(this,'my','pq2','pf2','p2c')">my</button>
+        </div>
+        <div class="poll-feedback" id="pf2"></div>
+      </div>
+      <div class="poll-q">
+        <div class="poll-q-text">3. "The visitors need badges. Please give ______ a badge."</div>
+        <div class="poll-options">
+          <button class="poll-btn" onclick="checkPoll(this,'they','pq3','pf3','p3a')">they</button>
+          <button class="poll-btn" onclick="checkPoll(this,'them','pq3','pf3','p3b')">them</button>
+          <button class="poll-btn" onclick="checkPoll(this,'their','pq3','pf3','p3c')">their</button>
+        </div>
+        <div class="poll-feedback" id="pf3"></div>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- ACTIVITY A -->
+    <div class="activity-card">
+      <div class="activity-title">Activity A — Choose the Correct Pronoun <span class="activity-score" id="actAScore">0 / 4</span></div>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:14px">Replace the underlined word with the correct object pronoun.</p>
+      <div class="activity-grid">
+        <div class="act-item">
+          <div style="font-size:13px;font-weight:500">"Call <u>the manager</u> when the client arrives."</div>
+          <div class="act-options">
+            <button class="act-btn" onclick="checkAct(this,'him','af1','actAScore',4)">him</button>
+            <button class="act-btn" onclick="checkAct(this,'he','af1','actAScore',4)">he</button>
+            <button class="act-btn" onclick="checkAct(this,'his','af1','actAScore',4)">his</button>
+          </div>
+          <div class="act-feedback" id="af1"></div>
+        </div>
+        <div class="act-item">
+          <div style="font-size:13px;font-weight:500">"Send <u>the report</u> to the Chicago office."</div>
+          <div class="act-options">
+            <button class="act-btn" onclick="checkAct(this,'it','af2','actAScore',4)">it</button>
+            <button class="act-btn" onclick="checkAct(this,'them','af2','actAScore',4)">them</button>
+            <button class="act-btn" onclick="checkAct(this,'her','af2','actAScore',4)">her</button>
+          </div>
+          <div class="act-feedback" id="af2"></div>
+        </div>
+        <div class="act-item">
+          <div style="font-size:13px;font-weight:500">"Can you help <u>Mónica and me</u> with the bags?"</div>
+          <div class="act-options">
+            <button class="act-btn" onclick="checkAct(this,'us','af3','actAScore',4)">us</button>
+            <button class="act-btn" onclick="checkAct(this,'we','af3','actAScore',4)">we</button>
+            <button class="act-btn" onclick="checkAct(this,'them','af3','actAScore',4)">them</button>
+          </div>
+          <div class="act-feedback" id="af3"></div>
+        </div>
+        <div class="act-item">
+          <div style="font-size:13px;font-weight:500">"Give <u>the visitors</u> a badge, please."</div>
+          <div class="act-options">
+            <button class="act-btn" onclick="checkAct(this,'them','af4','actAScore',4)">them</button>
+            <button class="act-btn" onclick="checkAct(this,'they','af4','actAScore',4)">they</button>
+            <button class="act-btn" onclick="checkAct(this,'their','af4','actAScore',4)">their</button>
+          </div>
+          <div class="act-feedback" id="af4"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ACTIVITY B -->
+    <div class="activity-card">
+      <div class="activity-title">Activity B — Correct or Incorrect? <span class="activity-score" id="actBScore">0 / 4</span></div>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:14px">Is the object pronoun correct? Choose YES or NO.</p>
+      <div class="activity-grid">
+        <div class="act-item">
+          <div style="font-size:13px;font-weight:500">"Call <em>to me</em> when you arrive."</div>
+          <div class="act-options">
+            <button class="act-btn" onclick="checkAct(this,'NO','bf1','actBScore',4)">✅ YES — correct</button>
+            <button class="act-btn" onclick="checkAct(this,'NO','bf1','actBScore',4)">❌ NO — fix it</button>
+          </div>
+          <div class="act-feedback" id="bf1"></div>
+        </div>
+        <div class="act-item">
+          <div style="font-size:13px;font-weight:500">"Please send <em>her</em> the Wi-Fi password."</div>
+          <div class="act-options">
+            <button class="act-btn" onclick="checkAct(this,'YES','bf2','actBScore',4)">✅ YES — correct</button>
+            <button class="act-btn" onclick="checkAct(this,'YES','bf2','actBScore',4)">❌ NO — fix it</button>
+          </div>
+          <div class="act-feedback" id="bf2"></div>
+        </div>
+        <div class="act-item">
+          <div style="font-size:13px;font-weight:500">"I need talk to <em>he</em> about the reservation."</div>
+          <div class="act-options">
+            <button class="act-btn" onclick="checkAct(this,'NO2','bf3','actBScore',4)">✅ YES — correct</button>
+            <button class="act-btn" onclick="checkAct(this,'NO2','bf3','actBScore',4)">❌ NO — fix it</button>
+          </div>
+          <div class="act-feedback" id="bf3"></div>
+        </div>
+        <div class="act-item">
+          <div style="font-size:13px;font-weight:500">"Can you give <em>us</em> the key cards, please?"</div>
+          <div class="act-options">
+            <button class="act-btn" onclick="checkAct(this,'YES2','bf4','actBScore',4)">✅ YES — correct</button>
+            <button class="act-btn" onclick="checkAct(this,'YES2','bf4','actBScore',4)">❌ NO — fix it</button>
+          </div>
+          <div class="act-feedback" id="bf4"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="teacher-note teacher-only">
+      <strong>Activity B nota:</strong> Activity B valida comprensión del error más común de mexicanos: "call to me" y "talk to he". El valor pedagógico es la discusión después del click.
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     §6 LISTENING
+════════════════════════════════════════ -->
+<section class="section" id="s6">
+  <div class="section-header">
+    <span class="section-number">§6</span>
+    <h2 class="section-title">🎧 Listening — Client Arrives at the Office</h2>
+    <span class="section-time">8 min</span>
+  </div>
+  <div class="section-body">
+
+    <div class="img-card">
+      <img src="https://images.unsplash.com/photo-1577412647305-991150c7d163?w=900&q=80" alt="Corporate lobby with people arriving" loading="lazy">
+      <div class="img-overlay">📍 Lobby de la planta — Mónica recibe a un cliente de EE.UU.</div>
+    </div>
+
+    <div class="listening-card">
+      <div class="audio-placeholder">
+        <div class="audio-icon">🎙️</div>
+        <div>
+          <div class="audio-title">ElevenLabs Audio — "Welcome to Solaris"</div>
+          <div class="audio-sub">Voice: Sarah (American) · Speed: 0.80 · A1.2 M3 S1A</div>
+        </div>
+      </div>
+    </div>
+
+    <button class="script-toggle" onclick="toggleScript('scriptBox1')">▼ Show ElevenLabs Script</button>
+    <div class="script-box" id="scriptBox1">
+      Good morning, Mr. Davis. Welcome to ConnectPro International. My name is Mónica. I am your host today.<br><br>
+      Please sign in here. This is your visitor badge. Please wear it all day.<br><br>
+      Can I help you with your luggage? — Oh, thank you. Please put it here.<br><br>
+      The meeting room is on the second floor. This way, please. The elevator is next to the reception desk.<br><br>
+      Can I get you some water or coffee? — Coffee, please.<br><br>
+      The Wi-Fi password is on the back of your badge. If you need anything, please call me. My extension is 205.<br><br>
+      The meeting starts at ten. Mr. Garza is on his way — he will be here in five minutes. Please make yourself comfortable.
+      <div style="font-size:11px;color:var(--muted);margin-top:10px;font-style:normal">📎 ElevenLabs: Voice — Sarah (American English) · Speed 0.80 · Pitch 1.0</div>
+    </div>
+
+    <div style="font-family:var(--font-head);font-size:12px;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin:18px 0 10px">✏️ Listening — Multiple Choice</div>
+
+    <div class="listen-q">
+      <div class="listen-q-text">1. What does Mónica give Mr. Davis?</div>
+      <div class="listen-opts">
+        <button class="listen-btn" onclick="checkListen(this,'badge','lf1')">A visitor badge</button>
+        <button class="listen-btn" onclick="checkListen(this,'key','lf1')">A key card</button>
+        <button class="listen-btn" onclick="checkListen(this,'passport','lf1')">His passport</button>
+      </div>
+      <div class="listen-feedback" id="lf1"></div>
+    </div>
+    <div class="listen-q">
+      <div class="listen-q-text">2. Where is the meeting room?</div>
+      <div class="listen-opts">
+        <button class="listen-btn" onclick="checkListen(this,'2nd','lf2')">On the second floor</button>
+        <button class="listen-btn" onclick="checkListen(this,'3rd','lf2')">On the third floor</button>
+        <button class="listen-btn" onclick="checkListen(this,'1st','lf2')">Next to reception</button>
+      </div>
+      <div class="listen-feedback" id="lf2"></div>
+    </div>
+
+    <div style="font-family:var(--font-head);font-size:12px;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin:18px 0 10px">✏️ Listening — True or False</div>
+
+    <div class="tf-row">
+      <div class="tf-stmt">Mónica asks Mr. Davis to sign in at reception.</div>
+      <div class="tf-btns">
+        <button class="tf-btn" onclick="checkTF(this,true,'tfl1')">TRUE</button>
+        <button class="tf-btn" onclick="checkTF(this,false,'tfl1')">FALSE</button>
+      </div>
+    </div>
+    <div class="tf-row">
+      <div class="tf-stmt">Mr. Davis asks for water.</div>
+      <div class="tf-btns">
+        <button class="tf-btn" onclick="checkTF(this,false,'tfl2')">TRUE</button>
+        <button class="tf-btn" onclick="checkTF(this,false,'tfl2')">FALSE</button>
+      </div>
+    </div>
+    <div class="tf-row">
+      <div class="tf-stmt">The Wi-Fi password is on the visitor badge.</div>
+      <div class="tf-btns">
+        <button class="tf-btn" onclick="checkTF(this,true,'tfl3')">TRUE</button>
+        <button class="tf-btn" onclick="checkTF(this,false,'tfl3')">FALSE</button>
+      </div>
+    </div>
+
+    <div class="teacher-note teacher-only">
+      <strong>Después del listening:</strong> "Close the script. Tell me THREE things Mónica did for Mr. Davis." Esto refuerza object pronouns sin que el alumno lo note: "She helped <strong>him</strong> with his luggage."
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     §7 PRODUCTION
+════════════════════════════════════════ -->
+<section class="section" id="s7">
+  <div class="section-header">
+    <span class="section-number">§7</span>
+    <h2 class="section-title">🔥 Production — Welcome to My Office</h2>
+    <span class="section-time">12 min</span>
+  </div>
+  <div class="section-body">
+
+    <div class="img-card">
+      <img src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=900&q=80" alt="Team welcoming someone at office" loading="lazy">
+      <div class="img-overlay">Now it&apos;s YOUR turn — welcome your visitor in English</div>
+    </div>
+
+    <!-- DEBATE METER -->
+    <div class="debate-wrap">
+      <div style="font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px">📊 Class Opinion Meter</div>
+      <div class="debate-meter">
+        <div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:8px">
+          "It is easy to receive a client in English."
+        </div>
+        <div class="meter-track"><div class="meter-fill" id="meterFill"></div></div>
+        <div class="meter-labels">
+          <span>😬 Disagree</span>
+          <span>50/50</span>
+          <span>Agree 😎</span>
+        </div>
+        <div class="debate-btns">
+          <button class="debate-btn-a" onclick="moveMeter(-7)">👎 I disagree</button>
+          <button class="debate-btn-b" onclick="moveMeter(7)">👍 I agree</button>
+        </div>
+        <div style="font-size:12px;color:var(--muted);margin-top:8px" id="meterPercent">Class: 50% agree</div>
+      </div>
+    </div>
+
+    <!-- SPEAKING QUESTIONS -->
+    <div class="speaking-qs">
+      <div class="speaking-q">
+        <div class="sq-tag"><span class="tag tag-t2s">T→S</span></div>
+        "A client arrives. Welcome them in 4 sentences. Go!"
+      </div>
+      <div class="speaking-q">
+        <div class="sq-tag"><span class="tag tag-s2s">S→S</span></div>
+        "You are at the hotel front desk. Check in: give your name, say you have a reservation."
+      </div>
+      <div class="speaking-q">
+        <div class="sq-tag"><span class="tag tag-t2s">T→S</span></div>
+        "Your colleague needs help. Use: &apos;Can I help you?&apos; + 2 more offers."
+      </div>
+      <div class="speaking-q">
+        <div class="sq-tag"><span class="tag tag-class">Class</span></div>
+        "Who can say the most complete welcome? Include: badge, meeting room, Wi-Fi, and coffee."
+      </div>
+    </div>
+
+    <!-- CHALLENGE TIMER -->
+    <div style="background:rgba(139,92,246,.05);border:1px solid var(--border);border-radius:12px;padding:20px;margin:14px 0">
+      <div style="font-family:var(--font-head);font-size:14px;font-weight:800;color:var(--accent);margin-bottom:8px">⚡ CHALLENGE — 90 seconds</div>
+      <div style="font-size:14px;color:var(--text);margin-bottom:14px">
+        Welcome a visitor to YOUR office. Include: greeting, badge, directions to the meeting room, offer help with luggage, and offer a drink. Use at least 3 object pronouns. Badge awarded for completing!
+      </div>
+      <div class="timer-wrap">
+        <svg class="timer-svg" id="svgT3" width="90" height="90" viewBox="0 0 90 90">
+          <circle class="timer-bg" cx="45" cy="45" r="38" stroke-width="6"/>
+          <circle class="timer-arc" id="tArc3" cx="45" cy="45" r="38" stroke-width="6" stroke-dasharray="238.76" stroke-dashoffset="0"/>
+          <text class="timer-text" id="tText3" x="45" y="44">1:30</text>
+          <text class="timer-label" x="45" y="57">challenge</text>
+        </svg>
+        <div class="timer-btns">
+          <button class="btn btn-primary" onclick="startTimer('tArc3','tText3',90,'b3')">START</button>
+          <button class="btn btn-ghost" onclick="resetTimer('tArc3','tText3',90,'1:30')">RESET</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- HOT SEAT DICE -->
+    <div class="dice-wrap">
+      <div style="font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px">🎲 Hot Seat Dice — 6 Prompts</div>
+      <div class="dice-grid">
+        <div class="dice-card"><span class="dice-num">1</span>"Welcome a German client to your factory."</div>
+        <div class="dice-card"><span class="dice-num">2</span>"Check into a hotel: give your name, ask for Wi-Fi."</div>
+        <div class="dice-card"><span class="dice-num">3</span>"A visitor lost their badge. Help them."</div>
+        <div class="dice-card"><span class="dice-num">4</span>"Your flight has a delay. Tell your colleague."</div>
+        <div class="dice-card"><span class="dice-num">5</span>"Offer a visitor water, coffee, and directions."</div>
+        <div class="dice-card"><span class="dice-num">6</span>"You are at the airport gate. Ask for help."</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     §8 WRAP-UP
+════════════════════════════════════════ -->
+<section class="section" id="s8">
+  <div class="section-header">
+    <span class="section-number">§8</span>
+    <h2 class="section-title">🏅 Wrap-Up — Badge Showcase</h2>
+    <span class="section-time">5 min</span>
+  </div>
+  <div class="section-body">
+
+    <div class="img-card">
+      <img src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=900&q=80" alt="Team celebrating completion" loading="lazy">
+      <div class="img-overlay">Module 3 started — you can now welcome visitors in English! 🧳</div>
+    </div>
+
+    <!-- BADGE SHOWCASE -->
+    <div class="badge-showcase">
+      <div class="badge-item"><span class="badge-emoji">⚡</span><div class="badge-name">Quick Start</div><div style="font-size:11px;color:var(--muted);margin-top:4px">Warm-up timer done</div></div>
+      <div class="badge-item"><span class="badge-emoji">📚</span><div class="badge-name">Word Power</div><div style="font-size:11px;color:var(--muted);margin-top:4px">8+ vocab correct</div></div>
+      <div class="badge-item"><span class="badge-emoji">🎯</span><div class="badge-name">Grammar Pro</div><div style="font-size:11px;color:var(--muted);margin-top:4px">Challenge completed</div></div>
+      <div class="badge-item"><span class="badge-emoji">🎧</span><div class="badge-name">Active Listener</div><div style="font-size:11px;color:var(--muted);margin-top:4px">Listening done</div></div>
+      <div class="badge-item"><span class="badge-emoji">🏆</span><div class="badge-name">My Win</div><div style="font-size:11px;color:var(--muted);margin-top:4px">Win saved today</div></div>
+    </div>
+
+    <!-- I CAN NOW -->
+    <div style="font-family:var(--font-head);font-size:12px;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin:16px 0 8px">✅ I Can Now…</div>
+    <div class="checklist">
+      <div class="check-item"><span class="check-icon">🟢</span>Welcome a visitor at reception in English</div>
+      <div class="check-item"><span class="check-icon">🟢</span>Use object pronouns: me, you, him, her, it, us, them</div>
+      <div class="check-item"><span class="check-icon">🟢</span>Offer help: "Can I help you with that?"</div>
+      <div class="check-item"><span class="check-icon">🟢</span>Say key travel words: badge, luggage, passport, gate, delay</div>
+      <div class="check-item"><span class="check-icon">🟢</span>Use colloquial phrases: "This way, please" / "Right this way"</div>
+    </div>
+
+    <!-- 3 PHRASES FOR THIS WEEK -->
+    <div style="font-family:var(--font-head);font-size:12px;font-weight:700;color:var(--warn);letter-spacing:.08em;text-transform:uppercase;margin:20px 0 8px">🎯 3 Phrases for This Week</div>
+    <div class="phrases-week">
+      <div class="phrase-card">"Welcome! This way, please."<span>When any visitor arrives at your office</span></div>
+      <div class="phrase-card">"Can I help you with that?"<span>When someone has bags or needs assistance</span></div>
+      <div class="phrase-card">"Please call me if you need anything."<span>After showing a visitor to their space</span></div>
+    </div>
+
+    <!-- MY WIN TODAY -->
+    <div style="font-family:var(--font-head);font-size:12px;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin:20px 0 8px">🏆 My Win Today</div>
+    <div class="win-box">
+      <textarea class="win-textarea" id="winInput" placeholder="What was YOUR win today? Write one thing you learned or said in English…"></textarea>
+      <button class="win-btn" onclick="saveWin()">Save My Win</button>
+      <div class="win-saved" id="winSaved"></div>
+    </div>
+
+  </div>
+</section>
+
+</main>
+
+<!-- FOOTER -->
+<footer class="site-footer">
+  <span class="level-tag">A1.1</span>
+  <span class="level-tag active">A1.2</span>
+  <span class="level-tag">A2.1</span>
+  <span class="level-tag">A2.2</span>
+  <span class="level-tag">B1.1</span>
+  <span class="level-tag">B1.2</span>
+</footer>
+
+<script>
+/* ═══════════════════ BADGES ═══════════════════ */
+const earnedBadges = {};
+function earnBadge(id) {
+  if (earnedBadges[id]) return;
+  earnedBadges[id] = true;
+  const el = document.getElementById(id);
+  if (el) el.classList.add('earned');
+  const total = Object.keys(earnedBadges).length;
+  if (total >= 5) launchConfetti();
+}
+
+function launchConfetti() {
+  const wrap = document.getElementById('confettiWrap');
+  wrap.style.display = 'block';
+  for (let i = 0; i < 80; i++) {
+    const c = document.createElement('div');
+    const colors = ['#8B5CF6','#A78BFA','#FFB347','#00E5A0','#FF4D6D','#A78BFA'];
+    c.style.cssText = 'position:absolute;width:8px;height:8px;background:'+colors[i%colors.length]+';border-radius:50%;left:'+Math.random()*100+'%;top:-10px;animation:confFall '+(1.5+Math.random()*2)+'s ease-out forwards;animation-delay:'+Math.random()*0.5+'s;';
+    wrap.appendChild(c);
+  }
+  const style = document.createElement('style');
+  style.textContent = '@keyframes confFall{0%{transform:translateY(0) rotate(0);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}';
+  document.head.appendChild(style);
+  setTimeout(() => { wrap.style.display = 'none'; wrap.innerHTML = ''; }, 4000);
+}
+
+/* ═══════════════════ TIMER ═══════════════════ */
+let timerInterval = null;
+function startTimer(arcId, textId, totalSec, badgeKey) {
+  if (timerInterval) clearInterval(timerInterval);
+  const arc = document.getElementById(arcId);
+  const txt = document.getElementById(textId);
+  const circumference = 238.76;
+  let remaining = totalSec;
+  timerInterval = setInterval(() => {
+    remaining--;
+    const m = Math.floor(remaining / 60);
+    const s = remaining % 60;
+    txt.textContent = m + ':' + (s < 10 ? '0' : '') + s;
+    const offset = circumference * (1 - remaining / totalSec);
+    arc.setAttribute('stroke-dashoffset', offset);
+    if (remaining <= 5) arc.style.stroke = '#FF4D6D';
+    if (remaining <= 0) {
+      clearInterval(timerInterval);
+      timerInterval = null;
+      txt.textContent = '0:00';
+      arc.style.stroke = 'var(--success)';
+      if (badgeKey) earnBadge(badgeKey);
+    }
+  }, 1000);
+}
+function resetTimer(arcId, textId, totalSec, label) {
+  if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+  const arc = document.getElementById(arcId);
+  const txt = document.getElementById(textId);
+  arc.setAttribute('stroke-dashoffset', '0');
+  arc.style.stroke = 'var(--accent)';
+  txt.textContent = label;
+}
+
+/* ═══════════════════ POLL ═══════════════════ */
+let pollScore = 0;
+const pollMsgs = {
+  p1a: { correct: false, msg: '❌ "he" is a subject pronoun. After a verb, use the object pronoun.' },
+  p1b: { correct: true,  msg: '✅ "him" — object pronoun after the verb "call".' },
+  p1c: { correct: false, msg: '❌ "his" is possessive. We need an object pronoun here.' },
+  p2a: { correct: false, msg: '❌ "I" is a subject pronoun. After "to", use "me".' },
+  p2b: { correct: true,  msg: '✅ "me" — object pronoun after "send it to".' },
+  p2c: { correct: false, msg: '❌ "my" is possessive. We need "me" after "to".' },
+  p3a: { correct: false, msg: '❌ "they" is a subject pronoun. After "give", use "them".' },
+  p3b: { correct: true,  msg: '✅ "them" — object pronoun after the verb "give".' },
+  p3c: { correct: false, msg: '❌ "their" is possessive. We need an object pronoun.' }
+};
+
+function checkPoll(btn, answer, groupId, feedbackId, key) {
+  const btns = btn.parentElement.querySelectorAll('.poll-btn');
+  btns.forEach(b => { b.disabled = true; b.classList.add('wrong-ans'); });
+  const fb = document.getElementById(feedbackId);
+  const info = pollMsgs[key];
+  if (info && info.correct) {
+    btn.classList.remove('wrong-ans');
+    btn.classList.add('correct-ans');
+    if (fb) fb.textContent = info.msg;
+    pollScore += 10;
+    document.getElementById('pollScoreVal').textContent = pollScore + ' pts';
+    if (pollScore >= 30) earnBadge('b3');
+  } else {
+    btn.classList.add('wrong-ans');
+    if (fb) fb.textContent = info ? info.msg : '❌ Not quite. Check the table above.';
+  }
+}
+
+/* ═══════════════════ ACTIVITY ═══════════════════ */
+const actAMsgs = {
+  him:  { correct: true,  msg: '✅ "him" replaces "the manager" (male object).' },
+  he:   { correct: false, msg: '❌ "he" is a subject pronoun. Use "him" after a verb.' },
+  his:  { correct: false, msg: '❌ "his" is possessive. Use "him" as the object.' },
+  it:   { correct: true,  msg: '✅ "it" replaces "the report" (thing).' },
+  them: { correct: false, msg: '❌ "them" is for people/things (plural). The report is singular.' },
+  her:  { correct: false, msg: '❌ "her" is for a woman. The report is a thing — use "it".' },
+  us:   { correct: true,  msg: '✅ "us" replaces "Mónica and me" (we = object).' },
+  we:   { correct: false, msg: '❌ "we" is a subject pronoun. After a verb use "us".' },
+  'them': { correct: true, msg: '✅ "them" replaces "the visitors" (plural object).' },
+  they: { correct: false, msg: '❌ "they" is a subject pronoun. Use "them" after a verb.' },
+  their:{ correct: false, msg: '❌ "their" is possessive. Use "them" as the object.' }
+};
+const actBMsgs = {
+  NO:   { correct: true,  msg: '✅ Correct! "Call to me" → should be "Call me". No "to" needed.' },
+  YES:  { correct: true,  msg: '✅ Correct! "Send her the password" is right. Object pronoun after verb.' },
+  NO2:  { correct: true,  msg: '✅ Correct! "talk to he" → should be "talk to him". Object pronoun after "to".' },
+  YES2: { correct: true,  msg: '✅ Correct! "give us the key cards" uses "us" correctly.' }
+};
+
+const answeredActs = {};
+function checkAct(btn, key, feedbackId, scoreId, maxScore) {
+  if (answeredActs[feedbackId]) return;
+  answeredActs[feedbackId] = true;
+  const info = actAMsgs[key] || actBMsgs[key];
+  const btns = btn.parentElement.querySelectorAll('.act-btn');
+  btns.forEach(b => { b.disabled = true; b.classList.add('wrong-ans'); });
+  const fb = document.getElementById(feedbackId);
+  if (info && info.correct) {
+    btn.classList.remove('wrong-ans');
+    btn.classList.add('correct-ans');
+    if (fb) fb.textContent = info.msg;
+    const scoreEl = document.getElementById(scoreId);
+    if (scoreEl) {
+      const parts = scoreEl.textContent.split('/');
+      const cur = parseInt(parts[0]) + 1;
+      scoreEl.textContent = cur + ' / ' + maxScore;
+    }
+  } else {
+    btn.classList.add('wrong-ans');
+    if (fb) fb.textContent = info ? info.msg : '❌ Try again — review the table.';
+  }
+}
+
+/* ═══════════════════ VOCAB QUIZ ═══════════════════ */
+const vqData = [
+  { word:'visitor',       sound:'Suena: VÍ-si-tor',        correct:'visitante',            wrongs:['equipaje','gafete'] },
+  { word:'badge',         sound:'Suena: badch',             correct:'gafete / credencial',  wrongs:['pasaporte','puerta'] },
+  { word:'host',          sound:'Suena: jóust',             correct:'anfitrión',            wrongs:['retraso','visitante'] },
+  { word:'escort',        sound:'Suena: es-CORT',           correct:'acompañar',            wrongs:['registrarse','reservación'] },
+  { word:'sign in',       sound:'Suena: sáin in',           correct:'registrarse',          wrongs:['anfitrión','equipaje'] },
+  { word:'boarding pass',  sound:'Suena: BOR-ding pas',     correct:'pase de abordar',      wrongs:['tarjeta de habitación','gafete'] },
+  { word:'passport',      sound:'Suena: PAS-port',          correct:'pasaporte',            wrongs:['puerta','retraso'] },
+  { word:'reservation',   sound:'Suena: re-ser-VÉI-shon',  correct:'reservación',          wrongs:['acompañar','visitante'] },
+  { word:'luggage',       sound:'Suena: LÓ-guech',          correct:'equipaje',             wrongs:['pasaporte','anfitrión'] },
+  { word:'gate',          sound:'Suena: guéit',              correct:'puerta (de abordar)',  wrongs:['gafete','equipaje'] },
+  { word:'delay',         sound:'Suena: di-LÉI',            correct:'retraso / demora',     wrongs:['reservación','registrarse'] },
+  { word:'key card',      sound:'Suena: quí card',           correct:'tarjeta de habitación',wrongs:['pase de abordar','pasaporte'] }
+];
+let vqQueue=[], vqCurrent=0, vqCorrect=0, vqAnswered=false;
+function vqShuffle(arr){for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];}return arr;}
+function vqInit(){
+  vqQueue=vqShuffle([...vqData]);vqCurrent=0;vqCorrect=0;vqAnswered=false;
+  document.getElementById('vqCard').style.display='block';
+  document.getElementById('vqDone').style.display='none';
+  vqRender();
+}
+function vqRender(){
+  const q=vqQueue[vqCurrent];
+  document.getElementById('vqWord').textContent=q.word;
+  document.getElementById('vqSound').textContent=q.sound;
+  document.getElementById('vqFeedback').textContent='';
+  document.getElementById('vqFeedback').style.color='';
+  document.getElementById('vqNext').style.display='none';
+  document.getElementById('vqCounter').textContent=(vqCurrent+1)+' / '+vqQueue.length;
+  const pct=Math.round((vqCurrent/vqQueue.length)*100);
+  document.getElementById('vqProgress').style.width=pct+'%';
+  document.getElementById('vqLabel').textContent=vqCurrent+' / '+vqQueue.length+' done';
+  vqAnswered=false;
+  const opts=vqShuffle([q.correct,...q.wrongs]);
+  const container=document.getElementById('vqOptions');
+  container.innerHTML='';
+  opts.forEach(opt=>{
+    const btn=document.createElement('button');
+    btn.className='vquiz-opt';btn.textContent=opt;
+    btn.onclick=()=>vqCheck(btn,opt,q.correct);
+    container.appendChild(btn);
+  });
+  speakWord(q.word);
+}
+function vqCheck(btn,chosen,correct){
+  if(vqAnswered)return;vqAnswered=true;
+  const fb=document.getElementById('vqFeedback');
+  document.querySelectorAll('.vquiz-opt').forEach(b=>{b.disabled=true;});
+  if(chosen===correct){
+    btn.classList.add('correct');
+    fb.textContent='✅ ¡Correcto! "'+correct+'"';fb.style.color='var(--success)';
+    vqCorrect++;if(vqCorrect>=8)earnBadge('b2');
+  }else{
+    btn.classList.add('wrong');
+    document.querySelectorAll('.vquiz-opt').forEach(b=>{if(b.textContent===correct)b.classList.add('correct');});
+    fb.textContent='❌ La respuesta es: "'+correct+'"';fb.style.color='var(--danger)';
+  }
+  document.getElementById('vqNext').style.display='inline-block';
+}
+function vqNextQuestion(){
+  vqCurrent++;
+  if(vqCurrent>=vqQueue.length)vqFinish();else vqRender();
+}
+function vqFinish(){
+  document.getElementById('vqCard').style.display='none';
+  const done=document.getElementById('vqDone');done.style.display='block';
+  document.getElementById('vqFinalScore').textContent=vqCorrect+' / '+vqQueue.length;
+  document.getElementById('vqProgress').style.width='100%';
+  document.getElementById('vqLabel').textContent=vqQueue.length+' / '+vqQueue.length+' done';
+  const pct=Math.round((vqCorrect/vqQueue.length)*100);
+  let msg='';
+  if(pct===100)msg='🏅 Perfect score! Word Power badge earned!';
+  else if(pct>=67)msg='🎯 Great job! '+vqCorrect+' correct — badge unlocked!';
+  else msg='📖 Keep practising — try again to beat your score.';
+  document.getElementById('vqDoneMsg').textContent=msg;
+  if(vqCorrect>=8)earnBadge('b2');
+  document.getElementById('vqCounter').textContent='✓ Done';
+}
+document.addEventListener('DOMContentLoaded',vqInit);
+
+/* ═══════════════════ SPEAK ═══════════════════ */
+function speakWord(text){
+  if(!window.speechSynthesis)return;
+  const utt=new SpeechSynthesisUtterance(text);
+  utt.lang='en-US';utt.rate=0.9;
+  speechSynthesis.cancel();speechSynthesis.speak(utt);
+}
+
+/* ═══════════════════ SCRIPT TOGGLE ═══════════════════ */
+function toggleScript(id){
+  const el=document.getElementById(id);
+  el.style.display=el.style.display==='block'?'none':'block';
+}
+
+/* ═══════════════════ LISTEN ANSWERS ═══════════════════ */
+const listenMsgs = {
+  badge:    { correct: true,  msg: '✅ A visitor badge — she gives it to him at sign-in.' },
+  key:      { correct: false, msg: '❌ A key card is for a hotel, not the office reception.' },
+  passport: { correct: false, msg: '❌ She doesn&apos;t ask for his passport.' },
+  '2nd':    { correct: true,  msg: '✅ On the second floor — correct!' },
+  '3rd':    { correct: false, msg: '❌ Listen again — she says "second floor".' },
+  '1st':    { correct: false, msg: '❌ The elevator is next to reception, but the room is on the 2nd floor.' }
+};
+function checkListen(btn, key, feedbackId) {
+  const btns = btn.parentElement.querySelectorAll('.listen-btn');
+  btns.forEach(b => { b.disabled = true; b.classList.add('wrong-ans'); });
+  const fb = document.getElementById(feedbackId);
+  const info = listenMsgs[key];
+  if (info && info.correct) {
+    btn.classList.remove('wrong-ans');
+    btn.classList.add('correct-ans');
+    if (fb) fb.textContent = info.msg;
+  } else {
+    btn.classList.add('wrong-ans');
+    if (fb) fb.textContent = info ? info.msg : '❌ Not quite.';
+  }
+  earnBadge('b4');
+}
+
+/* ═══════════════════ TRUE/FALSE ═══════════════════ */
+function checkTF(btn, isCorrect, id) {
+  const row = btn.closest('.tf-row');
+  row.querySelectorAll('.tf-btn').forEach(b => b.disabled = true);
+  if (isCorrect) {
+    btn.style.cssText = 'background:rgba(0,229,160,.15);border-color:var(--success);color:var(--success)';
+  } else {
+    btn.style.cssText = 'background:rgba(255,77,109,.12);border-color:var(--danger);color:var(--danger)';
+    const sib = Array.from(row.querySelectorAll('.tf-btn')).find(b => b !== btn);
+    if (sib) sib.style.cssText = 'background:rgba(0,229,160,.15);border-color:var(--success);color:var(--success)';
+  }
+  earnBadge('b4');
+}
+
+/* ═══════════════════ DEBATE METER ═══════════════════ */
+let meterVal = 50;
+function moveMeter(delta) {
+  meterVal = Math.max(5, Math.min(95, meterVal + delta));
+  document.getElementById('meterFill').style.width = meterVal + '%';
+  document.getElementById('meterPercent').textContent = 'Class: ' + meterVal + '% agree';
+}
+
+/* ═══════════════════ MY WIN ═══════════════════ */
+function saveWin() {
+  const txt = document.getElementById('winInput').value.trim();
+  if (!txt) return;
+  const saved = document.getElementById('winSaved');
+  saved.style.display = 'block';
+  saved.textContent = '🏆 "' + txt + '" — Great job today!';
+  earnBadge('b5');
+}
+
+/* ═══════════════════ MODE TOGGLE ═══════════════════ */
+function toggleMode() {
+  document.body.classList.toggle('student-mode');
+  const btn = document.querySelector('.mode-toggle');
+  btn.textContent = document.body.classList.contains('student-mode') ? 'TEACHER MODE' : 'STUDENT MODE';
+}
+
+/* ═══════════════════ PROGRESS BAR ═══════════════════ */
+window.addEventListener('scroll', () => {
+  const h = document.documentElement;
+  const pct = (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100;
+  document.getElementById('progressBar').style.width = pct + '%';
+});
+</script>
+</body>
+</html>
