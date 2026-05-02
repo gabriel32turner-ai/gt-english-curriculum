@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GT · A2.2 · M3 · S2B · Advice — Application</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{--accent:#F97316;--accent2:#FB923C;--bg:#080808;--surface:#111318;--surface2:#1a1f28;--border:rgba(249,115,22,.18);--text:#F0F4F8;--muted:#8A9BB0;--danger:#FF4D6D;--success:#00E5A0;--warn:#FFB347;--font-head:'Syne',sans-serif;--font-body:'DM Sans',sans-serif}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:15px;line-height:1.65;min-height:100vh}
+#progressBar{position:fixed;top:0;left:0;width:0%;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent2));z-index:9999;transition:width .3s}
+.site-header{position:sticky;top:0;z-index:900;background:rgba(8,8,8,.94);backdrop-filter:blur(14px);border-bottom:1px solid var(--border);padding:0 24px}
+.header-inner{max-width:960px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:58px;gap:12px;flex-wrap:wrap}
+.header-brand{font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--accent);letter-spacing:.08em;text-transform:uppercase}
+.header-meta{font-size:12px;color:var(--muted)}
+.session-badge{background:rgba(255,179,71,.12);border:1px solid rgba(255,179,71,.35);color:var(--warn);font-family:var(--font-head);font-size:10px;font-weight:800;letter-spacing:.1em;padding:3px 10px;border-radius:20px;text-transform:uppercase}
+.badge-strip{display:flex;gap:6px}.badge-strip span{font-size:18px;opacity:.25;transition:all .4s;filter:grayscale(1);cursor:default}.badge-strip span.earned{opacity:1;filter:none;animation:badgePop .5s cubic-bezier(.34,1.56,.64,1)}
+@keyframes badgePop{0%{transform:scale(.4) rotate(-20deg);opacity:0}70%{transform:scale(1.25) rotate(4deg);opacity:1}100%{transform:scale(1) rotate(0)}}
+.mode-toggle{background:var(--surface2);border:1px solid var(--border);color:var(--accent);font-family:var(--font-head);font-size:11px;font-weight:700;padding:5px 12px;border-radius:6px;cursor:pointer}.mode-toggle:hover{background:var(--accent);color:#fff}
+.sticky-nav{position:sticky;top:58px;z-index:800;background:rgba(8,8,8,.9);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none}.sticky-nav::-webkit-scrollbar{display:none}
+.nav-inner{max-width:960px;margin:0 auto;display:flex;gap:0;padding:0 16px}
+.nav-inner a{font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:.06em;color:var(--muted);text-decoration:none;padding:10px 14px;border-bottom:2px solid transparent;white-space:nowrap;transition:all .2s}.nav-inner a:hover{color:var(--accent);border-color:var(--accent)}
+.main{max-width:960px;margin:0 auto;padding:32px 20px 80px}
+.section{margin-bottom:48px;border:1px solid var(--border);border-radius:16px;overflow:hidden;background:var(--surface)}
+.section-header{display:flex;align-items:center;gap:14px;padding:18px 24px;background:linear-gradient(135deg,rgba(249,115,22,.08),transparent);border-bottom:1px solid var(--border)}
+.section-number{font-family:var(--font-head);font-size:11px;font-weight:800;color:var(--accent);letter-spacing:.12em;text-transform:uppercase;background:rgba(249,115,22,.1);border:1px solid var(--border);padding:3px 10px;border-radius:20px}
+.section-title{font-family:var(--font-head);font-size:18px;font-weight:800;color:var(--text);flex:1}
+.section-time{font-size:12px;color:var(--muted);background:var(--surface2);padding:3px 10px;border-radius:20px}
+.section-body{padding:24px}
+.img-card{border-radius:10px;overflow:hidden;position:relative;margin-bottom:18px}.img-card img{width:100%;height:180px;object-fit:cover;display:block}.img-overlay{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(8,8,8,.88));padding:12px 16px;font-size:13px;color:rgba(255,255,255,.85)}
+.teacher-note{background:rgba(249,115,22,.06);border-left:3px solid var(--accent);border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0;font-size:13px;color:var(--muted)}.teacher-note strong{color:var(--accent)}
+.student-only{display:none}body.student-mode .teacher-only{display:none}body.student-mode .student-only{display:block}
+.timer-wrap{display:flex;flex-direction:column;align-items:center;gap:10px;margin:16px 0}
+.timer-svg{transform:rotate(-90deg)}.timer-bg{fill:none;stroke:rgba(255,255,255,.07)}.timer-arc{fill:none;stroke:var(--accent);stroke-linecap:round;transition:stroke .5s}.timer-text{font-family:var(--font-head);font-weight:800;font-size:22px;fill:var(--text);dominant-baseline:middle;text-anchor:middle}.timer-label{font-size:11px;fill:var(--muted);dominant-baseline:middle;text-anchor:middle}
+.timer-btns{display:flex;gap:8px}.btn{font-family:var(--font-head);font-size:12px;font-weight:700;letter-spacing:.06em;padding:7px 18px;border-radius:8px;border:none;cursor:pointer;transition:all .2s}.btn-primary{background:var(--accent);color:#fff}.btn-primary:hover{background:var(--accent2)}.btn-ghost{background:var(--surface2);border:1px solid var(--border);color:var(--muted)}.btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
+.hot-take-card{background:linear-gradient(135deg,rgba(255,77,109,.07),rgba(255,179,71,.04));border:1px solid rgba(255,77,109,.3);border-radius:14px;padding:24px;margin:16px 0}
+.hot-take-label{font-family:var(--font-head);font-size:11px;font-weight:800;color:var(--danger);letter-spacing:.12em;text-transform:uppercase;margin-bottom:10px}
+.hot-take-prompt{font-size:20px;font-weight:600;color:var(--text);line-height:1.4;margin-bottom:16px}
+.rule-pill{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:4px 12px;font-size:12px;color:var(--muted)}.rule-pill strong{color:var(--text)}
+.sides-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0}
+.side-card{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:18px}
+.side-label{font-family:var(--font-head);font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px}
+.side-a .side-label{color:#A78BFA}.side-b .side-label{color:var(--accent)}
+.side-prompt{font-size:14px;font-weight:600;color:var(--text);margin-bottom:12px;line-height:1.4}
+.side-starters{display:flex;flex-direction:column;gap:6px}
+.side-starters span{font-size:13px;color:var(--muted);font-style:italic;padding-left:10px;border-left:2px solid var(--border)}
+.strength-slider-wrap{background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:22px;margin:16px 0}
+.strength-slider-title{font-family:var(--font-head);font-size:13px;font-weight:800;color:var(--accent);letter-spacing:.04em;text-transform:uppercase;margin-bottom:6px}
+.strength-slider-sub{font-size:13px;color:var(--muted);margin-bottom:18px}
+.strength-labels{display:flex;justify-content:space-between;font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px}
+#strengthRange{width:100%;accent-color:var(--accent);cursor:pointer;margin-bottom:18px}
+.strength-output{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:16px;text-align:center}
+.strength-modal{font-family:var(--font-head);font-size:26px;font-weight:800;margin-bottom:8px}
+.strength-sentence{font-size:15px;font-style:italic;color:var(--muted);margin-bottom:6px}
+.strength-sentence strong{color:var(--text)}
+.strength-note{font-size:12px;color:var(--muted)}
+.relay-wrap{display:flex;flex-direction:column;gap:14px;margin:16px 0}
+.relay-prompt{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:16px}
+.relay-tag{font-family:var(--font-head);font-size:10px;font-weight:700;color:var(--accent);letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px}
+.relay-input-text{font-size:16px;font-weight:600;color:var(--text);margin-bottom:6px}
+.relay-target{font-size:13px;color:var(--muted);margin-bottom:10px}
+.relay-reveal-btn{background:transparent;border:1px dashed var(--accent);color:var(--accent);font-family:var(--font-head);font-size:11px;font-weight:700;padding:5px 14px;border-radius:6px;cursor:pointer}
+.relay-answer{display:none;margin-top:10px;background:rgba(0,229,160,.06);border:1px solid rgba(0,229,160,.2);border-radius:8px;padding:10px 14px;font-size:13px;color:var(--success)}
+.speed-score-bar{display:flex;justify-content:space-between;align-items:center;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:8px 16px;margin-bottom:14px}
+.speed-label{font-family:var(--font-head);font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
+.speed-val{font-family:var(--font-head);font-size:20px;font-weight:800;color:var(--accent)}
+.speed-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:14px 0}
+.speed-card{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center;cursor:pointer;transition:all .2s;min-height:80px;display:flex;flex-direction:column;justify-content:center;align-items:center}.speed-card:hover:not(.used){border-color:var(--accent);transform:translateY(-2px)}.speed-card.used{opacity:.4;pointer-events:none;border-color:var(--success)}
+.speed-icon{font-size:22px;margin-bottom:4px}.speed-word{font-family:var(--font-head);font-size:12px;font-weight:700;color:var(--accent);line-height:1.3}.speed-hint{font-size:11px;color:var(--muted);margin-top:2px}
+.src-card{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:18px;margin-bottom:14px}
+.src-who{font-family:var(--font-head);font-size:11px;font-weight:700;color:var(--accent);letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px}
+.src-quote{font-size:14px;color:var(--text);font-style:italic;border-left:2px solid var(--accent);padding-left:12px;margin-bottom:12px;line-height:1.6}
+.src-task{font-size:13px;color:var(--warn);margin-bottom:10px;font-weight:500}
+.src-options{display:flex;flex-wrap:wrap;gap:6px}
+.src-btn{background:var(--surface);border:1px solid var(--border);color:var(--text);font-size:13px;padding:6px 12px;border-radius:6px;cursor:pointer;transition:all .2s}.src-btn:hover:not(:disabled){border-color:var(--accent)}.src-btn.correct-ans{background:rgba(0,229,160,.15);border-color:var(--success);color:var(--success)}.src-btn.wrong-ans{background:rgba(255,77,109,.12);border-color:var(--danger);color:var(--danger)}.src-btn:disabled{opacity:.6}
+.src-feedback{font-size:12px;color:var(--muted);margin-top:6px;min-height:16px}
+.wa-msgs{display:flex;flex-direction:column;gap:8px;margin-bottom:12px}
+.wa-bubble{border-radius:12px;padding:10px 14px;font-size:14px;line-height:1.5;max-width:82%}
+.wa-in{background:var(--surface);border:1px solid var(--border);align-self:flex-start}
+.wa-out{background:rgba(249,115,22,.12);border:1px solid rgba(249,115,22,.25);align-self:flex-end}
+.wa-name{font-size:11px;font-weight:700;color:var(--accent);margin-bottom:3px}
+.slider-row{display:flex;align-items:center;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+.rating-label{font-size:13px;color:var(--text);flex:1;min-width:180px}
+.slider-row input[type=range]{flex:1;min-width:120px;accent-color:var(--accent)}
+.rating-val{font-family:var(--font-head);font-size:18px;font-weight:800;color:var(--accent);min-width:30px;text-align:center}
+.rating-feedback{font-size:13px;color:var(--muted);margin-top:10px;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:8px}
+.lb-controls{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.lb-input{background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:7px 12px;color:var(--text);font-family:var(--font-body);font-size:13px;flex:1;min-width:100px}.lb-input:focus{outline:none;border-color:var(--accent)}
+.lb-pts-input{max-width:80px;flex:0}
+.lb-add-btn{background:var(--accent);border:none;color:#fff;font-family:var(--font-head);font-size:11px;font-weight:700;padding:7px 14px;border-radius:6px;cursor:pointer}
+.lb-reset-btn{background:transparent;border:1px solid var(--border);color:var(--muted);font-family:var(--font-head);font-size:11px;font-weight:700;padding:7px 14px;border-radius:6px;cursor:pointer}
+table.lb-table{width:100%;border-collapse:collapse;font-size:13px}table.lb-table th{background:rgba(249,115,22,.1);color:var(--accent);font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:8px 12px;text-align:left;border-bottom:1px solid var(--border)}table.lb-table td{padding:8px 12px;border-bottom:1px solid rgba(255,255,255,.04)}.lb-empty{text-align:center;color:var(--muted);font-style:italic;padding:18px}
+.badge-showcase{display:flex;gap:14px;flex-wrap:wrap;margin:16px 0}.badge-item{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:14px 16px;text-align:center;flex:1;min-width:120px}.badge-emoji{font-size:28px;display:block;margin-bottom:6px}.badge-name{font-family:var(--font-head);font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
+.cert-card{background:linear-gradient(135deg,rgba(249,115,22,.06),rgba(251,146,60,.03));border:2px solid var(--accent);border-radius:16px;padding:30px;text-align:center;margin:16px 0}
+.cert-title{font-family:var(--font-head);font-size:10px;font-weight:700;color:var(--accent);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px}
+.cert-main{font-family:var(--font-head);font-size:22px;font-weight:800;color:var(--text);margin-bottom:6px}.cert-sub{font-size:13px;color:var(--muted)}
+.cert-skills{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:14px 0}.cert-skill{background:rgba(249,115,22,.1);border:1px solid var(--border);border-radius:20px;padding:3px 12px;font-size:11px;color:var(--accent);font-family:var(--font-head);font-weight:700}
+.cert-input{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 16px;color:var(--text);font-family:var(--font-body);font-size:15px;text-align:center;width:250px;margin:10px auto;display:block}.cert-input:focus{outline:none;border-color:var(--accent)}
+.cert-gen-btn{background:var(--accent);border:none;color:#fff;font-family:var(--font-head);font-size:12px;font-weight:800;padding:9px 22px;border-radius:8px;cursor:pointer;margin-top:8px}
+.cert-result{display:none;margin-top:14px;padding:20px;background:rgba(0,229,160,.06);border:2px solid var(--success);border-radius:12px}
+.cert-name{font-family:var(--font-head);font-size:24px;font-weight:800;color:var(--success)}.cert-date{font-size:12px;color:var(--muted);margin-top:4px}
+.phrases-week{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:14px 0}.phrase-card{background:linear-gradient(135deg,rgba(249,115,22,.08),rgba(251,146,60,.04));border:1px solid var(--border);border-radius:10px;padding:14px;font-family:var(--font-head);font-size:14px;font-weight:700;color:var(--accent);text-align:center}.phrase-card span{display:block;font-family:var(--font-body);font-size:11px;color:var(--muted);font-weight:400;margin-top:4px}
+.win-textarea{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:14px;padding:12px 14px;resize:vertical;min-height:72px}.win-textarea:focus{outline:none;border-color:var(--accent)}
+.win-btn{margin-top:8px;background:var(--accent);border:none;color:#fff;font-family:var(--font-head);font-size:12px;font-weight:800;padding:9px 20px;border-radius:8px;cursor:pointer}
+.win-saved{display:none;margin-top:10px;background:rgba(0,229,160,.1);border:1px solid var(--success);border-radius:8px;padding:12px 14px;font-size:14px;color:var(--success)}
+.confetti-wrap{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9000;display:none}
+.divider{border:none;border-top:1px solid var(--border);margin:18px 0}
+.site-footer{border-top:1px solid var(--border);padding:20px;display:flex;justify-content:center;gap:8px;flex-wrap:wrap}.level-tag{font-family:var(--font-head);font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;letter-spacing:.08em;background:var(--surface2);color:var(--muted);border:1px solid transparent}.level-tag.active{background:rgba(249,115,22,.1);color:var(--accent);border-color:var(--accent)}
+@media(max-width:640px){.sides-grid,.phrases-week{grid-template-columns:1fr}.speed-grid{grid-template-columns:repeat(2,1fr)}.header-inner{height:auto;padding:10px 0}}
+</style>
+</head>
+<body>
+<div id="progressBar"></div><div class="confetti-wrap" id="confettiWrap"></div>
+<header class="site-header"><div class="header-inner">
+  <div><div class="header-brand">Gabriel Turner · English Training</div><div class="header-meta">A2.2 · Module 3 · Session 2B — Application &amp; Mastery <span class="session-badge">PRODUCTION</span></div></div>
+  <div class="badge-strip"><span id="b1">🔥</span><span id="b2">⚡</span><span id="b3">🎤</span><span id="b4">🔍</span><span id="b5">🏆</span></div>
+  <button class="mode-toggle" onclick="toggleMode()">STUDENT MODE</button>
+</div></header>
+<nav class="sticky-nav"><div class="nav-inner"><a href="#s1">§1 Hot Take</a><a href="#s2">§2 Pitch</a><a href="#s3">§3 Relay</a><a href="#s4">§4 Speed</a><a href="#s5">§5 Solo</a><a href="#s6">§6 Sources</a><a href="#s7">§7 Rating</a><a href="#s8">§8 Certificate</a></div></nav>
+<main class="main">
+
+<section class="section" id="s1"><div class="section-header"><span class="section-number">§1</span><h2 class="section-title">🔥 Hot Take — Cold Start</h2><span class="section-time">5 min</span></div><div class="section-body">
+  <div class="img-card"><img src="https://images.unsplash.com/photo-1600880292089-90a7e086ee0c?w=900&q=80" alt="Stressed professional needing advice" loading="lazy"><div class="img-overlay">No prep. Someone needs your advice — give it NOW.</div></div>
+  <div class="teacher-note teacher-only"><strong>Cold start:</strong> El alumno da consejos inmediatos. Si se bloquea: "Should she stay or leave? — Start there." Push para should + shouldn't + could. Corrige "I suggest you to" al final, no mid-utterance.</div>
+  <div class="hot-take-card"><div class="hot-take-label">🔥 Hot Take — 60 sec</div><div class="hot-take-prompt">Andrea just texted you: "My manager gave me terrible feedback in my performance review. I feel bad and I don't know what to do." You have 60 seconds. Give her your best advice. GO!</div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:0"><span class="rule-pill"><strong>60 sec</strong></span><span class="rule-pill"><strong>No notes</strong></span><span class="rule-pill"><strong>should/shouldn't/could</strong></span><span class="rule-pill"><strong>Give reasons</strong></span></div>
+  </div>
+  <div class="timer-wrap"><svg class="timer-svg" width="100" height="100" viewBox="0 0 100 100"><circle class="timer-bg" cx="50" cy="50" r="42" stroke-width="7"/><circle class="timer-arc" id="tArc1" cx="50" cy="50" r="42" stroke-width="7" stroke-dasharray="263.89" stroke-dashoffset="0"/><text class="timer-text" id="tText1" x="50" y="49">1:00</text><text class="timer-label" x="50" y="62">hot take</text></svg><div class="timer-btns"><button class="btn btn-primary" onclick="startTimer('tArc1','tText1',60,'b1',263.89)">START</button><button class="btn btn-ghost" onclick="resetTimer('tArc1','tText1','1:00',263.89)">RESET</button></div></div>
+</div></section>
+
+<section class="section" id="s2"><div class="section-header"><span class="section-number">§2</span><h2 class="section-title">🎯 Pitch — Assigned Sides</h2><span class="section-time">10 min</span></div><div class="section-body">
+  <div class="img-card"><img src="https://images.unsplash.com/photo-1587614382346-4ec70e388b28?w=900&q=80" alt="Two professionals in a debate" loading="lazy"><div class="img-overlay">Defend your side — even if you personally disagree</div></div>
+  <div class="teacher-note teacher-only"><strong>Topic:</strong> "You should always ask for what you want at work — a raise, a promotion, a day off." Teacher asigna lados. Push para should/shouldn't/could con razones en ambos. 90 seg por lado, luego 60 seg de debate.</div>
+  <div class="sides-grid">
+    <div class="side-card side-a"><div class="side-label">🟣 Side A — ALWAYS ASK</div><div class="side-prompt">"You should always ask for what you want at work. Defend this."</div><div class="side-starters"><strong style="font-size:12px;color:var(--muted);font-family:var(--font-head);letter-spacing:.06em;text-transform:uppercase">Starters:</strong><span>"You should be direct — if you don't ask, you'll never get it…"</span><span>"You could start by having a conversation with your manager…"</span><span>"You shouldn't wait — managers don't read minds…"</span></div></div>
+    <div class="side-card side-b"><div class="side-label">🔵 Side B — TIMING MATTERS</div><div class="side-prompt">"You shouldn't always ask — timing is critical. Counter the argument."</div><div class="side-starters"><strong style="font-size:12px;color:var(--muted);font-family:var(--font-head);letter-spacing:.06em;text-transform:uppercase">Starters:</strong><span>"You should wait for the right moment — not every day is a good day…"</span><span>"You could prepare your case first before asking for a raise…"</span><span>"You shouldn't ask during a bad performance review — it could hurt you…"</span></div></div>
+  </div>
+  <div class="timer-wrap"><svg class="timer-svg" width="100" height="100" viewBox="0 0 100 100"><circle class="timer-bg" cx="50" cy="50" r="42" stroke-width="7"/><circle class="timer-arc" id="tArc2" cx="50" cy="50" r="42" stroke-width="7" stroke-dasharray="263.89" stroke-dashoffset="0"/><text class="timer-text" id="tText2" x="50" y="49">1:30</text><text class="timer-label" x="50" y="62">per side</text></svg><div class="timer-btns"><button class="btn btn-primary" onclick="startTimer('tArc2','tText2',90,null,263.89)">START</button><button class="btn btn-ghost" onclick="resetTimer('tArc2','tText2','1:30',263.89)">RESET</button></div></div>
+</div></section>
+
+<section class="section" id="s3"><div class="section-header"><span class="section-number">§3</span><h2 class="section-title">🔄 Relay — Advice Strength Slider</h2><span class="section-time">8 min</span></div><div class="section-body">
+  <div class="img-card"><img src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=900&q=80" alt="Person making a considered decision" loading="lazy"><div class="img-overlay">How strong is your advice? Drag the slider — then say the sentence.</div></div>
+  <div class="teacher-note teacher-only"><strong>Nueva mecánica — Advice Strength Slider:</strong> El alumno arrastra el slider → pantalla muestra el modal correcto + oración de ejemplo. Teacher da una situación → alumno elige la fuerza apropiada → produce su oración propia.<br><strong>Dinámica:</strong> "Situation 1 — which strength? Why?" → oral production immediate.</div>
+  <div class="strength-slider-wrap">
+    <div class="strength-slider-title">⚡ Advice Strength Slider</div>
+    <div class="strength-slider-sub">Drag to choose strength. Then produce your own advice sentence for each situation below.</div>
+    <div class="strength-labels"><span style="color:#A78BFA">GENTLE — could</span><span style="color:var(--accent);text-align:center">STANDARD — should</span><span style="color:var(--danger);text-align:right">STRONG — must</span></div>
+    <input type="range" id="strengthRange" min="0" max="2" step="1" value="1" oninput="updateStrength()">
+    <div class="strength-output" id="strengthOutput">
+      <div class="strength-modal" id="strengthModal" style="color:var(--accent)">should</div>
+      <div class="strength-sentence" id="strengthSentence">You <strong>should</strong> talk to your manager. — <em>A firm recommendation.</em></div>
+      <div class="strength-note" id="strengthNote">Use when you genuinely believe it is the right thing to do.</div>
+    </div>
+  </div>
+  <div style="font-family:var(--font-head);font-size:12px;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin:18px 0 10px">🎙️ Now Transform — Choose the strength, then speak</div>
+  <div class="relay-wrap">
+    <div class="relay-prompt"><div class="relay-tag">Situation 1 — New colleague, first week</div><div class="relay-input-text">"What advice do you give a new colleague on their first day?"</div><div class="relay-target">→ Choose gentle (could) or standard (should). Give 2 pieces of advice.</div><button class="relay-reveal-btn" onclick="revealRelay('rr1')">Show Answer</button><div class="relay-answer" id="rr1">"You <strong>could</strong> introduce yourself to the team first." (gentle) / "You <strong>should</strong> arrive early and ask questions." (standard)</div></div>
+    <div class="relay-prompt"><div class="relay-tag">Situation 2 — Colleague always late</div><div class="relay-input-text">"Your colleague is late every day. The manager is very angry. What should they do?"</div><div class="relay-target">→ This needs STRONG advice. Should or must. Add a reason.</div><button class="relay-reveal-btn" onclick="revealRelay('rr2')">Show Answer</button><div class="relay-answer" id="rr2">"You <strong>should</strong> talk to your manager before they take action." / "You <strong>shouldn't</strong> continue — it is seriously damaging your career."</div></div>
+    <div class="relay-prompt"><div class="relay-tag">Situation 3 — Fix the error</div><div class="relay-input-text">"I suggest you to prepare for the performance review."</div><div class="relay-target">→ Error! Fix it and say the correct version.</div><button class="relay-reveal-btn" onclick="revealRelay('rr3')">Show Answer</button><div class="relay-answer" id="rr3">"You <strong>should</strong> prepare for the performance review." — Never "suggest + you + to"! Use should OR "I suggest preparing" (gerund).</div></div>
+    <div class="relay-prompt"><div class="relay-tag">Situation 4 — Soften the advice</div><div class="relay-input-text">"You must look for another job immediately."</div><div class="relay-target">→ Too strong. Make it gentler using could or should.</div><button class="relay-reveal-btn" onclick="revealRelay('rr4')">Show Answer</button><div class="relay-answer" id="rr4">"You <strong>could</strong> start exploring other opportunities." / "You <strong>should</strong> think about your next career step."</div></div>
+    <div class="relay-prompt"><div class="relay-tag">Situation 5 — Your real life</div><div class="relay-input-text">"Think of one real challenge you have at work right now."</div><div class="relay-target">→ Give yourself advice: should + shouldn't + could. At least 3 sentences.</div><button class="relay-reveal-btn" onclick="revealRelay('rr5')">Show Answer</button><div class="relay-answer" id="rr5">Open — "I should [action]. I shouldn't [bad habit I have]. I could [alternative I haven't tried]."</div></div>
+  </div>
+</div></section>
+
+<section class="section" id="s4"><div class="section-header"><span class="section-number">§4</span><h2 class="section-title">⚡ Speed Round — Situation Cards</h2><span class="section-time">6 min</span></div><div class="section-body">
+  <div class="img-card"><img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=900&q=80" alt="Fast decision making" loading="lazy"><div class="img-overlay">Click → give ONE piece of advice instantly. No pauses. 7+ = badge!</div></div>
+  <div class="teacher-note teacher-only"><strong>Regla:</strong> Alumno hace click → produce una oración de consejo en 15 seg. Badge ⚡ a 7+. Variante: "Give advice AND a reason" para nivel avanzado.</div>
+  <div class="speed-score-bar"><div class="speed-label">Speed Score</div><div class="speed-val" id="speedVal">0 / 10</div></div>
+  <div class="speed-grid">
+    <div class="speed-card" onclick="speedClick(this)"><div class="speed-icon">😤</div><div class="speed-word">angry client</div><div class="speed-hint">should / shouldn't</div></div>
+    <div class="speed-card" onclick="speedClick(this)"><div class="speed-icon">💰</div><div class="speed-word">ask for a raise</div><div class="speed-hint">could / should</div></div>
+    <div class="speed-card" onclick="speedClick(this)"><div class="speed-icon">😴</div><div class="speed-word">always tired at work</div><div class="speed-hint">should + reason</div></div>
+    <div class="speed-card" onclick="speedClick(this)"><div class="speed-icon">🤝</div><div class="speed-word">bad relationship with manager</div><div class="speed-hint">could talk</div></div>
+    <div class="speed-card" onclick="speedClick(this)"><div class="speed-icon">📅</div><div class="speed-word">too many meetings</div><div class="speed-hint">shouldn't accept all</div></div>
+    <div class="speed-card" onclick="speedClick(this)"><div class="speed-icon">💼</div><div class="speed-word">job interview tomorrow</div><div class="speed-hint">should prepare</div></div>
+    <div class="speed-card" onclick="speedClick(this)"><div class="speed-icon">🔥</div><div class="speed-word">burning out</div><div class="speed-hint">should / could take a break</div></div>
+    <div class="speed-card" onclick="speedClick(this)"><div class="speed-icon">📧</div><div class="speed-word">mistake in an email</div><div class="speed-hint">should apologize</div></div>
+    <div class="speed-card" onclick="speedClick(this)"><div class="speed-icon">📈</div><div class="speed-word">want a promotion</div><div class="speed-hint">could / should</div></div>
+    <div class="speed-card" onclick="speedClick(this)"><div class="speed-icon">🤐</div><div class="speed-word">colleague spreading gossip</div><div class="speed-hint">shouldn't engage</div></div>
+  </div>
+</div></section>
+
+<section class="section" id="s5"><div class="section-header"><span class="section-number">§5</span><h2 class="section-title">🎤 Solo Challenge — 2 Minutes</h2><span class="section-time">8 min</span></div><div class="section-body">
+  <div class="img-card"><img src="https://images.unsplash.com/photo-1487528278747-ba99ed528ebc?w=900&q=80" alt="Career advisor session" loading="lazy"><div class="img-overlay">You are the career advisor. Andrea needs your help — 2 minutes.</div></div>
+  <div class="teacher-note teacher-only"><strong>Solo:</strong> El alumno es el career advisor de Andrea. Teacher juega el rol de Andrea y hace preguntas REALES durante el solo: "But what if my manager doesn't listen?" / "Could I also look for another job?" Esto fuerza respuestas espontáneas. Badge 🎤 si mantiene 2 minutos con advice language fluida.</div>
+  <div style="background:linear-gradient(135deg,rgba(249,115,22,.08),rgba(251,146,60,.04));border:1px solid var(--border);border-radius:14px;padding:24px;margin:16px 0">
+    <div style="font-family:var(--font-head);font-size:14px;font-weight:800;color:var(--accent);margin-bottom:10px">🎤 SOLO — Career Advisor to Andrea (2 min)</div>
+    <div style="font-size:15px;color:var(--text);line-height:1.6;margin-bottom:16px"><strong>Andrea's situation:</strong> She got bad feedback, feels undervalued, and is thinking about quitting. Give her complete career advice.</div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px"><span class="rule-pill"><strong>3+ should/shouldn't</strong></span><span class="rule-pill"><strong>2+ could</strong></span><span class="rule-pill"><strong>Give reasons</strong></span><span class="rule-pill"><strong>"If I were you…"</strong></span><span class="rule-pill"><strong>No notes</strong></span></div>
+  </div>
+  <div class="timer-wrap"><svg class="timer-svg" width="110" height="110" viewBox="0 0 110 110"><circle class="timer-bg" cx="55" cy="55" r="46" stroke-width="8"/><circle class="timer-arc" id="tArc3" cx="55" cy="55" r="46" stroke-width="8" stroke-dasharray="289.03" stroke-dashoffset="0"/><text class="timer-text" id="tText3" x="55" y="54">2:00</text><text class="timer-label" x="55" y="68">solo</text></svg><div class="timer-btns"><button class="btn btn-primary" onclick="startTimer('tArc3','tText3',120,'b3',289.03)">START</button><button class="btn btn-ghost" onclick="resetTimer('tArc3','tText3','2:00',289.03)">RESET</button></div></div>
+</div></section>
+
+<section class="section" id="s6"><div class="section-header"><span class="section-number">§6</span><h2 class="section-title">🔍 Source Analysis — Real Advice Messages</h2><span class="section-time">8 min</span></div><div class="section-body">
+  <div class="img-card"><img src="https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=900&q=80" alt="Reading messages and analyzing" loading="lazy"><div class="img-overlay">Read real messages. Find the advice language. Analyze the strength.</div></div>
+  <div class="teacher-note teacher-only"><strong>Dinámica:</strong> 4 fuentes reales en distintos formatos. Source 4 es metacognitiva — el alumno detecta qué estructura NO aparece en un texto cargado de advice language.</div>
+
+  <div class="src-card">
+    <div class="src-who">💬 WhatsApp — Friend's advice to Andrea</div>
+    <div class="wa-msgs">
+      <div style="display:flex;flex-direction:column;align-items:flex-start"><div class="wa-name">Andrea</div><div class="wa-bubble wa-in">My manager said my work wasn't good enough. I don't know what to do. Should I quit?</div></div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end"><div class="wa-name" style="text-align:right;color:var(--accent2)">Friend</div><div class="wa-bubble wa-out">You shouldn't quit immediately. You could ask your manager for a meeting and request specific feedback. You should also talk to HR if the review was unfair. If I were you, I would wait one month and see if things improve.</div></div>
+    </div>
+    <div class="src-task">❓ The friend uses three different modals. Which is the STRONGEST advice?</div>
+    <div class="src-options"><button class="src-btn" onclick="srcCheck(this,'should_s','sf1')">should — firm recommendation</button><button class="src-btn" onclick="srcCheck(this,'could_s','sf1')">could — most important option</button><button class="src-btn" onclick="srcCheck(this,'same_s','sf1')">They are all the same strength</button></div>
+    <div class="src-feedback" id="sf1"></div>
+  </div>
+
+  <div class="src-card">
+    <div class="src-who">💼 LinkedIn Post — Career coach</div>
+    <div class="src-quote">"5 things you should do after a bad performance review: 1) You shouldn't react emotionally — wait 24 hours. 2) You should ask for specific examples. 3) You could request a follow-up meeting. 4) You shouldn't tell colleagues about it. 5) You should create an improvement plan."</div>
+    <div class="src-task">❓ How many should / shouldn't / could are in this post?</div>
+    <div class="src-options"><button class="src-btn" onclick="srcCheck(this,'six_s','sf2')">Six (should ×3, shouldn't ×2, could ×1)</button><button class="src-btn" onclick="srcCheck(this,'three_s','sf2')">Three</button><button class="src-btn" onclick="srcCheck(this,'two_s','sf2')">Two</button></div>
+    <div class="src-feedback" id="sf2"></div>
+  </div>
+
+  <div class="src-card">
+    <div class="src-who">📧 HR Email to Andrea</div>
+    <div class="src-quote">"Hi Andrea, after your review, we recommend you attend a training session next month. You could also speak with your direct manager about a development plan. You should not miss the follow-up meeting on November 15th — attendance is required."</div>
+    <div class="src-task">❓ HR writes "You should not" instead of "You shouldn't." What is the difference?</div>
+    <div class="src-options"><button class="src-btn" onclick="srcCheck(this,'form_s','sf3')">"Should not" is more formal — same meaning, used in professional writing</button><button class="src-btn" onclick="srcCheck(this,'strong_s','sf3')">"Should not" is stronger than "shouldn't"</button><button class="src-btn" onclick="srcCheck(this,'err_s','sf3')">"Should not" is an error in English</button></div>
+    <div class="src-feedback" id="sf3"></div>
+  </div>
+
+  <div class="src-card">
+    <div class="src-who">🧠 Grammar Detective — Which modal is MISSING?</div>
+    <div class="src-quote">"If I were you, I would talk to your manager calmly. You could prepare a list of your achievements. You should explain how you feel — but you shouldn't be aggressive. My advice would be to ask for a specific action plan. Could you also speak to a mentor outside the company?"</div>
+    <div class="src-task">❓ This text uses many advice structures. Which modal does NOT appear?</div>
+    <div class="src-options"><button class="src-btn" onclick="srcCheck(this,'must_s','sf4')">"Must" — not in the text</button><button class="src-btn" onclick="srcCheck(this,'should_s2','sf4')">"Should" — not in the text</button><button class="src-btn" onclick="srcCheck(this,'could_s2','sf4')">"Could" — not in the text</button></div>
+    <div class="src-feedback" id="sf4"></div>
+  </div>
+</div></section>
+
+<section class="section" id="s7"><div class="section-header"><span class="section-number">§7</span><h2 class="section-title">📊 Self-Rating &amp; Leaderboard</h2><span class="section-time">5 min</span></div><div class="section-body">
+  <div class="img-card"><img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=900&q=80" alt="Performance dashboard" loading="lazy"><div class="img-overlay">Where are YOU today? Honest self-assessment is the fastest way to grow.</div></div>
+  <div style="font-family:var(--font-head);font-size:12px;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:14px">Rate yourself 1–10</div>
+  <div class="slider-row"><div class="rating-label">I can give advice using should / shouldn't / could fluently</div><input type="range" min="1" max="10" value="5" id="r1" oninput="updateRating()"><div class="rating-val" id="rv1">5</div></div>
+  <div class="slider-row"><div class="rating-label">I choose the right strength (gentle vs firm) for each situation</div><input type="range" min="1" max="10" value="5" id="r2" oninput="updateRating()"><div class="rating-val" id="rv2">5</div></div>
+  <div class="slider-row"><div class="rating-label">I can advise for 2 minutes without stopping or switching to Spanish</div><input type="range" min="1" max="10" value="5" id="r3" oninput="updateRating()"><div class="rating-val" id="rv3">5</div></div>
+  <div class="rating-feedback" id="rfeedback">Move the sliders to see your feedback.</div>
+  <hr class="divider">
+  <div style="font-family:var(--font-head);font-size:12px;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:12px">🏆 Session Leaderboard</div>
+  <div class="lb-controls"><input class="lb-input" type="text" id="lbName" placeholder="Student name…"><input class="lb-input lb-pts-input" type="number" id="lbPts" placeholder="pts" min="0"><button class="lb-add-btn" onclick="lbAdd()">+ ADD</button><button class="lb-reset-btn" onclick="lbReset()">↺ Reset</button></div>
+  <table class="lb-table"><thead><tr><th>#</th><th>Student</th><th>Points</th></tr></thead><tbody id="lbBody"><tr><td colspan="3" class="lb-empty">No students yet</td></tr></tbody></table>
+</div></section>
+
+<section class="section" id="s8"><div class="section-header"><span class="section-number">§8</span><h2 class="section-title">🏅 Certificate + Badge Showcase</h2><span class="section-time">5 min</span></div><div class="section-body">
+  <div class="img-card"><img src="https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=900&q=80" alt="Professional achievement" loading="lazy"><div class="img-overlay">M3 S2 complete — you give professional advice in English! 💡</div></div>
+  <div class="badge-showcase"><div class="badge-item"><span class="badge-emoji">🔥</span><div class="badge-name">Hot Start</div><div style="font-size:11px;color:var(--muted);margin-top:4px">Cold start done</div></div><div class="badge-item"><span class="badge-emoji">⚡</span><div class="badge-name">Speed Demon</div><div style="font-size:11px;color:var(--muted);margin-top:4px">7+ situations</div></div><div class="badge-item"><span class="badge-emoji">🎤</span><div class="badge-name">Solo Star</div><div style="font-size:11px;color:var(--muted);margin-top:4px">2-min advisor</div></div><div class="badge-item"><span class="badge-emoji">🔍</span><div class="badge-name">Analyst</div><div style="font-size:11px;color:var(--muted);margin-top:4px">4 sources read</div></div><div class="badge-item"><span class="badge-emoji">🏆</span><div class="badge-name">My Win</div><div style="font-size:11px;color:var(--muted);margin-top:4px">Win saved</div></div></div>
+  <div class="cert-card"><div class="cert-title">Gabriel Turner · English Training</div><div class="cert-main">Session Certificate — A2.2 M3 S2</div><div class="cert-sub">Advice &amp; Suggestions — Should / Could / Career English</div><div class="cert-skills"><span class="cert-skill">Should / shouldn't</span><span class="cert-skill">Could (suggestions)</span><span class="cert-skill">Advice strength</span><span class="cert-skill">2-min fluency</span></div><input class="cert-input" type="text" id="certName" placeholder="Your name…"><button class="cert-gen-btn" onclick="generateCert()">Generate Certificate</button><div class="cert-result" id="certResult"><div class="cert-name" id="certDisplay"></div><div class="cert-date" id="certDate"></div><div style="font-size:13px;color:var(--success);margin-top:8px">✅ A2.2 M3 S2 — Completed</div></div></div>
+  <div style="font-family:var(--font-head);font-size:12px;font-weight:700;color:var(--warn);letter-spacing:.08em;text-transform:uppercase;margin:20px 0 8px">🎯 3 Phrases for This Week</div>
+  <div class="phrases-week"><div class="phrase-card">"You should / You could…"<span>Give a colleague advice this week</span></div><div class="phrase-card">"If I were you, I would…"<span>Strong personal advice in any situation</span></div><div class="phrase-card">"Have you thought about…?"<span>Gentle suggestion without pressure</span></div></div>
+  <div style="font-family:var(--font-head);font-size:12px;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin:20px 0 8px">🏆 My Win Today</div>
+  <div style="margin:16px 0"><textarea class="win-textarea" id="winInput" placeholder="What was YOUR biggest win today?"></textarea><button class="win-btn" onclick="saveWin()">Save My Win</button><div class="win-saved" id="winSaved"></div></div>
+</div></section>
+
+</main>
+<footer class="site-footer"><span class="level-tag">A1.1</span><span class="level-tag">A1.2</span><span class="level-tag">A2.1</span><span class="level-tag active">A2.2</span><span class="level-tag">B1.1</span><span class="level-tag">B1.2</span></footer>
+
+<script>
+const earnedBadges={};function earnBadge(id){if(earnedBadges[id])return;earnedBadges[id]=true;const el=document.getElementById(id);if(el)el.classList.add('earned');if(Object.keys(earnedBadges).length>=5)launchConfetti();}
+function launchConfetti(){const w=document.getElementById('confettiWrap');w.style.display='block';for(let i=0;i<80;i++){const c=document.createElement('div');const cols=['#F97316','#FB923C','#FFB347','#00E5A0','#FF4D6D','#A78BFA'];c.style.cssText='position:absolute;width:8px;height:8px;background:'+cols[i%cols.length]+';border-radius:50%;left:'+Math.random()*100+'%;top:-10px;animation:confFall '+(1.5+Math.random()*2)+'s ease-out forwards;animation-delay:'+Math.random()*.5+'s;';w.appendChild(c);}const s=document.createElement('style');s.textContent='@keyframes confFall{0%{transform:translateY(0) rotate(0);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}';document.head.appendChild(s);setTimeout(()=>{w.style.display='none';w.innerHTML='';},4000);}
+let timerInterval=null;
+function startTimer(arcId,textId,totalSec,badgeKey,circ){if(timerInterval)clearInterval(timerInterval);const c=circ||238.76;const arc=document.getElementById(arcId);const txt=document.getElementById(textId);let rem=totalSec;timerInterval=setInterval(()=>{rem--;const m=Math.floor(rem/60);const s=rem%60;txt.textContent=m+':'+(s<10?'0':'')+s;arc.setAttribute('stroke-dashoffset',c*(1-rem/totalSec));if(rem<=5)arc.style.stroke='#FF4D6D';if(rem<=0){clearInterval(timerInterval);timerInterval=null;txt.textContent='0:00';arc.style.stroke='var(--success)';if(badgeKey)earnBadge(badgeKey);}},1000);}
+function resetTimer(arcId,textId,label,circ){if(timerInterval){clearInterval(timerInterval);timerInterval=null;}const arc=document.getElementById(arcId);arc.setAttribute('stroke-dashoffset','0');arc.style.stroke='var(--accent)';document.getElementById(textId).textContent=label;}
+const strengthData=[{modal:'could',color:'#A78BFA',sentence:'You <strong>could</strong> talk to your manager about this.',note:"Gentle — you're offering an option. The person can choose."},{modal:'should',color:'var(--accent)',sentence:'You <strong>should</strong> talk to your manager about this.',note:'Standard — you genuinely think this is the right thing to do.'},{modal:'must',color:'var(--danger)',sentence:'You <strong>must</strong> talk to your manager — do not wait!',note:'Strong — urgent. The person really needs to act now.'}];
+function updateStrength(){const v=parseInt(document.getElementById('strengthRange').value);const d=strengthData[v];document.getElementById('strengthModal').textContent=d.modal;document.getElementById('strengthModal').style.color=d.color;document.getElementById('strengthSentence').innerHTML=d.sentence+' — <em>'+['Gentle suggestion','Firm recommendation','Strong obligation'][v]+'</em>';document.getElementById('strengthNote').textContent=d.note;}
+function revealRelay(id){document.getElementById(id).style.display='block';}
+let speedCount=0;function speedClick(card){if(card.classList.contains('used'))return;card.classList.add('used');speedCount++;document.getElementById('speedVal').textContent=speedCount+' / 10';if(speedCount>=7)earnBadge('b2');}
+const srcMsgs={should_s:{correct:true,msg:"✅ 'Should' is the firmest recommendation here. 'Could' = gentle option. 'If I were you' = strong personal advice but still indirect."},could_s:{correct:false,msg:"❌ 'Could' is the gentlest — it offers an option, not a recommendation. 'Should' carries more weight."},same_s:{correct:false,msg:"❌ Not the same strength. could (gentle) < should (firm) < if I were you (strong personal advice)."},six_s:{correct:true,msg:"✅ Six modals total: should ×3 + shouldn't ×2 + could ×1. Pattern: should dominates for firm advice. Could for the one softer option."},three_s:{correct:false,msg:"❌ Count again carefully: should appears 3 times, shouldn't 2 times, could 1 time = 6 total."},two_s:{correct:false,msg:"❌ Far more than two. Look at every sentence."},form_s:{correct:true,msg:"✅ 'Should not' = full form, more formal. 'Shouldn't' = contraction, more casual. Identical meaning. HR uses the full form in official writing."},strong_s:{correct:false,msg:"❌ Same meaning — 'should not' is just the formal full form of 'shouldn't'."},err_s:{correct:false,msg:"❌ 'Should not' is perfectly correct — it is the full formal version."},must_s:{correct:true,msg:"✅ 'Must' does not appear. The advisor uses: could + should + shouldn't + 'If I were you' + 'My advice would be' + 'Could you…?' — but never 'must'."},should_s2:{correct:false,msg:"❌ 'Should' appears: 'you should explain how you feel'."},could_s2:{correct:false,msg:"❌ 'Could' appears twice: 'you could prepare' and 'Could you also speak?'"}};
+let srcAnswered=0;function srcCheck(btn,key,fbId){const btns=btn.parentElement.querySelectorAll('.src-btn');btns.forEach(b=>{b.disabled=true;b.classList.add('wrong-ans');});const fb=document.getElementById(fbId);const info=srcMsgs[key];if(info&&info.correct){btn.classList.remove('wrong-ans');btn.classList.add('correct-ans');if(fb)fb.textContent=info.msg;}else{if(fb)fb.textContent=info?info.msg:'❌ Not quite.';}srcAnswered++;if(srcAnswered>=4)earnBadge('b4');}
+function updateRating(){['r1','r2','r3'].forEach((id,i)=>{document.getElementById('rv'+(i+1)).textContent=document.getElementById(id).value;});const avg=Math.round((['r1','r2','r3'].reduce((s,id)=>s+parseInt(document.getElementById(id).value),0))/3);const fb=document.getElementById('rfeedback');if(avg>=8)fb.textContent='🌟 Excellent! You give professional-level advice in English. Use it at work this week.';else if(avg>=5)fb.textContent='📈 Good progress. Try giving one piece of advice per day in English — even to yourself.';else fb.textContent='💪 Review the Strength Slider. Practise: could for ideas, should for recommendations, must for urgency.';}
+let lbData=[];function lbAdd(){const n=document.getElementById('lbName').value.trim();const p=parseInt(document.getElementById('lbPts').value)||0;if(!n)return;lbData.push({name:n,pts:p});lbData.sort((a,b)=>b.pts-a.pts);lbRender();document.getElementById('lbName').value='';document.getElementById('lbPts').value='';}function lbReset(){lbData=[];lbRender();}function lbRender(){const t=document.getElementById('lbBody');if(!lbData.length){t.innerHTML='<tr><td colspan="3" class="lb-empty">No students yet</td></tr>';return;}t.innerHTML=lbData.map((s,i)=>'<tr><td style="color:var(--accent);font-weight:700">'+(i+1)+'</td><td>'+s.name+'</td><td style="font-weight:700;color:var(--accent)">'+s.pts+'</td></tr>').join('');}
+function generateCert(){const n=document.getElementById('certName').value.trim();if(!n)return;document.getElementById('certDisplay').textContent=n;document.getElementById('certDate').textContent=new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});document.getElementById('certResult').style.display='block';}
+function saveWin(){const t=document.getElementById('winInput').value.trim();if(!t)return;document.getElementById('winSaved').style.display='block';document.getElementById('winSaved').textContent='🏆 "'+t+'" — Excellent work today!';earnBadge('b5');}
+function toggleMode(){document.body.classList.toggle('student-mode');document.querySelector('.mode-toggle').textContent=document.body.classList.contains('student-mode')?'TEACHER MODE':'STUDENT MODE';}
+window.addEventListener('scroll',()=>{const h=document.documentElement;document.getElementById('progressBar').style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100+'%';});
+</script>
+</body>
+</html>

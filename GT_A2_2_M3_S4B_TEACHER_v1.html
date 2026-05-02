@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GT A2.2 · M3 · S4B — Possibility · Application &amp; Mastery</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#080808;--surface:#111318;--surface2:#1a1f28;
+  --accent:#F97316;--accent2:#FB923C;
+  --border:rgba(249,115,22,.18);
+  --text:#F0F4F8;--muted:#8A9BB0;--dim:rgba(226,226,226,.25);
+  --danger:#FF4D6D;--success:#00E5A0;--warn:#FFB347;
+  --violet:#A78BFA;--cyan:#00CFFF;--gold:#FFB800;
+  --font-head:'Syne',sans-serif;--font-body:'DM Sans',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:14px;line-height:1.6}
+.progress-bar{height:3px;background:var(--surface2);position:fixed;top:0;left:0;right:0;z-index:200}
+.progress-fill{height:100%;background:var(--accent);width:0%;transition:width .3s}
+.hdr{background:var(--surface);border-bottom:1px solid var(--border);padding:18px 48px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;position:sticky;top:0;z-index:100}
+.brand{display:flex;align-items:center;gap:10px}
+.dot{width:8px;height:8px;background:var(--accent);border-radius:50%}
+.bname{font-family:var(--font-head);font-weight:800;font-size:13px;letter-spacing:2.5px;text-transform:uppercase;color:#fff}
+.bsub{font-size:11px;color:var(--muted);letter-spacing:1px}
+.sess-tag{display:flex;gap:7px;align-items:center;flex-wrap:wrap}
+.tag{display:inline-block;padding:4px 11px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase}
+.ta{background:rgba(249,115,22,.15);color:var(--accent);border:1px solid rgba(249,115,22,.3)}
+.tg{background:rgba(0,229,160,.1);color:var(--success);border:1px solid rgba(0,229,160,.25)}
+.tc{background:rgba(0,207,255,.1);color:var(--cyan);border:1px solid rgba(0,207,255,.25)}
+.tgold{background:rgba(255,184,0,.1);color:var(--gold);border:1px solid rgba(255,184,0,.25)}
+.session-badge{background:var(--accent);color:#fff;padding:4px 12px;font-family:var(--font-head);font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;border-radius:4px}
+.badge-strip{display:flex;gap:10px;align-items:center;padding:10px 48px;background:var(--surface);border-bottom:1px solid var(--border)}
+.badge-strip span{font-size:20px;filter:grayscale(1);opacity:.3;transition:all .4s}
+.badge-strip span.earned{filter:grayscale(0);opacity:1;transform:scale(1.2)}
+.mode-btn{margin-left:auto;background:none;border:1px solid var(--border);color:var(--muted);padding:5px 14px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;cursor:pointer;transition:all .2s}
+.mode-btn:hover{border-color:var(--accent);color:var(--accent)}
+.teacher-only{display:block}
+body.student-mode .teacher-only{display:none}
+.section{margin:0 48px 32px;border:1px solid var(--border);border-radius:14px;overflow:hidden;background:var(--surface)}
+.section-header{display:flex;align-items:center;gap:14px;padding:16px 24px;background:linear-gradient(135deg,rgba(249,115,22,.08),transparent);border-bottom:1px solid var(--border);flex-wrap:wrap}
+.section-number{font-family:var(--font-head);font-size:10px;font-weight:800;color:var(--accent);letter-spacing:.12em;text-transform:uppercase;background:rgba(249,115,22,.1);border:1px solid var(--border);padding:3px 10px;border-radius:20px}
+.section-title{font-family:var(--font-head);font-size:20px;font-weight:800;color:#fff}
+.section-title em{color:var(--accent);font-style:normal}
+.section-sub{font-size:12px;color:var(--muted);margin-top:2px}
+.dur-tag{font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;color:var(--gold);border:1px solid rgba(255,184,0,.2);padding:3px 10px;margin-left:auto;white-space:nowrap}
+.section-body{padding:24px}
+.img-hero{width:100%;height:200px;object-fit:cover;display:block;filter:brightness(.6)}
+.img-banner{width:100%;height:140px;object-fit:cover;display:block;filter:brightness(.55)}
+.img-card{width:100%;height:80px;object-fit:cover;display:block;filter:brightness(.5)}
+.img-sm{width:100%;height:70px;object-fit:cover;display:block;filter:brightness(.5)}
+.tn{border-radius:8px;padding:14px 18px;margin:14px 0;font-size:12.5px;line-height:1.7}
+.tn-c1{background:rgba(0,207,255,.05);border-left:3px solid var(--cyan);color:rgba(0,207,255,.85)}
+.tn-c2{background:rgba(249,115,22,.05);border-left:3px solid var(--accent2);color:rgba(251,146,60,.9)}
+.tn-c3{background:rgba(255,184,0,.05);border-left:3px solid var(--gold);color:rgba(255,184,0,.85)}
+.tn-lbl{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:5px}
+
+/* TIMER */
+.timer-wrap{display:flex;flex-direction:column;align-items:center;gap:8px;margin:14px 0}
+.timer-svg{transform:rotate(-90deg)}
+.timer-arc{fill:none;stroke:var(--accent);stroke-width:6;stroke-dasharray:238.76;stroke-dashoffset:0;stroke-linecap:round;transition:stroke .3s}
+.timer-track{fill:none;stroke:rgba(249,115,22,.15);stroke-width:6}
+.timer-label{font-size:11px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;text-align:center}
+.timer-btns{display:flex;gap:8px}
+.timer-start{background:var(--accent);border:none;color:#fff;padding:9px 22px;border-radius:6px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;cursor:pointer}
+.timer-start:hover{opacity:.85}
+.timer-reset{background:none;border:1px solid var(--border);color:var(--muted);padding:9px 16px;border-radius:6px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1px;cursor:pointer;transition:all .2s}
+.timer-reset:hover{border-color:var(--accent);color:var(--accent)}
+
+/* HOT TAKE */
+.hot-scenario{background:var(--surface2);border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:0 10px 10px 0;padding:18px 20px;margin-bottom:18px}
+.ht-lbl{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:6px}
+.ht-txt{font-size:15px;color:#fff;font-weight:600;line-height:1.5;margin-bottom:8px}
+.ht-prompt{font-size:13px;color:var(--muted);font-style:italic;line-height:1.6}
+.rules-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:16px}
+.rule-card{background:var(--surface2);border:1px solid var(--border);border-top:3px solid var(--accent);border-radius:0 0 8px 8px;padding:14px}
+.rule-num{font-family:var(--font-head);font-size:22px;font-weight:800;color:var(--accent);margin-bottom:4px}
+.rule-txt{font-size:12px;color:var(--muted);line-height:1.5}
+
+/* PITCH */
+.pitch-sides{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}
+.pitch-side{background:var(--surface2);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.pitch-side-img{width:100%;height:80px;object-fit:cover;filter:brightness(.5)}
+.pitch-side-body{padding:14px 16px}
+.pitch-lbl{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:5px}
+.pitch-title{font-family:var(--font-head);font-size:14px;font-weight:800;color:#fff;margin-bottom:8px}
+.pitch-starters{list-style:none;display:flex;flex-direction:column;gap:5px}
+.pitch-starters li{font-size:12px;color:var(--muted);font-style:italic;padding-left:12px;position:relative;line-height:1.4}
+.pitch-starters li::before{content:'→';position:absolute;left:0;color:var(--accent);font-style:normal;font-size:11px}
+
+/* RELAY — VISUAL NUEVO S4B: Possibility Chain */
+.relay-banner{width:100%;height:120px;object-fit:cover;display:block;filter:brightness(.55);border-radius:10px;margin-bottom:14px}
+.possibility-chain{display:flex;flex-direction:column;gap:0}
+.chain-segment{display:flex;align-items:stretch;border-radius:0;border-bottom:1px solid var(--border)}
+.chain-segment:last-child{border-bottom:none}
+.chain-certainty{width:110px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:14px 8px;gap:4px}
+.chain-modal{font-family:var(--font-head);font-size:18px;font-weight:800;line-height:1}
+.chain-pct{font-family:var(--font-head);font-size:10px;color:var(--muted)}
+.chain-body{flex:1;padding:14px 18px;border-left:1px solid var(--border)}
+.chain-situation{font-size:11.5px;color:var(--muted);margin-bottom:5px;font-style:italic}
+.chain-sentence{font-size:13.5px;color:#fff;font-weight:600;line-height:1.5;margin-bottom:5px}
+.chain-task{font-size:11.5px;color:var(--accent2);line-height:1.4}
+.chain-img{width:90px;flex-shrink:0;overflow:hidden}
+.chain-img img{width:100%;height:100%;object-fit:cover;filter:brightness(.5)}
+.chain-s0{background:rgba(255,77,109,.06)}
+.chain-s1{background:rgba(255,77,109,.04)}
+.chain-s2{background:rgba(249,115,22,.04)}
+.chain-s3{background:rgba(96,165,250,.04)}
+.chain-s4{background:rgba(0,229,160,.05)}
+
+/* SPEED */
+.speed-banner{width:100%;height:110px;object-fit:cover;display:block;filter:brightness(.55);border-radius:10px;margin-bottom:14px}
+.score-bar{display:flex;align-items:center;gap:12px;margin-bottom:16px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px 16px}
+.score-val{font-family:var(--font-head);font-size:28px;font-weight:800;color:var(--accent)}
+.score-lbl{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
+.score-btns{margin-left:auto;display:flex;gap:8px}
+.score-btn{width:36px;height:36px;border-radius:50%;font-size:18px;font-weight:700;cursor:pointer;border:none;transition:opacity .2s}
+.score-btn:hover{opacity:.8}
+.speed-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.speed-card{background:var(--surface2);border:1px solid var(--border);border-radius:10px;overflow:hidden;cursor:pointer;transition:all .2s}
+.speed-card:hover{border-color:var(--accent)}
+.speed-card.revealed{border-color:var(--success);background:rgba(0,229,160,.04)}
+.speed-card-img{width:100%;height:70px;object-fit:cover;filter:brightness(.5)}
+.speed-card-body{padding:10px 12px}
+.speed-q{font-size:12.5px;color:#fff;font-weight:600;line-height:1.4;margin-bottom:5px}
+.speed-a{font-size:11.5px;color:var(--success);font-style:italic;display:none;line-height:1.4}
+.speed-card.revealed .speed-a{display:block}
+.speed-modal{font-size:10px;color:var(--muted);margin-top:3px}
+
+/* SOLO */
+.solo-scenario{background:linear-gradient(135deg,rgba(249,115,22,.08),rgba(249,115,22,.02));border:1px solid rgba(249,115,22,.25);border-radius:12px;padding:20px 22px;margin-bottom:20px}
+.solo-lbl{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:8px}
+.solo-txt{font-size:14px;color:#fff;font-weight:600;line-height:1.6;margin-bottom:8px}
+.solo-reqs{list-style:none;display:flex;flex-direction:column;gap:5px;margin-top:10px}
+.solo-reqs li{font-size:12.5px;color:var(--muted);padding-left:16px;position:relative;line-height:1.4}
+.solo-reqs li::before{content:'✓';position:absolute;left:0;color:var(--accent);font-size:11px}
+.solo-arc-svg{transform:rotate(-90deg)}
+.solo-arc-track{fill:none;stroke:rgba(249,115,22,.15);stroke-width:7}
+.solo-arc-fill{fill:none;stroke:var(--accent);stroke-width:7;stroke-dasharray:289.03;stroke-dashoffset:0;stroke-linecap:round;transition:stroke .3s}
+
+/* SOURCE */
+.source-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.source-card{background:var(--surface2);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.source-card-img{width:100%;height:100px;object-fit:cover;filter:brightness(.5)}
+.source-card-body{padding:14px 16px}
+.source-type{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:8px}
+.source-content{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px 14px;margin-bottom:10px;font-size:13px;color:var(--text);line-height:1.7;font-style:italic}
+.source-q{font-size:12.5px;color:var(--muted);line-height:1.5}
+.source-q strong{color:var(--accent2)}
+.mh{color:var(--accent2);font-weight:700}
+.will-h{color:var(--success);font-weight:700}
+.neg-h{color:var(--danger);font-weight:700}
+
+/* SLIDER + LB */
+.rating-banner{width:100%;height:110px;object-fit:cover;display:block;filter:brightness(.55);border-radius:10px;margin-bottom:16px}
+.slider-group{display:flex;flex-direction:column;gap:16px;margin-bottom:20px}
+.slider-item{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:16px}
+.slider-label{font-size:13px;color:#fff;font-weight:600;margin-bottom:10px;line-height:1.4}
+.slider-row{display:flex;align-items:center;gap:12px}
+.slider-input{flex:1;accent-color:var(--accent);cursor:pointer}
+.slider-val{font-family:var(--font-head);font-size:20px;font-weight:800;color:var(--accent);min-width:28px;text-align:center}
+.rating-fb{background:rgba(249,115,22,.06);border:1px solid rgba(249,115,22,.2);border-radius:8px;padding:14px 18px;font-size:13px;color:var(--text);line-height:1.6;min-height:50px}
+.lb-header{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.lb-input{flex:1;background:var(--surface);border:1px solid var(--border);color:var(--text);padding:9px 14px;border-radius:6px;font-size:13px;outline:none;min-width:120px}
+.lb-input:focus{border-color:var(--accent)}
+.lb-pts{background:var(--surface);border:1px solid var(--border);color:var(--text);padding:9px 10px;border-radius:6px;font-size:13px;width:70px;outline:none}
+.lb-add{background:var(--accent);border:none;color:#fff;padding:9px 18px;border-radius:6px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;cursor:pointer}
+.lb-reset{background:none;border:1px solid var(--border);color:var(--muted);padding:9px 14px;border-radius:6px;font-family:var(--font-head);font-size:10px;font-weight:700;cursor:pointer;transition:all .2s}
+.lb-reset:hover{border-color:var(--danger);color:var(--danger)}
+.lb-table{width:100%;border-collapse:collapse}
+.lb-table th{background:var(--surface2);padding:10px 14px;text-align:left;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim);border-bottom:2px solid var(--accent)}
+.lb-table td{padding:10px 14px;border-bottom:1px solid var(--border);font-size:13px}
+.lb-table tr:first-child td{color:var(--gold)}
+.lb-rank{font-family:var(--font-head);font-weight:800;color:var(--accent)}
+.lb-empty{color:var(--muted);font-style:italic;padding:16px 14px;font-size:12.5px}
+
+/* CERT */
+.cert-banner{width:100%;height:120px;object-fit:cover;display:block;filter:brightness(.55);border-radius:10px;margin-bottom:14px}
+.cert-input-row{display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+.cert-name{flex:1;background:var(--surface);border:1px solid var(--border);color:var(--text);padding:10px 14px;border-radius:6px;font-size:13px;outline:none;min-width:160px}
+.cert-name:focus{border-color:var(--accent)}
+.cert-gen{background:var(--accent);border:none;color:#fff;padding:10px 22px;border-radius:6px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;cursor:pointer}
+.cert-result{display:none;background:linear-gradient(135deg,rgba(249,115,22,.06),rgba(249,115,22,.02));border:2px solid rgba(249,115,22,.35);border-radius:14px;padding:28px 30px;margin-top:14px;text-align:center}
+.cert-result.show{display:block}
+.cert-logo{font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:14px}
+.cert-title{font-family:var(--font-head);font-size:22px;font-weight:800;color:#fff;margin-bottom:8px}
+.cert-name-display{font-family:var(--font-head);font-size:28px;font-weight:800;color:var(--accent);margin-bottom:12px}
+.cert-skills{font-size:13px;color:var(--muted);line-height:1.8;margin-bottom:16px}
+.cert-date{font-family:var(--font-head);font-size:11px;color:var(--dim);letter-spacing:1px}
+.cert-seal{font-size:36px;margin-bottom:8px}
+
+/* BADGES */
+.badge-showcase{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:20px}
+.bs-badge{display:flex;flex-direction:column;align-items:center;gap:5px;flex:1;min-width:80px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:14px 8px}
+.bs-icon{font-size:28px}
+.bs-label{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);text-align:center;line-height:1.3}
+.bs-badge.earned{border-color:var(--accent);background:rgba(249,115,22,.07)}
+.bs-badge.earned .bs-label{color:var(--accent)}
+
+/* PHRASES */
+.phrases-sec{background:rgba(255,184,0,.03);border-top:1px solid rgba(255,184,0,.12);border-bottom:1px solid rgba(255,184,0,.12);margin:0 48px 32px;border-radius:14px;overflow:hidden}
+.ph-header{padding:20px 24px;border-bottom:1px solid rgba(255,184,0,.12)}
+.ph-lbl{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:5px}
+.ph-title{font-family:var(--font-head);font-size:18px;font-weight:800;color:#fff}
+.ph-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border-top:1px solid rgba(255,184,0,.12)}
+.ph-card{padding:20px 22px;border-right:1px solid rgba(255,184,0,.12)}
+.ph-card:last-child{border-right:none}
+.ph-card-img{width:100%;height:80px;object-fit:cover;filter:brightness(.5);border-radius:8px;margin-bottom:12px}
+.ph-num{font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;color:var(--gold);margin-bottom:7px}
+.ph-phrase{font-family:var(--font-head);font-size:14px;font-weight:700;color:#fff;margin-bottom:8px;line-height:1.4}
+.ph-ctx{font-size:11.5px;color:var(--muted);line-height:1.6}
+
+.my-win{background:rgba(0,229,160,.04);border:1px solid rgba(0,229,160,.2);border-radius:10px;padding:18px 20px;margin-top:20px}
+.mw-lbl{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--success);margin-bottom:6px}
+.mw-prompt{font-size:13px;color:var(--text);margin-bottom:10px;line-height:1.5}
+.mw-area{width:100%;background:var(--surface);border:1px solid var(--border);color:var(--text);padding:10px 14px;font-family:var(--font-body);font-size:13px;border-radius:8px;resize:vertical;min-height:70px;outline:none;line-height:1.6}
+.mw-area:focus{border-color:var(--accent)}
+.mw-save{background:var(--success);border:none;color:#fff;padding:8px 20px;border-radius:6px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;cursor:pointer;margin-top:8px}
+
+.ftr{background:var(--surface);border-top:1px solid var(--border);padding:18px 48px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-top:16px}
+.fbrand{font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim)}
+.finfo{font-size:11px;color:var(--dim)}
+.flvs{display:flex;gap:3px;flex-wrap:wrap}
+.level-tag{padding:5px 10px;font-family:var(--font-head);font-size:10px;font-weight:700;background:var(--surface2);color:var(--dim);border-radius:4px}
+.level-tag.active{background:var(--accent);color:#fff}
+@media(max-width:860px){.hdr,.ftr,.badge-strip{padding:14px 16px}.section,.phrases-sec{margin-left:12px;margin-right:12px}.section-body{padding:14px}.pitch-sides,.source-grid,.speed-grid{grid-template-columns:1fr}.ph-grid,.rules-grid,.badge-showcase{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+
+<header class="hdr">
+  <div class="brand"><div class="dot"></div><div><div class="bname">Gabriel Turner</div><div class="bsub">English Training · Teacher Edition</div></div></div>
+  <div class="sess-tag">
+    <span class="tag ta">A2.2</span><span class="tag tgold">Module 3</span>
+    <span class="tag tc">Session 4B</span><span class="session-badge">PRODUCTION</span>
+    <span class="tag tg">90 min</span>
+  </div>
+</header>
+
+<div class="badge-strip">
+  <span id="b1">🔥</span><span id="b2">⚡</span>
+  <span id="b3">🎤</span><span id="b4">🔍</span><span id="b5">🏆</span>
+  <button class="mode-btn" onclick="toggleMode()">👁 Student Mode</button>
+</div>
+
+<!-- §1 HOT TAKE -->
+<div style="height:24px"></div>
+<section class="section">
+  <div class="section-header">
+    <span class="section-number">§1</span>
+    <div><div class="section-title">Hot Take — <em>60 Seconds Under Uncertainty</em></div>
+    <div class="section-sub">Andrea's project is in danger · Express possibility precisely · No notes · Timer on</div></div>
+    <span class="dur-tag">⏱ 5 MIN</span>
+  </div>
+  <img class="img-hero" src="https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=900&q=80" alt="uncertain urgent business situation">
+  <div class="section-body">
+    <div class="hot-scenario">
+      <div class="ht-lbl">🔥 The Situation</div>
+      <div class="ht-txt">It's Monday morning. Andrea's team has 3 open situations: (1) The key client might cancel the quarterly review. (2) The digital inventory project may be delayed because the IT team is understaffed. (3) The budget might not be approved until next month. The CEO just walked in and asks: "Andrea, how's next week looking?"</div>
+      <div class="ht-prompt">You are Andrea. You have 60 seconds to give the CEO an honest, professional update. Use will, might, may, and might not. No notes. Be specific — not just "we'll see."</div>
+    </div>
+    <div class="timer-wrap">
+      <svg class="timer-svg" width="100" height="100" viewBox="0 0 100 100">
+        <circle class="timer-track" cx="50" cy="50" r="38"/>
+        <circle class="timer-arc" id="htArc" cx="50" cy="50" r="38"/>
+        <text style="font-family:var(--font-head);font-size:22px;font-weight:800;fill:#fff;text-anchor:middle;dominant-baseline:middle" x="50" y="50" transform="rotate(90,50,50)" id="htText">60</text>
+      </svg>
+      <div class="timer-label">Hot Take Timer</div>
+      <div class="timer-btns">
+        <button class="timer-start" onclick="startTimer('htArc','htText',60,'b1',238.76)">▶ Start</button>
+        <button class="timer-reset" onclick="resetTimer('htArc','htText',60,238.76)">↺ Reset</button>
+      </div>
+    </div>
+    <div class="rules-grid">
+      <div class="rule-card"><div class="rule-num">01</div><div class="rule-txt">Use <strong style="color:var(--success)">will</strong> for the one confirmed thing — show the CEO what is solid</div></div>
+      <div class="rule-card"><div class="rule-num">02</div><div class="rule-txt">Use <strong style="color:var(--accent)">might / may</strong> for the uncertain situations — no "maybe," use the modal</div></div>
+      <div class="rule-card"><div class="rule-num">03</div><div class="rule-txt">End with <strong style="color:var(--cyan)">"I'll keep you posted"</strong> or <strong style="color:var(--cyan)">"TBD"</strong> — close the loop professionally</div></div>
+    </div>
+    <div class="tn tn-c1 teacher-only" style="margin-top:14px">
+      <div class="tn-lbl">📘 Pedagogical Note</div>
+      This Hot Take specifically targets the "maybe" default. Listen for students who say "maybe the client cancels" and gently redirect: "That's 'the client might cancel' — try it with the modal." The correction should happen after the timer, not during.
+    </div>
+  </div>
+</section>
+
+<!-- §2 PITCH -->
+<section class="section">
+  <div class="section-header">
+    <span class="section-number">§2</span>
+    <div><div class="section-title">Pitch Round — <em>Optimist vs Pessimist</em></div>
+    <div class="section-sub">Two views on the same uncertain week · might vs might not · 3 minutes each</div></div>
+    <span class="dur-tag">⏱ 10 MIN</span>
+  </div>
+  <img class="img-banner" src="https://images.unsplash.com/photo-1573167243872-43c6433b9d40?w=900&q=80" alt="pitch debate two sides presentation">
+  <div class="section-body">
+    <div style="background:rgba(249,115,22,.05);border:1px solid rgba(249,115,22,.15);border-radius:8px;padding:12px 16px;margin-bottom:16px;font-size:12.5px;color:var(--accent2);line-height:1.7">
+      📋 <strong>How to run this:</strong> Same scenario — Andrea's uncertain week. Side A argues things will probably go well (optimist). Side B argues things might not go as planned (pessimist). Both must use may/might/might not correctly. The winner is judged on grammar accuracy AND argument quality. 3 minutes per side, then class vote.
+    </div>
+    <div class="pitch-sides">
+      <div class="pitch-side">
+        <img class="pitch-side-img" src="https://images.unsplash.com/photo-1522071901873-411886a10004?w=600&q=80" alt="optimist positive outlook meeting">
+        <div class="pitch-side-body">
+          <div class="pitch-lbl">Side A — The Optimist</div>
+          <div class="pitch-title">Things may go better than expected</div>
+          <ul class="pitch-starters">
+            <li>"The client <strong>may</strong> confirm the review after all — they usually do."</li>
+            <li>"The IT team <strong>might</strong> find a solution faster than we think."</li>
+            <li>"The budget <strong>may</strong> be approved earlier — finance has been efficient lately."</li>
+            <li>"Things <strong>will</strong> work out — the project <strong>will</strong> start even with delays."</li>
+            <li>"It depends on how Andrea manages the week — she's done it before."</li>
+          </ul>
+        </div>
+      </div>
+      <div class="pitch-side">
+        <img class="pitch-side-img" src="https://images.unsplash.com/photo-1595152772835-219674b2a163?w=600&q=80" alt="pessimist risk concern worried">
+        <div class="pitch-side-body">
+          <div class="pitch-lbl">Side B — The Pessimist</div>
+          <div class="pitch-title">Things might not go as planned</div>
+          <ul class="pitch-starters">
+            <li>"The client <strong>might not</strong> confirm — they've rescheduled twice already."</li>
+            <li>"The project <strong>may not</strong> start Monday — the IT team is already overloaded."</li>
+            <li>"The budget <strong>might not</strong> arrive — it depends on the director's schedule."</li>
+            <li>"The delivery <strong>might not</strong> arrive — transport issues are real this week."</li>
+            <li>"TBD on all fronts — this <strong>might</strong> be a very difficult week for the team."</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div style="margin-top:14px;display:flex;gap:8px;align-items:center">
+      <div style="font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:1.5px;color:var(--gold)">⏱ PITCH TIMER</div>
+      <button class="timer-start" onclick="startTimer('pitchArc','pitchText',180,'b2',238.76)" style="padding:7px 18px">▶ 3 min</button>
+      <button class="timer-reset" onclick="resetTimer('pitchArc','pitchText',180,238.76)" style="background:none;border:1px solid var(--border);color:var(--muted);padding:7px 14px;border-radius:6px;cursor:pointer;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1px">↺</button>
+    </div>
+    <div class="timer-wrap" style="margin:12px 0">
+      <svg class="timer-svg" width="80" height="80" viewBox="0 0 100 100">
+        <circle class="timer-track" cx="50" cy="50" r="38"/>
+        <circle class="timer-arc" id="pitchArc" cx="50" cy="50" r="38"/>
+        <text style="font-family:var(--font-head);font-size:20px;font-weight:800;fill:#fff;text-anchor:middle;dominant-baseline:middle" x="50" y="50" transform="rotate(90,50,50)" id="pitchText">3:00</text>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- §3 RELAY — VISUAL NUEVO S4B: Possibility Chain -->
+<section class="section">
+  <div class="section-header">
+    <span class="section-number">§3</span>
+    <div><div class="section-title">Relay — <em>Possibility Chain</em></div>
+    <div class="section-sub">Transform certainty into uncertainty — 5 situations, one spectrum · Each student shifts the modal one level</div></div>
+    <span class="dur-tag">⏱ 8 MIN</span>
+  </div>
+  <div class="section-body">
+    <img class="relay-banner" src="https://images.unsplash.com/photo-1552664688-cf412ec27db2?w=900&q=80" alt="possibility chain relay teamwork">
+    <div style="background:rgba(0,207,255,.04);border:1px solid rgba(0,207,255,.18);border-radius:8px;padding:12px 16px;margin-bottom:16px;font-size:12px;color:var(--cyan);line-height:1.7">
+      💬 <strong>How it works:</strong> Each chain has 5 versions of the same sentence — from won't (0%) to will (100%). Student 1 reads the "will" version. Student 2 must step it down one level to "may." Student 3 steps to "might." Student 4 goes to "might not." Student 5 reaches "won't." Then the class discusses: in what situation would each level be realistic?
+    </div>
+    <div class="possibility-chain">
+      <!-- Chain 1 -->
+      <div style="font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);padding:12px 18px 6px;background:var(--surface2);border-bottom:1px solid var(--border)">Chain 1 — The Client Visit</div>
+      <div class="chain-segment chain-s4">
+        <div class="chain-certainty"><span class="chain-modal" style="color:var(--success)">will</span><span class="chain-pct">100%</span></div>
+        <div class="chain-body">
+          <div class="chain-situation">Context: It's confirmed — tickets booked, agenda sent.</div>
+          <div class="chain-sentence">"The client <strong>will</strong> visit our office on Thursday."</div>
+          <div class="chain-task">→ Student 1 reads this. Student 2: transform to "may."</div>
+        </div>
+        <div class="chain-img"><img src="https://images.unsplash.com/photo-1600880292089-90a7e086ee0c?w=400&q=80" alt="client confirmed visit"></div>
+      </div>
+      <div class="chain-segment chain-s3">
+        <div class="chain-certainty"><span class="chain-modal" style="color:#60A5FA">may</span><span class="chain-pct">~60%</span></div>
+        <div class="chain-body">
+          <div class="chain-situation">Context: They said yes but haven't confirmed the exact time.</div>
+          <div class="chain-sentence">"The client <strong>may</strong> visit our office on Thursday."</div>
+          <div class="chain-task">→ Student 2 says this. Student 3: transform to "might."</div>
+        </div>
+        <div class="chain-img"><img src="https://images.unsplash.com/photo-1556761175-b413da4baf72?w=400&q=80" alt="uncertain client meeting"></div>
+      </div>
+      <div class="chain-segment chain-s2">
+        <div class="chain-certainty"><span class="chain-modal" style="color:var(--accent)">might</span><span class="chain-pct">~40%</span></div>
+        <div class="chain-body">
+          <div class="chain-situation">Context: They're travelling — it's 50/50.</div>
+          <div class="chain-sentence">"The client <strong>might</strong> visit our office on Thursday."</div>
+          <div class="chain-task">→ Student 3 says this. Student 4: transform to "might not."</div>
+        </div>
+        <div class="chain-img"><img src="https://images.unsplash.com/photo-1518186285589-2f7649de83e0?w=400&q=80" alt="50-50 uncertain decision"></div>
+      </div>
+      <div class="chain-segment chain-s1">
+        <div class="chain-certainty"><span class="chain-modal" style="color:#F87171">might not</span><span class="chain-pct">~70% NO</span></div>
+        <div class="chain-body">
+          <div class="chain-situation">Context: They just rescheduled twice. Probably not happening.</div>
+          <div class="chain-sentence">"The client <strong>might not</strong> visit our office on Thursday."</div>
+          <div class="chain-task">→ Student 4 says this. Student 5: transform to "won't."</div>
+        </div>
+        <div class="chain-img"><img src="https://images.unsplash.com/photo-1565688534245-4a9344d1e6cf?w=400&q=80" alt="likely cancelled meeting"></div>
+      </div>
+      <div class="chain-segment chain-s0">
+        <div class="chain-certainty"><span class="chain-modal" style="color:var(--danger)">won't</span><span class="chain-pct">0%</span></div>
+        <div class="chain-body">
+          <div class="chain-situation">Context: They cancelled. Officially. It's done.</div>
+          <div class="chain-sentence">"The client <strong>won't</strong> visit our office on Thursday."</div>
+          <div class="chain-task">✅ Full chain complete. Class discussion: when does each level apply at your job?</div>
+        </div>
+        <div class="chain-img"><img src="https://images.unsplash.com/photo-1606857521015-7f9fcf423740?w=400&q=80" alt="cancelled confirmed not happening"></div>
+      </div>
+    </div>
+
+    <div style="margin-top:18px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:14px 18px">
+      <div style="font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:8px">🎤 Chain 2 — Mini Version (class does this together)</div>
+      <div style="font-size:13px;color:var(--text);line-height:1.7">Starter: <strong>"The Q4 budget <span style="color:var(--success)">will</span> be approved this week."</strong><br>
+      The class transforms it step by step. Teacher asks: "What happened between 'will' and 'won't'? What changed the certainty?"<br>
+      <em style="color:var(--muted);font-size:11.5px">Target: Students internalize that the modal choice reflects how much information you have — not just how you feel.</em></div>
+    </div>
+
+    <div style="text-align:right;margin-top:12px;display:flex;justify-content:flex-end;gap:8px">
+      <button class="timer-start" onclick="startTimer('relayArc','relayText',90,'b3',238.76)">▶ 90s Per Chain</button>
+      <button class="timer-reset" onclick="resetTimer('relayArc','relayText',90,238.76)" style="background:none;border:1px solid var(--border);color:var(--muted);padding:9px 14px;border-radius:6px;cursor:pointer;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1px">↺</button>
+    </div>
+    <div class="timer-wrap" style="margin:10px 0 0">
+      <svg class="timer-svg" width="70" height="70" viewBox="0 0 100 100">
+        <circle class="timer-track" cx="50" cy="50" r="38"/>
+        <circle class="timer-arc" id="relayArc" cx="50" cy="50" r="38"/>
+        <text style="font-family:var(--font-head);font-size:20px;font-weight:800;fill:#fff;text-anchor:middle;dominant-baseline:middle" x="50" y="50" transform="rotate(90,50,50)" id="relayText">90</text>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- §4 SPEED ROUND -->
+<section class="section">
+  <div class="section-header">
+    <span class="section-number">§4</span>
+    <div><div class="section-title">Speed Round — <em>10 Cards · Instant Modal</em></div>
+    <div class="section-sub">Click to reveal · Choose the right modal · Score +1 for each correct spontaneous answer</div></div>
+    <span class="dur-tag">⏱ 6 MIN</span>
+  </div>
+  <div class="section-body">
+    <img class="speed-banner" src="https://images.unsplash.com/photo-1531538606174-0f90ff5dce83?w=900&q=80" alt="speed round challenge cards">
+    <div class="score-bar">
+      <div><div class="score-val" id="scoreVal">0</div><div class="score-lbl">Points</div></div>
+      <div class="score-btns">
+        <button class="score-btn" style="background:var(--success);color:#fff" onclick="adjustScore(1)">+</button>
+        <button class="score-btn" style="background:var(--surface);border:1px solid var(--danger);color:var(--danger)" onclick="adjustScore(-1)">−</button>
+      </div>
+    </div>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:14px;font-style:italic">Click the card to reveal the model. Award +1 only if the student used the right modal naturally — before seeing the answer.</div>
+    <div class="speed-grid">
+      <div class="speed-card" onclick="revealSpeed(this)">
+        <img class="speed-card-img" src="https://images.unsplash.com/photo-1529119368496-2dfda6ec2804?w=600&q=80" alt="flight travel uncertain">
+        <div class="speed-card-body">
+          <div class="speed-q">Your flight to Monterrey on Friday isn't confirmed yet — 50% chance. How do you tell your team?</div>
+          <div class="speed-a">✅ "I may travel to Monterrey on Friday — I'll confirm by Thursday."</div>
+          <div class="speed-modal">Target modal: may (~50%)</div>
+        </div>
+      </div>
+      <div class="speed-card" onclick="revealSpeed(this)">
+        <img class="speed-card-img" src="https://images.unsplash.com/photo-1542744173-05336fcc7ad4?w=600&q=80" alt="deadline pressure project">
+        <div class="speed-card-body">
+          <div class="speed-q">The project deadline is officially set for next Friday. How do you communicate this?</div>
+          <div class="speed-a">✅ "The project will finish by next Friday — it's confirmed."</div>
+          <div class="speed-modal">Target modal: will (100% certain)</div>
+        </div>
+      </div>
+      <div class="speed-card" onclick="revealSpeed(this)">
+        <img class="speed-card-img" src="https://images.unsplash.com/photo-1586953208448-b95a79798f07?w=600&q=80" alt="late supplier low probability">
+        <div class="speed-card-body">
+          <div class="speed-q">The supplier is probably not going to make it — there's a 70% chance of delay. How do you update the manager?</div>
+          <div class="speed-a">✅ "The delivery might not arrive on time — I'd suggest preparing a backup plan."</div>
+          <div class="speed-modal">Target modal: might not (70% NO)</div>
+        </div>
+      </div>
+      <div class="speed-card" onclick="revealSpeed(this)">
+        <img class="speed-card-img" src="https://images.unsplash.com/photo-1551836022-4d4c36ff0e4e?w=600&q=80" alt="client call uncertain">
+        <div class="speed-card-body">
+          <div class="speed-q">You're not sure if the client will join Thursday's call — it depends on their director's availability.</div>
+          <div class="speed-a">✅ "The client might join Thursday's call — it depends on her director. TBD."</div>
+          <div class="speed-modal">Target modal: might (~35–40%)</div>
+        </div>
+      </div>
+      <div class="speed-card" onclick="revealSpeed(this)">
+        <img class="speed-card-img" src="https://images.unsplash.com/photo-1556740758-90de374c12ad?w=600&q=80" alt="email uncertain response">
+        <div class="speed-card-body">
+          <div class="speed-q">You sent a proposal 3 days ago. No reply yet. Your manager asks if the client is interested.</div>
+          <div class="speed-a">✅ "They might be interested — I haven't heard back yet. I may follow up tomorrow."</div>
+          <div class="speed-modal">Target: might + may (two levels of uncertainty)</div>
+        </div>
+      </div>
+      <div class="speed-card" onclick="revealSpeed(this)">
+        <img class="speed-card-img" src="https://images.unsplash.com/photo-1581289013599-6a4ae6847c34?w=600&q=80" alt="team meeting confirmed agenda">
+        <div class="speed-card-body">
+          <div class="speed-q">The all-hands meeting is in the calendar for Monday — everyone confirmed attendance. How do you announce it?</div>
+          <div class="speed-a">✅ "The all-hands meeting will happen on Monday at 10 AM — attendance is confirmed."</div>
+          <div class="speed-modal">Target modal: will (confirmed, 100%)</div>
+        </div>
+      </div>
+      <div class="speed-card" onclick="revealSpeed(this)">
+        <img class="speed-card-img" src="https://images.unsplash.com/photo-1567016432779-094069958ea5?w=600&q=80" alt="weather disruption travel uncertainty">
+        <div class="speed-card-body">
+          <div class="speed-q">There's a storm forecast for Tuesday. The supplier usually drives from Guadalajara. What do you tell the production team?</div>
+          <div class="speed-a">✅ "The delivery may be delayed due to weather — we might need to use emergency stock."</div>
+          <div class="speed-modal">Target: may (first risk) + might (consequence)</div>
+        </div>
+      </div>
+      <div class="speed-card" onclick="revealSpeed(this)">
+        <img class="speed-card-img" src="https://images.unsplash.com/photo-1556742400-b5b7b512d7bf?w=600&q=80" alt="budget approval waiting uncertain">
+        <div class="speed-card-body">
+          <div class="speed-q">The finance director is on holiday until Thursday. The budget needs his signature. When does Andrea get it?</div>
+          <div class="speed-a">✅ "The budget might not be approved before Thursday — it depends on when the director returns."</div>
+          <div class="speed-modal">Target: might not (blocked by external factor)</div>
+        </div>
+      </div>
+      <div class="speed-card" onclick="revealSpeed(this)">
+        <img class="speed-card-img" src="https://images.unsplash.com/photo-1525130413817-d45c1d127c42?w=600&q=80" alt="presentation rescheduled uncertain">
+        <div class="speed-card-body">
+          <div class="speed-q">The board presentation was supposed to be Wednesday — but two board members are possibly unavailable. Update the team.</div>
+          <div class="speed-a">✅ "The board presentation may be rescheduled — two members might not be available. I'll keep you posted."</div>
+          <div class="speed-modal">Target: may (change) + might not (reason)</div>
+        </div>
+      </div>
+      <div class="speed-card" onclick="revealSpeed(this)">
+        <img class="speed-card-img" src="https://images.unsplash.com/photo-1576267423445-b2e0074d68a4?w=600&q=80" alt="certain definitive cancelled confirmed no">
+        <div class="speed-card-body">
+          <div class="speed-q">The client officially sent a cancellation email for Thursday's meeting. Zero chance of happening now. What do you say?</div>
+          <div class="speed-a">✅ "The Thursday meeting won't happen — the client cancelled. I'll reschedule for next week."</div>
+          <div class="speed-modal">Target: won't (0% — it's certain it won't happen)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- §5 SOLO CHALLENGE -->
+<section class="section">
+  <div class="section-header">
+    <span class="section-number">§5</span>
+    <div><div class="section-title">Solo Challenge — <em>2 Minutes · Full Spectrum</em></div>
+    <div class="section-sub">Combine will + may + might + might not in one coherent professional update · No notes</div></div>
+    <span class="dur-tag">⏱ 8 MIN</span>
+  </div>
+  <div class="section-body">
+    <img class="img-hero" src="https://images.unsplash.com/photo-1508739773434-c26b3d09e071?w=900&q=80" alt="Andrea solo professional challenge">
+    <div class="solo-scenario">
+      <div class="solo-lbl">🎯 Solo Challenge</div>
+      <div class="solo-txt">You are a team leader. Your manager just called and asked: "Give me a quick status on next week — what's confirmed, what's at risk, and what definitely won't happen?" You have 2 minutes. Be precise with your modals.</div>
+      <ul class="solo-reqs">
+        <li>Mention at least <strong>1 thing that WILL happen</strong> — confirmed, certain</li>
+        <li>Mention at least <strong>1 thing that MAY happen</strong> — 50–60% likely</li>
+        <li>Mention at least <strong>1 thing that MIGHT happen</strong> — 30–40%, uncertain</li>
+        <li>Mention at least <strong>1 thing that MIGHT NOT happen</strong> — more likely to be delayed or cancelled</li>
+        <li>Use one colloquial phrase: <strong>"I'll keep you posted," "TBD," or "It depends on…"</strong></li>
+      </ul>
+    </div>
+    <div class="timer-wrap">
+      <svg class="solo-arc-svg" width="110" height="110" viewBox="0 0 110 110">
+        <circle class="solo-arc-track" cx="55" cy="55" r="46"/>
+        <circle class="solo-arc-fill" id="soloArc" cx="55" cy="55" r="46"/>
+        <text style="font-family:var(--font-head);font-size:24px;font-weight:800;fill:#fff;text-anchor:middle;dominant-baseline:middle" x="55" y="55" transform="rotate(90,55,55)" id="soloText">2:00</text>
+      </svg>
+      <div class="timer-label">Solo Challenge Timer</div>
+      <div class="timer-btns">
+        <button class="timer-start" onclick="startSolo()">▶ Start 2 min</button>
+        <button class="timer-reset" onclick="resetSolo()">↺ Reset</button>
+      </div>
+    </div>
+    <div class="tn tn-c3 teacher-only">
+      <div class="tn-lbl">💰 Retention &amp; Upsell Note</div>
+      After the Solo Challenge, tell the class: "Everything you just did — expressing uncertainty, mixing modals, using professional phrases — is exactly the language of M4. In M4 we add Present Continuous for future ('I'm meeting the client Friday') which makes this even more precise." One sentence plants the next module's value proposition.
+    </div>
+  </div>
+</section>
+
+<!-- §6 SOURCE ANALYSIS -->
+<section class="section">
+  <div class="section-header">
+    <span class="section-number">§6</span>
+    <div><div class="section-title">Source Analysis — <em>Modals in the Wild</em></div>
+    <div class="section-sub">4 real-format sources · Identify modal choice · Evaluate accuracy and register</div></div>
+    <span class="dur-tag">⏱ 8 MIN</span>
+  </div>
+  <div class="section-body">
+    <div style="background:rgba(0,207,255,.04);border:1px solid rgba(0,207,255,.18);border-radius:8px;padding:12px 16px;margin-bottom:16px;font-size:12px;color:var(--cyan);line-height:1.7">
+      💬 <strong>How to run this:</strong> Students read each source and answer the metacognitive question. Key focus: is the modal choice accurate given the context? Could a different modal change the message significantly?
+    </div>
+    <div class="source-grid">
+      <div class="source-card">
+        <img class="source-card-img" src="https://images.unsplash.com/photo-1543269864-cbf2e70f6098?w=600&q=80" alt="whatsapp message modal uncertainty">
+        <div class="source-card-body">
+          <div class="source-type">💬 WhatsApp — Team Group</div>
+          <div class="source-content">"Hey team — quick update. The client visit <span class="mh">might</span> be rescheduled. I <span class="neg-h">may not</span> be in the office Thursday. The Friday delivery <span class="will-h">will</span> arrive — confirmed. I'll keep you posted. 🙏"</div>
+          <div class="source-q"><strong>Q:</strong> The writer uses three different modals in four sentences. Are they all correctly chosen? What does the switch from "might" to "will" communicate to the reader? Does "I'll keep you posted" add value here?</div>
+        </div>
+      </div>
+      <div class="source-card">
+        <img class="source-card-img" src="https://images.unsplash.com/photo-1517433670267-08bbd4be890f?w=600&q=80" alt="email project update formal">
+        <div class="source-card-body">
+          <div class="source-type">📧 Email — Project Update</div>
+          <div class="source-content">"Dear team, I wanted to flag that the IT infrastructure upgrade <span class="mh">may</span> affect our system access next Tuesday. The impact <span class="mh">might</span> last 2–4 hours. Critical processes <span class="will-h">will</span> be prioritized and <span class="neg-h">might not</span> be affected. I'll confirm on Monday. TBD for less critical tools."</div>
+          <div class="source-q"><strong>Q:</strong> This email uses four modals in professional context. Which modal signals the highest confidence? What would change if the writer used "will" instead of "may" in the first sentence? How does "TBD" function differently from "I'll keep you posted"?</div>
+        </div>
+      </div>
+      <div class="source-card">
+        <img class="source-card-img" src="https://images.unsplash.com/photo-1611606063065-ee7946f0787a?w=600&q=80" alt="linkedin professional post update">
+        <div class="source-card-body">
+          <div class="source-type">💼 LinkedIn Post</div>
+          <div class="source-content">"Career tip: When you don't know if something <span class="mh">will</span> happen, say 'it <span class="mh">might</span>.' When you think it's likely, say 'it <span class="mh">may</span>.' When it's confirmed, say 'it <span class="will-h">will</span>.' Three words. Three levels of certainty. One of the most underused tools in professional English."</div>
+          <div class="source-q"><strong>Q:</strong> This LinkedIn post teaches exactly what we studied today. Is the explanation accurate? What's missing from this post — what would you add to make it more complete? <strong>Could you write a similar post in English today?</strong></div>
+        </div>
+      </div>
+      <div class="source-card">
+        <img class="source-card-img" src="https://images.unsplash.com/photo-1463453091185-61582044d556?w=600&q=80" alt="business report memo uncertainty">
+        <div class="source-card-body">
+          <div class="source-type">📄 Internal Memo</div>
+          <div class="source-content">"Due to current supply chain conditions, the Q4 product launch <span class="mh">may</span> be delayed by 2–3 weeks. Some components <span class="neg-h">might not</span> arrive before October 15th. Marketing campaigns <span class="will-h">will</span> proceed as planned. A revised timeline <span class="mh">may</span> be shared by end of week. Status: TBD."</div>
+          <div class="source-q"><strong>Q:</strong> This memo mixes certainty (will) with uncertainty (may/might not). Does the structure feel reassuring or worrying? <strong>Rewrite the first sentence using "will" instead of "may" — how does that change the tone of the whole memo?</strong></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- §7 SELF-RATING + LEADERBOARD -->
+<section class="section">
+  <div class="section-header">
+    <span class="section-number">§7</span>
+    <div><div class="section-title">Self-Rating — <em>How did you perform?</em></div>
+    <div class="section-sub">3 sliders · Honest self-assessment · Leaderboard</div></div>
+    <span class="dur-tag">⏱ 5 MIN</span>
+  </div>
+  <div class="section-body">
+    <img class="rating-banner" src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=900&q=80" alt="self assessment results">
+    <div class="slider-group">
+      <div class="slider-item">
+        <div class="slider-label">1. How naturally did you use "might" and "may" today without thinking? (1 = always translated from Spanish, 10 = automatic)</div>
+        <div class="slider-row"><input type="range" class="slider-input" id="sl1" min="1" max="10" value="5" oninput="updateSliders()"><div class="slider-val" id="sv1">5</div></div>
+      </div>
+      <div class="slider-item">
+        <div class="slider-label">2. How well did you distinguish "might" (less certain) from "may" (more likely) in context? (1 = I used them randomly, 10 = I chose deliberately)</div>
+        <div class="slider-row"><input type="range" class="slider-input" id="sl2" min="1" max="10" value="5" oninput="updateSliders()"><div class="slider-val" id="sv2">5</div></div>
+      </div>
+      <div class="slider-item">
+        <div class="slider-label">3. How confident are you to use "I'll keep you posted" and "TBD" at work tomorrow? (1 = I need more practice, 10 = using it in my next email)</div>
+        <div class="slider-row"><input type="range" class="slider-input" id="sl3" min="1" max="10" value="5" oninput="updateSliders()"><div class="slider-val" id="sv3">5</div></div>
+      </div>
+    </div>
+    <div class="rating-fb" id="ratingFb">Move the sliders to get your feedback...</div>
+
+    <div style="margin-top:24px;font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:12px">🏆 Session Leaderboard</div>
+    <div class="lb-header">
+      <input type="text" class="lb-input" id="lbName" placeholder="Student name...">
+      <input type="number" class="lb-pts" id="lbPts" placeholder="Pts" min="0" max="20">
+      <button class="lb-add" onclick="addToLB()">Add</button>
+      <button class="lb-reset" onclick="resetLB()">Reset</button>
+    </div>
+    <table class="lb-table">
+      <thead><tr><th>#</th><th>Name</th><th>Points</th><th>Badge</th></tr></thead>
+      <tbody id="lbBody"><tr><td colspan="4" class="lb-empty">No scores yet — add students above</td></tr></tbody>
+    </table>
+  </div>
+</section>
+
+<!-- §8 CERTIFICATE + MY WIN -->
+<section class="section">
+  <div class="section-header">
+    <span class="section-number">§8</span>
+    <div><div class="section-title">Certificate — <em>Module 3 · Session 4 Complete</em></div>
+    <div class="section-sub">Badge showcase · Certificate generator · My Win Today</div></div>
+    <span class="dur-tag">⏱ 5 MIN</span>
+  </div>
+  <div class="section-body">
+    <img class="cert-banner" src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=900&q=80" alt="achievement completion certificate">
+    <div style="font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:12px">🏅 Badge Showcase — Session 4B</div>
+    <div class="badge-showcase">
+      <div class="bs-badge" id="bs1"><div class="bs-icon">🔥</div><div class="bs-label">Hot Take<br>Complete</div></div>
+      <div class="bs-badge" id="bs2"><div class="bs-icon">⚡</div><div class="bs-label">Pitch<br>Champion</div></div>
+      <div class="bs-badge" id="bs3"><div class="bs-icon">🎤</div><div class="bs-label">Possibility<br>Chain</div></div>
+      <div class="bs-badge" id="bs4"><div class="bs-icon">🔍</div><div class="bs-label">Speed<br>Analyst</div></div>
+      <div class="bs-badge" id="bs5"><div class="bs-icon">🏆</div><div class="bs-label">Solo<br>Champion</div></div>
+    </div>
+    <div class="cert-input-row">
+      <input type="text" class="cert-name" id="certNameInput" placeholder="Enter student name...">
+      <button class="cert-gen" onclick="generateCert()">Generate Certificate</button>
+    </div>
+    <div class="cert-result" id="certResult">
+      <div class="cert-seal">🏆</div>
+      <div class="cert-logo">Gabriel Turner · English Training</div>
+      <div class="cert-title">Certificate of Completion</div>
+      <div class="cert-name-display" id="certNameDisplay">—</div>
+      <div class="cert-skills">
+        Has successfully completed <strong>A2.2 · Module 3 · Session 4</strong><br>
+        Skills demonstrated: expressing possibility and certainty · may / might / might not / will<br>
+        Professional phrases: "I'll keep you posted" · "TBD" · "It depends on…"<br>
+        Production: Hot Take · Pitch Debate · Possibility Chain · Speed Round · Solo Challenge
+      </div>
+      <div class="cert-date" id="certDate"></div>
+    </div>
+    <div class="my-win" style="margin-top:18px">
+      <div class="mw-lbl">🏆 My Win Today</div>
+      <div class="mw-prompt">Which phrase will you use at work this week that you couldn't say before today? Be specific — what situation will you use it in?</div>
+      <textarea class="mw-area" id="myWinArea" placeholder="Example: Instead of 'maybe the supplier is late,' I'll say 'the delivery might not arrive on time — I'll keep you posted.'"></textarea>
+      <br><button class="mw-save" onclick="saveWin()">Save My Win 🏆</button>
+    </div>
+  </div>
+</section>
+
+<!-- PHRASES -->
+<div class="phrases-sec">
+  <div class="ph-header">
+    <div class="ph-lbl">🎯 This week at work</div>
+    <div class="ph-title">3 Phrases — Use Them This Week</div>
+  </div>
+  <div class="ph-grid">
+    <div class="ph-card">
+      <img class="ph-card-img" src="https://images.unsplash.com/photo-1512374382149-233c42b6a83b?w=600&q=80" alt="professional update certainty">
+      <div class="ph-num">PHRASE 1</div>
+      <div class="ph-phrase">"The meeting will happen — the client might be late, but it won't be cancelled."</div>
+      <div class="ph-ctx">Will + might in one sentence — you signal certainty AND prepare your team for a minor risk. This is mature, professional language that separates strong communicators from the rest.</div>
+    </div>
+    <div class="ph-card">
+      <img class="ph-card-img" src="https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=600&q=80" alt="professional TBD uncertainty">
+      <div class="ph-num">PHRASE 2</div>
+      <div class="ph-phrase">"The budget may not arrive this week — TBD. I'll keep you posted."</div>
+      <div class="ph-ctx">Three uncertainty tools in one sentence: may not (negative possibility) + TBD (status flag) + "I'll keep you posted" (commitment to follow up). Use this in any email or WhatsApp where something is unresolved.</div>
+    </div>
+    <div class="ph-card">
+      <img class="ph-card-img" src="https://images.unsplash.com/photo-1565884280851-8ff8a6be5f27?w=600&q=80" alt="depends on context business">
+      <div class="ph-num">PHRASE 3</div>
+      <div class="ph-phrase">"It depends on the client — they might confirm, or they might not. We'll see."</div>
+      <div class="ph-ctx">The most complete expression of genuine uncertainty in professional English. "It depends on" + two modal options + "we'll see" covers everything. Honest, clear, and completely natural. Use when someone presses you for a definitive answer you don't have.</div>
+    </div>
+  </div>
+</div>
+
+<footer class="ftr">
+  <div class="fbrand">Gabriel Turner · English Training</div>
+  <div class="finfo">A2.2 · Module 3 · Session 4B · GT_A2_2_M3_S4B_TEACHER_v1</div>
+  <div class="flvs">
+    <div class="level-tag">A1.1</div><div class="level-tag">A1.2</div><div class="level-tag">A2.1</div>
+    <div class="level-tag active">A2.2</div><div class="level-tag">B1.1</div><div class="level-tag">B1.2</div>
+  </div>
+</footer>
+
+<script>
+function toggleMode(){document.body.classList.toggle('student-mode');document.querySelector('.mode-btn').textContent=document.body.classList.contains('student-mode')?'👁 Teacher Mode':'👁 Student Mode';}
+function earnBadge(id){const el=document.getElementById(id);if(!el||el.classList.contains('earned'))return;el.classList.add('earned');el.style.transform='scale(1.4)';setTimeout(()=>el.style.transform='scale(1.2)',300);const bs=document.getElementById('bs'+id.replace('b',''));if(bs)bs.classList.add('earned');if([...document.querySelectorAll('.badge-strip span')].every(b=>b.classList.contains('earned')))launchConfetti();}
+function launchConfetti(){const c=['#F97316','#FB923C','#FFB347','#FFD04D','#FF4D6D'];for(let i=0;i<80;i++){const d=document.createElement('div');d.style.cssText=`position:fixed;top:-10px;left:${Math.random()*100}vw;width:9px;height:9px;background:${c[Math.floor(Math.random()*c.length)]};border-radius:2px;z-index:9999;animation:cf ${1.5+Math.random()*2.5}s linear forwards`;document.body.appendChild(d);setTimeout(()=>d.remove(),5000);}}
+const cs=document.createElement('style');cs.textContent='@keyframes cf{0%{transform:translateY(0) rotate(0);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}';document.head.appendChild(cs);
+
+// SINGLE startTimer DEFINITION
+function startTimer(arcId,textId,seconds,badgeKey,circumference){
+  const arc=document.getElementById(arcId),txt=document.getElementById(textId);
+  if(!arc||!txt)return;
+  arc.style.stroke='var(--accent)';
+  let remaining=seconds;arc.style.strokeDashoffset=0;
+  const iv=setInterval(()=>{
+    remaining--;
+    arc.style.strokeDashoffset=circumference*(1-remaining/seconds);
+    if(remaining<=5)arc.style.stroke='#FF4D6D';
+    const m=Math.floor(remaining/60),s=remaining%60;
+    txt.textContent=remaining>=60?(m+':'+(s<10?'0':'')+s):remaining;
+    if(remaining<=0){clearInterval(iv);arc.style.stroke='var(--success)';txt.textContent='✓';if(badgeKey)earnBadge(badgeKey);}
+  },1000);
+}
+function resetTimer(arcId,textId,seconds,circumference){
+  const arc=document.getElementById(arcId),txt=document.getElementById(textId);
+  if(!arc||!txt)return;
+  arc.style.stroke='var(--accent)';arc.style.strokeDashoffset=0;
+  const m=Math.floor(seconds/60),s=seconds%60;
+  txt.textContent=seconds>=60?(m+':'+(s<10?'0':'')+s):seconds;
+}
+function startSolo(){
+  const arc=document.getElementById('soloArc'),txt=document.getElementById('soloText');
+  arc.style.stroke='var(--accent)';let rem=120;
+  const iv=setInterval(()=>{rem--;arc.style.strokeDashoffset=289.03*(1-rem/120);if(rem<=10)arc.style.stroke='#FF4D6D';const m=Math.floor(rem/60),s=rem%60;txt.textContent=m+':'+(s<10?'0':'')+s;if(rem<=0){clearInterval(iv);arc.style.stroke='var(--success)';txt.textContent='✓';earnBadge('b5');}},1000);
+}
+function resetSolo(){document.getElementById('soloArc').style.stroke='var(--accent)';document.getElementById('soloArc').style.strokeDashoffset=0;document.getElementById('soloText').textContent='2:00';}
+
+function revealSpeed(card){card.classList.toggle('revealed');if(card.classList.contains('revealed'))earnBadge('b4');}
+let score=0;
+function adjustScore(n){score=Math.max(0,score+n);document.getElementById('scoreVal').textContent=score;if(score>=5)earnBadge('b4');}
+
+function updateSliders(){
+  const v1=+document.getElementById('sl1').value,v2=+document.getElementById('sl2').value,v3=+document.getElementById('sl3').value;
+  document.getElementById('sv1').textContent=v1;document.getElementById('sv2').textContent=v2;document.getElementById('sv3').textContent=v3;
+  const avg=(v1+v2+v3)/3;
+  document.getElementById('ratingFb').textContent=avg>=8?'🌟 Outstanding performance. You\'re operating at B1 level with modal precision. M4 will feel natural.':avg>=5?'✅ Solid progress. The certainty spectrum is clear — now just use it daily. One might or may per day this week.':'💪 Keep going. Focus on "might" first — use it tomorrow when something is uncertain at work. Precision comes with repetition.';
+}
+
+let lbData=[];
+function addToLB(){const n=document.getElementById('lbName').value.trim(),p=+document.getElementById('lbPts').value||0;if(!n)return;lbData.push({name:n,pts:p});lbData.sort((a,b)=>b.pts-a.pts);renderLB();document.getElementById('lbName').value='';document.getElementById('lbPts').value='';}
+function renderLB(){const medals=['🥇','🥈','🥉'],tb=document.getElementById('lbBody');if(!lbData.length){tb.innerHTML='<tr><td colspan="4" class="lb-empty">No scores yet</td></tr>';return;}tb.innerHTML=lbData.map((r,i)=>`<tr><td class="lb-rank">${i+1}</td><td>${r.name}</td><td style="font-family:var(--font-head);font-weight:700">${r.pts}</td><td>${medals[i]||''}</td></tr>`).join('');}
+function resetLB(){lbData=[];renderLB();}
+
+function generateCert(){const n=document.getElementById('certNameInput').value.trim();if(!n)return;document.getElementById('certNameDisplay').textContent=n;const d=new Date(),mo=['January','February','March','April','May','June','July','August','September','October','November','December'];document.getElementById('certDate').textContent=mo[d.getMonth()]+' '+d.getDate()+', '+d.getFullYear();document.getElementById('certResult').classList.add('show');earnBadge('b5');launchConfetti();}
+function saveWin(){const v=document.getElementById('myWinArea').value.trim();if(v.length>5){earnBadge('b5');document.querySelector('.mw-save').textContent='Saved! ✅';}}
+
+window.addEventListener('scroll',()=>{const e=document.documentElement,p=(e.scrollTop/(e.scrollHeight-e.clientHeight))*100;document.getElementById('progressFill').style.width=p+'%';if(p>8)earnBadge('b1');});
+updateSliders();
+</script>
+</body>
+</html>
