@@ -1,0 +1,1045 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>GT · A1.2 · M3 S4B · Airport Navigation — Application &amp; Mastery</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --violet:#8B5CF6;--violet2:#A78BFA;--violet-r:rgba(139,92,246,.22);--violet-f:rgba(139,92,246,.07);
+  --bg:#080808;--bg-card:#111111;
+  --text:#E8E8E8;--mu:rgba(232,232,232,.5);--mu2:rgba(232,232,232,.28);
+  --ok:#22D3A4;--ok-f:rgba(34,211,164,.1);
+  --danger:#FF4B6E;--danger-f:rgba(255,75,110,.1);
+  --gold:#FFD166;--gold-f:rgba(255,209,102,.1);
+  --hd:'Syne',sans-serif;--bd:'DM Sans',sans-serif;
+  --r:8px;--rl:14px;
+}
+span.h{color:var(--violet);font-weight:600}
+span.rs{color:var(--gold);font-weight:600}
+span.col{color:var(--ok);font-style:italic}
+span.imp{color:#FF7A50;font-weight:600}
+span.obj{color:var(--violet2);font-weight:600}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--bd);font-size:16px;line-height:1.65;overflow-x:hidden}
+
+#prog{position:fixed;top:0;left:0;height:3px;width:0%;background:linear-gradient(90deg,var(--violet),var(--violet2));z-index:1100;box-shadow:0 0 12px rgba(139,92,246,.5);transition:width .06s linear}
+#smt{position:fixed;top:12px;right:16px;z-index:1000;background:rgba(8,8,8,.9);border:1.5px solid var(--violet-r);color:var(--violet);font-family:var(--hd);font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:6px 14px;border-radius:20px;cursor:pointer;display:flex;align-items:center;gap:7px;transition:all .2s;backdrop-filter:blur(8px)}
+#smt:hover{background:var(--violet);color:var(--bg)}
+#smt .dot{width:7px;height:7px;border-radius:50%;background:var(--violet)}
+body.sm #smt{border-color:var(--ok);color:var(--ok)}
+body.sm #smt .dot{background:var(--ok)}
+body.sm .to{display:none!important}
+#nav{position:sticky;top:0;z-index:900;background:rgba(8,8,8,.92);border-bottom:1px solid rgba(139,92,246,.12);backdrop-filter:blur(12px);padding:0 20px;overflow-x:auto;white-space:nowrap;scrollbar-width:none}
+#nav::-webkit-scrollbar{display:none}
+#nav a{display:inline-block;padding:13px 14px;font-family:var(--hd);font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mu);text-decoration:none;border-bottom:2px solid transparent;transition:all .2s}
+#nav a:hover,#nav a.act{color:var(--violet);border-bottom-color:var(--violet)}
+#bstrip{position:sticky;top:42px;z-index:850;background:rgba(8,8,8,.88);backdrop-filter:blur(10px);border-bottom:1px solid rgba(139,92,246,.08);padding:8px 20px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+#bstrip .bl{font-family:var(--hd);font-size:10px;letter-spacing:.1em;color:var(--mu2);text-transform:uppercase;margin-right:4px}
+.bdg{font-size:1.3rem;opacity:.25;transition:all .35s;filter:grayscale(1)}
+.bdg.earned{opacity:1;filter:none;animation:badgePop .4s cubic-bezier(.34,1.56,.64,1)}
+@keyframes badgePop{0%{transform:scale(.5)}70%{transform:scale(1.3)}100%{transform:scale(1)}}
+#cft{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9999;display:none}
+
+/* HEADER */
+.hdr{position:relative;min-height:340px;display:flex;flex-direction:column;justify-content:flex-end;padding:48px 32px 40px;overflow:hidden}
+.hdr img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:brightness(.25) saturate(1.2)}
+.hdr-overlay{position:absolute;inset:0;background:linear-gradient(135deg,rgba(139,92,246,.15) 0%,rgba(8,8,8,.9) 60%)}
+.hdr-content{position:relative;z-index:2}
+.hdr-eyebrow{font-family:var(--hd);font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--violet);margin-bottom:10px}
+.hdr h1{font-family:var(--hd);font-size:clamp(1.8rem,5vw,3rem);font-weight:800;color:#fff;line-height:1.1;margin-bottom:12px}
+.hdr-meta{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
+.hdr-tag{background:rgba(139,92,246,.12);border:1px solid rgba(139,92,246,.3);color:var(--violet);font-family:var(--hd);font-size:10px;font-weight:700;letter-spacing:.1em;padding:4px 12px;border-radius:20px;text-transform:uppercase}
+.hdr-tag-danger{background:rgba(255,75,110,.12);border:1px solid rgba(255,75,110,.3);color:var(--danger)}
+.hdr-tag-gold{background:rgba(255,209,102,.1);border:1px solid rgba(255,209,102,.3);color:var(--gold)}
+.hdr-tag-ok{background:rgba(34,211,164,.1);border:1px solid rgba(34,211,164,.3);color:var(--ok)}
+
+/* SECTIONS */
+section{padding:56px 24px;max-width:960px;margin:0 auto}
+.s-banner{position:relative;height:180px;border-radius:var(--rl);overflow:hidden;margin-bottom:36px}
+.s-banner img{width:100%;height:100%;object-fit:cover;filter:brightness(.28) saturate(1.2)}
+.s-banner-overlay{position:absolute;inset:0;background:linear-gradient(90deg,rgba(139,92,246,.18),transparent)}
+.s-banner-content{position:absolute;inset:0;display:flex;align-items:center;padding:0 32px;gap:16px}
+.s-num{font-family:var(--hd);font-size:4rem;font-weight:800;color:var(--violet);opacity:.2;line-height:1}
+.s-info{flex:1}
+.s-label{font-family:var(--hd);font-size:10px;font-weight:700;letter-spacing:.15em;color:var(--violet);text-transform:uppercase;opacity:.8;margin-bottom:4px}
+.s-title{font-family:var(--hd);font-size:1.5rem;font-weight:700;color:#fff}
+.s-time{font-family:var(--hd);font-size:10px;color:var(--mu);letter-spacing:.08em;text-transform:uppercase;margin-top:4px}
+
+/* TEACHER NOTES */
+.tn-wrap{margin:24px 0}
+.tn-btn{display:flex;align-items:center;gap:10px;background:rgba(139,92,246,.06);border:1px solid rgba(139,92,246,.18);color:var(--violet);font-family:var(--hd);font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:10px 16px;border-radius:var(--r);cursor:pointer;width:100%;transition:all .2s}
+.tn-btn:hover{background:rgba(139,92,246,.12)}
+.tn-btn .arr{margin-left:auto}
+.tn-panel{display:none;margin-top:12px;border-radius:var(--r);overflow:hidden;border:1px solid rgba(139,92,246,.1)}
+.tn-layer{padding:14px 18px;border-bottom:1px solid rgba(255,255,255,.05)}
+.tn-layer:last-child{border-bottom:none}
+.tn-layer-tag{font-family:var(--hd);font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;margin-bottom:6px;opacity:.8}
+.tn-panel p,.tn-panel li{font-size:14px;color:var(--text);line-height:1.6}
+.tn-panel ul{margin-left:18px}
+.tn-l1{background:rgba(139,92,246,.06)}.tn-l1 .tn-layer-tag{color:var(--violet)}
+.tn-l2{background:rgba(255,209,102,.05)}.tn-l2 .tn-layer-tag{color:var(--gold)}
+.tn-l3{background:rgba(34,211,164,.05)}.tn-l3 .tn-layer-tag{color:var(--ok)}
+
+/* CARDS */
+.card{background:var(--bg-card);border:1px solid rgba(255,255,255,.07);border-radius:var(--rl);overflow:hidden;margin:16px 0}
+.card-inner{padding:24px}
+.card-img{width:100%;object-fit:cover;filter:brightness(.4)}
+.card-cyan{border-color:rgba(139,92,246,.2);background:var(--violet-f)}
+.card-gold{border-color:rgba(255,209,102,.2);background:var(--gold-f)}
+.card-ok{border-color:rgba(34,211,164,.2);background:rgba(34,211,164,.05)}
+.card-danger{border-color:rgba(255,75,110,.2);background:var(--danger-f)}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media(max-width:640px){.g2,.g3{grid-template-columns:1fr}}
+
+/* TIMERS */
+.timer-wrap{display:flex;flex-direction:column;align-items:center;gap:10px;margin:16px 0}
+.arc-svg{transform:rotate(-90deg)}
+.arc-bg{fill:none;stroke:rgba(139,92,246,.15);stroke-width:4}
+.arc-fill{fill:none;stroke:var(--violet);stroke-width:4;stroke-linecap:round;transition:stroke-dashoffset .1s linear,stroke .3s}
+.arc-label{font-family:var(--hd);font-size:1.4rem;font-weight:700;fill:var(--text)}
+.arc-sub{font-size:.6rem;fill:var(--mu);font-family:var(--bd)}
+.timer-btns{display:flex;gap:10px}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:10px 22px;border-radius:24px;font-family:var(--hd);font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:all .2s;border:none}
+.btn-cyan{background:var(--violet);color:var(--bg)}
+.btn-cyan:hover{background:#A78BFA}
+.btn-outline{background:transparent;border:1.5px solid rgba(139,92,246,.4);color:var(--violet)}
+.btn-outline:hover{background:rgba(139,92,246,.1)}
+.btn-danger{background:var(--danger);color:#fff}
+.btn-sm{padding:7px 16px;font-size:11px}
+
+/* HOT TAKE */
+.hot-card{background:var(--bg-card);border:1px solid rgba(255,75,110,.2);border-radius:var(--rl);overflow:hidden;margin:16px 0}
+.hot-img{width:100%;height:160px;object-fit:cover;filter:brightness(.35)}
+.hot-inner{padding:24px}
+.hot-scenario{font-size:15px;color:var(--text);line-height:1.7;margin-bottom:14px}
+.hot-prompt{font-size:17px;font-weight:600;color:#fff;line-height:1.4;margin-bottom:16px}
+
+/* DEBATE */
+.debate-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:16px 0}
+.debate-side{background:var(--bg-card);border:1px solid rgba(255,255,255,.08);border-radius:var(--rl);overflow:hidden}
+.debate-side-img{width:100%;height:110px;object-fit:cover;filter:brightness(.35)}
+.debate-side-inner{padding:18px}
+.debate-side-label{font-family:var(--hd);font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;margin-bottom:10px}
+.debate-starters{list-style:none;display:flex;flex-direction:column;gap:6px;margin-top:10px}
+.debate-starters li{font-size:13px;color:var(--mu);font-style:italic;padding:6px 12px;background:rgba(139,92,246,.04);border-left:2px solid var(--violet);line-height:1.5}
+.debate-meter{background:var(--bg-card);border:1px solid rgba(139,92,246,.15);border-radius:var(--rl);padding:24px;margin:16px 0}
+.dm-track{height:12px;background:rgba(255,255,255,.08);border-radius:6px;margin:14px 0}
+.dm-fill{height:100%;width:50%;background:linear-gradient(90deg,#FF4B6E,var(--violet));border-radius:6px;transition:width .3s}
+.dm-labels{display:flex;justify-content:space-between;font-family:var(--hd);font-size:11px;color:var(--mu)}
+.dm-btns{display:flex;justify-content:space-between;gap:10px}
+@media(max-width:640px){.debate-grid{grid-template-columns:1fr}}
+
+/* RELAY — unique visual S4B */
+.relay-board{background:var(--bg-card);border:1px solid rgba(139,92,246,.2);border-radius:var(--rl);overflow:hidden;margin:20px 0}
+.relay-board-hdr{background:linear-gradient(135deg,rgba(139,92,246,.1),transparent);padding:20px 24px;border-bottom:1px solid rgba(139,92,246,.1);display:flex;align-items:center;gap:12px}
+.relay-board-icon{font-size:1.8rem}
+.relay-board-title{font-family:var(--hd);font-size:1rem;font-weight:700;color:var(--violet)}
+.relay-board-sub{font-size:12px;color:var(--mu)}
+.relay-board-body{padding:0}
+.relay-item{display:grid;grid-template-columns:90px 1fr;border-bottom:1px solid rgba(255,255,255,.04);transition:background .2s}
+.relay-item:last-child{border-bottom:none}
+.relay-item:hover{background:rgba(139,92,246,.03)}
+.relay-item-img{width:90px;height:90px;object-fit:cover;filter:brightness(.4);flex-shrink:0}
+.relay-item-body{padding:14px 18px}
+.relay-item-num{font-family:var(--hd);font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--violet);margin-bottom:4px}
+.relay-item-q{font-size:14px;color:#fff;font-weight:500;margin-bottom:6px;line-height:1.5}
+.relay-item-transform{font-size:12px;color:var(--mu);font-style:italic}
+.relay-reveal-btn{font-family:var(--hd);font-size:10px;color:var(--violet);background:none;border:none;cursor:pointer;padding:0;margin-top:6px;text-decoration:underline;text-underline-offset:3px}
+.relay-answer{display:none;margin-top:8px;padding:10px 14px;background:rgba(34,211,164,.06);border:1px solid rgba(34,211,164,.2);border-radius:var(--r);font-size:13px;color:var(--ok);line-height:1.6}
+.relay-answer.show{display:block}
+
+/* SPEED ROUND */
+.speed-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:16px 0}
+.speed-card{background:var(--bg-card);border:1px solid rgba(255,255,255,.07);border-radius:var(--r);overflow:hidden;cursor:pointer;transition:all .2s}
+.speed-card:hover{border-color:var(--violet);transform:translateY(-2px)}
+.speed-card-img{width:100%;height:70px;object-fit:cover;filter:brightness(.4)}
+.speed-card-body{padding:12px 14px}
+.speed-q{font-size:13px;color:var(--text);line-height:1.5}
+.speed-answer{font-size:12px;color:var(--ok);margin-top:6px;display:none;font-style:italic}
+.speed-score-display{background:var(--bg-card);border:1px solid rgba(139,92,246,.15);border-radius:var(--rl);padding:20px 24px;margin:16px 0;text-align:center}
+.speed-score-num{font-family:var(--hd);font-size:2.5rem;font-weight:800;color:var(--violet)}
+.speed-score-label{font-family:var(--hd);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--mu);margin-top:4px}
+
+/* Q ITEMS */
+.q-item{background:var(--bg-card);border:1px solid rgba(255,255,255,.07);border-radius:var(--r);padding:18px;margin:12px 0}
+.q-item p{font-size:15px;margin-bottom:12px;font-weight:500}
+.q-opts{display:flex;flex-wrap:wrap;gap:8px}
+.q-opt{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:var(--text);font-family:var(--bd);font-size:13px;padding:8px 16px;border-radius:20px;cursor:pointer;transition:all .2s}
+.q-opt:hover{border-color:var(--violet);color:var(--violet)}
+.q-opt.ok{background:var(--ok-f);border-color:var(--ok);color:var(--ok)}
+.q-opt.bad{background:var(--danger-f);border-color:var(--danger);color:var(--danger)}
+.q-opt:disabled{cursor:not-allowed}
+.q-fb{font-size:13px;margin-top:10px;display:none;padding:8px 12px;border-radius:var(--r)}
+.q-fb.ok-fb{background:var(--ok-f);color:var(--ok)}
+.q-fb.bad-fb{background:var(--danger-f);color:var(--danger)}
+.score-display{font-family:var(--hd);font-size:1.1rem;color:var(--violet);margin:12px 0}
+
+/* SOURCE CARDS */
+.source-card{background:var(--bg-card);border:1px solid rgba(255,255,255,.07);border-radius:var(--rl);overflow:hidden;margin:14px 0}
+.source-card-img{width:100%;height:100px;object-fit:cover;filter:brightness(.35)}
+.source-card-inner{padding:18px}
+.source-type{font-family:var(--hd);font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--gold);margin-bottom:8px}
+.source-text{font-size:14px;color:var(--text);line-height:1.7;padding:14px 16px;background:rgba(139,92,246,.04);border:1px solid rgba(139,92,246,.1);border-radius:var(--r);margin-bottom:10px}
+.source-q{font-size:13px;color:var(--mu);font-style:italic}
+
+/* SELF-RATING */
+.slider-group{display:flex;flex-direction:column;gap:14px;margin:16px 0}
+.slider-item{background:var(--bg-card);border:1px solid rgba(255,255,255,.07);border-radius:var(--r);padding:16px 18px}
+.slider-label{font-size:14px;color:var(--text);margin-bottom:8px}
+.slider-range{width:100%;accent-color:var(--violet);cursor:pointer}
+.slider-val{font-family:var(--hd);font-size:14px;font-weight:800;color:var(--violet);text-align:center;margin-top:4px}
+.slider-feedback{background:var(--bg-card);border:1px solid rgba(139,92,246,.15);border-radius:var(--rl);padding:20px;margin-top:14px;text-align:center;display:none}
+
+/* LEADERBOARD */
+.lb-input{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.lb-input input{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:var(--text);font-family:var(--bd);font-size:14px;padding:8px 14px;border-radius:var(--r);flex:1;min-width:100px}
+.lb-input input:focus{outline:none;border-color:var(--violet)}
+.lb-table{width:100%;border-collapse:collapse}
+.lb-table th{background:rgba(139,92,246,.08);color:var(--violet);font-family:var(--hd);font-weight:700;font-size:11px;letter-spacing:.1em;text-transform:uppercase;padding:10px 14px;text-align:left;border-bottom:1px solid rgba(139,92,246,.2)}
+.lb-table td{padding:10px 14px;border-bottom:1px solid rgba(255,255,255,.05);font-size:14px}
+.lb-table tr:first-child td{color:var(--gold)}
+.lb-table tr:nth-child(2) td{color:var(--violet2)}
+
+/* CERTIFICATE */
+.cert-area{background:var(--bg-card);border:1px solid rgba(255,209,102,.15);border-radius:var(--rl);padding:24px;margin:16px 0}
+.cert-input{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.cert-input input{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:var(--text);font-family:var(--bd);font-size:14px;padding:8px 14px;border-radius:var(--r);flex:1}
+.cert-input input:focus{outline:none;border-color:var(--violet)}
+.cert-result{display:none;margin-top:16px;background:linear-gradient(135deg,rgba(139,92,246,.08),rgba(167,139,250,.04));border:2px solid rgba(139,92,246,.3);border-radius:var(--rl);padding:36px;text-align:center}
+.cert-watermark{font-family:var(--hd);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--mu2);margin-bottom:14px}
+.cert-title{font-family:var(--hd);font-size:.9rem;color:var(--mu);margin-bottom:8px}
+.cert-name{font-family:var(--hd);font-size:1.8rem;font-weight:800;color:#fff;margin-bottom:8px}
+.cert-detail{font-size:14px;color:var(--mu);margin-bottom:4px}
+.cert-skills{font-size:13px;color:var(--violet2);margin-top:12px;font-style:italic;line-height:1.6}
+.cert-date{font-family:var(--hd);font-size:11px;color:var(--mu2);margin-top:14px;letter-spacing:.1em}
+
+/* PHRASES */
+.phrase-row{display:flex;align-items:center;gap:0;background:var(--bg-card);border-radius:var(--r);margin:8px 0;border-left:3px solid var(--violet);overflow:hidden}
+.phrase-row-img{width:60px;height:60px;object-fit:cover;filter:brightness(.4);flex-shrink:0}
+.phrase-row-text{padding:10px 16px;flex:1}
+.phrase-en{font-size:14px;font-weight:500}
+.phrase-es{font-size:13px;color:var(--mu);font-style:italic;margin-top:2px}
+
+/* CHECKLIST & WIN */
+.checklist{list-style:none;margin:14px 0}
+.checklist li{display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:14px}
+.checklist li:last-child{border-bottom:none}
+.checklist input[type=checkbox]{accent-color:var(--violet);width:16px;height:16px;margin-top:2px;cursor:pointer;flex-shrink:0}
+.win-box{background:var(--bg-card);border:1px solid rgba(255,209,102,.2);border-radius:var(--rl);padding:24px;margin:16px 0}
+.win-box textarea{width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:var(--text);font-family:var(--bd);font-size:14px;padding:12px;border-radius:var(--r);resize:vertical;min-height:80px}
+.win-box textarea:focus{outline:none;border-color:var(--violet)}
+.win-result{display:none;margin-top:14px;padding:14px 18px;background:var(--gold-f);border:1px solid rgba(255,209,102,.3);border-radius:var(--r);font-size:15px}
+.badge-showcase{display:flex;flex-wrap:wrap;gap:20px;justify-content:center;margin:24px 0}
+.bs-item{text-align:center;display:flex;flex-direction:column;align-items:center;gap:8px}
+.bs-icon{font-size:2.8rem;opacity:.25;filter:grayscale(1);transition:all .4s}
+.bs-icon.earned{opacity:1;filter:none}
+.bs-label{font-family:var(--hd);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--mu)}
+
+/* PB */
+.pb-wrap{margin:10px 0}
+.pb-label{font-family:var(--hd);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--mu);margin-bottom:6px}
+.pb-track{height:6px;background:rgba(255,255,255,.08);border-radius:3px}
+.pb-fill{height:100%;background:linear-gradient(90deg,var(--violet),var(--violet2));border-radius:3px;transition:width .5s ease}
+
+/* FOOTER */
+footer{background:rgba(8,8,8,.95);border-top:1px solid rgba(139,92,246,.1);padding:20px 24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+.footer-levels{display:flex;gap:4px;flex-wrap:wrap}
+.fl{padding:4px 10px;font-family:var(--hd);font-size:10px;font-weight:700;background:rgba(255,255,255,.04);color:var(--mu2);border-radius:4px}
+.fl.active{background:var(--violet);color:#fff}
+.footer-copy{font-family:var(--hd);font-size:10px;color:var(--mu2);letter-spacing:.08em}
+
+@media(max-width:640px){section{padding:32px 16px}.hdr{padding:32px 20px 28px;min-height:260px}.s-banner{height:130px}.speed-grid{grid-template-columns:1fr}.lb-input,.cert-input{flex-direction:column}}
+</style>
+</head>
+<body>
+
+<canvas id="cft"></canvas>
+<div id="prog"></div>
+<button id="smt" onclick="toggleSM()"><span class="dot"></span><span id="smt-label">Teacher Mode</span></button>
+
+<nav id="nav">
+  <a href="#s1">§1 Hot Take</a>
+  <a href="#s2">§2 Debate</a>
+  <a href="#s3">§3 Relay</a>
+  <a href="#s4">§4 Speed Round</a>
+  <a href="#s5">§5 Solo Challenge</a>
+  <a href="#s6">§6 Source Analysis</a>
+  <a href="#s7">§7 Self-Rating</a>
+  <a href="#s8">§8 Certificate</a>
+</nav>
+
+<div id="bstrip">
+  <span class="bl">Badges:</span>
+  <span class="bdg" id="b1">🔥</span>
+  <span class="bdg" id="b2">⚡</span>
+  <span class="bdg" id="b3">🎤</span>
+  <span class="bdg" id="b4">🔍</span>
+  <span class="bdg" id="b5">🏆</span>
+</div>
+
+<!-- HEADER -->
+<div class="hdr">
+  <img src="https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=1200&q=80" alt="airport runway city at night aerial">
+  <div class="hdr-overlay"></div>
+  <div class="hdr-content">
+    <div class="hdr-eyebrow">A1.2 · Module 3 · Session 4B — Application &amp; Mastery</div>
+    <h1>Airport Navigation<br>Under Pressure 🔥</h1>
+    <div class="hdr-meta">
+      <span class="hdr-tag">A1.2</span>
+      <span class="hdr-tag">Module 3</span>
+      <span class="hdr-tag hdr-tag-gold">Session 4 of 5</span>
+      <span class="hdr-tag hdr-tag-danger">PRODUCTION MODE</span>
+      <span class="hdr-tag hdr-tag-ok">120 min</span>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ §1 HOT TAKE ══════════ -->
+<section id="s1">
+  <div class="s-banner">
+    <img src="https://images.unsplash.com/photo-1548484352-ea579e5233a8?w=900&q=80" alt="airport terminal rush pressure travel">
+    <div class="s-banner-overlay"></div>
+    <div class="s-banner-content">
+      <div class="s-num">01</div>
+      <div class="s-info">
+        <div class="s-label">§1</div>
+        <div class="s-title">Hot Take — 60 Seconds, No Notes</div>
+        <div class="s-time">⏱ 5 min · Imperatives + Object Pronouns at speed</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tn-wrap to">
+    <button class="tn-btn" onclick="toggleTN('tn1')"><span>👁 Teacher Notes — §1</span><span class="arr" id="arr-tn1">▼</span></button>
+    <div class="tn-panel" id="tn1">
+      <div class="tn-layer tn-l1"><div class="tn-layer-tag">📋 Logistics</div><p>This is a pressure activity. 60 seconds per student — no pauses, no notes. Goal: automatic production of imperatives + object pronouns, NOT perfection. Count every object pronoun used. 4+ in 60 seconds = badge 🔥 earned.</p></div>
+      <div class="tn-layer tn-l2"><div class="tn-layer-tag">🎯 Pedagogical Focus</div><p>If student freezes: say "I'll meet…" — that single prompt should restart them. The imperative verbs from S4A must be automatic now. Monitor for: "Go to straight" (wrong) vs "Go straight" (correct), and "Call to me" (wrong) vs "Call me" (correct).</p></div>
+      <div class="tn-layer tn-l3"><div class="tn-layer-tag">💡 Upsell</div><p>Tell students: "In S4B you don't study — you perform. Everything you learned in S4A is now the tool. The goal is fluency in real situations." This reframes the session as a showcase, not a test.</p></div>
+    </div>
+  </div>
+
+  <div class="hot-card">
+    <img class="hot-img" src="https://images.unsplash.com/photo-1520175480921-4edfa2983e0f?w=900&q=80" alt="lost traveler stressed at airport">
+    <div class="hot-inner">
+      <div style="font-family:var(--hd);font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--danger);margin-bottom:10px">🚨 Scenario — 11:45 PM, GTO Airport</div>
+      <div class="hot-scenario">Your VIP client from Germany just landed. He has his luggage. He calls you in a panic — his phone battery is at 2%. You have 60 seconds to give him complete instructions: from baggage claim to your car outside at ground transportation. After that, his phone dies.</div>
+      <div class="hot-prompt">Go. Use imperatives. Use object pronouns. Don't stop.</div>
+    </div>
+  </div>
+
+  <div class="card card-cyan">
+    <div class="card-inner">
+      <p style="font-family:var(--hd);font-size:.85rem;letter-spacing:.1em;text-transform:uppercase;color:var(--violet);margin-bottom:16px">🔥 HOT TAKE TIMER · 60 SECONDS</p>
+      <div class="timer-wrap">
+        <svg class="arc-svg" width="110" height="110" viewBox="0 0 110 110">
+          <circle class="arc-bg" cx="55" cy="55" r="48"/>
+          <circle class="arc-fill" id="htArc" cx="55" cy="55" r="48" stroke-dasharray="301.6" stroke-dashoffset="0"/>
+          <text class="arc-label" x="55" y="60" text-anchor="middle" id="htTime">1:00</text>
+          <text class="arc-sub" x="55" y="72" text-anchor="middle">sec</text>
+        </svg>
+        <div class="timer-btns">
+          <button class="btn btn-danger btn-sm" onclick="startTimer('htArc','htTime',60,'b1',301.6)">🔥 START</button>
+          <button class="btn btn-outline btn-sm" onclick="resetTimer('htArc','htTime',60,301.6)">RESET</button>
+        </div>
+      </div>
+      <div style="font-size:13px;color:var(--mu);text-align:center;margin-top:8px">Partner counts object pronouns · 4+ = Badge 🔥</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ §2 DEBATE — Business Class vs Economy ══════════ -->
+<section id="s2">
+  <div class="s-banner">
+    <img src="https://images.unsplash.com/photo-1493246507139-91e8fad9978e?w=900&q=80" alt="airplane interior seats premium economy">
+    <div class="s-banner-overlay"></div>
+    <div class="s-banner-content">
+      <div class="s-num">02</div>
+      <div class="s-info">
+        <div class="s-label">§2</div>
+        <div class="s-title">Debate — Business Class vs Economy</div>
+        <div class="s-time">⏱ 10 min · Object pronouns in arguments · Debate meter</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tn-wrap to">
+    <button class="tn-btn" onclick="toggleTN('tn2')"><span>👁 Teacher Notes — §2</span><span class="arr" id="arr-tn2">▼</span></button>
+    <div class="tn-panel" id="tn2">
+      <div class="tn-layer tn-l1"><div class="tn-layer-tag">📋 Logistics</div><p>Assign sides randomly. 90 seconds per side, then switch. Debate meter: teacher clicks Agree/Disagree after each argument. Winner: most object pronouns used correctly + strongest argument. 2 rounds per student.</p></div>
+      <div class="tn-layer tn-l2"><div class="tn-layer-tag">🎯 Pedagogical Focus</div><p>Every argument MUST include at least one object pronoun. If student argues without one: "Say that again — but replace the noun with him/her/it/them." This forces real-time self-correction.</p></div>
+      <div class="tn-layer tn-l3"><div class="tn-layer-tag">💡 Corporate Link</div><p>This debate is 100% relevant: many companies in Bajío sector have expense policies for business vs economy. Students who can argue this in English can participate in real procurement conversations.</p></div>
+    </div>
+  </div>
+
+  <p style="font-size:15px;font-weight:500;color:var(--text);margin-bottom:16px">Your company sends clients and staff on business trips. Which seat class should they book — and why?</p>
+
+  <div class="debate-grid">
+    <div class="debate-side" style="border-color:rgba(255,209,102,.2)">
+      <img class="debate-side-img" src="https://images.unsplash.com/photo-1545987796-200677ee1011?w=600&q=80" alt="business class airplane seats wide">
+      <div class="debate-side-inner">
+        <div class="debate-side-label" style="color:var(--gold)">✈️ SIDE A — Business Class</div>
+        <p style="font-size:13px;color:var(--mu);margin-bottom:10px">Clients deserve comfort. Tired executives don't perform well. The extra cost is worth it.</p>
+        <ul class="debate-starters">
+          <li>"Book <span class="obj">it</span> for <span class="obj">them</span> — they fly 10 hours. They need <span class="obj">it</span>."</li>
+          <li>"Show <span class="obj">them</span> respect — our clients expect <span class="obj">it</span>."</li>
+          <li>"Give <span class="obj">them</span> a comfortable seat and they'll trust <span class="obj">us</span> more."</li>
+        </ul>
+      </div>
+    </div>
+    <div class="debate-side" style="border-color:rgba(139,92,246,.2)">
+      <img class="debate-side-img" src="https://images.unsplash.com/photo-1530521954074-e64f6810b32d?w=600&q=80" alt="economy airplane seats rows passengers">
+      <div class="debate-side-inner">
+        <div class="debate-side-label" style="color:var(--violet)">💺 SIDE B — Economy</div>
+        <p style="font-size:13px;color:var(--mu);margin-bottom:10px">Economy is professional too. Save the company money. Use the savings to improve services.</p>
+        <ul class="debate-starters">
+          <li>"Book <span class="obj">it</span> in economy — the company needs to save <span class="obj">it</span> for other things."</li>
+          <li>"Tell <span class="obj">them</span> economy is fine — a 2-hour flight doesn't need <span class="obj">it</span>."</li>
+          <li>"Use the money — invest <span class="obj">it</span> in better products for <span class="obj">them</span>."</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="debate-meter">
+    <p style="font-family:var(--hd);font-size:.85rem;letter-spacing:.1em;text-transform:uppercase;color:var(--violet);margin-bottom:6px">📊 Class Debate Meter</p>
+    <div class="dm-labels"><span>Economy Wins</span><span>Business Class Wins</span></div>
+    <div class="dm-track"><div class="dm-fill" id="dmFill"></div></div>
+    <p style="font-size:13px;color:var(--mu);text-align:center;margin-bottom:12px" id="dmMsg">Balanced debate — keep going!</p>
+    <div class="dm-btns">
+      <button class="btn btn-outline btn-sm" onclick="moveMeter(-12)">← Economy point</button>
+      <button class="btn btn-outline btn-sm" onclick="moveMeter(12)">Business Class point →</button>
+    </div>
+  </div>
+
+  <div class="card card-cyan">
+    <div class="card-inner">
+      <p style="font-family:var(--hd);font-size:.85rem;letter-spacing:.1em;text-transform:uppercase;color:var(--violet);margin-bottom:14px">⏱ DEBATE TIMER · 90 SECONDS PER SIDE</p>
+      <div class="timer-wrap">
+        <svg class="arc-svg" width="100" height="100" viewBox="0 0 100 100">
+          <circle class="arc-bg" cx="50" cy="50" r="44"/>
+          <circle class="arc-fill" id="dbArc" cx="50" cy="50" r="44" stroke-dasharray="276.5" stroke-dashoffset="0"/>
+          <text class="arc-label" x="50" y="54" text-anchor="middle" id="dbTime">1:30</text>
+          <text class="arc-sub" x="50" y="66" text-anchor="middle">sec</text>
+        </svg>
+        <div class="timer-btns">
+          <button class="btn btn-cyan btn-sm" onclick="startTimer('dbArc','dbTime',90,'b2',276.5)">START</button>
+          <button class="btn btn-outline btn-sm" onclick="resetTimer('dbArc','dbTime',90,276.5)">RESET</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ §3 RELAY — Airport Instruction Relay (unique visual) ══════════ -->
+<section id="s3">
+  <div class="s-banner">
+    <img src="https://images.unsplash.com/photo-1521618755572-156ae0cdd74d?w=900&q=80" alt="airport walkway corridor direction signs movement">
+    <div class="s-banner-overlay"></div>
+    <div class="s-banner-content">
+      <div class="s-num">03</div>
+      <div class="s-info">
+        <div class="s-label">§3</div>
+        <div class="s-title">Relay — Airport Instruction Board</div>
+        <div class="s-time">⏱ 8 min · 5 real situations · Transform &amp; reveal</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tn-wrap to">
+    <button class="tn-btn" onclick="toggleTN('tn3')"><span>👁 Teacher Notes — §3</span><span class="arr" id="arr-tn3">▼</span></button>
+    <div class="tn-panel" id="tn3">
+      <div class="tn-layer tn-l1"><div class="tn-layer-tag">📋 Logistics</div><p>5 relay items — each shows a Spanish situation. Student must give the English instruction in 15 seconds. Then click "Reveal" to compare. Run as a relay race: Partner A does 1, 3, 5 · Partner B does 2, 4. Timer pressure optional — use the 90s timer from §2.</p></div>
+      <div class="tn-layer tn-l2"><div class="tn-layer-tag">🎯 Pedagogical Focus</div><p>Each situation requires: imperative verb + object pronoun. If student uses subject pronoun instead ("call he" instead of "call him") — correct immediately and repeat the item. Pattern drilling disguised as relay.</p></div>
+      <div class="tn-layer tn-l3"><div class="tn-layer-tag">💡 Badge Rule</div><p>Badge 🎤 unlocks when student completes all 5 relay items with at least 3 correct object pronouns. Teacher tracks — student self-reports at the end of the relay.</p></div>
+    </div>
+  </div>
+
+  <p style="font-size:14px;color:var(--mu);margin-bottom:16px">Each situation is in Spanish. Transform it into English — use an imperative and an object pronoun. Then click Reveal to compare.</p>
+
+  <div class="relay-board">
+    <div class="relay-board-hdr">
+      <div class="relay-board-icon">🛫</div>
+      <div>
+        <div class="relay-board-title">Airport Instruction Relay</div>
+        <div class="relay-board-sub">5 situations · Transform · Reveal · Compare</div>
+      </div>
+    </div>
+    <div class="relay-board-body">
+
+      <div class="relay-item">
+        <img class="relay-item-img" src="https://images.unsplash.com/photo-1548096747-a2b31ed54f30?w=400&q=80" alt="customs officer checking passport">
+        <div class="relay-item-body">
+          <div class="relay-item-num">RELAY 1</div>
+          <div class="relay-item-q">🇲🇽 "Espérame en la sala de llegadas. Llegaré en 5 minutos." → Say this in English to your client.</div>
+          <div class="relay-item-transform">Must include: imperative + <strong>me</strong></div>
+          <button class="relay-reveal-btn" onclick="revealRelay('ra1')">▶ Reveal Answer</button>
+          <div class="relay-answer" id="ra1">"<span class="imp">Wait for</span> <span class="obj">me</span> in the arrivals hall. I'll be there in 5 minutes." — ✅ Imperative "wait for" + object pronoun "me"</div>
+        </div>
+      </div>
+
+      <div class="relay-item">
+        <img class="relay-item-img" src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&q=80" alt="person walking with suitcase airport">
+        <div class="relay-item-body">
+          <div class="relay-item-num">RELAY 2</div>
+          <div class="relay-item-q">🇲🇽 "Recógela en el área de maletas — la vuelta ya aterrizó." → Tell the driver to pick up your colleague (female).</div>
+          <div class="relay-item-transform">Must include: imperative + <strong>her</strong></div>
+          <button class="relay-reveal-btn" onclick="revealRelay('ra2')">▶ Reveal Answer</button>
+          <div class="relay-answer" id="ra2">"<span class="imp">Pick</span> <span class="obj">her</span> up at baggage claim — her flight already landed." — ✅ "Pick her up" is one phrasal imperative</div>
+        </div>
+      </div>
+
+      <div class="relay-item">
+        <img class="relay-item-img" src="https://images.unsplash.com/photo-1578575437130-527eed3abbec?w=400&q=80" alt="airline gate boarding departure">
+        <div class="relay-item-body">
+          <div class="relay-item-num">RELAY 3</div>
+          <div class="relay-item-q">🇲🇽 "No pierdas tu pase de abordar — lo vas a necesitar en el filtro de seguridad." → Warn a colleague.</div>
+          <div class="relay-item-transform">Must include: negative imperative + <strong>it</strong> (twice)</div>
+          <button class="relay-reveal-btn" onclick="revealRelay('ra3')">▶ Reveal Answer</button>
+          <div class="relay-answer" id="ra3">"<span class="imp">Don't lose</span> your boarding pass — you'll need <span class="obj">it</span> at security. Keep <span class="obj">it</span> in your hand." — ✅ Negative imperative + "it" used twice</div>
+        </div>
+      </div>
+
+      <div class="relay-item">
+        <img class="relay-item-img" src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=400&q=80" alt="taxi ground transportation outside airport">
+        <div class="relay-item-body">
+          <div class="relay-item-num">RELAY 4</div>
+          <div class="relay-item-q">🇲🇽 "Lleva a los clientes al área de transporte terrestre — el chofer los está esperando allá." → Tell your assistant.</div>
+          <div class="relay-item-transform">Must include: imperative + <strong>them</strong></div>
+          <button class="relay-reveal-btn" onclick="revealRelay('ra4')">▶ Reveal Answer</button>
+          <div class="relay-answer" id="ra4">"<span class="imp">Take</span> <span class="obj">them</span> to ground transportation — the driver is waiting for <span class="obj">them</span> there." — ✅ "Take them" + "for them" = 2 object pronouns</div>
+        </div>
+      </div>
+
+      <div class="relay-item">
+        <img class="relay-item-img" src="https://images.unsplash.com/photo-1508739773434-c26b3d09e071?w=400&q=80" alt="airport information desk help desk">
+        <div class="relay-item-body">
+          <div class="relay-item-num">RELAY 5</div>
+          <div class="relay-item-q">🇲🇽 "¿Cuánto tiempo tarda en llegar a nuestra oficina desde el aeropuerto?" → Client asks you this question. Answer AND ask back.</div>
+          <div class="relay-item-transform">Must include: "How long" + "It takes" + <strong>you / us</strong></div>
+          <button class="relay-reveal-btn" onclick="revealRelay('ra5')">▶ Reveal Answer</button>
+          <div class="relay-answer" id="ra5">"It takes <span class="obj">us</span> about 40 minutes by car. — <span class="col">It's a bit of a walk</span> to the parking area, but I'll walk with <span class="obj">you</span>." — ✅ "It takes us" + "with you"</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  <button class="btn btn-cyan" style="margin-top:8px" onclick="earnBadge('b3')">✅ Relay Complete — Claim Badge 🎤</button>
+</section>
+
+<!-- ══════════ §4 SPEED ROUND ══════════ -->
+<section id="s4">
+  <div class="s-banner">
+    <img src="https://images.unsplash.com/photo-1501621667575-af81f1cce69b?w=900&q=80" alt="fast speed blurred lights airport city">
+    <div class="s-banner-overlay"></div>
+    <div class="s-banner-content">
+      <div class="s-num">04</div>
+      <div class="s-info">
+        <div class="s-label">§4</div>
+        <div class="s-title">Speed Round — Airport Flash Cards</div>
+        <div class="s-time">⏱ 6 min · 10 cards · Click to reveal answer · Score yourself</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tn-wrap to">
+    <button class="tn-btn" onclick="toggleTN('tn4')"><span>👁 Teacher Notes — §4</span><span class="arr" id="arr-tn4">▼</span></button>
+    <div class="tn-panel" id="tn4">
+      <div class="tn-layer tn-l1"><div class="tn-layer-tag">📋 Logistics</div><p>10 flash cards. Student says the answer aloud BEFORE clicking. Click to reveal. Self-score: +1 if correct, 0 if not. No penalty for wrong — this builds risk-taking. Target: 8/10. Score above 8 = add +10 leaderboard points.</p></div>
+      <div class="tn-layer tn-l2"><div class="tn-layer-tag">🎯 Pedagogical Focus</div><p>Speed is the goal — not perfection. This round targets automaticity: the student should not need to think about whether to use "him" or "he" at this point in the session. If they hesitate: back to basics in next session.</p></div>
+      <div class="tn-layer tn-l3"><div class="tn-layer-tag">💡 Competitive Option</div><p>Run as class race: first student to answer all 10 correctly wins 5 leaderboard points. Adds energy without pressure on individual errors.</p></div>
+    </div>
+  </div>
+
+  <div class="speed-grid">
+    <div class="speed-card" onclick="toggleSpeed(this)">
+      <img class="speed-card-img" src="https://images.unsplash.com/photo-1593642633279-1796119d5482?w=400&q=80" alt="laptop computer working">
+      <div class="speed-card-body"><div class="speed-q">1. "Avísame cuando llegues." → In English with an object pronoun:</div><div class="speed-answer">"Let <strong>me</strong> know when you arrive." ✅</div></div>
+    </div>
+    <div class="speed-card" onclick="toggleSpeed(this)">
+      <img class="speed-card-img" src="https://images.unsplash.com/photo-1565043589221-1a6fd9ae45c7?w=400&q=80" alt="airport sign customs declaration">
+      <div class="speed-card-body"><div class="speed-q">2. Where do passengers collect their suitcases?</div><div class="speed-answer">Baggage claim ✅</div></div>
+    </div>
+    <div class="speed-card" onclick="toggleSpeed(this)">
+      <img class="speed-card-img" src="https://images.unsplash.com/photo-1480674504987-af2e5aced1f8?w=400&q=80" alt="traveler asking question lost direction">
+      <div class="speed-card-body"><div class="speed-q">3. Your client is a woman. She's at Gate B3. How do you text her: "I'll meet ___ at baggage claim"?</div><div class="speed-answer">"I'll meet <strong>her</strong> at baggage claim." ✅</div></div>
+    </div>
+    <div class="speed-card" onclick="toggleSpeed(this)">
+      <img class="speed-card-img" src="https://images.unsplash.com/photo-1436891620584-47fd0e565afb?w=400&q=80" alt="clock time airport schedule">
+      <div class="speed-card-body"><div class="speed-q">4. "¿Cuánto tiempo tarda?" — Full question in English:</div><div class="speed-answer">"How long does <strong>it</strong> take?" ✅</div></div>
+    </div>
+    <div class="speed-card" onclick="toggleSpeed(this)">
+      <img class="speed-card-img" src="https://images.unsplash.com/photo-1504383633899-a0fc7a8e14d7?w=400&q=80" alt="two clients colleagues airport arrival">
+      <div class="speed-card-body"><div class="speed-q">5. Two clients just landed. Tell the driver: "Go pick ___ up."</div><div class="speed-answer">"Go pick <strong>them</strong> up." ✅</div></div>
+    </div>
+    <div class="speed-card" onclick="toggleSpeed(this)">
+      <img class="speed-card-img" src="https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&q=80" alt="boarding pass plane ticket document">
+      <div class="speed-card-body"><div class="speed-q">6. "La sala de llegadas" in English:</div><div class="speed-answer">The arrivals hall ✅</div></div>
+    </div>
+    <div class="speed-card" onclick="toggleSpeed(this)">
+      <img class="speed-card-img" src="https://images.unsplash.com/photo-1559135197-8a45ea74d367?w=400&q=80" alt="easy obvious location sign arrow">
+      <div class="speed-card-body"><div class="speed-q">7. How do you say "no puedes perderte" in casual English?</div><div class="speed-answer">"You can't miss <strong>it</strong>." ✅</div></div>
+    </div>
+    <div class="speed-card" onclick="toggleSpeed(this)">
+      <img class="speed-card-img" src="https://images.unsplash.com/photo-1464277202850-83049ef21e67?w=400&q=80" alt="security checkpoint scan airport screening">
+      <div class="speed-card-body"><div class="speed-q">8. "Saca tu laptop de tu bolsa" — imperativa negativa equivalente:</div><div class="speed-answer">"Take your laptop <strong>out</strong> of your bag." / "Don't leave it inside." ✅</div></div>
+    </div>
+    <div class="speed-card" onclick="toggleSpeed(this)">
+      <img class="speed-card-img" src="https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=400&q=80" alt="traveler with suitcase walking departure">
+      <div class="speed-card-body"><div class="speed-q">9. "Es un poco de camino" — colloquial English phrase:</div><div class="speed-answer">"It's a bit of a walk." ✅</div></div>
+    </div>
+    <div class="speed-card" onclick="toggleSpeed(this)">
+      <img class="speed-card-img" src="https://images.unsplash.com/photo-1569254025631-cc05bb9a3ceb?w=400&q=80" alt="luggage suitcase uncountable airport">
+      <div class="speed-card-body"><div class="speed-q">10. "I have three luggages." — What's wrong? Give the correct sentence.</div><div class="speed-answer">"Luggage is uncountable! → I have a lot of luggage." ✅</div></div>
+    </div>
+  </div>
+
+  <div class="speed-score-display">
+    <div class="speed-score-label">My Score</div>
+    <div class="speed-score-num"><span id="spScore">0</span><span style="font-size:1.5rem;color:var(--mu)">/10</span></div>
+    <div style="display:flex;gap:8px;justify-content:center;margin-top:12px">
+      <button class="btn btn-cyan btn-sm" onclick="updateSp(1)">+1 Correct</button>
+      <button class="btn btn-outline btn-sm" onclick="updateSp(-1)">-1</button>
+      <button class="btn btn-outline btn-sm" onclick="resetSp()">Reset</button>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ §5 SOLO CHALLENGE ══════════ -->
+<section id="s5">
+  <div class="s-banner">
+    <img src="https://images.unsplash.com/photo-1462899006636-339e08d1844e?w=900&q=80" alt="solo challenge airport window reflection">
+    <div class="s-banner-overlay"></div>
+    <div class="s-banner-content">
+      <div class="s-num">05</div>
+      <div class="s-info">
+        <div class="s-label">§5</div>
+        <div class="s-title">Solo Challenge — Full Airport Phone Call</div>
+        <div class="s-time">⏱ 8 min · 2 minutes · No notes · No help · Imperatives + pronouns throughout</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tn-wrap to">
+    <button class="tn-btn" onclick="toggleTN('tn5')"><span>👁 Teacher Notes — §5</span><span class="arr" id="arr-tn5">▼</span></button>
+    <div class="tn-panel" id="tn5">
+      <div class="tn-layer tn-l1"><div class="tn-layer-tag">📋 Logistics</div><p>Individual performance. 120-second arc timer. Student plays Mónica Herrera — guiding a client from the moment the plane lands to the car. No interruptions. Teacher only marks errors on paper — correct after timer stops.</p></div>
+      <div class="tn-layer tn-l2"><div class="tn-layer-tag">🎯 Pedagogical Focus</div><p>Success criteria: 5 imperatives + 4 object pronouns + at least 1 "How long does it take" + at least 1 colloquial phrase. Note which criteria students miss — that's S5 content for review.</p></div>
+      <div class="tn-layer tn-l3"><div class="tn-layer-tag">💡 Evidence for Corporate Clients</div><p>This is the moment to record (with student permission). 2 minutes of fluent business airport English is concrete evidence of A1.2 progress. HR departments at Bajío manufacturers respond to audio samples — it's worth capturing.</p></div>
+    </div>
+  </div>
+
+  <div class="card card-danger">
+    <img class="card-img" src="https://images.unsplash.com/photo-1500835556837-99ac94a94552?w=900&q=80" alt="phone call urgent airport guide navigation" style="height:140px">
+    <div class="card-inner">
+      <p style="font-family:var(--hd);font-size:.85rem;letter-spacing:.1em;text-transform:uppercase;color:var(--danger);margin-bottom:12px">🎤 YOU ARE MÓNICA HERRERA</p>
+      <p style="font-size:15px;font-weight:500;margin-bottom:12px">Your client James just called. He landed 5 minutes ago, has his luggage, and is somewhere near security. Guide him all the way to your car. In 2 minutes. Cover:</p>
+      <ul style="font-size:14px;color:var(--mu);margin-left:18px;line-height:2">
+        <li>Where he is now + what to do first (imperative + object pronoun)</li>
+        <li>Step-by-step directions to ground transportation (4 imperatives minimum)</li>
+        <li>How long it will take him to reach you</li>
+        <li>What he'll see when he gets there (use "you can't miss it")</li>
+        <li>A warm closing line</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card card-cyan">
+    <div class="card-inner">
+      <p style="font-family:var(--hd);font-size:.85rem;letter-spacing:.1em;text-transform:uppercase;color:var(--violet);margin-bottom:14px">⏱ SOLO CHALLENGE — 2:00 MINUTES</p>
+      <div class="timer-wrap">
+        <svg class="arc-svg" width="130" height="130" viewBox="0 0 130 130">
+          <circle class="arc-bg" cx="65" cy="65" r="58"/>
+          <circle class="arc-fill" id="scArc" cx="65" cy="65" r="58" stroke-dasharray="364.4" stroke-dashoffset="0"/>
+          <text class="arc-label" x="65" y="71" text-anchor="middle" id="scTime">2:00</text>
+          <text class="arc-sub" x="65" y="84" text-anchor="middle">sec</text>
+        </svg>
+        <div class="timer-btns">
+          <button class="btn btn-cyan" onclick="startTimer('scArc','scTime',120,'b3',364.4)">🎤 START CHALLENGE</button>
+          <button class="btn btn-outline btn-sm" onclick="resetTimer('scArc','scTime',120,364.4)">RESET</button>
+        </div>
+      </div>
+      <p style="font-size:13px;color:var(--mu);text-align:center;margin-top:8px">Partner tracks: ✅ Imperatives · ✅ Object pronouns · ✅ "How long" · ✅ Colloquial</p>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ §6 SOURCE ANALYSIS ══════════ -->
+<section id="s6">
+  <div class="s-banner">
+    <img src="https://images.unsplash.com/photo-1512758017271-d7b84c2113f1?w=900&q=80" alt="reading analyzing documents messages screen">
+    <div class="s-banner-overlay"></div>
+    <div class="s-banner-content">
+      <div class="s-num">06</div>
+      <div class="s-info">
+        <div class="s-label">§6</div>
+        <div class="s-title">Source Analysis — Real Airport Messages</div>
+        <div class="s-time">⏱ 8 min · 4 authentic texts · Find the grammar · Metacognition</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tn-wrap to">
+    <button class="tn-btn" onclick="toggleTN('tn6')"><span>👁 Teacher Notes — §6</span><span class="arr" id="arr-tn6">▼</span></button>
+    <div class="tn-panel" id="tn6">
+      <div class="tn-layer tn-l1"><div class="tn-layer-tag">📋 Logistics</div><p>4 real-world texts (WhatsApp, airline announcement, email, hotel message). Students read and answer the metacognitive question about grammar. No right/wrong — this is critical analysis. Badge 🔍 when student completes all 4.</p></div>
+      <div class="tn-layer tn-l2"><div class="tn-layer-tag">🎯 Pedagogical Focus</div><p>The metacognitive question is more important than the reading. "Why did they choose 'it' here?" forces conscious grammar awareness — the final step before automaticity. Don't rush this section.</p></div>
+      <div class="tn-layer tn-l3"><div class="tn-layer-tag">💡 Colloquial Note</div><p>Source 2 contains "Ladies and gents" (informal airline). Use this to contrast: "Ladies and gentlemen" (formal) vs "Ladies and gents" (conversational). A small but memorable distinction for A1.2 students.</p></div>
+    </div>
+  </div>
+
+  <div class="source-card">
+    <img class="source-card-img" src="https://images.unsplash.com/photo-1622020457014-86064e1e3e42?w=900&q=80" alt="whatsapp message phone chat business">
+    <div class="source-card-inner">
+      <div class="source-type">💬 WhatsApp — Colleague Message</div>
+      <div class="source-text">Hey! I just landed. I have my luggage. Where are you? — I'm waiting for <span class="obj">you</span> in arrivals. <span class="imp">Walk past</span> the pharmacy and <span class="imp">follow</span> the signs for exits. <span class="col">You can't miss</span> <span class="obj">me</span> — I have a blue ConnectPro jacket. <span class="col">Let</span> <span class="obj">me</span> know when you see <span class="obj">me</span>!</div>
+      <div class="source-q">❓ Count the object pronouns: how many are there? Which verb + pronoun pattern appears most often?</div>
+    </div>
+  </div>
+
+  <div class="source-card">
+    <img class="source-card-img" src="https://images.unsplash.com/photo-1610216705422-caa3fcb6d158?w=900&q=80" alt="airplane cabin announcement speaker flight">
+    <div class="source-card-inner">
+      <div class="source-type">📢 Airline Announcement — Boarding Call</div>
+      <div class="source-text">Ladies and gentlemen, we are now boarding Flight AM492 to Monterrey. Please have your boarding pass and ID ready. <span class="imp">Show</span> <span class="obj">them</span> to the agent at the gate. <span class="imp">Don't place</span> your carry-on luggage in the aisle — <span class="imp">put</span> <span class="obj">it</span> in the overhead bin. We'll <span class="imp">ask</span> <span class="obj">you</span> to take your seat as quickly as possible. Thank <span class="obj">you</span> for flying with us.</div>
+      <div class="source-q">❓ How many different object pronouns appear? Circle each one. Why does the announcement use "them" for "boarding pass and ID"?</div>
+    </div>
+  </div>
+
+  <div class="source-card">
+    <img class="source-card-img" src="https://images.unsplash.com/photo-1587620962725-abab19836100?w=900&q=80" alt="email compose business professional laptop">
+    <div class="source-card-inner">
+      <div class="source-type">📧 Email — Client Arrival Confirmation</div>
+      <div class="source-text">Dear James, We are confirming your arrival at BJX Airport on Friday at 18:30. Our driver will be there to <span class="imp">meet</span> <span class="obj">you</span> at arrivals — <span class="imp">look for</span> <span class="obj">him</span>, he'll have a ConnectPro sign. <span class="imp">Call</span> <span class="obj">me</span> if you have any problems finding <span class="obj">him</span>. It takes about 45 minutes to <span class="imp">get</span> <span class="obj">you</span> to our offices. We look forward to seeing <span class="obj">you</span>. — Mónica</div>
+      <div class="source-q">❓ "him" appears twice — both refer to the driver. Why does good writing use "him" instead of repeating "the driver"? What rule is this?</div>
+    </div>
+  </div>
+
+  <div class="source-card">
+    <img class="source-card-img" src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=900&q=80" alt="hotel text message guest arrival">
+    <div class="source-card-inner">
+      <div class="source-type">📱 Hotel Text — Automated Message</div>
+      <div class="source-text">Welcome, Mr. Weber! Your room at Hotel Ejecutivo is ready. <span class="imp">Take</span> the shuttle from ground transportation — <span class="imp">tell</span> the driver <span class="obj">we</span> sent <span class="obj">you</span>. <span class="imp">Call</span> <span class="obj">us</span> if you need any help. It takes <span class="obj">you</span> about 12 minutes to arrive. We'll be waiting for <span class="obj">you</span>. <span class="col">You can't miss us</span> — the hotel sign is very large.</div>
+      <div class="source-q">❓ This text uses "us" three times — who is "us"? And "you" appears four times — is it always the same person? What grammar point links all four texts?</div>
+    </div>
+  </div>
+
+  <button class="btn btn-cyan" style="margin-top:8px" onclick="earnBadge('b4')">🔍 Source Analysis Complete — Badge Earned</button>
+</section>
+
+<!-- ══════════ §7 SELF-RATING + LEADERBOARD ══════════ -->
+<section id="s7">
+  <div class="s-banner">
+    <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=900&q=80" alt="self assessment reflection person writing">
+    <div class="s-banner-overlay"></div>
+    <div class="s-banner-content">
+      <div class="s-num">07</div>
+      <div class="s-info">
+        <div class="s-label">§7</div>
+        <div class="s-title">Self-Rating &amp; Class Leaderboard</div>
+        <div class="s-time">⏱ 5 min · 3 sliders · Dynamic feedback · Rankings</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tn-wrap to">
+    <button class="tn-btn" onclick="toggleTN('tn7')"><span>👁 Teacher Notes — §7</span><span class="arr" id="arr-tn7">▼</span></button>
+    <div class="tn-panel" id="tn7">
+      <div class="tn-layer tn-l1"><div class="tn-layer-tag">📋 Logistics</div><p>3 sliders — students self-rate 1–10 on: object pronoun accuracy / airport vocabulary / speaking fluency. Feedback generates dynamically based on average. Leaderboard: teacher adds names + session points (speed round score × 5 + relay points). Visible to class on main screen.</p></div>
+      <div class="tn-layer tn-l2"><div class="tn-layer-tag">🎯 Pedagogical Focus</div><p>Self-rating is NOT teacher assessment. Never comment publicly on scores. If student rates themselves low, ask privately: "Which part felt hardest?" → use for S5 review planning. Students who rate themselves high AND performed well get S5 preview homework.</p></div>
+      <div class="tn-layer tn-l3"><div class="tn-layer-tag">💡 Upsell Moment</div><p>After leaderboard: "In S5 — Module 3 Exit — you will present a full business trip from hotel check-in to airport navigation in front of the class. Start thinking about your real travel story." This creates anticipation and homework motivation without formal homework assignment.</p></div>
+    </div>
+  </div>
+
+  <div class="slider-group">
+    <div class="slider-item">
+      <div class="slider-label">🎯 I used object pronouns correctly today (me/him/her/it/us/them after verbs)</div>
+      <input type="range" class="slider-range" min="1" max="10" value="5" id="sl1" oninput="updateSliders()">
+      <div class="slider-val" id="sv1">5</div>
+    </div>
+    <div class="slider-item">
+      <div class="slider-label">✈️ I can navigate an airport and guide someone in English confidently</div>
+      <input type="range" class="slider-range" min="1" max="10" value="5" id="sl2" oninput="updateSliders()">
+      <div class="slider-val" id="sv2">5</div>
+    </div>
+    <div class="slider-item">
+      <div class="slider-label">🗣️ I spoke with fluency and speed today — I didn't stop to translate</div>
+      <input type="range" class="slider-range" min="1" max="10" value="5" id="sl3" oninput="updateSliders()">
+      <div class="slider-val" id="sv3">5</div>
+    </div>
+  </div>
+
+  <div class="slider-feedback" id="slFb">
+    <p style="font-family:var(--hd);font-size:1rem;font-weight:700;margin-bottom:6px" id="slMsg"></p>
+    <p style="font-size:13px;color:var(--mu)" id="slSub"></p>
+  </div>
+
+  <!-- Leaderboard -->
+  <div style="margin-top:28px">
+    <h3 style="font-family:var(--hd);font-size:1rem;font-weight:700;color:var(--violet);margin-bottom:16px;letter-spacing:.05em">🏆 SESSION LEADERBOARD</h3>
+    <div class="lb-input">
+      <input type="text" id="lbName" placeholder="Student name">
+      <input type="number" id="lbPts" placeholder="Points" min="0" max="200">
+      <button class="btn btn-cyan btn-sm" onclick="addLB()">Add</button>
+      <button class="btn btn-outline btn-sm" onclick="resetLB()">Reset</button>
+    </div>
+    <div style="background:var(--bg-card);border:1px solid rgba(139,92,246,.15);border-radius:var(--rl);overflow:hidden">
+      <table class="lb-table" style="margin:0">
+        <thead><tr><th>#</th><th>Name</th><th>Points</th></tr></thead>
+        <tbody id="lbBody"><tr><td colspan="3" style="text-align:center;color:var(--mu);padding:20px;font-size:13px">No students added yet</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ §8 CERTIFICATE + MY WIN ══════════ -->
+<section id="s8">
+  <div class="s-banner">
+    <img src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=900&q=80" alt="achievement graduation certificate celebration success">
+    <div class="s-banner-overlay"></div>
+    <div class="s-banner-content">
+      <div class="s-num">08</div>
+      <div class="s-info">
+        <div class="s-label">§8</div>
+        <div class="s-title">Certificate, Phrases &amp; My Win</div>
+        <div class="s-time">⏱ 5 min · Generate certificate · 3 phrases · My win today</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tn-wrap to">
+    <button class="tn-btn" onclick="toggleTN('tn8')"><span>👁 Teacher Notes — §8</span><span class="arr" id="arr-tn8">▼</span></button>
+    <div class="tn-panel" id="tn8">
+      <div class="tn-layer tn-l1"><div class="tn-layer-tag">📋 Logistics</div><p>Certificate generator + badge showcase + 3 phrases + My Win. S5 preview: 30 sec max. This is the emotional close of S4 — celebrate what was accomplished. Never rush this section even if time is short.</p></div>
+      <div class="tn-layer tn-l2"><div class="tn-layer-tag">🎯 Pedagogical Focus</div><p>"I can now" checklist doubles as student self-assessment AND teacher diagnostic. If fewer than 3 items checked: review those specifically in S5 warm-up. If all 5 checked: assign S5 solo performance homework.</p></div>
+      <div class="tn-layer tn-l3"><div class="tn-layer-tag">💡 S5 (Module Exit) Bridge — 30 sec script</div><p>"Session 5 is our Module 3 Exit. You'll present a full business trip story — hotel + airport + directions — in English. No notes. 3 minutes minimum. It's everything from S1 to S4 in one performance. Start practicing tonight." — Done. Maximum impact, minimum time.</p></div>
+    </div>
+  </div>
+
+  <h3 style="font-family:var(--hd);font-size:1rem;font-weight:700;color:var(--violet);margin:0 0 16px;letter-spacing:.05em">BADGE SHOWCASE — SESSION 4B</h3>
+  <div class="badge-showcase">
+    <div class="bs-item"><div class="bs-icon" id="bs1">🔥</div><div class="bs-label">Hot Take<br>Survivor</div></div>
+    <div class="bs-item"><div class="bs-icon" id="bs2">⚡</div><div class="bs-label">Debate<br>Champion</div></div>
+    <div class="bs-item"><div class="bs-icon" id="bs3">🎤</div><div class="bs-label">Relay<br>Finisher</div></div>
+    <div class="bs-item"><div class="bs-icon" id="bs4">🔍</div><div class="bs-label">Source<br>Analyst</div></div>
+    <div class="bs-item"><div class="bs-icon" id="bs5">🏆</div><div class="bs-label">S4B<br>Complete</div></div>
+  </div>
+
+  <h3 style="font-family:var(--hd);font-size:1rem;font-weight:700;color:var(--violet);margin:24px 0 12px;letter-spacing:.05em">I CAN NOW… ✅</h3>
+  <ul class="checklist">
+    <li><input type="checkbox" onchange="checkCL()"><span>Guide a client from baggage claim to ground transportation in 60 seconds using imperatives and object pronouns</span></li>
+    <li><input type="checkbox" onchange="checkCL()"><span>Use all 7 object pronouns correctly in context: me / you / him / her / it / us / them</span></li>
+    <li><input type="checkbox" onchange="checkCL()"><span>Ask and answer "How long does it take?" in both directions</span></li>
+    <li><input type="checkbox" onchange="checkCL()"><span>Use airport colloquial phrases naturally under time pressure</span></li>
+    <li><input type="checkbox" onchange="checkCL()"><span>Analyze real airport communications and identify object pronouns in context</span></li>
+  </ul>
+  <div id="clResult" style="font-size:14px;color:var(--mu);margin-top:8px"></div>
+
+  <!-- Certificate -->
+  <h3 style="font-family:var(--hd);font-size:1rem;font-weight:700;color:var(--violet);margin:28px 0 12px;letter-spacing:.05em">🎓 SESSION CERTIFICATE</h3>
+  <div class="cert-area">
+    <div class="cert-input">
+      <input type="text" id="certName" placeholder="Enter your full name...">
+      <button class="btn btn-cyan btn-sm" onclick="genCert()">Generate Certificate</button>
+    </div>
+    <div class="cert-result" id="certResult">
+      <div class="cert-watermark">Gabriel Turner · English Training</div>
+      <div class="cert-title">This certificate is awarded to</div>
+      <div class="cert-name" id="certDisplayName"></div>
+      <div class="cert-detail">for successfully completing</div>
+      <div class="cert-detail" style="color:var(--violet);font-family:var(--hd);font-weight:700;font-size:1rem;margin:6px 0">A1.2 · Module 3 · Session 4B — Airport Navigation</div>
+      <div class="cert-skills">Skills demonstrated: Imperative instructions for business travel · Object pronouns (me/you/him/her/it/us/them) in context · Airport vocabulary (baggage claim, arrivals hall, ground transportation) · "How long does it take?" · Business travel colloquial English</div>
+      <div class="cert-date" id="certDate"></div>
+    </div>
+  </div>
+
+  <h3 style="font-family:var(--hd);font-size:1rem;font-weight:700;color:var(--violet);margin:28px 0 12px;letter-spacing:.05em">3 PHRASES FOR THIS WEEK</h3>
+  <div class="phrase-row">
+    <img class="phrase-row-img" src="https://images.unsplash.com/photo-1570547196881-cf20616e7e35?w=200&q=80" alt="meeting someone arrivals sign">
+    <div class="phrase-row-text"><div class="phrase-en">Walk past the pharmacy, turn left, and look for me — you can't miss it.</div><div class="phrase-es">Pasa la farmacia, dobla a la izquierda y búscame — no puedes perderte.</div></div>
+  </div>
+  <div class="phrase-row">
+    <img class="phrase-row-img" src="https://images.unsplash.com/photo-1556745753-b2904692b3cd?w=200&q=80" alt="phone call pickup">
+    <div class="phrase-row-text"><div class="phrase-en">Let me know when you land and I'll pick you up at ground transportation.</div><div class="phrase-es">Avísame cuando aterrices y voy a recogerte en transporte terrestre.</div></div>
+  </div>
+  <div class="phrase-row">
+    <img class="phrase-row-img" src="https://images.unsplash.com/photo-1584438784894-089d6a62b8fa?w=200&q=80" alt="business travel professional car drive">
+    <div class="phrase-row-text"><div class="phrase-en">It takes us about 40 minutes — it's a bit of a walk to the car, but I'll show you.</div><div class="phrase-es">Tardamos unos 40 minutos — es un poco de camino al carro, pero te muestro.</div></div>
+  </div>
+
+  <h3 style="font-family:var(--hd);font-size:1rem;font-weight:700;color:var(--violet);margin:28px 0 12px;letter-spacing:.05em">MY WIN TODAY 🏆</h3>
+  <div class="win-box">
+    <p style="font-size:14px;margin-bottom:12px">In English, finish this sentence: <em>"Today I can now say… / Today I performed… / The hardest thing was…"</em></p>
+    <textarea id="winText" placeholder="Write your win in English..."></textarea>
+    <button class="btn btn-cyan" style="margin-top:12px" onclick="saveWin()">💾 Save My Win</button>
+    <div class="win-result" id="winResult"></div>
+  </div>
+
+  <div class="card card-cyan" style="margin-top:28px">
+    <div class="card-inner">
+      <p style="font-family:var(--hd);font-size:.85rem;letter-spacing:.1em;text-transform:uppercase;color:var(--violet);margin-bottom:10px">📌 SESSION 5 — MODULE 3 EXIT TASK</p>
+      <p style="font-size:15px;font-weight:500">Next: <strong>Full Module 3 Integration — Business Trip Presentation</strong></p>
+      <p style="font-size:14px;color:var(--mu);margin-top:6px">You will present a complete business trip story in English: receiving a client at reception → hotel check-in → airport navigation → giving directions to your plant. No notes. Minimum 3 minutes. Everything from Sessions 1–4.</p>
+      <p style="font-size:13px;color:var(--ok);margin-top:10px">🎯 Homework: Think of a real client visit or business trip. Write 5 sentences about it in English. Use object pronouns + imperatives. Bring it to Session 5.</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-levels">
+    <span class="fl">A1.1</span><span class="fl active">A1.2</span><span class="fl">A2.1</span>
+    <span class="fl">A2.2</span><span class="fl">B1.1</span><span class="fl">B1.2</span>
+    <span class="fl">B2.1</span><span class="fl">B2.2</span>
+  </div>
+  <div class="footer-copy">© Gabriel Turner · English Training · GT_A1_2_M3_S4B_TEACHER_v1.html</div>
+</footer>
+
+<script>
+// ─── STATE ───
+const badges={b1:false,b2:false,b3:false,b4:false,b5:false};
+let dmPct=50,spScoreN=0,lbData=[];
+const timerIntervals={};
+
+// ─── SCROLL + NAV ───
+window.addEventListener('scroll',()=>{
+  const el=document.documentElement;
+  document.getElementById('prog').style.width=(el.scrollTop/(el.scrollHeight-el.clientHeight)*100)+'%';
+  document.querySelectorAll('section').forEach(s=>{
+    const a=document.querySelector('#nav a[href="#'+s.id+'"]');
+    if(!a)return;
+    const r=s.getBoundingClientRect();
+    if(r.top<=120&&r.bottom>0)a.classList.add('act');else a.classList.remove('act');
+  });
+});
+
+// ─── STUDENT MODE ───
+function toggleSM(){
+  document.body.classList.toggle('sm');
+  document.getElementById('smt-label').textContent=document.body.classList.contains('sm')?'Student Mode':'Teacher Mode';
+}
+
+// ─── TEACHER NOTES ───
+function toggleTN(id){
+  const p=document.getElementById(id);const a=document.getElementById('arr-'+id);
+  const open=p.style.display==='block';p.style.display=open?'none':'block';
+  if(a)a.textContent=open?'▼':'▲';
+}
+
+// ─── BADGES ───
+function earnBadge(key){
+  if(badges[key])return;badges[key]=true;
+  const el=document.getElementById(key);if(el)el.classList.add('earned');
+  const bs=document.getElementById('bs'+key.slice(1));if(bs)bs.classList.add('earned');
+  if(Object.values(badges).every(v=>v))triggerConfetti();
+}
+
+// ─── CONFETTI ───
+function triggerConfetti(){
+  earnBadge('b5');
+  const cv=document.getElementById('cft');cv.style.display='block';
+  const ctx=cv.getContext('2d');cv.width=window.innerWidth;cv.height=window.innerHeight;
+  const cols=['#8B5CF6','#A78BFA','#FFD166','#22D3A4','#FF4B6E','#fff'];
+  const ps=[];
+  for(let i=0;i<140;i++)ps.push({x:Math.random()*cv.width,y:-20,w:Math.random()*12+4,h:Math.random()*7+3,c:cols[Math.floor(Math.random()*cols.length)],vx:(Math.random()-.5)*5,vy:Math.random()*5+2,rot:Math.random()*360,rv:(Math.random()-.5)*7});
+  let fr=0;
+  function draw(){ctx.clearRect(0,0,cv.width,cv.height);ps.forEach(p=>{ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.rot*Math.PI/180);ctx.fillStyle=p.c;ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);ctx.restore();p.x+=p.vx;p.y+=p.vy;p.rot+=p.rv;p.vy+=.06;});fr++;if(fr<200)requestAnimationFrame(draw);else cv.style.display='none';}
+  draw();
+}
+
+// ─── TIMERS ───
+function startTimer(arcId,timeId,totalSec,badgeKey,circ){
+  if(timerIntervals[arcId])clearInterval(timerIntervals[arcId]);
+  const arc=document.getElementById(arcId);const txt=document.getElementById(timeId);
+  let rem=totalSec;arc.style.stroke='var(--violet)';arc.style.strokeDashoffset='0';
+  timerIntervals[arcId]=setInterval(()=>{
+    rem--;const m=Math.floor(rem/60),s=rem%60;
+    txt.textContent=m+':'+(s<10?'0':'')+s;
+    arc.style.strokeDashoffset=circ*(1-rem/totalSec);
+    if(rem<=5)arc.style.stroke='#FF4B6E';
+    if(rem<=0){clearInterval(timerIntervals[arcId]);arc.style.stroke='var(--ok)';txt.textContent='Done!';earnBadge(badgeKey);}
+  },1000);
+}
+function resetTimer(arcId,timeId,totalSec,circ){
+  if(timerIntervals[arcId])clearInterval(timerIntervals[arcId]);
+  const arc=document.getElementById(arcId);const txt=document.getElementById(timeId);
+  arc.style.strokeDashoffset='0';arc.style.stroke='var(--violet)';
+  const m=Math.floor(totalSec/60),s=totalSec%60;txt.textContent=m+':'+(s<10?'0':'')+s;
+}
+
+// ─── DEBATE METER ───
+const dmLabels=['Economy wins decisively!','Class leans Economy','Balanced debate — push harder!','Class leans Business Class','Business Class wins!'];
+function moveMeter(d){dmPct=Math.max(5,Math.min(95,dmPct+d));document.getElementById('dmFill').style.width=dmPct+'%';document.getElementById('dmMsg').textContent=dmLabels[Math.min(Math.floor(dmPct/20),4)];}
+
+// ─── RELAY REVEAL ───
+function revealRelay(id){const el=document.getElementById(id);if(el){el.classList.add('show');const btn=el.previousElementSibling;if(btn)btn.textContent='▼ Hide Answer';}}
+
+// ─── SPEED ROUND ───
+function toggleSpeed(card){
+  const ans=card.querySelector('.speed-answer');
+  ans.style.display=ans.style.display==='block'?'none':'block';
+}
+function updateSp(d){spScoreN=Math.max(0,Math.min(10,spScoreN+d));document.getElementById('spScore').textContent=spScoreN;}
+function resetSp(){spScoreN=0;document.getElementById('spScore').textContent='0';}
+
+// ─── SELF-RATING SLIDERS ───
+function updateSliders(){
+  const v1=+document.getElementById('sl1').value,v2=+document.getElementById('sl2').value,v3=+document.getElementById('sl3').value;
+  document.getElementById('sv1').textContent=v1;document.getElementById('sv2').textContent=v2;document.getElementById('sv3').textContent=v3;
+  const avg=(v1+v2+v3)/3;
+  const fb=document.getElementById('slFb');const msg=document.getElementById('slMsg');const sub=document.getElementById('slSub');
+  fb.style.display='block';
+  if(avg>=8){msg.textContent='🌟 Outstanding performance!';msg.style.color='var(--ok)';sub.textContent='Object pronouns are becoming automatic. You\'re ready for the Module 3 Exit Task.';}
+  else if(avg>=6){msg.textContent='💪 Solid session — real progress!';msg.style.color='var(--violet)';sub.textContent='Keep practicing the object pronouns in real situations this week. You\'re close to automatic use.';}
+  else if(avg>=4){msg.textContent='📈 You\'re building the foundation.';msg.style.color='var(--gold)';sub.textContent='Review the grammar reference table from S4A. Focus on: "him" not "he" / "her" not "she" after verbs.';}
+  else{msg.textContent='🔄 Let\'s strengthen this before S5.';msg.style.color='var(--danger)';sub.textContent='Revisit S4A §5 grammar table. Practice 3 airport instructions out loud tonight — with object pronouns.';}
+}
+
+// ─── LEADERBOARD ───
+function addLB(){
+  const n=document.getElementById('lbName').value.trim();const p=parseInt(document.getElementById('lbPts').value);
+  if(!n||isNaN(p))return;
+  lbData.push({n,p});lbData.sort((a,b)=>b.p-a.p);renderLB();
+  document.getElementById('lbName').value='';document.getElementById('lbPts').value='';
+}
+function resetLB(){lbData=[];renderLB();}
+function renderLB(){
+  const body=document.getElementById('lbBody');
+  if(lbData.length===0){body.innerHTML='<tr><td colspan="3" style="text-align:center;color:var(--mu);padding:20px;font-size:13px">No students added yet</td></tr>';return;}
+  const medals=['🥇','🥈','🥉'];
+  body.innerHTML=lbData.map((r,i)=>`<tr><td style="font-family:var(--hd);font-weight:700">${medals[i]||i+1}</td><td>${r.n}</td><td style="font-family:var(--hd);font-weight:700;color:var(--violet)">${r.p}</td></tr>`).join('');
+}
+
+// ─── CERTIFICATE ───
+function genCert(){
+  const n=document.getElementById('certName').value.trim();if(!n)return;
+  document.getElementById('certDisplayName').textContent=n;
+  document.getElementById('certDate').textContent='Issued: '+new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+  document.getElementById('certResult').style.display='block';
+  earnBadge('b5');
+}
+
+// ─── CHECKLIST ───
+function checkCL(){
+  const boxes=document.querySelectorAll('.checklist input');const n=[...boxes].filter(b=>b.checked).length;
+  const res=document.getElementById('clResult');
+  if(n===5){res.textContent='🎉 Session 4B complete! Airport navigation in English — unlocked.';res.style.color='var(--ok)';earnBadge('b5');}
+  else if(n>=3){res.textContent='💪 Almost there! Check the remaining items this week.';res.style.color='var(--gold)';}
+  else{res.textContent='Keep building — every session adds one more tool to your English.';res.style.color='var(--mu)';}
+}
+
+// ─── MY WIN ───
+function saveWin(){
+  const t=document.getElementById('winText').value.trim();if(!t)return;
+  const r=document.getElementById('winResult');r.style.display='block';
+  r.innerHTML='🏆 <strong>Your win:</strong> "'+t+'" — Take this with you. Use it in English this week.';
+  earnBadge('b5');
+}
+</script>
+</body>
+</html>

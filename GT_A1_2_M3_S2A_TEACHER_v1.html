@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GT · A1.2 · M3 · S2A · Getting Around — Directions</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{--accent:#8B5CF6;--accent2:#A78BFA;--bg:#080808;--surface:#111318;--surface2:#1a1f28;--border:rgba(139,92,246,.18);--text:#F0F4F8;--muted:#8A9BB0;--danger:#FF4D6D;--success:#00E5A0;--warn:#FFB347;--font-head:'Syne',sans-serif;--font-body:'DM Sans',sans-serif}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:15px;line-height:1.65;min-height:100vh}
+#progressBar{position:fixed;top:0;left:0;width:0%;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent2));z-index:9999;transition:width .3s}
+.site-header{position:sticky;top:0;z-index:900;background:rgba(8,8,8,.92);backdrop-filter:blur(14px);border-bottom:1px solid var(--border);padding:0 24px}
+.header-inner{max-width:960px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:58px;gap:12px;flex-wrap:wrap}
+.header-brand{font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--accent);letter-spacing:.08em;text-transform:uppercase}
+.header-meta{font-size:12px;color:var(--muted);font-weight:500}
+.badge-strip{display:flex;gap:6px}
+.badge-strip span{font-size:18px;opacity:.25;transition:all .4s;filter:grayscale(1);cursor:default}
+.badge-strip span.earned{opacity:1;filter:none;animation:badgePop .5s cubic-bezier(.34,1.56,.64,1)}
+@keyframes badgePop{0%{transform:scale(.4) rotate(-20deg);opacity:0}70%{transform:scale(1.25) rotate(4deg);opacity:1}100%{transform:scale(1) rotate(0)}}
+.mode-toggle{background:var(--surface2);border:1px solid var(--border);color:var(--accent);font-family:var(--font-head);font-size:11px;font-weight:700;padding:5px 12px;border-radius:6px;cursor:pointer;letter-spacing:.06em;transition:all .2s}
+.mode-toggle:hover{background:var(--accent);color:#fff}
+.sticky-nav{position:sticky;top:58px;z-index:800;background:rgba(8,8,8,.88);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none}
+.sticky-nav::-webkit-scrollbar{display:none}
+.nav-inner{max-width:960px;margin:0 auto;display:flex;gap:0;padding:0 16px}
+.nav-inner a{font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:.06em;color:var(--muted);text-decoration:none;padding:10px 14px;border-bottom:2px solid transparent;white-space:nowrap;transition:all .2s}
+.nav-inner a:hover{color:var(--accent);border-color:var(--accent)}
+.main{max-width:960px;margin:0 auto;padding:32px 20px 80px}
+.section{margin-bottom:48px;border:1px solid var(--border);border-radius:16px;overflow:hidden;background:var(--surface)}
+.section-header{display:flex;align-items:center;gap:14px;padding:18px 24px;background:linear-gradient(135deg,rgba(139,92,246,.08),transparent);border-bottom:1px solid var(--border)}
+.section-number{font-family:var(--font-head);font-size:11px;font-weight:800;color:var(--accent);letter-spacing:.12em;text-transform:uppercase;background:rgba(139,92,246,.1);border:1px solid var(--border);padding:3px 10px;border-radius:20px}
+.section-title{font-family:var(--font-head);font-size:18px;font-weight:800;color:var(--text);flex:1}
+.section-time{font-size:12px;color:var(--muted);font-weight:500;background:var(--surface2);padding:3px 10px;border-radius:20px}
+.section-body{padding:24px}
+.img-card{border-radius:10px;overflow:hidden;position:relative;margin-bottom:18px}
+.img-card img{width:100%;height:180px;object-fit:cover;display:block}
+.img-overlay{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(8,8,8,.88));padding:12px 16px;font-size:13px;color:rgba(255,255,255,.85)}
+.teacher-note{background:rgba(139,92,246,.06);border-left:3px solid var(--accent);border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0;font-size:13px;color:var(--muted)}
+.teacher-note strong{color:var(--accent)}
+.student-only{display:none}
+body.student-mode .teacher-only{display:none}
+body.student-mode .student-only{display:block}
+.warmup-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0}
+.warmup-q{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:16px;font-size:14px}
+.warmup-q .qnum{font-family:var(--font-head);font-size:10px;font-weight:800;color:var(--accent);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px}
+.timer-wrap{display:flex;flex-direction:column;align-items:center;gap:10px;margin:16px 0}
+.timer-svg{transform:rotate(-90deg)}
+.timer-bg{fill:none;stroke:rgba(255,255,255,.07)}
+.timer-arc{fill:none;stroke:var(--accent);stroke-linecap:round;transition:stroke .5s}
+.timer-text{font-family:var(--font-head);font-weight:800;font-size:22px;fill:var(--text);dominant-baseline:middle;text-anchor:middle}
+.timer-label{font-size:11px;fill:var(--muted);dominant-baseline:middle;text-anchor:middle}
+.timer-btns{display:flex;gap:8px}
+.btn{font-family:var(--font-head);font-size:12px;font-weight:700;letter-spacing:.06em;padding:7px 18px;border-radius:8px;border:none;cursor:pointer;transition:all .2s}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-primary:hover{background:var(--accent2)}
+.btn-ghost{background:var(--surface2);border:1px solid var(--border);color:var(--muted)}
+.btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
+.topic-card{background:linear-gradient(135deg,rgba(139,92,246,.07),rgba(167,139,250,.04));border:1px solid var(--border);border-radius:12px;padding:22px;margin:16px 0}
+.topic-card h3{font-family:var(--font-head);font-size:20px;font-weight:800;color:var(--accent);margin-bottom:6px}
+.rounds{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:14px 0}
+.round-card{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px 10px;text-align:center}
+.round-card .rnum{font-family:var(--font-head);font-size:10px;font-weight:700;color:var(--accent);letter-spacing:.1em;margin-bottom:4px}
+.round-card .rq{font-size:13px;font-weight:500}
+.reveal-btn{background:transparent;border:1px dashed var(--accent);color:var(--accent);font-family:var(--font-head);font-size:11px;font-weight:700;padding:7px 16px;border-radius:8px;cursor:pointer;margin-top:14px}
+.model-box{display:none;margin-top:12px;background:rgba(139,92,246,.06);border:1px solid var(--border);border-radius:10px;padding:16px;font-size:14px;line-height:1.8}
+.model-box .h{color:var(--accent);font-weight:600}
+.model-box .rs{color:#00CFFF;font-weight:600}
+.model-box .col{color:var(--warn);font-weight:600}
+/* DIRECTION MAP — new visual element */
+.direction-map{background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:20px;margin:16px 0;position:relative;overflow:hidden}
+.map-title{font-family:var(--font-head);font-size:12px;font-weight:700;color:var(--accent);letter-spacing:.08em;text-transform:uppercase;margin-bottom:14px}
+.map-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.map-step{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:10px;text-align:center;position:relative}
+.map-step .step-num{font-family:var(--font-head);font-size:18px;font-weight:800;color:var(--accent);margin-bottom:3px}
+.map-step .step-cmd{font-size:13px;font-weight:600;color:var(--text);margin-bottom:4px}
+.map-step .step-icon{font-size:22px;margin-bottom:4px}
+.map-step .step-note{font-size:11px;color:var(--muted)}
+.map-arrow{display:flex;align-items:center;justify-content:center;color:var(--accent);font-size:20px;font-weight:700}
+.vocab-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px;margin:16px 0}
+.vocab-card{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:14px;cursor:pointer;transition:all .2s;display:flex;flex-direction:column;gap:4px}
+.vocab-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.vocab-word{font-family:var(--font-head);font-size:15px;font-weight:700;color:var(--accent)}
+.vocab-sound{font-size:12px;color:var(--muted);font-style:italic}
+.vocab-def{font-size:13px;color:var(--text)}
+.vocab-ex{font-size:12px;color:var(--muted);font-style:italic;border-left:2px solid var(--accent);padding-left:8px;margin-top:4px}
+.speak-btn{background:rgba(139,92,246,.12);border:none;border-radius:5px;color:var(--accent);font-size:11px;padding:2px 8px;cursor:pointer;font-family:var(--font-head);font-weight:700;margin-top:4px}
+.vquiz-wrap{margin:20px 0}
+.vquiz-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.vquiz-title{font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
+.vquiz-counter{font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--accent);background:rgba(139,92,246,.1);border:1px solid var(--border);padding:3px 12px;border-radius:20px}
+.progress-container{flex:1;margin:0 16px}
+.progress-track{height:6px;background:rgba(255,255,255,.07);border-radius:10px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:10px;transition:width .4s}
+.progress-label{font-size:11px;color:var(--muted);margin-top:4px;text-align:right}
+.vquiz-card{background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:26px 24px;text-align:center}
+.vquiz-word{font-family:var(--font-head);font-size:28px;font-weight:800;color:var(--accent);margin-bottom:6px}
+.vquiz-sound{font-size:13px;color:var(--muted);margin-bottom:20px;font-style:italic}
+.vquiz-options{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.vquiz-opt{background:var(--surface);border:2px solid var(--border);color:var(--text);font-size:14px;font-weight:500;padding:12px 8px;border-radius:10px;cursor:pointer;transition:all .2s;line-height:1.3}
+.vquiz-opt:hover:not(:disabled){border-color:var(--accent);color:var(--accent)}
+.vquiz-opt.correct{background:rgba(0,229,160,.15);border-color:var(--success);color:var(--success);pointer-events:none}
+.vquiz-opt.wrong{background:rgba(255,77,109,.1);border-color:var(--danger);color:var(--danger);pointer-events:none}
+.vquiz-feedback{margin-top:14px;font-size:14px;font-weight:600;min-height:22px}
+.vquiz-next{display:none;margin-top:14px;background:var(--accent);border:none;color:#fff;font-family:var(--font-head);font-size:12px;font-weight:800;padding:9px 22px;border-radius:8px;cursor:pointer}
+.vquiz-done{display:none;text-align:center;padding:24px;background:rgba(0,229,160,.07);border:1px solid var(--success);border-radius:12px;margin-top:12px}
+.vquiz-done-score{font-family:var(--font-head);font-size:36px;font-weight:800;color:var(--success)}
+.vquiz-done-msg{font-size:14px;color:var(--muted);margin-top:6px}
+.vquiz-restart{margin-top:12px;background:transparent;border:1px solid var(--accent);color:var(--accent);font-family:var(--font-head);font-size:11px;font-weight:700;padding:7px 18px;border-radius:8px;cursor:pointer}
+.col-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0}
+.col-card{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:16px}
+.col-phrase{font-family:var(--font-head);font-size:15px;font-weight:700;color:var(--warn);margin-bottom:6px}
+.col-use{font-size:13px;color:var(--muted);margin-bottom:8px}
+.col-example{font-size:13px;font-style:italic;color:var(--text);border-left:2px solid var(--warn);padding-left:10px}
+/* DIRECTION GRAMMAR — new visual */
+.dir-table{width:100%;border-collapse:collapse;margin:16px 0;font-size:13px}
+.dir-table th{background:rgba(139,92,246,.1);color:var(--accent);font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:10px 14px;text-align:left;border-bottom:1px solid var(--border)}
+.dir-table td{padding:9px 14px;border-bottom:1px solid rgba(255,255,255,.04);vertical-align:top}
+.dir-table .gram-form{color:var(--accent);font-weight:700;font-family:var(--font-head)}
+.dir-table .gram-ex{color:var(--muted);font-style:italic}
+.prep-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:16px 0}
+.prep-card{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center}
+.prep-word{font-family:var(--font-head);font-size:18px;font-weight:800;color:var(--accent);margin-bottom:6px}
+.prep-icon{font-size:26px;margin-bottom:4px}
+.prep-def{font-size:12px;color:var(--muted);margin-bottom:6px}
+.prep-ex{font-size:12px;font-style:italic;color:var(--text);border-left:2px solid var(--accent);padding-left:8px;text-align:left}
+.poll-section{margin:20px 0}
+.poll-score-bar{display:flex;justify-content:space-between;align-items:center;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:8px 16px;margin-bottom:14px}
+.poll-score-label{font-family:var(--font-head);font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
+.poll-score-val{font-family:var(--font-head);font-size:20px;font-weight:800;color:var(--accent)}
+.poll-q{margin-bottom:14px}
+.poll-q-text{font-size:14px;font-weight:600;color:var(--text);margin-bottom:8px}
+.poll-options{display:flex;flex-wrap:wrap;gap:8px}
+.poll-btn{background:var(--surface2);border:1px solid var(--border);color:var(--text);font-size:13px;padding:7px 14px;border-radius:8px;cursor:pointer;transition:all .2s}
+.poll-btn.correct-ans{background:rgba(0,229,160,.15);border-color:var(--success);color:var(--success)}
+.poll-btn.wrong-ans{background:rgba(255,77,109,.12);border-color:var(--danger);color:var(--danger)}
+.poll-feedback{font-size:13px;color:var(--muted);margin-top:6px;min-height:18px}
+.activity-card{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:20px;margin:14px 0}
+.activity-title{font-family:var(--font-head);font-size:14px;font-weight:800;color:var(--accent);margin-bottom:12px;letter-spacing:.04em;text-transform:uppercase}
+.activity-score{float:right;font-family:var(--font-head);font-size:16px;font-weight:800;color:var(--accent2)}
+.activity-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0}
+.act-item{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:8px;padding:10px}
+.act-options{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.act-btn{background:var(--surface);border:1px solid var(--border);color:var(--text);font-size:13px;padding:6px 14px;border-radius:6px;cursor:pointer;transition:all .2s}
+.act-btn:hover:not(:disabled){border-color:var(--accent);color:var(--accent)}
+.act-btn.correct-ans{background:rgba(0,229,160,.15);border-color:var(--success);color:var(--success);pointer-events:none}
+.act-btn.wrong-ans{background:rgba(255,77,109,.12);border-color:var(--danger);color:var(--danger);pointer-events:none}
+.act-btn:disabled{opacity:.6}
+.act-feedback{font-size:12px;color:var(--muted);margin-top:6px;min-height:16px}
+.listening-card{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:20px;margin:16px 0}
+.audio-placeholder{display:flex;align-items:center;gap:16px;padding:16px;background:rgba(139,92,246,.05);border:1px dashed var(--border);border-radius:10px}
+.audio-icon{font-size:32px}
+.audio-title{font-family:var(--font-head);font-size:14px;font-weight:700;color:var(--text)}
+.audio-sub{font-size:12px;color:var(--muted)}
+.script-toggle{background:transparent;border:1px solid var(--border);color:var(--muted);font-family:var(--font-head);font-size:11px;font-weight:700;padding:7px 16px;border-radius:8px;cursor:pointer;margin:12px 0}
+.script-box{display:none;background:rgba(139,92,246,.04);border:1px solid rgba(139,92,246,.15);border-radius:10px;padding:18px;font-size:13px;color:var(--text);line-height:1.9;font-style:italic;margin-top:8px}
+.listen-q{margin-bottom:12px}
+.listen-q-text{font-size:14px;font-weight:500;color:var(--text);margin-bottom:8px}
+.listen-opts{display:flex;flex-wrap:wrap;gap:8px}
+.listen-btn{background:var(--surface2);border:1px solid var(--border);color:var(--text);font-size:13px;padding:7px 14px;border-radius:8px;cursor:pointer;transition:all .2s}
+.listen-btn:hover:not(:disabled){border-color:var(--accent);color:var(--accent)}
+.listen-btn.correct-ans{background:rgba(0,229,160,.15);border-color:var(--success);color:var(--success)}
+.listen-btn.wrong-ans{background:rgba(255,77,109,.12);border-color:var(--danger);color:var(--danger)}
+.listen-btn:disabled{opacity:.6}
+.listen-feedback{font-size:12px;color:var(--muted);margin-top:6px;min-height:16px}
+.tf-row{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px;flex-wrap:wrap}
+.tf-stmt{font-size:13px;color:var(--text);flex:1;line-height:1.5;min-width:180px}
+.tf-btns{display:flex;gap:8px;flex-shrink:0}
+.tf-btn{background:var(--surface);border:1px solid var(--border);color:var(--text);font-family:var(--font-head);font-size:11px;font-weight:700;padding:6px 14px;border-radius:6px;cursor:pointer}
+.tf-btn:disabled{opacity:.6}
+.debate-wrap{margin:16px 0}
+.debate-meter{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:18px}
+.meter-track{height:10px;background:rgba(255,255,255,.07);border-radius:10px;overflow:hidden;margin:10px 0}
+.meter-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:10px;transition:width .4s;width:50%}
+.meter-labels{display:flex;justify-content:space-between;font-size:12px;color:var(--muted)}
+.debate-btns{display:flex;gap:8px;margin-top:10px}
+.debate-btn-a{background:rgba(167,139,250,.15);border:1px solid #A78BFA;color:#A78BFA;font-family:var(--font-head);font-size:12px;font-weight:700;padding:6px 14px;border-radius:8px;cursor:pointer}
+.debate-btn-b{background:rgba(139,92,246,.12);border:1px solid var(--accent);color:var(--accent);font-family:var(--font-head);font-size:12px;font-weight:700;padding:6px 14px;border-radius:8px;cursor:pointer}
+.speaking-qs{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}
+.speaking-q{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px;font-size:13px}
+.speaking-q .sq-tag{font-family:var(--font-head);font-size:10px;font-weight:700;color:var(--accent);letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px}
+.dice-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0}
+.dice-card{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px;text-align:center;font-size:13px}
+.dice-num{font-family:var(--font-head);font-size:22px;font-weight:800;color:var(--accent);display:block}
+.badge-showcase{display:flex;gap:14px;flex-wrap:wrap;margin:16px 0}
+.badge-item{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:14px 16px;text-align:center;flex:1;min-width:130px}
+.badge-emoji{font-size:28px;display:block;margin-bottom:6px}
+.badge-name{font-family:var(--font-head);font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
+.checklist{margin:14px 0}
+.check-item{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:14px}
+.check-item:last-child{border-bottom:none}
+.phrases-week{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:14px 0}
+.phrase-card{background:linear-gradient(135deg,rgba(139,92,246,.08),rgba(167,139,250,.04));border:1px solid var(--border);border-radius:10px;padding:14px;font-family:var(--font-head);font-size:14px;font-weight:700;color:var(--accent);text-align:center}
+.phrase-card span{display:block;font-family:var(--font-body);font-size:11px;color:var(--muted);font-weight:400;margin-top:4px}
+.win-textarea{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:14px;padding:12px 14px;resize:vertical;min-height:72px}
+.win-textarea:focus{outline:none;border-color:var(--accent)}
+.win-btn{margin-top:8px;background:var(--accent);border:none;color:#fff;font-family:var(--font-head);font-size:12px;font-weight:800;padding:9px 20px;border-radius:8px;cursor:pointer}
+.win-saved{display:none;margin-top:10px;background:rgba(0,229,160,.1);border:1px solid var(--success);border-radius:8px;padding:12px 14px;font-size:14px;color:var(--success)}
+.confetti-wrap{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9000;display:none}
+.tag{display:inline-block;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:2px 8px;border-radius:20px;margin-right:4px}
+.tag-t2s{background:rgba(139,92,246,.1);color:var(--accent)}
+.tag-s2s{background:rgba(0,207,255,.12);color:#00CFFF}
+.tag-class{background:rgba(0,229,160,.1);color:var(--success)}
+.divider{border:none;border-top:1px solid var(--border);margin:18px 0}
+.site-footer{border-top:1px solid var(--border);padding:20px;display:flex;justify-content:center;gap:8px;flex-wrap:wrap}
+.level-tag{font-family:var(--font-head);font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;letter-spacing:.08em;background:var(--surface2);color:var(--muted);border:1px solid transparent}
+.level-tag.active{background:rgba(139,92,246,.1);color:var(--accent);border-color:var(--accent)}
+@media(max-width:640px){.warmup-grid,.rounds,.col-grid,.speaking-qs,.activity-grid,.phrases-week,.vocab-grid,.prep-cards,.map-grid{grid-template-columns:1fr}.header-inner{height:auto;padding:10px 0}.dice-grid{grid-template-columns:repeat(2,1fr)}.vquiz-options{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div id="progressBar"></div>
+<div class="confetti-wrap" id="confettiWrap"></div>
+
+<header class="site-header">
+  <div class="header-inner">
+    <div><div class="header-brand">Gabriel Turner · English Training</div><div class="header-meta">A1.2 · Module 3 · Session 2A — Discovery &amp; Drill</div></div>
+    <div class="badge-strip"><span id="b1" title="Quick Start">⚡</span><span id="b2" title="Word Power">📚</span><span id="b3" title="Grammar Pro">🎯</span><span id="b4" title="Active Listener">🎧</span><span id="b5" title="My Win">🏆</span></div>
+    <button class="mode-toggle" onclick="toggleMode()">STUDENT MODE</button>
+  </div>
+</header>
+
+<nav class="sticky-nav">
+  <div class="nav-inner">
+    <a href="#s1">§1 Warm-Up</a><a href="#s2">§2 Speaking</a><a href="#s3">§3 Vocabulary</a>
+    <a href="#s4">§4 Colloquial</a><a href="#s5">§5 Grammar</a><a href="#s6">§6 Listening</a>
+    <a href="#s7">§7 Production</a><a href="#s8">§8 Wrap-Up</a>
+  </div>
+</nav>
+
+<main class="main">
+
+<!-- §1 WARM-UP -->
+<section class="section" id="s1">
+  <div class="section-header"><span class="section-number">§1</span><h2 class="section-title">⚡ Warm-Up — Quick Fire</h2><span class="section-time">5 min</span></div>
+  <div class="section-body">
+    <div class="img-card"><img src="https://images.unsplash.com/photo-1570125909517-53cb21c89ff2?w=900&q=80" alt="Aerial view of a highway intersection" loading="lazy"><div class="img-overlay">📍 Getting from A to B in English — directions are a survival skill</div></div>
+
+    <div class="teacher-note teacher-only"><strong>🎯 Objetivo:</strong> Activar experiencias reales de travel y directions. Muchos alumnos del Bajío viajan a CDMX, Monterrey o al aeropuerto de Guanajuato (BJX). Usar ese contexto.<br><strong>Quick Win activado:</strong> Antes de las preguntas, el alumno dice una dirección en inglés. No importa si es perfecta — que hable.</div>
+
+    <div style="background:rgba(139,92,246,.06);border:1px solid rgba(139,92,246,.2);border-radius:10px;padding:14px 16px;margin-bottom:16px;font-size:14px">
+      <div style="font-family:var(--font-head);font-size:10px;font-weight:800;color:var(--accent);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px">⚡ Quick Win — 20 sec</div>
+      Say this out loud right now: <strong>"Turn right, then go straight."</strong> That's your first direction in English!
+    </div>
+
+    <div class="warmup-grid">
+      <div class="warmup-q"><div class="qnum">Q1 <span class="tag tag-t2s">T→S</span></div><div class="qtext">How do you get to work? By car? By taxi? By Uber?</div></div>
+      <div class="warmup-q"><div class="qnum">Q2 <span class="tag tag-t2s">T→S</span></div><div class="qtext">Did you ever get <em>lost</em> in another city? What happened?</div></div>
+      <div class="warmup-q"><div class="qnum">Q3 <span class="tag tag-s2s">S→S</span></div><div class="qtext">How do you get from <em>your house</em> to the airport? How long does it take?</div></div>
+      <div class="warmup-q"><div class="qnum">Q4 <span class="tag tag-s2s">S→S</span></div><div class="qtext">A client calls you from the airport. They need directions to your office. What is the first thing you say?</div></div>
+    </div>
+
+    <div class="teacher-note teacher-only"><strong>Layer 1:</strong> ¿Dicen "by taxi" o "in a taxi"? Ambos suenan a A1.2 — ambos están bien.<br><strong>Layer 2:</strong> Si dicen "I go straight" → push: "How far? How many blocks?"<br><strong>Layer 3:</strong> "What if the client doesn't speak Spanish? What do you do?"</div>
+
+    <div class="timer-wrap">
+      <svg class="timer-svg" width="90" height="90" viewBox="0 0 90 90"><circle class="timer-bg" cx="45" cy="45" r="38" stroke-width="6"/><circle class="timer-arc" id="tArc1" cx="45" cy="45" r="38" stroke-width="6" stroke-dasharray="238.76" stroke-dashoffset="0"/><text class="timer-text" id="tText1" x="45" y="44">1:30</text><text class="timer-label" x="45" y="57">quick fire</text></svg>
+      <div class="timer-btns"><button class="btn btn-primary" onclick="startTimer('tArc1','tText1',90,'b1')">START</button><button class="btn btn-ghost" onclick="resetTimer('tArc1','tText1','1:30')">RESET</button></div>
+    </div>
+  </div>
+</section>
+
+<!-- §2 SPEAKING TOPIC -->
+<section class="section" id="s2">
+  <div class="section-header"><span class="section-number">§2</span><h2 class="section-title">🗣️ Speaking — Getting from the Airport</h2><span class="section-time">8 min</span></div>
+  <div class="section-body">
+    <div class="img-card"><img src="https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=900&q=80" alt="Airport departure hall" loading="lazy"><div class="img-overlay">A client just landed at BJX Airport. How do they get to your office?</div></div>
+
+    <div class="topic-card">
+      <h3>From the Airport to Our Office</h3>
+      <p style="color:var(--muted);font-size:14px;margin-bottom:12px">A supplier from Chicago just arrived at Guanajuato Airport (BJX). They need directions to your office in Celaya. How do you help them?</p>
+      <div class="rounds">
+        <div class="round-card"><div class="rnum">Round 1 · 60 seg</div><div class="rq"><span class="tag tag-t2s">T→S</span> "How do you get from BJX Airport to your office? What transport do you use?"</div></div>
+        <div class="round-card"><div class="rnum">Round 2 · 60 seg</div><div class="rq"><span class="tag tag-s2s">S→S</span> "Give your partner directions from the office reception to the meeting room floor by floor."</div></div>
+        <div class="round-card"><div class="rnum">Round 3 · 90 seg</div><div class="rq"><span class="tag tag-class">Class</span> "Do you prefer to travel by plane or by car for business? How long does each take?"</div></div>
+      </div>
+      <button class="reveal-btn" onclick="this.nextElementSibling.style.display=&apos;block&apos;;this.style.display=&apos;none&apos;">▶ Reveal Model Answer (B1 level)</button>
+      <div class="model-box">
+        <strong style="color:var(--muted);font-size:11px;font-family:var(--font-head);letter-spacing:.06em;text-transform:uppercase">Model Answer</strong><br><br>
+        "From <span class="h">BJX Airport</span>, take a <span class="h">taxi</span> to Celaya — it&apos;s about 45 minutes. <span class="col">It&apos;s not far.</span> Go <span class="rs">through</span> the exit and take the highway. Turn <span class="rs">right</span> at the first <span class="h">traffic lights</span>. Go <span class="rs">straight</span> for about 2 kilometres. Our office is on the left, <span class="rs">past</span> the Oxxo. Call <span class="rs">me</span> when you arrive — I&apos;ll come down to the <span class="h">lobby</span>. <span class="col">Have a good trip!</span>"
+        <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;font-size:11px"><span style="color:var(--accent)">■ Vocabulary</span><span style="color:#00CFFF">■ Prepositions/Directions</span><span style="color:var(--warn)">■ Colloquial</span></div>
+      </div>
+    </div>
+
+    <div class="teacher-note teacher-only"><strong>Coaching:</strong> Si el alumno da solo "take a taxi" → "Great! Then what? Where does the client go? Turn left or right? How long?" Push for complete directions.</div>
+  </div>
+</section>
+
+<!-- §3 VOCABULARY -->
+<section class="section" id="s3">
+  <div class="section-header"><span class="section-number">§3</span><h2 class="section-title">📚 Vocabulary — Airport &amp; Transport</h2><span class="section-time">10 min</span></div>
+  <div class="section-body">
+
+    <div class="img-card"><img src="https://images.unsplash.com/photo-1587019158091-1a103c5dd17f?w=900&q=80" alt="Airport terminal with flights" loading="lazy"><div class="img-overlay">Every word you need at the airport — in English</div></div>
+
+    <div class="vocab-grid">
+      <div class="vocab-card" onclick="speakWord('terminal')"><div class="vocab-word">terminal</div><div class="vocab-sound">Suena: TER-mi-nal</div><div class="vocab-def">Airport building for passengers</div><div class="vocab-ex">"My flight is at Terminal 2."</div><button class="speak-btn">🔊</button></div>
+      <div class="vocab-card" onclick="speakWord('gate')"><div class="vocab-word">gate</div><div class="vocab-sound">Suena: guéit</div><div class="vocab-def">The door where you board the plane</div><div class="vocab-ex">"Go to Gate B12. The plane is boarding."</div><button class="speak-btn">🔊</button></div>
+      <div class="vocab-card" onclick="speakWord('boarding pass')"><div class="vocab-word">boarding pass</div><div class="vocab-sound">Suena: BOR-ding pas</div><div class="vocab-def">Your ticket to get on the plane</div><div class="vocab-ex">"Can you show me your boarding pass?"</div><button class="speak-btn">🔊</button></div>
+      <div class="vocab-card" onclick="speakWord('baggage claim')"><div class="vocab-word">baggage claim</div><div class="vocab-sound">Suena: BAG-ach kleim</div><div class="vocab-def">Where you pick up your luggage</div><div class="vocab-ex">"Your bags are at baggage claim."</div><button class="speak-btn">🔊</button></div>
+      <div class="vocab-card" onclick="speakWord('customs')"><div class="vocab-word">customs</div><div class="vocab-sound">Suena: CÁS-toms</div><div class="vocab-def">The border control at the airport</div><div class="vocab-ex">"Go through customs and then take a taxi."</div><button class="speak-btn">🔊</button></div>
+      <div class="vocab-card" onclick="speakWord('departure')"><div class="vocab-word">departure</div><div class="vocab-sound">Suena: di-PÁR-cher</div><div class="vocab-def">When the plane leaves</div><div class="vocab-ex">"Departure is at 7 AM. Don't be late!"</div><button class="speak-btn">🔊</button></div>
+      <div class="vocab-card" onclick="speakWord('arrival')"><div class="vocab-word">arrival</div><div class="vocab-sound">Suena: a-RÁI-val</div><div class="vocab-def">When you land or get to a place</div><div class="vocab-ex">"The arrival time is 9:30 PM."</div><button class="speak-btn">🔊</button></div>
+      <div class="vocab-card" onclick="speakWord('delay')"><div class="vocab-word">delay</div><div class="vocab-sound">Suena: di-LÉI</div><div class="vocab-def">When something is late</div><div class="vocab-ex">"There is a 2-hour delay. I&apos;m sorry."</div><button class="speak-btn">🔊</button></div>
+      <div class="vocab-card" onclick="speakWord('shuttle')"><div class="vocab-word">shuttle</div><div class="vocab-sound">Suena: SHÁ-tol</div><div class="vocab-def">A transport service between two places</div><div class="vocab-ex">"Take the airport shuttle to the hotel."</div><button class="speak-btn">🔊</button></div>
+      <div class="vocab-card" onclick="speakWord('company car')"><div class="vocab-word">company car</div><div class="vocab-sound">Suena: CÓM-pa-ni car</div><div class="vocab-def">A car owned by the company</div><div class="vocab-ex">"Our driver picks you up in the company car."</div><button class="speak-btn">🔊</button></div>
+      <div class="vocab-card" onclick="speakWord('traffic lights')"><div class="vocab-word">traffic lights</div><div class="vocab-sound">Suena: TRAF-ic laits</div><div class="vocab-def">The red/yellow/green signals on the road</div><div class="vocab-ex">"Turn left at the traffic lights."</div><button class="speak-btn">🔊</button></div>
+      <div class="vocab-card" onclick="speakWord('roundabout')"><div class="vocab-word">roundabout</div><div class="vocab-sound">Suena: RAUND-a-baut</div><div class="vocab-def">A circular road junction</div><div class="vocab-ex">"Take the second exit at the roundabout."</div><button class="speak-btn">🔊</button></div>
+    </div>
+
+    <div class="vquiz-wrap">
+      <div class="vquiz-header">
+        <div class="vquiz-title">⚡ Vocab Quiz</div>
+        <div class="progress-container"><div class="progress-track"><div class="progress-fill" id="vqProgress" style="width:0%"></div></div><div class="progress-label" id="vqLabel">0/12</div></div>
+        <div class="vquiz-counter" id="vqCounter">1/12</div>
+      </div>
+      <div class="vquiz-card" id="vqCard"><div class="vquiz-word" id="vqWord">—</div><div class="vquiz-sound" id="vqSound">—</div><div class="vquiz-options" id="vqOptions"></div><div class="vquiz-feedback" id="vqFeedback"></div><button class="vquiz-next" id="vqNext" onclick="vqNextQuestion()">NEXT →</button></div>
+      <div class="vquiz-done" id="vqDone"><div class="vquiz-done-score" id="vqFinalScore">0/12</div><div class="vquiz-done-msg" id="vqDoneMsg"></div><button class="vquiz-restart" onclick="vqInit()">↺ Try Again</button></div>
+    </div>
+
+    <div class="teacher-note teacher-only"><strong>Pronunciation alert:</strong> "delay" — el acento va en la segunda sílaba: di-LÉI, no DÉI-lay.<br>"roundabout" — muy común en inglés británico y en México ("glorieta"). En inglés americano también se dice "traffic circle". Ambos OK.</div>
+  </div>
+</section>
+
+<!-- §4 COLLOQUIAL -->
+<section class="section" id="s4">
+  <div class="section-header"><span class="section-number">§4</span><h2 class="section-title">💬 Colloquial — Travel Phrases</h2><span class="section-time">5 min</span></div>
+  <div class="section-body">
+    <div class="img-card"><img src="https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=900&q=80" alt="Road trip open road" loading="lazy"><div class="img-overlay">The phrases that make travel conversations feel natural</div></div>
+    <div class="col-grid">
+      <div class="col-card"><div class="col-phrase">It&apos;s not far.</div><div class="col-use">When: reassuring someone about distance</div><div class="col-example">"Is it far from the airport? — <em>It&apos;s not far.</em> About 30 minutes by taxi."</div></div>
+      <div class="col-card"><div class="col-phrase">Have a good trip!</div><div class="col-use">When: saying goodbye before travel</div><div class="col-example">"Your flight is at 8. <em>Have a good trip!</em> See you next Monday."</div></div>
+      <div class="col-card"><div class="col-phrase">You can&apos;t miss it.</div><div class="col-use">When: a place is very easy to find</div><div class="col-example">"Turn right at the traffic lights. Our building is the tall blue one. <em>You can&apos;t miss it.</em>"</div></div>
+      <div class="col-card"><div class="col-phrase">I&apos;m on my way.</div><div class="col-use">When: you are already travelling to somewhere</div><div class="col-example">"Are you here yet? — Not yet. <em>I&apos;m on my way.</em> Five minutes."</div></div>
+    </div>
+    <div class="teacher-note teacher-only"><strong>Práctica rápida:</strong> Teacher da el contexto → alumno produce la frase. "Tu cliente dice que el edificio está lejos. ¿Qué le dices?" → "It&apos;s not far!" / "Tu cliente va al aeropuerto. ¿Qué le dices?" → "Have a good trip!"</div>
+  </div>
+</section>
+
+<!-- §5 GRAMMAR — Prepositions of Movement + Directions -->
+<section class="section" id="s5">
+  <div class="section-header"><span class="section-number">§5</span><h2 class="section-title">🎯 Grammar — Directions &amp; Movement</h2><span class="section-time">10 min</span></div>
+  <div class="section-body">
+    <div class="img-card"><img src="https://images.unsplash.com/photo-1555636222-cae831e670b3?w=900&q=80" alt="Street map and navigation" loading="lazy"><div class="img-overlay">Turn left. Go straight. Go through the gate. — Essential for every business trip</div></div>
+
+    <div class="teacher-note teacher-only"><strong>REFERENCIAL.</strong> Las preposiciones de movimiento y los imperativos de dirección son vocabulario en contexto, no gramática abstracta. Muestra la tabla, da un ejemplo real del camino del aeropuerto a la oficina, activa el Poll.<br><strong>Tip:</strong> Pide al alumno que dibuje el mapa mientras da las instrucciones — comprensión kinestésica.</div>
+
+    <!-- PREP MOVEMENT CARDS -->
+    <div style="font-family:var(--font-head);font-size:12px;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px">🗺️ Prepositions of Movement</div>
+    <div class="prep-cards">
+      <div class="prep-card"><div class="prep-icon">➡️</div><div class="prep-word">to</div><div class="prep-def">moving toward a destination</div><div class="prep-ex">"Take a taxi <strong>to</strong> the office."</div></div>
+      <div class="prep-card"><div class="prep-icon">⬅️</div><div class="prep-word">from</div><div class="prep-def">the starting point of movement</div><div class="prep-ex">"How long <strong>from</strong> the airport?"</div></div>
+      <div class="prep-card"><div class="prep-icon">🚶</div><div class="prep-word">through</div><div class="prep-def">entering and exiting a place</div><div class="prep-ex">"Go <strong>through</strong> customs."</div></div>
+      <div class="prep-card"><div class="prep-icon">🏃</div><div class="prep-word">past</div><div class="prep-def">passing a landmark without stopping</div><div class="prep-ex">"Go <strong>past</strong> the Oxxo."</div></div>
+      <div class="prep-card"><div class="prep-icon">🛣️</div><div class="prep-word">along</div><div class="prep-def">following a road or path</div><div class="prep-ex">"Go <strong>along</strong> the main road."</div></div>
+      <div class="prep-card"><div class="prep-icon">🌉</div><div class="prep-word">across</div><div class="prep-def">from one side to the other</div><div class="prep-ex">"Walk <strong>across</strong> the bridge."</div></div>
+    </div>
+
+    <!-- DIRECTION IMPERATIVE TABLE -->
+    <div style="font-family:var(--font-head);font-size:12px;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin:16px 0 10px">📍 Direction Imperatives</div>
+    <table class="dir-table">
+      <thead><tr><th>Command</th><th>Spanish</th><th>Example</th></tr></thead>
+      <tbody>
+        <tr><td class="gram-form">Turn left / right</td><td>Gira a la izquierda / derecha</td><td class="gram-ex">"Turn left at the traffic lights."</td></tr>
+        <tr><td class="gram-form">Go straight</td><td>Ve directo / todo recto</td><td class="gram-ex">"Go straight for two blocks."</td></tr>
+        <tr><td class="gram-form">Take the first / second right</td><td>Toma la primera / segunda a la derecha</td><td class="gram-ex">"Take the first right after the bridge."</td></tr>
+        <tr><td class="gram-form">Go past [landmark]</td><td>Pasa [lugar] sin doblar</td><td class="gram-ex">"Go past the Oxxo and turn left."</td></tr>
+        <tr><td class="gram-form">Take the highway / exit</td><td>Toma la carretera / la salida</td><td class="gram-ex">"Take the highway north for 10 km."</td></tr>
+        <tr><td class="gram-form">How long does it take?</td><td>¿Cuánto tiempo tarda?</td><td class="gram-ex">"About 45 minutes by taxi."</td></tr>
+        <tr><td class="gram-form">How far is it?</td><td>¿Qué tan lejos está?</td><td class="gram-ex">"About 40 km from the airport."</td></tr>
+      </tbody>
+    </table>
+
+    <!-- DIRECTION MAP EXERCISE — new -->
+    <div class="direction-map">
+      <div class="map-title">🗺️ Follow the Directions — Airport → Office</div>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:14px">Read each step. Which preposition or direction word is correct?</p>
+      <div class="map-grid">
+        <div class="map-step"><div class="step-num">1</div><div class="step-icon">✈️</div><div class="step-cmd">Exit <strong>through</strong> Terminal 1</div><div class="step-note">entering → exiting the building</div></div>
+        <div class="map-step"><div class="step-num">2</div><div class="step-icon">🚕</div><div class="step-cmd">Take a taxi <strong>to</strong> Celaya</div><div class="step-note">destination = Celaya</div></div>
+        <div class="map-step"><div class="step-num">3</div><div class="step-icon">🛣️</div><div class="step-cmd">Go <strong>along</strong> the highway</div><div class="step-note">following the road</div></div>
+        <div class="map-step"><div class="step-num">4</div><div class="step-icon">↩️</div><div class="step-cmd"><strong>Turn right</strong> at the lights</div><div class="step-note">change direction</div></div>
+        <div class="map-step"><div class="step-num">5</div><div class="step-icon">🏪</div><div class="step-cmd">Go <strong>past</strong> the Oxxo</div><div class="step-note">don&apos;t stop there!</div></div>
+        <div class="map-step"><div class="step-num">6</div><div class="step-icon">🏢</div><div class="step-cmd">Arrive <strong>at</strong> our office</div><div class="step-note">you&apos;re here! 🎉</div></div>
+      </div>
+    </div>
+
+    <!-- QUICK POLL -->
+    <div class="poll-section">
+      <div style="font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--accent);letter-spacing:.08em;text-transform:uppercase;margin-bottom:12px">⚡ Quick Poll — 30 pts</div>
+      <div class="poll-score-bar"><div class="poll-score-label">Poll Score</div><div class="poll-score-val" id="pollScoreVal">0 pts</div></div>
+      <div class="poll-q"><div class="poll-q-text">1. "Go ______ customs and pick up your bags."</div><div class="poll-options">
+        <button class="poll-btn" onclick="checkPoll(this,'through','pq1','pf1','p1a')">through</button>
+        <button class="poll-btn" onclick="checkPoll(this,'past','pq1','pf1','p1b')">past</button>
+        <button class="poll-btn" onclick="checkPoll(this,'along','pq1','pf1','p1c')">along</button>
+      </div><div class="poll-feedback" id="pf1"></div></div>
+      <div class="poll-q"><div class="poll-q-text">2. "______ right at the traffic lights."</div><div class="poll-options">
+        <button class="poll-btn" onclick="checkPoll(this,'Go','pq2','pf2','p2a')">Go</button>
+        <button class="poll-btn" onclick="checkPoll(this,'Turn','pq2','pf2','p2b')">Turn</button>
+        <button class="poll-btn" onclick="checkPoll(this,'Take','pq2','pf2','p2c')">Take</button>
+      </div><div class="poll-feedback" id="pf2"></div></div>
+      <div class="poll-q"><div class="poll-q-text">3. "How long ______ the taxi take from the airport?"</div><div class="poll-options">
+        <button class="poll-btn" onclick="checkPoll(this,'do','pq3','pf3','p3a')">do</button>
+        <button class="poll-btn" onclick="checkPoll(this,'does','pq3','pf3','p3b')">does</button>
+        <button class="poll-btn" onclick="checkPoll(this,'is','pq3','pf3','p3c')">is</button>
+      </div><div class="poll-feedback" id="pf3"></div></div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- ACTIVITY A -->
+    <div class="activity-card">
+      <div class="activity-title">Activity A — Choose the Correct Preposition <span class="activity-score" id="actAScore">0 / 4</span></div>
+      <div class="activity-grid">
+        <div class="act-item"><div style="font-size:13px;font-weight:500">"Walk ______ the bridge to reach the hotel."</div><div class="act-options">
+          <button class="act-btn" onclick="checkAct(this,'a1c','af1','actAScore',4)">across</button>
+          <button class="act-btn" onclick="checkAct(this,'a1w','af1','actAScore',4)">through</button>
+          <button class="act-btn" onclick="checkAct(this,'a1x','af1','actAScore',4)">past</button>
+        </div><div class="act-feedback" id="af1"></div></div>
+        <div class="act-item"><div style="font-size:13px;font-weight:500">"Go ______ the main road for 3 kilometres."</div><div class="act-options">
+          <button class="act-btn" onclick="checkAct(this,'a2c','af2','actAScore',4)">along</button>
+          <button class="act-btn" onclick="checkAct(this,'a2w','af2','actAScore',4)">across</button>
+          <button class="act-btn" onclick="checkAct(this,'a2x','af2','actAScore',4)">to</button>
+        </div><div class="act-feedback" id="af2"></div></div>
+        <div class="act-item"><div style="font-size:13px;font-weight:500">"The hotel is ______ the conference centre."</div><div class="act-options">
+          <button class="act-btn" onclick="checkAct(this,'a3c','af3','actAScore',4)">past</button>
+          <button class="act-btn" onclick="checkAct(this,'a3w','af3','actAScore',4)">from</button>
+          <button class="act-btn" onclick="checkAct(this,'a3x','af3','actAScore',4)">along</button>
+        </div><div class="act-feedback" id="af3"></div></div>
+        <div class="act-item"><div style="font-size:13px;font-weight:500">"How long does it take ______ the airport to Celaya?"</div><div class="act-options">
+          <button class="act-btn" onclick="checkAct(this,'a4c','af4','actAScore',4)">from</button>
+          <button class="act-btn" onclick="checkAct(this,'a4w','af4','actAScore',4)">to</button>
+          <button class="act-btn" onclick="checkAct(this,'a4x','af4','actAScore',4)">through</button>
+        </div><div class="act-feedback" id="af4"></div></div>
+      </div>
+    </div>
+
+    <!-- ACTIVITY B -->
+    <div class="activity-card">
+      <div class="activity-title">Activity B — Correct the Direction <span class="activity-score" id="actBScore">0 / 4</span></div>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:14px">One word is wrong. Choose the correct replacement.</p>
+      <div class="activity-grid">
+        <div class="act-item"><div style="font-size:13px;font-weight:500">"<em>Go</em> right at the traffic lights."<br><span style="font-size:11px;color:var(--danger)">"Go" isn&apos;t right here. What should it be?</span></div><div class="act-options">
+          <button class="act-btn" onclick="checkAct(this,'b1c','bf1','actBScore',4)">Turn</button>
+          <button class="act-btn" onclick="checkAct(this,'b1w','bf1','actBScore',4)">Take</button>
+          <button class="act-btn" onclick="checkAct(this,'b1x','bf1','actBScore',4)">Walk</button>
+        </div><div class="act-feedback" id="bf1"></div></div>
+        <div class="act-item"><div style="font-size:13px;font-weight:500">"Take a taxi <em>from</em> the hotel."<br><span style="font-size:11px;color:var(--danger)">You want to go TO the hotel, not leave it.</span></div><div class="act-options">
+          <button class="act-btn" onclick="checkAct(this,'b2c','bf2','actBScore',4)">to</button>
+          <button class="act-btn" onclick="checkAct(this,'b2w','bf2','actBScore',4)">past</button>
+          <button class="act-btn" onclick="checkAct(this,'b2x','bf2','actBScore',4)">along</button>
+        </div><div class="act-feedback" id="bf2"></div></div>
+        <div class="act-item"><div style="font-size:13px;font-weight:500">"Go <em>along</em> customs and show your passport."<br><span style="font-size:11px;color:var(--danger)">You enter customs, not follow it.</span></div><div class="act-options">
+          <button class="act-btn" onclick="checkAct(this,'b3c','bf3','actBScore',4)">through</button>
+          <button class="act-btn" onclick="checkAct(this,'b3w','bf3','actBScore',4)">past</button>
+          <button class="act-btn" onclick="checkAct(this,'b3x','bf3','actBScore',4)">to</button>
+        </div><div class="act-feedback" id="bf3"></div></div>
+        <div class="act-item"><div style="font-size:13px;font-weight:500">"How <em>far</em> does it take by taxi? — About 40 minutes."<br><span style="font-size:11px;color:var(--danger)">We&apos;re talking about time, not distance.</span></div><div class="act-options">
+          <button class="act-btn" onclick="checkAct(this,'b4c','bf4','actBScore',4)">long</button>
+          <button class="act-btn" onclick="checkAct(this,'b4w','bf4','actBScore',4)">much</button>
+          <button class="act-btn" onclick="checkAct(this,'b4x','bf4','actBScore',4)">many</button>
+        </div><div class="act-feedback" id="bf4"></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- §6 LISTENING -->
+<section class="section" id="s6">
+  <div class="section-header"><span class="section-number">§6</span><h2 class="section-title">🎧 Listening — Mónica Gives Directions</h2><span class="section-time">8 min</span></div>
+  <div class="section-body">
+    <div class="img-card"><img src="https://images.unsplash.com/photo-1534430480872-3498386e7856?w=900&q=80" alt="Woman on phone at office desk" loading="lazy"><div class="img-overlay">📍 Mónica Herrera calls a supplier arriving at BJX Airport</div></div>
+    <div class="listening-card"><div class="audio-placeholder"><div class="audio-icon">🎙️</div><div><div class="audio-title">ElevenLabs — "From BJX to ConnectPro"</div><div class="audio-sub">Voice: Sarah · Speed: 0.80 · A1.2 M3 S2A</div></div></div></div>
+    <button class="script-toggle" onclick="toggleScript('scriptBox1')">▼ Show Script</button>
+    <div class="script-box" id="scriptBox1">
+      Hi, Mr. Davis! Welcome to Mexico. Are you at the airport now?<br><br>
+      Great. Listen — it&apos;s easy. From the airport, go through the arrivals exit and take a taxi. Tell him: ConnectPro International in Celaya. It&apos;s about 45 minutes from the airport — it&apos;s not far.<br><br>
+      When you arrive in Celaya, the taxi will take the highway. Go along the highway and take the second exit. Turn right at the first traffic lights. Go straight for about two kilometres. Go past a big Oxxo on your left. Our building is right after it. You can&apos;t miss it.<br><br>
+      Call me when you arrive at the lobby. I&apos;ll come down and meet you. My number is 461 555 0192. Send it to me in a WhatsApp message if you need it again.<br><br>
+      Oh — and don&apos;t worry about baggage claim. I have someone from our office there now to help you. Call him if you have any problems — his name is Roberto.<br><br>
+      OK? Have a good trip! See you soon.
+      <div style="font-size:11px;color:var(--muted);margin-top:10px;font-style:normal">📎 ElevenLabs: Voice — Sarah · Speed 0.80 · A1.2 M3 S2A</div>
+    </div>
+
+    <div style="font-family:var(--font-head);font-size:12px;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin:18px 0 10px">✏️ Multiple Choice</div>
+    <div class="listen-q"><div class="listen-q-text">1. Which exit does the taxi take on the highway?</div><div class="listen-opts">
+      <button class="listen-btn" onclick="checkListen(this,'second','lf1')">The second exit</button>
+      <button class="listen-btn" onclick="checkListen(this,'first','lf1')">The first exit</button>
+      <button class="listen-btn" onclick="checkListen(this,'third','lf1')">The third exit</button>
+    </div><div class="listen-feedback" id="lf1"></div></div>
+    <div class="listen-q"><div class="listen-q-text">2. What is Roberto&apos;s role?</div><div class="listen-opts">
+      <button class="listen-btn" onclick="checkListen(this,'help','lf2')">He is there to help with baggage claim</button>
+      <button class="listen-btn" onclick="checkListen(this,'driver','lf2')">He is the taxi driver</button>
+      <button class="listen-btn" onclick="checkListen(this,'manager','lf2')">He is Mr. Davis&apos;s manager</button>
+    </div><div class="listen-feedback" id="lf2"></div></div>
+
+    <div style="font-family:var(--font-head);font-size:12px;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin:18px 0 10px">✏️ True or False</div>
+    <div class="tf-row"><div class="tf-stmt">The trip from the airport takes about 45 minutes.</div><div class="tf-btns"><button class="tf-btn" onclick="checkTF(this,true)">TRUE</button><button class="tf-btn" onclick="checkTF(this,false)">FALSE</button></div></div>
+    <div class="tf-row"><div class="tf-stmt">Mr. Davis should turn left at the traffic lights.</div><div class="tf-btns"><button class="tf-btn" onclick="checkTF(this,false)">TRUE</button><button class="tf-btn" onclick="checkTF(this,false)">FALSE</button></div></div>
+    <div class="tf-row"><div class="tf-stmt">Mónica will meet Mr. Davis at the lobby.</div><div class="tf-btns"><button class="tf-btn" onclick="checkTF(this,true)">TRUE</button><button class="tf-btn" onclick="checkTF(this,false)">FALSE</button></div></div>
+
+    <div class="teacher-note teacher-only"><strong>Post-listening speaking:</strong> "Close the script. Tell me: how does Mr. Davis get from the airport to ConnectPro? Three steps." → forces direction recall without notes.</div>
+  </div>
+</section>
+
+<!-- §7 PRODUCTION -->
+<section class="section" id="s7">
+  <div class="section-header"><span class="section-number">§7</span><h2 class="section-title">🔥 Production — Give Directions</h2><span class="section-time">12 min</span></div>
+  <div class="section-body">
+    <div class="img-card"><img src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=900&q=80" alt="Business person with directions" loading="lazy"><div class="img-overlay">Now YOU give the directions — in English, from memory</div></div>
+
+    <div class="debate-wrap">
+      <div style="font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px">📊 Class Opinion Meter</div>
+      <div class="debate-meter"><div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:8px">"It&apos;s easier to give directions by WhatsApp than by phone."</div>
+        <div class="meter-track"><div class="meter-fill" id="meterFill"></div></div>
+        <div class="meter-labels"><span>😬 Disagree</span><span>50/50</span><span>Agree 📱</span></div>
+        <div class="debate-btns"><button class="debate-btn-a" onclick="moveMeter(-7)">👎 Disagree</button><button class="debate-btn-b" onclick="moveMeter(7)">👍 Agree</button></div>
+        <div style="font-size:12px;color:var(--muted);margin-top:8px" id="meterPercent">Class: 50% agree</div>
+      </div>
+    </div>
+
+    <div class="speaking-qs">
+      <div class="speaking-q"><div class="sq-tag"><span class="tag tag-t2s">T→S</span></div>"Give me directions from YOUR house to YOUR office in 4 sentences."</div>
+      <div class="speaking-q"><div class="sq-tag"><span class="tag tag-s2s">S→S</span></div>"Partner A draws a simple map. Partner B gives directions. Switch!"</div>
+      <div class="speaking-q"><div class="sq-tag"><span class="tag tag-t2s">T→S</span></div>"A client asks: &apos;How long does it take from BJX to Celaya?&apos; Answer with a full sentence."</div>
+      <div class="speaking-q"><div class="sq-tag"><span class="tag tag-class">Class</span></div>"What is the WORST direction you ever received? What happened?"</div>
+    </div>
+
+    <div style="background:rgba(139,92,246,.05);border:1px solid var(--border);border-radius:12px;padding:20px;margin:14px 0">
+      <div style="font-family:var(--font-head);font-size:14px;font-weight:800;color:var(--accent);margin-bottom:8px">⚡ CHALLENGE — Airport to Office (90 sec)</div>
+      <div style="font-size:14px;color:var(--text);margin-bottom:14px">A client calls you from BJX Airport. Give complete directions to YOUR office. Include: transport, at least 3 direction commands, one preposition of movement, and "How long" information. Badge awarded!</div>
+      <div class="timer-wrap">
+        <svg class="timer-svg" width="90" height="90" viewBox="0 0 90 90"><circle class="timer-bg" cx="45" cy="45" r="38" stroke-width="6"/><circle class="timer-arc" id="tArc3" cx="45" cy="45" r="38" stroke-width="6" stroke-dasharray="238.76" stroke-dashoffset="0"/><text class="timer-text" id="tText3" x="45" y="44">1:30</text><text class="timer-label" x="45" y="57">challenge</text></svg>
+        <div class="timer-btns"><button class="btn btn-primary" onclick="startTimer('tArc3','tText3',90,'b3')">START</button><button class="btn btn-ghost" onclick="resetTimer('tArc3','tText3','1:30')">RESET</button></div>
+      </div>
+    </div>
+
+    <div style="font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px">🎲 Hot Seat Dice — 6 Prompts</div>
+    <div class="dice-grid">
+      <div class="dice-card"><span class="dice-num">1</span>"Give directions from the airport to a hotel in your city."</div>
+      <div class="dice-card"><span class="dice-num">2</span>"How long does it take to fly from Mexico City to your city?"</div>
+      <div class="dice-card"><span class="dice-num">3</span>"A colleague calls: 'I&apos;m at the roundabout. Where do I go?' Help them."</div>
+      <div class="dice-card"><span class="dice-num">4</span>"What transport is best from BJX to Celaya? Why?"</div>
+      <div class="dice-card"><span class="dice-num">5</span>"Use 'through', 'past', 'along' in one set of directions."</div>
+      <div class="dice-card"><span class="dice-num">6</span>"A client has a flight delay. What do you say to them?"</div>
+    </div>
+  </div>
+</section>
+
+<!-- §8 WRAP-UP -->
+<section class="section" id="s8">
+  <div class="section-header"><span class="section-number">§8</span><h2 class="section-title">🏅 Wrap-Up — Badge Showcase</h2><span class="section-time">5 min</span></div>
+  <div class="section-body">
+    <div class="img-card"><img src="https://images.unsplash.com/photo-1593642632559-0c6d3fc62b89?w=900&q=80" alt="Successful team" loading="lazy"><div class="img-overlay">S2 complete — you can now guide anyone from the airport to your office! ✈️</div></div>
+    <div class="badge-showcase">
+      <div class="badge-item"><span class="badge-emoji">⚡</span><div class="badge-name">Quick Start</div><div style="font-size:11px;color:var(--muted);margin-top:4px">Warm-up done</div></div>
+      <div class="badge-item"><span class="badge-emoji">📚</span><div class="badge-name">Word Power</div><div style="font-size:11px;color:var(--muted);margin-top:4px">8+ vocab correct</div></div>
+      <div class="badge-item"><span class="badge-emoji">🎯</span><div class="badge-name">Grammar Pro</div><div style="font-size:11px;color:var(--muted);margin-top:4px">Challenge done</div></div>
+      <div class="badge-item"><span class="badge-emoji">🎧</span><div class="badge-name">Active Listener</div><div style="font-size:11px;color:var(--muted);margin-top:4px">Listening done</div></div>
+      <div class="badge-item"><span class="badge-emoji">🏆</span><div class="badge-name">My Win</div><div style="font-size:11px;color:var(--muted);margin-top:4px">Win saved</div></div>
+    </div>
+    <div style="font-family:var(--font-head);font-size:12px;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin:16px 0 8px">✅ I Can Now…</div>
+    <div class="checklist">
+      <div class="check-item"><span class="check-icon">🟢</span>Give travel directions using imperatives: "Turn right / Go straight / Take the exit"</div>
+      <div class="check-item"><span class="check-icon">🟢</span>Use prepositions of movement: through / past / along / across / to / from</div>
+      <div class="check-item"><span class="check-icon">🟢</span>Ask and answer: "How long does it take?" / "How far is it?"</div>
+      <div class="check-item"><span class="check-icon">🟢</span>Use airport vocabulary: terminal, gate, boarding pass, baggage claim, customs, delay</div>
+      <div class="check-item"><span class="check-icon">🟢</span>Say travel colloquial: "It&apos;s not far" / "You can&apos;t miss it" / "Have a good trip!"</div>
+    </div>
+    <div style="font-family:var(--font-head);font-size:12px;font-weight:700;color:var(--warn);letter-spacing:.08em;text-transform:uppercase;margin:20px 0 8px">🎯 3 Phrases for This Week</div>
+    <div class="phrases-week">
+      <div class="phrase-card">"Turn right at the traffic lights."<span>Use when giving directions to any visitor</span></div>
+      <div class="phrase-card">"It&apos;s not far — about 30 minutes."<span>Reassure clients about travel time</span></div>
+      <div class="phrase-card">"You can&apos;t miss it."<span>Describe a place that&apos;s easy to find</span></div>
+    </div>
+    <div style="font-family:var(--font-head);font-size:12px;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin:20px 0 8px">🏆 My Win Today</div>
+    <div style="margin:16px 0"><textarea class="win-textarea" id="winInput" placeholder="What was YOUR win today?"></textarea><button class="win-btn" onclick="saveWin()">Save My Win</button><div class="win-saved" id="winSaved"></div></div>
+  </div>
+</section>
+
+</main>
+<footer class="site-footer"><span class="level-tag">A1.1</span><span class="level-tag active">A1.2</span><span class="level-tag">A2.1</span><span class="level-tag">A2.2</span><span class="level-tag">B1.1</span><span class="level-tag">B1.2</span></footer>
+
+<script>
+const earnedBadges={};
+function earnBadge(id){if(earnedBadges[id])return;earnedBadges[id]=true;const el=document.getElementById(id);if(el)el.classList.add('earned');if(Object.keys(earnedBadges).length>=5)launchConfetti();}
+function launchConfetti(){const w=document.getElementById('confettiWrap');w.style.display='block';for(let i=0;i<80;i++){const c=document.createElement('div');const cols=['#8B5CF6','#A78BFA','#FFB347','#00E5A0','#FF4D6D','#00CFFF'];c.style.cssText='position:absolute;width:8px;height:8px;background:'+cols[i%cols.length]+';border-radius:50%;left:'+Math.random()*100+'%;top:-10px;animation:confFall '+(1.5+Math.random()*2)+'s ease-out forwards;animation-delay:'+Math.random()*.5+'s;';w.appendChild(c);}const s=document.createElement('style');s.textContent='@keyframes confFall{0%{transform:translateY(0) rotate(0);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}';document.head.appendChild(s);setTimeout(()=>{w.style.display='none';w.innerHTML='';},4000);}
+
+let timerInterval=null;
+function startTimer(arcId,textId,totalSec,badgeKey){if(timerInterval)clearInterval(timerInterval);const arc=document.getElementById(arcId);const txt=document.getElementById(textId);const circ=238.76;let rem=totalSec;timerInterval=setInterval(()=>{rem--;const m=Math.floor(rem/60);const s=rem%60;txt.textContent=m+':'+(s<10?'0':'')+s;arc.setAttribute('stroke-dashoffset',circ*(1-rem/totalSec));if(rem<=5)arc.style.stroke='#FF4D6D';if(rem<=0){clearInterval(timerInterval);timerInterval=null;txt.textContent='0:00';arc.style.stroke='var(--success)';if(badgeKey)earnBadge(badgeKey);}},1000);}
+function resetTimer(arcId,textId,label){if(timerInterval){clearInterval(timerInterval);timerInterval=null;}document.getElementById(arcId).setAttribute('stroke-dashoffset','0');document.getElementById(arcId).style.stroke='var(--accent)';document.getElementById(textId).textContent=label;}
+
+let pollScore=0;
+const pollMsgs={
+  p1a:{correct:true,msg:'✅ "through" — you enter customs and exit the other side.'},
+  p1b:{correct:false,msg:'❌ "past" = you walk by without stopping. You can&apos;t walk past customs!'},
+  p1c:{correct:false,msg:'❌ "along" = following a road. Customs is a place you go through.'},
+  p2a:{correct:false,msg:'❌ "Go right" isn&apos;t natural for directions. "Turn" + direction.'},
+  p2b:{correct:true,msg:'✅ "Turn right" — the classic direction command.'},
+  p2c:{correct:false,msg:'❌ "Take" is for highways and exits, not for directions at a junction.'},
+  p3a:{correct:false,msg:'❌ "do" is for "you" or "I". "The taxi" is singular → does.'},
+  p3b:{correct:true,msg:'✅ "does" — singular subject (the taxi).'},
+  p3c:{correct:false,msg:'❌ "is" isn&apos;t right here. "How long" asks about time → does + take.'}
+};
+function checkPoll(btn,a,gId,fId,k){const btns=btn.parentElement.querySelectorAll('.poll-btn');btns.forEach(b=>{b.disabled=true;b.classList.add('wrong-ans');});const fb=document.getElementById(fId);const info=pollMsgs[k];if(info&&info.correct){btn.classList.remove('wrong-ans');btn.classList.add('correct-ans');if(fb)fb.textContent=info.msg;pollScore+=10;document.getElementById('pollScoreVal').textContent=pollScore+' pts';if(pollScore>=30)earnBadge('b3');}else{btn.classList.add('wrong-ans');if(fb)fb.textContent=info?info.msg:'❌';}}
+
+const actMsgs={
+  a1c:{correct:true,msg:'✅ "across" — moving from one side of a bridge to the other.'},
+  a1w:{correct:false,msg:'❌ "through" = entering a place. A bridge isn&apos;t a place — use "across".'},
+  a1x:{correct:false,msg:'❌ "past" = walking by without going over.'},
+  a2c:{correct:true,msg:'✅ "along" — following the road.'},
+  a2w:{correct:false,msg:'❌ "across" = from side to side. "Along" = following the road.'},
+  a2x:{correct:false,msg:'❌ "to" = destination. Here you&apos;re describing the path → "along".'},
+  a3c:{correct:true,msg:'✅ "past" — the hotel is after the conference centre.'},
+  a3w:{correct:false,msg:'❌ "from" = starting point. The hotel is located after a place → "past".'},
+  a3x:{correct:false,msg:'❌ "along" = following a road. This is about position → "past".'},
+  a4c:{correct:true,msg:'✅ "from" — the starting point of the journey.'},
+  a4w:{correct:false,msg:'❌ "to" = destination. We want the starting point → "from".'},
+  a4x:{correct:false,msg:'❌ "through" = entering something. Here we want the start point.'},
+  b1c:{correct:true,msg:'✅ "Turn right" — the correct imperative for direction changes.'},
+  b1w:{correct:false,msg:'❌ "Take right" isn&apos;t natural in English.'},
+  b1x:{correct:false,msg:'❌ "Walk right" — "walk" doesn&apos;t give a direction like this.'},
+  b2c:{correct:true,msg:'✅ "to the hotel" — destination = to.'},
+  b2w:{correct:false,msg:'❌ "past the hotel" = go by without stopping.'},
+  b2x:{correct:false,msg:'❌ "along the hotel" doesn&apos;t make sense.'},
+  b3c:{correct:true,msg:'✅ "through" customs — you enter, show passport, and exit.'},
+  b3w:{correct:false,msg:'❌ "past customs" = you skip it without going through. Not allowed!'},
+  b3x:{correct:false,msg:'❌ "to customs" = destination only. You also go through it.'},
+  b4c:{correct:true,msg:'✅ "How long" → time. "How far" → distance.'},
+  b4w:{correct:false,msg:'❌ "How much" is for uncountable things/money. Use "How long" for time.'},
+  b4x:{correct:false,msg:'❌ "How many" is for countable things. Time uses "How long".'}
+};
+const answeredActs={};
+function checkAct(btn,key,fId,sId,max){if(answeredActs[fId])return;answeredActs[fId]=true;const info=actMsgs[key];const btns=btn.parentElement.querySelectorAll('.act-btn');btns.forEach(b=>{b.disabled=true;b.classList.add('wrong-ans');});const fb=document.getElementById(fId);if(info&&info.correct){btn.classList.remove('wrong-ans');btn.classList.add('correct-ans');if(fb)fb.textContent=info.msg;const s=document.getElementById(sId);if(s){const p=s.textContent.split('/');s.textContent=(parseInt(p[0])+1)+' / '+max;}}else{btn.classList.add('wrong-ans');if(fb)fb.textContent=info?info.msg:'❌';}}
+
+const vqData=[
+  {word:'terminal',sound:'Suena: TER-mi-nal',correct:'edificio del aeropuerto',wrongs:['puerta de abordaje','aduanas']},
+  {word:'gate',sound:'Suena: guéit',correct:'puerta de abordaje',wrongs:['terminal','equipaje']},
+  {word:'boarding pass',sound:'Suena: BOR-ding pas',correct:'pase de abordar',wrongs:['pasaporte','aduanas']},
+  {word:'baggage claim',sound:'Suena: BAG-ach kleim',correct:'reclamación de equipaje',wrongs:['salida','check-in']},
+  {word:'customs',sound:'Suena: CÁS-toms',correct:'aduanas',wrongs:['terminal','llegadas']},
+  {word:'departure',sound:'Suena: di-PÁR-cher',correct:'salida (vuelo)',wrongs:['llegada','retraso']},
+  {word:'arrival',sound:'Suena: a-RÁI-val',correct:'llegada',wrongs:['salida','retraso']},
+  {word:'delay',sound:'Suena: di-LÉI',correct:'retraso',wrongs:['salida','llegada']},
+  {word:'shuttle',sound:'Suena: SHÁ-tol',correct:'transporte de enlace',wrongs:['auto de empresa','taxi']},
+  {word:'company car',sound:'Suena: CÓM-pa-ni car',correct:'auto de empresa',wrongs:['taxi','shuttle']},
+  {word:'traffic lights',sound:'Suena: TRAF-ic laits',correct:'semáforo',wrongs:['rotonda','señal']},
+  {word:'roundabout',sound:'Suena: RAUND-a-baut',correct:'glorieta / rotonda',wrongs:['semáforo','puente']}
+];
+let vqQueue=[],vqCurrent=0,vqCorrect=0,vqAnswered=false;
+function vqShuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function vqInit(){vqQueue=vqShuffle([...vqData]);vqCurrent=0;vqCorrect=0;vqAnswered=false;document.getElementById('vqCard').style.display='block';document.getElementById('vqDone').style.display='none';vqRender();}
+function vqRender(){const q=vqQueue[vqCurrent];document.getElementById('vqWord').textContent=q.word;document.getElementById('vqSound').textContent=q.sound;document.getElementById('vqFeedback').textContent='';document.getElementById('vqFeedback').style.color='';document.getElementById('vqNext').style.display='none';document.getElementById('vqCounter').textContent=(vqCurrent+1)+'/'+vqQueue.length;document.getElementById('vqProgress').style.width=Math.round((vqCurrent/vqQueue.length)*100)+'%';document.getElementById('vqLabel').textContent=vqCurrent+'/'+vqQueue.length+' done';vqAnswered=false;const opts=vqShuffle([q.correct,...q.wrongs]);const c=document.getElementById('vqOptions');c.innerHTML='';opts.forEach(o=>{const b=document.createElement('button');b.className='vquiz-opt';b.textContent=o;b.onclick=()=>vqCheck(b,o,q.correct);c.appendChild(b);});speakWord(q.word);}
+function vqCheck(btn,chosen,correct){if(vqAnswered)return;vqAnswered=true;const fb=document.getElementById('vqFeedback');document.querySelectorAll('.vquiz-opt').forEach(b=>b.disabled=true);if(chosen===correct){btn.classList.add('correct');fb.textContent='✅ ¡Correcto!';fb.style.color='var(--success)';vqCorrect++;if(vqCorrect>=8)earnBadge('b2');}else{btn.classList.add('wrong');document.querySelectorAll('.vquiz-opt').forEach(b=>{if(b.textContent===correct)b.classList.add('correct');});fb.textContent='❌ → "'+correct+'"';fb.style.color='var(--danger)';}document.getElementById('vqNext').style.display='inline-block';}
+function vqNextQuestion(){vqCurrent++;if(vqCurrent>=vqQueue.length)vqFinish();else vqRender();}
+function vqFinish(){document.getElementById('vqCard').style.display='none';document.getElementById('vqDone').style.display='block';document.getElementById('vqFinalScore').textContent=vqCorrect+'/'+vqQueue.length;document.getElementById('vqProgress').style.width='100%';document.getElementById('vqLabel').textContent=vqQueue.length+'/'+vqQueue.length+' done';document.getElementById('vqDoneMsg').textContent=vqCorrect>=10?'🏅 Perfect!':vqCorrect>=8?'🎯 Badge earned!':'📖 Try again!';if(vqCorrect>=8)earnBadge('b2');document.getElementById('vqCounter').textContent='✓';}
+document.addEventListener('DOMContentLoaded',vqInit);
+
+function speakWord(t){if(!window.speechSynthesis)return;const u=new SpeechSynthesisUtterance(t);u.lang='en-US';u.rate=0.80;speechSynthesis.cancel();speechSynthesis.speak(u);}
+function toggleScript(id){const el=document.getElementById(id);el.style.display=el.style.display==='block'?'none':'block';}
+
+const listenMsgs={
+  second:{correct:true,msg:'✅ The second exit — "take the second exit".'},
+  first:{correct:false,msg:'❌ Listen again — she says "second exit".'},
+  third:{correct:false,msg:'❌ Not the third — it&apos;s the second exit.'},
+  help:{correct:true,msg:'✅ Roberto is from ConnectPro, at baggage claim to help.'},
+  driver:{correct:false,msg:'❌ Roberto is not the taxi driver — he&apos;s from the company.'},
+  manager:{correct:false,msg:'❌ Roberto works for ConnectPro, not for Mr. Davis.'}
+};
+function checkListen(btn,key,fbId){const btns=btn.parentElement.querySelectorAll('.listen-btn');btns.forEach(b=>{b.disabled=true;b.classList.add('wrong-ans');});const fb=document.getElementById(fbId);const info=listenMsgs[key];if(info&&info.correct){btn.classList.remove('wrong-ans');btn.classList.add('correct-ans');if(fb)fb.textContent=info.msg;}else{if(fb)fb.textContent=info?info.msg:'❌';}earnBadge('b4');}
+
+function checkTF(btn,isCorrect){const row=btn.closest('.tf-row');row.querySelectorAll('.tf-btn').forEach(b=>b.disabled=true);if(isCorrect){btn.style.cssText='background:rgba(0,229,160,.15);border-color:var(--success);color:var(--success)';}else{btn.style.cssText='background:rgba(255,77,109,.12);border-color:var(--danger);color:var(--danger)';const sib=Array.from(row.querySelectorAll('.tf-btn')).find(b=>b!==btn);if(sib)sib.style.cssText='background:rgba(0,229,160,.15);border-color:var(--success);color:var(--success)';}earnBadge('b4');}
+
+let meterVal=50;
+function moveMeter(d){meterVal=Math.max(5,Math.min(95,meterVal+d));document.getElementById('meterFill').style.width=meterVal+'%';document.getElementById('meterPercent').textContent='Class: '+meterVal+'% agree';}
+
+function saveWin(){const t=document.getElementById('winInput').value.trim();if(!t)return;document.getElementById('winSaved').style.display='block';document.getElementById('winSaved').textContent='🏆 "'+t+'" — Great job!';earnBadge('b5');}
+function toggleMode(){document.body.classList.toggle('student-mode');document.querySelector('.mode-toggle').textContent=document.body.classList.contains('student-mode')?'TEACHER MODE':'STUDENT MODE';}
+window.addEventListener('scroll',()=>{const h=document.documentElement;document.getElementById('progressBar').style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100+'%';});
+</script>
+</body>
+</html>

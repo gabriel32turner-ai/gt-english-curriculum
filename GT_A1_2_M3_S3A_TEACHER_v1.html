@@ -1,0 +1,1360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GT A1.2 · M3 · S3A — Hotel Check-In & Reservations</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#080808;--surface:#111318;--surface2:#1a1f28;
+  --border:rgba(139,92,246,.18);
+  --accent:#8B5CF6;--accent2:#A78BFA;
+  --text:#F0F4F8;--muted:#8A9BB0;--dim:rgba(226,226,226,.25);
+  --danger:#FF4D6D;--success:#00E5A0;--warn:#FFB347;
+  --violet:#A78BFA;--cyan:#00CFFF;--gold:#FFB800;--green:#00E676;
+  --font-head:'Syne',sans-serif;--font-body:'DM Sans',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:14px;line-height:1.6}
+
+/* PROGRESS BAR */
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--accent);z-index:9999;transition:width .2s;width:0}
+
+/* HEADER */
+.hdr{background:var(--surface);border-bottom:1px solid var(--border);padding:18px 48px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+.brand{display:flex;align-items:center;gap:10px}
+.dot{width:8px;height:8px;background:var(--accent);border-radius:50%}
+.bname{font-family:var(--font-head);font-weight:800;font-size:13px;letter-spacing:2.5px;text-transform:uppercase;color:#fff}
+.bsub{font-size:11px;color:var(--muted);letter-spacing:1px}
+.sess-tag{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.tag{display:inline-block;padding:4px 12px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;border-radius:20px}
+.tv{background:rgba(139,92,246,.15);color:var(--accent);border:1px solid rgba(139,92,246,.3)}
+.tgold{background:rgba(255,184,0,.1);color:var(--gold);border:1px solid rgba(255,184,0,.25)}
+.tc{background:rgba(0,207,255,.1);color:var(--cyan);border:1px solid rgba(0,207,255,.25)}
+.tg{background:rgba(0,230,118,.1);color:var(--green);border:1px solid rgba(0,230,118,.25)}
+
+/* BADGE STRIP */
+.badge-strip{display:flex;gap:6px;margin-left:12px}
+.badge-strip span{font-size:18px;filter:grayscale(1) opacity(.35);transition:all .4s}
+.badge-strip span.earned{filter:none;opacity:1;animation:badgePop .5s ease}
+@keyframes badgePop{0%{transform:scale(1)}50%{transform:scale(1.5)}100%{transform:scale(1)}}
+
+/* SECTIONS */
+.section{margin:24px;border:1px solid var(--border);border-radius:16px;overflow:hidden;background:var(--surface)}
+.section-header{display:flex;align-items:center;gap:14px;padding:18px 24px;background:linear-gradient(135deg,rgba(139,92,246,.08),transparent);border-bottom:1px solid var(--border)}
+.section-number{font-family:var(--font-head);font-size:11px;font-weight:800;color:var(--accent);letter-spacing:.12em;text-transform:uppercase;background:rgba(139,92,246,.1);border:1px solid var(--border);padding:3px 10px;border-radius:20px}
+.section-title{font-family:var(--font-head);font-size:22px;font-weight:800;color:#fff}
+.section-title em{color:var(--accent);font-style:normal}
+.section-body{padding:24px}
+.section-sub{font-size:13px;color:var(--muted);margin-bottom:18px}
+.dur-tag{font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;color:var(--gold);border:1px solid rgba(255,184,0,.2);padding:3px 10px;display:inline-block;margin-bottom:18px;border-radius:20px}
+
+/* IMAGES */
+.hero-img{width:100%;height:240px;object-fit:cover;border-radius:12px;border:1px solid var(--border);margin-bottom:18px;filter:brightness(.65)}
+.img-card{width:100%;height:90px;object-fit:cover;display:block;filter:brightness(.5);border-radius:10px 10px 0 0}
+.img-sm{width:100%;height:70px;object-fit:cover;display:block;filter:brightness(.5);border-radius:10px 10px 0 0}
+.img-banner{width:100%;height:160px;object-fit:cover;border-radius:12px;border:1px solid var(--border);margin-bottom:18px;filter:brightness(.6)}
+
+/* WARM-UP CARDS */
+.wu-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.wu-card{background:var(--surface2);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.wu-card-body{padding:14px 16px}
+.wu-q{font-size:13px;color:var(--text);line-height:1.6}
+
+/* TEACHER NOTES */
+.teacher-note{padding:12px 16px;margin:12px 0;font-size:12px;line-height:1.6;border-radius:8px}
+.tn-c1{background:rgba(0,207,255,.06);border:1px solid rgba(0,207,255,.2);color:rgba(0,207,255,.85)}
+.tn-c2{background:rgba(232,21,90,.06);border:1px solid rgba(232,21,90,.2);color:rgba(255,120,160,.85)}
+.tn-c3{background:rgba(255,184,0,.05);border:1px solid rgba(255,184,0,.2);color:rgba(255,184,0,.85)}
+
+/* QUICK WIN */
+.quick-win{background:rgba(0,230,118,.05);border:1px solid rgba(0,230,118,.2);border-left:4px solid var(--green);padding:16px 20px;border-radius:0 10px 10px 0;margin-top:16px}
+.qw-label{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--green);margin-bottom:5px}
+
+/* SPEAKING TOPIC */
+.topic-card{background:var(--surface2);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:18px}
+.topic-body{padding:20px 24px}
+.round-grid{display:flex;flex-direction:column;gap:12px}
+.round-card{background:var(--surface2);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.round-body{padding:14px 16px}
+.round-label{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:5px}
+.round-q{font-size:14px;color:#fff;font-weight:500;margin-bottom:8px;line-height:1.5}
+.round-hint{font-size:11.5px;color:var(--muted);font-style:italic}
+.model-reveal{background:var(--surface2);border:1px solid rgba(139,92,246,.25);border-radius:10px;margin-top:14px;overflow:hidden}
+.model-btn{background:none;border:none;color:var(--accent);padding:12px 16px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;cursor:pointer;width:100%;text-align:left}
+.model-content{max-height:0;overflow:hidden;transition:max-height .4s}
+.model-content.open{max-height:300px}
+.model-text{padding:0 16px 14px;font-size:12.5px;color:var(--accent2);line-height:1.7;font-style:italic}
+
+/* VOCAB */
+.vocab-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.vocab-card{background:var(--surface2);border:1px solid var(--border);border-radius:10px;overflow:hidden;cursor:pointer;transition:all .2s}
+.vocab-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.vocab-card-body{padding:12px 14px}
+.vc-w{font-family:var(--font-head);font-size:12px;font-weight:700;color:#fff;margin-bottom:2px}
+.vc-pron{font-size:10.5px;color:var(--cyan);margin-bottom:5px;font-style:italic}
+.vc-d{font-size:11px;color:var(--muted);line-height:1.4;margin-bottom:6px}
+.vc-e{font-size:11px;color:var(--accent2);font-style:italic;border-left:2px solid var(--accent);padding-left:7px}
+.vc-s{font-size:10px;color:var(--dim);margin-top:5px}
+
+/* VOCAB QUIZ */
+.quiz-area{margin-top:18px;background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:20px}
+.quiz-progress{height:6px;background:rgba(139,92,246,.15);border-radius:3px;margin-bottom:14px;overflow:hidden}
+.quiz-bar{height:100%;background:var(--accent);border-radius:3px;transition:width .3s;width:0}
+.quiz-q{font-size:14px;color:#fff;margin-bottom:12px;font-weight:500}
+.quiz-opts{display:flex;flex-direction:column;gap:8px}
+.quiz-opt{background:var(--surface);border:1px solid var(--border);color:var(--text);padding:10px 16px;font-family:var(--font-body);font-size:13px;cursor:pointer;border-radius:8px;transition:all .2s;text-align:left}
+.quiz-opt:hover:not(:disabled){border-color:var(--accent)}
+.quiz-opt.correct-ans{background:rgba(0,229,160,.12);border-color:var(--success);color:var(--success)}
+.quiz-opt.wrong-ans{background:rgba(255,77,109,.12);border-color:var(--danger);color:var(--danger)}
+.quiz-opt:disabled{cursor:not-allowed}
+.quiz-score{font-family:var(--font-head);font-size:13px;color:var(--accent);margin-top:12px}
+.quiz-restart{background:var(--accent);border:none;color:#fff;padding:8px 18px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;cursor:pointer;border-radius:20px;margin-top:10px;display:none}
+
+/* COLLOQUIAL */
+.coll-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.coll-card{background:var(--surface2);border:1px solid var(--border);border-radius:10px;overflow:hidden;cursor:pointer;transition:border-color .2s}
+.coll-card:hover{border-color:var(--accent)}
+.coll-body{padding:14px 16px}
+.coll-phrase{font-family:var(--font-head);font-size:13px;font-weight:700;color:#fff;margin-bottom:4px}
+.coll-meaning{font-size:11px;color:var(--muted);margin-bottom:6px}
+.coll-ex{font-size:11px;color:var(--accent2);font-style:italic}
+
+/* GRAMMAR */
+.problem-box{background:rgba(139,92,246,.06);border:1px solid rgba(139,92,246,.22);border-left:4px solid var(--accent);padding:18px 22px;border-radius:0 12px 12px 0;margin-bottom:18px}
+.problem-label{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:8px}
+.tool-box{background:rgba(0,229,160,.05);border:1px solid rgba(0,229,160,.2);border-left:4px solid var(--success);padding:16px 20px;border-radius:0 12px 12px 0;margin-bottom:18px}
+.tool-label{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--success);margin-bottom:7px}
+.gram-table{width:100%;border-collapse:collapse;margin-bottom:14px}
+.gram-table th{background:var(--surface);padding:10px 14px;text-align:left;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim);border-bottom:2px solid var(--accent)}
+.gram-table td{padding:10px 14px;border-bottom:1px solid var(--border);font-size:12.5px;vertical-align:top}
+.gram-table tr:hover td{background:rgba(139,92,246,.04)}
+.ex{color:var(--accent2);font-style:italic}
+.err-box{background:rgba(255,77,109,.05);border:1px solid rgba(255,77,109,.2);padding:13px 17px;margin:13px 0;font-size:12px;color:rgba(255,120,120,.9);line-height:1.8;border-radius:10px}
+.err-box strong{color:var(--danger)}
+.coll-toggle{background:var(--surface2);border:1px solid var(--border);color:var(--muted);padding:9px 16px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;cursor:pointer;width:100%;text-align:left;border-radius:8px;margin-bottom:3px}
+.coll-toggle:hover{border-color:var(--accent)}
+.coll-content{max-height:0;overflow:hidden;transition:max-height .4s ease}
+.coll-content.open{max-height:600px}
+
+/* HOTEL CHECK-IN SIMULATOR (unique visual) */
+.sim-container{background:var(--surface2);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin:18px 0}
+.sim-header{background:linear-gradient(135deg,rgba(139,92,246,.12),rgba(167,139,250,.06));padding:18px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px}
+.sim-icon{font-size:28px}
+.sim-title{font-family:var(--font-head);font-size:16px;font-weight:800;color:#fff}
+.sim-sub{font-size:11px;color:var(--muted)}
+.sim-body{padding:22px}
+.sim-step{display:none;animation:fadeIn .4s}
+.sim-step.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.sim-prompt{font-size:14px;color:#fff;margin-bottom:6px;font-weight:500;line-height:1.5}
+.sim-context{font-size:12px;color:var(--muted);margin-bottom:14px;font-style:italic}
+.sim-opts{display:flex;flex-direction:column;gap:8px}
+.sim-opt{background:var(--surface);border:1px solid var(--border);color:var(--text);padding:12px 16px;font-family:var(--font-body);font-size:13px;cursor:pointer;border-radius:8px;transition:all .2s;text-align:left}
+.sim-opt:hover:not(:disabled){border-color:var(--accent);color:var(--accent)}
+.sim-opt.sim-correct{background:rgba(0,229,160,.12);border-color:var(--success);color:var(--success)}
+.sim-opt.sim-wrong{background:rgba(255,77,109,.12);border-color:var(--danger);color:var(--danger)}
+.sim-opt:disabled{cursor:not-allowed}
+.sim-feedback{margin-top:10px;padding:10px 14px;border-radius:8px;font-size:12px;display:none}
+.sim-feedback.show{display:block}
+.sim-next{background:var(--accent);border:none;color:#fff;padding:8px 20px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;cursor:pointer;border-radius:20px;margin-top:12px;display:none}
+.sim-progress{display:flex;gap:6px;margin-bottom:14px}
+.sim-dot{width:28px;height:4px;border-radius:2px;background:rgba(139,92,246,.2)}
+.sim-dot.done{background:var(--success)}
+.sim-dot.current{background:var(--accent)}
+.sim-complete{text-align:center;padding:30px 20px}
+.sim-complete-icon{font-size:48px;margin-bottom:12px}
+.sim-complete-text{font-family:var(--font-head);font-size:18px;font-weight:800;color:var(--success)}
+
+/* POLL */
+.poll-box{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:18px;margin:14px 0}
+.poll-q{font-size:13.5px;color:#fff;margin-bottom:12px;font-weight:500}
+.poll-opts{display:flex;gap:8px;flex-wrap:wrap}
+.poll-btn{background:var(--surface);border:1px solid var(--border);color:var(--text);padding:9px 18px;font-family:var(--font-body);font-size:12.5px;cursor:pointer;border-radius:8px;transition:all .2s}
+.poll-btn:hover:not(:disabled){border-color:var(--accent);color:var(--accent)}
+.poll-btn.correct-ans{background:rgba(0,229,160,.12);border-color:var(--success);color:var(--success)}
+.poll-btn.wrong-ans{background:rgba(255,77,109,.12);border-color:var(--danger);color:var(--danger)}
+.poll-btn:disabled{cursor:not-allowed}
+
+/* ACTIVITIES */
+.act-title{font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:11px;padding-top:18px;border-top:1px solid var(--border);margin-top:20px}
+.opt-group{margin-bottom:14px}
+.opt-q{font-size:13px;color:var(--text);margin-bottom:9px;padding:10px 14px;background:var(--surface);border-left:3px solid var(--accent);line-height:1.5;border-radius:0 8px 8px 0}
+.opts{display:flex;gap:8px;flex-wrap:wrap}
+.opt{background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:8px 16px;font-family:var(--font-body);font-size:12.5px;cursor:pointer;transition:all .2s;border-radius:8px}
+.opt:hover:not(:disabled){border-color:var(--accent);color:var(--accent)}
+.opt.correct{background:rgba(0,229,160,.12);border-color:var(--success);color:var(--success)}
+.opt.wrong{background:rgba(255,77,109,.12);border-color:var(--danger);color:var(--danger)}
+.opt:disabled{cursor:not-allowed}
+
+/* T/F */
+.tf-set{display:flex;flex-direction:column;gap:9px;margin-bottom:14px}
+.tf-row{background:var(--surface);border:1px solid var(--border);padding:12px 15px;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;border-radius:8px}
+.tf-stmt{font-size:12.5px;color:var(--text);flex:1;line-height:1.5;min-width:180px}
+.tf-btns{display:flex;gap:8px;flex-shrink:0}
+.tf-btn{background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:7px 16px;font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:1px;cursor:pointer;transition:all .2s;border-radius:6px}
+.tf-btn:hover:not(:disabled){border-color:var(--accent)}
+.tf-btn:disabled{cursor:not-allowed}
+
+/* DRAG & DROP */
+.reorder-list{display:flex;flex-direction:column;gap:7px;margin-bottom:10px;list-style:none;padding-left:0}
+.reorder-item{background:var(--surface);border:1px solid var(--border);padding:10px 13px;cursor:grab;font-size:12.5px;color:var(--text);display:flex;align-items:center;gap:9px;user-select:none;transition:border-color .2s;border-radius:8px}
+.reorder-item:active{cursor:grabbing}
+.reorder-item.dragging{opacity:.4}
+.reorder-item.drag-over{border-color:var(--accent);border-style:dashed}
+.drag-handle{color:var(--dim);font-size:13px;flex-shrink:0}
+.check-btn{background:var(--accent);border:none;color:#fff;padding:8px 20px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;cursor:pointer;margin-top:7px;border-radius:20px}
+.fb{display:none;padding:9px 13px;font-size:12.5px;margin-top:7px;line-height:1.5;border-radius:8px}
+.fb.show{display:block}
+.fb.ok{background:rgba(0,229,160,.1);border:1px solid rgba(0,229,160,.3);color:var(--success)}
+.fb.no{background:rgba(255,77,109,.08);border:1px solid rgba(255,77,109,.25);color:var(--danger)}
+
+/* MICRO-SPEAKING */
+.micro-speak{background:rgba(0,207,255,.05);border:1px solid rgba(0,207,255,.2);padding:13px 17px;margin-top:16px;border-radius:10px}
+.micro-label{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--cyan);margin-bottom:5px}
+
+/* LISTENING */
+.player-box{background:var(--surface);border:1px solid var(--border);padding:22px;border-radius:12px;margin-bottom:14px}
+.player-top{display:flex;align-items:center;gap:15px;margin-bottom:12px}
+.play-btn{width:42px;height:42px;background:var(--accent);border:none;border-radius:50%;cursor:pointer;font-size:15px;color:#fff;flex-shrink:0}
+.track-title{font-family:var(--font-head);font-size:12.5px;font-weight:700;color:#fff;margin-bottom:3px}
+.track-sub{font-size:10.5px;color:var(--muted)}
+.waveform{display:flex;align-items:center;gap:2px;height:38px;overflow:hidden}
+.wbar{width:3px;background:var(--accent);border-radius:2px;flex-shrink:0}
+.script-toggle{background:none;border:1px solid var(--border);color:var(--muted);padding:7px 15px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;cursor:pointer;margin-bottom:11px;border-radius:8px}
+.script-box{max-height:0;overflow:hidden;transition:max-height .4s}
+.script-box.open{max-height:900px}
+.script-content{background:rgba(0,207,255,.04);border:1px solid rgba(0,207,255,.15);padding:16px;font-size:12px;color:var(--text);line-height:1.9;font-style:italic;border-radius:10px}
+.eleven-note{font-size:10.5px;color:var(--dim);margin-top:7px}
+
+/* READING */
+.reading-card{background:var(--surface);border:1px solid var(--border);padding:24px 28px;border-radius:12px;margin-bottom:18px}
+.av-row{display:flex;align-items:center;gap:13px;margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid var(--border);flex-wrap:wrap}
+.avatar{width:50px;height:50px;border-radius:50%;object-fit:cover;border:2px solid var(--accent);flex-shrink:0}
+.av-name{font-family:var(--font-head);font-size:13px;font-weight:700;color:#fff}
+.av-role{font-size:11px;color:var(--muted)}
+.av-meta{margin-left:auto;font-size:11px;color:var(--muted);text-align:right;line-height:1.6}
+.rb{font-size:13px;line-height:1.95;color:var(--text)}
+.rb .obj{color:var(--accent);font-weight:600}
+.rb .imp{color:var(--gold);font-weight:600}
+.rb .hotel{color:var(--cyan);font-weight:600}
+.kw-box{background:rgba(139,92,246,.06);border:1px solid rgba(139,92,246,.15);padding:11px 15px;margin:14px 0;font-size:11.5px;color:var(--accent2);line-height:1.6;border-radius:8px}
+
+/* PRODUCTION / SPEAKING */
+.opinion-meter{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:18px;margin-bottom:18px}
+.om-bar-wrap{height:8px;background:rgba(139,92,246,.15);border-radius:4px;margin:10px 0;overflow:hidden}
+.om-bar{height:100%;background:var(--accent);border-radius:4px;transition:width .3s;width:50%}
+.om-btns{display:flex;gap:10px;margin-top:8px}
+.om-btn{padding:8px 18px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1px;cursor:pointer;border-radius:20px;transition:all .2s}
+.om-btn:hover{border-color:var(--accent)}
+.speak-grid{display:flex;flex-direction:column;gap:12px}
+.speak-card{background:var(--surface2);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.speak-body{padding:14px 16px}
+.sc-lbl{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:5px}
+.sc-q{font-size:14px;color:#fff;font-weight:500;margin-bottom:9px;line-height:1.5}
+.sc-hint{font-size:11.5px;color:var(--muted);font-style:italic}
+
+/* TIMER SVG */
+.timer-wrap{display:flex;align-items:center;gap:14px;margin:14px 0}
+.timer-text{font-family:var(--font-head);font-size:24px;font-weight:800;color:#fff}
+
+/* DICE */
+.dice-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+.dice-card{background:var(--surface2);border:1px solid var(--border);border-radius:10px;overflow:hidden;cursor:pointer;transition:all .2s}
+.dice-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.dice-body{padding:12px 14px}
+.dice-q{font-size:12px;color:var(--text);line-height:1.5}
+
+/* 3 PHRASES */
+.phrases-sec{background:rgba(255,184,0,.03);border:1px solid rgba(255,184,0,.15);border-radius:16px;margin:24px;overflow:hidden}
+.phrases-header{padding:18px 24px;border-bottom:1px solid rgba(255,184,0,.12)}
+.ph-label{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:4px}
+.ph-title{font-family:var(--font-head);font-size:20px;font-weight:800;color:#fff}
+.phrases-body{padding:20px 24px}
+.ph-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:13px}
+.ph-card{background:var(--surface2);border:1px solid rgba(255,184,0,.2);border-radius:10px;overflow:hidden}
+.ph-card-body{padding:16px}
+.ph-num{font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;color:var(--gold);margin-bottom:6px}
+.ph-phrase{font-family:var(--font-head);font-size:13px;font-weight:700;color:#fff;margin-bottom:8px;line-height:1.4}
+.ph-ctx{font-size:11px;color:var(--muted);line-height:1.6}
+
+/* WRAP-UP */
+.wu3-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:13px;margin-bottom:22px}
+.wu3-card{background:var(--surface);border:1px solid var(--border);border-top:3px solid var(--accent);padding:16px 15px;border-radius:0 0 10px 10px}
+.wu3-num{font-family:var(--font-head);font-size:22px;font-weight:800;color:var(--accent);margin-bottom:5px}
+.wu3-txt{font-size:12px;color:var(--muted);line-height:1.5}
+.checklist{display:flex;flex-direction:column;gap:7px;margin-bottom:22px}
+.cl-item{display:flex;align-items:flex-start;gap:11px;background:var(--surface);border:1px solid var(--border);padding:12px 15px;cursor:pointer;transition:all .2s;font-size:12.5px;color:var(--text);line-height:1.5;border-radius:8px}
+.cl-item:hover{border-color:var(--accent)}
+.cl-item.done{border-color:rgba(0,229,160,.3);background:rgba(0,229,160,.04);color:rgba(0,229,160,.8);text-decoration:line-through;opacity:.7}
+.cl-box{width:15px;height:15px;border:2px solid var(--accent);flex-shrink:0;margin-top:2px;border-radius:3px}
+.cl-item.done .cl-box{background:var(--success);border-color:var(--success)}
+
+/* MY WIN */
+.mywin-area{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:18px;margin-top:16px}
+.mywin-ta{width:100%;min-height:80px;background:var(--surface);border:1px solid var(--border);color:var(--text);padding:12px;font-family:var(--font-body);font-size:13px;border-radius:8px;resize:vertical}
+.mywin-btn{background:var(--accent);border:none;color:#fff;padding:8px 18px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;cursor:pointer;border-radius:20px;margin-top:8px}
+
+/* NEXT */
+.next-box{background:var(--surface);border:1px solid var(--border);border-left:4px solid var(--cyan);padding:17px 21px;border-radius:0 10px 10px 0;margin-top:18px}
+.next-lbl{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--cyan);margin-bottom:5px}
+.next-title{font-size:14px;font-weight:600;color:#fff;margin-bottom:3px}
+.next-sub{font-size:11.5px;color:var(--muted)}
+
+/* FOOTER */
+.ftr{background:var(--surface);border-top:1px solid var(--border);padding:18px 48px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:11px}
+.fbrand{font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim)}
+.finfo{font-size:11px;color:var(--dim)}
+.flvs{display:flex;gap:3px;flex-wrap:wrap}
+.flv{padding:5px 10px;font-family:var(--font-head);font-size:10px;font-weight:700;background:var(--surface2);color:var(--dim);border-radius:4px}
+.flv.active{background:var(--accent);color:#fff}
+
+/* STUDENT MODE */
+.student-hide{/* visible by default in teacher edition */}
+body.student-mode .teacher-note,
+body.student-mode .student-hide{display:none!important}
+.mode-toggle{position:fixed;bottom:20px;right:20px;background:var(--accent);color:#fff;border:none;padding:8px 16px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1px;cursor:pointer;border-radius:20px;z-index:999;box-shadow:0 4px 16px rgba(139,92,246,.4)}
+
+/* CONFETTI */
+.confetti-piece{position:fixed;width:8px;height:8px;z-index:9998;pointer-events:none;border-radius:2px}
+
+@media(max-width:860px){
+  .hdr,.ftr{padding:15px 18px}
+  .section{margin:12px}
+  .section-body{padding:16px}
+  .vocab-grid{grid-template-columns:repeat(2,1fr)}
+  .coll-grid{grid-template-columns:1fr}
+  .wu-grid{grid-template-columns:1fr}
+  .ph-grid,.wu3-grid,.dice-grid{grid-template-columns:1fr}
+  .av-meta{margin-left:0;text-align:left}
+  .opts,.poll-opts{flex-direction:column}
+  .phrases-sec{margin:12px}
+}
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progressBar"></div>
+
+<!-- HEADER -->
+<header class="hdr">
+  <div class="brand"><div class="dot"></div><div><div class="bname">Gabriel Turner</div><div class="bsub">English Training · Teacher Edition</div></div></div>
+  <div class="sess-tag">
+    <span class="tag tv">A1.2</span>
+    <span class="tag tgold">Module 3</span>
+    <span class="tag tc">Session 3A — Discovery &amp; Drill</span>
+    <span class="tag tg">120 min</span>
+    <div class="badge-strip">
+      <span id="b1">⚡</span><span id="b2">📚</span>
+      <span id="b3">🎯</span><span id="b4">🎧</span><span id="b5">🏆</span>
+    </div>
+  </div>
+</header>
+
+<button class="mode-toggle" onclick="toggleMode()">👁 Student Mode</button>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- §1 WARM-UP -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-header">
+    <span class="section-number">§1</span>
+    <div><div class="section-title">Checking Into a <em>Business Hotel</em></div></div>
+  </div>
+  <div class="section-body">
+    <div class="section-sub">Activate hotel language · Connect object pronouns to real travel scenarios · Personal experience</div>
+    <div class="dur-tag">⏱ 5 MIN</div>
+    <img class="hero-img" src="https://images.unsplash.com/photo-1566073771259-6a8506099945?w=900&auto=format&fit=crop&q=80" alt="Luxury business hotel lobby at night">
+
+    <div class="wu-grid">
+      <div class="wu-card">
+        <img class="img-card" src="https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=600&auto=format&fit=crop&q=80" alt="Hotel reception desk">
+        <div class="wu-card-body">
+          <div class="wu-q">🏨 <strong>Quick memory:</strong> Think about the last time you stayed at a hotel for work or personal travel. What was the first thing you said at reception? Try to say it in English!</div>
+        </div>
+      </div>
+      <div class="wu-card">
+        <img class="img-card" src="https://images.unsplash.com/photo-1590490360182-c33d06508886?w=600&auto=format&fit=crop&q=80" alt="Hotel key card on desk">
+        <div class="wu-card-body">
+          <div class="wu-q">💬 <strong>Partner question:</strong> Tell your partner: "When I travel for work, I usually stay at _____ hotel." What is important for you — Wi-Fi, breakfast, or location?</div>
+        </div>
+      </div>
+      <div class="wu-card">
+        <img class="img-card" src="https://images.unsplash.com/photo-1618773928121-c32f1e8e4290?w=600&auto=format&fit=crop&q=80" alt="Business traveler with luggage">
+        <div class="wu-card-body">
+          <div class="wu-q">🧠 <strong>Think about this:</strong> Your colleague from the US visits your company. You booked a hotel for <em>him</em>. How do you tell your boss: "I booked <em>it</em> for <em>him</em>"? What are the small words you need?</div>
+        </div>
+      </div>
+      <div class="wu-card">
+        <img class="img-card" src="https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=600&auto=format&fit=crop&q=80" alt="Hotel room interior">
+        <div class="wu-card-body">
+          <div class="wu-q">⚡ <strong>Teacher note:</strong> S3 focuses on hotel check-in as the real-world context for object pronouns in action. The small words (me, him, her, it, us, them) are the heroes today. Collect student attempts on the board — note who drops the object pronoun entirely.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="quick-win">
+      <div class="qw-label">⚡ Quick Win — 20 seconds</div>
+      <div style="font-size:13.5px;color:#fff;line-height:1.6">Say this out loud right now: <strong>"I have a reservation. My name is [your name], from [your company]."</strong> That's it — you just checked in!</div>
+    </div>
+
+    <div class="teacher-note tn-c1" style="margin-top:14px">
+      🧠 <strong>Pedagogical:</strong> Students at A1.2 often omit the object pronoun completely ("I booked for colleague" instead of "I booked it for him"). Today's session drills the habit of always including the pronoun. The hotel context makes this natural because check-in involves constant references to people and things.
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- §2 SPEAKING TOPIC -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-header">
+    <span class="section-number">§2</span>
+    <div><div class="section-title">Business Travel — <em>Hotels & You</em></div></div>
+  </div>
+  <div class="section-body">
+    <div class="section-sub">Personal travel experience · Hotel preferences · Object pronouns in natural speech</div>
+    <div class="dur-tag">⏱ 8 MIN</div>
+
+    <div class="topic-card">
+      <img class="img-card" src="https://images.unsplash.com/photo-1445019980597-93fa8acb246c?w=900&auto=format&fit=crop&q=80" alt="Hotel lobby with business travelers" style="height:120px;border-radius:12px 12px 0 0">
+      <div class="topic-body">
+        <div style="font-size:13px;color:var(--muted);margin-bottom:8px">Mónica Herrera is a sales manager at ConnectPro International in Guadalajara. She travels to client offices in Monterrey, México City, and sometimes San Antonio, Texas. She always stays at business hotels near the client's office.</div>
+        <div style="font-size:14px;color:#fff;font-weight:500;line-height:1.5">Today's question: <strong>What makes a good business hotel? What do you need when you travel for work?</strong></div>
+      </div>
+    </div>
+
+    <div class="round-grid">
+      <div class="round-card">
+        <img class="img-card" src="https://images.unsplash.com/photo-1584132967334-10e028bd69f7?w=600&auto=format&fit=crop&q=80" alt="Hotel room amenities">
+        <div class="round-body">
+          <div class="round-label">Round 1 — Your hotel preferences</div>
+          <div class="round-q">When you travel for work, what is most important in a hotel? Wi-Fi? Breakfast? Location? Quiet room? Tell your partner using: "For me, the most important thing is..."</div>
+          <div class="round-hint">💡 Try: "I need a room with good Wi-Fi. Can you give <strong>me</strong> a quiet room?"</div>
+        </div>
+      </div>
+      <div class="round-card">
+        <img class="img-card" src="https://images.unsplash.com/photo-1564501049412-61c2a3083791?w=600&auto=format&fit=crop&q=80" alt="Hotel breakfast buffet">
+        <div class="round-body">
+          <div class="round-label">Round 2 — A hotel experience</div>
+          <div class="round-q">Tell your partner about a hotel you stayed at for work (or vacation). Was it good? What did you like? What was the problem? Use: "The hotel was..." and "They gave me/us..."</div>
+          <div class="round-hint">💡 Try: "The hotel was near the office. They gave <strong>us</strong> a nice room."</div>
+        </div>
+      </div>
+      <div class="round-card">
+        <img class="img-card" src="https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=600&auto=format&fit=crop&q=80" alt="Hotel swimming pool business">
+        <div class="round-body">
+          <div class="round-label">Round 3 — Book for a colleague</div>
+          <div class="round-q">Your company sends a colleague to Celaya. YOU need to book a hotel for him/her. Tell your partner: What hotel? What room? Why? Use object pronouns: "I booked it for him/her."</div>
+          <div class="round-hint">💡 Try: "I booked a room for <strong>her</strong> at Hotel XYZ. I sent <strong>her</strong> the confirmation."</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="model-reveal">
+      <button class="model-btn" onclick="toggleModel('model1')">▼ Show Model Answer</button>
+      <div class="model-content" id="model1">
+        <div class="model-text">"When I travel for work, the most important thing is Wi-Fi and location. I need a hotel near the client's office. Last month, I stayed at a hotel in Monterrey. It was very good — they gave <strong>me</strong> a quiet room on the 5th floor. When my colleague visits Celaya, I book a hotel for <strong>him</strong> near our plant. I always send <strong>him</strong> the reservation by email."</div>
+      </div>
+    </div>
+
+    <div class="teacher-note tn-c2">
+      🎯 <strong>Engagement:</strong> Round 3 is critical — it forces students to use third-person object pronouns (him/her) in a natural context. If students say "I booked for colleague" without the pronoun, correct immediately: "I booked <strong>it</strong> for <strong>him</strong>."
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- §3 VOCABULARY -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-header">
+    <span class="section-number">§3</span>
+    <div><div class="section-title">Hotel <em>Vocabulary</em></div></div>
+  </div>
+  <div class="section-body">
+    <div class="section-sub">12 essential hotel words · Click to hear · Used with object pronouns in every example</div>
+    <div class="dur-tag">⏱ 10 MIN</div>
+    <img class="img-banner" src="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=900&auto=format&fit=crop&q=80" alt="Hotel room interior elegant">
+
+    <div class="vocab-grid">
+      <div class="vocab-card" onclick="speak('reservation')">
+        <img class="img-sm" src="https://images.unsplash.com/photo-1549294413-26f195200c16?w=600&auto=format&fit=crop&q=80" alt="Hotel reservation confirmation">
+        <div class="vocab-card-body">
+          <div class="vc-w">reservation</div>
+          <div class="vc-pron">Suena: re-ser-VEI-shon</div>
+          <div class="vc-d">A booking you make before you arrive</div>
+          <div class="vc-e">"I have a reservation. Can you find <strong>it</strong> for me?"</div>
+          <div class="vc-s">🔊 Click to hear</div>
+        </div>
+      </div>
+      <div class="vocab-card" onclick="speak('reception desk')">
+        <img class="img-sm" src="https://images.unsplash.com/photo-1596394516093-501ba68a0ba6?w=600&auto=format&fit=crop&q=80" alt="Hotel front desk">
+        <div class="vocab-card-body">
+          <div class="vc-w">reception desk</div>
+          <div class="vc-pron">Suena: ri-SEP-shon desk</div>
+          <div class="vc-d">The front desk where you check in</div>
+          <div class="vc-e">"Go to the reception desk. They can help <strong>you</strong>."</div>
+          <div class="vc-s">🔊 Click to hear</div>
+        </div>
+      </div>
+      <div class="vocab-card" onclick="speak('key card')">
+        <img class="img-sm" src="https://images.unsplash.com/photo-1611892440504-42a792e24d32?w=600&auto=format&fit=crop&q=80" alt="Hotel key card">
+        <div class="vocab-card-body">
+          <div class="vc-w">key card</div>
+          <div class="vc-pron">Suena: ki card</div>
+          <div class="vc-d">The plastic card to open your hotel room</div>
+          <div class="vc-e">"Here is your key card. Don't lose <strong>it</strong>."</div>
+          <div class="vc-s">🔊 Click to hear</div>
+        </div>
+      </div>
+      <div class="vocab-card" onclick="speak('single room')">
+        <img class="img-sm" src="https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=600&auto=format&fit=crop&q=80" alt="Single hotel room">
+        <div class="vocab-card-body">
+          <div class="vc-w">single room</div>
+          <div class="vc-pron">Suena: SIN-gol rum</div>
+          <div class="vc-d">A room for one person with one bed</div>
+          <div class="vc-e">"I'd like a single room, please. Book <strong>it</strong> for two nights."</div>
+          <div class="vc-s">🔊 Click to hear</div>
+        </div>
+      </div>
+      <div class="vocab-card" onclick="speak('double room')">
+        <img class="img-sm" src="https://images.unsplash.com/photo-1600210492493-0946911123ea?w=400&auto=format&fit=crop&q=80" alt="Double hotel room">
+        <div class="vocab-card-body">
+          <div class="vc-w">double room</div>
+          <div class="vc-pron">Suena: DA-bol rum</div>
+          <div class="vc-d">A room for two people or with a big bed</div>
+          <div class="vc-e">"My colleague needs a double room. Book <strong>it</strong> for <strong>her</strong>."</div>
+          <div class="vc-s">🔊 Click to hear</div>
+        </div>
+      </div>
+      <div class="vocab-card" onclick="speak('check in')">
+        <img class="img-sm" src="https://images.unsplash.com/photo-1529290130-4ca3753253ae?w=400&auto=format&fit=crop&q=80" alt="Hotel check-in process">
+        <div class="vocab-card-body">
+          <div class="vc-w">check in</div>
+          <div class="vc-pron">Suena: chek in</div>
+          <div class="vc-d">To arrive and register at a hotel</div>
+          <div class="vc-e">"What time can I check in? — At 3 PM. We'll have <strong>it</strong> ready for <strong>you</strong>."</div>
+          <div class="vc-s">🔊 Click to hear</div>
+        </div>
+      </div>
+      <div class="vocab-card" onclick="speak('check out')">
+        <img class="img-sm" src="https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=600&auto=format&fit=crop&q=80" alt="Hotel checkout lobby">
+        <div class="vocab-card-body">
+          <div class="vc-w">check out</div>
+          <div class="vc-pron">Suena: chek aut</div>
+          <div class="vc-d">To leave and pay when your stay is finished</div>
+          <div class="vc-e">"I need to check out early tomorrow. Can you prepare the bill for <strong>me</strong>?"</div>
+          <div class="vc-s">🔊 Click to hear</div>
+        </div>
+      </div>
+      <div class="vocab-card" onclick="speak('lobby')">
+        <img class="img-sm" src="https://images.unsplash.com/photo-1600011689032-26628de3ee98?w=400&auto=format&fit=crop&q=80" alt="Hotel lobby">
+        <div class="vocab-card-body">
+          <div class="vc-w">lobby</div>
+          <div class="vc-pron">Suena: LO-bi</div>
+          <div class="vc-d">The entrance area of the hotel</div>
+          <div class="vc-e">"I'll meet <strong>you</strong> in the lobby at 8 AM."</div>
+          <div class="vc-s">🔊 Click to hear</div>
+        </div>
+      </div>
+      <div class="vocab-card" onclick="speak('Wi-Fi password')">
+        <img class="img-sm" src="https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=600&auto=format&fit=crop&q=80" alt="Wi-Fi connection laptop">
+        <div class="vocab-card-body">
+          <div class="vc-w">Wi-Fi password</div>
+          <div class="vc-pron">Suena: WAI-fai PAS-uord</div>
+          <div class="vc-d">The code to connect to the internet</div>
+          <div class="vc-e">"Can you give <strong>me</strong> the Wi-Fi password, please?"</div>
+          <div class="vc-s">🔊 Click to hear</div>
+        </div>
+      </div>
+      <div class="vocab-card" onclick="speak('breakfast')">
+        <img class="img-sm" src="https://images.unsplash.com/photo-1504754524776-8f4f37790ca0?w=600&auto=format&fit=crop&q=80" alt="Hotel breakfast buffet">
+        <div class="vocab-card-body">
+          <div class="vc-w">breakfast</div>
+          <div class="vc-pron">Suena: BREK-fast</div>
+          <div class="vc-d">The first meal of the day, usually included in business hotels</div>
+          <div class="vc-e">"Does the room include breakfast? — Yes, we serve <strong>it</strong> from 7 to 10."</div>
+          <div class="vc-s">🔊 Click to hear</div>
+        </div>
+      </div>
+      <div class="vocab-card" onclick="speak('elevator')">
+        <img class="img-sm" src="https://images.unsplash.com/photo-1572116469696-31de0f17cc34?w=600&auto=format&fit=crop&q=80" alt="Hotel elevator">
+        <div class="vocab-card-body">
+          <div class="vc-w">elevator</div>
+          <div class="vc-pron">Suena: E-le-vei-tor</div>
+          <div class="vc-d">The machine that takes you up and down between floors</div>
+          <div class="vc-e">"Take the elevator to the 4th floor. Your room is there."</div>
+          <div class="vc-s">🔊 Click to hear</div>
+        </div>
+      </div>
+      <div class="vocab-card" onclick="speak('receipt')">
+        <img class="img-sm" src="https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80" alt="Hotel receipt bill">
+        <div class="vocab-card-body">
+          <div class="vc-w">receipt</div>
+          <div class="vc-pron">Suena: ri-SIT (la P es silenciosa!)</div>
+          <div class="vc-d">The paper that shows what you paid</div>
+          <div class="vc-e">"Can you give <strong>me</strong> the receipt? I need <strong>it</strong> for my company."</div>
+          <div class="vc-s">🔊 Click to hear</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- VOCAB QUIZ -->
+    <div class="quiz-area" id="vocabQuiz">
+      <div style="font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:2px;color:var(--accent);text-transform:uppercase;margin-bottom:10px">📝 Vocabulary Quiz</div>
+      <div class="quiz-progress"><div class="quiz-bar" id="quizBar"></div></div>
+      <div id="quizQuestion" class="quiz-q"></div>
+      <div id="quizOpts" class="quiz-opts"></div>
+      <div id="quizScore" class="quiz-score"></div>
+      <button class="quiz-restart" id="quizRestart" onclick="restartQuiz()">🔄 Try Again</button>
+    </div>
+
+    <div class="micro-speak">
+      <div class="micro-label">🗣️ Micro-Speaking — 60 seconds</div>
+      <div style="font-size:12.5px;color:var(--text);line-height:1.6">Say 3 hotel vocabulary words out loud with an object pronoun: <em style="color:var(--accent2)">"Can you give <strong>me</strong> the key card?" / "Send <strong>her</strong> the reservation." / "I need <strong>it</strong> for my company."</em></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- §4 COLLOQUIAL -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-header">
+    <span class="section-number">§4</span>
+    <div><div class="section-title">Everyday <em>Hotel English</em></div></div>
+  </div>
+  <div class="section-body">
+    <div class="section-sub">5 phrases you hear in every business hotel · Click each card to hear · Real life, not textbook</div>
+    <div class="dur-tag">⏱ 5 MIN</div>
+    <img class="img-banner" src="https://images.unsplash.com/photo-1578683010236-d716f9a3f461?w=900&auto=format&fit=crop&q=80" alt="Hotel concierge helping guest">
+
+    <div class="coll-grid">
+      <div class="coll-card" onclick="speak('Do you need anything?')">
+        <img class="img-card" src="https://images.unsplash.com/photo-1606402179428-a57976d71fa4?w=600&auto=format&fit=crop&q=80" alt="Hotel staff smiling">
+        <div class="coll-body">
+          <div class="coll-phrase">"Do you need anything?"</div>
+          <div class="coll-meaning">The receptionist asks if you want help with something</div>
+          <div class="coll-ex">Answer: "Yes, can you give <strong>me</strong> extra towels?" or "No, I'm fine. Thank you."</div>
+        </div>
+      </div>
+      <div class="coll-card" onclick="speak('Right this way.')">
+        <img class="img-card" src="https://images.unsplash.com/photo-1585409677983-0f6c41128c20?w=600&auto=format&fit=crop&q=80" alt="Hotel hallway elegant">
+        <div class="coll-body">
+          <div class="coll-phrase">"Right this way."</div>
+          <div class="coll-meaning">Follow me — I'll take you there</div>
+          <div class="coll-ex">"Your room is on the 3rd floor. Right this way — let <strong>me</strong> show <strong>you</strong>."</div>
+        </div>
+      </div>
+      <div class="coll-card" onclick="speak('It\'s not far.')">
+        <img class="img-card" src="https://images.unsplash.com/photo-1519999482648-25049ddd37b1?w=600&auto=format&fit=crop&q=80" alt="Hotel nearby office building">
+        <div class="coll-body">
+          <div class="coll-phrase">"It's not far."</div>
+          <div class="coll-meaning">The place is close — don't worry about distance</div>
+          <div class="coll-ex">"The business center? It's not far — I'll take <strong>you</strong> there."</div>
+        </div>
+      </div>
+      <div class="coll-card" onclick="speak('Have a good trip!')">
+        <img class="img-card" src="https://images.unsplash.com/photo-1436491865332-7a61a109db05?w=600&auto=format&fit=crop&q=80" alt="Airport departure happy traveler">
+        <div class="coll-body">
+          <div class="coll-phrase">"Have a good trip!"</div>
+          <div class="coll-meaning">A friendly goodbye when someone is traveling</div>
+          <div class="coll-ex">"Thank you for staying with <strong>us</strong>. Have a good trip!"</div>
+        </div>
+      </div>
+      <div class="coll-card" onclick="speak('I\'m here for a client visit.')">
+        <img class="img-card" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&auto=format&fit=crop&q=80" alt="Professional traveler arriving">
+        <div class="coll-body">
+          <div class="coll-phrase">"I'm here for a client visit."</div>
+          <div class="coll-meaning">Standard arrival phrase at hotel or reception</div>
+          <div class="coll-ex">"Hi, I'm here for a client visit. My company booked a room for <strong>me</strong>."</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="teacher-note tn-c2">
+      🎯 <strong>Engagement:</strong> Have students role-play: one is the receptionist, the other is the guest. The receptionist uses the colloquial phrases naturally. Switch after 90 seconds. This builds confidence for real hotel situations.
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- §5 GRAMMAR — Object Pronouns at the Hotel -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-header">
+    <span class="section-number">§5</span>
+    <div><div class="section-title">Object Pronouns — <em>At the Hotel</em></div></div>
+  </div>
+  <div class="section-body">
+    <div class="section-sub">The small words that make you sound professional · me / you / him / her / it / us / them</div>
+    <div class="dur-tag">⏱ 10 MIN</div>
+    <img class="img-banner" src="https://images.unsplash.com/photo-1590381105924-c72589b9ef3f?w=900&auto=format&fit=crop&q=80" alt="Business meeting at hotel lobby">
+
+    <div class="problem-box">
+      <div class="problem-label">🚨 Real Situation — Business Trip to Monterrey</div>
+      <div style="font-size:13.5px;color:#fff;line-height:1.7;margin-bottom:8px">You arrive at the hotel in Monterrey at 10 PM. You're tired. The receptionist asks for your passport. You want to say:<br><span style="color:var(--muted);font-style:italic">"Aquí tiene. ¿Puede darme la llave de mi habitación? Mi empresa la reservó para mí."</span></div>
+      <div style="font-size:12.5px;color:var(--muted);font-style:italic">❓ How do you say "darme" and "para mí" in English? What small words do you need?</div>
+    </div>
+
+    <div class="tool-box">
+      <div class="tool-label">✅ The Tool: Object Pronouns</div>
+      <div style="font-size:13.5px;color:var(--text);line-height:1.9">
+        "Here you go. Can you give <span style="color:var(--accent);font-weight:600">me</span> the key card? My company booked <span style="color:var(--accent);font-weight:600">it</span> for <span style="color:var(--accent);font-weight:600">me</span>."<br><br>
+        <span style="color:var(--accent);font-weight:600">Rule:</span> Object pronouns go <strong>after the verb</strong> or <strong>after a preposition</strong> (for, to, with).<br>
+        <span style="color:var(--gold);font-weight:600">Pattern:</span> Verb + <strong>object pronoun</strong> &nbsp;·&nbsp; Preposition + <strong>object pronoun</strong>
+      </div>
+    </div>
+
+    <!-- HOTEL CHECK-IN SIMULATOR (unique visual) -->
+    <div class="sim-container">
+      <div class="sim-header">
+        <div class="sim-icon">🏨</div>
+        <div><div class="sim-title">Hotel Check-In Simulator</div><div class="sim-sub">Complete the check-in conversation — choose the correct object pronoun each time</div></div>
+      </div>
+      <div class="sim-body">
+        <div class="sim-progress" id="simProgress">
+          <div class="sim-dot current" id="sd1"></div>
+          <div class="sim-dot" id="sd2"></div>
+          <div class="sim-dot" id="sd3"></div>
+          <div class="sim-dot" id="sd4"></div>
+          <div class="sim-dot" id="sd5"></div>
+        </div>
+        <div id="simArea"></div>
+      </div>
+    </div>
+
+    <button class="coll-toggle" onclick="toggleColl('gramRef')">▼ Grammar Reference Table — Click to expand</button>
+    <div class="coll-content" id="gramRef">
+      <table class="gram-table">
+        <thead><tr><th>Subject</th><th>Object Pronoun</th><th>Hotel Example</th></tr></thead>
+        <tbody>
+          <tr><td style="color:var(--accent);font-family:var(--font-head);font-weight:700">I</td><td><strong>me</strong></td><td><span class="ex">Can you give <strong>me</strong> the Wi-Fi password?</span></td></tr>
+          <tr><td style="color:var(--accent);font-family:var(--font-head);font-weight:700">you</td><td><strong>you</strong></td><td><span class="ex">I'll meet <strong>you</strong> in the lobby at 8 AM.</span></td></tr>
+          <tr><td style="color:var(--accent);font-family:var(--font-head);font-weight:700">he</td><td><strong>him</strong></td><td><span class="ex">I booked a room for <strong>him</strong>. Send <strong>him</strong> the confirmation.</span></td></tr>
+          <tr><td style="color:var(--accent);font-family:var(--font-head);font-weight:700">she</td><td><strong>her</strong></td><td><span class="ex">Call <strong>her</strong> when you arrive. Give <strong>her</strong> the key card.</span></td></tr>
+          <tr><td style="color:var(--accent);font-family:var(--font-head);font-weight:700">it</td><td><strong>it</strong></td><td><span class="ex">The receipt? I need <strong>it</strong> for my company.</span></td></tr>
+          <tr><td style="color:var(--accent);font-family:var(--font-head);font-weight:700">we</td><td><strong>us</strong></td><td><span class="ex">Thank you for helping <strong>us</strong>. Show <strong>us</strong> the room.</span></td></tr>
+          <tr><td style="color:var(--accent);font-family:var(--font-head);font-weight:700">they</td><td><strong>them</strong></td><td><span class="ex">The clients? Meet <strong>them</strong> in the lobby.</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="err-box">
+      ⚠️ <strong>Top A1.2 errors with object pronouns — correct immediately:</strong><br>
+      ✗ "Give to me the key" → ✅ Give <strong>me</strong> the key (no "to" before me after give)<br>
+      ✗ "Call to her" → ✅ Call <strong>her</strong> (no preposition needed after call)<br>
+      ✗ "I booked for he" → ✅ I booked it for <strong>him</strong> (object form, not subject form)<br>
+      ✗ "Send she the email" → ✅ Send <strong>her</strong> the email
+    </div>
+
+    <!-- POLL -->
+    <div class="poll-box">
+      <div style="font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:2px;color:var(--accent);text-transform:uppercase;margin-bottom:8px">📊 Quick Poll</div>
+      <div class="poll-q">Complete: "The receptionist gave _____ the key card." (The guest is a woman.)</div>
+      <div class="poll-opts">
+        <button class="poll-btn" onclick="pollCheck(this,'her','poll1')">she</button>
+        <button class="poll-btn" onclick="pollCheck(this,'her','poll1')">her</button>
+        <button class="poll-btn" onclick="pollCheck(this,'her','poll1')">him</button>
+      </div>
+    </div>
+
+    <!-- Activity A: MC -->
+    <div class="act-title">✏️ Activity A — Choose the Correct Object Pronoun</div>
+    <div class="opt-group">
+      <div class="opt-q">1. I have a reservation. Can you find _____ for me?</div>
+      <div class="opts" id="q1">
+        <button class="opt" onclick="checkOpt(this,'it','q1')">her</button>
+        <button class="opt" onclick="checkOpt(this,'it','q1')">it</button>
+        <button class="opt" onclick="checkOpt(this,'it','q1')">them</button>
+      </div>
+    </div>
+    <div class="opt-group">
+      <div class="opt-q">2. My colleague is arriving tomorrow. Please book a room for _____.</div>
+      <div class="opts" id="q2">
+        <button class="opt" onclick="checkOpt(this,'him','q2')">he</button>
+        <button class="opt" onclick="checkOpt(this,'him','q2')">him</button>
+        <button class="opt" onclick="checkOpt(this,'him','q2')">his</button>
+      </div>
+    </div>
+    <div class="opt-group">
+      <div class="opt-q">3. The clients from Chicago need a meeting room. Can you show _____ the business center?</div>
+      <div class="opts" id="q3">
+        <button class="opt" onclick="checkOpt(this,'them','q3')">they</button>
+        <button class="opt" onclick="checkOpt(this,'them','q3')">their</button>
+        <button class="opt" onclick="checkOpt(this,'them','q3')">them</button>
+      </div>
+    </div>
+    <div class="opt-group">
+      <div class="opt-q">4. I need the receipt for my company. Can you give _____ to me?</div>
+      <div class="opts" id="q4">
+        <button class="opt" onclick="checkOpt(this,'it','q4')">it</button>
+        <button class="opt" onclick="checkOpt(this,'it','q4')">them</button>
+        <button class="opt" onclick="checkOpt(this,'it','q4')">her</button>
+      </div>
+    </div>
+    <div class="opt-group">
+      <div class="opt-q">5. We are checking in. Can you help _____?</div>
+      <div class="opts" id="q5">
+        <button class="opt" onclick="checkOpt(this,'us','q5')">we</button>
+        <button class="opt" onclick="checkOpt(this,'us','q5')">our</button>
+        <button class="opt" onclick="checkOpt(this,'us','q5')">us</button>
+      </div>
+    </div>
+
+    <div class="micro-speak">
+      <div class="micro-label">🗣️ Micro-Speaking — 90 seconds</div>
+      <div style="font-size:12.5px;color:var(--text);line-height:1.6">Tell your partner: <em style="color:var(--accent2)">"Ask me 3 questions with 'Can you give me…?' or 'Can you show us…?' — I'll answer with hotel vocabulary."</em></div>
+    </div>
+
+    <!-- Activity B: Drag & Drop — SCRAMBLED ORDER -->
+    <div class="act-title">✏️ Activity B — Reorder to Make a Correct Hotel Sentence</div>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:13px">Drag the pieces into the correct order.</p>
+    <ol id="order1" class="reorder-list">
+      <li class="reorder-item" draggable="true"><span class="drag-handle">⠿</span>the Wi-Fi password?</li>
+      <li class="reorder-item" draggable="true"><span class="drag-handle">⠿</span>Can you</li>
+      <li class="reorder-item" draggable="true"><span class="drag-handle">⠿</span>give me</li>
+    </ol>
+    <button class="check-btn" onclick="checkOrder('order1',['Can you','give me','the Wi-Fi password?'],'fb1')">Check Order</button>
+    <div class="fb" id="fb1"></div>
+
+    <div style="margin-top:18px"></div>
+    <ol id="order2" class="reorder-list">
+      <li class="reorder-item" draggable="true"><span class="drag-handle">⠿</span>for him.</li>
+      <li class="reorder-item" draggable="true"><span class="drag-handle">⠿</span>a double room</li>
+      <li class="reorder-item" draggable="true"><span class="drag-handle">⠿</span>I booked</li>
+    </ol>
+    <button class="check-btn" onclick="checkOrder('order2',['I booked','a double room','for him.'],'fb2')">Check Order</button>
+    <div class="fb" id="fb2"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- §6 LISTENING -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-header">
+    <span class="section-number">§6</span>
+    <div><div class="section-title">Listening — <em>Mónica Checks In</em></div></div>
+  </div>
+  <div class="section-body">
+    <div class="section-sub">Mónica Herrera arrives at a business hotel in Monterrey · Listen for object pronouns and hotel vocabulary</div>
+    <div class="dur-tag">⏱ 8 MIN</div>
+
+    <div class="player-box">
+      <img class="img-card" src="https://images.unsplash.com/photo-1568084680786-a84f91d1153c?w=600&auto=format&fit=crop&q=80" alt="Woman checking into hotel" style="border-radius:10px 10px 0 0">
+      <div class="player-top" style="margin-top:14px">
+        <button class="play-btn">▶</button>
+        <div><div class="track-title">Mónica's Hotel Check-In — Monterrey</div><div class="track-sub">A1.2 · M3 · S3A · Voice: Sarah (American English) · Speed: 0.80</div></div>
+      </div>
+      <div class="waveform" id="wv"></div>
+    </div>
+
+    <button class="script-toggle" onclick="toggleScript()">▼ Show ElevenLabs Script</button>
+    <div class="script-box" id="scriptBox">
+      <div class="script-content">
+        <strong>Receptionist:</strong> Good evening! Welcome to Hotel Ejecutivo. How can I help you?<br><br>
+        <strong>Mónica:</strong> Hi, good evening. I have a reservation. My name is Mónica Herrera, from ConnectPro International.<br><br>
+        <strong>Receptionist:</strong> Let me check... Yes, I can see it. A single room for two nights. Is that correct?<br><br>
+        <strong>Mónica:</strong> Yes, that's right. My company booked it for me.<br><br>
+        <strong>Receptionist:</strong> Perfect. Can I see your ID, please?<br><br>
+        <strong>Mónica:</strong> Of course. Here you go.<br><br>
+        <strong>Receptionist:</strong> Thank you. Your room is 412, on the 4th floor. Here is your key card. Don't lose it!<br><br>
+        <strong>Mónica:</strong> Thank you. Can you give me the Wi-Fi password?<br><br>
+        <strong>Receptionist:</strong> Of course. The password is "hotel2025." I'll write it down for you.<br><br>
+        <strong>Mónica:</strong> Great. And does the room include breakfast?<br><br>
+        <strong>Receptionist:</strong> Yes, we serve it from 6:30 to 10 AM in the restaurant on the first floor.<br><br>
+        <strong>Mónica:</strong> Perfect. One more thing — I need to check out early tomorrow. Can you prepare the receipt for me? I need it for my company.<br><br>
+        <strong>Receptionist:</strong> No problem. We'll have it ready for you at the front desk. Do you need anything else?<br><br>
+        <strong>Mónica:</strong> No, that's all. Thank you very much.<br><br>
+        <strong>Receptionist:</strong> You're welcome. Have a good night!
+      </div>
+      <div class="eleven-note">📎 ElevenLabs: Voice — Sarah (American English) · Speed 0.80 · Pitch 1.0 · A1.2 M3 S3A</div>
+    </div>
+
+    <div class="act-title">✏️ Listening — Multiple Choice</div>
+    <div class="opt-group">
+      <div class="opt-q">1. What type of room does Mónica have?</div>
+      <div class="opts" id="lq1">
+        <button class="opt" onclick="checkOpt(this,'A single room for two nights','lq1')">A double room for three nights</button>
+        <button class="opt" onclick="checkOpt(this,'A single room for two nights','lq1')">A single room for two nights</button>
+        <button class="opt" onclick="checkOpt(this,'A single room for two nights','lq1')">A single room for one night</button>
+      </div>
+    </div>
+    <div class="opt-group">
+      <div class="opt-q">2. Why does Mónica need the receipt?</div>
+      <div class="opts" id="lq2">
+        <button class="opt" onclick="checkOpt(this,'She needs it for her company','lq2')">She wants to keep it at home</button>
+        <button class="opt" onclick="checkOpt(this,'She needs it for her company','lq2')">She needs it for her company</button>
+        <button class="opt" onclick="checkOpt(this,'She needs it for her company','lq2')">She lost the key card</button>
+      </div>
+    </div>
+
+    <div class="act-title">✏️ Listening — True or False</div>
+    <div class="tf-set">
+      <div class="tf-row">
+        <div class="tf-stmt">Mónica's room is on the 3rd floor.</div>
+        <div class="tf-btns">
+          <button class="tf-btn" onclick="checkTF(this,false,'tfl1')">TRUE</button>
+          <button class="tf-btn" onclick="checkTF(this,false,'tfl1')">FALSE</button>
+        </div>
+      </div>
+      <div class="tf-row">
+        <div class="tf-stmt">The hotel serves breakfast from 6:30 to 10 AM.</div>
+        <div class="tf-btns">
+          <button class="tf-btn" onclick="checkTF(this,true,'tfl2')">TRUE</button>
+          <button class="tf-btn" onclick="checkTF(this,false,'tfl2')">FALSE</button>
+        </div>
+      </div>
+      <div class="tf-row">
+        <div class="tf-stmt">Mónica's company booked the room for her.</div>
+        <div class="tf-btns">
+          <button class="tf-btn" onclick="checkTF(this,true,'tfl3')">TRUE</button>
+          <button class="tf-btn" onclick="checkTF(this,false,'tfl3')">FALSE</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="micro-speak">
+      <div class="micro-label">🗣️ Micro-Speaking — From Memory</div>
+      <div style="font-size:12.5px;color:var(--text);line-height:1.6">Close the script. Tell your partner 3 things about Mónica's check-in: <em>"Her room is... / She asked for... / She needs the receipt for..."</em></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- §7 PRODUCTION / SPEAKING PRACTICE -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-header">
+    <span class="section-number">§7</span>
+    <div><div class="section-title">At the Hotel — <em>Your Turn</em></div></div>
+  </div>
+  <div class="section-body">
+    <div class="section-sub">Role-play hotel situations · Use object pronouns + hotel vocabulary · Accuracy is the goal</div>
+    <div class="dur-tag">⏱ 12 MIN</div>
+    <img class="hero-img" src="https://images.unsplash.com/photo-1455587734955-081b22074882?w=900&auto=format&fit=crop&q=80" alt="Elegant hotel at night">
+
+    <!-- Opinion Meter -->
+    <div class="opinion-meter">
+      <div style="font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:2px;color:var(--accent);text-transform:uppercase;margin-bottom:6px">📊 Opinion Meter</div>
+      <div style="font-size:13px;color:#fff;margin-bottom:6px">"Hotels are more important than the meeting itself when you travel for business."</div>
+      <div class="om-bar-wrap"><div class="om-bar" id="omBar"></div></div>
+      <div style="font-size:12px;color:var(--muted);text-align:center;margin-bottom:6px">Agreement: <span id="omPct">50</span>%</div>
+      <div class="om-btns">
+        <button class="om-btn" onclick="opinionVote(7)">👍 Agree</button>
+        <button class="om-btn" onclick="opinionVote(-7)">👎 Disagree</button>
+      </div>
+    </div>
+
+    <div style="background:rgba(0,207,255,.04);border:1px solid rgba(0,207,255,.18);padding:13px 17px;margin-bottom:16px;font-size:12px;color:var(--cyan);line-height:1.7;border-radius:10px">
+      💬 <strong>How to run this:</strong> Students work in pairs — one is Guest, one is Receptionist. Switch roles after Q3. Teacher monitors for object pronoun accuracy. Correct every "give to me" → "give me" immediately.
+    </div>
+
+    <div class="speak-grid">
+      <div class="speak-card">
+        <img class="img-card" src="https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=600&auto=format&fit=crop&q=80" alt="Hotel receptionist">
+        <div class="speak-body">
+          <div class="sc-lbl">Question 1 — Check In</div>
+          <div class="sc-q">You arrive at a business hotel. Tell the receptionist: your name, your company, and that you have a reservation. Ask for the Wi-Fi password and your key card.</div>
+          <div class="sc-hint">💡 Use: "I have a reservation. My name is... Can you give <strong>me</strong>...?"</div>
+        </div>
+      </div>
+      <div class="speak-card">
+        <img class="img-card" src="https://images.unsplash.com/photo-1559508551-44bff1de756b?w=600&auto=format&fit=crop&q=80" alt="Hotel room service">
+        <div class="speak-body">
+          <div class="sc-lbl">Question 2 — You need things</div>
+          <div class="sc-q">Your room is missing extra towels, there's no soap, and the Wi-Fi doesn't work. Call reception and ask for help using "Can you bring me...?" and "Can you help me with...?"</div>
+          <div class="sc-hint">💡 Use: "Can you bring <strong>me</strong> extra towels? / Can you help <strong>me</strong> with the Wi-Fi?"</div>
+        </div>
+      </div>
+      <div class="speak-card">
+        <img class="img-card" src="https://images.unsplash.com/photo-1521783988139-89397d761dce?w=600&auto=format&fit=crop&q=80" alt="Colleagues at hotel meeting">
+        <div class="speak-body">
+          <div class="sc-lbl">Question 3 — Book for a colleague</div>
+          <div class="sc-q">Your boss asks you to book a hotel for two colleagues visiting from Chicago. Call the hotel and reserve rooms. Use him/her/them: "I need to book a room for <strong>them</strong>."</div>
+          <div class="sc-hint">💡 Use: "Can you book <strong>it</strong> for <strong>them</strong>? / Send <strong>them</strong> the confirmation."</div>
+        </div>
+      </div>
+      <div class="speak-card">
+        <img class="img-card" src="https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=400&auto=format&fit=crop&q=80" alt="Receipt and bill">
+        <div class="speak-body">
+          <div class="sc-lbl">Question 4 — Check Out</div>
+          <div class="sc-q">It's morning. You need to check out, get the receipt for your company, and ask for a taxi to the airport. Use at least 3 different object pronouns in your conversation.</div>
+          <div class="sc-hint">💡 Use: "Can you prepare <strong>it</strong> for <strong>me</strong>? / Call a taxi for <strong>us</strong>."</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CHALLENGE with Timer -->
+    <div style="background:rgba(139,92,246,.06);border:1px solid rgba(139,92,246,.22);border-radius:12px;padding:18px;margin-top:18px">
+      <div style="font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:8px">⭐ 60-Second Challenge</div>
+      <div style="font-size:14px;color:#fff;margin-bottom:10px;line-height:1.5">Complete a full hotel check-in in 60 seconds. No notes. Include: greeting, name, company, reservation, ask for Wi-Fi, ask for breakfast time, request receipt. Partner counts your object pronouns.</div>
+      <div class="timer-wrap">
+        <svg width="90" height="90" viewBox="0 0 90 90">
+          <circle cx="45" cy="45" r="38" fill="none" stroke="rgba(139,92,246,.15)" stroke-width="4"/>
+          <circle id="challengeArc" cx="45" cy="45" r="38" fill="none" stroke="var(--accent)" stroke-width="4" stroke-dasharray="238.76" stroke-dashoffset="0" stroke-linecap="round" style="transform:rotate(-90deg);transform-origin:center"/>
+        </svg>
+        <div class="timer-text" id="challengeText">1:00</div>
+        <button class="check-btn" onclick="startTimer('challengeArc','challengeText',60,'b3',238.76)" style="margin-top:0">▶ Start Timer</button>
+      </div>
+    </div>
+
+    <!-- HOT SEAT DICE -->
+    <div style="margin-top:18px">
+      <div style="font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:10px">🎲 Hot Seat Dice — Click a card, answer the question!</div>
+      <div class="dice-grid">
+        <div class="dice-card">
+          <img class="img-sm" src="https://images.unsplash.com/photo-1587985064135-0571b93e0c2f?w=400&auto=format&fit=crop&q=80" alt="Question mark neon">
+          <div class="dice-body"><div class="dice-q">The receptionist doesn't find your reservation. What do you say? Use 2 object pronouns.</div></div>
+        </div>
+        <div class="dice-card">
+          <img class="img-sm" src="https://images.unsplash.com/photo-1495364141860-b0d03eccd065?w=400&auto=format&fit=crop&q=80" alt="Clock time">
+          <div class="dice-body"><div class="dice-q">You need to wake up at 5 AM. Ask the hotel to call you. Use "me" and "it."</div></div>
+        </div>
+        <div class="dice-card">
+          <img class="img-sm" src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=400&auto=format&fit=crop&q=80" alt="Building exterior">
+          <div class="dice-body"><div class="dice-q">Your colleague lost her key card. Tell the receptionist the situation. Use "her" and "it."</div></div>
+        </div>
+        <div class="dice-card">
+          <img class="img-sm" src="https://images.unsplash.com/photo-1574362848149-11496d93a7c7?w=400&auto=format&fit=crop&q=80" alt="Hotel corridor">
+          <div class="dice-body"><div class="dice-q">You can't find the business center. Ask a hotel employee to show you where it is.</div></div>
+        </div>
+        <div class="dice-card">
+          <img class="img-sm" src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=400&auto=format&fit=crop&q=80" alt="Breakfast food">
+          <div class="dice-body"><div class="dice-q">You missed breakfast. Ask reception if they can bring it to your room.</div></div>
+        </div>
+        <div class="dice-card">
+          <img class="img-sm" src="https://images.unsplash.com/photo-1524661135-423995f22d0b?w=400&auto=format&fit=crop&q=80" alt="City map directions">
+          <div class="dice-body"><div class="dice-q">Ask the receptionist: How do I get to the client's office from here? Is it far?</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- 3 PHRASES FOR THIS WEEK -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="phrases-sec">
+  <div class="phrases-header">
+    <div class="ph-label">🎯 This week at work</div>
+    <div class="ph-title">3 Phrases You Can Use Starting Tomorrow</div>
+  </div>
+  <div class="phrases-body">
+    <div class="ph-grid">
+      <div class="ph-card">
+        <img class="img-sm" src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=600&auto=format&fit=crop&q=80" alt="Hotel lobby business">
+        <div class="ph-card-body">
+          <div class="ph-num">PHRASE 1</div>
+          <div class="ph-phrase">"I have a reservation. My name is [name], from [company]."</div>
+          <div class="ph-ctx">Your opening line at any hotel check-in worldwide. Confident, clear, professional. No hesitation needed — you just learned it!</div>
+        </div>
+      </div>
+      <div class="ph-card">
+        <img class="img-sm" src="https://images.unsplash.com/photo-1544197150-b99a580bb7a8?w=400&auto=format&fit=crop&q=80" alt="Wi-Fi connection">
+        <div class="ph-card-body">
+          <div class="ph-num">PHRASE 2</div>
+          <div class="ph-phrase">"Can you give me the Wi-Fi password, please?"</div>
+          <div class="ph-ctx">The first thing every business traveler asks. Perfect object pronoun use: "give <strong>me</strong>." Use this at hotels, cafés, and client offices.</div>
+        </div>
+      </div>
+      <div class="ph-card">
+        <img class="img-sm" src="https://images.unsplash.com/photo-1434626881859-194d67b2b86f?w=400&auto=format&fit=crop&q=80" alt="Receipt document">
+        <div class="ph-card-body">
+          <div class="ph-num">PHRASE 3</div>
+          <div class="ph-phrase">"Can you prepare the receipt for me? I need it for my company."</div>
+          <div class="ph-ctx">Two object pronouns in one sentence! "for <strong>me</strong>" + "I need <strong>it</strong>." This is what professional English sounds like. Use it at checkout.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- §8 WRAP-UP -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-header">
+    <span class="section-number">§8</span>
+    <div><div class="section-title">Session <em>Wrap-Up</em></div></div>
+  </div>
+  <div class="section-body">
+    <div class="section-sub">Consolidate what you learned · Check your progress · Preview next session</div>
+    <div class="dur-tag">⏱ 5 MIN</div>
+    <img class="img-banner" src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=900&auto=format&fit=crop&q=80" alt="Cozy hotel room at night">
+
+    <!-- Badge Showcase -->
+    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:18px;margin-bottom:18px;text-align:center">
+      <div style="font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:2px;color:var(--accent);text-transform:uppercase;margin-bottom:10px">🏆 Your Badges Today</div>
+      <div style="font-size:28px;display:flex;justify-content:center;gap:16px">
+        <span id="bs1" style="filter:grayscale(1) opacity(.35)">⚡</span>
+        <span id="bs2" style="filter:grayscale(1) opacity(.35)">📚</span>
+        <span id="bs3" style="filter:grayscale(1) opacity(.35)">🎯</span>
+        <span id="bs4" style="filter:grayscale(1) opacity(.35)">🎧</span>
+        <span id="bs5" style="filter:grayscale(1) opacity(.35)">🏆</span>
+      </div>
+    </div>
+
+    <div class="wu3-grid">
+      <div class="wu3-card">
+        <div class="wu3-num">01</div>
+        <div class="wu3-txt"><strong style="color:#fff">Object pronouns replace people and things.</strong> me / you / him / her / it / us / them — always AFTER the verb or preposition.</div>
+      </div>
+      <div class="wu3-card">
+        <div class="wu3-num">02</div>
+        <div class="wu3-txt"><strong style="color:#fff">Hotel check-in = object pronoun practice.</strong> "Give <strong>me</strong> the key" · "Book <strong>it</strong> for <strong>him</strong>" · "Show <strong>us</strong> the room" — every interaction uses them.</div>
+      </div>
+      <div class="wu3-card">
+        <div class="wu3-num">03</div>
+        <div class="wu3-txt"><strong style="color:#fff">Never use subject form after a verb.</strong> "Give <strong>me</strong>" NOT "give I." "Call <strong>her</strong>" NOT "call she." "Help <strong>us</strong>" NOT "help we."</div>
+      </div>
+    </div>
+
+    <div class="act-title">✅ I Can Now… — Click each one when confident</div>
+    <div class="checklist">
+      <div class="cl-item" onclick="this.classList.toggle('done')"><div class="cl-box"></div>I can check into a business hotel in English: "I have a reservation. My name is..."</div>
+      <div class="cl-item" onclick="this.classList.toggle('done')"><div class="cl-box"></div>I can use object pronouns correctly: "Give me / Call her / Book it for him"</div>
+      <div class="cl-item" onclick="this.classList.toggle('done')"><div class="cl-box"></div>I can ask for things at a hotel: Wi-Fi, breakfast, receipt, extra towels</div>
+      <div class="cl-item" onclick="this.classList.toggle('done')"><div class="cl-box"></div>I can book a hotel for a colleague using him/her/them</div>
+      <div class="cl-item" onclick="this.classList.toggle('done')"><div class="cl-box"></div>I can check out and request a receipt for my company</div>
+    </div>
+
+    <!-- My Win -->
+    <div class="mywin-area">
+      <div style="font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:2px;color:var(--gold);text-transform:uppercase;margin-bottom:8px">🏆 My Win Today</div>
+      <div style="font-size:12.5px;color:var(--muted);margin-bottom:8px">What is ONE thing you learned today that you can use at work or in real life? Write it here.</div>
+      <textarea class="mywin-ta" placeholder="Today I learned..."></textarea>
+      <button class="mywin-btn" onclick="saveWin()">💾 Save My Win</button>
+    </div>
+
+    <div class="next-box">
+      <div class="next-lbl">▶ Next Class — Session 3B · Application & Mastery</div>
+      <div class="next-title">Hotel Problem Solver</div>
+      <div class="next-sub">Real hotel problems · Object pronouns under pressure · Hotel complaints and solutions · Timed challenges</div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="ftr">
+  <div class="fbrand">Gabriel Turner · English Training</div>
+  <div class="finfo">A1.2 · Module 3 · Session 3A · GT_A1_2_M3_S3A_TEACHER_v1</div>
+  <div class="flvs">
+    <div class="flv">A1.1</div><div class="flv active">A1.2</div><div class="flv">A2.1</div>
+    <div class="flv">A2.2</div><div class="flv">B1.1</div><div class="flv">B1.2</div>
+  </div>
+</footer>
+
+<script>
+/* ============ SPEECH ============ */
+function speak(t){if(!window.speechSynthesis)return;speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='en-US';u.rate=0.80;u.pitch=1;speechSynthesis.speak(u);}
+
+/* ============ MODE TOGGLE ============ */
+function toggleMode(){document.body.classList.toggle('student-mode');const btn=document.querySelector('.mode-toggle');btn.textContent=document.body.classList.contains('student-mode')?'👁 Teacher Mode':'👁 Student Mode';}
+
+/* ============ BADGES ============ */
+let badges={b1:false,b2:false,b3:false,b4:false,b5:false};
+function earnBadge(id){if(badges[id])return;badges[id]=true;const el=document.getElementById(id);if(el){el.classList.add('earned');}const bs=document.getElementById('bs'+id.charAt(1));if(bs){bs.style.filter='none';bs.style.opacity='1';}if(Object.values(badges).every(v=>v))launchConfetti();}
+function launchConfetti(){const colors=['#8B5CF6','#A78BFA','#FFB800','#00E676','#00CFFF'];for(let i=0;i<60;i++){const c=document.createElement('div');c.className='confetti-piece';c.style.left=Math.random()*100+'vw';c.style.top='-10px';c.style.background=colors[Math.floor(Math.random()*colors.length)];c.style.transform='rotate('+Math.random()*360+'deg)';document.body.appendChild(c);const dur=2+Math.random()*2;c.animate([{top:'-10px',opacity:1},{top:'100vh',opacity:0}],{duration:dur*1000,easing:'ease-out'});setTimeout(()=>c.remove(),dur*1000);}}
+
+/* ============ TIMER ============ */
+let timerInterval=null;
+function startTimer(arcId,textId,seconds,badgeKey,circumference){
+  if(timerInterval)clearInterval(timerInterval);
+  const arc=document.getElementById(arcId);const txt=document.getElementById(textId);
+  let remaining=seconds;
+  arc.style.strokeDashoffset='0';arc.style.stroke='var(--accent)';
+  timerInterval=setInterval(()=>{
+    remaining--;
+    const m=Math.floor(remaining/60);const s=remaining%60;
+    txt.textContent=m+':'+(s<10?'0':'')+s;
+    const offset=circumference*(1-remaining/seconds);
+    arc.style.strokeDashoffset=offset;
+    if(remaining<=5)arc.style.stroke='#FF4D6D';
+    if(remaining<=0){clearInterval(timerInterval);timerInterval=null;arc.style.stroke='var(--success)';txt.textContent='Done!';earnBadge(badgeKey);}
+  },1000);
+}
+
+/* ============ CHECK OPT ============ */
+function checkOpt(btn,correct,qid){
+  const c=document.getElementById(qid);
+  c.querySelectorAll('.opt').forEach(b=>{b.disabled=true;if(b.textContent.trim()===correct)b.classList.add('correct');});
+  if(btn.textContent.trim()!==correct)btn.classList.add('wrong');
+}
+
+/* ============ POLL CHECK ============ */
+function pollCheck(btn,correct,pid){
+  const parent=btn.closest('.poll-opts');
+  parent.querySelectorAll('.poll-btn').forEach(b=>{b.disabled=true;if(b.textContent.trim()===correct)b.classList.add('correct-ans');});
+  if(btn.textContent.trim()!==correct)btn.classList.add('wrong-ans');
+  earnBadge('b1');
+}
+
+/* ============ TRUE/FALSE ============ */
+function checkTF(btn,isCorrect,id){
+  const row=btn.closest('.tf-row');
+  row.querySelectorAll('.tf-btn').forEach(b=>b.disabled=true);
+  if(isCorrect){btn.style.cssText='background:rgba(0,229,160,.15);border-color:var(--success);color:var(--success)';earnBadge('b4');}
+  else{btn.style.cssText='background:rgba(255,77,109,.12);border-color:var(--danger);color:var(--danger)';
+    const s=row.querySelector('.tf-stmt');if(s)s.style.textDecoration='line-through';
+    const sib=Array.from(row.querySelectorAll('.tf-btn')).find(b=>b!==btn);
+    if(sib)sib.style.cssText='background:rgba(0,229,160,.12);border-color:var(--success);color:var(--success)';
+  }
+}
+
+/* ============ MODEL REVEAL ============ */
+function toggleModel(id){const el=document.getElementById(id);el.classList.toggle('open');const btn=el.previousElementSibling;btn.textContent=el.classList.contains('open')?'▲ Hide Model Answer':'▼ Show Model Answer';}
+
+/* ============ COLLAPSIBLE ============ */
+function toggleColl(id){const el=document.getElementById(id);el.classList.toggle('open');const btn=el.previousElementSibling;btn.textContent=el.classList.contains('open')?'▲ Grammar Reference Table — Click to collapse':'▼ Grammar Reference Table — Click to expand';}
+function toggleScript(){const b=document.getElementById('scriptBox');b.classList.toggle('open');document.querySelector('.script-toggle').textContent=b.classList.contains('open')?'▲ Hide Script':'▼ Show ElevenLabs Script';}
+
+/* ============ DRAG & DROP ============ */
+let dragSrc=null;
+function initDrag(listId){
+  const list=document.getElementById(listId);if(!list)return;
+  list.querySelectorAll('.reorder-item').forEach(item=>{
+    item.addEventListener('dragstart',function(){dragSrc=this;this.classList.add('dragging');});
+    item.addEventListener('dragend',function(){this.classList.remove('dragging');list.querySelectorAll('.reorder-item').forEach(i=>i.classList.remove('drag-over'));});
+    item.addEventListener('dragover',function(e){e.preventDefault();list.querySelectorAll('.reorder-item').forEach(i=>i.classList.remove('drag-over'));if(this!==dragSrc)this.classList.add('drag-over');});
+    item.addEventListener('drop',function(e){e.preventDefault();if(this!==dragSrc){const all=[...list.querySelectorAll('.reorder-item')];if(all.indexOf(dragSrc)<all.indexOf(this))list.insertBefore(dragSrc,this.nextSibling);else list.insertBefore(dragSrc,this);}});
+  });
+}
+function checkOrder(listId,correct,fbId){
+  const list=document.getElementById(listId);
+  const current=[...list.querySelectorAll('.reorder-item')].map(i=>i.textContent.replace('⠿','').trim());
+  const fb=document.getElementById(fbId);
+  if(JSON.stringify(current)===JSON.stringify(correct)){fb.className='fb show ok';fb.textContent='✓ Correct! Well done!';list.querySelectorAll('.reorder-item').forEach(i=>{i.style.borderColor='var(--success)';i.style.color='var(--success)';});}
+  else{fb.className='fb show no';fb.textContent='✗ Not quite. Correct order: '+correct.join(' — ');list.querySelectorAll('.reorder-item').forEach(i=>{i.style.borderColor='var(--danger)';});}
+}
+
+/* ============ OPINION METER ============ */
+let omVal=50;
+function opinionVote(delta){omVal=Math.max(5,Math.min(95,omVal+delta));document.getElementById('omBar').style.width=omVal+'%';document.getElementById('omPct').textContent=omVal;}
+
+/* ============ MY WIN ============ */
+function saveWin(){earnBadge('b5');const btn=document.querySelector('.mywin-btn');btn.textContent='✅ Saved!';btn.style.background='var(--success)';}
+
+/* ============ VOCAB QUIZ ============ */
+const quizData=[
+  {q:'The paper that shows what you paid at the hotel:',a:'receipt',d:['reservation','elevator']},
+  {q:'The plastic card to open your hotel room:',a:'key card',d:['receipt','lobby']},
+  {q:'To arrive and register at a hotel:',a:'check in',d:['check out','breakfast']},
+  {q:'The entrance area of the hotel where you wait:',a:'lobby',d:['elevator','single room']},
+  {q:'A room for one person with one bed:',a:'single room',d:['double room','reception desk']},
+  {q:'A booking you make before you arrive:',a:'reservation',d:['receipt','key card']},
+  {q:'The front desk where you register:',a:'reception desk',d:['lobby','elevator']},
+  {q:'To leave the hotel and pay your bill:',a:'check out',d:['check in','breakfast']},
+  {q:'The machine that takes you between floors:',a:'elevator',d:['lobby','reception desk']},
+  {q:'The first meal of the day, usually included:',a:'breakfast',d:['receipt','key card']}
+];
+let qIdx=0,qScore=0,shuffledQuiz=[];
+function shuffleArr(arr){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function loadQuiz(){
+  shuffledQuiz=shuffleArr(quizData);qIdx=0;qScore=0;
+  document.getElementById('quizRestart').style.display='none';
+  document.getElementById('quizScore').textContent='';
+  showQuizQ();
+}
+function showQuizQ(){
+  if(qIdx>=shuffledQuiz.length){
+    document.getElementById('quizQuestion').textContent='Quiz complete!';
+    document.getElementById('quizOpts').innerHTML='';
+    document.getElementById('quizScore').textContent='Score: '+qScore+'/'+shuffledQuiz.length;
+    document.getElementById('quizBar').style.width='100%';
+    document.getElementById('quizRestart').style.display='inline-block';
+    if(qScore>=8)earnBadge('b2');
+    return;
+  }
+  const q=shuffledQuiz[qIdx];
+  document.getElementById('quizQuestion').textContent=(qIdx+1)+'. '+q.q;
+  document.getElementById('quizBar').style.width=((qIdx/shuffledQuiz.length)*100)+'%';
+  const opts=shuffleArr([q.a,...q.d]);
+  const container=document.getElementById('quizOpts');
+  container.innerHTML='';
+  opts.forEach(o=>{
+    const btn=document.createElement('button');btn.className='quiz-opt';btn.textContent=o;
+    btn.onclick=function(){
+      container.querySelectorAll('.quiz-opt').forEach(b=>b.disabled=true);
+      if(o===q.a){btn.classList.add('correct-ans');qScore++;}
+      else{btn.classList.add('wrong-ans');container.querySelectorAll('.quiz-opt').forEach(b=>{if(b.textContent===q.a)b.classList.add('correct-ans');});}
+      setTimeout(()=>{qIdx++;showQuizQ();},900);
+    };
+    container.appendChild(btn);
+  });
+}
+function restartQuiz(){loadQuiz();}
+
+/* ============ HOTEL CHECK-IN SIMULATOR ============ */
+const simSteps=[
+  {prompt:'Receptionist: "Good evening! How can I help you?"',context:'You need to tell her you have a reservation.',opts:['I have a reservation. My name is García, from TechCorp.','I want room. Give room.','Reservation García please room.'],correct:0,fb:'Perfect! Name + company + "I have a reservation" — that\'s professional English.'},
+  {prompt:'Receptionist: "Can I see your ID, please?"',context:'She needs your identification document.',opts:['Of course. Here you go.','Give she my ID.','ID for you is here.'],correct:0,fb:'Great! "Here you go" is natural and polite.'},
+  {prompt:'Receptionist: "Your room is 305. Here is your key card."',context:'You want to ask for the Wi-Fi password.',opts:['Give to me Wi-Fi.','Can you give me the Wi-Fi password?','Wi-Fi password I need it.'],correct:1,fb:'"Can you give ME the Wi-Fi password?" — perfect object pronoun use!'},
+  {prompt:'Receptionist: "Does your colleague need a room too?"',context:'Your colleague María needs a double room.',opts:['Yes, please book a double room for her.','Yes, book for she a room.','She need room double.'],correct:0,fb:'Excellent! "Book a room for HER" — object pronoun after preposition.'},
+  {prompt:'Receptionist: "Anything else?"',context:'You need the receipt for your company tomorrow.',opts:['I need receipt give me.','Can you prepare the receipt for me? I need it for my company.','Receipt tomorrow company.'],correct:1,fb:'Two object pronouns in one sentence: "for ME" + "I need IT" — well done!'}
+];
+let simIdx=0;
+function loadSim(){simIdx=0;renderSimStep();}
+function renderSimStep(){
+  if(simIdx>=simSteps.length){
+    document.getElementById('simArea').innerHTML='<div class="sim-complete"><div class="sim-complete-icon">🎉</div><div class="sim-complete-text">Check-In Complete!</div><div style="font-size:13px;color:var(--muted);margin-top:8px">You checked in like a pro. Object pronouns: unlocked!</div></div>';
+    earnBadge('b3');
+    updateSimDots();return;
+  }
+  const s=simSteps[simIdx];
+  let html='<div class="sim-step active">';
+  html+='<div class="sim-prompt">'+s.prompt+'</div>';
+  html+='<div class="sim-context">'+s.context+'</div>';
+  html+='<div class="sim-opts">';
+  s.opts.forEach((o,i)=>{
+    html+='<button class="sim-opt" onclick="simAnswer('+i+')">'+o+'</button>';
+  });
+  html+='</div>';
+  html+='<div class="sim-feedback" id="simFb"></div>';
+  html+='<button class="sim-next" id="simNext" onclick="nextSimStep()">Next →</button>';
+  html+='</div>';
+  document.getElementById('simArea').innerHTML=html;
+  updateSimDots();
+}
+function simAnswer(idx){
+  const s=simSteps[simIdx];
+  const btns=document.querySelectorAll('.sim-opt');
+  btns.forEach((b,i)=>{
+    b.disabled=true;
+    if(i===s.correct)b.classList.add('sim-correct');
+    else if(i===idx)b.classList.add('sim-wrong');
+  });
+  const fb=document.getElementById('simFb');
+  if(idx===s.correct){fb.style.background='rgba(0,229,160,.1)';fb.style.border='1px solid rgba(0,229,160,.3)';fb.style.color='var(--success)';fb.textContent='✓ '+s.fb;}
+  else{fb.style.background='rgba(255,77,109,.08)';fb.style.border='1px solid rgba(255,77,109,.25)';fb.style.color='var(--danger)';fb.textContent='✗ Not quite. The correct answer uses object pronouns properly.';}
+  fb.classList.add('show');
+  document.getElementById('simNext').style.display='inline-block';
+}
+function nextSimStep(){simIdx++;renderSimStep();}
+function updateSimDots(){
+  for(let i=1;i<=5;i++){
+    const d=document.getElementById('sd'+i);
+    if(i-1<simIdx)d.className='sim-dot done';
+    else if(i-1===simIdx)d.className='sim-dot current';
+    else d.className='sim-dot';
+  }
+}
+
+/* ============ WAVEFORM ============ */
+const wv=document.getElementById('wv');
+for(let i=0;i<60;i++){const b=document.createElement('div');b.className='wbar';b.style.height=(8+Math.sin(i*.6)*10+Math.random()*18)+'px';b.style.opacity=.3+Math.random()*.4;wv.appendChild(b);}
+
+/* ============ PROGRESS BAR ============ */
+window.addEventListener('scroll',()=>{const h=document.documentElement;const pct=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100;document.getElementById('progressBar').style.width=pct+'%';});
+
+/* ============ INIT ============ */
+loadQuiz();
+loadSim();
+initDrag('order1');
+initDrag('order2');
+</script>
+</body>
+</html>
