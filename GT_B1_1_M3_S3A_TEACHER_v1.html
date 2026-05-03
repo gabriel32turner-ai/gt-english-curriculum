@@ -1,0 +1,1330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GT B1.1 · M3 · S3A — In-Store vs Online</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0D1117;--surface:#111318;--surface2:#1a1f28;
+  --accent:#10B981;--accent2:#34D399;
+  --border:rgba(16,185,129,.18);
+  --text:#F0F4F8;--muted:#8A9BB0;--dim:rgba(226,226,226,.25);
+  --danger:#FF4D6D;--success:#00E5A0;--warn:#FFB347;
+  --gold:#FFB800;--cyan:#00CFFF;--green:#00E676;--violet:#A78BFA;
+  --font-head:'Syne',sans-serif;--font-body:'DM Sans',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:14px;line-height:1.6}
+.prog{height:3px;background:var(--accent);position:fixed;top:0;left:0;z-index:999;width:0;transition:width .1s linear;box-shadow:0 0 8px rgba(16,185,129,.6)}
+.hdr{background:var(--surface);border-bottom:1px solid var(--border);padding:18px 40px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:3px;z-index:200;backdrop-filter:blur(12px);flex-wrap:wrap;gap:10px}
+.brand{display:flex;align-items:center;gap:10px}
+.dot{width:8px;height:8px;background:var(--accent);border-radius:50%;animation:pulse 2.5s ease-in-out infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(16,185,129,.4)}60%{box-shadow:0 0 0 5px rgba(16,185,129,0)}}
+.bname{font-family:var(--font-head);font-weight:800;font-size:12px;letter-spacing:2.5px;text-transform:uppercase;color:#fff}
+.bsub{font-size:10px;color:var(--muted);letter-spacing:1px}
+.badge-strip{display:flex;gap:6px;align-items:center}
+.badge-strip span{font-size:18px;filter:grayscale(1);opacity:.3;transition:all .4s;cursor:default}
+.badge-strip span.earned{filter:grayscale(0);opacity:1;transform:scale(1.2)}
+.sess-meta{display:flex;gap:7px;flex-wrap:wrap;align-items:center}
+.tag{display:inline-block;padding:3px 10px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;border-radius:3px}
+.tag-level{background:rgba(16,185,129,.15);color:var(--accent);border:1px solid var(--border)}
+.tag-mod{background:rgba(255,184,0,.1);color:var(--gold);border:1px solid rgba(255,184,0,.25)}
+.tag-sess{background:rgba(0,207,255,.1);color:var(--cyan);border:1px solid rgba(0,207,255,.25)}
+.tag-time{background:rgba(0,230,118,.08);color:var(--green);border:1px solid rgba(0,230,118,.2)}
+
+.section{margin:24px 32px;border:1px solid var(--border);border-radius:14px;overflow:hidden;background:var(--surface)}
+.section-header{display:flex;align-items:center;gap:14px;padding:16px 22px;background:linear-gradient(135deg,rgba(16,185,129,.08),transparent);border-bottom:1px solid var(--border);flex-wrap:wrap}
+.section-number{font-family:var(--font-head);font-size:10px;font-weight:800;color:var(--accent);letter-spacing:.12em;text-transform:uppercase;background:rgba(16,185,129,.1);border:1px solid var(--border);padding:2px 9px;border-radius:20px}
+.section-title{font-family:var(--font-head);font-size:18px;font-weight:800;color:#fff}
+.section-title em{color:var(--accent);font-style:normal}
+.section-sub{font-size:12px;color:var(--muted);margin-left:auto}
+.dur-tag{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:1.5px;color:var(--gold);border:1px solid rgba(255,184,0,.2);padding:2px 8px;border-radius:3px;margin-left:8px;white-space:nowrap}
+.section-body{padding:22px 24px}
+
+.img-hero{width:100%;height:220px;object-fit:cover;display:block;filter:brightness(.58)}
+.img-banner{width:100%;height:130px;object-fit:cover;display:block;filter:brightness(.52)}
+.img-card{width:100%;height:80px;object-fit:cover;display:block;filter:brightness(.48)}
+.img-sm{width:100%;height:70px;object-fit:cover;display:block;filter:brightness(.48)}
+
+.tn{border-radius:8px;padding:12px 16px;margin-top:14px;font-size:12px;line-height:1.6}
+.tn-c1{background:rgba(0,207,255,.06);border:1px solid rgba(0,207,255,.2);color:rgba(0,207,255,.85)}
+.tn-c2{background:rgba(255,61,114,.06);border:1px solid rgba(255,61,114,.2);color:rgba(255,120,150,.9)}
+.tn-c3{background:rgba(255,184,0,.05);border:1px solid rgba(255,184,0,.2);color:rgba(255,184,0,.85)}
+.tn-lbl{font-family:var(--font-head);font-size:8.5px;font-weight:800;letter-spacing:2px;text-transform:uppercase;margin-bottom:5px;display:block}
+
+/* WARM-UP */
+.wu-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}
+.wu-card{background:var(--surface2);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.wu-card-img{width:100%;height:90px;object-fit:cover;display:block;filter:brightness(.48)}
+.wu-card-body{padding:12px 14px}
+.wu-q{font-size:13px;color:var(--text);line-height:1.5}
+.wu-hint{font-size:11px;color:var(--muted);font-style:italic;margin-top:5px}
+.quick-win{background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.25);border-radius:10px;padding:14px 18px;margin-top:16px;display:flex;align-items:flex-start;gap:12px}
+.qw-icon{font-size:20px;flex-shrink:0}
+.qw-lbl{font-family:var(--font-head);font-size:8.5px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:5px;display:block}
+.qw-text{font-size:13.5px;color:#fff;line-height:1.5}
+
+/* SPEAKING TOPIC */
+.topic-hero{position:relative;overflow:hidden;border-radius:10px;margin-bottom:16px}
+.topic-hero-img{width:100%;height:180px;object-fit:cover;display:block;filter:brightness(.48)}
+.topic-hero-overlay{position:absolute;bottom:0;left:0;right:0;padding:16px 20px;background:linear-gradient(transparent,rgba(0,0,0,.78))}
+.topic-label{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--accent);margin-bottom:4px}
+.topic-q{font-size:18px;font-weight:700;color:#fff;line-height:1.3}
+.rounds-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.round-card{background:var(--surface2);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.round-card-img{width:100%;height:80px;object-fit:cover;display:block;filter:brightness(.48)}
+.round-card-body{padding:11px 13px}
+.round-num{font-family:var(--font-head);font-size:9px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);margin-bottom:4px}
+.round-q{font-size:12.5px;color:var(--text);line-height:1.4;margin-bottom:6px}
+.model-reveal-btn{background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.3);color:var(--accent);padding:5px 12px;font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:1.5px;cursor:pointer;border-radius:4px;width:100%;text-align:center;transition:all .2s}
+.model-reveal-btn:hover{background:rgba(16,185,129,.2)}
+.model-answer{display:none;margin-top:8px;background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.15);border-radius:6px;padding:10px 12px;font-size:12px;color:var(--text);line-height:1.6;font-style:italic}
+.model-answer.show{display:block}
+
+/* VOCAB */
+.vocab-section-banner{width:100%;height:100px;object-fit:cover;display:block;filter:brightness(.48);border-radius:8px;margin-bottom:16px}
+.vocab-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.vocab-card{background:var(--surface2);border:1px solid var(--border);border-radius:10px;overflow:hidden;cursor:pointer;transition:all .2s}
+.vocab-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.vocab-card-img{width:100%;height:70px;object-fit:cover;display:block;filter:brightness(.48)}
+.vocab-card-body{padding:10px 12px}
+.vc-word{font-family:var(--font-head);font-size:13px;font-weight:700;color:#fff;margin-bottom:2px}
+.vc-ipa{font-size:10.5px;color:var(--cyan);margin-bottom:4px;font-style:italic}
+.vc-pos{font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--dim);margin-bottom:4px}
+.vc-def{font-size:11px;color:var(--muted);line-height:1.4;margin-bottom:5px}
+.vc-ex{font-size:11px;color:var(--accent2);font-style:italic;border-left:2px solid rgba(16,185,129,.35);padding-left:6px;line-height:1.4}
+.vc-sp{font-size:9.5px;color:var(--dim);margin-top:5px}
+.micro-speaking{background:rgba(16,185,129,.05);border:1px solid rgba(16,185,129,.18);border-radius:8px;padding:12px 16px;margin-top:14px}
+.ms-lbl{font-family:var(--font-head);font-size:9px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:5px;display:block}
+
+/* COLLOQUIAL */
+.coll-banner{width:100%;height:100px;object-fit:cover;display:block;filter:brightness(.48);border-radius:8px;margin-bottom:14px}
+.coll-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.coll-card{background:var(--surface2);border:1px solid rgba(34,211,164,.15);border-radius:10px;overflow:hidden;cursor:pointer;transition:border-color .2s}
+.coll-card:hover{border-color:var(--accent)}
+.coll-card-img{width:100%;height:90px;object-fit:cover;display:block;filter:brightness(.48)}
+.coll-card-body{padding:12px 14px}
+.coll-phrase{font-family:var(--font-head);font-size:13px;font-weight:700;color:#fff;margin-bottom:5px}
+.coll-meaning{font-size:11px;color:var(--muted);line-height:1.5;margin-bottom:6px}
+.coll-ex{font-size:11px;color:var(--accent2);font-style:italic;border-left:2px solid rgba(16,185,129,.3);padding-left:6px;line-height:1.4}
+
+/* GRAMMAR */
+.gram-banner{width:100%;height:120px;object-fit:cover;display:block;filter:brightness(.48);border-radius:8px;margin-bottom:16px}
+.gram-toggle-btn{background:var(--surface2);border:1px solid var(--border);color:var(--muted);padding:9px 16px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;cursor:pointer;width:100%;text-align:left;border-radius:6px;margin-bottom:4px;transition:all .2s}
+.gram-toggle-btn:hover{border-color:var(--accent)}
+.gram-coll{max-height:0;overflow:hidden;transition:max-height .4s ease}
+.gram-coll.open{max-height:900px}
+.gram-table{width:100%;border-collapse:collapse;margin-top:10px;margin-bottom:14px}
+.gram-table th{background:var(--surface2);padding:10px 14px;text-align:left;font-family:var(--font-head);font-size:9.5px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim);border-bottom:2px solid var(--accent)}
+.gram-table td{padding:10px 14px;border-bottom:1px solid var(--border);font-size:12.5px;vertical-align:top}
+.gram-table tr:hover td{background:rgba(16,185,129,.03)}
+.ex-phrase{color:var(--accent2);font-style:italic}
+.rule-note{background:rgba(255,184,0,.04);border:1px solid rgba(255,184,0,.18);border-radius:6px;padding:12px 16px;margin:12px 0;font-size:12px;color:rgba(255,184,0,.85);line-height:1.6}
+.err-box{background:rgba(255,77,109,.05);border:1px solid rgba(255,77,109,.2);border-radius:6px;padding:12px 16px;margin:12px 0;font-size:12px;color:rgba(255,140,160,.9);line-height:1.7}
+.err-box strong{color:var(--danger)}
+
+/* SHOWDOWN VISUAL */
+.showdown-container{margin-bottom:20px}
+.showdown-title{font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:10px}
+.showdown-categories{display:flex;flex-direction:column;gap:8px}
+.showdown-row{display:grid;grid-template-columns:1fr 90px 1fr;gap:8px;align-items:stretch}
+.showdown-cat{background:var(--surface2);border:1px solid var(--border);border-radius:10px;overflow:hidden;cursor:pointer;transition:all .25s}
+.showdown-cat:hover{transform:translateY(-2px)}
+.showdown-cat-img{width:100%;height:70px;object-fit:cover;display:block;filter:brightness(.48)}
+.showdown-cat-body{padding:10px 12px}
+.showdown-cat-name{font-family:var(--font-head);font-size:12px;font-weight:700;color:#fff;margin-bottom:3px}
+.showdown-cat-ex{font-size:10.5px;color:var(--muted);line-height:1.4}
+.showdown-middle{display:flex;align-items:center;justify-content:center}
+.showdown-btn-wrap{display:flex;flex-direction:column;gap:5px;align-items:center}
+.sd-btn{font-family:var(--font-head);font-size:9px;font-weight:800;letter-spacing:1px;padding:6px 10px;border-radius:5px;cursor:pointer;border:1px solid var(--border);background:var(--surface2);color:var(--muted);transition:all .2s;width:82px;text-align:center}
+.sd-btn:hover{border-color:var(--accent);color:var(--accent)}
+.sd-btn.store-active{background:rgba(16,185,129,.2);border-color:var(--accent);color:var(--accent2)}
+.sd-btn.online-active{background:rgba(0,207,255,.15);border-color:var(--cyan);color:var(--cyan)}
+.showdown-output{background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.18);border-radius:8px;padding:14px 18px;margin-top:14px;min-height:60px}
+.so-lbl{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:6px}
+.so-sentence{font-size:13.5px;color:#fff;font-style:italic;line-height:1.6}
+.so-rule{font-size:11px;color:var(--muted);margin-top:5px}
+
+/* POLL */
+.poll-box{background:rgba(16,185,129,.04);border:1px solid rgba(16,185,129,.15);border-radius:10px;padding:16px 18px;margin-bottom:16px}
+.poll-lbl{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:8px}
+.poll-q{font-size:14px;color:#fff;font-weight:500;margin-bottom:12px;line-height:1.4}
+.poll-opts{display:flex;gap:8px;flex-wrap:wrap}
+.poll-btn{background:var(--surface2);border:1px solid var(--border);color:var(--muted);padding:8px 16px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1px;cursor:pointer;border-radius:5px;transition:all .2s}
+.poll-btn:hover:not(:disabled){border-color:var(--accent);color:var(--accent)}
+.poll-btn.selected{background:rgba(16,185,129,.15);border-color:var(--accent);color:var(--accent)}
+.poll-btn:disabled{cursor:not-allowed}
+.poll-feedback{display:none;margin-top:10px;font-size:12.5px;color:var(--text);line-height:1.5;padding:10px 14px;background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.15);border-radius:6px}
+.poll-feedback.show{display:block}
+
+/* ACTIVITIES */
+.act-title{font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:11px;padding-top:18px;border-top:1px solid var(--border);margin-top:20px}
+.opt-group{margin-bottom:14px}
+.opt-q{font-size:13px;color:var(--text);margin-bottom:9px;padding:10px 14px;background:var(--surface2);border-left:3px solid var(--accent);border-radius:0 6px 6px 0;line-height:1.5}
+.opts{display:flex;gap:7px;flex-wrap:wrap}
+.opt{background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:7px 15px;font-family:var(--font-body);font-size:12.5px;cursor:pointer;border-radius:5px;transition:all .2s}
+.opt:hover:not(:disabled){border-color:var(--accent);color:var(--accent)}
+.opt.correct{background:rgba(0,229,160,.12);border-color:var(--success);color:var(--success)}
+.opt.wrong{background:rgba(255,77,109,.12);border-color:var(--danger);color:var(--danger)}
+.opt:disabled{cursor:not-allowed}
+.tf-set{display:flex;flex-direction:column;gap:8px;margin-bottom:14px}
+.tf-row{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px 15px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.tf-stmt{font-size:12.5px;color:var(--text);flex:1;line-height:1.5;min-width:180px}
+.tf-btns{display:flex;gap:7px;flex-shrink:0}
+.tf-btn{background:var(--surface);border:1px solid var(--border);color:var(--text);padding:6px 15px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1px;cursor:pointer;border-radius:4px;transition:all .2s}
+.tf-btn:hover:not(:disabled){border-color:var(--accent)}
+.tf-btn:disabled{cursor:not-allowed}
+
+/* READING */
+.reading-card{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:22px 26px;margin-bottom:16px}
+.av-row{display:flex;align-items:center;gap:12px;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--border);flex-wrap:wrap}
+.avatar{width:48px;height:48px;border-radius:50%;object-fit:cover;border:2px solid var(--accent);flex-shrink:0}
+.av-name{font-family:var(--font-head);font-size:13px;font-weight:700;color:#fff}
+.av-role{font-size:11px;color:var(--muted)}
+.av-meta{margin-left:auto;font-size:11px;color:var(--muted);text-align:right;line-height:1.5}
+.kw-box{background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.15);border-radius:6px;padding:10px 14px;margin:12px 0;font-size:11.5px;color:var(--accent2);line-height:1.5}
+.rb{font-size:13.5px;line-height:1.95;color:var(--text)}
+.rb strong{color:var(--accent)}
+
+/* LISTENING */
+.player-box{background:var(--surface2);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:14px}
+.player-box-img{width:100%;height:90px;object-fit:cover;display:block;filter:brightness(.42)}
+.player-box-body{padding:18px 22px}
+.track-title{font-family:var(--font-head);font-size:12px;font-weight:700;color:#fff;margin-bottom:2px}
+.track-sub{font-size:10.5px;color:var(--muted)}
+.waveform{display:flex;align-items:center;gap:2px;height:36px;overflow:hidden;margin:10px 0}
+.wbar{width:3px;background:var(--accent);border-radius:2px;flex-shrink:0;opacity:.4}
+.script-toggle{background:none;border:1px solid var(--border);color:var(--muted);padding:6px 14px;font-family:var(--font-head);font-size:9.5px;font-weight:700;letter-spacing:1.5px;cursor:pointer;border-radius:4px;margin-bottom:10px;transition:all .2s}
+.script-toggle:hover{border-color:var(--accent)}
+.script-box{max-height:0;overflow:hidden;transition:max-height .45s ease}
+.script-box.open{max-height:1000px}
+.script-content{background:rgba(0,207,255,.04);border:1px solid rgba(0,207,255,.15);border-radius:6px;padding:16px 18px;font-size:12.5px;color:var(--text);line-height:1.9;font-style:italic}
+.eleven-note{font-size:10.5px;color:var(--dim);margin-top:7px}
+
+/* SPEAKING */
+.speak-card{background:var(--surface2);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:0 10px 10px 0;overflow:hidden;margin-bottom:10px}
+.speak-card-img{width:100%;height:80px;object-fit:cover;display:block;filter:brightness(.48)}
+.speak-card-body{padding:13px 16px}
+.sc-lbl{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:4px}
+.sc-q{font-size:14px;color:#fff;font-weight:500;margin-bottom:7px;line-height:1.4}
+.sc-hint{font-size:11.5px;color:var(--muted);font-style:italic}
+
+/* TIMER */
+.timer-wrap{display:inline-flex;flex-direction:column;align-items:center;gap:6px;margin-bottom:14px}
+.timer-svg{transform:rotate(-90deg)}
+.timer-arc{transition:stroke-dashoffset .9s linear;stroke-linecap:round}
+.timer-text{font-family:var(--font-head);font-size:18px;font-weight:800;fill:#fff}
+.timer-btn{font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;padding:7px 18px;border-radius:5px;cursor:pointer;border:1px solid var(--accent);background:rgba(16,185,129,.1);color:var(--accent);transition:all .2s;margin-top:6px}
+.timer-btn:hover{background:rgba(16,185,129,.2)}
+
+/* PHRASES */
+.phrases-section{background:rgba(255,184,0,.03);border-top:1px solid rgba(255,184,0,.12);border-bottom:1px solid rgba(255,184,0,.12)}
+.ph-lbl{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:7px}
+.ph-title{font-family:var(--font-head);font-size:22px;font-weight:800;color:#fff;margin-bottom:20px;line-height:1.3}
+.ph-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.ph-card{background:var(--surface2);border:1px solid rgba(255,184,0,.2);border-radius:10px;overflow:hidden}
+.ph-card-img{width:100%;height:80px;object-fit:cover;display:block;filter:brightness(.45)}
+.ph-card-body{padding:14px 16px}
+.ph-num{font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;color:var(--gold);margin-bottom:6px}
+.ph-phrase{font-family:var(--font-head);font-size:14px;font-weight:700;color:#fff;margin-bottom:7px;line-height:1.3}
+.ph-ctx{font-size:11.5px;color:var(--muted);line-height:1.55}
+
+/* WRAP-UP */
+.wu3-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px}
+.wu3-card{background:var(--surface2);border:1px solid var(--border);border-top:3px solid var(--accent);border-radius:0 0 10px 10px;padding:16px 15px}
+.wu3-num{font-family:var(--font-head);font-size:24px;font-weight:800;color:var(--accent);margin-bottom:5px}
+.wu3-txt{font-size:12px;color:var(--muted);line-height:1.55}
+.checklist{display:flex;flex-direction:column;gap:7px;margin-bottom:20px}
+.cl-item{display:flex;align-items:flex-start;gap:11px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:11px 15px;cursor:pointer;transition:all .2s;font-size:12.5px;color:var(--text);line-height:1.5}
+.cl-item:hover{border-color:var(--accent)}
+.cl-item.done{border-color:rgba(0,229,160,.3);background:rgba(0,229,160,.04);color:rgba(0,229,160,.8);text-decoration:line-through;opacity:.7}
+.cl-box{width:15px;height:15px;border:2px solid var(--accent);border-radius:3px;flex-shrink:0;margin-top:2px;transition:all .2s}
+.cl-item.done .cl-box{background:var(--success);border-color:var(--success)}
+.next-box{background:var(--surface2);border:1px solid var(--border);border-left:4px solid var(--cyan);border-radius:0 10px 10px 0;padding:16px 20px}
+.next-lbl{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--cyan);margin-bottom:5px}
+.next-title{font-size:14px;font-weight:600;color:#fff;margin-bottom:3px}
+.next-sub{font-size:11.5px;color:var(--muted)}
+.win-box{background:rgba(255,184,0,.04);border:1px solid rgba(255,184,0,.18);border-radius:10px;padding:16px 18px;margin-top:16px}
+.win-lbl{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold);margin-bottom:8px}
+.win-textarea{width:100%;background:var(--surface);border:1px solid rgba(255,184,0,.2);border-radius:6px;color:var(--text);font-family:var(--font-body);font-size:13px;padding:10px 13px;resize:vertical;min-height:70px;outline:none;line-height:1.5;transition:border-color .2s}
+.win-textarea::placeholder{color:var(--muted)}
+.win-textarea:focus{border-color:var(--gold)}
+.win-save{margin-top:8px;background:rgba(255,184,0,.1);border:1px solid rgba(255,184,0,.3);color:var(--gold);padding:7px 18px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;cursor:pointer;border-radius:5px;transition:all .2s}
+.win-save:hover{background:rgba(255,184,0,.2)}
+
+.ftr{background:var(--surface);border-top:1px solid var(--border);padding:16px 40px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-top:24px}
+.fbrand{font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim)}
+.finfo{font-size:11px;color:var(--dim)}
+.flevels{display:flex;gap:3px;flex-wrap:wrap}
+.flv{padding:5px 10px;font-family:var(--font-head);font-size:10px;font-weight:700;background:var(--surface2);color:var(--dim);border-radius:3px}
+.flv.active{background:var(--accent);color:#fff}
+
+@media(max-width:860px){
+  .hdr,.ftr{padding:14px 16px}
+  .section{margin:14px 10px}
+  .section-body{padding:14px 14px}
+  .wu-grid,.rounds-grid,.vocab-grid,.coll-grid{grid-template-columns:1fr 1fr}
+  .ph-grid{grid-template-columns:1fr}
+  .wu3-grid{grid-template-columns:1fr}
+  .showdown-row{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<div class="prog" id="prog"></div>
+
+<header class="hdr">
+  <div class="brand"><div class="dot"></div><div><div class="bname">Gabriel Turner</div><div class="bsub">English Training · Teacher Edition</div></div></div>
+  <div class="badge-strip">
+    <span id="b1" title="Warm-Up">⚡</span>
+    <span id="b2" title="Vocabulary">📚</span>
+    <span id="b3" title="Grammar">🎯</span>
+    <span id="b4" title="Listening">🎧</span>
+    <span id="b5" title="Session Complete">🏆</span>
+  </div>
+  <div class="sess-meta">
+    <span class="tag tag-level">B1.1</span>
+    <span class="tag tag-mod">Module 3</span>
+    <span class="tag tag-sess">Session 3A — Discovery &amp; Drill</span>
+    <span class="tag tag-time">120 min</span>
+  </div>
+</header>
+
+<!-- §1 WARM-UP -->
+<section class="section">
+  <div class="section-header">
+    <span class="section-number">§1</span>
+    <span class="section-title">Warm-Up — <em>Where Do You Shop?</em></span>
+    <span class="section-sub">Activate shopping vocabulary · Connect to real buying habits</span>
+    <span class="dur-tag">⏱ 5 MIN</span>
+  </div>
+  <div class="section-body">
+    <img class="img-hero" src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=900&q=80" alt="shopping store vs online decision">
+    <div class="wu-grid">
+      <div class="wu-card">
+        <img class="wu-card-img" src="https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?w=600&q=80" alt="online shopping on phone">
+        <div class="wu-card-body">
+          <div class="wu-q">📱 Think of the last 5 things you bought. How many were online? How many in a physical store? Which was the last thing you returned?</div>
+          <div class="wu-hint">→ Collect answers — they'll anchor the speaking topic in §2</div>
+        </div>
+      </div>
+      <div class="wu-card">
+        <img class="wu-card-img" src="https://images.unsplash.com/photo-1555529669-e69e7aa0ba9a?w=600&q=80" alt="fitting room clothes shopping">
+        <div class="wu-card-body">
+          <div class="wu-q">👗 Is there any product you would NEVER buy online? Something you absolutely need to see, touch, or try on before buying?</div>
+          <div class="wu-hint">→ "Try on" is key vocabulary for today — note it on the board</div>
+        </div>
+      </div>
+      <div class="wu-card">
+        <img class="wu-card-img" src="https://images.unsplash.com/photo-1619994403073-2cec844b8e63?w=600&q=80" alt="checkout cashier store experience">
+        <div class="wu-card-body">
+          <div class="wu-q">🏪 When you go to a physical store, what do you like about the experience? What do you dislike? How does it compare to shopping from home?</div>
+          <div class="wu-hint">→ Push for specific examples: "The assistant helped me…" / "I hate the checkout line…"</div>
+        </div>
+      </div>
+      <div class="wu-card">
+        <img class="wu-card-img" src="https://images.unsplash.com/photo-1509622905150-fa66d3906e09?w=600&q=80" alt="delivery package online order">
+        <div class="wu-card-body">
+          <div class="wu-q">📦 Have you ever been disappointed with an online purchase? What happened — wrong size, wrong color, damage in delivery? What did you do?</div>
+          <div class="wu-hint">→ Connects to vocabulary: return, receipt, refund, delivery — all in today's list</div>
+        </div>
+      </div>
+    </div>
+    <div class="quick-win">
+      <div class="qw-icon">⚡</div>
+      <div>
+        <span class="qw-lbl">Quick Win — 20 seconds</span>
+        <div class="qw-text">Say this out loud right now: <strong>"If I buy clothes online, I'll probably have to return them — I need to try them on first."</strong> First Conditional. Real. Yours.</div>
+      </div>
+    </div>
+    <div class="tn tn-c1">
+      <span class="tn-lbl">📘 Pedagogical</span>
+      S3 sits between S2 (Online Shopping Behavior) and S4 (Financial Goals). It's the most concrete and immediately relatable session of M3 — everyone has an opinion on in-store vs online. The First Conditional is the natural grammar for expressing purchase decisions: "If the price is lower online, I'll order it" / "If I can't try it on, I won't buy it." Push for real examples throughout.
+    </div>
+    <div class="tn tn-c2">
+      <span class="tn-lbl">💡 Engagement</span>
+      Ask the class: "Is anyone here a 100% online shopper? Raise your hand. Is anyone a 100% in-store shopper?" — almost no one will be either extreme. That's the discussion: it depends on the product. Today's grammar — First Conditional — is perfect for conditional preferences: "If it's clothing, I'll always go to the store. If it's electronics, I'll buy online."
+    </div>
+  </div>
+</section>
+
+<!-- §2 SPEAKING TOPIC -->
+<section class="section">
+  <div class="section-header">
+    <span class="section-number">§2</span>
+    <span class="section-title">Speaking Topic — <em>In-Store vs Online</em></span>
+    <span class="section-sub">Rodrigo Vega's shopping habits · 3 rounds · Model B1.1 answers</span>
+    <span class="dur-tag">⏱ 8 MIN</span>
+  </div>
+  <div class="section-body">
+    <div class="topic-hero">
+      <img class="topic-hero-img" src="https://images.unsplash.com/photo-1472851294608-062f824d29cc?w=900&q=80" alt="shopping comparison in-store online debate">
+      <div class="topic-hero-overlay">
+        <div class="topic-label">Session Topic</div>
+        <div class="topic-q">For what products do you still prefer a physical store?</div>
+      </div>
+    </div>
+    <div class="rounds-grid">
+      <div class="round-card">
+        <img class="round-card-img" src="https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?w=600&q=80" alt="clothing store fitting room">
+        <div class="round-card-body">
+          <div class="round-num">Round 1 — Clothing</div>
+          <div class="round-q">Do you buy clothes online? What happens if the size is wrong? When do you absolutely need to go to a physical store?</div>
+          <button class="model-reveal-btn" onclick="revealModel('m1')">▼ Show B1.1 Model Answer</button>
+          <div class="model-answer" id="m1">"I buy basic things online — t-shirts, socks — but if it's anything more formal, I'll always go to a store. If I can't try it on, I'll probably return it. I've returned too many things. It's just not worth the hassle for clothing."</div>
+        </div>
+      </div>
+      <div class="round-card">
+        <img class="round-card-img" src="https://images.unsplash.com/photo-1593640408182-31c228e8e37f?w=600&q=80" alt="electronics store laptop test">
+        <div class="round-card-body">
+          <div class="round-num">Round 2 — Electronics</div>
+          <div class="round-q">Do you test electronics in a store before buying them online cheaper? Is that fair to the store? Would you buy a phone without touching it first?</div>
+          <button class="model-reveal-btn" onclick="revealModel('m2')">▼ Show B1.1 Model Answer</button>
+          <div class="model-answer" id="m2">"Honestly? Yes — I've done that. I go to the store, I touch the laptop, I compare the screens, and then I buy it 20% cheaper online. I don't feel too bad about it. If the store offers better service and the same price, I'll buy there. But if the price difference is big, I'll always choose online."</div>
+        </div>
+      </div>
+      <div class="round-card">
+        <img class="round-card-img" src="https://images.unsplash.com/photo-1534723452862-4c874018d66d?w=600&q=80" alt="furniture store sofa experience">
+        <div class="round-card-body">
+          <div class="round-num">Round 3 — Furniture / Big Items</div>
+          <div class="round-q">Would you buy a sofa online? What about a mattress? Is there a category where you absolutely need to physically experience the product before buying?</div>
+          <button class="model-reveal-btn" onclick="revealModel('m3')">▼ Show B1.1 Model Answer</button>
+          <div class="model-answer" id="m3">"Furniture? No way online. If I can't sit on the sofa, I won't buy it. Same with mattresses — that's years of sleeping. For things I'll use every day, if I can't touch and test it in person, I'll feel nervous about the purchase. That's where the store still wins, absolutely."</div>
+        </div>
+      </div>
+    </div>
+    <div class="tn tn-c1">
+      <span class="tn-lbl">📘 Context — Rodrigo Vega</span>
+      Rodrigo (B1.1 character) is a pragmatic mid-career professional. He shops both online and in-store depending on product type. His perspective: online for repeatables (books, supplements, basic clothing), in-store for high-involvement purchases (clothes he'll wear to work, furniture, shoes). Students who work in manufacturing tend to agree — they value durability and fit over convenience.
+    </div>
+  </div>
+</section>
+
+<!-- §3 VOCABULARY -->
+<section class="section">
+  <div class="section-header">
+    <span class="section-number">§3</span>
+    <span class="section-title">Vocabulary — <em>In-Store Shopping</em></span>
+    <span class="section-sub">8 nouns + 8 verbs · All from a real shopping experience · Click to hear</span>
+    <span class="dur-tag">⏱ 10 MIN</span>
+  </div>
+  <div class="section-body">
+    <img class="vocab-section-banner" src="https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=900&q=80" alt="in-store shopping vocabulary banner">
+    <div style="font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:10px">8 Nouns — Click to hear</div>
+    <div class="vocab-grid">
+      <div class="vocab-card" onclick="speak('store')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1501183638710-841dd1904471?w=600&q=80" alt="store retail shop">
+        <div class="vocab-card-body">
+          <div class="vc-word">store</div>
+          <div class="vc-ipa">/stɔːr/</div>
+          <div class="vc-pos">noun</div>
+          <div class="vc-def">A physical place where goods are sold to the public</div>
+          <div class="vc-ex">"If the online price is the same, I'll go to the store — I prefer talking to a real person."</div>
+          <div class="vc-sp">🔊 Click to hear</div>
+        </div>
+      </div>
+      <div class="vocab-card" onclick="speak('shelf')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1556742111-a301076d9d18?w=600&q=80" alt="shelf products store aisle">
+        <div class="vocab-card-body">
+          <div class="vc-word">shelf</div>
+          <div class="vc-ipa">/ʃɛlf/</div>
+          <div class="vc-pos">noun</div>
+          <div class="vc-def">A flat surface fixed to a wall where products are displayed</div>
+          <div class="vc-ex">"If the shelf is empty, I'll ask the assistant if there's more in the back."</div>
+          <div class="vc-sp">🔊 Click to hear</div>
+        </div>
+      </div>
+      <div class="vocab-card" onclick="speak('receipt')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1556742044-3c52d6e88c62?w=600&q=80" alt="receipt paper store purchase">
+        <div class="vocab-card-body">
+          <div class="vc-word">receipt</div>
+          <div class="vc-ipa">/rɪˈsiːt/</div>
+          <div class="vc-pos">noun</div>
+          <div class="vc-def">A printed record confirming payment (the P is silent)</div>
+          <div class="vc-ex">"If you don't keep the receipt, you won't be able to return it."</div>
+          <div class="vc-sp">🔊 Click to hear (silent P!)</div>
+        </div>
+      </div>
+      <div class="vocab-card" onclick="speak('fitting room')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1505022610485-0249ba5b3675?w=600&q=80" alt="fitting room changing room clothes">
+        <div class="vocab-card-body">
+          <div class="vc-word">fitting room</div>
+          <div class="vc-ipa">/ˈfɪtɪŋ ruːm/</div>
+          <div class="vc-pos">noun</div>
+          <div class="vc-def">A small room in a store where you try on clothes (also: changing room)</div>
+          <div class="vc-ex">"If the fitting room has a long queue, I'll try it at home and return if needed."</div>
+          <div class="vc-sp">🔊 Click to hear</div>
+        </div>
+      </div>
+      <div class="vocab-card" onclick="speak('checkout')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1604719312566-8912e9227c6a?w=600&q=80" alt="checkout cashier till payment">
+        <div class="vocab-card-body">
+          <div class="vc-word">checkout</div>
+          <div class="vc-ipa">/ˈtʃɛkaʊt/</div>
+          <div class="vc-pos">noun</div>
+          <div class="vc-def">The area where you pay for goods (also used as a verb: to check out)</div>
+          <div class="vc-ex">"If there's a self-checkout, I'll use it — it's much faster."</div>
+          <div class="vc-sp">🔊 Click to hear</div>
+        </div>
+      </div>
+      <div class="vocab-card" onclick="speak('assistant')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1621976498727-9e5d56476276?w=600&q=80" alt="store assistant employee help">
+        <div class="vocab-card-body">
+          <div class="vc-word">assistant</div>
+          <div class="vc-ipa">/əˈsɪstənt/</div>
+          <div class="vc-pos">noun</div>
+          <div class="vc-def">A person who helps customers in a store (= store assistant, shop assistant)</div>
+          <div class="vc-ex">"If I can't find my size, I'll ask the assistant — that's what they're there for."</div>
+          <div class="vc-sp">🔊 Click to hear</div>
+        </div>
+      </div>
+      <div class="vocab-card" onclick="speak('experience')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1581393942896-e5cc3e8012b4?w=600&q=80" alt="shopping experience in-store atmosphere">
+        <div class="vocab-card-body">
+          <div class="vc-word">experience</div>
+          <div class="vc-ipa">/ɪkˈspɪəriəns/</div>
+          <div class="vc-pos">noun</div>
+          <div class="vc-def">The feeling or quality of an activity — here, the overall feeling of shopping in a store</div>
+          <div class="vc-ex">"If the shopping experience is bad — rude staff, long queues — I'll never go back."</div>
+          <div class="vc-sp">🔊 Click to hear</div>
+        </div>
+      </div>
+      <div class="vocab-card" onclick="speak('transaction')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1559757175-0eb30cd8c063?w=600&q=80" alt="transaction payment card store">
+        <div class="vocab-card-body">
+          <div class="vc-word">transaction</div>
+          <div class="vc-ipa">/trænˈzækʃən/</div>
+          <div class="vc-pos">noun</div>
+          <div class="vc-def">The process of buying or selling something — a purchase</div>
+          <div class="vc-ex">"If the transaction fails online, I'll go to the store and pay in person."</div>
+          <div class="vc-sp">🔊 Click to hear</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:10px;margin-top:18px">8 Verbs — Click to hear</div>
+    <div class="vocab-grid">
+      <div class="vocab-card" onclick="speak('try on')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1509631179647-0177331693ae?w=600&q=80" alt="try on clothes fitting room">
+        <div class="vocab-card-body">
+          <div class="vc-word">try on</div>
+          <div class="vc-ipa">/traɪ ɒn/</div>
+          <div class="vc-pos">phrasal verb</div>
+          <div class="vc-def">To put on clothing to see if it fits before buying</div>
+          <div class="vc-ex">"If I can't try it on, I won't buy it — especially shoes."</div>
+          <div class="vc-sp">🔊 Click to hear</div>
+        </div>
+      </div>
+      <div class="vocab-card" onclick="speak('browse')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1483181957632-8bda974cbc91?w=600&q=80" alt="browsing store looking products">
+        <div class="vocab-card-body">
+          <div class="vc-word">browse</div>
+          <div class="vc-ipa">/braʊz/</div>
+          <div class="vc-pos">verb</div>
+          <div class="vc-def">To look at products casually without a specific intention to buy</div>
+          <div class="vc-ex">"If I'm just browsing, I prefer going to the store — it's more interesting than scrolling."</div>
+          <div class="vc-sp">🔊 Click to hear</div>
+        </div>
+      </div>
+      <div class="vocab-card" onclick="speak('compare')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1600585154526-990dced4db0d?w=600&q=80" alt="compare products side by side">
+        <div class="vocab-card-body">
+          <div class="vc-word">compare</div>
+          <div class="vc-ipa">/kəmˈpɛr/</div>
+          <div class="vc-pos">verb</div>
+          <div class="vc-def">To look at two or more things to find differences or similarities</div>
+          <div class="vc-ex">"If I compare the prices online first, I'll know if the store deal is good."</div>
+          <div class="vc-sp">🔊 Click to hear</div>
+        </div>
+      </div>
+      <div class="vocab-card" onclick="speak('touch')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1609205807107-a8b12d7994f4?w=600&q=80" alt="touch feel texture product fabric">
+        <div class="vocab-card-body">
+          <div class="vc-word">touch</div>
+          <div class="vc-ipa">/tʌtʃ/</div>
+          <div class="vc-pos">verb</div>
+          <div class="vc-def">To feel the texture or quality of something with your hands</div>
+          <div class="vc-ex">"If I can't touch the fabric, I'll never know if the quality is good."</div>
+          <div class="vc-sp">🔊 Click to hear</div>
+        </div>
+      </div>
+      <div class="vocab-card" onclick="speak('return')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1591160690555-5d7251f5b2c7?w=600&q=80" alt="return item parcel refund">
+        <div class="vocab-card-body">
+          <div class="vc-word">return</div>
+          <div class="vc-ipa">/rɪˈtɜːrn/</div>
+          <div class="vc-pos">verb</div>
+          <div class="vc-def">To take a product back to the store and get a refund</div>
+          <div class="vc-ex">"If it doesn't fit when I get home, I'll return it the next day."</div>
+          <div class="vc-sp">🔊 Click to hear</div>
+        </div>
+      </div>
+      <div class="vocab-card" onclick="speak('carry')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1499298626-5e6b73b6c4bc?w=600&q=80" alt="carry shopping bags store">
+        <div class="vocab-card-body">
+          <div class="vc-word">carry</div>
+          <div class="vc-ipa">/ˈkæri/</div>
+          <div class="vc-pos">verb</div>
+          <div class="vc-def">To hold something and take it with you — also: a store "carries" a product if it sells it</div>
+          <div class="vc-ex">"If they don't carry my size, I'll order online and return if needed."</div>
+          <div class="vc-sp">🔊 Click to hear</div>
+        </div>
+      </div>
+      <div class="vocab-card" onclick="speak('choose')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?w=600&q=80" alt="choose decide options selection">
+        <div class="vocab-card-body">
+          <div class="vc-word">choose</div>
+          <div class="vc-ipa">/tʃuːz/</div>
+          <div class="vc-pos">verb</div>
+          <div class="vc-def">To decide between two or more options</div>
+          <div class="vc-ex">"If the colors are better online, I'll choose a different one from the store."</div>
+          <div class="vc-sp">🔊 Click to hear</div>
+        </div>
+      </div>
+      <div class="vocab-card" onclick="speak('ask for help')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1574362848149-11496d93a7c7?w=600&q=80" alt="ask for help store customer service">
+        <div class="vocab-card-body">
+          <div class="vc-word">ask (for help)</div>
+          <div class="vc-ipa">/æsk fər hɛlp/</div>
+          <div class="vc-pos">verb phrase</div>
+          <div class="vc-def">To request assistance from a store employee</div>
+          <div class="vc-ex">"If I'm confused about which product to buy, I'll ask for help — it's what they're there for."</div>
+          <div class="vc-sp">🔊 Click to hear</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="micro-speaking">
+      <span class="ms-lbl">🗣️ Micro-Speaking — 60 seconds</span>
+      <div style="font-size:12.5px;color:var(--text);line-height:1.6">Choose 3 vocabulary words. Make one First Conditional sentence with each about a real shopping situation.<br>
+      Model: <em style="color:var(--accent2)">"If I can't try on the shoes, I won't buy them — I've returned too many pairs."</em></div>
+    </div>
+
+    <div class="tn tn-c3">
+      <span class="tn-lbl">⭐ GT Original — Pronunciation Notes</span>
+      "Receipt" — the P is completely silent: /rɪˈsiːt/ not /rɪˈsiːpt/. Students often add the P. Drill it: "re-SEET." "Experience" — 5 syllables: /ɪk-SPEER-ee-əns/. Students often collapse it to 3. "Transaction" — stress on the second syllable: /trænˈZAK-shən/. "Fitting room" — two words, not one. In Mexican Spanish "probador" is one word — students sometimes say "the trier" or confuse with "changing room" (both are correct).
+    </div>
+  </div>
+</section>
+
+<!-- §4 COLLOQUIAL -->
+<section class="section">
+  <div class="section-header">
+    <span class="section-number">§4</span>
+    <span class="section-title">Colloquial English — <em>Shopping Talk</em></span>
+    <span class="section-sub">3 natural phrases · In-store context · Used by native speakers every day</span>
+    <span class="dur-tag">⏱ 5 MIN</span>
+  </div>
+  <div class="section-body">
+    <img class="coll-banner" src="https://images.unsplash.com/photo-1491553895911-0055eca6402d?w=900&q=80" alt="natural shopping conversation phrases">
+    <div class="coll-grid">
+      <div class="coll-card" onclick="speak('I like to see it before I buy it.')">
+        <img class="coll-card-img" src="https://images.unsplash.com/photo-1483721310020-03333e577078?w=600&q=80" alt="looking at product before buying">
+        <div class="coll-card-body">
+          <div class="coll-phrase">"I like to see it before I buy it."</div>
+          <div class="coll-meaning">The most natural way to say you prefer physical stores for visual or tactile products. Common in any buying conversation — even for cars, houses, or appliances.</div>
+          <div class="coll-ex">"I'm not an online furniture buyer. I like to see it before I buy it. If I can't sit on the sofa, I won't spend that money."</div>
+        </div>
+      </div>
+      <div class="coll-card" onclick="speak('I need to try it on first.')">
+        <img class="coll-card-img" src="https://images.unsplash.com/photo-1532453288672-3a27e9be9efd?w=600&q=80" alt="try on clothes necessary shopping">
+        <div class="coll-card-body">
+          <div class="coll-phrase">"I need to try it on first."</div>
+          <div class="coll-meaning">Specifically for clothing and shoes. "Try it on" = to put it on your body to check the fit. One of the most common in-store shopping phrases in English.</div>
+          <div class="coll-ex">"I need to try it on first — if I order online and it doesn't fit, I'll have to deal with the return process, and that's a waste of time."</div>
+        </div>
+      </div>
+      <div class="coll-card" onclick="speak('I just want to be quick.')">
+        <img class="coll-card-img" src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=600&q=80" alt="quick shopping efficient errand">
+        <div class="coll-card-body">
+          <div class="coll-phrase">"I just want to be quick."</div>
+          <div class="coll-meaning">Explains why you prefer efficiency over experience — for routine purchases. "Just" softens the statement. Pairs naturally with "I'll order online if I don't have time."</div>
+          <div class="coll-ex">"I just want to be quick — if it's something I buy every week, I'll do it online. I don't want to spend 40 minutes in a supermarket for 5 items."</div>
+        </div>
+      </div>
+    </div>
+    <div class="tn tn-c2">
+      <span class="tn-lbl">💡 Drill Note</span>
+      Each phrase pairs naturally with First Conditional. After students say each phrase, push them to finish with a condition: "I like to see it before I buy it — IF the store is nearby, I'll go. If not, I'll take the risk online." Run 3 quick rounds: Teacher says the context → student responds with the phrase + a First Conditional sentence.
+    </div>
+  </div>
+</section>
+
+<!-- §5 GRAMMAR -->
+<section class="section">
+  <div class="section-header">
+    <span class="section-number">§5</span>
+    <span class="section-title">Grammar — <em>First Conditional in Shopping Decisions</em></span>
+    <span class="section-sub">In-Store vs Online Showdown · Referential approach · 2 activities</span>
+    <span class="dur-tag">⏱ 10 MIN</span>
+  </div>
+  <div class="section-body">
+    <img class="gram-banner" src="https://images.unsplash.com/photo-1664575602276-acd073f104c1?w=900&q=80" alt="grammar first conditional shopping decision">
+
+    <!-- POLL -->
+    <div class="poll-box">
+      <div class="poll-lbl">⚡ 30-Second Poll — Grammar Gut Check</div>
+      <div class="poll-q">Which sentence correctly uses First Conditional for a shopping decision?</div>
+      <div class="poll-opts" id="pollA">
+        <button class="poll-btn" onclick="doPoll('pollA','pa1',this)">A: "If I will find a better price online, I'll buy it there."</button>
+        <button class="poll-btn" onclick="doPoll('pollA','pa2',this)">B: "If I find a better price online, I'll buy it there."</button>
+        <button class="poll-btn" onclick="doPoll('pollA','pa3',this)">C: "If I found a better price online, I would buy it there."</button>
+      </div>
+      <div class="poll-feedback" id="pa1">❌ "Will" never goes in the if-clause — not even when the situation is about the future. The condition is expressed with Present Simple: "If I find…" The future idea lives in the result: "I'll buy it there."</div>
+      <div class="poll-feedback" id="pa2">✅ Correct! "If I find" — Present Simple in the if-clause. "I'll buy it" — will + base verb in the result. Real condition, likely outcome. This is exactly how native speakers express conditional shopping decisions.</div>
+      <div class="poll-feedback" id="pa3">❌ "If I found… I would buy" is Second Conditional — for hypothetical or unlikely situations. If you're genuinely considering buying online, First Conditional is the right choice. Second Conditional suggests it's unlikely to happen.</div>
+    </div>
+
+    <!-- NEW VISUAL: IN-STORE vs ONLINE SHOWDOWN -->
+    <div class="showdown-container">
+      <div class="showdown-title">🛒 In-Store vs Online Showdown — Choose Your Preference</div>
+      <p style="font-size:12px;color:var(--muted);margin-bottom:12px;line-height:1.5">For each product category, click <strong style="color:var(--accent)">Store</strong> or <strong style="color:var(--cyan)">Online</strong> to generate a First Conditional sentence that matches your choice. Notice how the grammar changes based on your decision.</p>
+
+      <div class="showdown-categories">
+        <div class="showdown-row">
+          <div class="showdown-cat">
+            <img class="showdown-cat-img" src="https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=600&q=80" alt="clothing fashion store">
+            <div class="showdown-cat-body">
+              <div class="showdown-cat-name">👗 Clothing</div>
+              <div class="showdown-cat-ex">T-shirts, jeans, dresses, formal wear</div>
+            </div>
+          </div>
+          <div class="showdown-middle">
+            <div class="showdown-btn-wrap">
+              <button class="sd-btn" id="cls1" onclick="setShowdown('clothing','store')">🏪 STORE</button>
+              <button class="sd-btn" id="cls2" onclick="setShowdown('clothing','online')">📱 ONLINE</button>
+            </div>
+          </div>
+          <div class="showdown-cat">
+            <img class="showdown-cat-img" src="https://images.unsplash.com/photo-1550009158-9ebf69173e03?w=600&q=80" alt="electronics technology laptop phone">
+            <div class="showdown-cat-body">
+              <div class="showdown-cat-name">💻 Electronics</div>
+              <div class="showdown-cat-ex">Phones, laptops, headphones, tablets</div>
+            </div>
+          </div>
+          <div class="showdown-middle">
+            <div class="showdown-btn-wrap">
+              <button class="sd-btn" id="els1" onclick="setShowdown('electronics','store')">🏪 STORE</button>
+              <button class="sd-btn" id="els2" onclick="setShowdown('electronics','online')">📱 ONLINE</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="showdown-row">
+          <div class="showdown-cat">
+            <img class="showdown-cat-img" src="https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=600&q=80" alt="furniture sofa couch home">
+            <div class="showdown-cat-body">
+              <div class="showdown-cat-name">🛋️ Furniture</div>
+              <div class="showdown-cat-ex">Sofas, beds, desks, chairs, shelves</div>
+            </div>
+          </div>
+          <div class="showdown-middle">
+            <div class="showdown-btn-wrap">
+              <button class="sd-btn" id="fus1" onclick="setShowdown('furniture','store')">🏪 STORE</button>
+              <button class="sd-btn" id="fus2" onclick="setShowdown('furniture','online')">📱 ONLINE</button>
+            </div>
+          </div>
+          <div class="showdown-cat">
+            <img class="showdown-cat-img" src="https://images.unsplash.com/photo-1495147466023-ac5c588e2e94?w=600&q=80" alt="books literature reading bookshop">
+            <div class="showdown-cat-body">
+              <div class="showdown-cat-name">📚 Books</div>
+              <div class="showdown-cat-ex">Novels, textbooks, workbooks, manuals</div>
+            </div>
+          </div>
+          <div class="showdown-middle">
+            <div class="showdown-btn-wrap">
+              <button class="sd-btn" id="bks1" onclick="setShowdown('books','store')">🏪 STORE</button>
+              <button class="sd-btn" id="bks2" onclick="setShowdown('books','online')">📱 ONLINE</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="showdown-row">
+          <div class="showdown-cat">
+            <img class="showdown-cat-img" src="https://images.unsplash.com/photo-1542838132-92c53300491e?w=600&q=80" alt="food grocery supermarket fresh">
+            <div class="showdown-cat-body">
+              <div class="showdown-cat-name">🥦 Groceries</div>
+              <div class="showdown-cat-ex">Fresh food, produce, meat, dairy</div>
+            </div>
+          </div>
+          <div class="showdown-middle">
+            <div class="showdown-btn-wrap">
+              <button class="sd-btn" id="grs1" onclick="setShowdown('groceries','store')">🏪 STORE</button>
+              <button class="sd-btn" id="grs2" onclick="setShowdown('groceries','online')">📱 ONLINE</button>
+            </div>
+          </div>
+          <div class="showdown-cat" style="visibility:hidden">
+            <div class="showdown-cat-body"><div class="showdown-cat-name"></div></div>
+          </div>
+          <div class="showdown-middle" style="visibility:hidden"></div>
+        </div>
+      </div>
+
+      <div class="showdown-output" id="showdownOutput">
+        <div class="so-lbl">Your First Conditional Shopping Decision</div>
+        <div class="so-sentence" id="soSentence">Click Store or Online for any category to generate your First Conditional sentence…</div>
+        <div class="so-rule" id="soRule"></div>
+      </div>
+    </div>
+
+    <!-- GRAMMAR REFERENCE -->
+    <button class="gram-toggle-btn" onclick="toggleGram('gramRef')">▼ Grammar Reference — First Conditional · Click to expand</button>
+    <div class="gram-coll" id="gramRef">
+      <table class="gram-table">
+        <thead><tr><th>Part</th><th>Structure</th><th>Shopping example</th></tr></thead>
+        <tbody>
+          <tr><td style="color:var(--accent);font-family:var(--font-head);font-weight:700">If-clause</td><td>If + Present Simple</td><td><span class="ex-phrase">If the price is better online…</span></td></tr>
+          <tr><td style="color:var(--accent2);font-family:var(--font-head);font-weight:700">Result clause</td><td>will + base verb</td><td><span class="ex-phrase">…I'll order from there.</span></td></tr>
+          <tr><td style="color:var(--gold);font-family:var(--font-head);font-weight:700">Negative if</td><td>If + don't/doesn't + base</td><td><span class="ex-phrase">If I can't try it on, I won't buy it.</span></td></tr>
+          <tr><td style="color:var(--gold);font-family:var(--font-head);font-weight:700">Negative result</td><td>won't + base verb</td><td><span class="ex-phrase">If the store is far, I won't make the trip.</span></td></tr>
+          <tr><td style="color:var(--cyan);font-family:var(--font-head);font-weight:700">Reversed order</td><td>Result first, then if</td><td><span class="ex-phrase">I'll always choose the store if I need to touch it.</span></td></tr>
+        </tbody>
+      </table>
+      <div class="rule-note">💡 <strong>The rule that matters most:</strong> No "will" in the if-clause. "If I <strong>find</strong> a deal…" not "if I <strong>will find</strong>…" — even though you're talking about the future. This is the number one error at B1.1.</div>
+      <div class="err-box">⚠️ <strong>Correct immediately:</strong><br>
+        ✗ "If I will go to the store, I'll try it on." → ✅ "If I <strong>go</strong> to the store, I'll try it on."<br>
+        ✗ "If I can't find it, I would order online." → ✅ "If I can't find it, I <strong>will</strong> order online."<br>
+        ✗ "I'll buy it if it will fit." → ✅ "I'll buy it if it <strong>fits</strong>."
+      </div>
+    </div>
+
+    <!-- ACTIVITY A -->
+    <div class="act-title">✏️ Activity A — Choose the Correct Form</div>
+    <div class="opt-group">
+      <div class="opt-q">1. If the store _____ my size, I'll ask them to order it specially for me.</div>
+      <div class="opts" id="q1">
+        <button class="opt" onclick="checkOpt(this,\'doesn\'t carry\',\'q1\')">won't carry</button>
+        <button class="opt" onclick="checkOpt(this,\'doesn\'t carry\',\'q1\')">doesn't carry</button>
+        <button class="opt" onclick="checkOpt(this,\'doesn\'t carry\',\'q1\')">didn't carry</button>
+      </div>
+    </div>
+    <div class="opt-group">
+      <div class="opt-q">2. Rodrigo _____ to the store if the online reviews are consistently bad.</div>
+      <div class="opts" id="q2">
+        <button class="opt" onclick="checkOpt(this,\'\'ll go\',\'q2\')">'ll go</button>
+        <button class="opt" onclick="checkOpt(this,\'\'ll go\',\'q2\')">would go</button>
+        <button class="opt" onclick="checkOpt(this,\'\'ll go\',\'q2\')">goes</button>
+      </div>
+    </div>
+    <div class="opt-group">
+      <div class="opt-q">3. If the checkout line _____ too long, I'll abandon the basket and order online instead.</div>
+      <div class="opts" id="q3">
+        <button class="opt" onclick="checkOpt(this,\'is\',\'q3\')">will be</button>
+        <button class="opt" onclick="checkOpt(this,\'is\',\'q3\')">is</button>
+        <button class="opt" onclick="checkOpt(this,\'is\',\'q3\')">was</button>
+      </div>
+    </div>
+    <div class="opt-group">
+      <div class="opt-q">4. She _____ return it if the assistant told her the return policy was clear.</div>
+      <div class="opts" id="q4">
+        <button class="opt" onclick="checkOpt(this,\'\'ll\',\'q4\')">'ll</button>
+        <button class="opt" onclick="checkOpt(this,\'\'ll\',\'q4\')">would</button>
+        <button class="opt" onclick="checkOpt(this,\'\'ll\',\'q4\')">will to</button>
+      </div>
+    </div>
+    <div class="opt-group">
+      <div class="opt-q">5. If I _____ the receipt, the store won't accept the return.</div>
+      <div class="opts" id="q5">
+        <button class="opt" onclick="checkOpt(this,\'lose\',\'q5\')">will lose</button>
+        <button class="opt" onclick="checkOpt(this,\'lose\',\'q5\')">lost</button>
+        <button class="opt" onclick="checkOpt(this,\'lose\',\'q5\')">lose</button>
+      </div>
+    </div>
+
+    <div class="micro-speaking">
+      <span class="ms-lbl">🗣️ Micro-Speaking — 90 seconds</span>
+      <div style="font-size:12.5px;color:var(--text);line-height:1.6">Tell your partner: <em>"For which product would you never shop online — and why? Start with a First Conditional."</em><br>
+      Use: <strong style="color:#fff">"If I need to buy [product], I'll always go to the store because…"</strong></div>
+    </div>
+
+    <!-- ACTIVITY B: T/F -->
+    <div class="act-title">✏️ Activity B — Grammar Rules: True or False?</div>
+    <div class="tf-set">
+      <div class="tf-row">
+        <div class="tf-stmt">In First Conditional, the if-clause uses Present Simple — not will + verb.</div>
+        <div class="tf-btns">
+          <button class="tf-btn" onclick="checkTF(this,true,'tf1')">TRUE</button>
+          <button class="tf-btn" onclick="checkTF(this,false,'tf1')">FALSE</button>
+        </div>
+      </div>
+      <div class="tf-row">
+        <div class="tf-stmt">"If I won't find my size, I'll order online" is a grammatically correct First Conditional.</div>
+        <div class="tf-btns">
+          <button class="tf-btn" onclick="checkTF(this,false,'tf2')">TRUE</button>
+          <button class="tf-btn" onclick="checkTF(this,false,'tf2')">FALSE</button>
+        </div>
+      </div>
+      <div class="tf-row">
+        <div class="tf-stmt">"I'll buy it online if the price is lower" is a correct First Conditional — even though the result comes first.</div>
+        <div class="tf-btns">
+          <button class="tf-btn" onclick="checkTF(this,true,'tf3')">TRUE</button>
+          <button class="tf-btn" onclick="checkTF(this,false,'tf3')">FALSE</button>
+        </div>
+      </div>
+      <div class="tf-row">
+        <div class="tf-stmt">First Conditional is only used for real, possible future situations — not hypothetical ones.</div>
+        <div class="tf-btns">
+          <button class="tf-btn" onclick="checkTF(this,true,'tf4')">TRUE</button>
+          <button class="tf-btn" onclick="checkTF(this,false,'tf4')">FALSE</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- §6 LISTENING -->
+<section class="section">
+  <div class="section-header">
+    <span class="section-number">§6</span>
+    <span class="section-title">Listening — <em>Rodrigo Goes Shopping</em></span>
+    <span class="section-sub">A Saturday in Celaya · In-store vs online decisions · First Conditional throughout</span>
+    <span class="dur-tag">⏱ 8 MIN</span>
+  </div>
+  <div class="section-body">
+    <div class="reading-card">
+      <div class="av-row">
+        <img class="avatar" src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=120&q=80" alt="Rodrigo Vega">
+        <div>
+          <div class="av-name">Rodrigo Vega</div>
+          <div class="av-role">Senior Analyst · Celaya · B1.1 Character</div>
+        </div>
+        <div class="av-meta">Context: Weekend shopping trip<br>Format: Internal monologue podcast</div>
+      </div>
+    </div>
+
+    <div class="player-box">
+      <img class="player-box-img" src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=900&q=80" alt="listening shopping experience podcast">
+      <div class="player-box-body">
+        <div class="track-title">Rodrigo's Saturday — A Day of Decisions</div>
+        <div class="track-sub">B1.1 · M3 · S3 · Voice: Marcus (American English) · Speed: 0.85</div>
+        <div class="waveform" id="wv"></div>
+      </div>
+    </div>
+
+    <button class="script-toggle" onclick="toggleScript()">▼ Show ElevenLabs Script</button>
+    <div class="script-box" id="scriptBox">
+      <div class="script-content">
+        Saturday. My day off. And I have a list of five things to buy. The question is always the same — store or online?<br><br>
+        First: a new work shirt. My manager said we have a client visit next Friday. If I order online, it might not arrive in time — and I've been burned by that before. If I go to the store today, I'll be able to try it on, choose the right fit, and have it ready. So the store it is.<br><br>
+        Second: a new laptop charger. Mine stopped working yesterday. If I go to the electronics store downtown, I'll find one today. But the price will probably be higher than online. If I order online, I'll save maybe 30 percent, but I'll wait three days without being able to work properly. I'll go to the store — I can't wait three days.<br><br>
+        Third: a book I want to read. That's an easy one — if it's available online for less than 200 pesos, I'll order it. If not, I'll check the bookstore near my apartment. I prefer physical books. If I read on a screen, my eyes get tired.<br><br>
+        Fourth: a new sofa for my apartment. I've been putting this off for months. If I buy it without sitting on it first, I'll regret it. I'll go to the furniture store this afternoon and test three or four before I decide.<br><br>
+        Fifth: groceries. I need things for the week. If I order delivery, I'll spend 80 more pesos in fees and the vegetables are never as fresh. I'll go to the market. Some things just work better in person.<br><br>
+        Five decisions. Five different answers. It's never one or the other — it depends.
+      </div>
+      <div class="eleven-note">📎 ElevenLabs: Voice — Marcus (American English) · Speed 0.85 · Pitch 1.0 · B1.1 M3 S3</div>
+    </div>
+
+    <div class="act-title">✏️ Listening — Multiple Choice</div>
+    <div class="opt-group">
+      <div class="opt-q">1. Why does Rodrigo decide to go to the store for the work shirt?</div>
+      <div class="opts" id="lq1">
+        <button class="opt" onclick="checkOpt(this,\'Online delivery might not arrive before Friday\',\'lq1\')">Shirts are always cheaper in stores</button>
+        <button class="opt" onclick="checkOpt(this,\'Online delivery might not arrive before Friday\',\'lq1\')">Online delivery might not arrive before Friday</button>
+        <button class="opt" onclick="checkOpt(this,\'Online delivery might not arrive before Friday\',\'lq1\')">He doesn't trust online shopping at all</button>
+      </div>
+    </div>
+    <div class="opt-group">
+      <div class="opt-q">2. What is Rodrigo's main reason for buying groceries in person?</div>
+      <div class="opts" id="lq2">
+        <button class="opt" onclick="checkOpt(this,\'Delivery fees are higher and vegetables aren\'t as fresh\',\'lq2\')">He enjoys the social experience of the market</button>
+        <button class="opt" onclick="checkOpt(this,\'Delivery fees are higher and vegetables aren\'t as fresh\',\'lq2\')">Delivery fees are higher and vegetables aren\'t as fresh</button>
+        <button class="opt" onclick="checkOpt(this,\'Delivery fees are higher and vegetables aren\'t as fresh\',\'lq2\')">The online store he uses doesn\'t deliver to his area</button>
+      </div>
+    </div>
+
+    <div class="act-title">✏️ Listening — True or False</div>
+    <div class="tf-set">
+      <div class="tf-row">
+        <div class="tf-stmt">Rodrigo decides to buy the laptop charger online to save money.</div>
+        <div class="tf-btns">
+          <button class="tf-btn" onclick="checkTF(this,false,'tfl1')">TRUE</button>
+          <button class="tf-btn" onclick="checkTF(this,false,'tfl1')">FALSE</button>
+        </div>
+      </div>
+      <div class="tf-row">
+        <div class="tf-stmt">Rodrigo plans to test several sofas in the furniture store before deciding.</div>
+        <div class="tf-btns">
+          <button class="tf-btn" onclick="checkTF(this,true,'tfl2')">TRUE</button>
+          <button class="tf-btn" onclick="checkTF(this,false,'tfl2')">FALSE</button>
+        </div>
+      </div>
+      <div class="tf-row">
+        <div class="tf-stmt">For the book, Rodrigo will check the online price first — and only go to the bookstore if the online price is too high.</div>
+        <div class="tf-btns">
+          <button class="tf-btn" onclick="checkTF(this,true,'tfl3')">TRUE</button>
+          <button class="tf-btn" onclick="checkTF(this,false,'tfl3')">FALSE</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="micro-speaking">
+      <span class="ms-lbl">🗣️ Micro-Speaking — From Memory</span>
+      <div style="font-size:12.5px;color:var(--text);line-height:1.6">Close the script. Tell your partner: <em>"What did Rodrigo decide for each of his 5 items — and what was his reason?"</em> Try to use First Conditional from memory.</div>
+    </div>
+  </div>
+</section>
+
+<!-- §7 PRODUCTION — SPEAKING PRACTICE -->
+<section class="section">
+  <div class="section-header">
+    <span class="section-number">§7</span>
+    <span class="section-title">Production — <em>Your Shopping Rules</em></span>
+    <span class="section-sub">Real decisions · First Conditional in authentic context · 6 speaking prompts</span>
+    <span class="dur-tag">⏱ 12 MIN</span>
+  </div>
+  <div class="section-body">
+    <img class="img-hero" src="https://images.unsplash.com/photo-1556742212-5b321f3c261b?w=900&q=80" alt="speaking practice shopping decisions production">
+
+    <div style="background:rgba(0,207,255,.04);border:1px solid rgba(0,207,255,.15);border-radius:8px;padding:12px 16px;margin-bottom:18px;font-size:12px;color:var(--cyan);line-height:1.6">
+      💬 <strong>How to run this:</strong> Students answer using First Conditional. Partner marks: (1) any "will" in the if-clause, (2) any "would" where "will" is needed. Correct after each response — don't let errors accumulate. Progress: Q1–Q2 = warm, Q3–Q4 = real, Q5–Q6 = challenge.
+    </div>
+
+    <div class="speak-card">
+      <img class="speak-card-img" src="https://images.unsplash.com/photo-1465877783223-4eba513e27c6?w=600&q=80" alt="shopping rules preferences">
+      <div class="speak-card-body">
+        <div class="sc-lbl">Question 1 — Your Shopping Rules</div>
+        <div class="sc-q">What are your personal rules for in-store vs online shopping? Make at least 3 rules using First Conditional — for different product categories.</div>
+        <div class="sc-hint">💡 "If it's clothing, I'll… / If I need it urgently, I'll… / If the price difference is more than [X]%, I'll…"</div>
+      </div>
+    </div>
+
+    <div class="speak-card">
+      <img class="speak-card-img" src="https://images.unsplash.com/photo-1512436991641-6745cdb1723f?w=600&q=80" alt="bad experience shopping return">
+      <div class="speak-card-body">
+        <div class="sc-lbl">Question 2 — The Return Story</div>
+        <div class="sc-q">Have you ever bought something online that you had to return? What happened? What will you do differently next time? Use First Conditional for the "next time" part.</div>
+        <div class="sc-hint">💡 "I bought [item] online and… / If I buy [item] online again, I'll… / I won't buy [item] online if…"</div>
+      </div>
+    </div>
+
+    <div class="speak-card">
+      <img class="speak-card-img" src="https://images.unsplash.com/photo-1607082349566-187342175e2f?w=600&q=80" alt="shopping assistant in-store help">
+      <div class="speak-card-body">
+        <div class="sc-lbl">Question 3 — The Future of Physical Stores</div>
+        <div class="sc-q">In 10 years, will physical stores still exist? Which ones will survive? Which will disappear? Give your predictions using First Conditional: "If [trend continues], [store type] will…"</div>
+        <div class="sc-hint">💡 "If online shopping keeps growing, small bookstores will… / If supermarkets can't compete on price, they'll… / If the experience is good enough, people will always prefer…"</div>
+      </div>
+    </div>
+
+    <div class="speak-card">
+      <img class="speak-card-img" src="https://images.unsplash.com/photo-1520881363902-a0ff4e722963?w=600&q=80" alt="luxury brand store premium shopping">
+      <div class="speak-card-body">
+        <div class="sc-lbl">Question 4 — Luxury vs Necessity</div>
+        <div class="sc-q">Does it make a difference if something is expensive vs cheap? Are your in-store vs online rules different for a $500 item vs a $5,000 item? Explain using conditions.</div>
+        <div class="sc-hint">💡 "If the price is under [X], I'll take the risk online. If it's over [X], I'll always go to a store."</div>
+      </div>
+    </div>
+
+    <div class="speak-card">
+      <img class="speak-card-img" src="https://images.unsplash.com/photo-1485727749690-d091e8284ef3?w=600&q=80" alt="phone app mobile shopping future">
+      <div class="speak-card-body">
+        <div class="sc-lbl">Question 5 — Convince Me</div>
+        <div class="sc-q">You are a physical store owner. Your best customer just told you they're switching entirely to online shopping. What will you say to convince them to come back? Use 3 First Conditional arguments.</div>
+        <div class="sc-hint">💡 "If you come to our store, you'll…" / "If you try it online, you'll miss…" / "If we don't have it, we'll order it for you…"</div>
+      </div>
+    </div>
+
+    <!-- Challenge with timer -->
+    <div style="background:rgba(16,185,129,.04);border:1px solid rgba(16,185,129,.2);border-radius:10px;padding:18px 20px;margin-top:14px;text-align:center">
+      <div style="font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:8px">⭐ Speaking Challenge — 90 Seconds</div>
+      <div style="font-size:14px;color:#fff;font-weight:500;margin-bottom:14px;line-height:1.4">You have $10,000 pesos to spend on: clothing, a phone, a piece of furniture, and groceries. Explain your shopping plan using First Conditional for each item. Where will you go? Why? No notes.</div>
+      <div class="timer-wrap">
+        <svg width="88" height="88" class="timer-svg">
+          <circle cx="44" cy="44" r="38" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="5"/>
+          <circle id="chalArc" cx="44" cy="44" r="38" fill="none" stroke="var(--accent)" stroke-width="5"
+            stroke-dasharray="238.76" stroke-dashoffset="0" class="timer-arc"/>
+          <text id="chalTxt" x="44" y="50" text-anchor="middle" class="timer-text">1:30</text>
+        </svg>
+        <button class="timer-btn" onclick="startTimer('chalArc','chalTxt',90,'b3',238.76)">Start Timer</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- §NEW: 3 PHRASES FOR THIS WEEK -->
+<section class="section phrases-section">
+  <div class="section-body">
+    <div class="ph-lbl">🎯 This week — use these 3 phrases</div>
+    <div class="ph-title">3 Phrases Starting Tomorrow</div>
+    <div class="ph-grid">
+      <div class="ph-card">
+        <img class="ph-card-img" src="https://images.unsplash.com/photo-1485217988980-11786ced9454?w=600&q=80" alt="see it before buying in store preference">
+        <div class="ph-card-body">
+          <div class="ph-num">PHRASE 1</div>
+          <div class="ph-phrase">"I like to see it before I buy it."</div>
+          <div class="ph-ctx">Use this when explaining why you prefer a physical store for a specific product. It's honest, natural, and immediately understood. Use it this week when someone recommends an online purchase and you disagree.</div>
+        </div>
+      </div>
+      <div class="ph-card">
+        <img class="ph-card-img" src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80" alt="try on clothes fitting room first">
+        <div class="ph-card-body">
+          <div class="ph-num">PHRASE 2</div>
+          <div class="ph-phrase">"If I can't try it on, I won't buy it."</div>
+          <div class="ph-ctx">First Conditional for a real personal rule. This phrase is practical and immediately shows that you know how to use conditional grammar naturally. Use it the next time someone asks if you buy clothes online.</div>
+        </div>
+      </div>
+      <div class="ph-card">
+        <img class="ph-card-img" src="https://images.unsplash.com/photo-1476357471311-43c0db9fb2b4?w=600&q=80" alt="it depends context shopping choice">
+        <div class="ph-card-body">
+          <div class="ph-num">PHRASE 3</div>
+          <div class="ph-phrase">"It depends — if [condition], I'll [decision]."</div>
+          <div class="ph-ctx">The most versatile phrase in English for expressing conditional preference. "It depends" sounds mature and thoughtful. Adding the First Conditional makes your answer specific and grammatically precise. Use it anywhere this week.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- §8 WRAP-UP -->
+<section class="section">
+  <div class="section-header">
+    <span class="section-number">§8</span>
+    <span class="section-title">Wrap-Up — <em>Session Checklist</em></span>
+    <span class="section-sub">3 key points · I can now… · Next session preview</span>
+    <span class="dur-tag">⏱ 5 MIN</span>
+  </div>
+  <div class="section-body">
+    <img class="img-banner" src="https://images.unsplash.com/photo-1536987333706-fc9adfb10d91?w=900&q=80" alt="wrap up session complete achievement">
+    <div style="height:14px"></div>
+
+    <div style="text-align:center;margin-bottom:20px">
+      <div style="font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:10px">Session Badges Earned</div>
+      <div style="display:flex;gap:10px;justify-content:center;font-size:26px">
+        <span id="bd1" style="opacity:.3;filter:grayscale(1);transition:all .4s">⚡</span>
+        <span id="bd2" style="opacity:.3;filter:grayscale(1);transition:all .4s">📚</span>
+        <span id="bd3" style="opacity:.3;filter:grayscale(1);transition:all .4s">🎯</span>
+        <span id="bd4" style="opacity:.3;filter:grayscale(1);transition:all .4s">🎧</span>
+        <span id="bd5" style="opacity:.3;filter:grayscale(1);transition:all .4s">🏆</span>
+      </div>
+    </div>
+
+    <div class="wu3-grid">
+      <div class="wu3-card">
+        <div class="wu3-num">01</div>
+        <div class="wu3-txt"><strong style="color:#fff">Present Simple in the if-clause.</strong> "If I go to the store…" — never "if I will go." The condition is a real possibility, expressed in Present Simple even though the meaning is future.</div>
+      </div>
+      <div class="wu3-card">
+        <div class="wu3-num">02</div>
+        <div class="wu3-txt"><strong style="color:#fff">It depends on the product.</strong> In-store vs online isn't a binary choice. First Conditional lets you express that nuance: "If it's clothing, I'll go to the store. If it's books, I'll order online."</div>
+      </div>
+      <div class="wu3-card">
+        <div class="wu3-num">03</div>
+        <div class="wu3-txt"><strong style="color:#fff">Touch, try on, compare.</strong> These three verbs are the heart of in-store shopping English. If you can say "If I can't touch it / try it on / compare it in person — I'll need to think twice," you sound like a B1+ speaker.</div>
+      </div>
+    </div>
+
+    <div class="act-title">✅ I Can Now… — Click each one when confident</div>
+    <div class="checklist">
+      <div class="cl-item" onclick="this.classList.toggle('done')"><div class="cl-box"></div>I can use First Conditional for shopping decisions: "If the price is lower online, I'll order from there."</div>
+      <div class="cl-item" onclick="this.classList.toggle('done')"><div class="cl-box"></div>I know the rule: Present Simple in the if-clause — never "will" / "would"</div>
+      <div class="cl-item" onclick="this.classList.toggle('done')"><div class="cl-box"></div>I can use in-store vocabulary: try on, browse, compare, receipt, fitting room, assistant, transaction</div>
+      <div class="cl-item" onclick="this.classList.toggle('done')"><div class="cl-box"></div>I can express conditional preferences naturally: "It depends — if it's clothing, I'll always go to the store."</div>
+      <div class="cl-item" onclick="this.classList.toggle('done')"><div class="cl-box"></div>I can explain in English why I prefer a physical store for specific product categories</div>
+    </div>
+
+    <div class="next-box">
+      <div class="next-lbl">▶ Next Class — Session 4 of 5</div>
+      <div class="next-title">Financial Goals</div>
+      <div class="next-sub">Saving, investing, mortgages, emergency funds · First Conditional for long-term planning · Rodrigo's 5-year financial ladder</div>
+    </div>
+
+    <div class="win-box">
+      <div class="win-lbl">🏆 My Win Today</div>
+      <textarea class="win-textarea" id="winText" placeholder="What's the most natural English sentence you produced today about your shopping habits? Write it here…"></textarea>
+      <button class="win-save" onclick="saveWin()">Save My Win → Earn Badge 🏆</button>
+    </div>
+
+    <div class="tn tn-c3">
+      <span class="tn-lbl">⭐ Retention &amp; Upsell</span>
+      S3 is the most relatable session of M3 — every adult has strong opinions about where they shop. If any student mentioned a specific in-store preference during speaking, circle back to it: "You said you always buy shoes in person — what about next time? Let's say the exact same pair is 500 pesos cheaper online. Write that as a First Conditional." Personalized grammar practice = 5x retention.
+    </div>
+  </div>
+</section>
+
+<footer class="ftr">
+  <div class="fbrand">Gabriel Turner · English Training</div>
+  <div class="finfo">B1.1 · Module 3 · Session 3A · GT_B1_1_M3_S3A_TEACHER_v1</div>
+  <div class="flevels">
+    <div class="flv">A1.1</div><div class="flv">A1.2</div><div class="flv">A2.1</div><div class="flv">A2.2</div>
+    <div class="flv active">B1.1</div><div class="flv">B1.2</div><div class="flv">B2.1</div><div class="flv">B2.2</div>
+  </div>
+</footer>
+
+<script>
+/* ══ PROGRESS BAR ══ */
+window.addEventListener('scroll',()=>{
+  const d=document.documentElement;
+  document.getElementById('prog').style.width=Math.min((d.scrollTop/(d.scrollHeight-d.clientHeight))*100,100)+'%';
+},{passive:true});
+
+/* ══ SPEAK ══ */
+function speak(t){
+  if(!window.speechSynthesis)return;
+  speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(t.replace(/[""''""]/g,'').trim());
+  u.lang='en-US';u.rate=0.85;u.pitch=1;
+  const v=speechSynthesis.getVoices().find(v=>v.lang==='en-US')||speechSynthesis.getVoices().find(v=>v.lang.startsWith('en'));
+  if(v)u.voice=v;
+  speechSynthesis.speak(u);
+}
+window.speechSynthesis.onvoiceschanged=()=>speechSynthesis.getVoices();
+
+/* ══ BADGES ══ */
+var earned={};
+function earnBadge(id){
+  if(earned[id])return;
+  earned[id]=true;
+  const el=document.getElementById(id);
+  if(el){el.classList.add('earned');}
+  const mirror=document.getElementById('bd'+id.replace('b',''));
+  if(mirror){mirror.style.opacity='1';mirror.style.filter='grayscale(0)';mirror.style.transform='scale(1.15)';}
+  if(Object.keys(earned).length>=5)launchConfetti();
+}
+function launchConfetti(){
+  const cols=['#10B981','#34D399','#00E5A0','#6EE7B7','#fff'];
+  for(let i=0;i<90;i++){
+    const p=document.createElement('div');const s=Math.random()*7+4;
+    Object.assign(p.style,{position:'fixed',top:'-10px',zIndex:'9999',left:Math.random()*100+'vw',width:s+'px',height:s+'px',background:cols[Math.floor(Math.random()*cols.length)],borderRadius:Math.random()>.5?'50%':'2px',animation:`fall ${1.5+Math.random()*2}s linear forwards`,opacity:'0.9'});
+    document.body.appendChild(p);setTimeout(()=>p.remove(),4000);
+  }
+}
+const cs=document.createElement('style');
+cs.textContent='@keyframes fall{to{transform:translateY(110vh) rotate(720deg);opacity:0}}';
+document.head.appendChild(cs);
+
+/* ══ TIMER ══ */
+var timerRunning=false;
+function startTimer(arcId,textId,seconds,badgeKey,circumference){
+  if(timerRunning)return;timerRunning=true;
+  const arc=document.getElementById(arcId),txt=document.getElementById(textId);
+  if(!arc||!txt)return;
+  let rem=seconds;arc.style.stroke='var(--accent)';
+  const iv=setInterval(()=>{
+    rem--;arc.style.strokeDashoffset=circumference*(seconds-rem)/seconds;
+    const m=Math.floor(rem/60),s=rem%60;
+    txt.textContent=m+':'+(s<10?'0':'')+s;
+    if(rem<=5)arc.style.stroke='#FF4D6D';
+    if(rem<=0){clearInterval(iv);arc.style.stroke='var(--success)';txt.textContent='Done';timerRunning=false;earnBadge(badgeKey);}
+  },1000);
+}
+
+/* ══ MODEL REVEAL ══ */
+function revealModel(id){
+  const el=document.getElementById(id);if(!el)return;
+  el.classList.toggle('show');
+  const btn=el.previousElementSibling;
+  btn.textContent=el.classList.contains('show')?'▲ Hide Model Answer':'▼ Show B1.1 Model Answer';
+  earnBadge('b1');
+}
+
+/* ══ POLL ══ */
+var pollMsgs={
+  pa1:'❌ "Will" never goes in the if-clause — not even for future situations. The condition uses Present Simple: "If I find…"',
+  pa2:'✅ Correct! "If I find" — Present Simple in the if-clause. "I\'ll buy it there" — will in the result. Real condition, likely outcome.',
+  pa3:'❌ "If I found… I would buy" is Second Conditional — hypothetical. First Conditional uses Present Simple in the if-clause + will in the result.'
+};
+function doPoll(groupId,msgKey,btn){
+  const grp=document.getElementById(groupId);
+  if(!grp||grp.dataset.done)return;grp.dataset.done='1';
+  grp.querySelectorAll('.poll-btn').forEach(b=>{b.classList.remove('selected');b.disabled=true;});
+  btn.classList.add('selected');
+  const fb=document.getElementById(msgKey);
+  if(fb){fb.textContent=pollMsgs[msgKey];fb.classList.add('show');}
+  earnBadge('b3');
+}
+
+/* ══ SHOWDOWN VISUAL ══ */
+var showdownData={
+  clothing:{store:'If I need to buy clothing, I\'ll always go to the store — I need to try it on first.',online:'If I buy clothing online, I\'ll make sure there\'s a free returns policy — I can\'t always trust the sizes.',rule:'If-clause: "If I need / If I buy" → Present Simple. Result: "I\'ll go / I\'ll make sure" → will + base verb.'},
+  electronics:{store:'If I\'m buying electronics, I\'ll test it in the store before I commit — even if I end up buying it cheaper online.',online:'If the online price is more than 20% lower, I\'ll buy electronics online — the warranty is the same anyway.',rule:'Reversed order also works: "I\'ll test it in the store if the price difference isn\'t huge."'},
+  furniture:{store:'If I\'m choosing furniture, I\'ll always go to the store — if I can\'t sit on it first, I won\'t buy it.',online:'If the online reviews are excellent and there\'s a 30-day return policy, I\'ll order the furniture online.',rule:'Notice the nested condition: "if I can\'t sit on it" inside the result clause — still grammatically correct First Conditional.'},
+  books:{store:'If I want to browse and discover new titles, I\'ll go to the bookstore — you can\'t replicate that online.',online:'If the book is available for less than 150 pesos online, I\'ll order it — delivery is fast and I prefer reading digital anyway.',rule:'"I\'ll order it if the price is right" — reversed First Conditional. The meaning is identical: present condition → future result.'},
+  groceries:{store:'If I\'m buying fresh produce, I\'ll always go to the market — if I can\'t touch the vegetables, I won\'t know if they\'re fresh.',online:'If I only need dry goods and I\'m short on time, I\'ll order groceries online — it saves 2 hours on a weeknight.',rule:'Two conditions in one sentence: "If I can\'t touch them" + "I won\'t know" — both parts of First Conditional.'}
+};
+function setShowdown(cat,mode){
+  const data=showdownData[cat];if(!data)return;
+  const s1=document.getElementById(cat[0]+cat.slice(1,3)+'s1')||document.getElementById(cat.slice(0,3)+'s1');
+  // Reset all buttons for this category
+  const allBtns=document.querySelectorAll('[id^="'+cat.slice(0,3)+'s"],[id^="'+cat.slice(0,2)+'s"],[id^="'+cat[0]+'ls"],[id^="'+cat[0]+'ks"],[id^="'+cat[0]+'rs"],[id^="'+cat[0]+'us"],[id^="'+cat[0]+'rs"]');
+  // Simpler: just target by known ID patterns
+  const catId=cat.slice(0,3);
+  const btn1=document.getElementById(catId+'s1')||document.getElementById(cat[0]+(cat.length>5?cat[1]:cat[1])+'s1');
+  const btn2=document.getElementById(catId+'s2')||document.getElementById(cat[0]+(cat.length>5?cat[1]:cat[1])+'s2');
+
+  // Use a map for cleaner lookup
+  const idMap={clothing:['cls1','cls2'],electronics:['els1','els2'],furniture:['fus1','fus2'],books:['bks1','bks2'],groceries:['grs1','grs2']};
+  const ids=idMap[cat];
+  if(ids){
+    document.getElementById(ids[0]).className='sd-btn'+(mode==='store'?' store-active':'');
+    document.getElementById(ids[1]).className='sd-btn'+(mode==='online'?' online-active':'');
+  }
+  const sentence=mode==='store'?data.store:data.online;
+  document.getElementById('soSentence').textContent=sentence;
+  document.getElementById('soRule').textContent='📐 '+data.rule;
+  earnBadge('b3');
+}
+
+/* ══ GRAMMAR TOGGLE ══ */
+function toggleGram(id){
+  const el=document.getElementById(id);el.classList.toggle('open');
+  const btn=el.previousElementSibling;
+  btn.textContent=el.classList.contains('open')?'▲ Grammar Reference — First Conditional · Click to collapse':'▼ Grammar Reference — First Conditional · Click to expand';
+}
+
+/* ══ SCRIPT TOGGLE ══ */
+function toggleScript(){
+  const b=document.getElementById('scriptBox');b.classList.toggle('open');
+  document.querySelector('.script-toggle').textContent=b.classList.contains('open')?'▲ Hide Script':'▼ Show ElevenLabs Script';
+}
+
+/* ══ MC ACTIVITY ══ */
+function checkOpt(btn,correct,qid){
+  const c=document.getElementById(qid);if(!c||c.dataset.done)return;c.dataset.done='1';
+  c.querySelectorAll('.opt').forEach(b=>{b.disabled=true;if(b.textContent.trim()===correct)b.classList.add('correct');});
+  if(btn.textContent.trim()!==correct)btn.classList.add('wrong');
+  earnBadge('b3');
+}
+
+/* ══ TRUE / FALSE ══ */
+function checkTF(btn,isCorrect,id){
+  const row=btn.closest('.tf-row');if(!row||row.dataset.done)return;row.dataset.done='1';
+  row.querySelectorAll('.tf-btn').forEach(b=>b.disabled=true);
+  if(isCorrect){
+    btn.style.cssText='background:rgba(0,229,160,.15);border-color:var(--success);color:var(--success)';
+  }else{
+    btn.style.cssText='background:rgba(255,77,109,.12);border-color:var(--danger);color:var(--danger)';
+    const sib=Array.from(row.querySelectorAll('.tf-btn')).find(b=>b!==btn);
+    if(sib)sib.style.cssText='background:rgba(0,229,160,.12);border-color:var(--success);color:var(--success)';
+  }
+  earnBadge('b4');
+}
+
+/* ══ MY WIN ══ */
+function saveWin(){
+  const t=document.getElementById('winText');
+  if(t&&t.value.trim().length>5){
+    earnBadge('b5');t.style.borderColor='var(--gold)';
+    const btn=t.nextElementSibling;
+    if(btn){btn.textContent='✓ Saved — Badge Earned!';btn.style.background='rgba(255,184,0,.25)';}
+  }
+}
+
+/* ══ WAVEFORM ══ */
+const wv=document.getElementById('wv');
+if(wv){for(let i=0;i<60;i++){const b=document.createElement('div');b.className='wbar';b.style.height=(8+Math.sin(i*.6)*10+Math.random()*18)+'px';b.style.opacity=.25+Math.random()*.45;wv.appendChild(b);}}
+
+/* ══ AUTO-BADGE ON SCROLL ══ */
+window.addEventListener('scroll',()=>{
+  const s=document.documentElement.scrollTop;
+  if(s>200)earnBadge('b1');
+  if(s>1400)earnBadge('b2');
+  if(s>2800)earnBadge('b4');
+},{passive:true});
+</script>
+</body>
+</html>
