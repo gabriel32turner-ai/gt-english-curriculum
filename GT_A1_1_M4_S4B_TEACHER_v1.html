@@ -1,0 +1,1126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GT A1.1 · M4 · S4B — Numbers, Floors &amp; City: Application</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#080808;--surface:#111318;--surface2:#1a1f28;
+  --accent:#FF1F5C;--accent2:#FF4D7A;
+  --border:rgba(255,31,92,.18);
+  --text:#F0F4F8;--muted:#8A9BB0;--dim:rgba(226,226,226,.25);
+  --danger:#FF4D6D;--success:#00E5A0;--warn:#FFB347;
+  --cyan:#00CFFF;--gold:#FFB800;
+  --font-head:'Syne',sans-serif;--font-body:'DM Sans',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:14px;line-height:1.6}
+
+.progress-bar-wrap{height:3px;background:rgba(255,31,92,.1);position:fixed;top:0;left:0;right:0;z-index:200}
+.progress-bar{height:100%;background:var(--accent);width:0%;transition:width .3s}
+
+.hdr{background:var(--surface);border-bottom:1px solid var(--border);padding:18px 48px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;position:sticky;top:0;z-index:100}
+.brand{display:flex;align-items:center;gap:10px}
+.dot{width:9px;height:9px;background:var(--accent);border-radius:50%}
+.bname{font-family:var(--font-head);font-weight:800;font-size:13px;letter-spacing:2.5px;text-transform:uppercase;color:#fff}
+.bsub{font-size:11px;color:var(--muted);letter-spacing:1px}
+.sess-tags{display:flex;gap:7px;align-items:center;flex-wrap:wrap}
+.tag{display:inline-block;padding:4px 12px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;border-radius:2px}
+.t-lv{background:rgba(255,31,92,.15);color:var(--accent2);border:1px solid rgba(255,31,92,.3)}
+.t-mod{background:rgba(255,184,0,.1);color:var(--gold);border:1px solid rgba(255,184,0,.25)}
+.t-sess{background:rgba(0,207,255,.08);color:var(--cyan);border:1px solid rgba(0,207,255,.2)}
+.t-time{background:rgba(0,229,160,.08);color:var(--success);border:1px solid rgba(0,229,160,.2)}
+.t-prod{background:rgba(255,31,92,.3);color:#fff;border:1px solid var(--accent);font-size:9px;letter-spacing:2px}
+
+.badge-strip{background:var(--surface2);border-bottom:1px solid var(--border);padding:10px 48px;display:flex;gap:14px;align-items:center}
+.badge-strip span{font-size:20px;opacity:.25;transition:all .4s;filter:grayscale(1)}
+.badge-strip span.earned{opacity:1;filter:none;transform:scale(1.15)}
+.badge-label{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-left:auto}
+
+.section{margin:0 48px 32px;border:1px solid var(--border);border-radius:14px;overflow:hidden;background:var(--surface)}
+.section-header{display:flex;align-items:center;gap:14px;padding:16px 24px;background:linear-gradient(135deg,rgba(255,31,92,.07),transparent);border-bottom:1px solid var(--border)}
+.section-number{font-family:var(--font-head);font-size:10px;font-weight:800;color:var(--accent2);letter-spacing:.12em;text-transform:uppercase;background:rgba(255,31,92,.1);border:1px solid var(--border);padding:3px 10px;border-radius:20px}
+.section-title{font-family:var(--font-head);font-size:18px;font-weight:800;color:#fff}
+.section-title em{color:var(--accent2);font-style:normal}
+.section-sub{font-size:12px;color:var(--muted);margin-top:2px}
+.dur-tag{margin-left:auto;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;color:var(--gold);border:1px solid rgba(255,184,0,.2);padding:3px 10px;border-radius:20px;white-space:nowrap}
+.section-body{padding:24px}
+
+.img-hero{width:100%;height:210px;object-fit:cover;display:block;filter:brightness(.55)}
+.img-banner{width:100%;height:150px;object-fit:cover;display:block;filter:brightness(.47)}
+
+.teacher-note{background:rgba(255,184,0,.05);border:1px solid rgba(255,184,0,.2);border-left:3px solid var(--gold);padding:13px 16px;border-radius:0 6px 6px 0;margin-top:12px}
+.tn-label{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:5px}
+.teacher-note p{font-size:12px;color:rgba(255,184,0,.82);line-height:1.6}
+.tn-c1{border-left-color:var(--cyan);background:rgba(0,207,255,.04)}
+.tn-c1 .tn-label{color:var(--cyan)}
+.tn-c1 p{color:rgba(0,207,255,.82)}
+.tn-c2{border-left-color:#FF6B9D;background:rgba(255,107,157,.04)}
+.tn-c2 .tn-label{color:#FF6B9D}
+.tn-c2 p{color:rgba(255,107,157,.82)}
+
+.timer-wrap{display:flex;flex-direction:column;align-items:center;gap:8px}
+.timer-svg{transform:rotate(-90deg)}
+.timer-text{font-family:var(--font-head);font-size:13px;font-weight:800;color:var(--accent2)}
+.timer-label{font-size:10px;color:var(--muted);text-align:center;text-transform:uppercase;letter-spacing:1px}
+.btn-timer{background:var(--accent);border:none;color:#fff;padding:8px 20px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;border-radius:20px;cursor:pointer;transition:opacity .2s}
+.btn-timer:hover{opacity:.85}
+
+/* HOT TAKE */
+.hot-take-card{background:var(--surface2);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:16px}
+.ht-img{width:100%;height:170px;object-fit:cover;filter:brightness(.45)}
+.ht-body{padding:18px 22px}
+.ht-label{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent2);margin-bottom:8px}
+.ht-scenario{font-size:13px;color:var(--muted);margin-bottom:10px;line-height:1.6;font-style:italic;border-left:2px solid var(--accent);padding-left:10px}
+.ht-prompt{font-size:16px;color:#fff;font-weight:600;line-height:1.4;margin-bottom:14px}
+.badge-rules{display:flex;flex-direction:column;gap:6px}
+.badge-rule{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:8px}
+
+/* PITCH */
+.pitch-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
+.pitch-side{background:var(--surface2);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.pitch-side-img{width:100%;height:95px;object-fit:cover;filter:brightness(.43)}
+.pitch-side-body{padding:14px 16px}
+.pitch-side-label{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:6px}
+.pitch-a .pitch-side-label{color:var(--success)}
+.pitch-b .pitch-side-label{color:var(--cyan)}
+.pitch-side-title{font-family:var(--font-head);font-size:14px;font-weight:800;color:#fff;margin-bottom:8px}
+.starter-list{list-style:none;display:flex;flex-direction:column;gap:5px}
+.starter-list li{font-size:12px;color:var(--muted);font-style:italic;padding-left:12px;position:relative;line-height:1.4}
+.starter-list li::before{content:'›';position:absolute;left:0;color:var(--accent2);font-style:normal}
+
+/* ── COLOUR & FLOOR BINGO — NEW VISUAL ── */
+.bingo-wrap{background:var(--surface2);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:20px}
+.bingo-header{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.bingo-title{font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent2)}
+.bingo-badge{background:rgba(255,31,92,.15);border:1px solid var(--border);color:var(--accent2);padding:2px 8px;font-size:10px;font-family:var(--font-head);font-weight:700;letter-spacing:1px;border-radius:20px}
+.bingo-body{padding:20px}
+.bingo-instructions{font-size:12px;color:var(--muted);margin-bottom:16px;line-height:1.6;font-style:italic}
+.bingo-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:16px}
+.bingo-cell{background:var(--surface);border:2px solid var(--border);border-radius:8px;overflow:hidden;cursor:pointer;transition:all .25s;position:relative}
+.bingo-cell:hover{border-color:var(--accent);transform:scale(1.02)}
+.bingo-cell.marked{border-color:var(--accent2);background:rgba(255,31,92,.18)}
+.bingo-cell.marked::after{content:'✓';position:absolute;top:4px;right:6px;font-size:14px;font-weight:800;color:var(--accent2)}
+.bingo-cell.bingo-line{border-color:var(--success);background:rgba(0,229,160,.12)}
+.bingo-cell.bingo-line .bc-floor{color:var(--success)}
+.bingo-cell img{width:100%;height:55px;object-fit:cover;filter:brightness(.42)}
+.bingo-cell-body{padding:7px 8px}
+.bc-floor{font-family:var(--font-head);font-size:11px;font-weight:800;color:var(--accent2);margin-bottom:2px}
+.bc-colour{font-size:10px;color:var(--muted);line-height:1.3}
+.bc-place{font-size:10px;color:var(--text);font-weight:500;line-height:1.3}
+.bingo-caller{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px 20px}
+.bingo-caller-label{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:10px}
+.bingo-call{font-size:14px;color:#fff;line-height:1.6;font-style:italic;min-height:44px;padding:10px 14px;background:rgba(255,31,92,.05);border-left:3px solid var(--accent);border-radius:0 6px 6px 0}
+.bingo-controls{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap}
+.bingo-btn{background:var(--accent);border:none;color:#fff;padding:9px 20px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;border-radius:20px;cursor:pointer;transition:opacity .2s}
+.bingo-btn:hover{opacity:.85}
+.bingo-btn-ghost{background:var(--surface2);border:1px solid var(--border);color:var(--muted);padding:9px 20px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;border-radius:20px;cursor:pointer}
+.bingo-score{font-family:var(--font-head);font-size:22px;font-weight:800;color:var(--accent2);padding:8px 0}
+.bingo-msg{font-size:12px;color:var(--success);margin-top:6px;display:none}
+.bingo-msg.show{display:block}
+
+/* SPEED CARDS */
+.speed-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.score-display{font-family:var(--font-head);font-size:28px;font-weight:800;color:var(--accent2)}
+.score-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
+.speed-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:14px}
+.speed-card{background:var(--surface2);border:1px solid var(--border);border-radius:10px;overflow:hidden;cursor:pointer;transition:all .2s}
+.speed-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.speed-card.flipped{border-color:var(--success);cursor:default}
+.speed-card img{width:100%;height:70px;object-fit:cover;filter:brightness(.43)}
+.speed-card-front{padding:10px 8px}
+.speed-card-q{font-size:11.5px;color:var(--text);line-height:1.4;font-weight:500}
+.speed-card-back{display:none;padding:10px 8px;background:rgba(0,229,160,.07)}
+.speed-card-a{font-size:11.5px;color:var(--success);font-style:italic;line-height:1.4}
+.speed-card.flipped .speed-card-front{display:none}
+.speed-card.flipped .speed-card-back{display:block}
+.sp-btns{display:flex;gap:8px;flex-wrap:wrap}
+.sp-btn{border:none;padding:9px 18px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;border-radius:20px;cursor:pointer}
+.sp-correct{background:var(--success);color:#000}
+.sp-wrong{background:var(--danger);color:#fff}
+.sp-reset{background:var(--surface2);border:1px solid var(--border);color:var(--muted);padding:9px 18px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;border-radius:20px;cursor:pointer}
+
+/* SOLO */
+.solo-card{background:var(--surface2);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:16px}
+.solo-img{width:100%;height:150px;object-fit:cover;filter:brightness(.43)}
+.solo-body{padding:18px 22px}
+.solo-label{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent2);margin-bottom:8px}
+.solo-title{font-family:var(--font-head);font-size:17px;font-weight:800;color:#fff;margin-bottom:10px;line-height:1.3}
+.solo-rules{list-style:none;display:flex;flex-direction:column;gap:7px}
+.solo-rules li{font-size:12.5px;color:var(--muted);padding-left:16px;position:relative;line-height:1.5}
+.solo-rules li::before{content:'→';position:absolute;left:0;color:var(--accent2)}
+
+/* SOURCE */
+.source-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
+.source-card{background:var(--surface2);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.source-card img{width:100%;height:95px;object-fit:cover;filter:brightness(.42)}
+.source-body{padding:14px 16px}
+.source-type{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent2);margin-bottom:6px}
+.source-content{font-size:12.5px;color:var(--text);line-height:1.6;margin-bottom:10px;font-style:italic;border-left:2px solid var(--accent);padding-left:10px}
+.source-q{font-size:12px;color:var(--muted);margin-bottom:8px}
+.source-input{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:8px 12px;color:var(--text);font-family:var(--font-body);font-size:12px;resize:none}
+.source-input:focus{outline:none;border-color:var(--accent)}
+
+/* SLIDERS */
+.slider-section{margin-bottom:18px}
+.slider-label{font-size:13px;color:var(--text);margin-bottom:8px;font-weight:500}
+.slider-wrap{display:flex;align-items:center;gap:12px;margin-bottom:5px}
+.rating-slider{-webkit-appearance:none;appearance:none;width:100%;height:6px;background:rgba(255,31,92,.2);border-radius:3px;outline:none;cursor:pointer}
+.rating-slider::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--accent);cursor:pointer;border:2px solid #fff}
+.slider-val{font-family:var(--font-head);font-size:16px;font-weight:800;color:var(--accent2);min-width:24px;text-align:center}
+.slider-range{display:flex;justify-content:space-between;font-size:10px;color:var(--dim)}
+.rating-feedback{background:rgba(255,31,92,.06);border:1px solid rgba(255,31,92,.2);border-radius:8px;padding:14px 18px;margin-top:14px;font-size:13px;color:var(--text);line-height:1.6;display:none}
+.rating-feedback.show{display:block}
+.rating-feedback strong{color:var(--accent2)}
+
+/* LEADERBOARD */
+.lb-wrap{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:18px 20px;margin-top:16px}
+.lb-label{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent2);margin-bottom:12px}
+.lb-input-row{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.lb-input{background:var(--surface);border:1px solid var(--border);color:var(--text);padding:8px 12px;font-family:var(--font-body);font-size:13px;border-radius:6px;flex:1;min-width:120px}
+.lb-input:focus{outline:none;border-color:var(--accent)}
+.lb-add{background:var(--accent);border:none;color:#fff;padding:9px 18px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;border-radius:20px;cursor:pointer}
+.lb-reset{background:var(--surface2);border:1px solid var(--border);color:var(--muted);padding:9px 18px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;border-radius:20px;cursor:pointer}
+.lb-table{width:100%;border-collapse:collapse}
+.lb-table th{padding:8px 12px;text-align:left;font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim);border-bottom:2px solid var(--accent)}
+.lb-table td{padding:9px 12px;border-bottom:1px solid var(--border);font-size:13px}
+.lb-rank{font-family:var(--font-head);font-weight:800;color:var(--accent2)}
+
+/* CERTIFICATE */
+.cert-wrap{background:var(--surface2);border:1px solid rgba(255,31,92,.25);border-radius:12px;padding:20px;margin-top:16px}
+.cert-label{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent2);margin-bottom:12px}
+.cert-input-row{display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+.cert-input{background:var(--surface);border:1px solid var(--border);color:var(--text);padding:9px 14px;font-family:var(--font-body);font-size:13px;border-radius:6px;flex:1}
+.cert-input:focus{outline:none;border-color:var(--accent)}
+.cert-gen{background:var(--accent);border:none;color:#fff;padding:9px 20px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;border-radius:20px;cursor:pointer}
+.cert-result{display:none;border:2px solid rgba(255,31,92,.4);border-radius:10px;padding:24px 28px;text-align:center;background:linear-gradient(135deg,rgba(255,31,92,.06),transparent);position:relative}
+.cert-result.show{display:block}
+.cert-border-top{position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,var(--accent),var(--accent2),transparent)}
+.cert-logo{font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent2);margin-bottom:12px}
+.cert-name{font-family:var(--font-head);font-size:26px;font-weight:800;color:#fff;margin-bottom:8px}
+.cert-text{font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:12px}
+.cert-skills{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-bottom:12px}
+.cert-skill{background:rgba(255,31,92,.1);border:1px solid rgba(255,31,92,.25);color:var(--accent2);padding:4px 12px;font-size:11px;font-family:var(--font-head);font-weight:700;border-radius:20px}
+.cert-date{font-size:11px;color:var(--dim)}
+
+/* MY WIN */
+.my-win{background:rgba(255,31,92,.05);border:1px solid rgba(255,31,92,.2);border-radius:10px;padding:18px 20px;margin-top:20px}
+.mw-label{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent2);margin-bottom:8px}
+.mw-textarea{width:100%;background:var(--surface);border:1px solid var(--border);color:var(--text);padding:12px 15px;font-family:var(--font-body);font-size:13px;border-radius:8px;resize:vertical;min-height:72px;line-height:1.5}
+.mw-textarea:focus{outline:none;border-color:var(--accent)}
+.mw-save{background:var(--accent);border:none;color:#fff;padding:8px 20px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;border-radius:20px;cursor:pointer;margin-top:10px}
+.mw-confirm{display:none;font-size:12px;color:var(--success);margin-top:6px}
+
+/* PHRASES */
+.phrases-week{background:rgba(255,184,0,.03);border-top:2px solid rgba(255,184,0,.15);margin:0 48px 32px}
+.pw-header{padding:16px 24px;display:flex;align-items:center;gap:12px}
+.pw-title{font-family:var(--font-head);font-size:13px;font-weight:800;color:#fff}
+.pw-sub{font-size:11px;color:var(--muted)}
+.pw-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border)}
+.pw-card{background:var(--surface);overflow:hidden}
+.pw-img{width:100%;height:80px;object-fit:cover;filter:brightness(.43)}
+.pw-body{padding:14px 16px}
+.pw-num{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:7px}
+.pw-phrase{font-family:var(--font-head);font-size:14px;font-weight:700;color:#fff;margin-bottom:8px;line-height:1.4}
+.pw-ctx{font-size:11.5px;color:var(--muted);line-height:1.6}
+
+/* CHECKLIST */
+.checklist{display:flex;flex-direction:column;gap:7px;margin-bottom:20px}
+.cl-item{display:flex;align-items:flex-start;gap:11px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px 15px;cursor:pointer;transition:all .2s;font-size:12.5px;color:var(--text);line-height:1.5}
+.cl-item:hover{border-color:var(--accent)}
+.cl-item.done{border-color:rgba(0,229,160,.3);background:rgba(0,229,160,.04);color:rgba(0,229,160,.8);text-decoration:line-through;opacity:.7}
+.cl-box{width:16px;height:16px;border:2px solid var(--accent);border-radius:3px;flex-shrink:0;margin-top:2px}
+.cl-item.done .cl-box{background:var(--success);border-color:var(--success)}
+
+.ftr{background:var(--surface);border-top:1px solid var(--border);padding:18px 48px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-top:40px}
+.fbrand{font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim)}
+.finfo{font-size:11px;color:var(--dim)}
+.flvs{display:flex;gap:3px;flex-wrap:wrap}
+.flv{padding:5px 10px;font-family:var(--font-head);font-size:10px;font-weight:700;background:var(--surface2);color:var(--dim);border-radius:3px}
+.flv.active{background:var(--accent);color:#fff}
+
+@media(max-width:860px){
+  .section,.phrases-week{margin:0 14px 22px}
+  .pitch-grid,.source-grid,.pw-grid{grid-template-columns:1fr}
+  .speed-grid{grid-template-columns:repeat(2,1fr)}
+  .bingo-grid{grid-template-columns:repeat(2,1fr)}
+  .hdr,.ftr{padding:14px 18px}
+  .badge-strip{padding:10px 18px}
+}
+</style>
+</head>
+<body>
+
+<div class="progress-bar-wrap"><div class="progress-bar" id="progressBar"></div></div>
+
+<header class="hdr">
+  <div class="brand">
+    <div class="dot"></div>
+    <div>
+      <div class="bname">Gabriel Turner</div>
+      <div class="bsub">English Training · Teacher Edition</div>
+    </div>
+  </div>
+  <div class="sess-tags">
+    <span class="tag t-lv">A1.1</span>
+    <span class="tag t-mod">Module 4</span>
+    <span class="tag t-sess">Session 4B — Application &amp; Mastery</span>
+    <span class="tag t-time">120 min</span>
+    <span class="tag t-prod">PRODUCTION</span>
+  </div>
+</header>
+
+<div class="badge-strip">
+  <span id="b1">🔥</span>
+  <span id="b2">⚡</span>
+  <span id="b3">🎤</span>
+  <span id="b4">🔍</span>
+  <span id="b5">🏆</span>
+  <span class="badge-label">Master all 5 challenges</span>
+</div>
+
+<!-- §1 HOT TAKE -->
+<div class="section">
+  <div class="section-header">
+    <span class="section-number">§1</span>
+    <div>
+      <div class="section-title">Hot Take — <em>What Floor? What Colour?</em></div>
+      <div class="section-sub">Ordinals + colours under pressure · Full description in 60 seconds · No notes</div>
+    </div>
+    <span class="dur-tag">⏱ 5 MIN</span>
+  </div>
+  <img class="img-hero" src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=900&q=80" alt="Professional speaking confidently building description">
+  <div class="section-body">
+    <div class="hot-take-card">
+      <img class="ht-img" src="https://images.unsplash.com/photo-1682687220063-4742bd7fd538?w=900&q=80" alt="city building exterior description aerial view">
+      <div class="ht-body">
+        <div class="ht-label">Scenario — Celaya, Guanajuato</div>
+        <div class="ht-scenario">Your European client is standing outside your building and calls: "I'm outside — I can see several buildings. Which one is yours? And which floor are you on?" Describe your building completely in 60 seconds so they can find you.</div>
+        <div class="ht-prompt">Describe your building (colour, floors, what's on the ground floor) AND give the floor of your office using the correct ordinal. Start with: "Our building is the [colour]…"</div>
+        <div class="badge-rules">
+          <div class="badge-rule"><span>🔥</span><span>Badge earned: complete building description (colour + floors + ordinal) before timer ends</span></div>
+          <div class="badge-rule"><span>⭐</span><span>Bonus: include a landmark nearby — "next to the [colour] building / opposite the [place]"</span></div>
+          <div class="badge-rule"><span>🎯</span><span>Teacher: tally ordinals + colours used. Write them on the board. Class record!</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;align-items:center;gap:20px;flex-wrap:wrap">
+      <div class="timer-wrap">
+        <svg class="timer-svg" width="76" height="76" viewBox="0 0 76 76">
+          <circle cx="38" cy="38" r="32" fill="none" stroke="rgba(255,31,92,.15)" stroke-width="5"/>
+          <circle id="arc-ht" cx="38" cy="38" r="32" fill="none" stroke="var(--accent2)" stroke-width="5" stroke-dasharray="201.06" stroke-dashoffset="0" stroke-linecap="round"/>
+        </svg>
+        <div class="timer-text" id="txt-ht">1:00</div>
+        <div class="timer-label">Hot Take</div>
+      </div>
+      <button class="btn-timer" onclick="startTimer('arc-ht','txt-ht',60,'b1',201.06)">▶ Start 60s</button>
+      <div class="teacher-note tn-c1" style="flex:1;margin-top:0">
+        <div class="tn-label">📌 Teacher Note</div>
+        <p>The goal is spontaneous production of ordinals and colours in context — not memorised phrases. Students who self-correct mid-sentence ("it's on the... fourth — no, fifth floor") are demonstrating real cognitive processing. Celebrate the self-correction as much as the accuracy.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- §2 PITCH -->
+<div class="section">
+  <div class="section-header">
+    <span class="section-number">§2</span>
+    <div>
+      <div class="section-title">Pitch — <em>Big City vs Small Town</em></div>
+      <div class="section-sub">Argue using ordinals, colours, distances · Grammar embedded in real debate</div>
+    </div>
+    <span class="dur-tag">⏱ 10 MIN</span>
+  </div>
+  <img class="img-banner" src="https://images.unsplash.com/photo-1682687982501-1e58ab814714?w=900&q=80" alt="Big city vs small town skyline comparison debate">
+  <div class="section-body">
+    <div class="pitch-grid">
+      <div class="pitch-side pitch-a">
+        <img class="pitch-side-img" src="https://images.unsplash.com/photo-1683009427668-e55eae87d95c?w=600&q=80" alt="large city skyline tall buildings">
+        <div class="pitch-side-body">
+          <div class="pitch-side-label">Team A — Big City is better for business</div>
+          <div class="pitch-side-title">Everything in one place!</div>
+          <ul class="starter-list">
+            <li>"There are twenty-floor buildings — the first floor has a bank, the second a pharmacy..."</li>
+            <li>"The hotel is two blocks from the office — it's a tall grey building on the corner."</li>
+            <li>"How far is the airport? About thirty minutes — not far for a big city."</li>
+            <li>"There are blue, grey, and white buildings everywhere — you can find anything on the third or fourth floor."</li>
+          </ul>
+        </div>
+      </div>
+      <div class="pitch-side pitch-b">
+        <img class="pitch-side-img" src="https://images.unsplash.com/photo-1625961332771-3f40b0e2bdcf?w=600&q=80" alt="small town village quiet buildings close">
+        <div class="pitch-side-body">
+          <div class="pitch-side-label">Team B — Small Town is better for business</div>
+          <div class="pitch-side-title">Everything is close!</div>
+          <ul class="starter-list">
+            <li>"The bank is on the ground floor of our building — no need for the third floor of a skyscraper!"</li>
+            <li>"How far is anything? One or two blocks. It's a short walk — not thirty minutes."</li>
+            <li>"Our office is a white two-floor building. Easy to find — it's the first building on the left."</li>
+            <li>"There aren't any grey towers — just clean, small buildings. No confusion, no traffic."</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="teacher-note">
+      <div class="tn-label">⚡ Badge ⚡ — Pitch Note</div>
+      <p>Badge ⚡ earned when a student uses an ordinal + colour + distance expression in a single argument turn. That's the S4 target sentence — celebrate it publicly when it happens. Class vote at end. Tally total ordinals used across both teams on the board.</p>
+    </div>
+
+    <div style="display:flex;align-items:center;gap:16px;margin-top:16px;flex-wrap:wrap">
+      <div class="timer-wrap">
+        <svg class="timer-svg" width="60" height="60" viewBox="0 0 60 60">
+          <circle cx="30" cy="30" r="24" fill="none" stroke="rgba(255,31,92,.15)" stroke-width="4"/>
+          <circle id="arc-pt" cx="30" cy="30" r="24" fill="none" stroke="var(--accent2)" stroke-width="4" stroke-dasharray="150.8" stroke-dashoffset="0" stroke-linecap="round"/>
+        </svg>
+        <div class="timer-text" id="txt-pt">2:00</div>
+        <div class="timer-label">Prep</div>
+      </div>
+      <button class="btn-timer" onclick="startTimer('arc-pt','txt-pt',120,'b2',150.8)">▶ Start Prep</button>
+      <div class="timer-wrap">
+        <svg class="timer-svg" width="60" height="60" viewBox="0 0 60 60">
+          <circle cx="30" cy="30" r="24" fill="none" stroke="rgba(255,31,92,.15)" stroke-width="4"/>
+          <circle id="arc-ps" cx="30" cy="30" r="24" fill="none" stroke="var(--cyan)" stroke-width="4" stroke-dasharray="150.8" stroke-dashoffset="0" stroke-linecap="round"/>
+        </svg>
+        <div class="timer-text" id="txt-ps">2:00</div>
+        <div class="timer-label">Per Side</div>
+      </div>
+      <button class="btn-timer" onclick="startTimer('arc-ps','txt-ps',120,null,150.8)">▶ Start Pitch</button>
+    </div>
+  </div>
+</div>
+
+<!-- §3 RELAY — COLOUR & FLOOR BINGO -->
+<div class="section">
+  <div class="section-header">
+    <span class="section-number">§3</span>
+    <div>
+      <div class="section-title">Relay — <em>Colour &amp; Floor Bingo</em></div>
+      <div class="section-sub">Teacher calls · Students mark · First line = Badge 🎤 · Integrates ordinals + colours + there is/are</div>
+    </div>
+    <span class="dur-tag">⏱ 8 MIN</span>
+  </div>
+  <div class="section-body">
+
+    <!-- NEW VISUAL: COLOUR & FLOOR BINGO -->
+    <div class="bingo-wrap">
+      <div class="bingo-header">
+        <span class="bingo-title">🎯 Colour &amp; Floor Bingo</span>
+        <span class="bingo-badge">NEW VISUAL</span>
+        <span style="font-size:11px;color:var(--muted);margin-left:auto">Teacher presses "Next Call" → students mark matching cell → first line wins!</span>
+      </div>
+      <div class="bingo-body">
+        <div class="bingo-instructions">Each cell shows a floor + colour + place. Teacher reads the call below — students click the cell if it matches. First student to mark a complete horizontal or vertical line shouts "BINGO!" and earns a point. Badge 🎤 for first bingo.</div>
+
+        <div class="bingo-grid" id="bingoGrid">
+          <!-- Row 1 -->
+          <div class="bingo-cell" onclick="markCell(this)" data-id="0">
+            <img src="https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?w=400&q=80" alt="office meeting room">
+            <div class="bingo-cell-body">
+              <div class="bc-floor">3rd floor</div>
+              <div class="bc-colour">grey building</div>
+              <div class="bc-place">Meeting Room</div>
+            </div>
+          </div>
+          <div class="bingo-cell" onclick="markCell(this)" data-id="1">
+            <img src="https://images.unsplash.com/photo-1548802673-380ab8ebc7b7?w=400&q=80" alt="elevator lobby">
+            <div class="bingo-cell-body">
+              <div class="bc-floor">Ground floor</div>
+              <div class="bc-colour">white building</div>
+              <div class="bc-place">Reception</div>
+            </div>
+          </div>
+          <div class="bingo-cell" onclick="markCell(this)" data-id="2">
+            <img src="https://images.unsplash.com/photo-1415226484005-a620a9af5c2b?w=400&q=80" alt="cafeteria food area">
+            <div class="bingo-cell-body">
+              <div class="bc-floor">5th floor</div>
+              <div class="bc-colour">blue building</div>
+              <div class="bc-place">Cafeteria</div>
+            </div>
+          </div>
+          <div class="bingo-cell" onclick="markCell(this)" data-id="3">
+            <img src="https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?w=400&q=80" alt="pharmacy store exterior">
+            <div class="bingo-cell-body">
+              <div class="bc-floor">1 block away</div>
+              <div class="bc-colour">red building</div>
+              <div class="bc-place">Pharmacy</div>
+            </div>
+          </div>
+          <!-- Row 2 -->
+          <div class="bingo-cell" onclick="markCell(this)" data-id="4">
+            <img src="https://images.unsplash.com/photo-1625961332717-b47f6d29a0b4?w=400&q=80" alt="bank building exterior">
+            <div class="bingo-cell-body">
+              <div class="bc-floor">2 blocks away</div>
+              <div class="bc-colour">black building</div>
+              <div class="bc-place">Bank</div>
+            </div>
+          </div>
+          <div class="bingo-cell" onclick="markCell(this)" data-id="5">
+            <img src="https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=400&q=80" alt="HR office door sign">
+            <div class="bingo-cell-body">
+              <div class="bc-floor">2nd floor</div>
+              <div class="bc-colour">grey building</div>
+              <div class="bc-place">HR Office</div>
+            </div>
+          </div>
+          <div class="bingo-cell" onclick="markCell(this)" data-id="6">
+            <img src="https://images.unsplash.com/photo-1636622433525-127afdf3662d?w=400&q=80" alt="hotel entrance door facade">
+            <div class="bingo-cell-body">
+              <div class="bc-floor">5 min on foot</div>
+              <div class="bc-colour">brown building</div>
+              <div class="bc-place">Hotel</div>
+            </div>
+          </div>
+          <div class="bingo-cell" onclick="markCell(this)" data-id="7">
+            <img src="https://images.unsplash.com/photo-1587613754590-e5a99fbc4c32?w=400&q=80" alt="break room office coffee area">
+            <div class="bingo-cell-body">
+              <div class="bc-floor">4th floor</div>
+              <div class="bc-colour">white building</div>
+              <div class="bc-place">Break Room</div>
+            </div>
+          </div>
+          <!-- Row 3 -->
+          <div class="bingo-cell" onclick="markCell(this)" data-id="8">
+            <img src="https://images.unsplash.com/photo-1682686578-ce85b9b9b7e9?w=400&q=80" alt="conference room above view">
+            <div class="bingo-cell-body">
+              <div class="bc-floor">1st floor</div>
+              <div class="bc-colour">orange building</div>
+              <div class="bc-place">Conference Rm</div>
+            </div>
+          </div>
+          <div class="bingo-cell" onclick="markCell(this)" data-id="9">
+            <img src="https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=400&q=80" alt="restaurant exterior city">
+            <div class="bingo-cell-body">
+              <div class="bc-floor">3 blocks away</div>
+              <div class="bc-colour">green building</div>
+              <div class="bc-place">Restaurant</div>
+            </div>
+          </div>
+          <div class="bingo-cell" onclick="markCell(this)" data-id="10">
+            <img src="https://images.unsplash.com/photo-1510074377623-b2c20c19d2c7?w=400&q=80" alt="IT department computer room">
+            <div class="bingo-cell-body">
+              <div class="bc-floor">6th floor</div>
+              <div class="bc-colour">blue building</div>
+              <div class="bc-place">IT Department</div>
+            </div>
+          </div>
+          <div class="bingo-cell" onclick="markCell(this)" data-id="11">
+            <img src="https://images.unsplash.com/photo-1616578738046-22f3a486b43c?w=400&q=80" alt="parking lot exterior building behind">
+            <div class="bingo-cell-body">
+              <div class="bc-floor">Behind building</div>
+              <div class="bc-colour">grey building</div>
+              <div class="bc-place">Parking Lot</div>
+            </div>
+          </div>
+          <!-- Row 4 -->
+          <div class="bingo-cell" onclick="markCell(this)" data-id="12">
+            <img src="https://images.unsplash.com/photo-1564069114553-7215e1ff1890?w=400&q=80" alt="supermarket store exterior">
+            <div class="bingo-cell-body">
+              <div class="bc-floor">4 blocks away</div>
+              <div class="bc-colour">yellow building</div>
+              <div class="bc-place">Supermarket</div>
+            </div>
+          </div>
+          <div class="bingo-cell" onclick="markCell(this)" data-id="13">
+            <img src="https://images.unsplash.com/photo-1533107862482-0e6974b06ec4?w=400&q=80" alt="rooftop terrace top floor building">
+            <div class="bingo-cell-body">
+              <div class="bc-floor">10th floor</div>
+              <div class="bc-colour">white building</div>
+              <div class="bc-place">Rooftop</div>
+            </div>
+          </div>
+          <div class="bingo-cell" onclick="markCell(this)" data-id="14">
+            <img src="https://images.unsplash.com/photo-1561489422-45c5da402c14?w=400&q=80" alt="training room classroom corporate">
+            <div class="bingo-cell-body">
+              <div class="bc-floor">7th floor</div>
+              <div class="bc-colour">grey building</div>
+              <div class="bc-place">Training Room</div>
+            </div>
+          </div>
+          <div class="bingo-cell" onclick="markCell(this)" data-id="15">
+            <img src="https://images.unsplash.com/photo-1549923746-c502d488b3ea?w=400&q=80" alt="hospital building exterior city">
+            <div class="bingo-cell-body">
+              <div class="bc-floor">10 min on foot</div>
+              <div class="bc-colour">white building</div>
+              <div class="bc-place">Hospital</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bingo-caller">
+          <div class="bingo-caller-label">📢 Current Call — Read this aloud to the class:</div>
+          <div class="bingo-call" id="bingoCurrent">Press "Next Call" to start. Teacher reads the call — students click the matching cell on their screen.</div>
+          <div class="bingo-controls">
+            <button class="bingo-btn" onclick="nextBingoCall()">▶ Next Call</button>
+            <button class="bingo-btn-ghost" onclick="resetBingo()">↺ Reset Board</button>
+            <div class="bingo-score" id="bingoScore"></div>
+          </div>
+          <div class="bingo-msg" id="bingoMsg">🎉 BINGO LINE! Check which cells are highlighted green!</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="teacher-note tn-c2">
+      <div class="tn-label">💡 How to run Bingo</div>
+      <p>Press "Next Call" to read the next description. Students click/mark the matching cell on their device or teacher displays on projector. First student to complete a full row or column (horizontal or vertical) calls "BINGO!" — their cells highlight green. Badge 🎤 for first bingo. Continue for 2nd and 3rd winners. Reset and play again if time allows.</p>
+    </div>
+  </div>
+</div>
+
+<!-- §4 SPEED ROUND -->
+<div class="section">
+  <div class="section-header">
+    <span class="section-number">§4</span>
+    <div>
+      <div class="section-title">Speed Round — <em>Say the Ordinal!</em></div>
+      <div class="section-sub">10 cards · Instant ordinal recognition · Pronunciation drill under pressure</div>
+    </div>
+    <span class="dur-tag">⏱ 6 MIN</span>
+  </div>
+  <img class="img-banner" src="https://images.unsplash.com/photo-1551641506-ee5bf4cb45f1?w=900&q=80" alt="Speed round fast team activity competitive">
+  <div class="section-body">
+    <div class="speed-header">
+      <div>
+        <div class="score-display" id="speedScore">0</div>
+        <div class="score-label">points</div>
+      </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+        <div class="sp-btns" id="speedBtns" style="display:none">
+          <button class="sp-btn sp-correct" onclick="addScore(1)">✓ Correct (+1)</button>
+          <button class="sp-btn sp-wrong" onclick="addScore(0)">✗ Wrong (0)</button>
+        </div>
+        <button class="sp-reset" onclick="resetSpeed()">↺ Reset</button>
+      </div>
+    </div>
+
+    <div class="speed-grid">
+      <div class="speed-card" onclick="flipCard(this)">
+        <img src="https://images.unsplash.com/photo-1683009427666-340595e57e43?w=400&q=80" alt="building floor 1 first level">
+        <div class="speed-card-front"><div class="speed-card-q">Floor number 1 → ordinal?</div></div>
+        <div class="speed-card-back"><div class="speed-card-a"><strong>First</strong> (1st)<br><em>Irregular — not "oneth"</em></div></div>
+      </div>
+      <div class="speed-card" onclick="flipCard(this)">
+        <img src="https://images.unsplash.com/photo-1573164574511-73c773193279?w=400&q=80" alt="building floor 3 third level city">
+        <div class="speed-card-front"><div class="speed-card-q">Floor number 3 → ordinal?</div></div>
+        <div class="speed-card-back"><div class="speed-card-a"><strong>Third</strong> (3rd)<br><em>Irregular — voiced TH at end</em></div></div>
+      </div>
+      <div class="speed-card" onclick="flipCard(this)">
+        <img src="https://images.unsplash.com/photo-1531880329399-75c5d5ffe01e?w=400&q=80" alt="building floor 5 fifth level">
+        <div class="speed-card-front"><div class="speed-card-q">Floor number 5 → ordinal?</div></div>
+        <div class="speed-card-back"><div class="speed-card-a"><strong>Fifth</strong> (5th)<br><em>/fɪfθ/ — two consonants: F+TH</em></div></div>
+      </div>
+      <div class="speed-card" onclick="flipCard(this)">
+        <img src="https://images.unsplash.com/photo-1538935732373-f7a495fea3f6?w=400&q=80" alt="building floor 2 second level">
+        <div class="speed-card-front"><div class="speed-card-q">Floor number 2 → ordinal?</div></div>
+        <div class="speed-card-back"><div class="speed-card-a"><strong>Second</strong> (2nd)<br><em>Irregular — not "twoth"</em></div></div>
+      </div>
+      <div class="speed-card" onclick="flipCard(this)">
+        <img src="https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=400&q=80" alt="building floor 8 eighth high level">
+        <div class="speed-card-front"><div class="speed-card-q">Floor number 8 → ordinal?</div></div>
+        <div class="speed-card-back"><div class="speed-card-a"><strong>Eighth</strong> (8th)<br><em>/eɪtθ/ — eight → eighth (drop the E)</em></div></div>
+      </div>
+      <div class="speed-card" onclick="flipCard(this)">
+        <img src="https://images.unsplash.com/photo-1574362848149-11496d93a7c7?w=400&q=80" alt="building floor 4 fourth level view">
+        <div class="speed-card-front"><div class="speed-card-q">Floor number 4 → ordinal?</div></div>
+        <div class="speed-card-back"><div class="speed-card-a"><strong>Fourth</strong> (4th)<br><em>/fɔːrθ/ — from here: number + TH</em></div></div>
+      </div>
+      <div class="speed-card" onclick="flipCard(this)">
+        <img src="https://images.unsplash.com/photo-1547592180-85f173990554?w=400&q=80" alt="floor 10 tenth high rise rooftop">
+        <div class="speed-card-front"><div class="speed-card-q">Floor number 10 → ordinal?</div></div>
+        <div class="speed-card-back"><div class="speed-card-a"><strong>Tenth</strong> (10th)<br><em>/tenθ/ — ten + TH</em></div></div>
+      </div>
+      <div class="speed-card" onclick="flipCard(this)">
+        <img src="https://images.unsplash.com/photo-1513181669658-c6d6e1e8fd64?w=400&q=80" alt="ground floor lobby entrance building">
+        <div class="speed-card-front"><div class="speed-card-q">Floor number 0 → what do we call it?</div></div>
+        <div class="speed-card-back"><div class="speed-card-a"><strong>Ground floor</strong><br><em>NOT "zero floor" — it's "ground floor"</em></div></div>
+      </div>
+      <div class="speed-card" onclick="flipCard(this)">
+        <img src="https://images.unsplash.com/photo-1567446537708-ac4aa75c9c28?w=400&q=80" alt="building floor 9 ninth high up">
+        <div class="speed-card-front"><div class="speed-card-q">Floor number 9 → ordinal?</div></div>
+        <div class="speed-card-back"><div class="speed-card-a"><strong>Ninth</strong> (9th)<br><em>/naɪnθ/ — nine → ninth (drop the E)</em></div></div>
+      </div>
+      <div class="speed-card" onclick="flipCard(this)">
+        <img src="https://images.unsplash.com/photo-1595846519845-68e298c2edd8?w=400&q=80" alt="floor 6 sixth office building">
+        <div class="speed-card-front"><div class="speed-card-q">Floor number 6 → ordinal?</div></div>
+        <div class="speed-card-back"><div class="speed-card-a"><strong>Sixth</strong> (6th)<br><em>/sɪksθ/ — three consonants at end: K+S+TH</em></div></div>
+      </div>
+    </div>
+
+    <div class="teacher-note tn-c1" style="margin-top:14px">
+      <div class="tn-label">📌 Speed Round — Badge 🔍</div>
+      <p>Focus on pronunciation — not just the word. After each reveal, have the student SAY the ordinal aloud before clicking ✓ or ✗. Badge 🔍 for 8+. "Fifth" (5th) and "sixth" (6th) are the hardest — slow down on those two and drill the ending consonants. "Ninth" and "eighth" catch students who don't know the spelling-change rule.</p>
+    </div>
+  </div>
+</div>
+
+<!-- §5 SOLO CHALLENGE -->
+<div class="section">
+  <div class="section-header">
+    <span class="section-number">§5</span>
+    <div>
+      <div class="section-title">Solo Challenge — <em>The Complete M4 Description</em></div>
+      <div class="section-sub">2 minutes · All M4 structures · Building + city + directions · No notes</div>
+    </div>
+    <span class="dur-tag">⏱ 8 MIN</span>
+  </div>
+  <div class="section-body">
+    <div class="solo-card">
+      <img class="solo-img" src="https://images.unsplash.com/photo-1567306226416-28f0efdc88ce?w=900&q=80" alt="professional complete city building description presentation">
+      <div class="solo-body">
+        <div class="solo-label">Solo Challenge — 2 minutes · Full M4 Integration</div>
+        <div class="solo-title">You're the official guide for a new international employee. Describe everything they need to know about the building and neighbourhood.</div>
+        <ul class="solo-rules">
+          <li>Use <strong>there is/are</strong> at least 4 times (S1 vocabulary)</li>
+          <li>Use at least <strong>3 prepositions of place</strong> (S2 vocabulary)</li>
+          <li>Give <strong>directions to one destination</strong> inside the building (S3 vocabulary)</li>
+          <li>Use at least <strong>2 ordinal numbers</strong> for floors (S4 vocabulary)</li>
+          <li>Describe the building using <strong>2 colours</strong> (S4 vocabulary)</li>
+          <li>Give the distance to <strong>1 nearby place</strong> using blocks or minutes (S4 vocabulary)</li>
+          <li>No notes. Partner tracks which M4 structures you use. Goal: all 6 boxes checked.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div style="display:flex;align-items:center;gap:20px;flex-wrap:wrap;margin-top:16px">
+      <div class="timer-wrap">
+        <svg class="timer-svg" width="90" height="90" viewBox="0 0 90 90">
+          <circle cx="45" cy="45" r="38" fill="none" stroke="rgba(255,31,92,.15)" stroke-width="5"/>
+          <circle id="arc-solo" cx="45" cy="45" r="38" fill="none" stroke="var(--accent2)" stroke-width="5" stroke-dasharray="238.76" stroke-dashoffset="0" stroke-linecap="round"/>
+        </svg>
+        <div class="timer-text" id="txt-solo">2:00</div>
+        <div class="timer-label">Solo Challenge</div>
+      </div>
+      <button class="btn-timer" onclick="startTimer('arc-solo','txt-solo',120,null,238.76)">▶ Start 2 Minutes</button>
+      <div style="flex:1;font-size:12.5px;color:var(--muted);line-height:1.7">This is the first full M4 integration practice before S5 (exit task). Students who hit all 6 boxes get their name on the certificate. Post scores to leaderboard — track M4 structures used, not just time.</div>
+    </div>
+  </div>
+</div>
+
+<!-- §6 SOURCE ANALYSIS -->
+<div class="section">
+  <div class="section-header">
+    <span class="section-number">§6</span>
+    <div>
+      <div class="section-title">Source Analysis — <em>Ordinals &amp; Colours in the Wild</em></div>
+      <div class="section-sub">4 real-world sources · Identify ordinals + colours + distances · Produce responses</div>
+    </div>
+    <span class="dur-tag">⏱ 8 MIN</span>
+  </div>
+  <div class="section-body">
+    <div class="source-grid">
+
+      <div class="source-card">
+        <img src="https://images.unsplash.com/photo-1432888498266-38ffec3eaf0a?w=600&q=80" alt="google maps directions building floor">
+        <div class="source-body">
+          <div class="source-type">📱 WhatsApp — New Employee Welcome</div>
+          <div class="source-content">"Hi! Welcome to Solaris. Your desk is on the fifth floor, Room 5B. The building is the grey and blue one — second building on the right from the main gate. There are 8 floors. Cafeteria is on the third floor."</div>
+          <div class="source-q">Your friend asks: "Which floor is the cafeteria?" and "How many floors?" Write both answers using full sentences with there is/are.</div>
+          <textarea class="source-input" rows="3" placeholder="The cafeteria is on the... There are..."></textarea>
+        </div>
+      </div>
+
+      <div class="source-card">
+        <img src="https://images.unsplash.com/photo-1647891808779-5d2b2aa4e8fc?w=600&q=80" alt="hotel booking email description">
+        <div class="source-body">
+          <div class="source-type">📧 Hotel Booking Confirmation</div>
+          <div class="source-content">"Your room is on the seventh floor. The hotel has twelve floors. There is a restaurant on the ground floor and a gym on the tenth floor. The building is the white and orange tower opposite the central park."</div>
+          <div class="source-q">A colleague asks you to describe the hotel. Say: which floor their room is on, what the building looks like, and one thing on the ground floor.</div>
+          <textarea class="source-input" rows="3" placeholder="The room is on the... The building is a white and orange... On the ground floor, there is..."></textarea>
+        </div>
+      </div>
+
+      <div class="source-card">
+        <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=600&q=80" alt="company directory sign floors building">
+        <div class="source-body">
+          <div class="source-type">🏢 Building Directory — Floor Index</div>
+          <div class="source-content">"G: Reception · Security. 1st: Sales · Marketing. 2nd: HR · Finance. 3rd: Engineering. 4th: Management. 5th: IT · Training. 6th: Conference Rooms A–F. 7th–8th: Maintenance."</div>
+          <div class="source-q">Give directions to Engineering from reception — include the floor (ordinal) and one preposition of place for where to go when they exit the elevator.</div>
+          <textarea class="source-input" rows="3" placeholder="Take the elevator to the third floor. Turn... Engineering is..."></textarea>
+        </div>
+      </div>
+
+      <div class="source-card">
+        <img src="https://images.unsplash.com/photo-1524230572899-a752b3835840?w=600&q=80" alt="city map street buildings colours distances">
+        <div class="source-body">
+          <div class="source-type">🗺️ Visitor Information Sheet</div>
+          <div class="source-content">"Near Solaris Manufacturing: Banco Nacional (grey building, 2 blocks north) · Farmacia del Centro (red and white building, 1 block east, ground floor only) · Hotel Colonial (white building, 10 min on foot, 6 floors)."</div>
+          <div class="source-q">A visitor asks: "Is there a pharmacy near here?" Give a complete answer: yes/no, colour, distance, and one direction to get there.</div>
+          <textarea class="source-input" rows="3" placeholder="Yes, there is a pharmacy! It's a red and white building — about one block from here. Go straight and turn..."></textarea>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="teacher-note tn-c1">
+      <div class="tn-label">📌 Source Analysis Note</div>
+      <p>Source 3 (directory) is the hardest — it requires reading for information AND producing directions with ordinals + prepositions. Source 4 is the M4 capstone: "Is there a…?" (S1) + preposition (S2) + direction (S3) + colour + distance (S4) all in one answer. Slow down on Source 4. Elicit 2–3 different versions from different students and compare them.</p>
+    </div>
+  </div>
+</div>
+
+<!-- §7 SELF-RATING + LEADERBOARD -->
+<div class="section">
+  <div class="section-header">
+    <span class="section-number">§7</span>
+    <div>
+      <div class="section-title">Self-Rating &amp; <em>Leaderboard</em></div>
+      <div class="section-sub">M4 S4 reflection · Track the class · Who used the most M4 structures today?</div>
+    </div>
+    <span class="dur-tag">⏱ 5 MIN</span>
+  </div>
+  <img class="img-banner" src="https://images.unsplash.com/photo-1554034483-04fda0d3507b?w=900&q=80" alt="Self assessment reflection notepad professional">
+  <div class="section-body">
+
+    <div class="slider-section">
+      <div class="slider-label">1. I can say any ordinal from 1st to 10th without thinking — and pronounce them correctly.</div>
+      <div class="slider-wrap">
+        <input type="range" class="rating-slider" id="sl1" min="1" max="10" value="5" oninput="updateSlider('sl1','sv1');calcFeedback()">
+        <div class="slider-val" id="sv1">5</div>
+      </div>
+      <div class="slider-range"><span>1 — Still confusing</span><span>5 — Mostly right</span><span>10 — Automatic!</span></div>
+    </div>
+
+    <div class="slider-section">
+      <div class="slider-label">2. I can describe a building using colours and floor numbers in a natural sentence.</div>
+      <div class="slider-wrap">
+        <input type="range" class="rating-slider" id="sl2" min="1" max="10" value="5" oninput="updateSlider('sl2','sv2');calcFeedback()">
+        <div class="slider-val" id="sv2">5</div>
+      </div>
+      <div class="slider-range"><span>1 — Not yet</span><span>5 — Getting there</span><span>10 — Completely natural!</span></div>
+    </div>
+
+    <div class="slider-section">
+      <div class="slider-label">3. I can combine ALL of M4: there is/are + prepositions + directions + ordinals + colours + distance.</div>
+      <div class="slider-wrap">
+        <input type="range" class="rating-slider" id="sl3" min="1" max="10" value="5" oninput="updateSlider('sl3','sv3');calcFeedback()">
+        <div class="slider-val" id="sv3">5</div>
+      </div>
+      <div class="slider-range"><span>1 — Need more practice</span><span>5 — Mostly yes</span><span>10 — Yes, spontaneously!</span></div>
+    </div>
+
+    <div class="rating-feedback" id="ratingFeedback"></div>
+
+    <div class="lb-wrap">
+      <div class="lb-label">🏅 Leaderboard — M4 S4B · Most M4 Structures Used</div>
+      <div class="lb-input-row">
+        <input class="lb-input" id="lbName" type="text" placeholder="Student name">
+        <input class="lb-input" id="lbPts" type="number" placeholder="Score" min="0" max="30" style="max-width:100px">
+        <button class="lb-add" onclick="addLB()">+ Add</button>
+        <button class="lb-reset" onclick="resetLB()">↺ Reset</button>
+      </div>
+      <table class="lb-table">
+        <thead><tr><th>#</th><th>Name</th><th>M4 Score</th></tr></thead>
+        <tbody id="lbBody"><tr><td colspan="3" style="color:var(--dim);text-align:center;padding:16px;font-size:12px">No scores yet — add first student!</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- §8 CERTIFICATE + MY WIN -->
+<div class="section">
+  <div class="section-header">
+    <span class="section-number">§8</span>
+    <div>
+      <div class="section-title">Certificate &amp; <em>My Win Today</em></div>
+      <div class="section-sub">Celebrate M4 S4 · Preview S5 Exit Task · 3 Phrases · Close the session</div>
+    </div>
+    <span class="dur-tag">⏱ 5 MIN</span>
+  </div>
+  <img class="img-banner" src="https://images.unsplash.com/photo-1423742774270-6884aac775fa?w=900&q=80" alt="Certificate completion celebration achievement">
+  <div class="section-body">
+
+    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:16px 20px;margin-bottom:20px">
+      <div style="font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent2);margin-bottom:10px">🏅 Badge Progress Today</div>
+      <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap">
+        <span style="font-size:22px" id="sh-b1">🔥</span>
+        <span style="font-size:22px" id="sh-b2">⚡</span>
+        <span style="font-size:22px" id="sh-b3">🎤</span>
+        <span style="font-size:22px" id="sh-b4">🔍</span>
+        <span style="font-size:22px" id="sh-b5">🏆</span>
+        <div id="confMsg" style="font-size:12px;color:var(--success);display:none;font-family:var(--font-head);font-weight:700;letter-spacing:1px">🎉 ALL 5 BADGES — Perfect M4 S4 session!</div>
+      </div>
+    </div>
+
+    <div style="background:rgba(255,184,0,.05);border:1px solid rgba(255,184,0,.2);border-radius:8px;padding:14px 18px;margin-bottom:20px">
+      <div style="font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:8px">⭐ Preview — Session 5: Module Exit Task</div>
+      <p style="font-size:12.5px;color:rgba(255,184,0,.85);line-height:1.6">S5 integrates ALL of M4: there is/are · prepositions · directions · ordinals · colours · distance. The exit task is a 4-minute spoken tour of your real workplace — for an imaginary international visitor. Start preparing your building tour now: you already have all the vocabulary.</p>
+    </div>
+
+    <div style="font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:10px">✅ M4 S4 Complete — I Can Now…</div>
+    <div class="checklist">
+      <div class="cl-item" onclick="this.classList.toggle('done')"><div class="cl-box"></div>I can say ordinals 1st–10th correctly — including first, second, third (irregular) and fifth, eighth, ninth (spelling changes)</div>
+      <div class="cl-item" onclick="this.classList.toggle('done')"><div class="cl-box"></div>I always say "on the [ordinal] floor" — never "in the floor"</div>
+      <div class="cl-item" onclick="this.classList.toggle('done')"><div class="cl-box"></div>I can describe a building with colour + floors: "It's a grey and blue building — there are eight floors"</div>
+      <div class="cl-item" onclick="this.classList.toggle('done')"><div class="cl-box"></div>I can answer "How far?" with blocks or minutes: "About two blocks / five minutes on foot"</div>
+      <div class="cl-item" onclick="this.classList.toggle('done')"><div class="cl-box"></div>I can combine ALL four M4 sessions in one complete, natural description of my workplace and neighbourhood</div>
+    </div>
+
+    <div class="cert-wrap">
+      <div class="cert-label">🎓 Session Certificate — Best M4 S4 Description</div>
+      <div class="cert-input-row">
+        <input class="cert-input" id="certName" type="text" placeholder="Student name">
+        <button class="cert-gen" onclick="generateCert()">Generate Certificate</button>
+      </div>
+      <div class="cert-result" id="certResult">
+        <div class="cert-border-top"></div>
+        <div class="cert-logo">Gabriel Turner English Training</div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:1.5px;font-family:var(--font-head)">Session Certificate</div>
+        <div class="cert-name" id="certNameDisplay"></div>
+        <div class="cert-text">has successfully completed<br><strong style="color:#fff">A1.1 · Module 4 · Session 4 — Numbers, Floors &amp; City</strong><br>demonstrating the ability to describe buildings and urban locations in English using ordinals, colours and distances.</div>
+        <div class="cert-skills">
+          <span class="cert-skill">Ordinals 1st–10th</span>
+          <span class="cert-skill">on the [floor] floor</span>
+          <span class="cert-skill">Colour descriptions</span>
+          <span class="cert-skill">How far? / How many?</span>
+          <span class="cert-skill">Full M4 integration</span>
+        </div>
+        <div class="cert-date" id="certDate"></div>
+      </div>
+    </div>
+
+    <div class="my-win">
+      <div class="mw-label">🏆 My Win Today</div>
+      <p style="font-size:12px;color:var(--muted);margin-bottom:8px">What's the most complete description of your building you produced today — using ordinals + colour + distance? Write it here.</p>
+      <textarea class="mw-textarea" id="myWin" placeholder="Example: 'Our building is grey and blue — there are six floors. My office is on the fourth floor. The nearest hotel is two blocks away — it's the tall white building at the corner. You can't miss it.'"></textarea>
+      <br>
+      <button class="mw-save" onclick="saveWin()">Save My Win 🏆</button>
+      <div class="mw-confirm" id="winConfirm">✓ Saved! Badge 🏆 earned — one session left before the Module 4 Exit Task!</div>
+    </div>
+  </div>
+</div>
+
+<!-- 3 PHRASES FOR THIS WEEK -->
+<div class="phrases-week">
+  <div class="pw-header">
+    <div style="font-size:18px">🎯</div>
+    <div>
+      <div class="pw-title">3 Phrases — Use These at Work This Week</div>
+      <div class="pw-sub">M4 S4 complete — full building + city description in your pocket</div>
+    </div>
+  </div>
+  <div class="pw-grid">
+    <div class="pw-card">
+      <img class="pw-img" src="https://images.unsplash.com/photo-1583202736458-7f66d8e8c2b8?w=600&q=80" alt="building exterior grey blue colour facade">
+      <div class="pw-body">
+        <div class="pw-num">Phrase 1</div>
+        <div class="pw-phrase">"It's the [colour] building — [X] floors. We're on the [ordinal]."</div>
+        <div class="pw-ctx">The complete building identification phrase. Use on any call where someone needs to find your building — WhatsApp, Teams, or when an international visitor is outside. Three facts in one sentence.</div>
+      </div>
+    </div>
+    <div class="pw-card">
+      <img class="pw-img" src="https://images.unsplash.com/photo-1511818966892-d7d671e672a2?w=600&q=80" alt="professional pointing to nearby hotel building distance">
+      <div class="pw-body">
+        <div class="pw-num">Phrase 2</div>
+        <div class="pw-phrase">"There is a [place] — it's the [colour] building, about [X] blocks from here."</div>
+        <div class="pw-ctx">The complete nearby-place description. Combines there is + colour + distance. Use when any international colleague asks about hotels, banks, or restaurants near your office. Sounds completely natural.</div>
+      </div>
+    </div>
+    <div class="pw-card">
+      <img class="pw-img" src="https://images.unsplash.com/photo-1568140937938-98e3a2ba23f4?w=600&q=80" alt="person explaining how many floors how far question">
+      <div class="pw-body">
+        <div class="pw-num">Phrase 3</div>
+        <div class="pw-phrase">"How many floors? [X]. How far? About [X] minutes on foot."</div>
+        <div class="pw-ctx">The two most common visitor questions — answered back-to-back. Use this rhythm in any written or spoken reply. Quick, precise, professional. It shows your English is efficient and complete.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer class="ftr">
+  <div class="fbrand">Gabriel Turner · English Training</div>
+  <div class="finfo">A1.1 · Module 4 · Session 4B · GT_A1_1_M4_S4B_TEACHER_v1</div>
+  <div class="flvs">
+    <div class="flv active">A1.1</div>
+    <div class="flv">A1.2</div>
+    <div class="flv">A2.1</div>
+    <div class="flv">A2.2</div>
+    <div class="flv">B1.1</div>
+    <div class="flv">B1.2</div>
+  </div>
+</footer>
+
+<script>
+/* ── BADGES ─────────────────────────────────── */
+const badgeEarned={b1:false,b2:false,b3:false,b4:false,b5:false};
+function earnBadge(id){
+  if(badgeEarned[id])return;badgeEarned[id]=true;
+  const el=document.getElementById(id);if(el)el.classList.add('earned');
+  const sh=document.getElementById('sh-'+id);if(sh)sh.style.filter='none';
+  if(Object.values(badgeEarned).every(Boolean)){launchConfetti();document.getElementById('confMsg').style.display='block';}
+}
+function launchConfetti(){
+  const colors=['#FF1F5C','#FF4D7A','#FF6B9D','#CC0044','#ffffff'];
+  for(let i=0;i<90;i++){
+    const d=document.createElement('div');
+    d.style.cssText='position:fixed;top:-10px;pointer-events:none;z-index:9999;border-radius:2px;';
+    d.style.left=Math.random()*100+'vw';
+    d.style.width=(6+Math.random()*6)+'px';d.style.height=(6+Math.random()*6)+'px';
+    d.style.background=colors[Math.floor(Math.random()*colors.length)];
+    d.style.animation='fall '+(1.5+Math.random()*2)+'s linear forwards';
+    document.body.appendChild(d);setTimeout(()=>d.remove(),4000);
+  }
+}
+
+/* ── TIMER ─────────────────────────────────── */
+let timerIntervals={};
+function startTimer(arcId,textId,seconds,badgeKey,circumference){
+  if(timerIntervals[arcId])clearInterval(timerIntervals[arcId]);
+  const arc=document.getElementById(arcId),txt=document.getElementById(textId);
+  let rem=seconds;
+  function update(){
+    arc.style.strokeDashoffset=circumference*(1-rem/seconds);
+    const m=Math.floor(rem/60),s=rem%60;
+    txt.textContent=m+':'+(s<10?'0':'')+s;
+    if(rem<=5)arc.style.stroke='#FF4D6D';
+    if(rem<=0){clearInterval(timerIntervals[arcId]);arc.style.stroke='var(--success)';if(badgeKey)earnBadge(badgeKey);return;}
+    rem--;
+  }
+  update();timerIntervals[arcId]=setInterval(update,1000);
+}
+
+/* ── COLOUR & FLOOR BINGO ─────────────────── */
+const bingoCalls=[
+  '"There is a meeting room on the third floor of a grey building." — Mark it!',
+  '"The reception is on the ground floor of a white building." — Mark it!',
+  '"There is a cafeteria on the fifth floor — the building is blue." — Mark it!',
+  '"There is a red pharmacy — it\'s one block away." — Mark it!',
+  '"There is a bank — it\'s a black building, two blocks from here." — Mark it!',
+  '"The HR office is on the second floor of a grey building." — Mark it!',
+  '"The hotel is brown — about five minutes on foot." — Mark it!',
+  '"There is a break room on the fourth floor of a white building." — Mark it!',
+  '"The conference room is on the first floor of an orange building." — Mark it!',
+  '"There is a green restaurant — three blocks away." — Mark it!',
+  '"The IT department is on the sixth floor of a blue building." — Mark it!',
+  '"There is a parking lot behind a grey building." — Mark it!',
+  '"There is a supermarket — yellow building, four blocks away." — Mark it!',
+  '"The rooftop terrace is on the tenth floor of a white building." — Mark it!',
+  '"The training room is on the seventh floor of a grey building." — Mark it!',
+  '"There is a hospital — white building, about ten minutes on foot." — Mark it!',
+];
+let bingoCallIdx=0;
+const marked=new Set();
+
+function nextBingoCall(){
+  if(bingoCallIdx>=bingoCalls.length){
+    document.getElementById('bingoCurrent').textContent='All calls complete! Reset to play again.';
+    return;
+  }
+  document.getElementById('bingoCurrent').textContent=bingoCalls[bingoCallIdx];
+  bingoCallIdx++;
+}
+
+function markCell(cell){
+  const id=parseInt(cell.dataset.id);
+  if(marked.has(id)){marked.delete(id);cell.classList.remove('marked','bingo-line');}
+  else{marked.add(id);cell.classList.add('marked');}
+  checkBingo();
+}
+
+function checkBingo(){
+  // 4x4 grid: rows 0-3, cols 0-3
+  const lines=[
+    [0,1,2,3],[4,5,6,7],[8,9,10,11],[12,13,14,15], // rows
+    [0,4,8,12],[1,5,9,13],[2,6,10,14],[3,7,11,15],  // cols
+    [0,5,10,15],[3,6,9,12] // diagonals
+  ];
+  let bingo=false;
+  for(const line of lines){
+    if(line.every(id=>marked.has(id))){
+      bingo=true;
+      line.forEach(id=>{
+        const cell=document.querySelector(`[data-id="${id}"]`);
+        if(cell)cell.classList.add('bingo-line');
+      });
+    }
+  }
+  if(bingo){
+    document.getElementById('bingoMsg').classList.add('show');
+    earnBadge('b3');
+  }
+}
+
+function resetBingo(){
+  marked.clear();
+  document.querySelectorAll('.bingo-cell').forEach(c=>c.classList.remove('marked','bingo-line'));
+  document.getElementById('bingoCurrent').textContent='Press "Next Call" to start.';
+  document.getElementById('bingoMsg').classList.remove('show');
+  bingoCallIdx=0;
+}
+
+/* ── SPEED CARDS ───────────────────────────── */
+let speedPts=0;
+function flipCard(card){
+  if(card.classList.contains('flipped'))return;
+  card.classList.add('flipped');
+  document.getElementById('speedBtns').style.display='flex';
+}
+function addScore(val){
+  speedPts+=val;
+  document.getElementById('speedScore').textContent=speedPts;
+  if(speedPts>=8)earnBadge('b4');
+}
+function resetSpeed(){
+  speedPts=0;
+  document.getElementById('speedScore').textContent='0';
+  document.getElementById('speedBtns').style.display='none';
+  document.querySelectorAll('.speed-card').forEach(c=>c.classList.remove('flipped'));
+}
+
+/* ── SELF-RATING ───────────────────────────── */
+function updateSlider(id,valId){document.getElementById(valId).textContent=document.getElementById(id).value;}
+function calcFeedback(){
+  const avg=(parseInt(document.getElementById('sl1').value)+parseInt(document.getElementById('sl2').value)+parseInt(document.getElementById('sl3').value))/3;
+  const fb=document.getElementById('ratingFeedback');fb.classList.add('show');
+  if(avg>=8){fb.innerHTML='<strong>Outstanding!</strong> You\'re ready for the S5 exit task — a 4-minute spoken tour of your workplace. You have all the vocabulary. The only thing left is confidence and fluency. S5 gives you both.';}
+  else if(avg>=5){fb.innerHTML='<strong>Good progress.</strong> Before S5, practice this one sentence tonight: "My office is on the [ordinal] floor of a [colour] building." Say it 10 times with your real details. That automaticity is what S5 needs.';}
+  else{fb.innerHTML='<strong>Focus on the core.</strong> Before S5, master just one ordinal + colour pair: "third floor, grey building." If you can say that automatically, you have the engine for the exit task. Everything else is just adding vocabulary.';}
+}
+
+/* ── LEADERBOARD ───────────────────────────── */
+let lbData=[];
+function addLB(){
+  const name=document.getElementById('lbName').value.trim();
+  const pts=parseInt(document.getElementById('lbPts').value)||0;
+  if(!name)return;
+  lbData.push({name,pts});lbData.sort((a,b)=>b.pts-a.pts);renderLB();
+  document.getElementById('lbName').value='';document.getElementById('lbPts').value='';
+}
+function resetLB(){lbData=[];renderLB();}
+function renderLB(){
+  const tbody=document.getElementById('lbBody');
+  if(!lbData.length){tbody.innerHTML='<tr><td colspan="3" style="color:var(--dim);text-align:center;padding:16px;font-size:12px">No scores yet</td></tr>';return;}
+  tbody.innerHTML=lbData.map((r,i)=>`<tr><td class="lb-rank">${i===0?'🥇':i===1?'🥈':i===2?'🥉':(i+1)}</td><td>${r.name}</td><td style="color:var(--accent2);font-family:var(--font-head);font-weight:700">${r.pts}</td></tr>`).join('');
+}
+
+/* ── CERTIFICATE ───────────────────────────── */
+function generateCert(){
+  const name=document.getElementById('certName').value.trim();if(!name)return;
+  document.getElementById('certNameDisplay').textContent=name;
+  const d=new Date();
+  document.getElementById('certDate').textContent='Issued: '+d.toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+  document.getElementById('certResult').classList.add('show');
+}
+
+/* ── MY WIN ─────────────────────────────────── */
+function saveWin(){
+  const v=document.getElementById('myWin').value.trim();if(!v)return;
+  document.getElementById('winConfirm').style.display='block';earnBadge('b5');
+}
+
+/* ── PROGRESS BAR ──────────────────────────── */
+window.addEventListener('scroll',()=>{
+  const h=document.documentElement;
+  document.getElementById('progressBar').style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight)*100)+'%';
+});
+
+/* ── CONFETTI ─────────────────────────────── */
+const styleEl=document.createElement('style');
+styleEl.textContent='@keyframes fall{0%{transform:translateY(-10px) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}';
+document.head.appendChild(styleEl);
+</script>
+</body>
+</html>
