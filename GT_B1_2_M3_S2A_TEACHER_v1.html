@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GT · B1.2 · M3 · S2A · Social Media Addiction</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{--accent:#34D399;--accent2:#6EE7B7;--bg:#080808;--surface:#111318;--surface2:#1a1f28;--border:rgba(52,211,153,.18);--text:#F0F4F8;--muted:#8A9BB0;--danger:#FF4D6D;--success:#00E5A0;--warn:#FFB347;--violet:#A78BFA;--font-head:'Syne',sans-serif;--font-body:'DM Sans',sans-serif}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:15px;line-height:1.65;min-height:100vh}
+#progressBar{position:fixed;top:0;left:0;width:0%;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent2));z-index:9999;transition:width .3s}
+.site-header{position:sticky;top:0;z-index:900;background:rgba(8,8,8,.92);backdrop-filter:blur(14px);border-bottom:1px solid var(--border);padding:0 24px}
+.header-inner{max-width:960px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:58px;gap:12px;flex-wrap:wrap}
+.header-brand{font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--accent);letter-spacing:.08em;text-transform:uppercase}
+.header-meta{font-size:12px;color:var(--muted)}
+.badge-strip{display:flex;gap:6px}.badge-strip span{font-size:18px;opacity:.25;transition:all .4s;filter:grayscale(1)}.badge-strip span.earned{opacity:1;filter:none;animation:badgePop .5s cubic-bezier(.34,1.56,.64,1)}
+@keyframes badgePop{0%{transform:scale(.4) rotate(-20deg);opacity:0}70%{transform:scale(1.25) rotate(4deg);opacity:1}100%{transform:scale(1) rotate(0)}}
+.mode-toggle{background:var(--surface2);border:1px solid var(--border);color:var(--accent);font-family:var(--font-head);font-size:11px;font-weight:700;padding:5px 12px;border-radius:6px;cursor:pointer}.mode-toggle:hover{background:var(--accent);color:var(--bg)}
+.sticky-nav{position:sticky;top:58px;z-index:800;background:rgba(8,8,8,.88);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none}.sticky-nav::-webkit-scrollbar{display:none}
+.nav-inner{max-width:960px;margin:0 auto;display:flex;gap:0;padding:0 16px}
+.nav-inner a{font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:.06em;color:var(--muted);text-decoration:none;padding:10px 14px;border-bottom:2px solid transparent;white-space:nowrap;transition:all .2s}.nav-inner a:hover{color:var(--accent);border-color:var(--accent)}
+.main{max-width:960px;margin:0 auto;padding:32px 20px 80px}
+.section{margin-bottom:48px;border:1px solid var(--border);border-radius:16px;overflow:hidden;background:var(--surface)}
+.section-header{display:flex;align-items:center;gap:14px;padding:18px 24px;background:linear-gradient(135deg,rgba(52,211,153,.08),transparent);border-bottom:1px solid var(--border)}
+.section-number{font-family:var(--font-head);font-size:11px;font-weight:800;color:var(--accent);letter-spacing:.12em;text-transform:uppercase;background:rgba(52,211,153,.1);border:1px solid var(--border);padding:3px 10px;border-radius:20px}
+.section-title{font-family:var(--font-head);font-size:18px;font-weight:800;color:var(--text);flex:1}
+.section-time{font-size:12px;color:var(--muted);background:var(--surface2);padding:3px 10px;border-radius:20px}
+.section-body{padding:24px}
+.img-card{border-radius:10px;overflow:hidden;position:relative;margin-bottom:18px}.img-card img{width:100%;height:200px;object-fit:cover;display:block}.img-overlay{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(8,8,8,.88));padding:14px 16px;font-size:13px;color:rgba(255,255,255,.88)}
+.img-sm img{height:160px}
+.teacher-note{background:rgba(52,211,153,.06);border-left:3px solid var(--accent);border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0;font-size:13px;color:var(--muted)}.teacher-note strong{color:var(--accent)}
+.student-only{display:none}body.student-mode .teacher-only{display:none}body.student-mode .student-only{display:block}
+.warmup-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0}
+.warmup-q{background:var(--surface2);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.warmup-q-img{width:100%;height:90px;object-fit:cover;display:block;filter:brightness(.55)}
+.warmup-q-body{padding:14px;font-size:14px}
+.warmup-q .qnum{font-family:var(--font-head);font-size:10px;font-weight:800;color:var(--accent);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px}
+.timer-wrap{display:flex;flex-direction:column;align-items:center;gap:10px;margin:16px 0}
+.timer-svg{transform:rotate(-90deg)}.timer-bg{fill:none;stroke:rgba(255,255,255,.07)}.timer-arc{fill:none;stroke:var(--accent);stroke-linecap:round;transition:stroke .5s}.timer-text{font-family:var(--font-head);font-weight:800;font-size:22px;fill:var(--text);dominant-baseline:middle;text-anchor:middle}.timer-label{font-size:11px;fill:var(--muted);dominant-baseline:middle;text-anchor:middle}
+.timer-btns{display:flex;gap:8px}.btn{font-family:var(--font-head);font-size:12px;font-weight:700;letter-spacing:.06em;padding:7px 18px;border-radius:8px;border:none;cursor:pointer;transition:all .2s}.btn-primary{background:var(--accent);color:var(--bg)}.btn-primary:hover{background:var(--accent2)}.btn-ghost{background:var(--surface2);border:1px solid var(--border);color:var(--muted)}.btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
+.topic-card{background:linear-gradient(135deg,rgba(52,211,153,.07),rgba(110,231,183,.04));border:1px solid var(--border);border-radius:12px;overflow:hidden;margin:16px 0}
+.topic-card-img{width:100%;height:140px;object-fit:cover;display:block;filter:brightness(.55)}
+.topic-card-body{padding:22px}
+.topic-card h3{font-family:var(--font-head);font-size:20px;font-weight:800;color:var(--accent);margin-bottom:6px}
+.rounds{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:14px 0}
+.round-card{background:var(--surface2);border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.round-card-img{width:100%;height:60px;object-fit:cover;display:block;filter:brightness(.45)}
+.round-card-body{padding:10px}
+.rnum{font-family:var(--font-head);font-size:10px;font-weight:700;color:var(--accent);letter-spacing:.1em;margin-bottom:4px}
+.reveal-btn{background:transparent;border:1px dashed var(--accent);color:var(--accent);font-family:var(--font-head);font-size:11px;font-weight:700;padding:7px 16px;border-radius:8px;cursor:pointer;margin-top:14px}
+.model-box{display:none;margin-top:12px;background:rgba(52,211,153,.06);border:1px solid var(--border);border-radius:10px;padding:16px;font-size:14px;line-height:1.8}
+/* DOPAMINE LOOP DIAGRAM — new visual */
+.dopamine-loop{margin:16px 0;background:var(--surface2);border:1px solid var(--border);border-radius:14px;overflow:hidden}
+.dl-header{padding:14px 18px;background:linear-gradient(135deg,rgba(52,211,153,.1),rgba(167,139,250,.08));border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.dl-title{font-family:var(--font-head);font-size:13px;font-weight:800;color:var(--accent);letter-spacing:.04em;text-transform:uppercase}
+.dl-sub{font-size:12px;color:var(--muted)}
+.dl-nodes{display:grid;grid-template-columns:repeat(4,1fr);gap:0;padding:0}
+.dl-node{border-right:1px solid var(--border);padding:16px 14px;text-align:center;cursor:pointer;transition:background .2s;position:relative}
+.dl-node:last-child{border-right:none}
+.dl-node:hover{background:rgba(52,211,153,.06)}
+.dl-node.active{background:rgba(52,211,153,.08);border-bottom:2px solid var(--accent)}
+.dl-node-icon{font-size:28px;margin-bottom:8px}
+.dl-node-label{font-family:var(--font-head);font-size:11px;font-weight:700;color:var(--accent);letter-spacing:.06em;text-transform:uppercase;margin-bottom:5px}
+.dl-node-passive{font-size:12px;color:var(--muted);font-style:italic;line-height:1.4}
+.dl-node-arrow{position:absolute;right:-14px;top:50%;transform:translateY(-50%);color:var(--accent);font-size:18px;z-index:1}
+.dl-detail{display:none;padding:16px 18px;border-top:1px solid var(--border);background:rgba(52,211,153,.04)}
+.dl-detail.show{display:block}
+.dl-detail-passive{font-size:16px;font-weight:600;color:var(--accent);margin-bottom:6px}
+.dl-detail-explain{font-size:13px;color:var(--muted);margin-bottom:8px;line-height:1.5}
+.dl-detail-passive-form{font-size:12px;color:var(--text);background:rgba(52,211,153,.08);border:1px solid rgba(52,211,153,.2);border-radius:6px;padding:8px 12px}
+/* VOCAB */
+.vocab-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(185px,1fr));gap:10px;margin:16px 0}
+.vocab-card{background:var(--surface2);border:1px solid var(--border);border-radius:10px;overflow:hidden;cursor:pointer;transition:all .2s}.vocab-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.vocab-card-img{width:100%;height:70px;object-fit:cover;display:block;filter:brightness(.5)}
+.vocab-card-body{padding:12px}
+.vocab-word{font-family:var(--font-head);font-size:14px;font-weight:700;color:var(--accent)}.vocab-ipa{font-size:11px;color:var(--muted);font-style:italic;margin-bottom:4px}.vocab-def{font-size:12px;color:var(--text);margin-bottom:4px}.vocab-ex{font-size:11px;color:var(--muted);font-style:italic;border-left:2px solid var(--accent);padding-left:7px}
+.speak-btn{background:rgba(52,211,153,.12);border:none;border-radius:5px;color:var(--accent);font-size:10px;padding:2px 7px;cursor:pointer;font-family:var(--font-head);font-weight:700;margin-top:5px}
+.vquiz-wrap{margin:20px 0}.vquiz-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}.vquiz-title{font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--muted);letter-spacing:.06em;text-transform:uppercase}.vquiz-counter{font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--accent);background:rgba(52,211,153,.1);border:1px solid var(--border);padding:3px 12px;border-radius:20px}.progress-container{flex:1;margin:0 16px}.progress-track{height:6px;background:rgba(255,255,255,.07);border-radius:10px;overflow:hidden}.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:10px;transition:width .4s}.progress-label{font-size:11px;color:var(--muted);margin-top:4px;text-align:right}
+.vquiz-card{background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:26px 24px;text-align:center}.vquiz-word{font-family:var(--font-head);font-size:28px;font-weight:800;color:var(--accent);margin-bottom:6px}.vquiz-ipa{font-size:13px;color:var(--muted);margin-bottom:20px;font-style:italic}.vquiz-options{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}.vquiz-opt{background:var(--surface);border:2px solid var(--border);color:var(--text);font-size:14px;font-weight:500;padding:12px 8px;border-radius:10px;cursor:pointer;transition:all .2s}.vquiz-opt:hover:not(:disabled){border-color:var(--accent);color:var(--accent)}.vquiz-opt.correct{background:rgba(0,229,160,.15);border-color:var(--success);color:var(--success);pointer-events:none}.vquiz-opt.wrong{background:rgba(255,77,109,.1);border-color:var(--danger);color:var(--danger);pointer-events:none}.vquiz-feedback{margin-top:14px;font-size:14px;font-weight:600;min-height:22px}.vquiz-next{display:none;margin-top:14px;background:var(--accent);border:none;color:var(--bg);font-family:var(--font-head);font-size:12px;font-weight:800;padding:9px 22px;border-radius:8px;cursor:pointer}.vquiz-done{display:none;text-align:center;padding:24px;background:rgba(0,229,160,.07);border:1px solid var(--success);border-radius:12px;margin-top:12px}.vquiz-done-score{font-family:var(--font-head);font-size:36px;font-weight:800;color:var(--success)}.vquiz-done-msg{font-size:14px;color:var(--muted);margin-top:6px}.vquiz-restart{margin-top:12px;background:transparent;border:1px solid var(--accent);color:var(--accent);font-family:var(--font-head);font-size:11px;font-weight:700;padding:7px 18px;border-radius:8px;cursor:pointer}
+/* COLLOQUIAL */
+.col-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0}
+.col-card{background:var(--surface2);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.col-card-img{width:100%;height:90px;object-fit:cover;display:block;filter:brightness(.5)}
+.col-card-body{padding:14px}
+.col-phrase{font-family:var(--font-head);font-size:15px;font-weight:700;color:var(--warn);margin-bottom:5px}.col-use{font-size:13px;color:var(--muted);margin-bottom:8px}.col-example{font-size:13px;font-style:italic;color:var(--text);border-left:2px solid var(--warn);padding-left:10px}
+/* GRAMMAR */
+table.grammar{width:100%;border-collapse:collapse;margin:16px 0;font-size:13px}table.grammar th{background:rgba(52,211,153,.1);color:var(--accent);font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:10px 14px;text-align:left;border-bottom:1px solid var(--border)}table.grammar td{padding:9px 14px;border-bottom:1px solid rgba(255,255,255,.04);vertical-align:top}.gram-form{color:var(--accent);font-weight:700;font-family:var(--font-head)}.gram-ex{color:var(--muted);font-style:italic}
+.poll-section{margin:20px 0}.poll-score-bar{display:flex;justify-content:space-between;align-items:center;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:8px 16px;margin-bottom:14px}.poll-score-label{font-family:var(--font-head);font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}.poll-score-val{font-family:var(--font-head);font-size:20px;font-weight:800;color:var(--accent)}
+.poll-q{margin-bottom:14px}.poll-q-text{font-size:14px;font-weight:600;color:var(--text);margin-bottom:8px}.poll-options{display:flex;flex-wrap:wrap;gap:8px}.poll-btn{background:var(--surface2);border:1px solid var(--border);color:var(--text);font-size:13px;padding:7px 14px;border-radius:8px;cursor:pointer;transition:all .2s}.poll-btn.correct-ans{background:rgba(0,229,160,.15);border-color:var(--success);color:var(--success)}.poll-btn.wrong-ans{background:rgba(255,77,109,.12);border-color:var(--danger);color:var(--danger)}.poll-feedback{font-size:13px;color:var(--muted);margin-top:6px;min-height:18px}
+.activity-card{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:20px;margin:14px 0}.activity-title{font-family:var(--font-head);font-size:14px;font-weight:800;color:var(--accent);margin-bottom:12px;letter-spacing:.04em;text-transform:uppercase}.activity-score{float:right;font-family:var(--font-head);font-size:16px;font-weight:800;color:var(--accent2)}.activity-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0}.act-item{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:8px;padding:10px}.act-options{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}.act-btn{background:var(--surface);border:1px solid var(--border);color:var(--text);font-size:13px;padding:6px 14px;border-radius:6px;cursor:pointer;transition:all .2s}.act-btn:hover:not(:disabled){border-color:var(--accent);color:var(--accent)}.act-btn.correct-ans{background:rgba(0,229,160,.15);border-color:var(--success);color:var(--success);pointer-events:none}.act-btn.wrong-ans{background:rgba(255,77,109,.12);border-color:var(--danger);color:var(--danger);pointer-events:none}.act-btn:disabled{opacity:.6}.act-feedback{font-size:12px;color:var(--muted);margin-top:6px;min-height:16px}
+/* LISTENING */
+.listening-card{background:var(--surface2);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin:16px 0}
+.listening-card-img{width:100%;height:120px;object-fit:cover;display:block;filter:brightness(.45)}
+.listening-card-body{padding:20px}
+.audio-placeholder{display:flex;align-items:center;gap:16px;padding:14px;background:rgba(52,211,153,.05);border:1px dashed var(--border);border-radius:10px}.audio-icon{font-size:32px}.audio-title{font-family:var(--font-head);font-size:14px;font-weight:700;color:var(--text)}.audio-sub{font-size:12px;color:var(--muted)}.script-toggle{background:transparent;border:1px solid var(--border);color:var(--muted);font-family:var(--font-head);font-size:11px;font-weight:700;padding:7px 16px;border-radius:8px;cursor:pointer;margin:12px 0}.script-box{display:none;background:rgba(52,211,153,.04);border:1px solid rgba(52,211,153,.15);border-radius:10px;padding:18px;font-size:13px;color:var(--text);line-height:1.9;font-style:italic;margin-top:8px}
+.listen-q{margin-bottom:12px}.listen-q-text{font-size:14px;font-weight:500;color:var(--text);margin-bottom:8px}.listen-opts{display:flex;flex-wrap:wrap;gap:8px}.listen-btn{background:var(--surface2);border:1px solid var(--border);color:var(--text);font-size:13px;padding:7px 14px;border-radius:8px;cursor:pointer;transition:all .2s}.listen-btn:hover:not(:disabled){border-color:var(--accent);color:var(--accent)}.listen-btn.correct-ans{background:rgba(0,229,160,.15);border-color:var(--success);color:var(--success)}.listen-btn.wrong-ans{background:rgba(255,77,109,.12);border-color:var(--danger);color:var(--danger)}.listen-btn:disabled{opacity:.6}.listen-feedback{font-size:12px;color:var(--muted);margin-top:6px;min-height:16px}
+.tf-row{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px;flex-wrap:wrap}.tf-stmt{font-size:13px;color:var(--text);flex:1;line-height:1.5;min-width:180px}.tf-btns{display:flex;gap:8px;flex-shrink:0}.tf-btn{background:var(--surface);border:1px solid var(--border);color:var(--text);font-family:var(--font-head);font-size:11px;font-weight:700;padding:6px 14px;border-radius:6px;cursor:pointer}.tf-btn:disabled{opacity:.6}
+/* PRODUCTION */
+.debate-wrap{margin:16px 0}.debate-meter{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:18px}.meter-track{height:10px;background:rgba(255,255,255,.07);border-radius:10px;overflow:hidden;margin:10px 0}.meter-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:10px;transition:width .4s;width:50%}.meter-labels{display:flex;justify-content:space-between;font-size:12px;color:var(--muted)}.debate-btns{display:flex;gap:8px;margin-top:10px}.debate-btn-a{background:rgba(167,139,250,.15);border:1px solid var(--violet);color:var(--violet);font-family:var(--font-head);font-size:12px;font-weight:700;padding:6px 14px;border-radius:8px;cursor:pointer}.debate-btn-b{background:rgba(52,211,153,.12);border:1px solid var(--accent);color:var(--accent);font-family:var(--font-head);font-size:12px;font-weight:700;padding:6px 14px;border-radius:8px;cursor:pointer}
+.speaking-qs{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}.speaking-q{background:var(--surface2);border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.speaking-q-img{width:100%;height:80px;object-fit:cover;display:block;filter:brightness(.45)}
+.speaking-q-body{padding:10px 12px}.sq-tag{font-family:var(--font-head);font-size:10px;font-weight:700;color:var(--accent);letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px}
+.dice-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0}.dice-card{background:var(--surface2);border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.dice-img{width:100%;height:70px;object-fit:cover;display:block;filter:brightness(.45)}
+.dice-body{padding:10px;text-align:center}.dice-num{font-family:var(--font-head);font-size:20px;font-weight:800;color:var(--accent);display:block;margin-bottom:4px}.dice-text{font-size:12px;color:var(--text)}
+/* WRAP-UP */
+.badge-showcase{display:flex;gap:14px;flex-wrap:wrap;margin:16px 0}.badge-item{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:14px 16px;text-align:center;flex:1;min-width:130px}.badge-emoji{font-size:28px;display:block;margin-bottom:6px}.badge-name{font-family:var(--font-head);font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
+.checklist{margin:14px 0}.check-item{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:14px}.check-item:last-child{border-bottom:none}
+.phrases-week{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:14px 0}.phrase-card{background:linear-gradient(135deg,rgba(52,211,153,.08),rgba(110,231,183,.04));border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.phrase-card-img{width:100%;height:80px;object-fit:cover;display:block;filter:brightness(.45)}
+.phrase-card-body{padding:12px;font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--accent);text-align:center}
+.phrase-card-body span{display:block;font-family:var(--font-body);font-size:11px;color:var(--muted);font-weight:400;margin-top:4px}
+.win-textarea{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:14px;padding:12px 14px;resize:vertical;min-height:72px}.win-textarea:focus{outline:none;border-color:var(--accent)}.win-btn{margin-top:8px;background:var(--accent);border:none;color:var(--bg);font-family:var(--font-head);font-size:12px;font-weight:800;padding:9px 20px;border-radius:8px;cursor:pointer}.win-saved{display:none;margin-top:10px;background:rgba(0,229,160,.1);border:1px solid var(--success);border-radius:8px;padding:12px 14px;font-size:14px;color:var(--success)}
+.confetti-wrap{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9000;display:none}
+.tag-t2s{background:rgba(52,211,153,.1);color:var(--accent);font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:2px 8px;border-radius:20px;margin-right:4px}
+.tag-s2s{background:rgba(167,139,250,.12);color:var(--violet);font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:2px 8px;border-radius:20px;margin-right:4px}
+.tag-class{background:rgba(0,229,160,.1);color:var(--success);font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:2px 8px;border-radius:20px;margin-right:4px}
+.divider{border:none;border-top:1px solid var(--border);margin:18px 0}
+.site-footer{border-top:1px solid var(--border);padding:20px;display:flex;justify-content:center;gap:8px;flex-wrap:wrap}.level-tag{font-family:var(--font-head);font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;letter-spacing:.08em;background:var(--surface2);color:var(--muted);border:1px solid transparent}.level-tag.active{background:rgba(52,211,153,.1);color:var(--accent);border-color:var(--accent)}
+@media(max-width:640px){.warmup-grid,.rounds,.col-grid,.speaking-qs,.activity-grid,.phrases-week,.vocab-grid,.dl-nodes{grid-template-columns:1fr 1fr}.header-inner{height:auto;padding:10px 0}.dice-grid{grid-template-columns:repeat(2,1fr)}.vquiz-options{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div id="progressBar"></div><div class="confetti-wrap" id="confettiWrap"></div>
+
+<header class="site-header"><div class="header-inner">
+  <div><div class="header-brand">Gabriel Turner · English Training</div><div class="header-meta">B1.2 · Module 3 · Session 2A — Discovery &amp; Drill</div></div>
+  <div class="badge-strip"><span id="b1">⚡</span><span id="b2">📚</span><span id="b3">🎯</span><span id="b4">🎧</span><span id="b5">🏆</span></div>
+  <button class="mode-toggle" onclick="toggleMode()">STUDENT MODE</button>
+</div></header>
+
+<nav class="sticky-nav"><div class="nav-inner">
+  <a href="#s1">§1 Warm-Up</a><a href="#s2">§2 Speaking</a><a href="#s3">§3 Vocabulary</a>
+  <a href="#s4">§4 Colloquial</a><a href="#s5">§5 Grammar</a><a href="#s6">§6 Listening</a>
+  <a href="#s7">§7 Production</a><a href="#s8">§8 Wrap-Up</a>
+</div></nav>
+
+<main class="main">
+
+<!-- §1 WARM-UP -->
+<section class="section" id="s1"><div class="section-header"><span class="section-number">§1</span><h2 class="section-title">⚡ Warm-Up — Quick Fire</h2><span class="section-time">5 min</span></div>
+<div class="section-body">
+  <div class="img-card"><img src="https://images.unsplash.com/photo-1611162616305-c69b3fa7fbe0?w=900&q=80" alt="Person unable to stop scrolling phone late at night" loading="lazy"><div class="img-overlay">📍 It's midnight. You said you'd sleep 30 minutes ago. Why are you still here?</div></div>
+
+  <div style="background:rgba(52,211,153,.06);border:1px solid rgba(52,211,153,.2);border-radius:10px;padding:14px 16px;margin-bottom:16px;font-size:14px">
+    <div style="font-family:var(--font-head);font-size:10px;font-weight:800;color:var(--accent);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px">⚡ Quick Win — 20 sec</div>
+    Say this out loud right now: <strong>"Social media apps are designed to keep us scrolling."</strong> — That's Passive Voice. You just used it.
+  </div>
+
+  <div class="teacher-note teacher-only"><strong>🎯 Objetivo:</strong> Activar experiencias de uso compulsivo de redes. El Passive Voice emerge naturalmente: "I was recommended this video", "It was designed to keep me watching". B1.2 students already know this — help them notice it.<br><strong>Phone experiment:</strong> "How many times did you unlock your phone today? Check right now." Real data = real discussion.</div>
+
+  <div class="warmup-grid">
+    <div class="warmup-q"><img class="warmup-q-img" src="https://images.unsplash.com/photo-1555421689-d68471e189f2?w=600&q=80" alt="Phone notifications"><div class="warmup-q-body"><div class="qnum">Q1 <span class="tag-t2s">T→S</span></div>How much time is spent on social media per day on average? Guess first — then check your phone settings.</div></div>
+    <div class="warmup-q"><img class="warmup-q-img" src="https://images.unsplash.com/photo-1512486130939-2c4f79935e4f?w=600&q=80" alt="Person scrolling endlessly"><div class="warmup-q-body"><div class="qnum">Q2 <span class="tag-t2s">T→S</span></div>Have you ever opened an app "for a second" and looked up 45 minutes later? What happened?</div></div>
+    <div class="warmup-q"><img class="warmup-q-img" src="https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=600&q=80" alt="Person feeling anxious looking at phone"><div class="warmup-q-body"><div class="qnum">Q3 <span class="tag-s2s">S→S</span></div>Ask your partner: "Have you ever deleted an app — and reinstalled it? How long did the break last?"</div></div>
+    <div class="warmup-q"><img class="warmup-q-img" src="https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=600&q=80" alt="People ignoring each other on phones"><div class="warmup-q-body"><div class="qnum">Q4 <span class="tag-s2s">S→S</span></div>"If social media didn't exist, what would you do with that time?" — Is your honest answer a good thing?</div></div>
+  </div>
+
+  <div class="teacher-note teacher-only"><strong>Layer 1:</strong> ¿Usan Passive naturalmente? "I was recommended", "It's designed to…" → nota para §5<br><strong>Layer 2:</strong> "How many hours are WASTED on social media globally per day? Estimate." → trigger discussion<br><strong>Layer 3:</strong> Carlos Mendez connection: "He's been spending 4+ hours a day on social media and just realized it."</div>
+
+  <div class="timer-wrap"><svg class="timer-svg" width="90" height="90" viewBox="0 0 90 90"><circle class="timer-bg" cx="45" cy="45" r="38" stroke-width="6"/><circle class="timer-arc" id="tArc1" cx="45" cy="45" r="38" stroke-width="6" stroke-dasharray="238.76" stroke-dashoffset="0"/><text class="timer-text" id="tText1" x="45" y="44">1:30</text><text class="timer-label" x="45" y="57">quick fire</text></svg>
+  <div class="timer-btns"><button class="btn btn-primary" onclick="startTimer('tArc1','tText1',90,'b1')">START</button><button class="btn btn-ghost" onclick="resetTimer('tArc1','tText1','1:30')">RESET</button></div></div>
+</div></section>
+
+<!-- §2 SPEAKING TOPIC -->
+<section class="section" id="s2"><div class="section-header"><span class="section-number">§2</span><h2 class="section-title">🗣️ Speaking — Social Media Addiction</h2><span class="section-time">8 min</span></div>
+<div class="section-body">
+  <div class="topic-card">
+    <img class="topic-card-img" src="https://images.unsplash.com/photo-1563841930606-67e2bce48b78?w=900&q=80" alt="Person trapped in phone screen concept">
+    <div class="topic-card-body">
+      <h3>Are You Really in Control — or Is the Algorithm?</h3>
+      <p style="color:var(--muted);font-size:14px;margin-bottom:12px">Carlos realized he spent 4h37min on social media on Tuesday. He doesn't remember what he watched. Is that addiction — or just a habit? And who designed it that way?</p>
+      <div class="rounds">
+        <div class="round-card"><img class="round-card-img" src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=400&q=80" alt="Individual reflection"><div class="round-card-body"><div class="rnum">Round 1 · 60 seg</div><div style="font-size:13px;font-weight:500"><span class="tag-t2s">T→S</span> "Describe your relationship with social media. Are you in control — or are you hooked?"</div></div></div>
+        <div class="round-card"><img class="round-card-img" src="https://images.unsplash.com/photo-1573164713988-8665fc963095?w=400&q=80" alt="Partner discussion"><div class="round-card-body"><div class="rnum">Round 2 · 90 seg</div><div style="font-size:13px;font-weight:500"><span class="tag-s2s">S→S</span> "Partner A: describe a time you felt controlled by an app. Partner B: respond using Passive Voice — 'You were being manipulated by…'"</div></div></div>
+        <div class="round-card"><img class="round-card-img" src="https://images.unsplash.com/photo-1517048676732-d65bc937f952?w=400&q=80" alt="Class debate"><div class="round-card-body"><div class="rnum">Round 3 · 90 seg</div><div style="font-size:13px;font-weight:500"><span class="tag-class">Class</span> "Should social media apps be regulated like cigarettes — with usage warnings and time limits?"</div></div></div>
+      </div>
+      <button class="reveal-btn" onclick="this.nextElementSibling.style.display='block';this.style.display='none'">▶ Reveal Model Answer (C1 level)</button>
+      <div class="model-box"><strong style="color:var(--muted);font-size:11px;font-family:var(--font-head);letter-spacing:.06em;text-transform:uppercase">Model Answer</strong><br><br>
+        "Honestly? <span style="color:var(--warn)">'Low-key obsessed'</span> is probably the right phrase for me. I know these apps <span style="color:var(--accent)">were designed</span> to keep me scrolling — the infinite feed, the notifications — all of it <span style="color:var(--accent)">was built</span> by very smart people to capture my attention. And it works. My screen time data is being <span style="color:var(--accent)">collected</span> and used to make me stay longer. The scary part is I know all this and I'm still <span style="color:var(--warn)">hooked</span>. That's not a habit — that's a feature."
+        <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;font-size:11px"><span style="color:var(--accent)">■ Passive Voice</span><span style="color:var(--warn)">■ Colloquial</span></div>
+      </div>
+    </div>
+  </div>
+</div></section>
+
+<!-- §3 VOCABULARY -->
+<section class="section" id="s3"><div class="section-header"><span class="section-number">§3</span><h2 class="section-title">📚 Vocabulary — Digital Behavior</h2><span class="section-time">10 min</span></div>
+<div class="section-body">
+  <div class="img-card img-sm"><img src="https://images.unsplash.com/photo-1432888498266-38ffec3eaf0a?w=900&q=80" alt="Social media app icons on phone screen" loading="lazy"><div class="img-overlay">The language of digital addiction — 20 words that explain how we're being controlled</div></div>
+
+  <div class="vocab-grid">
+    <div class="vocab-card" onclick="speakWord('screen time')"><img class="vocab-card-img" src="https://images.unsplash.com/photo-1607703703520-bb638e84caf2?w=400&q=80" alt="Screen time"><div class="vocab-card-body"><div class="vocab-word">screen time</div><div class="vocab-ipa">/skriːn taɪm/</div><div class="vocab-def">Total time spent on a device</div><div class="vocab-ex">"Screen time is being tracked on most phones now."</div><button class="speak-btn">🔊</button></div></div>
+    <div class="vocab-card" onclick="speakWord('algorithm')"><img class="vocab-card-img" src="https://images.unsplash.com/photo-1518770660439-4636190af475?w=400&q=80" alt="Algorithm code"><div class="vocab-card-body"><div class="vocab-word">algorithm</div><div class="vocab-ipa">/ˈælɡərɪðəm/</div><div class="vocab-def">Code that decides what content you see</div><div class="vocab-ex">"You're being shown this because the algorithm knows you'll engage."</div><button class="speak-btn">🔊</button></div></div>
+    <div class="vocab-card" onclick="speakWord('notification')"><img class="vocab-card-img" src="https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=400&q=80" alt="Phone notifications"><div class="vocab-card-body"><div class="vocab-word">notification</div><div class="vocab-ipa">/ˌnoʊtɪfɪˈkeɪʃən/</div><div class="vocab-def">An alert sent to pull you back to the app</div><div class="vocab-ex">"Notifications are designed to interrupt your focus."</div><button class="speak-btn">🔊</button></div></div>
+    <div class="vocab-card" onclick="speakWord('dopamine')"><img class="vocab-card-img" src="https://images.unsplash.com/photo-1559757175-5700dde675bc?w=400&q=80" alt="Brain reward system"><div class="vocab-card-body"><div class="vocab-word">dopamine</div><div class="vocab-ipa">/ˈdoʊpəmiːn/</div><div class="vocab-def">The "reward" chemical triggered by likes and scrolling</div><div class="vocab-ex">"Every like triggers a dopamine hit — that's why it feels good."</div><button class="speak-btn">🔊</button></div></div>
+    <div class="vocab-card" onclick="speakWord('withdrawal')"><img class="vocab-card-img" src="https://images.unsplash.com/photo-1489533119213-66a5cd877091?w=400&q=80" alt="Person feeling anxious without phone"><div class="vocab-card-body"><div class="vocab-word">withdrawal</div><div class="vocab-ipa">/wɪðˈdrɔːəl/</div><div class="vocab-def">Anxiety felt when the app is removed</div><div class="vocab-ex">"Social media withdrawal is now being studied as a real condition."</div><button class="speak-btn">🔊</button></div></div>
+    <div class="vocab-card" onclick="speakWord('comparison')"><img class="vocab-card-img" src="https://images.unsplash.com/photo-1513956589380-bad6acb9b9d4?w=400&q=80" alt="Comparing idealized lives online"><div class="vocab-card-body"><div class="vocab-word">comparison</div><div class="vocab-ipa">/kəmˈpærɪsən/</div><div class="vocab-def">Measuring yourself against others' highlight reels</div><div class="vocab-ex">"Constant comparison to others is encouraged by the platform design."</div><button class="speak-btn">🔊</button></div></div>
+    <div class="vocab-card" onclick="speakWord('feed')"><img class="vocab-card-img" src="https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=400&q=80" alt="Infinite scroll feed"><div class="vocab-card-body"><div class="vocab-word">feed (n)</div><div class="vocab-ipa">/fiːd/</div><div class="vocab-def">The endless stream of content shown to you</div><div class="vocab-ex">"The feed is curated by algorithms — nothing is shown by accident."</div><button class="speak-btn">🔊</button></div></div>
+    <div class="vocab-card" onclick="speakWord('scroll')"><img class="vocab-card-img" src="https://images.unsplash.com/photo-1604881991720-f91add269bed?w=400&q=80" alt="Infinite scrolling gesture"><div class="vocab-card-body"><div class="vocab-word">scroll (v)</div><div class="vocab-ipa">/skroʊl/</div><div class="vocab-def">To move down through content continuously</div><div class="vocab-ex">"I'm being trained to scroll — I can't stop even when there's nothing new."</div><button class="speak-btn">🔊</button></div></div>
+    <div class="vocab-card" onclick="speakWord('content')"><img class="vocab-card-img" src="https://images.unsplash.com/photo-1492724441997-5dc865305da7?w=400&q=80" alt="Content creation studio"><div class="vocab-card-body"><div class="vocab-word">content (n)</div><div class="vocab-ipa">/ˈkɒntɛnt/</div><div class="vocab-def">Videos, posts, and media consumed online</div><div class="vocab-ex">"Content is produced and consumed at a speed nobody can process."</div><button class="speak-btn">🔊</button></div></div>
+    <div class="vocab-card" onclick="speakWord('disconnect')"><img class="vocab-card-img" src="https://images.unsplash.com/photo-1531219432768-9f540ce91ef3?w=400&q=80" alt="Person putting phone down intentionally"><div class="vocab-card-body"><div class="vocab-word">disconnect (v)</div><div class="vocab-ipa">/ˌdɪskəˈnɛkt/</div><div class="vocab-def">To stop using digital devices intentionally</div><div class="vocab-ex">"I've been told to disconnect on weekends — easier said than done."</div><button class="speak-btn">🔊</button></div></div>
+  </div>
+
+  <div class="vquiz-wrap"><div class="vquiz-header"><div class="vquiz-title">⚡ Vocab Quiz — Digital Behavior</div><div class="progress-container"><div class="progress-track"><div class="progress-fill" id="vqProgress" style="width:0%"></div></div><div class="progress-label" id="vqLabel">0/12</div></div><div class="vquiz-counter" id="vqCounter">1/12</div></div>
+    <div class="vquiz-card" id="vqCard"><div class="vquiz-word" id="vqWord">—</div><div class="vquiz-ipa" id="vqIpa">—</div><div class="vquiz-options" id="vqOptions"></div><div class="vquiz-feedback" id="vqFeedback"></div><button class="vquiz-next" id="vqNext" onclick="vqNextQuestion()">NEXT →</button></div>
+    <div class="vquiz-done" id="vqDone"><div class="vquiz-done-score" id="vqFinalScore">0/12</div><div class="vquiz-done-msg" id="vqDoneMsg"></div><button class="vquiz-restart" onclick="vqInit()">↺ Try Again</button></div>
+  </div>
+
+  <div class="teacher-note teacher-only"><strong>GT Original — "dopamine" /ˈdoʊpəmiːn/:</strong> 3 syllables, stress on first: DO-pa-meen. Drill before moving on. It will come up constantly in S2–S5.<br><strong>"Withdrawal" /wɪðˈdrɔːəl/:</strong> 3 syllables. Very often mispronounced as 4. "With-DRAW-al". Practice the consonant cluster /wɪð/.<br><strong>Passive connection:</strong> Every example sentence in the vocab cards uses Passive Voice. Ask students to identify which ones as they read.</div>
+</div></section>
+
+<!-- §4 COLLOQUIAL -->
+<section class="section" id="s4"><div class="section-header"><span class="section-number">§4</span><h2 class="section-title">💬 Colloquial — How Gen Z Talks About Addiction</h2><span class="section-time">5 min</span></div>
+<div class="section-body">
+  <div class="img-card img-sm"><img src="https://images.unsplash.com/photo-1502823403499-6ccfcf4fb453?w=900&q=80" alt="Young people speaking casually" loading="lazy"><div class="img-overlay">These phrases are used daily — master them and you'll sound completely natural</div></div>
+  <div class="col-grid">
+    <div class="col-card">
+      <img class="col-card-img" src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=600&q=80" alt="Person addicted to phone">
+      <div class="col-card-body"><div class="col-phrase">"I'm hooked."</div><div class="col-use">When: addicted or obsessed with any app, series, or habit</div><div class="col-example">"I started using TikTok 'just to see what it was' and now <em>I'm completely hooked</em>."</div></div>
+    </div>
+    <div class="col-card">
+      <img class="col-card-img" src="https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?w=600&q=80" alt="Video going viral on phone">
+      <div class="col-card-body"><div class="col-phrase">"It blew up."</div><div class="col-use">When: something became viral or popular extremely fast</div><div class="col-example">"He posted a video of his cat and <em>it blew up</em> overnight — 2 million views."</div></div>
+    </div>
+    <div class="col-card">
+      <img class="col-card-img" src="https://images.unsplash.com/photo-1564866657315-7f07a28e18aa?w=600&q=80" alt="Suspicious looking at phone">
+      <div class="col-card-body"><div class="col-phrase">"That's sus."</div><div class="col-use">When: something seems suspicious or dishonest</div><div class="col-example">"He deleted all his posts from 2019 the same day. <em>That's sus</em>."</div></div>
+    </div>
+    <div class="col-card">
+      <img class="col-card-img" src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=600&q=80" alt="Quiet obsession with screen">
+      <div class="col-card-body"><div class="col-phrase">"Low-key obsessed."</div><div class="col-use">When: secretly or quietly addicted to something</div><div class="col-example">"I'm <em>low-key obsessed</em> with checking my follower count, honestly."</div></div>
+    </div>
+  </div>
+  <div class="teacher-note teacher-only"><strong>Drill:</strong> Teacher provides context → student produces phrase. "Tu colega revisó Instagram 40 veces hoy." → "He's hooked." / "Un video tuyo tiene 500K reproducciones." → "It blew up!" / "Alguien borró todos sus tweets de 2020." → "That's sus." / "Describes your own secret app obsession." → "I'm low-key obsessed with…"</div>
+</div></section>
+
+<!-- §5 GRAMMAR — PASSIVE VOICE -->
+<section class="section" id="s5"><div class="section-header"><span class="section-number">§5</span><h2 class="section-title">🎯 Grammar — Passive Voice &amp; Digital Control</h2><span class="section-time">10 min</span></div>
+<div class="section-body">
+  <div class="img-card img-sm"><img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=900&q=80" alt="Data being collected on multiple screens" loading="lazy"><div class="img-overlay">"Your data is being collected." — By whom? That's the point of the Passive.</div></div>
+
+  <!-- DOPAMINE LOOP DIAGRAM — new visual -->
+  <div class="dopamine-loop">
+    <div class="dl-header">
+      <div><div class="dl-title">🧠 The Dopamine Loop — Passive Voice in Every Step</div><div class="dl-sub">Click each step to see the Passive Voice and what it hides</div></div>
+    </div>
+    <div class="dl-nodes" id="dlNodes">
+      <div class="dl-node active" onclick="showDlDetail(0)" style="position:relative">
+        <div class="dl-node-icon">🔔</div>
+        <div class="dl-node-label">Trigger</div>
+        <div class="dl-node-passive">"A notification<br><em>is sent</em>"</div>
+        <div class="dl-node-arrow">›</div>
+      </div>
+      <div class="dl-node" onclick="showDlDetail(1)" style="position:relative">
+        <div class="dl-node-icon">📱</div>
+        <div class="dl-node-label">Engage</div>
+        <div class="dl-node-passive">"Content<br><em>is served</em>"</div>
+        <div class="dl-node-arrow">›</div>
+      </div>
+      <div class="dl-node" onclick="showDlDetail(2)" style="position:relative">
+        <div class="dl-node-icon">❤️</div>
+        <div class="dl-node-label">Reward</div>
+        <div class="dl-node-passive">"Dopamine<br><em>is released</em>"</div>
+        <div class="dl-node-arrow">›</div>
+      </div>
+      <div class="dl-node" onclick="showDlDetail(3)">
+        <div class="dl-node-icon">🔁</div>
+        <div class="dl-node-label">Repeat</div>
+        <div class="dl-node-passive">"Your data<br><em>is collected</em>"</div>
+      </div>
+    </div>
+    <div class="dl-detail show" id="dlDetail">
+      <div class="dl-detail-passive" id="dlPassive">"A notification is sent."</div>
+      <div class="dl-detail-explain" id="dlExplain">The app sends you a notification — but the passive hides who sent it. You feel the urge; they take the credit. By whom? The platform. The algorithm. The design team. You never know — and that's the point.</div>
+      <div class="dl-detail-passive-form" id="dlForm"><strong>Form:</strong> be (present) + past participle → Present Passive · Agent (by…) is optional — often hidden intentionally.</div>
+    </div>
+  </div>
+
+  <div class="teacher-note teacher-only"><strong>REFERENCIAL.</strong> S1 covered introduction. S2 goes deeper: why the Passive is CHOSEN in tech/news contexts — to hide the agent, to sound objective, to avoid blame. This is the B1.2 insight: not just "how" but "why".<br><strong>The critical question:</strong> "Who IS the agent?" — "Your data is collected BY WHOM?" Push students to find the hidden agent in every passive sentence.</div>
+
+  <table class="grammar"><thead><tr><th>Tense</th><th>Active → Passive</th><th>Social Media Context</th></tr></thead><tbody>
+    <tr><td class="gram-form">Present Simple</td><td>be + past participle</td><td class="gram-ex">Your data is sold to advertisers every day.</td></tr>
+    <tr><td class="gram-form">Present Continuous</td><td>is/are being + pp</td><td class="gram-ex">You are being tracked right now.</td></tr>
+    <tr><td class="gram-form">Past Simple</td><td>was/were + pp</td><td class="gram-ex">These apps were designed to maximize engagement.</td></tr>
+    <tr><td class="gram-form">Present Perfect</td><td>has/have been + pp</td><td class="gram-ex">My screen time has been monitored for years.</td></tr>
+    <tr><td class="gram-form">With agent</td><td>passive + by [agent]</td><td class="gram-ex">The feed was curated by an algorithm — not a human.</td></tr>
+    <tr><td class="gram-form">Agentless</td><td>passive (no by)</td><td class="gram-ex">Thousands of hours are wasted on this app every day.</td></tr>
+    <tr style="border-top:2px solid var(--danger)"><td colspan="3" style="padding-top:12px"><span style="color:var(--danger);font-family:var(--font-head);font-size:12px;font-weight:700">⚠️ KEY INSIGHT — WHY PASSIVE IS CHOSEN</span><br><span style="color:var(--muted);font-size:13px">"Data is collected" → sounds neutral, avoids blame. Active: "Facebook collects your data" — that's confrontational. Tech companies prefer the passive. Now you know why.</span></td></tr>
+  </tbody></table>
+
+  <div class="poll-section">
+    <div style="font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--accent);letter-spacing:.08em;text-transform:uppercase;margin-bottom:12px">⚡ Quick Poll — 30 pts</div>
+    <div class="poll-score-bar"><div class="poll-score-label">Poll Score</div><div class="poll-score-val" id="pollScoreVal">0 pts</div></div>
+    <div class="poll-q"><div class="poll-q-text">1. "Your behavior ______ monitored by the algorithm 24 hours a day."</div><div class="poll-options">
+      <button class="poll-btn" onclick="checkPoll(this,'is being','pq1','pf1','p1a')">is being</button>
+      <button class="poll-btn" onclick="checkPoll(this,'is being monitored','pq1','pf1','p1b')">is monitored</button>
+      <button class="poll-btn" onclick="checkPoll(this,'monitors','pq1','pf1','p1c')">monitors</button>
+    </div><div class="poll-feedback" id="pf1"></div></div>
+    <div class="poll-q"><div class="poll-q-text">2. "These platforms ______ to exploit psychological vulnerabilities."</div><div class="poll-options">
+      <button class="poll-btn" onclick="checkPoll(this,'designed','pq2','pf2','p2a')">were designed</button>
+      <button class="poll-btn" onclick="checkPoll(this,'design','pq2','pf2','p2b')">are designed</button>
+      <button class="poll-btn" onclick="checkPoll(this,'designing','pq2','pf2','p2c')">are designing</button>
+    </div><div class="poll-feedback" id="pf2"></div></div>
+    <div class="poll-q"><div class="poll-q-text">3. Which sentence is in the Passive Voice?</div><div class="poll-options">
+      <button class="poll-btn" onclick="checkPoll(this,'passive','pq3','pf3','p3a')">"The app collects your location data."</button>
+      <button class="poll-btn" onclick="checkPoll(this,'passive2','pq3','pf3','p3b')">"Your location data is collected by the app."</button>
+      <button class="poll-btn" onclick="checkPoll(this,'passive3','pq3','pf3','p3c')">"You allow the app to collect your data."</button>
+    </div><div class="poll-feedback" id="pf3"></div></div>
+  </div>
+  <hr class="divider">
+
+  <div class="activity-card"><div class="activity-title">Activity A — Active → Passive Transform <span class="activity-score" id="actAScore">0 / 4</span></div>
+    <div class="activity-grid">
+      <div class="act-item"><div style="font-size:13px;font-weight:500">Active: "Instagram tracks your every move." → Passive: "Your every move ______ by Instagram."</div><div class="act-options">
+        <button class="act-btn" onclick="checkAct(this,'a1c','af1','actAScore',4)">is tracked</button>
+        <button class="act-btn" onclick="checkAct(this,'a1w','af1','actAScore',4)">is tracking</button>
+        <button class="act-btn" onclick="checkAct(this,'a1x','af1','actAScore',4)">tracked</button>
+      </div><div class="act-feedback" id="af1"></div></div>
+      <div class="act-item"><div style="font-size:13px;font-weight:500">Active: "Engineers designed the infinite scroll." → Passive: "The infinite scroll ______ by engineers."</div><div class="act-options">
+        <button class="act-btn" onclick="checkAct(this,'a2c','af2','actAScore',4)">was designed</button>
+        <button class="act-btn" onclick="checkAct(this,'a2w','af2','actAScore',4)">is designed</button>
+        <button class="act-btn" onclick="checkAct(this,'a2x','af2','actAScore',4)">designed</button>
+      </div><div class="act-feedback" id="af2"></div></div>
+      <div class="act-item"><div style="font-size:13px;font-weight:500">"The algorithm is currently serving you content" → Passive: "Content ______ to you right now."</div><div class="act-options">
+        <button class="act-btn" onclick="checkAct(this,'a3c','af3','actAScore',4)">is being served</button>
+        <button class="act-btn" onclick="checkAct(this,'a3w','af3','actAScore',4)">was served</button>
+        <button class="act-btn" onclick="checkAct(this,'a3x','af3','actAScore',4)">is serving</button>
+      </div><div class="act-feedback" id="af3"></div></div>
+      <div class="act-item"><div style="font-size:13px;font-weight:500">"They have sold my data to 47 companies." → Passive: "My data ______ to 47 companies."</div><div class="act-options">
+        <button class="act-btn" onclick="checkAct(this,'a4c','af4','actAScore',4)">has been sold</button>
+        <button class="act-btn" onclick="checkAct(this,'a4w','af4','actAScore',4)">was sold</button>
+        <button class="act-btn" onclick="checkAct(this,'a4x','af4','actAScore',4)">is sold</button>
+      </div><div class="act-feedback" id="af4"></div></div>
+    </div>
+  </div>
+
+  <div class="activity-card"><div class="activity-title">Activity B — Find the Hidden Agent <span class="activity-score" id="actBScore">0 / 4</span></div>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:14px">Each passive sentence hides the agent. Who is really responsible?</p>
+    <div class="activity-grid">
+      <div class="act-item"><div style="font-size:13px;font-weight:500">"Your location is tracked at all times." — Who is tracking it?</div><div class="act-options">
+        <button class="act-btn" onclick="checkAct(this,'b1c','bf1','actBScore',4)">The apps and platforms installed on your device</button>
+        <button class="act-btn" onclick="checkAct(this,'b1w','bf1','actBScore',4)">Your phone hardware manufacturer</button>
+      </div><div class="act-feedback" id="bf1"></div></div>
+      <div class="act-item"><div style="font-size:13px;font-weight:500">"The dopamine loop was designed to maximize engagement." — Who designed it?</div><div class="act-options">
+        <button class="act-btn" onclick="checkAct(this,'b2c','bf2','actBScore',4)">Tech company engineers and behavioral psychologists</button>
+        <button class="act-btn" onclick="checkAct(this,'b2w','bf2','actBScore',4)">Users who scrolled and gave feedback</button>
+      </div><div class="act-feedback" id="bf2"></div></div>
+      <div class="act-item"><div style="font-size:13px;font-weight:500">"Content is shown based on your fears and insecurities." — Who is showing it?</div><div class="act-options">
+        <button class="act-btn" onclick="checkAct(this,'b3c','bf3','actBScore',4)">The algorithm trained on your engagement history</button>
+        <button class="act-btn" onclick="checkAct(this,'b3w','bf3','actBScore',4)">Other users who created the content</button>
+      </div><div class="act-feedback" id="bf3"></div></div>
+      <div class="act-item"><div style="font-size:13px;font-weight:500">"Billions of hours are wasted on social media every year." — Why is the agent hidden here?</div><div class="act-options">
+        <button class="act-btn" onclick="checkAct(this,'b4c','bf4','actBScore',4)">Because there is no single agent — it's a systemic problem</button>
+        <button class="act-btn" onclick="checkAct(this,'b4w','bf4','actBScore',4)">Because the agent is users themselves and they can't be named</button>
+      </div><div class="act-feedback" id="bf4"></div></div>
+    </div>
+  </div>
+</div></section>
+
+<!-- §6 LISTENING -->
+<section class="section" id="s6"><div class="section-header"><span class="section-number">§6</span><h2 class="section-title">🎧 Listening — Carlos's Wake-Up Call</h2><span class="section-time">8 min</span></div>
+<div class="section-body">
+  <div class="listening-card">
+    <img class="listening-card-img" src="https://images.unsplash.com/photo-1516321497487-e288fb19713f?w=900&q=80" alt="Person looking at phone usage statistics shocked">
+    <div class="listening-card-body">
+      <div class="audio-placeholder"><div class="audio-icon">🎙️</div><div><div class="audio-title">ElevenLabs — "Carlos's Wake-Up Call"</div><div class="audio-sub">Voice: Marcus · Speed: 0.85 · B1.2 M3 S2A</div></div></div>
+    </div>
+  </div>
+  <button class="script-toggle" onclick="toggleScript('scriptBox1')">▼ Show Script</button>
+  <div class="script-box" id="scriptBox1">
+    I've always thought of myself as someone who uses technology intentionally. Then last week my phone showed me my weekly screen time report. Four hours and thirty-seven minutes. Per day. That's over thirty hours a week. I was shocked. More than a full-time job — being wasted on Instagram and TikTok.<br><br>
+    And the worst part? I can remember almost nothing I watched. Hours of content were consumed, and I have nothing to show for it. No new ideas were formed. No skills were built. The time was just... taken from me. Or I gave it away — I'm not sure which.<br><br>
+    I started researching how these apps work. What I found was disturbing. These platforms were specifically designed by teams of engineers and behavioral psychologists. The infinite scroll was invented so that you never reach a natural stopping point. Notifications are sent at calculated intervals — not when something happens, but when you're most likely to re-engage. Your weaknesses are being studied and exploited every time you open the app.<br><br>
+    I'm not saying the apps are evil. But I do think we should know the truth: we are not the customers. We are the product. Our attention is being sold to advertisers while we scroll for free.<br><br>
+    I deleted Instagram and TikTok two weeks ago. I've been called dramatic. I've been told "it's just an app." But those hours have been reclaimed. I've read two books. I've been sleeping better. My concentration has improved. And honestly? I don't miss it. I miss who I thought I was on it. And that's a different problem entirely.
+    <div style="font-size:11px;color:var(--muted);margin-top:10px;font-style:normal">📎 ElevenLabs: Voice — Marcus · Speed 0.85 · B1.2 M3 S2A</div>
+  </div>
+
+  <div style="font-family:var(--font-head);font-size:12px;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin:18px 0 10px">✏️ Multiple Choice</div>
+  <div class="listen-q"><div class="listen-q-text">1. What disturbed Carlos most about the screen time report?</div><div class="listen-opts">
+    <button class="listen-btn" onclick="checkListen(this,'nothing','lf1')">He consumed hours of content and had nothing to show for it</button>
+    <button class="listen-btn" onclick="checkListen(this,'cost','lf1')">The apps had charged him money without consent</button>
+    <button class="listen-btn" onclick="checkListen(this,'data','lf1')">His data had been stolen by hackers</button>
+  </div><div class="listen-feedback" id="lf1"></div></div>
+  <div class="listen-q"><div class="listen-q-text">2. What does Carlos mean by "we are the product"?</div><div class="listen-opts">
+    <button class="listen-btn" onclick="checkListen(this,'attention','lf2')">Our attention is sold to advertisers while we use the apps for free</button>
+    <button class="listen-btn" onclick="checkListen(this,'made','lf2')">We are made to produce content for platforms</button>
+    <button class="listen-btn" onclick="checkListen(this,'employee','lf2')">We are unpaid employees of the tech companies</button>
+  </div><div class="listen-feedback" id="lf2"></div></div>
+
+  <div style="font-family:var(--font-head);font-size:12px;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin:18px 0 10px">✏️ True or False</div>
+  <div class="tf-row"><div class="tf-stmt">Carlos deleted social media and immediately felt better about his decision.</div><div class="tf-btns"><button class="tf-btn" onclick="checkTF(this,false)">TRUE</button><button class="tf-btn" onclick="checkTF(this,false)">FALSE</button></div></div>
+  <div class="tf-row"><div class="tf-stmt">The infinite scroll was invented to create a natural stopping point for users.</div><div class="tf-btns"><button class="tf-btn" onclick="checkTF(this,false)">TRUE</button><button class="tf-btn" onclick="checkTF(this,false)">FALSE</button></div></div>
+  <div class="tf-row"><div class="tf-stmt">After deleting the apps, Carlos has read books and slept better.</div><div class="tf-btns"><button class="tf-btn" onclick="checkTF(this,true)">TRUE</button><button class="tf-btn" onclick="checkTF(this,false)">FALSE</button></div></div>
+
+  <div class="teacher-note teacher-only"><strong>Passive count in the script:</strong> "were consumed / were formed / was built / was taken / were designed / was invented / are sent / are being studied / is being sold / have been reclaimed / has improved" → 11 passive constructions. Ask students to find as many as they can after first listen.</div>
+</div></section>
+
+<!-- §7 PRODUCTION -->
+<section class="section" id="s7"><div class="section-header"><span class="section-number">§7</span><h2 class="section-title">🔥 Production — Your Digital Manifesto</h2><span class="section-time">12 min</span></div>
+<div class="section-body">
+  <div class="img-card"><img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=900&q=80" alt="Person making a deliberate choice with technology" loading="lazy"><div class="img-overlay">It's time to say something — in Passive Voice, with conviction.</div></div>
+
+  <div class="debate-wrap"><div style="font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px">📊 Class Opinion Meter</div>
+    <div class="debate-meter"><div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:8px">"Social media companies should be held legally responsible for their users' addiction."</div>
+      <div class="meter-track"><div class="meter-fill" id="meterFill"></div></div>
+      <div class="meter-labels"><span>🙅 Disagree</span><span>50/50</span><span>Agree 💯</span></div>
+      <div class="debate-btns"><button class="debate-btn-a" onclick="moveMeter(-7)">👎 Disagree</button><button class="debate-btn-b" onclick="moveMeter(7)">👍 Agree</button></div>
+      <div style="font-size:12px;color:var(--muted);margin-top:8px" id="meterPercent">Class: 50% agree</div>
+    </div>
+  </div>
+
+  <div class="speaking-qs">
+    <div class="speaking-q"><img class="speaking-q-img" src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=600&q=80" alt="Thinking critically about social media"><div class="speaking-q-body"><div class="sq-tag"><span class="tag-t2s">T→S</span></div>"Describe how social media works using only Passive Voice sentences. At least 4. No active sentences allowed."</div></div>
+    <div class="speaking-q"><img class="speaking-q-img" src="https://images.unsplash.com/photo-1571042463213-7e2f5a88f50f?w=600&q=80" alt="Partner debate on social media"><div class="speaking-q-body"><div class="sq-tag"><span class="tag-s2s">S→S</span></div>"Partner A: defend social media using Passive: 'Millions of people have been connected…' Partner B: attack it with Passive: 'Hours of productivity have been stolen…'"</div></div>
+    <div class="speaking-q"><img class="speaking-q-img" src="https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=600&q=80" alt="Personal digital audit"><div class="speaking-q-body"><div class="sq-tag"><span class="tag-t2s">T→S</span></div>"Carlos said 'We are the product.' Do you agree? Use at least 2 Passive Voice structures in your answer."</div></div>
+    <div class="speaking-q"><img class="speaking-q-img" src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=600&q=80" alt="Class discussion regulations"><div class="speaking-q-body"><div class="sq-tag"><span class="tag-class">Class</span></div>"'Social media addiction should be classified as a mental health disorder.' Debate — use Passive in your arguments: 'It has been proven that…' / 'This claim has been disputed by…'"</div></div>
+  </div>
+
+  <div style="background:rgba(52,211,153,.05);border:1px solid var(--border);border-radius:12px;padding:20px;margin:14px 0">
+    <div style="font-family:var(--font-head);font-size:14px;font-weight:800;color:var(--accent);margin-bottom:8px">⚡ CHALLENGE — Your Digital Manifesto (90 sec)</div>
+    <div style="font-size:14px;color:var(--text);margin-bottom:14px">Write and deliver a 90-second personal statement about your relationship with social media. Use at least 4 Passive constructions + 2 colloquial phrases. No notes.</div>
+    <div class="timer-wrap"><svg class="timer-svg" width="90" height="90" viewBox="0 0 90 90"><circle class="timer-bg" cx="45" cy="45" r="38" stroke-width="6"/><circle class="timer-arc" id="tArc3" cx="45" cy="45" r="38" stroke-width="6" stroke-dasharray="238.76" stroke-dashoffset="0"/><text class="timer-text" id="tText3" x="45" y="44">1:30</text><text class="timer-label" x="45" y="57">manifesto</text></svg>
+    <div class="timer-btns"><button class="btn btn-primary" onclick="startTimer('tArc3','tText3',90,'b3')">START</button><button class="btn btn-ghost" onclick="resetTimer('tArc3','tText3','1:30')">RESET</button></div></div>
+  </div>
+
+  <div style="font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px">🎲 Hot Seat Dice</div>
+  <div class="dice-grid">
+    <div class="dice-card"><img class="dice-img" src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&q=80" alt="Social media metrics"><div class="dice-body"><span class="dice-num">1</span><div class="dice-text">"Name 3 things that are being designed to keep you on social media. Use Passive."</div></div></div>
+    <div class="dice-card"><img class="dice-img" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80" alt="Person reflecting on habits"><div class="dice-body"><span class="dice-num">2</span><div class="dice-text">"Describe your worst social media habit using Passive: 'Hours have been wasted by me on…'"</div></div></div>
+    <div class="dice-card"><img class="dice-img" src="https://images.unsplash.com/photo-1488426862026-3ee34a7d66a5?w=400&q=80" alt="Group of people on phones"><div class="dice-body"><span class="dice-num">3</span><div class="dice-text">"'You're being watched right now.' Explain this statement in 4 sentences — all Passive."</div></div></div>
+    <div class="dice-card"><img class="dice-img" src="https://images.unsplash.com/photo-1591199764483-7cadd6d34b3d?w=400&q=80" alt="Digital detox choice"><div class="dice-body"><span class="dice-num">4</span><div class="dice-text">"If you deleted all social media tomorrow, what would be lost? What would be gained? Passive for both."</div></div></div>
+    <div class="dice-card"><img class="dice-img" src="https://images.unsplash.com/photo-1611162616475-46b635cb6868?w=400&q=80" alt="Viral content creation"><div class="dice-body"><span class="dice-num">5</span><div class="dice-text">"I'm low-key obsessed with [app]. Describe it using 3 Passive sentences."</div></div></div>
+    <div class="dice-card"><img class="dice-img" src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&q=80" alt="Social media regulation"><div class="dice-body"><span class="dice-num">6</span><div class="dice-text">"'Children should be protected from social media until age 16.' Argue for or against — Passive Voice throughout."</div></div></div>
+  </div>
+</div></section>
+
+<!-- §8 WRAP-UP -->
+<section class="section" id="s8"><div class="section-header"><span class="section-number">§8</span><h2 class="section-title">🏅 Wrap-Up — Badge Showcase</h2><span class="section-time">5 min</span></div>
+<div class="section-body">
+  <div class="img-card img-sm"><img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=900&q=80" alt="Person consciously choosing to put down phone" loading="lazy"><div class="img-overlay">S2 complete — you can now describe how digital systems control us in fluent, powerful English 📱</div></div>
+  <div class="badge-showcase"><div class="badge-item"><span class="badge-emoji">⚡</span><div class="badge-name">Quick Start</div><div style="font-size:11px;color:var(--muted);margin-top:4px">Warm-up done</div></div><div class="badge-item"><span class="badge-emoji">📚</span><div class="badge-name">Word Power</div><div style="font-size:11px;color:var(--muted);margin-top:4px">8+ vocab</div></div><div class="badge-item"><span class="badge-emoji">🎯</span><div class="badge-name">Grammar Pro</div><div style="font-size:11px;color:var(--muted);margin-top:4px">Manifesto done</div></div><div class="badge-item"><span class="badge-emoji">🎧</span><div class="badge-name">Active Listener</div><div style="font-size:11px;color:var(--muted);margin-top:4px">11 passives found</div></div><div class="badge-item"><span class="badge-emoji">🏆</span><div class="badge-name">My Win</div><div style="font-size:11px;color:var(--muted);margin-top:4px">Win saved</div></div></div>
+  <div style="font-family:var(--font-head);font-size:12px;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin:16px 0 8px">✅ I Can Now…</div>
+  <div class="checklist"><div class="check-item"><span>🟢</span>Use Passive Voice in 4 tenses: present simple, present continuous, past simple, present perfect</div><div class="check-item"><span>🟢</span>Explain WHY Passive is chosen: to hide the agent, to sound objective, to avoid blame</div><div class="check-item"><span>🟢</span>Describe the dopamine loop using Passive: "is sent / is served / is released / is collected"</div><div class="check-item"><span>🟢</span>Use colloquial B1.2 phrases: "I'm hooked" / "it blew up" / "that's sus" / "low-key obsessed"</div><div class="check-item"><span>🟢</span>Deliver a personal opinion about social media addiction using natural Passive Voice</div></div>
+  <div style="font-family:var(--font-head);font-size:12px;font-weight:700;color:var(--warn);letter-spacing:.08em;text-transform:uppercase;margin:20px 0 8px">🎯 3 Phrases for This Week</div>
+  <div class="phrases-week">
+    <div class="phrase-card"><img class="phrase-card-img" src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&q=80" alt="Being tracked online"><div class="phrase-card-body">"You are being tracked right now."<span>Use to start any conversation about data privacy</span></div></div>
+    <div class="phrase-card"><img class="phrase-card-img" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&q=80" alt="Hooked on social media"><div class="phrase-card-body">"I'm hooked — and I know it."<span>Honest + colloquial + self-aware</span></div></div>
+    <div class="phrase-card"><img class="phrase-card-img" src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&q=80" alt="Algorithm controlling content"><div class="phrase-card-body">"We are not customers. We're the product."<span>Use when discussing tech company business models</span></div></div>
+  </div>
+  <div style="font-family:var(--font-head);font-size:12px;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin:20px 0 8px">🏆 My Win Today</div>
+  <div style="margin:16px 0"><textarea class="win-textarea" id="winInput" placeholder="What was YOUR win today?"></textarea><button class="win-btn" onclick="saveWin()">Save My Win</button><div class="win-saved" id="winSaved"></div></div>
+</div></section>
+
+</main>
+<footer class="site-footer"><span class="level-tag">A1.1</span><span class="level-tag">A1.2</span><span class="level-tag">A2.1</span><span class="level-tag">A2.2</span><span class="level-tag">B1.1</span><span class="level-tag active">B1.2</span></footer>
+
+<script>
+const earnedBadges={};function earnBadge(id){if(earnedBadges[id])return;earnedBadges[id]=true;const el=document.getElementById(id);if(el)el.classList.add('earned');if(Object.keys(earnedBadges).length>=5)launchConfetti();}
+function launchConfetti(){const w=document.getElementById('confettiWrap');w.style.display='block';for(let i=0;i<80;i++){const c=document.createElement('div');const cols=['#34D399','#6EE7B7','#FFB347','#00E5A0','#FF4D6D','#A78BFA'];c.style.cssText='position:absolute;width:8px;height:8px;background:'+cols[i%cols.length]+';border-radius:50%;left:'+Math.random()*100+'%;top:-10px;animation:confFall '+(1.5+Math.random()*2)+'s ease-out forwards;animation-delay:'+Math.random()*.5+'s;';w.appendChild(c);}const s=document.createElement('style');s.textContent='@keyframes confFall{0%{transform:translateY(0) rotate(0);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}';document.head.appendChild(s);setTimeout(()=>{w.style.display='none';w.innerHTML='';},4000);}
+let timerInterval=null;function startTimer(arcId,textId,totalSec,badgeKey){if(timerInterval)clearInterval(timerInterval);const arc=document.getElementById(arcId);const txt=document.getElementById(textId);const circ=238.76;let rem=totalSec;timerInterval=setInterval(()=>{rem--;const m=Math.floor(rem/60);const s=rem%60;txt.textContent=m+':'+(s<10?'0':'')+s;arc.setAttribute('stroke-dashoffset',circ*(1-rem/totalSec));if(rem<=5)arc.style.stroke='#FF4D6D';if(rem<=0){clearInterval(timerInterval);timerInterval=null;txt.textContent='0:00';arc.style.stroke='var(--success)';if(badgeKey)earnBadge(badgeKey);}},1000);}
+function resetTimer(arcId,textId,label){if(timerInterval){clearInterval(timerInterval);timerInterval=null;}document.getElementById(arcId).setAttribute('stroke-dashoffset','0');document.getElementById(arcId).style.stroke='var(--accent)';document.getElementById(textId).textContent=label;}
+/* DOPAMINE LOOP */
+const dlData=[
+  {passive:'"A notification is sent."',explain:'The app sends you a notification — but the passive hides who sent it. By whom? The platform. The algorithm. The design team. You never know — and that\'s the point. The passive removes responsibility.',form:'Form: is + sent (be + past participle) · Present Simple Passive · Agent hidden'},
+  {passive:'"Content is served to you."',explain:'Every video and post you see was selected — not randomly, but because the algorithm predicts you\'ll engage. "Is served" hides the fact that a corporation decided what enters your mind.',form:'Form: is + served · Present Simple Passive · Deliberate omission of agent (algorithm/company)'},
+  {passive:'"Dopamine is released."',explain:'Your brain\'s reward system is triggered every time you get a like or see something emotionally engaging. This is chemistry being exploited — "is released" makes it sound natural, not engineered.',form:'Form: is + released · Present Simple Passive · Makes exploitation sound like biology'},
+  {passive:'"Your data is collected."',explain:'Every action — every scroll, pause, like — is recorded. "Is collected" sounds neutral. The active form would be: "Facebook collects your data for profit." Companies prefer the passive. Now you know why.',form:'Form: is + collected · Present Simple Passive · Most politically loaded passive in tech language'}
+];
+let dlActive=0;function showDlDetail(i){dlActive=i;document.querySelectorAll('.dl-node').forEach((n,j)=>n.classList.toggle('active',j===i));const d=dlData[i];document.getElementById('dlPassive').textContent=d.passive;document.getElementById('dlExplain').textContent=d.explain;document.getElementById('dlForm').innerHTML='<strong>Form:</strong> '+d.form;document.getElementById('dlDetail').classList.add('show');}
+/* POLL */
+let pollScore=0;const pollMsgs={p1a:{correct:true,msg:'✅ "is being monitored" — Present Continuous Passive. Happening right now.'},p1b:{correct:false,msg:'❌ "is monitored" = Present Simple Passive (regular). "Is being monitored" = happening continuously right now.'},p1c:{correct:false,msg:'❌ "monitors" = Active Voice, Present Simple.'},designed:{correct:true,msg:'✅ "were designed" — Past Simple Passive. These platforms were created in the past with a specific intention.'},design:{correct:false,msg:'❌ "are designed" = present passive. The past tense is better here — they were created/designed historically.'},designing:{correct:false,msg:'❌ "are designing" = Present Continuous Active. Not Passive.'},passive:{correct:false,msg:'❌ "The app collects your data" = Active Voice. Subject (app) + active verb.'},passive2:{correct:true,msg:'✅ "Your location data is collected by the app" = Passive Voice. Object becomes subject + be + past participle + by agent.'},passive3:{correct:false,msg:'❌ "You allow the app to collect" = Active Voice. You are the subject performing the action.'}};
+function checkPoll(btn,a,gId,fId,k){const btns=btn.parentElement.querySelectorAll('.poll-btn');btns.forEach(b=>{b.disabled=true;b.classList.add('wrong-ans');});const fb=document.getElementById(fId);const info=pollMsgs[k]||pollMsgs[a];if(info&&info.correct){btn.classList.remove('wrong-ans');btn.classList.add('correct-ans');if(fb)fb.textContent=info.msg;pollScore+=10;document.getElementById('pollScoreVal').textContent=pollScore+' pts';if(pollScore>=30)earnBadge('b3');}else{btn.classList.add('wrong-ans');if(fb)fb.textContent=info?info.msg:'❌';}}
+/* ACTIVITIES */
+const actMsgs={a1c:{correct:true,msg:'✅ "is tracked" — Present Simple Passive.'},a1w:{correct:false,msg:'❌ "is tracking" = Present Continuous Active.'},a1x:{correct:false,msg:'❌ "tracked" alone is not a passive — needs "is" before it.'},a2c:{correct:true,msg:'✅ "was designed" — Past Simple Passive. The infinite scroll was created in the past.'},a2w:{correct:false,msg:'❌ "is designed" = Present Passive. The sentence refers to a specific historical creation → past.'},a2x:{correct:false,msg:'❌ "designed" alone is not passive — needs "was" before it.'},a3c:{correct:true,msg:'✅ "is being served" — Present Continuous Passive. Content is being served to you right now, as this happens.'},a3w:{correct:false,msg:'❌ "was served" = Past Passive. "Currently" tells us it\'s happening now → is being served.'},a3x:{correct:false,msg:'❌ "is serving" = Present Continuous Active. We need Passive here.'},a4c:{correct:true,msg:'✅ "has been sold" — Present Perfect Passive. The action happened at some point in the past with ongoing relevance.'},a4w:{correct:false,msg:'❌ "was sold" = Past Simple Passive. Present Perfect ("have sold" → "has been sold") is more natural here.'},a4x:{correct:false,msg:'❌ "is sold" = Present Simple Passive. The sentence uses "they have sold" which → has been sold (Present Perfect Passive).'},b1c:{correct:true,msg:'✅ Apps and platforms installed on your device. Your location data is collected by the software you agreed to install.'},b1w:{correct:false,msg:'❌ Hardware manufacturers don\'t typically track location — it\'s the software/apps you install.'},b2c:{correct:true,msg:'✅ Tech engineers AND behavioral psychologists. The dopamine loop was deliberately engineered by both technical and psychological expertise.'},b2w:{correct:false,msg:'❌ Users gave data, but they didn\'t design the system. The design team at the tech company did.'},b3c:{correct:true,msg:'✅ The algorithm trained on your engagement history. It learns what triggers your anxiety, envy, or desire — and serves more.'},b3w:{correct:false,msg:'❌ Content creators create it, but they don\'t decide who sees it. The algorithm decides.'},b4c:{correct:true,msg:'✅ The agent is hidden because it\'s systemic — billions of people collectively wasting time. There\'s no single responsible party to name.'},b4w:{correct:false,msg:'❌ Users can be named — "by us" — but the passive is chosen here to describe a collective phenomenon, not individual blame.'}};
+const answeredActs={};function checkAct(btn,key,fId,sId,max){if(answeredActs[fId])return;answeredActs[fId]=true;const info=actMsgs[key];const btns=btn.parentElement.querySelectorAll('.act-btn');btns.forEach(b=>{b.disabled=true;b.classList.add('wrong-ans');});const fb=document.getElementById(fId);if(info&&info.correct){btn.classList.remove('wrong-ans');btn.classList.add('correct-ans');if(fb)fb.textContent=info.msg;const s=document.getElementById(sId);if(s){const p=s.textContent.split('/');s.textContent=(parseInt(p[0])+1)+' / '+max;}}else{btn.classList.add('wrong-ans');if(fb)fb.textContent=info?info.msg:'❌';}}
+/* VOCAB QUIZ */
+const vqData=[{word:'screen time',ipa:'/skriːn taɪm/',correct:'tiempo de pantalla / uso de dispositivo',wrongs:['dopamina','contenido']},{word:'algorithm',ipa:'/ˈælɡərɪðəm/',correct:'algoritmo',wrongs:['notificación','feed']},{word:'notification',ipa:'/ˌnoʊtɪfɪˈkeɪʃən/',correct:'notificación',wrongs:['algoritmo','pantalla']},{word:'dopamine',ipa:'/ˈdoʊpəmiːn/',correct:'dopamina',wrongs:['retiro','comparación']},{word:'withdrawal',ipa:'/wɪðˈdrɔːəl/',correct:'síndrome de abstinencia / retiro',wrongs:['desconexión','dopamina']},{word:'comparison',ipa:'/kəmˈpærɪsən/',correct:'comparación / compararse con otros',wrongs:['contenido','feed']},{word:'feed',ipa:'/fiːd/',correct:'feed / flujo de contenido',wrongs:['scroll','algoritmo']},{word:'scroll',ipa:'/skroʊl/',correct:'desplazarse por pantalla',wrongs:['publicar','compartir']},{word:'content',ipa:'/ˈkɒntɛnt/',correct:'contenido digital',wrongs:['tiempo de pantalla','feed']},{word:'disconnect',ipa:'/ˌdɪskəˈnɛkt/',correct:'desconectarse / alejarse del digital',wrongs:['comparar','borrar']},{word:'I\'m hooked',ipa:'/aɪm hʊkt/',correct:'Estoy enganchado / adicto',wrongs:['Lo mando al diablo','Estoy confundido']},{word:'it blew up',ipa:'/ɪt bluː ʌp/',correct:'se hizo viral / explotó en popularidad',wrongs:['se eliminó','se reportó']}];
+let vqQueue=[],vqCurrent=0,vqCorrect=0,vqAnswered=false;function vqShuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function vqInit(){vqQueue=vqShuffle([...vqData]);vqCurrent=0;vqCorrect=0;vqAnswered=false;document.getElementById('vqCard').style.display='block';document.getElementById('vqDone').style.display='none';vqRender();}
+function vqRender(){const q=vqQueue[vqCurrent];document.getElementById('vqWord').textContent=q.word;document.getElementById('vqIpa').textContent=q.ipa;document.getElementById('vqFeedback').textContent='';document.getElementById('vqFeedback').style.color='';document.getElementById('vqNext').style.display='none';document.getElementById('vqCounter').textContent=(vqCurrent+1)+'/'+vqQueue.length;document.getElementById('vqProgress').style.width=Math.round((vqCurrent/vqQueue.length)*100)+'%';document.getElementById('vqLabel').textContent=vqCurrent+'/'+vqQueue.length;vqAnswered=false;const opts=vqShuffle([q.correct,...q.wrongs]);const c=document.getElementById('vqOptions');c.innerHTML='';opts.forEach(o=>{const b=document.createElement('button');b.className='vquiz-opt';b.textContent=o;b.onclick=()=>vqCheck(b,o,q.correct);c.appendChild(b);});speakWord(q.word);}
+function vqCheck(btn,chosen,correct){if(vqAnswered)return;vqAnswered=true;const fb=document.getElementById('vqFeedback');document.querySelectorAll('.vquiz-opt').forEach(b=>b.disabled=true);if(chosen===correct){btn.classList.add('correct');fb.textContent='✅ ¡Correcto!';fb.style.color='var(--success)';vqCorrect++;if(vqCorrect>=8)earnBadge('b2');}else{btn.classList.add('wrong');document.querySelectorAll('.vquiz-opt').forEach(b=>{if(b.textContent===correct)b.classList.add('correct');});fb.textContent='❌ → "'+correct+'"';fb.style.color='var(--danger)';}document.getElementById('vqNext').style.display='inline-block';}
+function vqNextQuestion(){vqCurrent++;if(vqCurrent>=vqQueue.length)vqFinish();else vqRender();}
+function vqFinish(){document.getElementById('vqCard').style.display='none';document.getElementById('vqDone').style.display='block';document.getElementById('vqFinalScore').textContent=vqCorrect+'/'+vqQueue.length;document.getElementById('vqProgress').style.width='100%';document.getElementById('vqLabel').textContent=vqQueue.length+'/'+vqQueue.length;document.getElementById('vqDoneMsg').textContent=vqCorrect>=10?'🏅 Perfect!':vqCorrect>=8?'🎯 Badge!':'📖 Try again!';if(vqCorrect>=8)earnBadge('b2');document.getElementById('vqCounter').textContent='✓';}
+document.addEventListener('DOMContentLoaded',vqInit);
+function speakWord(t){if(!window.speechSynthesis)return;const u=new SpeechSynthesisUtterance(t);u.lang='en-US';u.rate=0.85;speechSynthesis.cancel();speechSynthesis.speak(u);}
+function toggleScript(id){const el=document.getElementById(id);el.style.display=el.style.display==='block'?'none':'block';}
+const listenMsgs={nothing:{correct:true,msg:'✅ "Hours of content were consumed and I have nothing to show for it" — no ideas formed, no skills built.'},cost:{correct:false,msg:'❌ No money was mentioned — he was shocked by time lost, not financial cost.'},data:{correct:false,msg:'❌ Data hacking was not the issue. He was disturbed by wasted time and lost hours.'},attention:{correct:true,msg:'✅ "Our attention is being sold to advertisers while we scroll for free." — The apps are free; we pay with attention.'},made:{correct:false,msg:'❌ We don\'t produce content for the platforms (most users consume). We pay with our attention.'},employee:{correct:false,msg:'❌ He didn\'t use employment language — he said our attention is the product being sold.'}};
+function checkListen(btn,key,fbId){const btns=btn.parentElement.querySelectorAll('.listen-btn');btns.forEach(b=>{b.disabled=true;b.classList.add('wrong-ans');});const fb=document.getElementById(fbId);const info=listenMsgs[key];if(info&&info.correct){btn.classList.remove('wrong-ans');btn.classList.add('correct-ans');if(fb)fb.textContent=info.msg;}else{if(fb)fb.textContent=info?info.msg:'❌';}earnBadge('b4');}
+function checkTF(btn,isCorrect){const row=btn.closest('.tf-row');row.querySelectorAll('.tf-btn').forEach(b=>b.disabled=true);if(isCorrect){btn.style.cssText='background:rgba(0,229,160,.15);border-color:var(--success);color:var(--success)';}else{btn.style.cssText='background:rgba(255,77,109,.12);border-color:var(--danger);color:var(--danger)';const sib=Array.from(row.querySelectorAll('.tf-btn')).find(b=>b!==btn);if(sib)sib.style.cssText='background:rgba(0,229,160,.15);border-color:var(--success);color:var(--success)';}earnBadge('b4');}
+let meterVal=50;function moveMeter(d){meterVal=Math.max(5,Math.min(95,meterVal+d));document.getElementById('meterFill').style.width=meterVal+'%';document.getElementById('meterPercent').textContent='Class: '+meterVal+'% agree';}
+function saveWin(){const t=document.getElementById('winInput').value.trim();if(!t)return;document.getElementById('winSaved').style.display='block';document.getElementById('winSaved').textContent='🏆 "'+t+'" — Excellent session!';earnBadge('b5');}
+function toggleMode(){document.body.classList.toggle('student-mode');document.querySelector('.mode-toggle').textContent=document.body.classList.contains('student-mode')?'TEACHER MODE':'STUDENT MODE';}
+window.addEventListener('scroll',()=>{const h=document.documentElement;document.getElementById('progressBar').style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100+'%';});
+</script>
+</body>
+</html>
