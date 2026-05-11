@@ -1036,6 +1036,11 @@ function renderMiProgreso(page) {
       <div class="metric"><div class="metric-label">Nivel actual</div>
         <div class="metric-val" style="font-size:18px">${a.nivel_actual}</div>
         <div class="metric-sub">${LEVEL_LABELS[a.nivel_actual]||''}</div></div>
+      <!-- ── MEJORA ALU-3 ── -->
+      <div class="metric"><div class="metric-label">Posición en el programa</div>
+        <div class="metric-val" style="font-size:16px">M${Math.ceil((a.sesion_actual||1)/9)} · S${(((a.sesion_actual||1)-1)%9)+1}</div>
+        <div class="metric-sub">Sesión ${a.sesion_actual||1} de 54</div></div>
+      <!-- ── /MEJORA ALU-3 ── -->
     </div>
     <div class="card">
       <div class="card-title">Progreso de nivel</div>
@@ -1049,6 +1054,62 @@ function renderMiProgreso(page) {
         <div class="prog-bar"><div class="prog-fill" style="width:${prog}%"></div></div>
       </div>
     </div>
+    <!-- ── MEJORAS ALU-1 / ALU-2 / ALU-4 ── -->
+    ${(() => {
+      const SESMAX_A = 54;
+      // ALU-1: Nota más reciente del maestro
+      const sesConNota = [...ses].sort((x,y) => y.fecha.localeCompare(x.fecha))
+        .find(s => s.notas && s.notas.trim());
+      const notaBlock = sesConNota ? `
+        <div class="card" style="border-left:3px solid var(--mag)">
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">
+            <span style="font-size:15px">📝</span>
+            <span style="font-size:12px;font-weight:500;color:var(--txt)">Nota de tu maestro</span>
+            <span style="font-size:11px;color:var(--txt3);margin-left:auto">${fmtDate(sesConNota.fecha)}</span>
+          </div>
+          <div style="font-size:13px;color:var(--txt2);line-height:1.5">${sesConNota.notas}</div>
+        </div>` : '';
+      // ALU-2: Temas del mes
+      const mesActualA = new Date().toISOString().slice(0,7);
+      const sesMesA = ses.filter(s => s.fecha?.startsWith(mesActualA) && s.tema && s.tema.trim());
+      let temasBlock = '';
+      if (sesMesA.length) {
+        const freqA = {};
+        sesMesA.forEach(s => { const t=s.tema.trim(); freqA[t]=(freqA[t]||0)+1; });
+        const sorted = Object.entries(freqA).sort((a,b)=>b[1]-a[1]);
+        temasBlock = `
+        <div class="card">
+          <div class="card-title">Este mes trabajaste</div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:4px">
+            ${sorted.map(([t,n])=>`<span style="background:var(--bg2);border:1px solid var(--border2);
+              border-radius:20px;padding:3px 10px;font-size:11px;color:var(--txt2)">${t}${n>1?` (${n})`:''}</span>`).join('')}
+          </div>
+        </div>`;
+      } else {
+        temasBlock = `<div class="card"><div style="font-size:12px;color:var(--txt3)">Este mes aún no hay sesiones registradas.</div></div>`;
+      }
+      // ALU-4: Proyección de avance (solo si >=4 sesiones)
+      let proyBlock = '';
+      if (ses.length >= 4) {
+        const sesFechas = [...ses].map(s=>s.fecha).filter(Boolean).sort();
+        const primera = new Date(sesFechas[0]);
+        const ultima  = new Date(sesFechas[sesFechas.length-1]);
+        const diffMs  = ultima - primera;
+        const semanas = diffMs / (1000*60*60*24*7) || 1;
+        const clxsem  = parseFloat((ses.length / semanas).toFixed(1));
+        if (clxsem >= 0.5) {
+          const restantes = SESMAX_A - (a.sesion_actual||1);
+          const semsRest  = restantes > 0 ? Math.ceil(restantes / clxsem) : 0;
+          proyBlock = `
+          <div style="font-size:11px;color:var(--txt3);padding:10px 14px;background:var(--bg2);
+            border-radius:var(--rs);margin-top:-4px">
+            📈 A tu ritmo actual (${clxsem} clases/semana), completás ${a.nivel_actual} en aprox. ${semsRest} semana${semsRest!==1?'s':''}.
+          </div>`;
+        }
+      }
+      return notaBlock + temasBlock + proyBlock;
+    })()}
+    <!-- ── /MEJORAS ALU-1 / ALU-2 / ALU-4 ── -->
     ${grupo ? `
     <div class="card">
       <div class="card-title">Mi grupo</div>
@@ -3556,12 +3617,18 @@ function renderRHDashboard(page) {
     </div>`;
 
   // Header hero
+  // ── MEJORA RH-3: tabs con acceso a detalle de grupo ──
   const grupoTabs = grupos.length > 1 ? `
-    <div class="group-tabs">
+    <div class="group-tabs" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
       <button class="group-tab ${!rhGrupoFiltro?'active':''}" onclick="rhGrupoFiltro='';showView('rh-dashboard')">Todos</button>
-      ${grupos.map(g=>`<button class="group-tab ${rhGrupoFiltro===g.id?'active':''}"
-        onclick="rhGrupoFiltro='${g.id}';showView('rh-dashboard')">${g.nombre}</button>`).join('')}
+      ${grupos.map(g=>`
+        <button class="group-tab ${rhGrupoFiltro===g.id?'active':''}"
+          onclick="rhGrupoFiltro='${g.id}';showView('rh-dashboard')">${g.nombre}</button>
+        <button class="action-btn" title="Ver detalle del grupo"
+          onclick="verGrupoDetalleRH('${g.id}')"
+          style="padding:3px 8px;font-size:10px;height:auto">↗</button>`).join('')}
     </div>` : '';
+  // ── /MEJORA RH-3 ──
 
   page.innerHTML = `
     <div class="rh-hero">
@@ -3626,6 +3693,17 @@ function renderRHDashboard(page) {
           <div class="prog-bar" style="margin-bottom:6px">
             <div class="prog-fill" style="width:${pct}%"></div>
           </div>
+          <!-- ── MEJORA RH-2 ── -->
+          ${(() => {
+            const sesA = a.sesion_actual || 1;
+            const pctCurr = Math.round(((sesA-1)/54)*100);
+            const modA = Math.ceil(sesA/9);
+            return `<div style="font-size:11px;color:var(--txt3);margin-bottom:4px">Sesión ${sesA} de 54 · Módulo ${modA} de 6</div>
+            <div class="prog-bar" style="margin-bottom:6px;background:var(--bg3)">
+              <div class="prog-fill" style="width:${pctCurr}%;background:var(--navy);opacity:.6"></div>
+            </div>`;
+          })()}
+          <!-- ── /MEJORA RH-2 ── -->
           <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--txt3)">
             <span>${asist}/${sesPers.length} sesiones este mes</span>
             <span style="color:var(--mag);font-weight:500">Ver detalle →</span>
@@ -3636,6 +3714,53 @@ function renderRHDashboard(page) {
     <div class="card">
       <p style="font-size:13px;color:var(--txt3)">No hay colaboradores registrados para esta empresa aún.</p>
     </div>`}
+
+    <!-- ── MEJORA RH-4: Temas trabajados del mes ── -->
+    ${(() => {
+      const temasMes = sesMes.filter(s => s.tema && s.tema.trim());
+      if (!temasMes.length) return `<div class="card">
+        <div class="card-title">Temas trabajados — ${mesNombre(rhMes)}</div>
+        <div style="font-size:12px;color:var(--txt3)">Sin sesiones registradas este mes.</div></div>`;
+      const freqRH = {};
+      temasMes.forEach(s => { const t=s.tema.trim(); freqRH[t]=(freqRH[t]||0)+1; });
+      const sortedRH = Object.entries(freqRH).sort((a,b)=>b[1]-a[1]).slice(0,10);
+      return `<div class="card">
+        <div class="card-title">Temas trabajados — ${mesNombre(rhMes)}</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:6px">
+          ${sortedRH.map(([t,n])=>`<span style="background:var(--bg2);border:1px solid var(--border2);
+            border-radius:20px;padding:3px 11px;font-size:11px;color:var(--txt2)">${t} (${n})</span>`).join('')}
+        </div></div>`;
+    })()}
+    <!-- ── /MEJORA RH-4 ── -->
+
+    <!-- ── MEJORA RH-5: Ranking del equipo ── -->
+    ${(() => {
+      if (lista.length <= 3) return '';
+      const ranked = lista.map(a => {
+        const s = DATA.sesiones.filter(ss => ss.alumno===a.id && ss.fecha?.startsWith(rhMes));
+        const ast = s.filter(ss=>ss.asistio).length;
+        const pct = s.length ? Math.round(ast/s.length*100) : 0;
+        const lvlAdv = Math.max(0, LEVELS.indexOf(a.nivel_actual) - LEVELS.indexOf(a.nivel_inicial));
+        return { a, pct, ast, total: s.length, score: pct + lvlAdv*5 };
+      }).sort((x,y) => y.score - x.score);
+      return `<div class="card">
+        <div class="card-title">Ranking del equipo — ${mesNombre(rhMes)}</div>
+        <table class="stable" style="margin-top:8px">
+          <thead><tr><th>#</th><th>Colaborador</th><th>Asistencia</th><th>Nivel</th><th>Sesión</th></tr></thead>
+          <tbody>${ranked.map((r,i) => {
+            const bg = i===0 ? 'background:var(--green-bg)' : '';
+            const col = r.pct < 60 && r.total > 0 ? 'color:var(--red)' : '';
+            return `<tr style="${bg}">
+              <td style="font-weight:600;color:var(--txt3)">#${i+1}</td>
+              <td style="font-weight:500">${r.a.nombre}</td>
+              <td style="${col}">${r.total ? r.pct+'% ('+r.ast+'/'+r.total+')' : '—'}</td>
+              <td><span class="level ${LEVEL_CLASS[r.a.nivel_actual]||'level-a1'}" style="font-size:9px;padding:1px 5px">${r.a.nivel_inicial}→${r.a.nivel_actual}</span></td>
+              <td style="font-size:12px;color:var(--txt3)">${r.a.sesion_actual||1} / 54</td>
+            </tr>`;
+          }).join('')}</tbody>
+        </table></div>`;
+    })()}
+    <!-- ── /MEJORA RH-5 ── -->
 
     ${lista.filter(a=>{
       const s=DATA.sesiones.filter(ss=>ss.alumno===a.id&&ss.fecha?.startsWith(rhMes));
@@ -3735,9 +3860,21 @@ function verColaboradorRH(alumnoId) {
       <span style="font-size:11px;color:var(--txt3)">→</span>
       <span class="level ${LEVEL_CLASS[a.nivel_actual]||'level-a1'}">${a.nivel_actual}</span>
     </div>
-    <div class="prog-bar" style="margin-bottom:18px">
+    <div class="prog-bar" style="margin-bottom:8px">
       <div class="prog-fill" style="width:${prog}%"></div>
     </div>
+    <!-- ── MEJORA RH-2 modal ── -->
+    ${(() => {
+      const sesA = a.sesion_actual || 1;
+      const modA = Math.ceil(sesA/9);
+      const pctC = Math.round(((sesA-1)/54)*100);
+      return `<div style="font-size:12px;color:var(--txt2);margin-bottom:4px">
+        Posición en el programa: Sesión ${sesA} de 54 · Módulo ${modA} de 6</div>
+      <div class="prog-bar" style="margin-bottom:18px;background:var(--bg3)">
+        <div class="prog-fill" style="width:${pctC}%;background:var(--navy);opacity:.55"></div>
+      </div>`;
+    })()}
+    <!-- ── /MEJORA RH-2 modal ── -->
 
     <!-- Asistencia por mes -->
     <div style="font-size:11px;font-weight:500;color:var(--txt3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px">
@@ -3798,10 +3935,17 @@ function renderRHReporte(page) {
   const alumnos  = DATA.alumnos.filter(a => a.empresa === empresa && a.activo !== false);
   const grupos   = DATA.grupos.filter(g => g.empresa === empresa && g.activo !== false);
 
+  // ── MEJORA RH-1: toggle individual / ejecutivo ──
   page.innerHTML = `
     <div class="ph"><h2>Generar reporte</h2>
       <p>Descargá el reporte mensual de tu equipo en PDF.</p></div>
     <div class="card">
+      <div style="display:flex;gap:8px;margin-bottom:16px">
+        <button id="btn-rep-individual" class="action-btn primary" onclick="setRHRepTipo('individual')"
+          style="font-size:12px">📄 Reporte individual</button>
+        <button id="btn-rep-ejecutivo" class="action-btn" onclick="setRHRepTipo('ejecutivo')"
+          style="font-size:12px">📊 Reporte ejecutivo</button>
+      </div>
       <div class="form-grid">
         ${grupos.length > 1 ? `
         <div class="fld"><label>Grupo</label>
@@ -3809,7 +3953,7 @@ function renderRHReporte(page) {
             <option value="">— todos los grupos —</option>
             ${grupos.map(g=>`<option value="${g.id}">${g.nombre}</option>`).join('')}
           </select></div>` : ''}
-        <div class="fld"><label>Colaborador</label>
+        <div class="fld" id="fld-rep-alumno"><label>Colaborador</label>
           <select id="rh-rep-alumno">
             <option value="">— todos —</option>
             ${alumnos.map(a=>`<option value="${a.id}">${a.nombre}</option>`).join('')}
@@ -3821,6 +3965,25 @@ function renderRHReporte(page) {
         style="padding:10px 24px;font-size:13px">Generar reporte</button>
     </div>
     <div id="rh-reporte-output"></div>`;
+
+  // Inicializar tipo en individual
+  setTimeout(() => setRHRepTipo('individual'), 30);
+}
+
+// ── MEJORA RH-1: helper para cambiar tipo de reporte ──
+function setRHRepTipo(tipo) {
+  window._rhRepTipo = tipo;
+  const btnI = document.getElementById('btn-rep-individual');
+  const btnE = document.getElementById('btn-rep-ejecutivo');
+  const fldA = document.getElementById('fld-rep-alumno');
+  if (!btnI) return;
+  if (tipo === 'individual') {
+    btnI.classList.add('primary'); btnE.classList.remove('primary');
+    if (fldA) fldA.style.display = '';
+  } else {
+    btnE.classList.add('primary'); btnI.classList.remove('primary');
+    if (fldA) fldA.style.display = 'none';
+  }
 }
 
 function filtrarRHAlumnos() {
@@ -3835,15 +3998,23 @@ function filtrarRHAlumnos() {
 
 function generarRHReporte() {
   const empresa  = currentUser.empresa;
-  const aId      = document.getElementById('rh-rep-alumno').value;
+  const aId      = document.getElementById('rh-rep-alumno')?.value || '';
   const mes      = document.getElementById('rh-rep-mes').value;
   const grupoId  = document.getElementById('rh-rep-grupo')?.value || '';
+  const tipo     = window._rhRepTipo || 'individual';
 
   let lista = DATA.alumnos.filter(a => a.empresa === empresa && a.activo !== false);
-  if (aId)     lista = lista.filter(a => a.id === aId);
-  else if (grupoId) lista = lista.filter(a => normId(a.grupo_id) === normId(grupoId));
+  if (grupoId) lista = lista.filter(a => normId(a.grupo_id) === normId(grupoId));
 
-  document.getElementById('rh-reporte-output').innerHTML = lista.map(a=>buildReporteHTML(a,mes)).join('');
+  // ── MEJORA RH-1: reporte ejecutivo ──
+  if (tipo === 'ejecutivo') {
+    document.getElementById('rh-reporte-output').innerHTML = buildReporteEjecutivoHTML(lista, mes, empresa);
+  } else {
+    // Reporte individual — comportamiento original
+    if (aId) lista = lista.filter(a => a.id === aId);
+    document.getElementById('rh-reporte-output').innerHTML = lista.map(a=>buildReporteHTML(a,mes)).join('');
+  }
+
   document.getElementById('topbar-actions').innerHTML =
     `<button class="action-btn primary no-print" onclick="window.print()"
       style="display:flex;align-items:center;gap:5px">⬇ Descargar PDF</button>`;
@@ -4631,7 +4802,106 @@ function abrirAgente(id) {
 }
 
 // ════════════════════════════════════════
-// FIN PORTAL GT v28
+// ── MEJORA RH-1: buildReporteEjecutivoHTML ──────────────────
+function buildReporteEjecutivoHTML(lista, mes, empresa) {
+  const [y, m] = mes.split('-');
+  const mesNom = new Date(y, m-1, 1).toLocaleString('es', {month:'long', year:'numeric'});
+  const sesMesAll = DATA.sesiones.filter(s => lista.some(a=>a.id===s.alumno) && s.fecha?.startsWith(mes));
+  const asistAll  = sesMesAll.filter(s=>s.asistio).length;
+  const pctMesAll = sesMesAll.length ? Math.round(asistAll/sesMesAll.length*100) : 0;
+  const conAvance = lista.filter(a => a.nivel_inicial && a.nivel_actual && a.nivel_inicial !== a.nivel_actual).length;
+  const clasesImpartidas = [...new Set(sesMesAll.map(s=>s.fecha))].length;
+
+  // Temas más frecuentes
+  const freqEj = {};
+  sesMesAll.filter(s=>s.tema&&s.tema.trim()).forEach(s=>{ const t=s.tema.trim(); freqEj[t]=(freqEj[t]||0)+1; });
+  const topTemas = Object.entries(freqEj).sort((a,b)=>b[1]-a[1]).slice(0,10);
+
+  // Tabla de colaboradores
+  const filas = lista.map(a => {
+    const ses  = DATA.sesiones.filter(s=>s.alumno===a.id&&s.fecha?.startsWith(mes));
+    const ast  = ses.filter(s=>s.asistio).length;
+    const pct  = ses.length ? Math.round(ast/ses.length*100) : 0;
+    const st   = getAttStatus(pct, ses.length);
+    const gNom = (DATA.grupos.find(g=>normId(g.id)===normId(a.grupo_id))||{}).nombre || '—';
+    return `<tr>
+      <td style="font-weight:500">${a.nombre}</td>
+      <td style="font-size:11px">${gNom}</td>
+      <td><span style="font-size:10px">${a.nivel_inicial} → ${a.nivel_actual}</span></td>
+      <td>${a.sesion_actual||1} de 54</td>
+      <td>${ses.length ? pct+'% ('+ast+'/'+ses.length+')' : '—'}</td>
+      <td><span class="status-chip ${st.chip}" style="font-size:10px">${st.label}</span></td>
+    </tr>`;
+  }).join('');
+
+  return `
+  <div class="report-preview" style="margin-bottom:24px">
+    <div class="report-header">
+      <div>
+        <div class="report-brand">● Gabriel Turner - English Training</div>
+        <div class="report-brand-sub">gabrielturner.com · 461 147 2119</div>
+      </div>
+      <div class="report-title">
+        <h2>Reporte ejecutivo</h2>
+        <p>${empresa} · ${mesNom}</p>
+      </div>
+    </div>
+
+    <div class="report-section">
+      <h3>Métricas del equipo</h3>
+      <div class="report-grid">
+        <div class="report-field"><div class="rf-label">Colaboradores activos</div><div class="rf-val">${lista.length}</div></div>
+        <div class="report-field"><div class="rf-label">Asistencia promedio</div><div class="rf-val">${pctMesAll}%</div></div>
+        <div class="report-field"><div class="rf-label">Sesiones impartidas</div><div class="rf-val">${clasesImpartidas}</div></div>
+        <div class="report-field"><div class="rf-label">Con avance de nivel</div><div class="rf-val">${conAvance}</div></div>
+      </div>
+    </div>
+
+    <div class="report-section">
+      <h3>Resumen de colaboradores</h3>
+      <table class="report-sessions-table">
+        <thead><tr><th>Nombre</th><th>Grupo</th><th>Nivel</th><th>Sesión actual</th><th>Asistencia del mes</th><th>Estado</th></tr></thead>
+        <tbody>${filas}</tbody>
+      </table>
+    </div>
+
+    ${topTemas.length ? `
+    <div class="report-section">
+      <h3>Temas trabajados en el período</h3>
+      <div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:6px">
+        ${topTemas.map(([t,n])=>`<span style="background:var(--bg);border:1px solid var(--border2);
+          border-radius:16px;padding:2px 10px;font-size:11px">${t} (${n})</span>`).join('')}
+      </div>
+    </div>` : ''}
+
+    <div class="report-footer">
+      <span>Gabriel Turner - English Training · Celaya, Guanajuato</span>
+      <span>Generado el ${new Date().toLocaleDateString('es-MX',{day:'2-digit',month:'long',year:'numeric'})}</span>
+    </div>
+  </div>
+
+  <div style="page-break-before:always">
+    <div style="font-size:11px;font-weight:500;color:var(--txt3);text-transform:uppercase;letter-spacing:.06em;
+      margin:24px 0 12px;padding:0 4px">Anexo — Reportes individuales</div>
+    ${lista.map(a=>buildReporteHTML(a,mes)).join('')}
+  </div>`;
+}
+
+// ── MEJORA RH-3: verGrupoDetalle read-only para rol RH ───────
+function verGrupoDetalleRH(grupoId) {
+  const empresa = currentUser.empresa;
+  const g = DATA.grupos.find(g => g.id === grupoId);
+  if (!g || g.empresa !== empresa) return;
+  // Reusar verGrupoDetalle pero sobreescribir el footer
+  verGrupoDetalle(grupoId);
+  // Esperar a que el modal se renderice y limpiar botones de edición
+  setTimeout(() => {
+    const footer = document.getElementById('modal-footer');
+    if (footer) footer.innerHTML = `<button class="action-btn" onclick="closeModal()">Cerrar</button>`;
+  }, 30);
+}
+
+// FIN PORTAL GT v29
 // ════════════════════════════════════════
 
 </script>
