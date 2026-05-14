@@ -1028,12 +1028,37 @@ function generateCert() {
 
 /* ═══════════════════ MY WIN ═══════════════════ */
 function saveWin() {
-  const txt = document.getElementById('winInput').value.trim();
-  if (!txt) return;
-  const saved = document.getElementById('winSaved');
-  saved.style.display = 'block';
-  saved.textContent = '🏆 "' + txt + '" — Session complete. See you next class!';
+  const winInput = document.getElementById('winInput');
+  const myWinTA  = document.getElementById('myWinTA');
+  const winTxt = winInput ? winInput.value.trim() : '';
+  const mwTxt  = myWinTA  ? myWinTA.value.trim()  : '';
+  if (!winTxt && !mwTxt) return;
+  if (winTxt) {
+    const saved = document.getElementById('winSaved');
+    if (saved) {
+      saved.style.display = 'block';
+      saved.textContent = '🏆 "' + winTxt + '" — Session complete. See you next class!';
+    }
+  }
+  if (mwTxt) {
+    const mwSaved = document.getElementById('mwSaved');
+    if (mwSaved) mwSaved.style.display = 'block';
+  }
   earnBadge('b5');
+}
+
+/* ═══════════════════ SPEAK (TTS) ═══════════════════ */
+if (typeof speak !== 'function') {
+  window.speak = function(text) {
+    if (!('speechSynthesis' in window)) return;
+    try {
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = 'en-US';
+      u.rate = 0.95;
+      window.speechSynthesis.cancel();
+      window.speechSynthesis.speak(u);
+    } catch(e) {}
+  };
 }
 
 /* ═══════════════════ MODE TOGGLE ═══════════════════ */
