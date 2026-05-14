@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GT A1.1 M6 S3B &mdash; Problems &amp; Solutions &middot; Production &amp; Fluency</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+
+:root{
+  --bg:#080808;--surface:#111318;--surface2:#1a1f28;
+  --accent:#FF1F5C;--accent2:#FF4D7A;
+  --border:rgba(255,31,92,.18);
+  --text:#F0F4F8;--muted:#8A9BB0;--dim:rgba(226,226,226,.25);
+  --danger:#FF4D6D;--success:#00E5A0;--warn:#FFB347;
+  --cyan:#00CFFF;--gold:#FFB800;
+  --font-head:"Syne",sans-serif;--font-body:"DM Sans",sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:15px;line-height:1.65}
+img{display:block;width:100%;object-fit:cover}
+.prog-wrap{position:fixed;top:0;left:0;width:100%;height:3px;background:rgba(255,31,92,.12);z-index:999}
+.prog-bar{height:3px;background:var(--accent);width:0%;transition:width .25s}
+.hdr{position:sticky;top:3px;z-index:90;background:rgba(17,19,24,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:14px 48px;display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px}
+.dot{width:8px;height:8px;background:var(--accent);border-radius:50%}
+.bname{font-family:var(--font-head);font-weight:800;font-size:13px;letter-spacing:2px;text-transform:uppercase;color:#fff}
+.bsub{font-size:11px;color:var(--muted);letter-spacing:.8px}
+.sess-tags{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.tag{display:inline-block;padding:4px 11px;font-family:var(--font-head);font-size:9.5px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;border-radius:3px}
+.t-lv{background:rgba(255,31,92,.18);color:var(--accent);border:1px solid rgba(255,31,92,.35)}
+.t-mod{background:rgba(255,184,0,.12);color:var(--gold);border:1px solid rgba(255,184,0,.3)}
+.t-sess{background:rgba(0,207,255,.1);color:var(--cyan);border:1px solid rgba(0,207,255,.25)}
+.t-time{background:rgba(255,255,255,.06);color:var(--muted);border:1px solid rgba(255,255,255,.1)}
+.sm-toggle{background:rgba(255,31,92,.12);border:1px solid rgba(255,31,92,.3);color:var(--accent);font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;padding:7px 14px;cursor:pointer;text-transform:uppercase;border-radius:3px;transition:.2s}
+.sm-toggle:hover{background:rgba(255,31,92,.22)}
+.badge-strip{display:flex;align-items:center;gap:10px;padding:14px 48px;background:var(--surface);border-bottom:1px solid var(--border)}
+.badge-strip span[id]{font-size:22px;filter:grayscale(1);opacity:.28;transition:.4s}
+.badge-strip span[id].earned{filter:none;opacity:1;animation:badgePop .45s ease}
+.badge-label{font-family:var(--font-head);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-left:auto}
+@keyframes badgePop{0%{transform:scale(1)}50%{transform:scale(1.35)}100%{transform:scale(1)}}
+#confMsg{display:none;font-family:var(--font-head);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);margin-left:8px}
+.section{margin-bottom:4px}
+.sec-img{position:relative;height:180px;overflow:hidden}
+.sec-img img{height:100%;object-fit:cover;filter:brightness(.45)}
+.sec-overlay{position:absolute;inset:0;display:flex;align-items:flex-end;padding:22px 32px;background:linear-gradient(to top,rgba(8,8,8,.85),transparent)}
+.sec-num{font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--accent)}
+.sec-title{font-family:var(--font-head);font-size:24px;font-weight:800;color:#fff;margin:2px 0}
+.sec-sub{font-size:12.5px;color:var(--muted)}
+.dur-tag{position:absolute;top:16px;right:16px;background:rgba(8,8,8,.65);border:1px solid rgba(255,255,255,.15);padding:5px 12px;font-family:var(--font-head);font-size:10px;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase}
+.sec-body{padding:28px 48px 36px;background:var(--surface)}
+.tn{border-left:3px solid var(--gold);background:rgba(255,184,0,.04);padding:14px 18px;margin-top:16px;border-radius:0 6px 6px 0}
+.tn.tn-c1{border-left-color:var(--cyan);background:rgba(0,207,255,.04)}
+.tn.tn-c2{border-left-color:var(--accent2);background:rgba(255,77,114,.04)}
+.tn-label{font-family:var(--font-head);font-size:9.5px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:7px}
+.tn.tn-c1 .tn-label{color:var(--cyan)}
+.tn.tn-c2 .tn-label{color:var(--accent2)}
+.tn p{font-size:13px;color:var(--muted);line-height:1.6}
+.tn em{color:var(--text);font-style:normal}
+body.sm .tn{display:none}
+/* HOT TAKE */
+.ht-wrap{background:linear-gradient(135deg,rgba(255,31,92,.09),transparent);border:1px solid rgba(255,31,92,.22);border-radius:10px;padding:22px 26px;margin-top:16px}
+.ht-label{font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--accent);margin-bottom:10px}
+.ht-stmt{font-size:18px;font-weight:600;color:#fff;line-height:1.4;margin-bottom:14px}
+.ht-btns{display:flex;gap:10px}
+.ht-btn{flex:1;padding:10px;font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border:1px solid;cursor:pointer;border-radius:6px;transition:.25s}
+.ht-agree{background:rgba(0,229,160,.1);border-color:rgba(0,229,160,.35);color:var(--success)}
+.ht-disagree{background:rgba(255,77,109,.1);border-color:rgba(255,77,109,.35);color:var(--danger)}
+.ht-btn:hover{transform:translateY(-2px)}
+.ht-mini-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:12px}
+.ht-mini{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 16px}
+.ht-mini-lbl{font-family:var(--font-head);font-size:9px;letter-spacing:2px;text-transform:uppercase;margin-bottom:6px}
+.ht-mini-txt{font-size:13.5px;color:var(--text);line-height:1.4}
+/* PITCH CARDS */
+.pitch-cards{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}
+.pitch-card{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:18px 20px}
+.pitch-role{font-family:var(--font-head);font-size:9.5px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px}
+.pitch-card:first-child .pitch-role{color:var(--cyan)}
+.pitch-card:last-child .pitch-role{color:var(--accent)}
+.pitch-task{font-size:14px;color:var(--text);line-height:1.5}
+.pitch-hint{font-size:12px;color:var(--muted);margin-top:8px;font-style:italic}
+/* RELAY */
+.relay-chain{display:flex;gap:8px;flex-wrap:wrap;align-items:stretch;margin:14px 0}
+.relay-item{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px 14px;font-size:13px;color:var(--text);flex:1;min-width:130px}
+.relay-item b{color:var(--accent);font-family:var(--font-head);font-size:9.5px;letter-spacing:1.5px;display:block;margin-bottom:4px;text-transform:uppercase}
+.relay-arrow{font-size:20px;color:var(--dim);align-self:center}
+/* MATCH UP */
+.mu-wrap{margin-top:16px}
+.mu-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:12px}
+.mu-col-label{font-family:var(--font-head);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:8px}
+.mu-items{display:flex;flex-direction:column;gap:8px}
+.mu-item{background:var(--surface2);border:2px solid var(--border);border-radius:8px;padding:11px 14px;cursor:pointer;transition:.2s;font-size:13.5px}
+.mu-item:hover{border-color:var(--accent)}
+.mu-item.selected{border-color:var(--accent);background:rgba(255,31,92,.1);color:var(--accent)}
+.mu-item.matched{border-color:var(--success);background:rgba(0,229,160,.08);color:var(--success);cursor:default}
+.mu-item.wrong{border-color:var(--danger);background:rgba(255,77,109,.08)}
+.mu-score{font-family:var(--font-head);font-size:12px;font-weight:700;letter-spacing:1px;color:var(--accent);margin-top:8px}
+.mu-reset{margin-top:10px;background:none;border:1px solid var(--border);color:var(--dim);font-family:var(--font-head);font-size:9px;letter-spacing:1.5px;padding:7px 14px;cursor:pointer;border-radius:4px;text-transform:uppercase;transition:.2s}
+.mu-reset:hover{border-color:var(--muted);color:var(--muted)}
+/* SPIN WHEEL */
+.wheel-wrap{display:flex;gap:28px;align-items:center;margin-top:16px;flex-wrap:wrap}
+.wheel-canvas-wrap{position:relative;width:220px;height:220px;flex-shrink:0}
+.wheel-pointer{position:absolute;top:-12px;left:50%;transform:translateX(-50%);font-size:24px;pointer-events:none}
+.wheel-result-wrap{flex:1;min-width:200px}
+.wheel-result-label{font-family:var(--font-head);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.wheel-result-val{font-size:17px;font-weight:700;color:var(--accent);min-height:44px;line-height:1.4;margin-bottom:14px}
+.spin-btn{background:rgba(255,31,92,.15);border:1px solid rgba(255,31,92,.4);color:var(--accent);font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:1.5px;padding:11px 22px;cursor:pointer;border-radius:6px;text-transform:uppercase;transition:.25s}
+.spin-btn:hover{background:rgba(255,31,92,.28);transform:translateY(-1px)}
+.spin-btn:disabled{opacity:.4;cursor:not-allowed}
+/* TIMER */
+.timer-block{display:flex;flex-direction:column;align-items:center;gap:10px;min-width:110px}
+.timer-svg{transform:rotate(-90deg)}
+.timer-bg{fill:none;stroke:rgba(255,255,255,.08)}
+.timer-arc{fill:none;stroke:var(--accent);stroke-linecap:round;transition:stroke .4s}
+.timer-text{font-family:var(--font-head);font-size:13px;font-weight:700;fill:var(--text);transform:rotate(90deg);transform-origin:45px 44px}
+.timer-lbl{font-family:var(--font-head);font-size:7px;letter-spacing:1.5px;fill:var(--muted);transform:rotate(90deg);transform-origin:45px 57px;text-anchor:middle}
+.t-btn{font-family:var(--font-head);font-size:9.5px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:8px 16px;border:1px solid;cursor:pointer;border-radius:4px;transition:.2s}
+.t-start{background:rgba(255,31,92,.15);border-color:rgba(255,31,92,.4);color:var(--accent)}
+.t-start:hover{background:rgba(255,31,92,.25)}
+.t-reset{background:transparent;border-color:var(--border);color:var(--dim)}
+.t-reset:hover{border-color:var(--muted);color:var(--muted)}
+/* LEADERBOARD */
+.lb-input-row{display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+.lb-input{background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:var(--font-body);font-size:13px;padding:10px 14px;border-radius:6px;flex:1;min-width:120px;outline:none}
+.lb-input:focus{border-color:var(--accent)}
+.lb-score-in{width:80px;flex:0 0 80px}
+.lb-add-btn{background:rgba(255,31,92,.15);border:1px solid rgba(255,31,92,.4);color:var(--accent);font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;padding:10px 16px;cursor:pointer;border-radius:6px;text-transform:uppercase;transition:.2s}
+.lb-add-btn:hover{background:rgba(255,31,92,.28)}
+.lb-table{width:100%;border-collapse:collapse}
+.lb-table th{font-family:var(--font-head);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--dim);padding:8px 14px;text-align:left;border-bottom:1px solid var(--border)}
+.lb-table td{padding:10px 14px;border-bottom:1px solid rgba(255,255,255,.04);font-size:13px}
+.lb-rank{font-family:var(--font-head);font-weight:800;color:var(--accent)}
+.lb-score-cell{color:var(--success);font-family:var(--font-head);font-weight:700}
+.lb-reset{background:none;border:1px solid var(--border);color:var(--dim);font-family:var(--font-head);font-size:9px;letter-spacing:1.5px;padding:6px 12px;cursor:pointer;border-radius:4px;text-transform:uppercase;margin-top:10px;transition:.2s}
+.lb-reset:hover{border-color:var(--muted);color:var(--muted)}
+/* CHECKLIST */
+.check-list{list-style:none;display:flex;flex-direction:column;gap:9px}
+.check-list li{display:flex;align-items:flex-start;gap:10px;font-size:13.5px;cursor:pointer}
+.check-list li .cb{width:18px;height:18px;border:2px solid var(--border);border-radius:4px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;margin-top:1px;transition:.2s}
+.check-list li.checked .cb{background:var(--success);border-color:var(--success);color:#000}
+.check-list li.checked .ct-txt{text-decoration:line-through;color:var(--dim)}
+/* PHRASES */
+.phrases-wrap{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-top:16px}
+.phrase-card{background:linear-gradient(135deg,rgba(255,184,0,.08),transparent);border:1px solid rgba(255,184,0,.25);border-radius:10px;padding:18px 20px}
+.phrase-num{font-family:var(--font-head);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:6px}
+.phrase-en{font-size:16px;font-weight:700;color:#fff;margin-bottom:6px}
+.phrase-context{font-size:12.5px;color:var(--muted);line-height:1.5}
+/* CERT */
+.cert-wrap{margin-top:20px;background:linear-gradient(135deg,rgba(255,31,92,.07),rgba(255,184,0,.05));border:1px solid rgba(255,31,92,.25);border-radius:12px;padding:28px;text-align:center}
+.cert-title{font-family:var(--font-head);font-size:22px;font-weight:800;color:#fff;margin-bottom:6px}
+.cert-sub{font-size:13px;color:var(--muted);margin-bottom:18px}
+.cert-input-row{display:flex;gap:10px;justify-content:center;margin-bottom:14px;flex-wrap:wrap}
+.cert-name-in{background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:var(--font-body);font-size:14px;padding:10px 18px;border-radius:6px;width:280px;outline:none}
+.cert-name-in:focus{border-color:var(--accent)}
+.cert-gen-btn{background:rgba(255,31,92,.18);border:1px solid rgba(255,31,92,.4);color:var(--accent);font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;padding:10px 18px;cursor:pointer;border-radius:6px;text-transform:uppercase;transition:.2s}
+.cert-gen-btn:hover{background:rgba(255,31,92,.32)}
+.cert-output{display:none;background:rgba(255,255,255,.03);border:1px solid rgba(255,184,0,.3);border-radius:10px;padding:24px;margin-top:16px}
+.cert-output h3{font-family:var(--font-head);font-size:18px;font-weight:800;color:var(--gold);margin-bottom:6px}
+.cert-output p{font-size:13px;color:var(--muted);margin-bottom:4px}
+/* WIN */
+.win-textarea{width:100%;background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:var(--font-body);font-size:14px;padding:14px 18px;border-radius:8px;resize:vertical;min-height:80px;outline:none;line-height:1.5}
+.win-textarea:focus{border-color:var(--accent)}
+.win-btn{margin-top:10px;background:rgba(255,31,92,.15);border:1px solid rgba(255,31,92,.4);color:var(--accent);font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;padding:10px 20px;cursor:pointer;border-radius:6px;text-transform:uppercase;transition:.2s}
+.win-btn:hover{background:rgba(255,31,92,.28)}
+.win-confirm{display:none;margin-top:10px;color:var(--success);font-family:var(--font-head);font-size:11px;letter-spacing:1.5px;text-transform:uppercase}
+/* NEXT */
+.next-card{background:rgba(0,207,255,.05);border:1px solid rgba(0,207,255,.2);border-radius:10px;padding:20px 24px;margin-top:20px}
+.next-label{font-family:var(--font-head);font-size:9.5px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--cyan);margin-bottom:8px}
+.next-title{font-size:16px;font-weight:700;color:#fff;margin-bottom:6px}
+.next-desc{font-size:13px;color:var(--muted)}
+/* FOOTER */
+.ftr{padding:28px 48px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-top:4px}
+.ftr-brand{font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted)}
+.ftr-file{font-size:11px;color:var(--dim)}
+.ftr-levels{display:flex;gap:3px}
+.flv{padding:4px 9px;font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;background:var(--surface);color:var(--dim);border-radius:3px}
+.flv.on{background:var(--accent);color:#fff}
+@media(max-width:860px){
+  .hdr{padding:12px 20px}
+  .sec-body{padding:20px 20px 28px}
+  .badge-strip{padding:12px 20px}
+  .pitch-cards{grid-template-columns:1fr}
+  .ht-mini-grid{grid-template-columns:1fr}
+  .phrases-wrap{grid-template-columns:1fr}
+  .mu-grid{grid-template-columns:1fr}
+  .wheel-wrap{justify-content:center}
+  .ftr{padding:20px}
+}
+
+</style>
+</head>
+<body>
+
+<div class="prog-wrap"><div class="prog-bar" id="progressBar"></div></div>
+
+<header class="hdr">
+  <div class="brand">
+    <div class="dot"></div>
+    <div>
+      <div class="bname">Gabriel Turner &middot; English Training</div>
+      <div class="bsub">Teacher Edition &middot; Production &amp; Fluency</div>
+    </div>
+  </div>
+  <div class="sess-tags">
+    <span class="tag t-lv">A1.1</span>
+    <span class="tag t-mod">Module 6</span>
+    <span class="tag t-sess">Session 3B &mdash; Production &amp; Fluency</span>
+    <span class="tag t-time">60&ndash;70 min</span>
+  </div>
+  <button class="sm-toggle" onclick="toggleSM()"><span id="smtLabel">Teacher Mode</span></button>
+</header>
+
+<div class="badge-strip">
+  <span id="b1">&#128293;</span>
+  <span id="b2">&#127919;</span>
+  <span id="b3">&#127922;</span>
+  <span id="b4">&#127941;</span>
+  <span id="b5">&#127942;</span>
+  <span class="badge-label">Earn all 5 badges today</span>
+  <span id="confMsg">&#127881; All badges earned!</span>
+</div>
+
+<!-- S1 HOT TAKE -->
+<div class="section">
+  <div class="sec-img">
+    <img src="https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?w=900&q=80" alt="factory problem">
+    <div class="sec-overlay">
+      <div>
+        <div class="sec-num">&sect;1 &middot; Hot Take &mdash; 8 min</div>
+        <div class="sec-title">Problem Opinions</div>
+        <div class="sec-sub">React fast &middot; Speak first &middot; No notes</div>
+      </div>
+    </div>
+    <div class="dur-tag">&#9201; 8 min</div>
+  </div>
+  <div class="sec-body">
+    <div class="tn">
+      <div class="tn-label">&#9889; Teacher Note &mdash; Hot Take</div>
+      <p>Remember from S3A: Ana at Solaris had broken printers, no badge access, and needed Carlos to help. Start with: <em>"Tell me ONE thing Ana could NOT do."</em> Students answer from memory &mdash; no notes. Then hit the Hot Take. Badge b1 fires when the class completes it.</p>
+    </div>
+    <div style="background:rgba(0,207,255,.05);border:1px solid rgba(0,207,255,.2);border-radius:8px;padding:14px 18px;margin-top:16px">
+      <div style="font-family:var(--font-head);font-size:9.5px;letter-spacing:2px;text-transform:uppercase;color:var(--cyan);margin-bottom:8px">&#128257; Remember from S3A</div>
+      <div style="font-size:14px;color:var(--text)">Ana said: <em style="color:var(--accent)">"There is no printer working on the second floor."</em> &mdash; <em style="color:var(--cyan)">"I can't print the quality reports."</em> &mdash; <em style="color:var(--warn)">"Sorry about that!"</em></div>
+    </div>
+    <div class="ht-wrap">
+      <div class="ht-label">&#128293; Hot Take &mdash; Agree or Disagree?</div>
+      <div class="ht-stmt">"When something is broken at work, it is MY problem &mdash; not IT's problem."</div>
+      <div class="ht-btns">
+        <button class="ht-btn ht-agree" onclick="earnBadge('b1')">&#10003; Agree</button>
+        <button class="ht-btn ht-disagree" onclick="earnBadge('b1')">&#10007; Disagree</button>
+      </div>
+    </div>
+    <div class="ht-mini-grid" style="margin-top:12px">
+      <div class="ht-mini">
+        <div class="ht-mini-lbl" style="color:var(--gold)">&#128293; Statement 2</div>
+        <div class="ht-mini-txt">"Saying 'Sorry about that' is enough when you make a mistake at work."</div>
+      </div>
+      <div class="ht-mini">
+        <div class="ht-mini-lbl" style="color:var(--accent)">&#128293; Statement 3</div>
+        <div class="ht-mini-txt">"I feel confident reporting a problem in English to my manager."</div>
+      </div>
+      <div class="ht-mini">
+        <div class="ht-mini-lbl" style="color:var(--success)">&#128293; Statement 4</div>
+        <div class="ht-mini-txt">"There are NO problems I can't describe in English after today."</div>
+      </div>
+    </div>
+    <div class="tn tn-c2">
+      <div class="tn-label">&#128161; Engagement Layer</div>
+      <p>Statement 3 will generate real answers. Note who says NO &mdash; give them extra speaking time in &sect;2 and &sect;3. The goal of S3B is to change their answer to YES by &sect;7.</p>
+    </div>
+  </div>
+</div>
+
+<!-- S2 PITCH / DEBATE -->
+<div class="section">
+  <div class="sec-img">
+    <img src="https://images.unsplash.com/photo-1475721027785-f74eccf877e2?w=900&q=80" alt="pitch debate speaking" loading="lazy">
+    <div class="sec-overlay">
+      <div>
+        <div class="sec-num">&sect;2 &middot; Pitch &amp; Debate &mdash; 12 min</div>
+        <div class="sec-title">Report It. Solve It. Live.</div>
+        <div class="sec-sub">Role-play &middot; Problem Frame &middot; Class Discussion</div>
+      </div>
+    </div>
+    <div class="dur-tag">&#9201; 12 min</div>
+  </div>
+  <div class="sec-body">
+    <div class="tn">
+      <div class="tn-label">&#9889; Teacher Note &mdash; Pitch Setup</div>
+      <p>The PROBLEM + LOCATION + SOLUTION frame from S3A. Students A and B role-play a call to the IT helpdesk. Run twice and swap. Push for the full frame: <em>problem + location + can/can't + solution request.</em> Watch for: <em>"I can't to open"</em> &rarr; correct immediately to <em>"I can't open."</em></p>
+    </div>
+    <div class="pitch-cards">
+      <div class="pitch-card">
+        <div class="pitch-role">&#128222; Student A &mdash; Employee</div>
+        <div class="pitch-task">Call IT to report: (1) The printer on your floor is broken. (2) You can't print the afternoon report. (3) Ask if someone can come and fix it before 3 PM. Use the full PROBLEM + LOCATION + SOLUTION frame.</div>
+        <div class="pitch-hint">Start: "Hi, I need to report a problem. The printer on the [floor] is broken. I can't print..."</div>
+      </div>
+      <div class="pitch-card">
+        <div class="pitch-role">&#128187; Student B &mdash; IT Helpdesk</div>
+        <div class="pitch-task">Respond to the call. Say: (1) "Let me check." (2) Confirm you can or can't send someone. (3) Offer one alternative: "There is a printer on floor [X] you can use." Be professional and helpful.</div>
+        <div class="pitch-hint">Use: "Let me check... / There is a printer on... / I can send someone at..."</div>
+      </div>
+    </div>
+    <div style="margin-top:16px">
+      <div style="font-family:var(--font-head);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:10px">Class Discussion &mdash; 3 Rounds</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;overflow:hidden">
+          <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=400&q=80" alt="email" loading="lazy" style="height:90px;filter:brightness(.45)">
+          <div style="padding:12px 14px">
+            <div style="font-family:var(--font-head);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);margin-bottom:6px">T&ndash;S</div>
+            <div style="font-size:13px;color:var(--text)">Your manager asks: "Is everything OK?" Report ONE real problem from your workplace in English. Use the frame.</div>
+          </div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;overflow:hidden">
+          <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=400&q=80" alt="team" loading="lazy" style="height:90px;filter:brightness(.45)">
+          <div style="padding:12px 14px">
+            <div style="font-family:var(--font-head);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--cyan);margin-bottom:6px">S&ndash;S</div>
+            <div style="font-size:13px;color:var(--text)">Partner A reports a problem. Partner B responds with "Let me check" + one solution. 90 seconds. Swap.</div>
+          </div>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;overflow:hidden">
+          <img src="https://images.unsplash.com/photo-1560439514-4e9645039924?w=400&q=80" alt="class" loading="lazy" style="height:90px;filter:brightness(.45)">
+          <div style="padding:12px 14px">
+            <div style="font-family:var(--font-head);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);margin-bottom:6px">Class</div>
+            <div style="font-size:13px;color:var(--text)">Vote: what is the hardest part of this conversation in English? Vocabulary? Grammar? Confidence?</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="tn tn-c1">
+      <div class="tn-label">&#128218; Upsell Moment</div>
+      <p>After the class vote, say: <em>"In A1.2, you will do this same conversation but add past tense: 'The printer broke yesterday.' You are almost there."</em> This creates forward momentum and reduces anxiety about the transition to the next level.</p>
+    </div>
+  </div>
+</div>
+
+<!-- S3 RELAY -->
+<div class="section">
+  <div class="sec-img">
+    <img src="https://images.unsplash.com/photo-1455390582262-044cdead277a?w=900&q=80" alt="relay notes" loading="lazy">
+    <div class="sec-overlay">
+      <div>
+        <div class="sec-num">&sect;3 &middot; Relay &mdash; 10 min</div>
+        <div class="sec-title">Problem Chain Relay</div>
+        <div class="sec-sub">Build the report &middot; Each student adds one sentence</div>
+      </div>
+    </div>
+    <div class="dur-tag">&#9201; 10 min</div>
+  </div>
+  <div class="sec-body">
+    <div class="tn">
+      <div class="tn-label">&#9889; Teacher Note &mdash; Relay Rules</div>
+      <p>Students build a full workplace problem report together, one sentence each. The chain must be logical &mdash; if a sentence breaks the logic, the class stops and repairs it together. Award badge b2 when the chain reaches 6+ coherent sentences without stopping. Encourage use of ALL S3A structures.</p>
+    </div>
+    <div class="relay-chain">
+      <div class="relay-item"><b>Student 1</b>"There is a problem on the second floor."</div>
+      <div class="relay-arrow">&#8594;</div>
+      <div class="relay-item"><b>Student 2</b>"The printer is broken."</div>
+      <div class="relay-arrow">&#8594;</div>
+      <div class="relay-item"><b>Student 3</b>"I can't print the reports."</div>
+      <div class="relay-arrow">&#8594;</div>
+      <div class="relay-item"><b>Student 4</b>"There is no IT technician available."</div>
+      <div class="relay-arrow">&#8594;</div>
+      <div class="relay-item"><b>Student 5+</b>Continue the story...</div>
+    </div>
+    <div style="margin-top:14px;background:rgba(255,184,0,.05);border:1px solid rgba(255,184,0,.2);border-radius:8px;padding:14px 18px">
+      <div style="font-family:var(--font-head);font-size:9.5px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:8px">&#127919; Relay Sentence Starters</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
+        <div style="font-size:13px;color:var(--muted)"><span style="color:var(--accent)">"There is no ___"</span></div>
+        <div style="font-size:13px;color:var(--muted)"><span style="color:var(--accent)">"There are no ___"</span></div>
+        <div style="font-size:13px;color:var(--muted)"><span style="color:var(--accent)">"I can / I can't ___"</span></div>
+        <div style="font-size:13px;color:var(--muted)"><span style="color:var(--cyan)">"Let me check."</span></div>
+        <div style="font-size:13px;color:var(--muted)"><span style="color:var(--cyan)">"Can you ___?"</span></div>
+        <div style="font-size:13px;color:var(--muted)"><span style="color:var(--warn)">"Sorry about that!"</span></div>
+      </div>
+    </div>
+    <button style="margin-top:14px;background:rgba(0,229,160,.1);border:1px solid rgba(0,229,160,.3);color:var(--success);font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;padding:10px 20px;cursor:pointer;border-radius:6px;text-transform:uppercase;transition:.2s" onclick="earnBadge('b2')">&#10003; Chain Complete &mdash; 6+ Sentences &mdash; Badge!</button>
+    <div class="tn tn-c2">
+      <div class="tn-label">&#128161; Retention Layer</div>
+      <p>The relay works because it forces LISTENING, not just speaking. Each student must hear the previous sentence before adding their own. This replicates a real conversation dynamic at A1.1 level and builds listening comprehension incidentally. If the chain breaks, treat it as a teaching moment: <em>"What structure can repair this sentence?"</em></p>
+    </div>
+  </div>
+</div>
+
+<!-- S4 SPEED ROUND -->
+<div class="section">
+  <div class="sec-img">
+    <img src="https://images.unsplash.com/photo-1543007630-9710e4a00a20?w=900&q=80" alt="speed round" loading="lazy">
+    <div class="sec-overlay">
+      <div>
+        <div class="sec-num">&sect;4 &middot; Speed Round &mdash; 8 min</div>
+        <div class="sec-title">30-Second Situation Sprint</div>
+        <div class="sec-sub">6 situations &middot; 30 seconds each &middot; Full frame required</div>
+      </div>
+    </div>
+    <div class="dur-tag">&#9201; 8 min</div>
+  </div>
+  <div class="sec-body">
+    <div class="tn">
+      <div class="tn-label">&#9889; Teacher Note &mdash; Speed Round</div>
+      <p>Teacher reads the situation. Student speaks for 30 seconds using the PROBLEM + LOCATION + SOLUTION frame. Class counts the structures used. If they use all three parts of the frame AND a colloquial phrase, they score a bonus point for the leaderboard in &sect;6.</p>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:16px">
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;overflow:hidden">
+        <img src="https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=400&q=80" alt="broken equipment" loading="lazy" style="height:90px;filter:brightness(.45)">
+        <div style="padding:12px 14px">
+          <div style="font-family:var(--font-head);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:5px">Sprint 1</div>
+          <div style="font-size:13px;color:var(--text)">The elevator in your building is broken. You have a meeting on the 8th floor in 5 minutes. Report the problem and your solution.</div>
+        </div>
+      </div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;overflow:hidden">
+        <img src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=400&q=80" alt="meeting room" loading="lazy" style="height:90px;filter:brightness(.45)">
+        <div style="padding:12px 14px">
+          <div style="font-family:var(--font-head);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--cyan);margin-bottom:5px">Sprint 2</div>
+          <div style="font-size:13px;color:var(--text)">There are no meeting rooms available for your 2 PM presentation. Report this to your coordinator and ask for help.</div>
+        </div>
+      </div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;overflow:hidden">
+        <img src="https://images.unsplash.com/photo-1529543544282-ea669407fca3?w=400&q=80" alt="badge access" loading="lazy" style="height:90px;filter:brightness(.45)">
+        <div style="padding:12px 14px">
+          <div style="font-family:var(--font-head);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:5px">Sprint 3</div>
+          <div style="font-size:13px;color:var(--text)">Your visitor's pass is not working at the entrance. The visitor has a meeting in 10 minutes. What do you say to security?</div>
+        </div>
+      </div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;overflow:hidden">
+        <img src="https://images.unsplash.com/photo-1551135049-8a33b5883817?w=400&q=80" alt="computer IT" loading="lazy" style="height:90px;filter:brightness(.45)">
+        <div style="padding:12px 14px">
+          <div style="font-family:var(--font-head);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--success);margin-bottom:5px">Sprint 4</div>
+          <div style="font-size:13px;color:var(--text)">Your computer screen is broken and you can't see anything. You have work to do. Report this to IT and ask for an urgent fix.</div>
+        </div>
+      </div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;overflow:hidden">
+        <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=400&q=80" alt="office floor" loading="lazy" style="height:90px;filter:brightness(.45)">
+        <div style="padding:12px 14px">
+          <div style="font-family:var(--font-head);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--warn);margin-bottom:5px">Sprint 5</div>
+          <div style="font-size:13px;color:var(--text)">There is no internet on your entire floor. Three colleagues can't work. Who do you call? What do you say?</div>
+        </div>
+      </div>
+      <div style="background:linear-gradient(135deg,rgba(255,31,92,.12),transparent);border:1px solid rgba(255,31,92,.3);border-radius:10px;overflow:hidden">
+        <img src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=400&q=80" alt="strategy challenge" loading="lazy" style="height:90px;filter:brightness(.45)">
+        <div style="padding:12px 14px">
+          <div style="font-family:var(--font-head);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:5px">Sprint 6 &mdash; Bonus</div>
+          <div style="font-size:13px;color:var(--text)">BONUS: Report TWO problems in one sentence. Use "and" to connect them. Include a solution for each. 30 seconds. No notes.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- S5 SOLO CHALLENGE + MATCH UP -->
+<div class="section">
+  <div class="sec-img">
+    <img src="https://images.unsplash.com/photo-1649859394611-4db0e11f1775?w=900&q=80" alt="match up challenge" loading="lazy">
+    <div class="sec-overlay">
+      <div>
+        <div class="sec-num">&sect;5 &middot; Solo Challenge + Match Up &mdash; 12 min</div>
+        <div class="sec-title">Grammar in Action</div>
+        <div class="sec-sub">Solo timed report &middot; Match Up Mini-Game</div>
+      </div>
+    </div>
+    <div class="dur-tag">&#9201; 12 min</div>
+  </div>
+  <div class="sec-body">
+    <div class="tn">
+      <div class="tn-label">&#9889; Teacher Note &mdash; Solo Challenge First</div>
+      <p>Give students 30 seconds to think, then 90 seconds to speak. The task is to report a real problem from their workplace using all grammar from S3A: <em>there is/are + can/can't + location + solution.</em> While they speak, write 2&ndash;3 errors silently on the board. Correct collectively after the timer ends, not during. Then run Match Up as a grammar consolidation game.</p>
+    </div>
+
+    <!-- SOLO CHALLENGE TIMER -->
+    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:22px 24px;margin-bottom:24px;display:flex;gap:24px;align-items:flex-start;flex-wrap:wrap">
+      <div style="flex:1;min-width:200px">
+        <div style="font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--accent);margin-bottom:10px">&#9201; Solo Challenge &mdash; 90 seconds</div>
+        <div style="font-size:17px;font-weight:600;color:#fff;margin-bottom:12px;line-height:1.4">Report a REAL problem from your workplace. Use the full frame in English.</div>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:6px">
+          <li style="font-size:13px;color:var(--muted);padding-left:16px;position:relative"><span style="position:absolute;left:0;color:var(--accent)">&#8594;</span>Say WHAT the problem is</li>
+          <li style="font-size:13px;color:var(--muted);padding-left:16px;position:relative"><span style="position:absolute;left:0;color:var(--accent)">&#8594;</span>Say WHERE it is (floor / area / department)</li>
+          <li style="font-size:13px;color:var(--muted);padding-left:16px;position:relative"><span style="position:absolute;left:0;color:var(--accent)">&#8594;</span>Say what you can or can't do because of it</li>
+          <li style="font-size:13px;color:var(--muted);padding-left:16px;position:relative"><span style="position:absolute;left:0;color:var(--accent)">&#8594;</span>Ask for a solution</li>
+        </ul>
+      </div>
+      <div class="timer-block">
+        <svg class="timer-svg" width="90" height="90" viewBox="0 0 90 90">
+          <circle class="timer-bg" cx="45" cy="45" r="38" stroke-width="6"/>
+          <circle class="timer-arc" id="tArcSolo" cx="45" cy="45" r="38" stroke-width="6" stroke-dasharray="238.76" stroke-dashoffset="0"/>
+          <text class="timer-text" id="tTextSolo" x="45" y="44">1:30</text>
+          <text class="timer-lbl" x="45" y="57">solo</text>
+        </svg>
+        <button class="t-btn t-start" onclick="startTimer('tArcSolo','tTextSolo',90,'b3',238.76)">START</button>
+        <button class="t-btn t-reset" onclick="resetArc('tArcSolo','tTextSolo',90,238.76)">RESET</button>
+      </div>
+    </div>
+
+    <!-- MATCH UP MINI-GAME -->
+    <div style="font-family:var(--font-head);font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:12px">&#9654; Match Up &mdash; Mini-Game</div>
+    <div class="tn" style="margin-top:0;margin-bottom:14px">
+      <div class="tn-label">&#9889; How to Run Match Up</div>
+      <p>Click a problem on the left, then click its correct structure on the right. Green = correct pair. The game tracks score. Badge b3 is already awarded by the timer &mdash; use the Match Up as a grammar consolidation without badge pressure. Teacher note: run this as a class on the projector for more engagement.</p>
+    </div>
+    <div class="mu-wrap">
+      <div style="font-family:var(--font-head);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:8px">Score: <span id="muScore">0</span> / 6 &nbsp;&nbsp; <span id="muMsg"></span></div>
+      <div class="mu-grid">
+        <div>
+          <div class="mu-col-label">Workplace Situation</div>
+          <div class="mu-items" id="muLeft">
+            <div class="mu-item" id="ml0" onclick="muClick('left',0)">No printers on floor 2</div>
+            <div class="mu-item" id="ml1" onclick="muClick('left',1)">Badge does not open the door</div>
+            <div class="mu-item" id="ml2" onclick="muClick('left',2)">You need IT but nobody is free</div>
+            <div class="mu-item" id="ml3" onclick="muClick('left',3)">All meeting rooms are occupied</div>
+            <div class="mu-item" id="ml4" onclick="muClick('left',4)">The elevator is not working</div>
+            <div class="mu-item" id="ml5" onclick="muClick('left',5)">You caused a scheduling mistake</div>
+          </div>
+        </div>
+        <div>
+          <div class="mu-col-label">Correct English Structure</div>
+          <div class="mu-items" id="muRight">
+            <div class="mu-item" id="mr0" onclick="muClick('right',0)">"Sorry about that!"</div>
+            <div class="mu-item" id="mr1" onclick="muClick('right',1)">"There are no printers available."</div>
+            <div class="mu-item" id="mr2" onclick="muClick('right',2)">"I can't open the door. My badge doesn't work."</div>
+            <div class="mu-item" id="mr3" onclick="muClick('right',3)">"There aren't any meeting rooms free."</div>
+            <div class="mu-item" id="mr4" onclick="muClick('right',4)">"There is no IT technician available right now."</div>
+            <div class="mu-item" id="mr5" onclick="muClick('right',5)">"The elevator is broken. I can't go up."</div>
+          </div>
+        </div>
+      </div>
+      <button class="mu-reset" onclick="resetMatchUp()">Reset Match Up</button>
+    </div>
+  </div>
+</div>
+
+<!-- S6 ASSESSMENT / LEADERBOARD -->
+<div class="section">
+  <div class="sec-img">
+    <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=900&q=80" alt="assessment leaderboard" loading="lazy">
+    <div class="sec-overlay">
+      <div>
+        <div class="sec-num">&sect;6 &middot; Assessment &mdash; 8 min</div>
+        <div class="sec-title">Session Leaderboard</div>
+        <div class="sec-sub">Score production &middot; Track progress &middot; Celebrate wins</div>
+      </div>
+    </div>
+    <div class="dur-tag">&#9201; 8 min</div>
+  </div>
+  <div class="sec-body">
+    <div class="tn">
+      <div class="tn-label">&#9889; Teacher Note &mdash; Scoring</div>
+      <p>Points for today: <em>(1) Completed the Hot Take with a reason &mdash; 1 pt / (2) Role-played the IT call &mdash; 1 pt / (3) Added a sentence to the Relay Chain &mdash; 1 pt / (4) Completed a Speed Sprint &mdash; 1 pt / (5) Completed the Solo Challenge &mdash; 1 pt / (6) Used a colloquial phrase spontaneously &mdash; 1 bonus pt.</em> Max 6 pts.</p>
+    </div>
+    <div class="lb-input-row" style="margin-top:16px">
+      <input class="lb-input" id="lbName" type="text" placeholder="Student name...">
+      <input class="lb-input lb-score-in" id="lbScoreIn" type="number" min="0" max="6" placeholder="0-6">
+      <button class="lb-add-btn" onclick="addLbEntry()">+ Add</button>
+    </div>
+    <table class="lb-table">
+      <thead><tr><th>#</th><th>Name</th><th>Score</th><th>Status</th></tr></thead>
+      <tbody id="lbBody"><tr><td colspan="4" style="color:var(--dim);font-size:13px;text-align:center;padding:20px">Add students above</td></tr></tbody>
+    </table>
+    <button class="lb-reset" onclick="resetLb()">Clear Leaderboard</button>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:20px">
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:18px 20px">
+        <div style="font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:12px">&#10003; I Can Now &mdash; S3B</div>
+        <ul class="check-list">
+          <li onclick="toggleCheck(this)"><span class="cb"></span><span class="ct-txt">Role-play a call to IT in English</span></li>
+          <li onclick="toggleCheck(this)"><span class="cb"></span><span class="ct-txt">Use PROBLEM + LOCATION + SOLUTION frame</span></li>
+          <li onclick="toggleCheck(this)"><span class="cb"></span><span class="ct-txt">Say "There is no ___" and "I can't ___" confidently</span></li>
+          <li onclick="toggleCheck(this)"><span class="cb"></span><span class="ct-txt">Use "Sorry about that!" and "Let me check" naturally</span></li>
+          <li onclick="toggleCheck(this)"><span class="cb"></span><span class="ct-txt">Report a real workplace problem in English</span></li>
+        </ul>
+      </div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:18px 20px">
+        <div style="font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--danger);margin-bottom:12px">&#128683; Error Watch &mdash; S3 Top Errors</div>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:9px">
+          <li style="font-size:13px;color:var(--muted)">&#10060; <span style="color:var(--danger)">"I can't to open"</span> &#8594; <span style="color:var(--success)">"I can't open"</span></li>
+          <li style="font-size:13px;color:var(--muted)">&#10060; <span style="color:var(--danger)">"There is no printers"</span> &#8594; <span style="color:var(--success)">"There are no printers"</span></li>
+          <li style="font-size:13px;color:var(--muted)">&#10060; <span style="color:var(--danger)">"Sorry for that"</span> &#8594; <span style="color:var(--success)">"Sorry about that"</span></li>
+          <li style="font-size:13px;color:var(--muted)">&#10060; <span style="color:var(--danger)">"The elevator not work"</span> &#8594; <span style="color:var(--success)">"The elevator is broken"</span></li>
+          <li style="font-size:13px;color:var(--muted)">&#10060; <span style="color:var(--danger)">"I need fix the printer"</span> &#8594; <span style="color:var(--success)">"Can you fix the printer?"</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- S7 WRAP-UP + SPIN THE WHEEL -->
+<div class="section">
+  <div class="sec-img">
+    <img src="https://images.unsplash.com/photo-1521791136064-7986c2920216?w=900&q=80" alt="wrap up achievement" loading="lazy">
+    <div class="sec-overlay">
+      <div>
+        <div class="sec-num">&sect;7 &middot; Wrap-Up &mdash; 8 min</div>
+        <div class="sec-title">Spin &amp; Close</div>
+        <div class="sec-sub">Spin the Wheel &middot; 3 Phrases &middot; Certificate &middot; My Win</div>
+      </div>
+    </div>
+    <div class="dur-tag">&#9201; 8 min</div>
+  </div>
+  <div class="sec-body">
+    <div class="tn">
+      <div class="tn-label">&#9889; Teacher Note &mdash; Spin the Wheel</div>
+      <p>Run Spin the Wheel for 3&ndash;4 minutes before closing. Each spin gives a student a random problem situation. They have 20 seconds to say ONE sentence using the S3 grammar. Fast, fun, and reinforces the structures one final time before the end of class. Then close with 3 Phrases + Certificate + My Win.</p>
+    </div>
+
+    <!-- SPIN THE WHEEL -->
+    <div style="font-family:var(--font-head);font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:12px">&#127922; Spin the Wheel &mdash; Final Round</div>
+    <div class="wheel-wrap">
+      <div class="wheel-canvas-wrap">
+        <div class="wheel-pointer">&#9660;</div>
+        <canvas id="wheelCanvas" width="220" height="220"></canvas>
+      </div>
+      <div class="wheel-result-wrap">
+        <div class="wheel-result-label">Your situation:</div>
+        <div class="wheel-result-val" id="wheelResult">Spin to get a situation!</div>
+        <button class="spin-btn" id="spinBtn" onclick="spinWheel()">&#127922; Spin</button>
+        <div style="margin-top:12px;font-size:12.5px;color:var(--muted)">Say ONE sentence about this situation using S3A grammar. 20 seconds. No notes.</div>
+      </div>
+    </div>
+
+    <!-- 3 PHRASES -->
+    <div style="font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold);margin-top:24px;margin-bottom:14px">&#127919; This week, you can use these 3 phrases at work:</div>
+    <div class="phrases-wrap">
+      <div class="phrase-card">
+        <div class="phrase-num">Phrase 1</div>
+        <div class="phrase-en">"The ___ is broken."</div>
+        <div class="phrase-context">The most direct way to report any broken item. Works in a call, an email, or face-to-face. Replace the blank with any equipment name.</div>
+      </div>
+      <div class="phrase-card">
+        <div class="phrase-num">Phrase 2</div>
+        <div class="phrase-en">"I can't ___ because ___."</div>
+        <div class="phrase-context">Use to explain the IMPACT of the problem: "I can't print because the printer is broken." Managers need to understand why the problem matters, not just what it is.</div>
+      </div>
+      <div class="phrase-card">
+        <div class="phrase-num">Phrase 3</div>
+        <div class="phrase-en">"Can you fix it before ___?"</div>
+        <div class="phrase-context">Add a time deadline to your solution request. "Can you fix it before 3 PM?" This is professional, clear, and shows you understand urgency in English.</div>
+      </div>
+    </div>
+
+    <!-- CERTIFICATE -->
+    <div class="cert-wrap">
+      <div class="cert-title">&#127942; Session Certificate</div>
+      <div class="cert-sub">A1.1 &middot; Module 6 &middot; Session 3B &mdash; Production &amp; Fluency Complete</div>
+      <div class="cert-input-row">
+        <input class="cert-name-in" id="certName" type="text" placeholder="Student's full name...">
+        <button class="cert-gen-btn" onclick="generateCert()">Generate &#10022;</button>
+      </div>
+      <div class="cert-output" id="certOut">
+        <h3 id="certNameOut">&mdash;</h3>
+        <p>has successfully completed</p>
+        <p style="color:var(--accent);font-weight:700;font-size:15px;margin:6px 0">A1.1 Module 6 &middot; Session 3B &mdash; Problems &amp; Solutions</p>
+        <p style="color:var(--muted);font-size:12px">Gabriel Turner English Training &middot; Celaya, Guanajuato &middot; <span id="certDate"></span></p>
+      </div>
+    </div>
+
+    <!-- MY WIN -->
+    <div style="margin-top:20px;font-family:var(--font-head);font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:8px">&#11088; My Win Today</div>
+    <textarea class="win-textarea" id="myWin" placeholder="Write ONE English sentence you will say at work this week when there is a problem..."></textarea>
+    <button class="win-btn" onclick="saveWin()">Save My Win &#8594; Earn Badge &#127942;</button>
+    <div class="win-confirm" id="winConfirm">&#10003; Saved! You now have real English for real problems.</div>
+
+    <div class="next-card">
+      <div class="next-label">Next Up &#8594; A1.1 Module 6 &middot; Session 4B</div>
+      <div class="next-title">Real Interaction: Full Integration &mdash; Production &amp; Fluency</div>
+      <div class="next-desc">The final production session of Module 6. You will combine ALL the language from Sessions 1&ndash;3: receptions, small talk, daily routines, and workplace problems. Role-plays, timed challenges, and a complete integrated leaderboard. Bring everything you have learned.</div>
+    </div>
+
+    <div class="tn">
+      <div class="tn-label">&#9889; Teacher Note &mdash; Exit Ticket</div>
+      <p>Exit ticket: each student must report ONE real workplace problem out loud before leaving. Minimum: <em>"The ___ is broken. I can't ___. Sorry about that!"</em> Three sentences. No notes. Every student leaves with a complete English sentence they can use tomorrow.</p>
+    </div>
+  </div>
+</div>
+
+<footer class="ftr">
+  <div class="ftr-brand">Gabriel Turner &middot; English Training</div>
+  <div class="ftr-file">GT_A1_1_M6_S3B_TEACHER_v1.html</div>
+  <div class="ftr-levels">
+    <div class="flv on">A1.1</div>
+    <div class="flv">A1.2</div>
+    <div class="flv">A2.1</div>
+    <div class="flv">A2.2</div>
+    <div class="flv">B1.1</div>
+    <div class="flv">B1.2</div>
+  </div>
+</footer>
+
+<script>
+// BADGES
+var badgeEarned = {b1:false,b2:false,b3:false,b4:false,b5:false};
+function earnBadge(id) {
+  if (badgeEarned[id]) return;
+  badgeEarned[id] = true;
+  var el = document.getElementById(id);
+  if (el) el.classList.add("earned");
+  var all = Object.keys(badgeEarned).every(function(k){ return badgeEarned[k]; });
+  if (all) { launchConfetti(); var cm = document.getElementById("confMsg"); if(cm) cm.style.display="block"; }
+}
+
+// CONFETTI
+function launchConfetti() {
+  var colors = ["#FF1F5C","#FF4D7A","#FFB800","#00E5A0","#ffffff"];
+  for (var i=0; i<90; i++) {
+    (function(){
+      var d = document.createElement("div");
+      d.style.cssText = "position:fixed;top:-10px;pointer-events:none;z-index:9999;border-radius:2px;";
+      d.style.left = Math.random()*100+"vw";
+      d.style.width = (6+Math.random()*6)+"px";
+      d.style.height = (6+Math.random()*6)+"px";
+      d.style.background = colors[Math.floor(Math.random()*colors.length)];
+      d.style.animation = "confFall "+(1.5+Math.random()*2)+"s linear forwards";
+      document.body.appendChild(d);
+      setTimeout(function(){ if(d.parentNode) d.parentNode.removeChild(d); }, 4000);
+    })();
+  }
+}
+(function(){
+  var s = document.createElement("style");
+  s.textContent = "@keyframes confFall{0%{transform:translateY(-10px) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}";
+  document.head.appendChild(s);
+})();
+
+// TIMER
+var timerIntervals = {};
+function startTimer(arcId, textId, seconds, badgeKey, circumference) {
+  if (timerIntervals[arcId]) clearInterval(timerIntervals[arcId]);
+  var arc = document.getElementById(arcId), txt = document.getElementById(textId);
+  var rem = seconds;
+  function update() {
+    arc.style.strokeDashoffset = circumference*(1-rem/seconds);
+    var m = Math.floor(rem/60), s = rem%60;
+    txt.textContent = m+":"+(s<10?"0":"")+s;
+    if (rem<=5) arc.style.stroke = "#FF4D6D";
+    if (rem<=0) { clearInterval(timerIntervals[arcId]); arc.style.stroke="var(--success)"; if(badgeKey) earnBadge(badgeKey); return; }
+    rem--;
+  }
+  update();
+  timerIntervals[arcId] = setInterval(update, 1000);
+}
+function resetArc(arcId, textId, seconds, circumference) {
+  if (timerIntervals[arcId]) { clearInterval(timerIntervals[arcId]); delete timerIntervals[arcId]; }
+  var arc = document.getElementById(arcId);
+  arc.style.strokeDashoffset = "0"; arc.style.stroke = "var(--accent)";
+  var m = Math.floor(seconds/60), s = seconds%60;
+  document.getElementById(textId).textContent = m+":"+(s<10?"0":"")+s;
+}
+
+// STUDENT MODE
+function toggleSM() {
+  document.body.classList.toggle("sm");
+  document.getElementById("smtLabel").textContent = document.body.classList.contains("sm") ? "Student Mode" : "Teacher Mode";
+}
+
+// MATCH UP
+var muPairs = [
+  [0,1],[1,2],[2,4],[3,3],[4,5],[5,0]
+];
+// left index -> correct right index
+var muCorrectMap = {0:1, 1:2, 2:4, 3:3, 4:5, 5:0};
+var muSelectedLeft = null, muSelectedRight = null, muMatchedPairs = 0;
+
+function muClick(side, idx) {
+  var el = document.getElementById((side==="left"?"ml":"mr")+idx);
+  if (el.classList.contains("matched")) return;
+
+  if (side === "left") {
+    if (muSelectedLeft !== null) {
+      var prev = document.getElementById("ml"+muSelectedLeft);
+      if (prev) prev.classList.remove("selected");
+    }
+    muSelectedLeft = idx;
+    el.classList.add("selected");
+  } else {
+    if (muSelectedRight !== null) {
+      var prev = document.getElementById("mr"+muSelectedRight);
+      if (prev) prev.classList.remove("selected");
+    }
+    muSelectedRight = idx;
+    el.classList.add("selected");
+  }
+
+  if (muSelectedLeft !== null && muSelectedRight !== null) {
+    var lEl = document.getElementById("ml"+muSelectedLeft);
+    var rEl = document.getElementById("mr"+muSelectedRight);
+    if (muCorrectMap[muSelectedLeft] === muSelectedRight) {
+      lEl.classList.remove("selected"); lEl.classList.add("matched");
+      rEl.classList.remove("selected"); rEl.classList.add("matched");
+      muMatchedPairs++;
+      document.getElementById("muScore").textContent = muMatchedPairs;
+      if (muMatchedPairs >= 6) {
+        document.getElementById("muMsg").textContent = "All matched!";
+        earnBadge("b4");
+      }
+    } else {
+      lEl.classList.add("wrong"); rEl.classList.add("wrong");
+      setTimeout(function(){
+        lEl.classList.remove("wrong","selected");
+        rEl.classList.remove("wrong","selected");
+      }, 800);
+    }
+    muSelectedLeft = null; muSelectedRight = null;
+  }
+}
+
+function resetMatchUp() {
+  muSelectedLeft = null; muSelectedRight = null; muMatchedPairs = 0;
+  document.getElementById("muScore").textContent = "0";
+  document.getElementById("muMsg").textContent = "";
+  for (var i=0; i<6; i++) {
+    var l = document.getElementById("ml"+i), r = document.getElementById("mr"+i);
+    if(l) l.className = "mu-item";
+    if(r) r.className = "mu-item";
+  }
+}
+
+// SPIN WHEEL
+var wheelSegments = [
+  {text:"Broken printer",color:"#FF1F5C"},
+  {text:"No internet",color:"#FF4D7A"},
+  {text:"Badge issue",color:"#FF1F5C"},
+  {text:"Full meeting room",color:"#FFB800"},
+  {text:"Broken elevator",color:"#FF4D7A"},
+  {text:"No IT available",color:"#FF1F5C"},
+  {text:"Computer broken",color:"#FFB800"},
+  {text:"No visitor pass",color:"#FF4D7A"}
+];
+var wheelAngle = 0, wheelSpinning = false;
+var wCanvas = document.getElementById("wheelCanvas");
+var wCtx = wCanvas ? wCanvas.getContext("2d") : null;
+
+function drawWheel(angle) {
+  if (!wCtx) return;
+  var cx=110, cy=110, r=105, n=wheelSegments.length;
+  wCtx.clearRect(0,0,220,220);
+  wheelSegments.forEach(function(seg,i){
+    var start = angle + i*(2*Math.PI/n);
+    var end = start + (2*Math.PI/n);
+    wCtx.beginPath(); wCtx.moveTo(cx,cy); wCtx.arc(cx,cy,r,start,end); wCtx.closePath();
+    wCtx.fillStyle = seg.color; wCtx.fill();
+    wCtx.strokeStyle = "rgba(0,0,0,.4)"; wCtx.lineWidth = 2; wCtx.stroke();
+    wCtx.save(); wCtx.translate(cx,cy); wCtx.rotate(start+(Math.PI/n));
+    wCtx.textAlign = "center"; wCtx.fillStyle = "#fff"; wCtx.font = "bold 11px sans-serif";
+    wCtx.fillText(seg.text, r*0.6, 4);
+    wCtx.restore();
+  });
+}
+drawWheel(0);
+
+function spinWheel() {
+  if (wheelSpinning) return;
+  wheelSpinning = true;
+  document.getElementById("spinBtn").disabled = true;
+  var extra = Math.PI*2*(5+Math.random()*5);
+  var duration = 3200, startTime = performance.now(), startAngle = wheelAngle;
+  function anim(now) {
+    var t = Math.min(1,(now-startTime)/duration);
+    var ease = 1-Math.pow(1-t,4);
+    wheelAngle = startAngle + extra*ease;
+    drawWheel(wheelAngle);
+    if (t < 1) { requestAnimationFrame(anim); }
+    else {
+      wheelSpinning = false;
+      document.getElementById("spinBtn").disabled = false;
+      var a = (((-wheelAngle%(Math.PI*2))+Math.PI*2)%(Math.PI*2));
+      var idx = Math.floor((a/(Math.PI*2))*wheelSegments.length) % wheelSegments.length;
+      var picked = wheelSegments[(wheelSegments.length-1-idx+wheelSegments.length)%wheelSegments.length];
+      document.getElementById("wheelResult").textContent = "Situation: " + picked.text + ". Say one sentence using S3A grammar!";
+    }
+  }
+  requestAnimationFrame(anim);
+}
+
+// LEADERBOARD
+var lbData = [];
+function addLbEntry() {
+  var name = document.getElementById("lbName").value.trim();
+  var score = parseInt(document.getElementById("lbScoreIn").value) || 0;
+  if (!name) return;
+  lbData.push({name:name, score:score});
+  lbData.sort(function(a,b){ return b.score-a.score; });
+  document.getElementById("lbName").value = "";
+  document.getElementById("lbScoreIn").value = "";
+  renderLb();
+}
+function renderLb() {
+  var tbody = document.getElementById("lbBody");
+  if (!lbData.length) {
+    tbody.innerHTML = '<tr><td colspan="4" style="color:var(--dim);font-size:13px;text-align:center;padding:20px">No entries yet</td></tr>';
+    return;
+  }
+  var medals = ["🥇","🥈","🥉"];
+  tbody.innerHTML = lbData.map(function(e,i){
+    var status = e.score>=5 ? "Excellent" : e.score>=3 ? "Good" : "Keep going!";
+    var medal = i < 3 ? medals[i] : String(i+1);
+    return '<tr><td class="lb-rank">'+medal+'</td><td>'+e.name+'</td><td class="lb-score-cell">'+e.score+' / 6</td><td style="font-size:11px;color:var(--muted)">'+status+'</td></tr>';
+  }).join("");
+  if (lbData.length >= 3) earnBadge("b4");
+}
+function resetLb() { lbData = []; renderLb(); }
+
+// CHECKLIST
+function toggleCheck(el) {
+  el.classList.toggle("checked");
+  var cb = el.querySelector(".cb");
+  if (cb) cb.textContent = el.classList.contains("checked") ? "✓" : "";
+}
+
+// CERTIFICATE
+function generateCert() {
+  var name = document.getElementById("certName").value.trim();
+  if (!name) return;
+  document.getElementById("certNameOut").textContent = name;
+  document.getElementById("certDate").textContent = new Date().toLocaleDateString("en-US",{year:"numeric",month:"long",day:"numeric"});
+  document.getElementById("certOut").style.display = "block";
+  earnBadge("b5");
+}
+
+// MY WIN
+function saveWin() {
+  var v = document.getElementById("myWin").value.trim();
+  if (!v) return;
+  document.getElementById("winConfirm").style.display = "block";
+  earnBadge("b5");
+}
+
+// PROGRESS BAR
+window.addEventListener("scroll", function(){
+  var h = document.documentElement;
+  var bar = document.getElementById("progressBar");
+  if (bar) bar.style.width = (h.scrollTop/(h.scrollHeight-h.clientHeight)*100)+"%";
+});
+</script>
+</body>
+</html>

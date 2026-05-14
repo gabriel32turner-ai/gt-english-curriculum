@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GT A1.1 M6 S4B &mdash; Full Integration &middot; Production &amp; Fluency</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+
+:root{
+  --bg:#080808;--surface:#111318;--surface2:#1a1f28;
+  --accent:#FF1F5C;--accent2:#FF4D7A;
+  --border:rgba(255,31,92,.18);
+  --text:#F0F4F8;--muted:#8A9BB0;--dim:rgba(226,226,226,.25);
+  --danger:#FF4D6D;--success:#00E5A0;--warn:#FFB347;
+  --cyan:#00CFFF;--gold:#FFB800;
+  --font-head:"Syne",sans-serif;--font-body:"DM Sans",sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:15px;line-height:1.65}
+img{display:block;width:100%;object-fit:cover}
+.prog-wrap{position:fixed;top:0;left:0;width:100%;height:3px;background:rgba(255,31,92,.12);z-index:999}
+.prog-bar{height:3px;background:var(--accent);width:0%;transition:width .25s}
+.hdr{position:sticky;top:3px;z-index:90;background:rgba(17,19,24,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:14px 48px;display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px}
+.dot{width:8px;height:8px;background:var(--accent);border-radius:50%}
+.bname{font-family:var(--font-head);font-weight:800;font-size:13px;letter-spacing:2px;text-transform:uppercase;color:#fff}
+.bsub{font-size:11px;color:var(--muted);letter-spacing:.8px}
+.sess-tags{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.tag{display:inline-block;padding:4px 11px;font-family:var(--font-head);font-size:9.5px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;border-radius:3px}
+.t-lv{background:rgba(255,31,92,.18);color:var(--accent);border:1px solid rgba(255,31,92,.35)}
+.t-mod{background:rgba(255,184,0,.12);color:var(--gold);border:1px solid rgba(255,184,0,.3)}
+.t-sess{background:rgba(0,207,255,.1);color:var(--cyan);border:1px solid rgba(0,207,255,.25)}
+.t-time{background:rgba(255,255,255,.06);color:var(--muted);border:1px solid rgba(255,255,255,.1)}
+.sm-toggle{background:rgba(255,31,92,.12);border:1px solid rgba(255,31,92,.3);color:var(--accent);font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;padding:7px 14px;cursor:pointer;text-transform:uppercase;border-radius:3px;transition:.2s}
+.sm-toggle:hover{background:rgba(255,31,92,.22)}
+.badge-strip{display:flex;align-items:center;gap:10px;padding:14px 48px;background:var(--surface);border-bottom:1px solid var(--border)}
+.badge-strip span[id]{font-size:22px;filter:grayscale(1);opacity:.28;transition:.4s}
+.badge-strip span[id].earned{filter:none;opacity:1;animation:badgePop .45s ease}
+.badge-label{font-family:var(--font-head);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-left:auto}
+@keyframes badgePop{0%{transform:scale(1)}50%{transform:scale(1.35)}100%{transform:scale(1)}}
+#confMsg{display:none;font-family:var(--font-head);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);margin-left:8px}
+.section{margin-bottom:4px}
+.sec-img{position:relative;height:180px;overflow:hidden}
+.sec-img img{height:100%;object-fit:cover;filter:brightness(.45)}
+.sec-overlay{position:absolute;inset:0;display:flex;align-items:flex-end;padding:22px 32px;background:linear-gradient(to top,rgba(8,8,8,.85),transparent)}
+.sec-num{font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--accent)}
+.sec-title{font-family:var(--font-head);font-size:24px;font-weight:800;color:#fff;margin:2px 0}
+.sec-sub{font-size:12.5px;color:var(--muted)}
+.dur-tag{position:absolute;top:16px;right:16px;background:rgba(8,8,8,.65);border:1px solid rgba(255,255,255,.15);padding:5px 12px;font-family:var(--font-head);font-size:10px;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase}
+.sec-body{padding:28px 48px 36px;background:var(--surface)}
+.tn{border-left:3px solid var(--gold);background:rgba(255,184,0,.04);padding:14px 18px;margin-top:16px;border-radius:0 6px 6px 0}
+.tn.tn-c1{border-left-color:var(--cyan);background:rgba(0,207,255,.04)}
+.tn.tn-c2{border-left-color:var(--accent2);background:rgba(255,77,114,.04)}
+.tn-label{font-family:var(--font-head);font-size:9.5px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:7px}
+.tn.tn-c1 .tn-label{color:var(--cyan)}
+.tn.tn-c2 .tn-label{color:var(--accent2)}
+.tn p{font-size:13px;color:var(--muted);line-height:1.6}
+.tn em{color:var(--text);font-style:normal}
+body.sm .tn{display:none}
+/* HOT TAKE */
+.ht-wrap{background:linear-gradient(135deg,rgba(255,31,92,.09),transparent);border:1px solid rgba(255,31,92,.22);border-radius:10px;padding:22px 26px;margin-top:16px}
+.ht-label{font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--accent);margin-bottom:10px}
+.ht-stmt{font-size:18px;font-weight:600;color:#fff;line-height:1.4;margin-bottom:14px}
+.ht-btns{display:flex;gap:10px}
+.ht-btn{flex:1;padding:10px;font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border:1px solid;cursor:pointer;border-radius:6px;transition:.25s}
+.ht-agree{background:rgba(0,229,160,.1);border-color:rgba(0,229,160,.35);color:var(--success)}
+.ht-disagree{background:rgba(255,77,109,.1);border-color:rgba(255,77,109,.35);color:var(--danger)}
+.ht-btn:hover{transform:translateY(-2px)}
+/* PITCH CARDS */
+.pitch-cards{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}
+.pitch-card{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:18px 20px}
+.pitch-role{font-family:var(--font-head);font-size:9.5px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px}
+.pitch-card:first-child .pitch-role{color:var(--cyan)}
+.pitch-card:last-child .pitch-role{color:var(--accent)}
+.pitch-task{font-size:14px;color:var(--text);line-height:1.5}
+.pitch-hint{font-size:12px;color:var(--muted);margin-top:8px;font-style:italic}
+/* RELAY */
+.relay-chain{display:flex;gap:6px;flex-wrap:wrap;align-items:stretch;margin:12px 0}
+.relay-item{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:11px 13px;font-size:13px;color:var(--text);flex:1;min-width:110px}
+.relay-item b{color:var(--accent);font-family:var(--font-head);font-size:9px;letter-spacing:1.5px;display:block;margin-bottom:3px;text-transform:uppercase}
+.relay-arrow{font-size:18px;color:var(--dim);align-self:center}
+/* GROUP SORT */
+.gs-instructions{font-size:13px;color:var(--muted);margin-bottom:14px;line-height:1.5}
+.gs-items{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;padding:14px;background:rgba(255,255,255,.02);border:1px dashed rgba(255,255,255,.1);border-radius:8px;min-height:54px}
+.gs-item{background:var(--surface2);border:2px solid var(--border);border-radius:6px;padding:8px 14px;font-size:13px;cursor:pointer;transition:.2s;user-select:none}
+.gs-item:hover{border-color:var(--accent);background:rgba(255,31,92,.08)}
+.gs-item.placed{opacity:.4;pointer-events:none}
+.gs-buckets{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px}
+.gs-bucket{border:2px dashed var(--border);border-radius:8px;min-height:100px;padding:10px;transition:.2s}
+.gs-bucket.active{border-color:var(--accent);background:rgba(255,31,92,.04)}
+.gs-bucket-label{font-family:var(--font-head);font-size:9.5px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px}
+.gs-bucket:nth-child(1) .gs-bucket-label{color:var(--accent)}
+.gs-bucket:nth-child(2) .gs-bucket-label{color:var(--cyan)}
+.gs-bucket:nth-child(3) .gs-bucket-label{color:var(--gold)}
+.gs-placed-item{background:var(--surface2);border:1px solid var(--border);border-radius:5px;padding:6px 10px;font-size:12.5px;margin-bottom:6px;cursor:pointer;transition:.2s}
+.gs-placed-item:hover{border-color:var(--danger);color:var(--danger)}
+.gs-check-btn{background:rgba(255,31,92,.15);border:1px solid rgba(255,31,92,.4);color:var(--accent);font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;padding:9px 18px;cursor:pointer;border-radius:6px;text-transform:uppercase;transition:.2s;margin-right:8px}
+.gs-check-btn:hover{background:rgba(255,31,92,.28)}
+.gs-reset-btn{background:none;border:1px solid var(--border);color:var(--dim);font-family:var(--font-head);font-size:10px;letter-spacing:1.5px;padding:9px 14px;cursor:pointer;border-radius:6px;text-transform:uppercase;transition:.2s}
+.gs-reset-btn:hover{color:var(--muted);border-color:var(--muted)}
+.gs-score{font-family:var(--font-head);font-size:12px;font-weight:700;color:var(--accent);margin-top:10px;min-height:20px}
+/* OPEN THE BOX */
+.otb-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:16px}
+.otb-box{background:var(--surface2);border:2px solid var(--border);border-radius:10px;min-height:130px;cursor:pointer;transition:.3s;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px;text-align:center}
+.otb-box:hover:not(.opened){border-color:var(--accent);transform:translateY(-3px);background:rgba(255,31,92,.06)}
+.otb-box.opened{border-color:var(--success);background:rgba(0,229,160,.04);cursor:default}
+.otb-num{font-family:var(--font-head);font-size:30px;font-weight:800;color:var(--accent)}
+.otb-box.opened .otb-num{display:none}
+.otb-icon{font-size:24px;margin-bottom:8px;display:none}
+.otb-box.opened .otb-icon{display:block}
+.otb-cat{display:none;font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--success);margin-bottom:6px}
+.otb-box.opened .otb-cat{display:block}
+.otb-content{display:none;font-size:13px;color:var(--text);line-height:1.5}
+.otb-box.opened .otb-content{display:block}
+.otb-done-msg{display:none;margin-top:14px;text-align:center;font-family:var(--font-head);font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold)}
+/* TIMER */
+.timer-block{display:flex;flex-direction:column;align-items:center;gap:10px;min-width:110px}
+.timer-svg{transform:rotate(-90deg)}
+.timer-bg{fill:none;stroke:rgba(255,255,255,.08)}
+.timer-arc{fill:none;stroke:var(--accent);stroke-linecap:round;transition:stroke .4s}
+.timer-text{font-family:var(--font-head);font-size:13px;font-weight:700;fill:var(--text);transform:rotate(90deg);transform-origin:45px 44px}
+.timer-lbl{font-family:var(--font-head);font-size:7px;letter-spacing:1.5px;fill:var(--muted);transform:rotate(90deg);transform-origin:45px 57px;text-anchor:middle}
+.t-btn{font-family:var(--font-head);font-size:9.5px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:8px 16px;border:1px solid;cursor:pointer;border-radius:4px;transition:.2s}
+.t-start{background:rgba(255,31,92,.15);border-color:rgba(255,31,92,.4);color:var(--accent)}
+.t-start:hover{background:rgba(255,31,92,.25)}
+.t-reset{background:transparent;border-color:var(--border);color:var(--dim)}
+.t-reset:hover{border-color:var(--muted);color:var(--muted)}
+/* LEADERBOARD */
+.lb-input-row{display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+.lb-input{background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:var(--font-body);font-size:13px;padding:10px 14px;border-radius:6px;flex:1;min-width:120px;outline:none}
+.lb-input:focus{border-color:var(--accent)}
+.lb-score-in{width:80px;flex:0 0 80px}
+.lb-add-btn{background:rgba(255,31,92,.15);border:1px solid rgba(255,31,92,.4);color:var(--accent);font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;padding:10px 16px;cursor:pointer;border-radius:6px;text-transform:uppercase;transition:.2s}
+.lb-add-btn:hover{background:rgba(255,31,92,.28)}
+.lb-table{width:100%;border-collapse:collapse}
+.lb-table th{font-family:var(--font-head);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--dim);padding:8px 14px;text-align:left;border-bottom:1px solid var(--border)}
+.lb-table td{padding:10px 14px;border-bottom:1px solid rgba(255,255,255,.04);font-size:13px}
+.lb-rank{font-family:var(--font-head);font-weight:800;color:var(--accent)}
+.lb-score-cell{color:var(--success);font-family:var(--font-head);font-weight:700}
+.lb-reset{background:none;border:1px solid var(--border);color:var(--dim);font-family:var(--font-head);font-size:9px;letter-spacing:1.5px;padding:6px 12px;cursor:pointer;border-radius:4px;text-transform:uppercase;margin-top:10px;transition:.2s}
+.lb-reset:hover{border-color:var(--muted);color:var(--muted)}
+/* CHECKLIST */
+.check-list{list-style:none;display:flex;flex-direction:column;gap:9px}
+.check-list li{display:flex;align-items:flex-start;gap:10px;font-size:13.5px;cursor:pointer}
+.check-list li .cb{width:18px;height:18px;border:2px solid var(--border);border-radius:4px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;margin-top:1px;transition:.2s}
+.check-list li.checked .cb{background:var(--success);border-color:var(--success);color:#000}
+.check-list li.checked .ct-txt{text-decoration:line-through;color:var(--dim)}
+/* PHRASES */
+.phrases-wrap{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-top:16px}
+.phrase-card{background:linear-gradient(135deg,rgba(255,184,0,.08),transparent);border:1px solid rgba(255,184,0,.25);border-radius:10px;padding:18px 20px}
+.phrase-num{font-family:var(--font-head);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:6px}
+.phrase-en{font-size:16px;font-weight:700;color:#fff;margin-bottom:6px}
+.phrase-context{font-size:12.5px;color:var(--muted);line-height:1.5}
+/* CERT */
+.cert-wrap{margin-top:20px;background:linear-gradient(135deg,rgba(255,31,92,.07),rgba(255,184,0,.05));border:1px solid rgba(255,31,92,.25);border-radius:12px;padding:28px;text-align:center}
+.cert-title{font-family:var(--font-head);font-size:22px;font-weight:800;color:#fff;margin-bottom:6px}
+.cert-sub{font-size:13px;color:var(--muted);margin-bottom:18px}
+.cert-input-row{display:flex;gap:10px;justify-content:center;margin-bottom:14px;flex-wrap:wrap}
+.cert-name-in{background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:var(--font-body);font-size:14px;padding:10px 18px;border-radius:6px;width:280px;outline:none}
+.cert-name-in:focus{border-color:var(--accent)}
+.cert-gen-btn{background:rgba(255,31,92,.18);border:1px solid rgba(255,31,92,.4);color:var(--accent);font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;padding:10px 18px;cursor:pointer;border-radius:6px;text-transform:uppercase;transition:.2s}
+.cert-gen-btn:hover{background:rgba(255,31,92,.32)}
+.cert-output{display:none;background:rgba(255,255,255,.03);border:1px solid rgba(255,184,0,.3);border-radius:10px;padding:24px;margin-top:16px}
+.cert-output h3{font-family:var(--font-head);font-size:18px;font-weight:800;color:var(--gold);margin-bottom:6px}
+.cert-output p{font-size:13px;color:var(--muted);margin-bottom:4px}
+/* WIN */
+.win-textarea{width:100%;background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:var(--font-body);font-size:14px;padding:14px 18px;border-radius:8px;resize:vertical;min-height:80px;outline:none;line-height:1.5}
+.win-textarea:focus{border-color:var(--accent)}
+.win-btn{margin-top:10px;background:rgba(255,31,92,.15);border:1px solid rgba(255,31,92,.4);color:var(--accent);font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;padding:10px 20px;cursor:pointer;border-radius:6px;text-transform:uppercase;transition:.2s}
+.win-btn:hover{background:rgba(255,31,92,.28)}
+.win-confirm{display:none;margin-top:10px;color:var(--success);font-family:var(--font-head);font-size:11px;letter-spacing:1.5px;text-transform:uppercase}
+/* NEXT */
+.next-card{background:rgba(0,207,255,.05);border:1px solid rgba(0,207,255,.2);border-radius:10px;padding:20px 24px;margin-top:20px}
+.next-label{font-family:var(--font-head);font-size:9.5px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--cyan);margin-bottom:8px}
+.next-title{font-size:16px;font-weight:700;color:#fff;margin-bottom:6px}
+.next-desc{font-size:13px;color:var(--muted)}
+/* FOOTER */
+.ftr{padding:28px 48px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-top:4px}
+.ftr-brand{font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted)}
+.ftr-file{font-size:11px;color:var(--dim)}
+.ftr-levels{display:flex;gap:3px}
+.flv{padding:4px 9px;font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;background:var(--surface);color:var(--dim);border-radius:3px}
+.flv.on{background:var(--accent);color:#fff}
+@media(max-width:860px){
+  .hdr{padding:12px 20px}
+  .sec-body{padding:20px 20px 28px}
+  .badge-strip{padding:12px 20px}
+  .pitch-cards{grid-template-columns:1fr}
+  .phrases-wrap{grid-template-columns:1fr}
+  .gs-buckets{grid-template-columns:1fr}
+  .otb-grid{grid-template-columns:1fr 1fr}
+  .ftr{padding:20px}
+}
+
+</style>
+</head>
+<body>
+
+<div class="prog-wrap"><div class="prog-bar" id="progressBar"></div></div>
+
+<header class="hdr">
+  <div class="brand">
+    <div class="dot"></div>
+    <div>
+      <div class="bname">Gabriel Turner &middot; English Training</div>
+      <div class="bsub">Teacher Edition &middot; Production &amp; Fluency</div>
+    </div>
+  </div>
+  <div class="sess-tags">
+    <span class="tag t-lv">A1.1</span>
+    <span class="tag t-mod">Module 6</span>
+    <span class="tag t-sess">Session 4B &mdash; Full Integration</span>
+    <span class="tag t-time">60&ndash;70 min</span>
+  </div>
+  <button class="sm-toggle" onclick="toggleSM()"><span id="smtLabel">Teacher Mode</span></button>
+</header>
+
+<div class="badge-strip">
+  <span id="b1">&#127775;</span>
+  <span id="b2">&#127917;</span>
+  <span id="b3">&#9889;</span>
+  <span id="b4">&#127941;</span>
+  <span id="b5">&#127942;</span>
+  <span class="badge-label">Earn all 5 badges today</span>
+  <span id="confMsg">&#127881; All badges earned!</span>
+</div>
+
+<!-- S1 HOT TAKE -->
+<div class="section">
+  <div class="sec-img">
+    <img src="https://images.unsplash.com/photo-1521791136064-7986c2920216?w=900&q=80" alt="professional handshake">
+    <div class="sec-overlay">
+      <div>
+        <div class="sec-num">&sect;1 &middot; Hot Take &mdash; 8 min</div>
+        <div class="sec-title">Module 6 Recap &amp; Hot Take</div>
+        <div class="sec-sub">Everything from Sessions 1&ndash;3 in 5 minutes &middot; Then react</div>
+      </div>
+    </div>
+    <div class="dur-tag">&#9201; 8 min</div>
+  </div>
+  <div class="sec-body">
+    <div class="tn">
+      <div class="tn-label">&#9889; Teacher Note &mdash; Module Recap First</div>
+      <p>Before the Hot Take, run a 3-minute oral recap. Ask the class: <em>"What can you say in English now that you could NOT say before Module 6?"</em> Take 3&ndash;4 answers. Then hit the Hot Take. This positions the session as a celebration of progress, not just more drilling. Badge b1 fires when the class completes it.</p>
+    </div>
+
+    <!-- MODULE MAP -->
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:16px;margin-bottom:20px">
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px 14px">
+        <div style="font-family:var(--font-head);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:6px">S1 &mdash; Reception</div>
+        <div style="font-size:12.5px;color:var(--muted)">"Good morning. I have a meeting with..." / Badge not working / Visitor pass</div>
+      </div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px 14px">
+        <div style="font-family:var(--font-head);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--cyan);margin-bottom:6px">S2 &mdash; Small Talk</div>
+        <div style="font-size:12.5px;color:var(--muted)">"How's your week?" / Workday description / Elevator &amp; hallway conversation</div>
+      </div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px 14px">
+        <div style="font-family:var(--font-head);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:6px">S3 &mdash; Problems</div>
+        <div style="font-size:12.5px;color:var(--muted)">"The printer is broken." / "I can't print." / "Sorry about that!" / "Let me check."</div>
+      </div>
+    </div>
+
+    <div class="ht-wrap">
+      <div class="ht-label">&#127775; Hot Take &mdash; Final Opinion of Module 6</div>
+      <div class="ht-stmt">"After Module 6, I can handle any basic situation at work in English."</div>
+      <div class="ht-btns">
+        <button class="ht-btn ht-agree" onclick="earnBadge('b1')">&#10003; Yes, I can!</button>
+        <button class="ht-btn ht-disagree" onclick="earnBadge('b1')">Not yet &mdash; but soon!</button>
+      </div>
+    </div>
+    <div class="tn tn-c2">
+      <div class="tn-label">&#128161; Teacher Strategy</div>
+      <p>Whether students say yes or not-yet, the conversation is valuable. For yes: <em>"Great &mdash; prove it in the role-play."</em> For not-yet: <em>"That is honest. Let's get you there today."</em> Both responses motivate. This is the final production session &mdash; set the tone that today is the real proof.</p>
+    </div>
+  </div>
+</div>
+
+<!-- S2 PITCH / DEBATE — FULL INTEGRATION ROLE-PLAY -->
+<div class="section">
+  <div class="sec-img">
+    <img src="https://images.unsplash.com/photo-1475721027785-f74eccf877e2?w=900&q=80" alt="integrated role play" loading="lazy">
+    <div class="sec-overlay">
+      <div>
+        <div class="sec-num">&sect;2 &middot; Pitch &amp; Debate &mdash; 14 min</div>
+        <div class="sec-title">The Full Scenario</div>
+        <div class="sec-sub">Reception &rarr; Small Talk &rarr; Problem &rarr; Solution &mdash; all in one</div>
+      </div>
+    </div>
+    <div class="dur-tag">&#9201; 14 min</div>
+  </div>
+  <div class="sec-body">
+    <div class="tn">
+      <div class="tn-label">&#9889; Teacher Note &mdash; Integrated Role-Play</div>
+      <p>This is the capstone role-play for Module 6. Students must use language from ALL three previous sessions in one continuous scenario. Run it twice (swap roles). While they speak, track: (1) Did they greet formally? (2) Did they use small talk? (3) Did they report the problem with the full frame? (4) Did they use at least one colloquial phrase? These 4 criteria = the oral assessment rubric for this session.</p>
+    </div>
+    <div style="background:rgba(255,184,0,.05);border:1px solid rgba(255,184,0,.2);border-radius:8px;padding:14px 18px;margin-top:16px;margin-bottom:16px">
+      <div style="font-family:var(--font-head);font-size:9.5px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:8px">&#127916; The Scenario</div>
+      <div style="font-size:14px;color:var(--text);line-height:1.6">An international visitor arrives at <strong>Solaris Manufacturing</strong> in Celaya for a 9 AM meeting with the operations manager. At the reception, there is a problem: the visitor's pass is not working and the meeting room on floor 3 is occupied. The receptionist must help, make small talk, and find a solution.</div>
+    </div>
+    <div class="pitch-cards">
+      <div class="pitch-card">
+        <div class="pitch-role">&#127760; Student A &mdash; International Visitor</div>
+        <div class="pitch-task">
+          <strong>Step 1 (Reception):</strong> Greet. Say your name. Say you have a meeting at 9 AM with [manager name].<br><br>
+          <strong>Step 2 (Small talk):</strong> While waiting, make 2 exchanges of small talk with the receptionist.<br><br>
+          <strong>Step 3 (Problem):</strong> Your pass doesn't work. Report it. Ask for help.
+        </div>
+        <div class="pitch-hint">Use: "Good morning, my name is..." / "How's your week?" / "My pass isn't working. Can you...?"</div>
+      </div>
+      <div class="pitch-card">
+        <div class="pitch-role">&#127970; Student B &mdash; Receptionist at Solaris</div>
+        <div class="pitch-task">
+          <strong>Step 1 (Reception):</strong> Welcome the visitor. Ask for their name and who they are meeting.<br><br>
+          <strong>Step 2 (Small talk):</strong> Respond naturally. Add ONE piece of information about the building or the week.<br><br>
+          <strong>Step 3 (Problem):</strong> The pass is broken AND the meeting room is full. Say: "Let me check." Offer an alternative.
+        </div>
+        <div class="pitch-hint">Use: "Welcome to Solaris!" / "Let me check." / "There is no room available on floor 3, but there is one on floor 2." / "Sorry about that!"</div>
+      </div>
+    </div>
+    <div class="tn tn-c1">
+      <div class="tn-label">&#128218; Assessment Rubric &mdash; 4 Criteria</div>
+      <p>While pairs perform, score each student 0&ndash;1 on each criterion: <em>(1) Formal greeting with name &mdash; 1 pt / (2) Small talk exchange (at least 1 question + answer) &mdash; 1 pt / (3) Problem reported with PROBLEM + LOCATION + SOLUTION frame &mdash; 1 pt / (4) Colloquial phrase used naturally &mdash; 1 pt.</em> Enter scores in the leaderboard in &sect;6.</p>
+    </div>
+  </div>
+</div>
+
+<!-- S3 RELAY -->
+<div class="section">
+  <div class="sec-img">
+    <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=900&q=80" alt="team relay" loading="lazy">
+    <div class="sec-overlay">
+      <div>
+        <div class="sec-num">&sect;3 &middot; Relay &mdash; 8 min</div>
+        <div class="sec-title">Module 6 Mega Chain</div>
+        <div class="sec-sub">One sentence from each module topic &middot; Keep it coherent</div>
+      </div>
+    </div>
+    <div class="dur-tag">&#9201; 8 min</div>
+  </div>
+  <div class="sec-body">
+    <div class="tn">
+      <div class="tn-label">&#9889; Teacher Note &mdash; Mega Chain Rules</div>
+      <p>This relay uses all 3 S topics. The chain tells a coherent story of one workday. Each student contributes ONE sentence. The story must flow: it starts at arrival, goes through the day, and ends with a problem and solution. If a student breaks the flow, the class repairs it together. Badge b2 fires at 8+ sentences. Aim for 10.</p>
+    </div>
+    <div class="relay-chain">
+      <div class="relay-item"><b>S1 Topic</b>"Good morning. I have a meeting with..."</div>
+      <div class="relay-arrow">&#8594;</div>
+      <div class="relay-item"><b>S2 Topic</b>"My team usually works on..."</div>
+      <div class="relay-arrow">&#8594;</div>
+      <div class="relay-item"><b>S2 Topic</b>"There are [number] people in my office."</div>
+      <div class="relay-arrow">&#8594;</div>
+      <div class="relay-item"><b>S3 Topic</b>"The printer is broken. I can't..."</div>
+      <div class="relay-arrow">&#8594;</div>
+      <div class="relay-item"><b>Any</b>Continue the story...</div>
+    </div>
+    <div style="margin-top:14px;background:rgba(0,229,160,.05);border:1px solid rgba(0,229,160,.2);border-radius:8px;padding:12px 16px">
+      <div style="font-family:var(--font-head);font-size:9.5px;letter-spacing:2px;text-transform:uppercase;color:var(--success);margin-bottom:8px">&#127775; All M6 Phrases Available</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
+        <div style="font-size:12.5px;color:var(--muted)"><span style="color:var(--accent)">"Good morning, I have a meeting..."</span></div>
+        <div style="font-size:12.5px;color:var(--muted)"><span style="color:var(--accent)">"How's your week going?"</span></div>
+        <div style="font-size:12.5px;color:var(--muted)"><span style="color:var(--accent)">"I usually arrive at..."</span></div>
+        <div style="font-size:12.5px;color:var(--muted)"><span style="color:var(--cyan)">"There is no ___ available."</span></div>
+        <div style="font-size:12.5px;color:var(--muted)"><span style="color:var(--cyan)">"I can't ___ because..."</span></div>
+        <div style="font-size:12.5px;color:var(--muted)"><span style="color:var(--warn)">"Sorry about that!" / "Sounds good!"</span></div>
+      </div>
+    </div>
+    <button style="margin-top:14px;background:rgba(0,229,160,.1);border:1px solid rgba(0,229,160,.3);color:var(--success);font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;padding:10px 20px;cursor:pointer;border-radius:6px;text-transform:uppercase" onclick="earnBadge('b2')">&#10003; 8+ Sentences &mdash; Badge Earned!</button>
+  </div>
+</div>
+
+<!-- S4 SPEED ROUND -->
+<div class="section">
+  <div class="sec-img">
+    <img src="https://images.unsplash.com/photo-1506784983877-45594efa4cbe?w=900&q=80" alt="speed round calendar" loading="lazy">
+    <div class="sec-overlay">
+      <div>
+        <div class="sec-num">&sect;4 &middot; Speed Round &mdash; 8 min</div>
+        <div class="sec-title">30-Second Full Integration</div>
+        <div class="sec-sub">Each situation uses language from 2+ sessions</div>
+      </div>
+    </div>
+    <div class="dur-tag">&#9201; 8 min</div>
+  </div>
+  <div class="sec-body">
+    <div class="tn">
+      <div class="tn-label">&#9889; Teacher Note &mdash; Speed Round</div>
+      <p>Each situation requires integrated language. The student must use at least 2 different M6 grammar structures. Class counts: 1 point per structure, 2 points for using a colloquial phrase. The teacher tracks on the board. Fastest class to hit 20 total points wins. Award badge b3 when the class hits 15+ points collectively.</p>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px">
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;overflow:hidden">
+        <img src="https://images.unsplash.com/photo-1529543544282-ea669407fca3?w=500&q=80" alt="reception" loading="lazy" style="height:100px;filter:brightness(.45)">
+        <div style="padding:14px 16px">
+          <div style="font-family:var(--font-head);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:5px">Sprint 1 &mdash; Reception + Problem</div>
+          <div style="font-size:13.5px;color:var(--text)">You arrive at a new client's office. Greet the receptionist, say who you are meeting, AND report that your visitor pass is not working. All in 30 seconds.</div>
+        </div>
+      </div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;overflow:hidden">
+        <img src="https://images.unsplash.com/photo-1502152518851-c4dca0b45a14?w=500&q=80" alt="cafeteria small talk" loading="lazy" style="height:100px;filter:brightness(.45)">
+        <div style="padding:14px 16px">
+          <div style="font-family:var(--font-head);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--cyan);margin-bottom:5px">Sprint 2 &mdash; Small Talk + Routine</div>
+          <div style="font-size:13.5px;color:var(--text)">You meet a foreign colleague in the cafeteria. Make small talk AND describe your typical morning routine. Use at least 2 frequency adverbs.</div>
+        </div>
+      </div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;overflow:hidden">
+        <img src="https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?w=500&q=80" alt="factory problem" loading="lazy" style="height:100px;filter:brightness(.45)">
+        <div style="padding:14px 16px">
+          <div style="font-family:var(--font-head);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:5px">Sprint 3 &mdash; Problem + Team</div>
+          <div style="font-size:13.5px;color:var(--text)">There is a problem in your production area. Report it to your manager AND describe what your team can and cannot do because of it.</div>
+        </div>
+      </div>
+      <div style="background:linear-gradient(135deg,rgba(255,31,92,.12),transparent);border:1px solid rgba(255,31,92,.3);border-radius:10px;overflow:hidden">
+        <img src="https://images.unsplash.com/photo-1543007630-9710e4a00a20?w=500&q=80" alt="integration challenge" loading="lazy" style="height:100px;filter:brightness(.45)">
+        <div style="padding:14px 16px">
+          <div style="font-family:var(--font-head);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:5px">Sprint 4 &mdash; FULL INTEGRATION</div>
+          <div style="font-size:13.5px;color:var(--text)">BONUS: Describe your ENTIRE workday from arrival to end. Reception, small talk, routine, one problem, one solution. Use all 5 colloqial phrases from Module 6. 30 seconds. No notes.</div>
+        </div>
+      </div>
+    </div>
+    <div style="margin-top:12px;background:rgba(255,184,0,.05);border:1px solid rgba(255,184,0,.2);border-radius:8px;padding:12px 16px">
+      <div style="font-family:var(--font-head);font-size:9.5px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:8px">M6 Colloquial Phrases &mdash; All 5</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <span style="background:rgba(255,184,0,.1);border:1px solid rgba(255,184,0,.25);border-radius:4px;padding:4px 10px;font-size:12.5px;color:var(--warn)">"Sounds good!"</span>
+        <span style="background:rgba(255,184,0,.1);border:1px solid rgba(255,184,0,.25);border-radius:4px;padding:4px 10px;font-size:12.5px;color:var(--warn)">"No worries!"</span>
+        <span style="background:rgba(255,184,0,.1);border:1px solid rgba(255,184,0,.25);border-radius:4px;padding:4px 10px;font-size:12.5px;color:var(--warn)">"I'll be right back."</span>
+        <span style="background:rgba(255,184,0,.1);border:1px solid rgba(255,184,0,.25);border-radius:4px;padding:4px 10px;font-size:12.5px;color:var(--warn)">"Let me check."</span>
+        <span style="background:rgba(255,184,0,.1);border:1px solid rgba(255,184,0,.25);border-radius:4px;padding:4px 10px;font-size:12.5px;color:var(--warn)">"Sorry about that!"</span>
+      </div>
+    </div>
+    <button style="margin-top:12px;background:rgba(255,31,92,.15);border:1px solid rgba(255,31,92,.4);color:var(--accent);font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;padding:10px 20px;cursor:pointer;border-radius:6px;text-transform:uppercase;transition:.2s" onclick="earnBadge('b3')">&#10003; 15+ Class Points &mdash; Badge!</button>
+  </div>
+</div>
+
+<!-- S5 SOLO CHALLENGE + GROUP SORT -->
+<div class="section">
+  <div class="sec-img">
+    <img src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=900&q=80" alt="solo challenge group sort" loading="lazy">
+    <div class="sec-overlay">
+      <div>
+        <div class="sec-num">&sect;5 &middot; Solo Challenge + Group Sort &mdash; 12 min</div>
+        <div class="sec-title">Grammar Sort &amp; Solo Sprint</div>
+        <div class="sec-sub">Group Sort Mini-Game &middot; 2-minute solo integration</div>
+      </div>
+    </div>
+    <div class="dur-tag">&#9201; 12 min</div>
+  </div>
+  <div class="sec-body">
+    <div class="tn">
+      <div class="tn-label">&#9889; Teacher Note</div>
+      <p>Run Group Sort first (6 min) as a class warm-up on the projector, then the solo timer. Group Sort consolidates all M6 grammar by making students categorize sentences into the correct structure bucket. Solo timer: 2 minutes to produce a full integrated monologue. This is the longest timer of the module &mdash; it reflects the level of production now expected.</p>
+    </div>
+
+    <!-- GROUP SORT MINI-GAME -->
+    <div style="font-family:var(--font-head);font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:12px">&#128260; Group Sort &mdash; Mini-Game</div>
+    <p class="gs-instructions">Click a sentence from the pool, then click the correct grammar bucket. All 9 sentences have one correct category. Score: <strong id="gsScore">0 / 9</strong> &nbsp; <span id="gsMsg"></span></p>
+
+    <div style="font-family:var(--font-head);font-size:9.5px;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:8px">Sentence Pool &mdash; click to place</div>
+    <div class="gs-items" id="gsPool">
+      <div class="gs-item" id="gsi0" onclick="gsSelect(0)">Good morning, I have a meeting at 9.</div>
+      <div class="gs-item" id="gsi1" onclick="gsSelect(1)">The elevator is broken.</div>
+      <div class="gs-item" id="gsi2" onclick="gsSelect(2)">I usually check my emails at 8 AM.</div>
+      <div class="gs-item" id="gsi3" onclick="gsSelect(3)">There are no meeting rooms available.</div>
+      <div class="gs-item" id="gsi4" onclick="gsSelect(4)">My badge is not working.</div>
+      <div class="gs-item" id="gsi5" onclick="gsSelect(5)">I can't print the report.</div>
+      <div class="gs-item" id="gsi6" onclick="gsSelect(6)">How's your week going?</div>
+      <div class="gs-item" id="gsi7" onclick="gsSelect(7)">There is a technician on floor 3.</div>
+      <div class="gs-item" id="gsi8" onclick="gsSelect(8)">She always arrives at 7:30.</div>
+    </div>
+
+    <div class="gs-buckets">
+      <div class="gs-bucket" id="gsBucket0" onclick="gsDrop(0)">
+        <div class="gs-bucket-label">Reception &amp; Small Talk (S1&ndash;S2)</div>
+        <div id="gsBucketContent0"></div>
+      </div>
+      <div class="gs-bucket" id="gsBucket1" onclick="gsDrop(1)">
+        <div class="gs-bucket-label">there is/are &amp; Problems (S3)</div>
+        <div id="gsBucketContent1"></div>
+      </div>
+      <div class="gs-bucket" id="gsBucket2" onclick="gsDrop(2)">
+        <div class="gs-bucket-label">Simple Present &amp; Routine (S2)</div>
+        <div id="gsBucketContent2"></div>
+      </div>
+    </div>
+    <div>
+      <button class="gs-check-btn" onclick="gsCheck()">Check</button>
+      <button class="gs-reset-btn" onclick="gsReset()">Reset</button>
+    </div>
+    <div class="gs-score" id="gsFb"></div>
+
+    <!-- SOLO TIMER -->
+    <div style="margin-top:24px;background:linear-gradient(135deg,rgba(255,31,92,.09),transparent);border:1px solid rgba(255,31,92,.22);border-radius:12px;padding:22px 24px;display:flex;gap:24px;align-items:flex-start;flex-wrap:wrap">
+      <div style="flex:1;min-width:200px">
+        <div style="font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--accent);margin-bottom:10px">&#9201; Module 6 Solo Integration &mdash; 2 minutes</div>
+        <div style="font-size:17px;font-weight:600;color:#fff;margin-bottom:12px;line-height:1.4">Speak about a REAL day at your workplace &mdash; from arrival to the end of the day.</div>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:6px">
+          <li style="font-size:13px;color:var(--muted);padding-left:16px;position:relative"><span style="position:absolute;left:0;color:var(--accent)">&#8594;</span>Greet someone at reception or in the hallway</li>
+          <li style="font-size:13px;color:var(--muted);padding-left:16px;position:relative"><span style="position:absolute;left:0;color:var(--accent)">&#8594;</span>Describe your morning routine (always/usually/sometimes)</li>
+          <li style="font-size:13px;color:var(--muted);padding-left:16px;position:relative"><span style="position:absolute;left:0;color:var(--accent)">&#8594;</span>Report one problem using there is/are + can/can't</li>
+          <li style="font-size:13px;color:var(--muted);padding-left:16px;position:relative"><span style="position:absolute;left:0;color:var(--accent)">&#8594;</span>Use at least 2 colloquial phrases from Module 6</li>
+        </ul>
+      </div>
+      <div class="timer-block">
+        <svg class="timer-svg" width="90" height="90" viewBox="0 0 90 90">
+          <circle class="timer-bg" cx="45" cy="45" r="38" stroke-width="6"/>
+          <circle class="timer-arc" id="tArcSolo" cx="45" cy="45" r="38" stroke-width="6" stroke-dasharray="238.76" stroke-dashoffset="0"/>
+          <text class="timer-text" id="tTextSolo" x="45" y="44">2:00</text>
+          <text class="timer-lbl" x="45" y="57">solo</text>
+        </svg>
+        <button class="t-btn t-start" onclick="startTimer('tArcSolo','tTextSolo',120,'b4',238.76)">START</button>
+        <button class="t-btn t-reset" onclick="resetArc('tArcSolo','tTextSolo',120,238.76)">RESET</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- S6 ASSESSMENT / LEADERBOARD -->
+<div class="section">
+  <div class="sec-img">
+    <img src="https://images.unsplash.com/photo-1560439514-4e9645039924?w=900&q=80" alt="assessment leaderboard" loading="lazy">
+    <div class="sec-overlay">
+      <div>
+        <div class="sec-num">&sect;6 &middot; Assessment &mdash; 8 min</div>
+        <div class="sec-title">Module 6 Final Leaderboard</div>
+        <div class="sec-sub">4-criterion rubric &middot; Full module score</div>
+      </div>
+    </div>
+    <div class="dur-tag">&#9201; 8 min</div>
+  </div>
+  <div class="sec-body">
+    <div class="tn">
+      <div class="tn-label">&#9889; Teacher Note &mdash; Final Score</div>
+      <p>Score students on the integrated role-play from &sect;2 (4 criteria, max 4 pts) plus any bonus points from the Speed Round (max 2 pts) = max 6 pts. This is the final production assessment for Module 6. Share scores transparently &mdash; students should see their progress. Top scorer gets a verbal shoutout before the certificate.</p>
+    </div>
+    <div class="lb-input-row" style="margin-top:16px">
+      <input class="lb-input" id="lbName" type="text" placeholder="Student name...">
+      <input class="lb-input lb-score-in" id="lbScoreIn" type="number" min="0" max="6" placeholder="0-6">
+      <button class="lb-add-btn" onclick="addLbEntry()">+ Add</button>
+    </div>
+    <table class="lb-table">
+      <thead><tr><th>#</th><th>Name</th><th>Score</th><th>Status</th></tr></thead>
+      <tbody id="lbBody"><tr><td colspan="4" style="color:var(--dim);font-size:13px;text-align:center;padding:20px">Add students above</td></tr></tbody>
+    </table>
+    <button class="lb-reset" onclick="resetLb()">Clear Leaderboard</button>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:20px">
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:18px 20px">
+        <div style="font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:12px">&#10003; Module 6 &mdash; I Can Now</div>
+        <ul class="check-list">
+          <li onclick="toggleCheck(this)"><span class="cb"></span><span class="ct-txt">Handle a reception conversation in English</span></li>
+          <li onclick="toggleCheck(this)"><span class="cb"></span><span class="ct-txt">Make small talk in an elevator or hallway</span></li>
+          <li onclick="toggleCheck(this)"><span class="cb"></span><span class="ct-txt">Describe my workday using Simple Present + adverbs</span></li>
+          <li onclick="toggleCheck(this)"><span class="cb"></span><span class="ct-txt">Report any workplace problem in English</span></li>
+          <li onclick="toggleCheck(this)"><span class="cb"></span><span class="ct-txt">Use all 5 M6 colloqial phrases naturally</span></li>
+        </ul>
+      </div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:18px 20px">
+        <div style="font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--cyan);margin-bottom:12px">&#127919; Module 6 Grammar Review</div>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:8px">
+          <li style="font-size:13px;color:var(--muted)"><span style="color:var(--accent)">to be</span> &mdash; I am / She is / They are</li>
+          <li style="font-size:13px;color:var(--muted)"><span style="color:var(--accent)">Simple Present</span> &mdash; I work / She works / They don't</li>
+          <li style="font-size:13px;color:var(--muted)"><span style="color:var(--accent)">can / can't</span> &mdash; I can help / I can't print</li>
+          <li style="font-size:13px;color:var(--muted)"><span style="color:var(--accent)">there is / are</span> &mdash; There is no room / There are 2 printers</li>
+          <li style="font-size:13px;color:var(--muted)"><span style="color:var(--accent)">adverbs</span> &mdash; always / usually / sometimes / never</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- S7 WRAP-UP + OPEN THE BOX -->
+<div class="section">
+  <div class="sec-img">
+    <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=900&q=80" alt="module complete achievement" loading="lazy">
+    <div class="sec-overlay">
+      <div>
+        <div class="sec-num">&sect;7 &middot; Wrap-Up &mdash; 8 min</div>
+        <div class="sec-title">Module 6 Complete</div>
+        <div class="sec-sub">Open the Box &middot; 3 Phrases &middot; Certificate &middot; My Win</div>
+      </div>
+    </div>
+    <div class="dur-tag">&#9201; 8 min</div>
+  </div>
+  <div class="sec-body">
+    <div class="tn">
+      <div class="tn-label">&#9889; Teacher Note &mdash; Open the Box Final Round</div>
+      <p>Run Open the Box for 3 minutes before closing. Each box has an integrated situation from any S1&ndash;S3 topic. The student speaks for 20 seconds. Fast, fun, and a final proof of fluency. Then close with 3 Phrases, Certificate, and My Win. This is the last time students see Module 6 language in a structured session &mdash; make it memorable.</p>
+    </div>
+
+    <!-- OPEN THE BOX -->
+    <div style="font-family:var(--font-head);font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:12px">&#128274; Open the Box &mdash; Final Round</div>
+    <div class="otb-grid">
+      <div class="otb-box" id="otbBox1" onclick="openBox(1)">
+        <div class="otb-num">1</div>
+        <div class="otb-icon">&#127760;</div>
+        <div class="otb-cat">Reception</div>
+        <div class="otb-content">You arrive at a new office for a meeting. The receptionist doesn't speak Spanish. Greet them, say your name, say who you are meeting, and ask for your visitor pass. 20 seconds.</div>
+      </div>
+      <div class="otb-box" id="otbBox2" onclick="openBox(2)">
+        <div class="otb-num">2</div>
+        <div class="otb-icon">&#128172;</div>
+        <div class="otb-cat">Small Talk</div>
+        <div class="otb-content">You are in the elevator with a foreign colleague for 30 seconds. Keep the conversation going with at least 3 exchanges. Use natural English. No awkward silence!</div>
+      </div>
+      <div class="otb-box" id="otbBox3" onclick="openBox(3)">
+        <div class="otb-num">3</div>
+        <div class="otb-icon">&#128188;</div>
+        <div class="otb-cat">Routine</div>
+        <div class="otb-content">Describe your typical Tuesday at work from arrival to 12:00 PM. Use: always / usually / sometimes. Include what your team does and what there is in your office area.</div>
+      </div>
+      <div class="otb-box" id="otbBox4" onclick="openBox(4)">
+        <div class="otb-num">4</div>
+        <div class="otb-icon">&#128680;</div>
+        <div class="otb-cat">Problem</div>
+        <div class="otb-content">There is no internet on your entire floor. You can't work. Three colleagues can't work either. Report this to your manager using the full PROBLEM + LOCATION + SOLUTION frame.</div>
+      </div>
+      <div class="otb-box" id="otbBox5" onclick="openBox(5)">
+        <div class="otb-num">5</div>
+        <div class="otb-icon">&#128230;</div>
+        <div class="otb-cat">Colloquial</div>
+        <div class="otb-content">Use ALL 5 Module 6 colloquial phrases in one continuous story about your workday. "Sounds good!" / "No worries!" / "I'll be right back." / "Let me check." / "Sorry about that!"</div>
+      </div>
+      <div class="otb-box" id="otbBox6" onclick="openBox(6)">
+        <div class="otb-num">6</div>
+        <div class="otb-icon">&#11088;</div>
+        <div class="otb-cat">Full Integration</div>
+        <div class="otb-content">FINAL CHALLENGE: Describe a complete English workday that includes a reception, small talk, your routine, one problem, and one solution. Use all 5 colloquial phrases. 60 seconds. No notes. This is your Module 6 proof.</div>
+      </div>
+    </div>
+    <div class="otb-done-msg" id="otbDoneMsg">&#127942; All 6 boxes opened! Module 6 fully complete!</div>
+
+    <!-- 3 PHRASES -->
+    <div style="font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold);margin-top:24px;margin-bottom:14px">&#127919; Module 6 &mdash; Your 3 Most Important Phrases:</div>
+    <div class="phrases-wrap">
+      <div class="phrase-card">
+        <div class="phrase-num">The Reception Phrase</div>
+        <div class="phrase-en">"Good morning. My name is ___. I have a meeting with ___."</div>
+        <div class="phrase-context">Use every time you arrive at any office in Mexico or internationally. This one sentence opens every professional interaction in English.</div>
+      </div>
+      <div class="phrase-card">
+        <div class="phrase-num">The Problem Phrase</div>
+        <div class="phrase-en">"The ___ is broken. I can't ___. Can you fix it before ___?"</div>
+        <div class="phrase-context">Report + impact + deadline. This is the complete English formula for reporting any workplace problem to anyone, anywhere.</div>
+      </div>
+      <div class="phrase-card">
+        <div class="phrase-num">The Lifesaver Phrase</div>
+        <div class="phrase-en">"Let me check."</div>
+        <div class="phrase-context">When you don't know the answer, this phrase buys you time professionally. It works in every situation: calls, meetings, face-to-face. Three words. Infinite use.</div>
+      </div>
+    </div>
+
+    <!-- CERTIFICATE -->
+    <div class="cert-wrap">
+      <div class="cert-title">&#127942; Module 6 Certificate</div>
+      <div class="cert-sub">A1.1 &middot; Module 6 &mdash; Real Interaction &middot; Complete</div>
+      <div class="cert-input-row">
+        <input class="cert-name-in" id="certName" type="text" placeholder="Student full name...">
+        <button class="cert-gen-btn" onclick="generateCert()">Generate &#10022;</button>
+      </div>
+      <div class="cert-output" id="certOut">
+        <h3 id="certNameOut">&mdash;</h3>
+        <p>has successfully completed</p>
+        <p style="color:var(--accent);font-weight:700;font-size:15px;margin:6px 0">A1.1 &middot; Module 6 &mdash; Real Interaction</p>
+        <p style="color:var(--muted);font-size:12px">Reception &middot; Small Talk &middot; Daily Routine &middot; Problems &amp; Solutions</p>
+        <p style="color:var(--muted);font-size:12px;margin-top:4px">Gabriel Turner English Training &middot; Celaya, Guanajuato &middot; <span id="certDate"></span></p>
+      </div>
+    </div>
+
+    <!-- MY WIN -->
+    <div style="margin-top:20px;font-family:var(--font-head);font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:8px">&#11088; My Win Today &mdash; Module 6</div>
+    <textarea class="win-textarea" id="myWin" placeholder="Write ONE thing you can do in English today that you could not do before Module 6 started..."></textarea>
+    <button class="win-btn" onclick="saveWin()">Save My Win &#8594; Earn Final Badge &#127942;</button>
+    <div class="win-confirm" id="winConfirm">&#10003; Module 6 complete. You did it. See you in A1.2.</div>
+
+    <div class="next-card">
+      <div class="next-label">Coming Up &#8594; A1.1 Module 6 &middot; Session 5 &mdash; Exit Lesson</div>
+      <div class="next-title">Real Interaction: Full A1.1 Integration &amp; Exit Project</div>
+      <div class="next-desc">The Exit Lesson brings together everything from A1.1: all 6 modules, all grammar structures, all colloquial phrases. You will complete your Exit Project: a 2-minute audio or video presentation about yourself, your job, and your workplace in English. No script. Just you and your English.</div>
+    </div>
+
+    <div class="tn">
+      <div class="tn-label">&#9889; Teacher Note &mdash; Module 6 Close</div>
+      <p>Exit ticket: each student says ONE sentence in English to a classmate as they leave &mdash; any sentence from any topic in Module 6. It can be a greeting, a routine sentence, or a problem report. The last English sentence of the module should land on a WIN. Celebrate explicitly: <em>"That is A1.1 English. You speak English now."</em></p>
+    </div>
+  </div>
+</div>
+
+<footer class="ftr">
+  <div class="ftr-brand">Gabriel Turner &middot; English Training</div>
+  <div class="ftr-file">GT_A1_1_M6_S4B_TEACHER_v1.html</div>
+  <div class="ftr-levels">
+    <div class="flv on">A1.1</div>
+    <div class="flv">A1.2</div>
+    <div class="flv">A2.1</div>
+    <div class="flv">A2.2</div>
+    <div class="flv">B1.1</div>
+    <div class="flv">B1.2</div>
+  </div>
+</footer>
+
+<script>
+// BADGES
+var badgeEarned = {b1:false,b2:false,b3:false,b4:false,b5:false};
+function earnBadge(id) {
+  if (badgeEarned[id]) return;
+  badgeEarned[id] = true;
+  var el = document.getElementById(id);
+  if (el) el.classList.add("earned");
+  var all = Object.keys(badgeEarned).every(function(k){ return badgeEarned[k]; });
+  if (all) { launchConfetti(); var cm = document.getElementById("confMsg"); if(cm) cm.style.display="block"; }
+}
+
+// CONFETTI
+function launchConfetti() {
+  var colors = ["#FF1F5C","#FF4D7A","#FFB800","#00E5A0","#ffffff"];
+  for (var i=0; i<90; i++) {
+    (function(){
+      var d = document.createElement("div");
+      d.style.cssText = "position:fixed;top:-10px;pointer-events:none;z-index:9999;border-radius:2px;";
+      d.style.left = Math.random()*100+"vw";
+      d.style.width = (6+Math.random()*6)+"px";
+      d.style.height = (6+Math.random()*6)+"px";
+      d.style.background = colors[Math.floor(Math.random()*colors.length)];
+      d.style.animation = "confFall "+(1.5+Math.random()*2)+"s linear forwards";
+      document.body.appendChild(d);
+      setTimeout(function(){ if(d.parentNode) d.parentNode.removeChild(d); }, 4000);
+    })();
+  }
+}
+(function(){
+  var s = document.createElement("style");
+  s.textContent = "@keyframes confFall{0%{transform:translateY(-10px) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}";
+  document.head.appendChild(s);
+})();
+
+// TIMER
+var timerIntervals = {};
+function startTimer(arcId, textId, seconds, badgeKey, circumference) {
+  if (timerIntervals[arcId]) clearInterval(timerIntervals[arcId]);
+  var arc = document.getElementById(arcId), txt = document.getElementById(textId);
+  var rem = seconds;
+  function update() {
+    arc.style.strokeDashoffset = circumference*(1-rem/seconds);
+    var m = Math.floor(rem/60), s = rem%60;
+    txt.textContent = m+":"+(s<10?"0":"")+s;
+    if (rem<=5) arc.style.stroke = "#FF4D6D";
+    if (rem<=0) { clearInterval(timerIntervals[arcId]); arc.style.stroke="var(--success)"; if(badgeKey) earnBadge(badgeKey); return; }
+    rem--;
+  }
+  update();
+  timerIntervals[arcId] = setInterval(update, 1000);
+}
+function resetArc(arcId, textId, seconds, circumference) {
+  if (timerIntervals[arcId]) { clearInterval(timerIntervals[arcId]); delete timerIntervals[arcId]; }
+  var arc = document.getElementById(arcId);
+  arc.style.strokeDashoffset = "0"; arc.style.stroke = "var(--accent)";
+  var m = Math.floor(seconds/60), s = seconds%60;
+  document.getElementById(textId).textContent = m+":"+(s<10?"0":"")+s;
+}
+
+// STUDENT MODE
+function toggleSM() {
+  document.body.classList.toggle("sm");
+  document.getElementById("smtLabel").textContent = document.body.classList.contains("sm") ? "Student Mode" : "Teacher Mode";
+}
+
+// GROUP SORT
+// Correct bucket: 0=Reception/SmallTalk, 1=ThereIs/Problems, 2=SimplePresent/Routine
+var gsCorrect = [0, 1, 2, 1, 0, 1, 0, 1, 2];
+var gsTexts = [
+  "Good morning, I have a meeting at 9.",
+  "The elevator is broken.",
+  "I usually check my emails at 8 AM.",
+  "There are no meeting rooms available.",
+  "My badge is not working.",
+  "I can't print the report.",
+  "How's your week going?",
+  "There is a technician on floor 3.",
+  "She always arrives at 7:30."
+];
+var gsSelected = null;
+var gsBuckets = [[], [], []];
+var gsPlaced = new Array(9).fill(false);
+var gsScore = 0;
+
+function gsSelect(idx) {
+  if (gsPlaced[idx]) return;
+  if (gsSelected !== null) {
+    var prev = document.getElementById("gsi"+gsSelected);
+    if (prev) prev.style.borderColor = "";
+  }
+  gsSelected = idx;
+  var el = document.getElementById("gsi"+idx);
+  if (el) el.style.borderColor = "var(--accent)";
+}
+
+function gsDrop(bucketIdx) {
+  if (gsSelected === null) return;
+  gsBuckets[bucketIdx].push(gsSelected);
+  gsPlaced[gsSelected] = true;
+  var el = document.getElementById("gsi"+gsSelected);
+  if (el) el.classList.add("placed");
+  var bc = document.getElementById("gsBucketContent"+bucketIdx);
+  if (bc) {
+    var div = document.createElement("div");
+    div.className = "gs-placed-item";
+    div.textContent = gsTexts[gsSelected];
+    div.dataset.idx = gsSelected;
+    div.dataset.bucket = bucketIdx;
+    div.onclick = function() { gsRemove(parseInt(this.dataset.idx), parseInt(this.dataset.bucket), this); };
+    bc.appendChild(div);
+  }
+  gsSelected = null;
+}
+
+function gsRemove(idx, bucketIdx, el) {
+  gsBuckets[bucketIdx] = gsBuckets[bucketIdx].filter(function(i){ return i !== idx; });
+  gsPlaced[idx] = false;
+  var orig = document.getElementById("gsi"+idx);
+  if (orig) orig.classList.remove("placed");
+  if (el.parentNode) el.parentNode.removeChild(el);
+}
+
+function gsCheck() {
+  var correct = 0;
+  for (var b=0; b<3; b++) {
+    gsBuckets[b].forEach(function(idx){
+      if (gsCorrect[idx] === b) correct++;
+    });
+  }
+  gsScore = correct;
+  document.getElementById("gsScore").textContent = correct + " / 9";
+  var fb = document.getElementById("gsFb");
+  if (correct === 9) {
+    fb.textContent = "Perfect! All 9 sentences correctly sorted!";
+    fb.style.color = "var(--success)";
+    earnBadge("b3");
+  } else {
+    fb.textContent = correct + " correct. Check the sentences in the wrong bucket and try again.";
+    fb.style.color = "var(--warn)";
+  }
+}
+
+function gsReset() {
+  gsBuckets = [[], [], []];
+  gsPlaced = new Array(9).fill(false);
+  gsSelected = null;
+  gsScore = 0;
+  document.getElementById("gsScore").textContent = "0 / 9";
+  document.getElementById("gsFb").textContent = "";
+  for (var i=0; i<9; i++) {
+    var el = document.getElementById("gsi"+i);
+    if (el) { el.classList.remove("placed"); el.style.borderColor = ""; }
+  }
+  for (var b=0; b<3; b++) {
+    var bc = document.getElementById("gsBucketContent"+b);
+    if (bc) bc.innerHTML = "";
+  }
+}
+
+// OPEN THE BOX
+var otbCount = 0;
+function openBox(n) {
+  var box = document.getElementById("otbBox"+n);
+  if (!box || box.classList.contains("opened")) return;
+  box.classList.add("opened");
+  otbCount++;
+  if (otbCount >= 5) {
+    document.getElementById("otbDoneMsg").style.display = "block";
+  }
+  if (otbCount >= 6) earnBadge("b5");
+}
+
+// LEADERBOARD
+var lbData = [];
+function addLbEntry() {
+  var name = document.getElementById("lbName").value.trim();
+  var score = parseInt(document.getElementById("lbScoreIn").value) || 0;
+  if (!name) return;
+  lbData.push({name:name, score:score});
+  lbData.sort(function(a,b){ return b.score-a.score; });
+  document.getElementById("lbName").value = "";
+  document.getElementById("lbScoreIn").value = "";
+  renderLb();
+}
+function renderLb() {
+  var tbody = document.getElementById("lbBody");
+  if (!lbData.length) {
+    tbody.innerHTML = '<tr><td colspan="4" style="color:var(--dim);font-size:13px;text-align:center;padding:20px">No entries yet</td></tr>';
+    return;
+  }
+  var medals = ["🥇","🥈","🥉"];
+  tbody.innerHTML = lbData.map(function(e,i){
+    var status = e.score>=5 ? "Excellent" : e.score>=3 ? "Good" : "Keep going!";
+    var medal = i < 3 ? medals[i] : String(i+1);
+    return '<tr><td class="lb-rank">'+medal+'</td><td>'+e.name+'</td><td class="lb-score-cell">'+e.score+' / 6</td><td style="font-size:11px;color:var(--muted)">'+status+'</td></tr>';
+  }).join("");
+  if (lbData.length >= 3) earnBadge("b4");
+}
+function resetLb() { lbData = []; renderLb(); }
+
+// CHECKLIST
+function toggleCheck(el) {
+  el.classList.toggle("checked");
+  var cb = el.querySelector(".cb");
+  if (cb) cb.textContent = el.classList.contains("checked") ? "\u2713" : "";
+}
+
+// CERTIFICATE
+function generateCert() {
+  var name = document.getElementById("certName").value.trim();
+  if (!name) return;
+  document.getElementById("certNameOut").textContent = name;
+  document.getElementById("certDate").textContent = new Date().toLocaleDateString("en-US",{year:"numeric",month:"long",day:"numeric"});
+  document.getElementById("certOut").style.display = "block";
+  earnBadge("b5");
+}
+
+// MY WIN
+function saveWin() {
+  var v = document.getElementById("myWin").value.trim();
+  if (!v) return;
+  document.getElementById("winConfirm").style.display = "block";
+  earnBadge("b5");
+}
+
+// PROGRESS BAR
+window.addEventListener("scroll", function(){
+  var h = document.documentElement;
+  var bar = document.getElementById("progressBar");
+  if (bar) bar.style.width = (h.scrollTop/(h.scrollHeight-h.clientHeight)*100)+"%";
+});
+</script>
+</body>
+</html>

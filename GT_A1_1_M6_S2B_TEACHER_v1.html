@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GT A1.1 M6 S2B — Real Interaction · Production & Fluency</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#080808;--surface:#111318;--surface2:#1a1f28;
+  --accent:#FF1F5C;--accent2:#FF4D7A;
+  --border:rgba(255,31,92,.18);
+  --text:#F0F4F8;--muted:#8A9BB0;--dim:rgba(226,226,226,.25);
+  --danger:#FF4D6D;--success:#00E5A0;--warn:#FFB347;
+  --cyan:#00CFFF;--gold:#FFB800;
+  --font-head:"Syne",sans-serif;--font-body:"DM Sans",sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:15px;line-height:1.65}
+img{display:block;width:100%;object-fit:cover}
+
+.prog-wrap{position:fixed;top:0;left:0;width:100%;height:3px;background:rgba(255,31,92,.12);z-index:999}
+.prog-bar{height:3px;background:var(--accent);width:0%;transition:width .25s}
+
+.hdr{position:sticky;top:3px;z-index:90;background:rgba(17,19,24,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:14px 48px;display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px}
+.dot{width:8px;height:8px;background:var(--accent);border-radius:50%}
+.bname{font-family:var(--font-head);font-weight:800;font-size:13px;letter-spacing:2px;text-transform:uppercase;color:#fff}
+.bsub{font-size:11px;color:var(--muted);letter-spacing:.8px}
+.sess-tags{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.tag{display:inline-block;padding:4px 11px;font-family:var(--font-head);font-size:9.5px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;border-radius:3px}
+.t-lv{background:rgba(255,31,92,.18);color:var(--accent);border:1px solid rgba(255,31,92,.35)}
+.t-mod{background:rgba(255,184,0,.12);color:var(--gold);border:1px solid rgba(255,184,0,.3)}
+.t-sess{background:rgba(0,207,255,.1);color:var(--cyan);border:1px solid rgba(0,207,255,.25)}
+.t-time{background:rgba(255,255,255,.06);color:var(--muted);border:1px solid rgba(255,255,255,.1)}
+.sm-toggle{background:rgba(255,31,92,.12);border:1px solid rgba(255,31,92,.3);color:var(--accent);font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;padding:7px 14px;cursor:pointer;text-transform:uppercase;border-radius:3px;transition:.2s}
+.sm-toggle:hover{background:rgba(255,31,92,.22)}
+
+.badge-strip{display:flex;align-items:center;gap:10px;padding:14px 48px;background:var(--surface);border-bottom:1px solid var(--border)}
+.badge-strip span[id]{font-size:22px;filter:grayscale(1);opacity:.28;transition:.4s;cursor:default}
+.badge-strip span[id].earned{filter:none;opacity:1;animation:badgePop .45s ease}
+.badge-label{font-family:var(--font-head);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-left:auto}
+@keyframes badgePop{0%{transform:scale(1)}50%{transform:scale(1.35)}100%{transform:scale(1)}}
+#confMsg{display:none;font-family:var(--font-head);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);margin-left:8px}
+
+.section{margin-bottom:4px}
+.sec-img{position:relative;height:180px;overflow:hidden}
+.sec-img img{height:100%;object-fit:cover;filter:brightness(.45)}
+.sec-overlay{position:absolute;inset:0;display:flex;align-items:flex-end;padding:22px 32px;background:linear-gradient(to top,rgba(8,8,8,.85),transparent)}
+.sec-num{font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--accent)}
+.sec-title{font-family:var(--font-head);font-size:24px;font-weight:800;color:#fff;margin:2px 0}
+.sec-sub{font-size:12.5px;color:var(--muted)}
+.dur-tag{position:absolute;top:16px;right:16px;background:rgba(8,8,8,.65);border:1px solid rgba(255,255,255,.15);padding:5px 12px;font-family:var(--font-head);font-size:10px;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase}
+.sec-body{padding:28px 48px 36px;background:var(--surface)}
+
+.tn{border-left:3px solid var(--gold);background:rgba(255,184,0,.04);padding:14px 18px;margin-top:16px;border-radius:0 6px 6px 0}
+.tn.tn-c1{border-left-color:var(--cyan);background:rgba(0,207,255,.04)}
+.tn.tn-c2{border-left-color:var(--accent2);background:rgba(255,77,114,.04)}
+.tn-label{font-family:var(--font-head);font-size:9.5px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:7px}
+.tn.tn-c1 .tn-label{color:var(--cyan)}
+.tn.tn-c2 .tn-label{color:var(--accent2)}
+.tn p{font-size:13px;color:var(--muted);line-height:1.6}
+.tn em{color:var(--text);font-style:normal}
+body.sm .tn{display:none}
+
+/* HOT TAKE */
+.hot-take{background:linear-gradient(135deg,rgba(255,31,92,.09),transparent);border:1px solid rgba(255,31,92,.22);border-radius:10px;padding:22px 26px;margin-top:16px}
+.ht-label{font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--accent);margin-bottom:10px}
+.ht-stmt{font-size:18px;font-weight:600;color:#fff;line-height:1.4;margin-bottom:14px}
+.ht-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:12px}
+.ht-mini{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 16px}
+.ht-mini-label{font-family:var(--font-head);font-size:9px;letter-spacing:2px;text-transform:uppercase;margin-bottom:6px}
+.ht-mini-stmt{font-size:13.5px;color:var(--text);line-height:1.4}
+.ht-btns{display:flex;gap:10px;margin-top:12px}
+.ht-btn{flex:1;padding:10px;font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border:1px solid;cursor:pointer;border-radius:6px;transition:.25s}
+.ht-agree{background:rgba(0,229,160,.1);border-color:rgba(0,229,160,.35);color:var(--success)}
+.ht-disagree{background:rgba(255,77,109,.1);border-color:rgba(255,77,109,.35);color:var(--danger)}
+.ht-btn:hover{transform:translateY(-2px)}
+
+/* SPEAKING CARDS MINI-GAME */
+.sc-game{background:var(--surface2);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-top:16px}
+.sc-game-hdr{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px}
+.sc-game-icon{font-size:22px}
+.sc-game-title{font-family:var(--font-head);font-size:13px;font-weight:700;color:#fff}
+.sc-game-sub{font-size:12px;color:var(--muted)}
+.sc-game-score{margin-left:auto;font-family:var(--font-head);font-size:11px;font-weight:700;color:var(--accent)}
+.sc-stage{padding:28px 24px;min-height:200px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;position:relative}
+.sc-card-display{background:linear-gradient(135deg,rgba(255,31,92,.12),rgba(255,77,114,.06));border:1px solid rgba(255,31,92,.3);border-radius:12px;padding:28px 32px;max-width:480px;width:100%;position:relative;transition:.4s}
+.sc-card-display.flip{animation:cardFlip .35s ease}
+@keyframes cardFlip{0%{transform:scale(1)}50%{transform:scale(.92) rotateY(8deg)}100%{transform:scale(1)}}
+.sc-card-num{font-family:var(--font-head);font-size:9.5px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:10px}
+.sc-card-prompt{font-size:17px;font-weight:600;color:#fff;line-height:1.5;margin-bottom:14px}
+.sc-card-hint{font-size:12.5px;color:var(--muted);font-style:italic}
+.sc-card-tag{display:inline-block;padding:3px 10px;font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;background:rgba(0,207,255,.12);color:var(--cyan);border-radius:3px;margin-bottom:12px}
+.sc-controls{display:flex;gap:10px;margin-top:20px;flex-wrap:wrap;justify-content:center}
+.sc-btn{font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:10px 20px;border:1px solid;cursor:pointer;border-radius:6px;transition:.2s}
+.sc-next{background:rgba(255,31,92,.15);border-color:rgba(255,31,92,.4);color:var(--accent)}
+.sc-next:hover{background:rgba(255,31,92,.28);transform:translateY(-1px)}
+.sc-done{background:rgba(0,229,160,.1);border-color:rgba(0,229,160,.3);color:var(--success)}
+.sc-done:hover{background:rgba(0,229,160,.18)}
+.sc-counter{font-family:var(--font-head);font-size:11px;letter-spacing:1px;color:var(--muted);margin-top:12px}
+
+/* PITCH CARDS */
+.pitch-cards{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}
+.pitch-card{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:18px 20px}
+.pitch-role{font-family:var(--font-head);font-size:9.5px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px}
+.pitch-card:first-child .pitch-role{color:var(--cyan)}
+.pitch-card:last-child .pitch-role{color:var(--accent)}
+.pitch-task{font-size:14px;color:var(--text);line-height:1.5}
+.pitch-hint{font-size:12px;color:var(--muted);margin-top:8px;font-style:italic}
+
+/* ROUND CARDS */
+.rounds{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-top:16px}
+.round-card{background:var(--surface2);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.round-img{height:120px;overflow:hidden}
+.round-img img{height:100%;object-fit:cover;filter:brightness(.48)}
+.round-body{padding:16px}
+.round-tag{display:inline-block;padding:3px 9px;font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;background:rgba(255,31,92,.15);color:var(--accent);border-radius:3px;margin-bottom:8px}
+.round-q{font-size:13.5px;color:var(--text);line-height:1.5;margin-bottom:10px}
+.reveal-btn{background:none;border:1px solid var(--border);color:var(--muted);font-family:var(--font-head);font-size:9.5px;font-weight:700;letter-spacing:1px;padding:6px 12px;cursor:pointer;text-transform:uppercase;width:100%;border-radius:4px;transition:.2s}
+.reveal-btn:hover{border-color:var(--accent);color:var(--accent)}
+.model-reveal{display:none;margin-top:10px;padding:10px;background:rgba(255,31,92,.07);border-radius:6px;font-size:13px;color:var(--text);line-height:1.5}
+.model-reveal.show{display:block}
+.model-reveal .gm{color:var(--accent);font-weight:600}
+.model-reveal .vw{color:var(--cyan);font-weight:600}
+.model-reveal .cq{color:var(--warn);font-weight:600}
+
+/* RELAY CHAIN */
+.relay-chain{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:14px 0}
+.relay-item{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-size:13px;color:var(--text);flex:1;min-width:120px}
+.relay-item b{color:var(--accent);font-family:var(--font-head);font-size:9.5px;letter-spacing:1.5px;display:block;margin-bottom:3px;text-transform:uppercase}
+.relay-arrow{font-size:20px;color:var(--dim)}
+
+/* TIMER */
+.challenge-wrap{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:24px;margin-top:16px;display:flex;gap:28px;align-items:flex-start;flex-wrap:wrap}
+.challenge-text{flex:1;min-width:200px}
+.challenge-label{font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--accent);margin-bottom:10px}
+.challenge-q{font-size:17px;font-weight:600;color:#fff;margin-bottom:12px;line-height:1.4}
+.challenge-bullets{list-style:none;display:flex;flex-direction:column;gap:6px}
+.challenge-bullets li{font-size:13px;color:var(--muted);padding-left:16px;position:relative}
+.challenge-bullets li::before{content:"→";position:absolute;left:0;color:var(--accent);font-size:11px}
+.timer-block{display:flex;flex-direction:column;align-items:center;gap:10px;min-width:110px}
+.timer-svg{transform:rotate(-90deg)}
+.timer-bg{fill:none;stroke:rgba(255,255,255,.08)}
+.timer-arc{fill:none;stroke:var(--accent);stroke-linecap:round;transition:stroke .4s}
+.timer-text{font-family:var(--font-head);font-size:13px;font-weight:700;fill:var(--text);transform:rotate(90deg);transform-origin:45px 44px}
+.timer-label-svg{font-family:var(--font-head);font-size:7px;letter-spacing:1.5px;fill:var(--muted);transform:rotate(90deg);transform-origin:45px 57px;text-anchor:middle}
+.t-btn{font-family:var(--font-head);font-size:9.5px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:8px 16px;border:1px solid;cursor:pointer;border-radius:4px;transition:.2s}
+.t-start{background:rgba(255,31,92,.15);border-color:rgba(255,31,92,.4);color:var(--accent)}
+.t-start:hover{background:rgba(255,31,92,.25)}
+.t-reset{background:transparent;border-color:var(--border);color:var(--dim)}
+.t-reset:hover{border-color:var(--muted);color:var(--muted)}
+
+/* OPEN THE BOX */
+.otb-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:16px}
+.otb-box{background:var(--surface2);border:2px solid var(--border);border-radius:10px;min-height:120px;cursor:pointer;transition:.3s;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px;text-align:center;position:relative;overflow:hidden}
+.otb-box:hover:not(.opened){border-color:var(--accent);transform:translateY(-3px);background:rgba(255,31,92,.06)}
+.otb-box.opened{border-color:var(--success);background:rgba(0,229,160,.05);cursor:default}
+.otb-num{font-family:var(--font-head);font-size:28px;font-weight:800;color:var(--accent);transition:.3s}
+.otb-box.opened .otb-num{display:none}
+.otb-icon{font-size:22px;margin-bottom:8px;display:none}
+.otb-box.opened .otb-icon{display:block}
+.otb-content{display:none;font-size:13px;color:var(--text);line-height:1.5}
+.otb-box.opened .otb-content{display:block}
+.otb-cat{display:none;font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--success);margin-bottom:6px}
+.otb-box.opened .otb-cat{display:block}
+.otb-done-msg{display:none;margin-top:14px;text-align:center;font-family:var(--font-head);font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold)}
+
+/* LEADERBOARD */
+.lb-wrap{margin-top:16px}
+.lb-input-row{display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+.lb-input{background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:var(--font-body);font-size:13px;padding:10px 14px;border-radius:6px;flex:1;min-width:120px;outline:none}
+.lb-input:focus{border-color:var(--accent)}
+.lb-score-in{width:80px;flex:0 0 80px}
+.lb-add-btn{background:rgba(255,31,92,.15);border:1px solid rgba(255,31,92,.4);color:var(--accent);font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;padding:10px 16px;cursor:pointer;border-radius:6px;text-transform:uppercase;transition:.2s}
+.lb-add-btn:hover{background:rgba(255,31,92,.28)}
+.lb-table{width:100%;border-collapse:collapse}
+.lb-table th{font-family:var(--font-head);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--dim);padding:8px 14px;text-align:left;border-bottom:1px solid var(--border)}
+.lb-table td{padding:10px 14px;border-bottom:1px solid rgba(255,255,255,.04);font-size:13px}
+.lb-rank{font-family:var(--font-head);font-weight:800;color:var(--accent)}
+.lb-score-cell{color:var(--success);font-family:var(--font-head);font-weight:700}
+.lb-reset{background:none;border:1px solid var(--border);color:var(--dim);font-family:var(--font-head);font-size:9px;letter-spacing:1.5px;padding:6px 12px;cursor:pointer;border-radius:4px;text-transform:uppercase;margin-top:10px;transition:.2s}
+.lb-reset:hover{border-color:var(--muted);color:var(--muted)}
+
+/* ASSESS */
+.assess-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:20px}
+.assess-card{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:18px 20px}
+.assess-title{font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:12px}
+.check-list{list-style:none;display:flex;flex-direction:column;gap:9px}
+.check-list li{display:flex;align-items:flex-start;gap:10px;font-size:13.5px;cursor:pointer;transition:.2s}
+.check-list li .cb{width:18px;height:18px;border:2px solid var(--border);border-radius:4px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;margin-top:1px;transition:.2s}
+.check-list li.checked .cb{background:var(--success);border-color:var(--success);color:#000}
+.check-list li.checked .ct-txt{text-decoration:line-through;color:var(--dim)}
+
+/* PHRASES */
+.phrases-wrap{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-top:16px}
+.phrase-card{background:linear-gradient(135deg,rgba(255,184,0,.08),transparent);border:1px solid rgba(255,184,0,.25);border-radius:10px;padding:18px 20px}
+.phrase-num{font-family:var(--font-head);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:6px}
+.phrase-en{font-size:16px;font-weight:700;color:#fff;margin-bottom:6px}
+.phrase-context{font-size:12.5px;color:var(--muted);line-height:1.5}
+
+/* CERT */
+.cert-wrap{margin-top:20px;background:linear-gradient(135deg,rgba(255,31,92,.07),rgba(255,184,0,.05));border:1px solid rgba(255,31,92,.25);border-radius:12px;padding:28px;text-align:center}
+.cert-title{font-family:var(--font-head);font-size:22px;font-weight:800;color:#fff;margin-bottom:6px}
+.cert-sub{font-size:13px;color:var(--muted);margin-bottom:18px}
+.cert-input-row{display:flex;gap:10px;justify-content:center;margin-bottom:14px;flex-wrap:wrap}
+.cert-name-in{background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:var(--font-body);font-size:14px;padding:10px 18px;border-radius:6px;width:280px;outline:none}
+.cert-name-in:focus{border-color:var(--accent)}
+.cert-gen-btn{background:rgba(255,31,92,.18);border:1px solid rgba(255,31,92,.4);color:var(--accent);font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;padding:10px 18px;cursor:pointer;border-radius:6px;text-transform:uppercase;transition:.2s}
+.cert-gen-btn:hover{background:rgba(255,31,92,.32)}
+.cert-output{display:none;background:rgba(255,255,255,.03);border:1px solid rgba(255,184,0,.3);border-radius:10px;padding:24px;margin-top:16px}
+.cert-output h3{font-family:var(--font-head);font-size:18px;font-weight:800;color:var(--gold);margin-bottom:6px}
+.cert-output p{font-size:13px;color:var(--muted);margin-bottom:4px}
+
+/* WIN */
+.win-textarea{width:100%;background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:var(--font-body);font-size:14px;padding:14px 18px;border-radius:8px;resize:vertical;min-height:90px;outline:none;line-height:1.5}
+.win-textarea:focus{border-color:var(--accent)}
+.win-btn{margin-top:10px;background:rgba(255,31,92,.15);border:1px solid rgba(255,31,92,.4);color:var(--accent);font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;padding:10px 20px;cursor:pointer;border-radius:6px;text-transform:uppercase;transition:.2s}
+.win-btn:hover{background:rgba(255,31,92,.28)}
+.win-confirm{display:none;margin-top:10px;color:var(--success);font-family:var(--font-head);font-size:11px;letter-spacing:1.5px;text-transform:uppercase}
+
+/* NEXT PREVIEW */
+.next-card{background:rgba(0,207,255,.05);border:1px solid rgba(0,207,255,.2);border-radius:10px;padding:20px 24px;margin-top:20px}
+.next-label{font-family:var(--font-head);font-size:9.5px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--cyan);margin-bottom:8px}
+.next-title{font-size:16px;font-weight:700;color:#fff;margin-bottom:6px}
+.next-desc{font-size:13px;color:var(--muted)}
+
+/* FOOTER */
+.ftr{padding:28px 48px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-top:4px}
+.ftr-brand{font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted)}
+.ftr-file{font-size:11px;color:var(--dim)}
+.ftr-levels{display:flex;gap:3px}
+.flv{padding:4px 9px;font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;background:var(--surface);color:var(--dim);border-radius:3px}
+.flv.on{background:var(--accent);color:#fff}
+
+@media(max-width:860px){
+  .hdr{padding:12px 20px}
+  .sec-body{padding:20px 20px 28px}
+  .badge-strip{padding:12px 20px}
+  .rounds{grid-template-columns:1fr}
+  .pitch-cards{grid-template-columns:1fr}
+  .ht-grid{grid-template-columns:1fr}
+  .phrases-wrap{grid-template-columns:1fr}
+  .assess-grid{grid-template-columns:1fr}
+  .otb-grid{grid-template-columns:1fr 1fr}
+  .ftr{padding:20px}
+}
+</style>
+</head>
+<body>
+
+<div class="prog-wrap"><div class="prog-bar" id="progressBar"></div></div>
+
+<header class="hdr">
+  <div class="brand">
+    <div class="dot"></div>
+    <div>
+      <div class="bname">Gabriel Turner &middot; English Training</div>
+      <div class="bsub">Teacher Edition &middot; Production &amp; Fluency</div>
+    </div>
+  </div>
+  <div class="sess-tags">
+    <span class="tag t-lv">A1.1</span>
+    <span class="tag t-mod">Module 6</span>
+    <span class="tag t-sess">Session 2B &mdash; Production &amp; Fluency</span>
+    <span class="tag t-time">60&ndash;70 min</span>
+  </div>
+  <button class="sm-toggle" onclick="toggleSM()"><span id="smtLabel">Teacher Mode</span></button>
+</header>
+
+<div class="badge-strip">
+  <span id="b1">&#128293;</span>
+  <span id="b2">&#127917;</span>
+  <span id="b3">&#127908;</span>
+  <span id="b4">&#127941;</span>
+  <span id="b5">&#127942;</span>
+  <span class="badge-label">Earn all 5 badges today</span>
+  <span id="confMsg">&#127881; All badges earned!</span>
+</div>
+
+<!-- S1 HOT TAKE -->
+<div class="section">
+  <div class="sec-img">
+    <img src="https://images.unsplash.com/photo-1485217988980-11786ced9454?w=900&q=80" alt="office hallway small talk">
+    <div class="sec-overlay">
+      <div>
+        <div class="sec-num">&sect;1 &middot; Hot Take &mdash; 8 min</div>
+        <div class="sec-title">Small Talk Opinions</div>
+        <div class="sec-sub">React fast. Speak first. No perfect sentences needed.</div>
+      </div>
+    </div>
+    <div class="dur-tag">&#9201; 8 min</div>
+  </div>
+  <div class="sec-body">
+
+    <div class="tn">
+      <div class="tn-label">&#9889; Teacher Note &mdash; Hot Take Routine</div>
+      <p>Read the main statement aloud. Students shout <em>Agree</em> or <em>Disagree</em> immediately, then one student gives a reason in English. No full paragraphs needed &mdash; one sentence is a win. Move through all 4 in under 3 minutes. The mini statements below run simultaneously: show on projector, students vote with hands. Take the most controversial one into a 90-second class debate before moving on.</p>
+    </div>
+
+    <div class="hot-take">
+      <div class="ht-label">&#128293; Hot Take &mdash; Main Statement</div>
+      <div class="ht-stmt">"Small talk in an elevator or hallway is NOT important at work."</div>
+      <div class="ht-btns">
+        <button class="ht-btn ht-agree" onclick="earnBadge('b1')">&#10003; Agree</button>
+        <button class="ht-btn ht-disagree" onclick="earnBadge('b1')">&#10007; Disagree</button>
+      </div>
+    </div>
+
+    <div class="ht-grid" style="margin-top:12px">
+      <div class="ht-mini">
+        <div class="ht-mini-label" style="color:var(--cyan)">&#128293; Statement 2</div>
+        <div class="ht-mini-stmt">"I feel comfortable talking to my colleagues in English every day."</div>
+      </div>
+      <div class="ht-mini">
+        <div class="ht-mini-label" style="color:var(--gold)">&#128293; Statement 3</div>
+        <div class="ht-mini-stmt">"Describing my full workday in English is very difficult."</div>
+      </div>
+      <div class="ht-mini">
+        <div class="ht-mini-label" style="color:var(--success)">&#128293; Statement 4</div>
+        <div class="ht-mini-stmt">"My manager understands me when I speak English."</div>
+      </div>
+    </div>
+
+    <div class="tn tn-c2">
+      <div class="tn-label">&#128161; Engagement Layer</div>
+      <p>After the vote on Statement 2, ask: <em>"Who said NO? Why? Use ONE sentence."</em> This surfaces real anxiety about English at work &mdash; the session content directly addresses it. Students who verbalize their difficulty are more receptive to the activities that follow.</p>
+    </div>
+
+  </div>
+</div>
+
+<!-- S2 PITCH / DEBATE -->
+<div class="section">
+  <div class="sec-img">
+    <img src="https://images.unsplash.com/photo-1502152518851-c4dca0b45a14?w=900&q=80" alt="cafeteria break room" loading="lazy">
+    <div class="sec-overlay">
+      <div>
+        <div class="sec-num">&sect;2 &middot; Pitch &amp; Debate &mdash; 12 min</div>
+        <div class="sec-title">A Day in the Life</div>
+        <div class="sec-sub">Role-play &middot; Speaking Cards Mini-Game &middot; Class Discussion</div>
+      </div>
+    </div>
+    <div class="dur-tag">&#9201; 12 min</div>
+  </div>
+  <div class="sec-body">
+
+    <div class="tn">
+      <div class="tn-label">&#9889; Teacher Note &mdash; Setup</div>
+      <p>Part 1 (5 min): Role-play in pairs &mdash; Student A describes their morning at work, Student B asks questions. Then swap. Part 2 (7 min): Speaking Cards Mini-Game as a class &mdash; teacher draws a card, nominates a student, student speaks for 30 seconds. Award badge b2 when the class completes 5 cards. This structure mirrors real elevator and hallway small talk situations.</p>
+    </div>
+
+    <div class="pitch-cards">
+      <div class="pitch-card">
+        <div class="pitch-role">&#128204; Student A &mdash; The Narrator</div>
+        <div class="pitch-task">Describe your morning at work from the moment you arrive to 12:00 PM. Use: <em>There is / There are</em> to describe your workspace, <em>always/usually/sometimes</em> for your routine, and at least ONE sentence with <em>can or can't.</em></div>
+        <div class="pitch-hint">Example start: "I usually arrive at 7:30. There are two security guards at the entrance..."</div>
+      </div>
+      <div class="pitch-card">
+        <div class="pitch-role">&#128172; Student B &mdash; The Colleague</div>
+        <div class="pitch-task">Listen to Student A. Ask 3 questions using: <em>Do you...? / Is there...? / Can you...?</em> Then add ONE sentence about your own morning to connect the conversation naturally.</div>
+        <div class="pitch-hint">Example question: "Do you have a meeting on Monday mornings?" / "Is there a cafeteria near your office?"</div>
+      </div>
+    </div>
+
+    <!-- SPEAKING CARDS MINI-GAME -->
+    <div style="margin-top:20px;font-family:var(--font-head);font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:12px">&#127917; Speaking Cards &mdash; Mini-Game</div>
+
+    <div class="sc-game">
+      <div class="sc-game-hdr">
+        <div class="sc-game-icon">&#127917;</div>
+        <div>
+          <div class="sc-game-title">Speaking Cards &mdash; Work Day Situations</div>
+          <div class="sc-game-sub">Draw a card &rarr; speak for 30 seconds &rarr; class reacts</div>
+        </div>
+        <div class="sc-game-score" id="scScore">Card 1 of 8</div>
+      </div>
+      <div class="sc-stage">
+        <div class="sc-card-display" id="scCard">
+          <div class="sc-card-tag" id="scTag">T&ndash;S</div>
+          <div class="sc-card-num" id="scNum">Card 1</div>
+          <div class="sc-card-prompt" id="scPrompt">Describe the area where you work. Use "There is" or "There are" at least twice. Tell us: What is near your desk? What is there on your floor?</div>
+          <div class="sc-card-hint" id="scHint">Use: There is a printer next to... / There are two windows in...</div>
+        </div>
+        <div class="sc-controls">
+          <button class="sc-btn sc-next" onclick="nextCard()">Next Card &#8594;</button>
+          <button class="sc-btn sc-done" onclick="earnBadge('b2')">&#10003; 5 Cards Done &mdash; Badge!</button>
+        </div>
+        <div class="sc-counter" id="scCounter">Tap "Next Card" to draw a new situation</div>
+      </div>
+    </div>
+
+    <div class="tn tn-c1">
+      <div class="tn-label">&#128218; GT Original &mdash; Speaking Cards in Class</div>
+      <p>Project the card on screen. Nominate a student or let volunteers go first. The class listens and gives a thumbs up if they understood. If the speaker uses a colloquial phrase from S1 (<em>"Sounds good!", "Let me check"</em>), the whole class earns a point on the leaderboard in &sect;6. This cross-session reinforcement is the highest-retention move in the program.</p>
+    </div>
+
+  </div>
+</div>
+
+<!-- S3 RELAY -->
+<div class="section">
+  <div class="sec-img">
+    <img src="https://images.unsplash.com/photo-1455390582262-044cdead277a?w=900&q=80" alt="writing notes relay" loading="lazy">
+    <div class="sec-overlay">
+      <div>
+        <div class="sec-num">&sect;3 &middot; Relay &mdash; 10 min</div>
+        <div class="sec-title">Small Talk Relay</div>
+        <div class="sec-sub">Elevator situations &middot; Chain build &middot; Timed production</div>
+      </div>
+    </div>
+    <div class="dur-tag">&#9201; 10 min</div>
+  </div>
+  <div class="sec-body">
+
+    <div class="tn">
+      <div class="tn-label">&#9889; Teacher Note &mdash; Relay Structure</div>
+      <p>Round 1 (4 min): Give each student one situation card below. They have 45 seconds to prepare one sentence. Then they say it out loud. Class corrects errors collectively. Round 2 (6 min): The Relay Chain &mdash; students build a complete elevator conversation. Each student adds ONE sentence. The conversation must be coherent and use only A1.1 structures. Celebrate when it reaches 6+ sentences without breaking.</p>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:16px">
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 16px">
+        <div style="font-family:var(--font-head);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:6px">Situation 1</div>
+        <div style="font-size:13.5px;color:var(--text)">You are in the elevator with your manager. It is Monday morning. Start a conversation about the week.</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:6px;font-style:italic">Use: "Good morning! How are you?" / "It's a busy week..."</div>
+      </div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 16px">
+        <div style="font-family:var(--font-head);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--cyan);margin-bottom:6px">Situation 2</div>
+        <div style="font-size:13.5px;color:var(--text)">You pass a colleague in the hallway. They look stressed. You want to help but you don't know their problem.</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:6px;font-style:italic">Use: "Are you OK?" / "Can I help you?" / "Do you need anything?"</div>
+      </div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 16px">
+        <div style="font-family:var(--font-head);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:6px">Situation 3</div>
+        <div style="font-size:13.5px;color:var(--text)">You meet a new person in the cafeteria. They speak English. Introduce yourself and your job in 3 sentences.</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:6px;font-style:italic">Use: "Hi! My name is... / I work at... / I'm a..."</div>
+      </div>
+    </div>
+
+    <div style="margin-top:20px;font-family:var(--font-head);font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--cyan);margin-bottom:10px">&#128279; Relay Chain &mdash; Build the Elevator Conversation</div>
+    <div class="relay-chain">
+      <div class="relay-item"><b>Student 1</b>"Good morning! How are you today?"</div>
+      <div class="relay-arrow">&#8594;</div>
+      <div class="relay-item"><b>Student 2</b>"I'm fine, thanks! It's a busy week..."</div>
+      <div class="relay-arrow">&#8594;</div>
+      <div class="relay-item"><b>Student 3</b>"Do you have meetings today?"</div>
+      <div class="relay-arrow">&#8594;</div>
+      <div class="relay-item"><b>Student 4+</b>Continue the conversation naturally</div>
+    </div>
+
+    <div class="tn tn-c2">
+      <div class="tn-label">&#128161; Retention Layer</div>
+      <p>The relay chain fails if students say <em>"Yes, I have meetings"</em> and stop. Push them to ADD information: <em>"Yes, I have a meeting at 10. It's with the production team."</em> This replicates real small talk &mdash; native speakers never answer with one word and go silent. Teach the rule: <em>answer + add = real conversation.</em></p>
+    </div>
+
+  </div>
+</div>
+
+<!-- S4 SPEED ROUND -->
+<div class="section">
+  <div class="sec-img">
+    <img src="https://images.unsplash.com/photo-1506784983877-45594efa4cbe?w=900&q=80" alt="calendar schedule speed round" loading="lazy">
+    <div class="sec-overlay">
+      <div>
+        <div class="sec-num">&sect;4 &middot; Speed Round &mdash; 8 min</div>
+        <div class="sec-title">Workday Description Sprint</div>
+        <div class="sec-sub">Grammar in real situations &middot; 30 seconds each &middot; No notes</div>
+      </div>
+    </div>
+    <div class="dur-tag">&#9201; 8 min</div>
+  </div>
+  <div class="sec-body">
+
+    <div class="tn">
+      <div class="tn-label">&#9889; Teacher Note &mdash; Speed Round Rules</div>
+      <p>Teacher reads the situation. Student has 5 seconds to think, then speaks for 30 seconds. The class counts: how many different grammar structures did they use? (to be / can / there is / adverbs of frequency / have). Each structure = 1 point. Track on the board. This gamifies grammar awareness without drilling.</p>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px">
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;overflow:hidden">
+        <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=600&q=80" alt="office" loading="lazy" style="height:100px;filter:brightness(.45)">
+        <div style="padding:14px 16px">
+          <div style="font-family:var(--font-head);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:6px">Sprint 1</div>
+          <div style="font-size:14px;color:var(--text);margin-bottom:8px">Tell us about your typical Monday morning at work. What do you do? What is there in your office?</div>
+          <div style="font-size:12px;color:var(--muted);font-style:italic">Target: 4+ structures</div>
+        </div>
+      </div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;overflow:hidden">
+        <img src="https://images.unsplash.com/photo-1560439514-4e9645039924?w=600&q=80" alt="team meeting" loading="lazy" style="height:100px;filter:brightness(.45)">
+        <div style="padding:14px 16px">
+          <div style="font-family:var(--font-head);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--cyan);margin-bottom:6px">Sprint 2</div>
+          <div style="font-size:14px;color:var(--text);margin-bottom:8px">Describe your team. How many people are there? What can they do? What do they usually do at work?</div>
+          <div style="font-size:12px;color:var(--muted);font-style:italic">Target: 4+ structures</div>
+        </div>
+      </div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;overflow:hidden">
+        <img src="https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?w=600&q=80" alt="factory manufacturing" loading="lazy" style="height:100px;filter:brightness(.45)">
+        <div style="padding:14px 16px">
+          <div style="font-family:var(--font-head);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:6px">Sprint 3</div>
+          <div style="font-size:14px;color:var(--text);margin-bottom:8px">Your international visitor asks: "What do you do at your company?" Answer in English for 30 seconds.</div>
+          <div style="font-size:12px;color:var(--muted);font-style:italic">Target: 4+ structures</div>
+        </div>
+      </div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;overflow:hidden">
+        <img src="https://images.unsplash.com/photo-1543007630-9710e4a00a20?w=600&q=80" alt="city night" loading="lazy" style="height:100px;filter:brightness(.45)">
+        <div style="padding:14px 16px">
+          <div style="font-family:var(--font-head);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--success);margin-bottom:6px">Sprint 4</div>
+          <div style="font-size:14px;color:var(--text);margin-bottom:8px">Describe your afternoon routine at work. What do you do after lunch? What time do you finish?</div>
+          <div style="font-size:12px;color:var(--muted);font-style:italic">Target: 4+ structures</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:16px;background:rgba(255,184,0,.05);border:1px solid rgba(255,184,0,.2);border-radius:8px;padding:14px 18px">
+      <div style="font-family:var(--font-head);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:8px">&#127942; Speed Round Scoring</div>
+      <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;text-align:center">
+        <div style="font-size:12px;color:var(--muted)"><div style="font-family:var(--font-head);font-size:16px;font-weight:800;color:var(--text)">to be</div>+1 pt</div>
+        <div style="font-size:12px;color:var(--muted)"><div style="font-family:var(--font-head);font-size:16px;font-weight:800;color:var(--text)">can/can't</div>+1 pt</div>
+        <div style="font-size:12px;color:var(--muted)"><div style="font-family:var(--font-head);font-size:16px;font-weight:800;color:var(--text)">there is/are</div>+1 pt</div>
+        <div style="font-size:12px;color:var(--muted)"><div style="font-family:var(--font-head);font-size:16px;font-weight:800;color:var(--text)">frequency adv</div>+1 pt</div>
+        <div style="font-size:12px;color:var(--muted)"><div style="font-family:var(--font-head);font-size:16px;font-weight:800;color:var(--text)">colloq phrase</div>+2 pts</div>
+      </div>
+    </div>
+
+    <div class="tn tn-c1">
+      <div class="tn-label">&#128218; False Friend Alert</div>
+      <p>Students often say <em>"I go to work at 7"</em> but mean <em>"I arrive at work at 7."</em> Reinforce: <em>go TO work</em> = the action of leaving home. <em>arrive AT work / get TO work</em> = the moment of arrival. In small talk: <em>"What time do you get to the office?"</em> sounds much more natural than <em>"What time do you go to work?"</em></p>
+    </div>
+
+  </div>
+</div>
+
+<!-- S5 SOLO CHALLENGE -->
+<div class="section">
+  <div class="sec-img">
+    <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=900&q=80" alt="solo challenge team" loading="lazy">
+    <div class="sec-overlay">
+      <div>
+        <div class="sec-num">&sect;5 &middot; Solo Challenge &mdash; 12 min</div>
+        <div class="sec-title">Open the Box &mdash; Mini-Game</div>
+        <div class="sec-sub">6 boxes &middot; 6 real work situations &middot; Speak to earn badges</div>
+      </div>
+    </div>
+    <div class="dur-tag">&#9201; 12 min</div>
+  </div>
+  <div class="sec-body">
+
+    <div class="tn">
+      <div class="tn-label">&#9889; Teacher Note &mdash; Open the Box Rules</div>
+      <p>Each student (or pair) picks a box number. Click to open. They have 30 seconds to speak on the situation inside. Class votes: thumbs up if they understood, thumbs sideways if it was unclear. After 5 boxes opened, award badge b3. Box 6 is the BONUS challenge &mdash; it can be done by the most confident student or as a group.</p>
+    </div>
+
+    <div class="otb-grid">
+      <div class="otb-box" id="otbBox1" onclick="openBox(1)">
+        <div class="otb-num">1</div>
+        <div class="otb-icon">&#128188;</div>
+        <div class="otb-cat">Work Routine</div>
+        <div class="otb-content">Describe your typical Tuesday at work in 4 sentences. Use: always / usually / sometimes / never.</div>
+      </div>
+      <div class="otb-box" id="otbBox2" onclick="openBox(2)">
+        <div class="otb-num">2</div>
+        <div class="otb-icon">&#127970;</div>
+        <div class="otb-cat">Office Description</div>
+        <div class="otb-content">You have a new colleague from the USA. Describe your office building to them. Use: There is / There are / It is / on the floor.</div>
+      </div>
+      <div class="otb-box" id="otbBox3" onclick="openBox(3)">
+        <div class="otb-num">3</div>
+        <div class="otb-icon">&#128101;</div>
+        <div class="otb-cat">Team Introduction</div>
+        <div class="otb-content">Introduce your team to a visitor. How many people? What do they do? What can they help with?</div>
+      </div>
+      <div class="otb-box" id="otbBox4" onclick="openBox(4)">
+        <div class="otb-num">4</div>
+        <div class="otb-icon">&#128172;</div>
+        <div class="otb-cat">Small Talk</div>
+        <div class="otb-content">You are in the elevator for 30 seconds with your manager's international guest. Keep the conversation going. Use at least 1 question.</div>
+      </div>
+      <div class="otb-box" id="otbBox5" onclick="openBox(5)">
+        <div class="otb-num">5</div>
+        <div class="otb-icon">&#128680;</div>
+        <div class="otb-cat">Problem Situation</div>
+        <div class="otb-content">The printer is broken and the meeting room is full. Tell a colleague about the problem and ask for help. Use: can / there is / I need.</div>
+      </div>
+      <div class="otb-box" id="otbBox6" onclick="openBox(6)">
+        <div class="otb-num">6</div>
+        <div class="otb-icon">&#11088;</div>
+        <div class="otb-cat">Bonus Challenge</div>
+        <div class="otb-content">BONUS: Describe your entire workday from 7 AM to 6 PM in English. Use ALL the grammar structures from Module 6. 90 seconds. No notes.</div>
+      </div>
+    </div>
+
+    <div class="otb-done-msg" id="otbDoneMsg">&#127942; 5 boxes opened &mdash; Badge earned! Great work, class.</div>
+
+    <!-- 90-second challenge timer -->
+    <div class="challenge-wrap" style="margin-top:20px">
+      <div class="challenge-text">
+        <div class="challenge-label">&#9201; Bonus Challenge Timer &mdash; 90 seconds</div>
+        <div class="challenge-q">Full workday description &mdash; Box 6</div>
+        <ul class="challenge-bullets">
+          <li>Describe arrival, morning, lunch, afternoon, and end of day</li>
+          <li>Use at least 3 different grammar structures</li>
+          <li>Include 1 colloqial phrase (Sounds good / Let me check / etc.)</li>
+          <li>No notes &mdash; speak from memory</li>
+        </ul>
+      </div>
+      <div class="timer-block">
+        <svg class="timer-svg" width="90" height="90" viewBox="0 0 90 90">
+          <circle class="timer-bg" cx="45" cy="45" r="38" stroke-width="6"/>
+          <circle class="timer-arc" id="tArcBonus" cx="45" cy="45" r="38" stroke-width="6" stroke-dasharray="238.76" stroke-dashoffset="0"/>
+          <text class="timer-text" id="tTextBonus" x="45" y="44">1:30</text>
+          <text class="timer-label-svg" x="45" y="57">bonus</text>
+        </svg>
+        <button class="t-btn t-start" onclick="startTimer('tArcBonus','tTextBonus',90,'b4',238.76)">START</button>
+        <button class="t-btn t-reset" onclick="resetArc('tArcBonus','tTextBonus',90,238.76)">RESET</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- S6 ASSESSMENT -->
+<div class="section">
+  <div class="sec-img">
+    <img src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=900&q=80" alt="assessment strategy" loading="lazy">
+    <div class="sec-overlay">
+      <div>
+        <div class="sec-num">&sect;6 &middot; Assessment &mdash; 8 min</div>
+        <div class="sec-title">Leaderboard &amp; Checklist</div>
+        <div class="sec-sub">Track production &middot; Celebrate the wins</div>
+      </div>
+    </div>
+    <div class="dur-tag">&#9201; 8 min</div>
+  </div>
+  <div class="sec-body">
+
+    <div class="tn">
+      <div class="tn-label">&#9889; Teacher Note &mdash; Scoring Criteria</div>
+      <p>Score today on SPOKEN production across all 5 sections. Points: <em>(1) Completed the Hot Take with a reason &mdash; 1 pt / (2) Completed the Speaking Card without stopping &mdash; 1 pt / (3) Participated in the Relay Chain &mdash; 1 pt / (4) Completed a Speed Sprint with 3+ structures &mdash; 1 pt / (5) Opened and spoke on a box &mdash; 1 pt.</em> Max 5 pts. Students who used a colloquial phrase from S1B get a +1 bonus point.</p>
+    </div>
+
+    <div class="lb-wrap">
+      <div class="lb-input-row">
+        <input class="lb-input" id="lbName" type="text" placeholder="Student name...">
+        <input class="lb-input lb-score-in" id="lbScoreIn" type="number" min="0" max="6" placeholder="0&ndash;6">
+        <button class="lb-add-btn" onclick="addLbEntry()">+ Add</button>
+      </div>
+      <table class="lb-table">
+        <thead>
+          <tr><th>#</th><th>Name</th><th>Score</th><th>Status</th></tr>
+        </thead>
+        <tbody id="lbBody">
+          <tr><td colspan="4" style="color:var(--dim);font-size:13px;text-align:center;padding:20px">Add students above to start the leaderboard</td></tr>
+        </tbody>
+      </table>
+      <button class="lb-reset" onclick="resetLb()">Clear Leaderboard</button>
+    </div>
+
+    <div class="assess-grid">
+      <div class="assess-card">
+        <div class="assess-title">&#10003; I Can Now &mdash; S2B Checklist</div>
+        <ul class="check-list">
+          <li onclick="toggleCheck(this)"><span class="cb"></span><span class="ct-txt">I can describe my workday in English</span></li>
+          <li onclick="toggleCheck(this)"><span class="cb"></span><span class="ct-txt">I can make small talk in an elevator or hallway</span></li>
+          <li onclick="toggleCheck(this)"><span class="cb"></span><span class="ct-txt">I can introduce my team to a visitor</span></li>
+          <li onclick="toggleCheck(this)"><span class="cb"></span><span class="ct-txt">I can report a problem using "The ... is broken"</span></li>
+          <li onclick="toggleCheck(this)"><span class="cb"></span><span class="ct-txt">I can use "Let me check" and "Sounds good!" naturally</span></li>
+        </ul>
+      </div>
+      <div class="assess-card">
+        <div class="assess-title">&#128683; Error Watch &mdash; M6 Top Errors</div>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:10px">
+          <li style="font-size:13px;color:var(--muted)">&#10060; <span style="color:var(--danger)">"He work here"</span> &rarr; <span style="color:var(--success)">"He works here"</span></li>
+          <li style="font-size:13px;color:var(--muted)">&#10060; <span style="color:var(--danger)">"I am come for a meeting"</span> &rarr; <span style="color:var(--success)">"I am here for a meeting"</span></li>
+          <li style="font-size:13px;color:var(--muted)">&#10060; <span style="color:var(--danger)">"There is many people"</span> &rarr; <span style="color:var(--success)">"There are many people"</span></li>
+          <li style="font-size:13px;color:var(--muted)">&#10060; <span style="color:var(--danger)">"I go to work at 7"</span> &rarr; <span style="color:var(--success)">"I get to work / arrive at 7"</span></li>
+          <li style="font-size:13px;color:var(--muted)">&#10060; <span style="color:var(--danger)">"She can to help"</span> &rarr; <span style="color:var(--success)">"She can help"</span></li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- S7 WRAP-UP -->
+<div class="section">
+  <div class="sec-img">
+    <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=900&q=80" alt="achievement wrap up" loading="lazy">
+    <div class="sec-overlay">
+      <div>
+        <div class="sec-num">&sect;7 &middot; Wrap-Up &mdash; 8 min</div>
+        <div class="sec-title">Close Strong</div>
+        <div class="sec-sub">3 Phrases &middot; Certificate &middot; My Win Today</div>
+      </div>
+    </div>
+    <div class="dur-tag">&#9201; 8 min</div>
+  </div>
+  <div class="sec-body">
+
+    <div style="font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold);margin-bottom:14px">&#127919; This week, you can use these 3 phrases at work:</div>
+    <div class="phrases-wrap">
+      <div class="phrase-card">
+        <div class="phrase-num">Phrase 1</div>
+        <div class="phrase-en">"How's your week going?"</div>
+        <div class="phrase-context">Use in any elevator, hallway, or break room. The perfect small talk opener. Expect: "Good, busy!" &mdash; then you say "Me too!"</div>
+      </div>
+      <div class="phrase-card">
+        <div class="phrase-num">Phrase 2</div>
+        <div class="phrase-en">"I usually [verb] in the morning."</div>
+        <div class="phrase-context">Use to describe your routine when an international colleague asks about your day. Replace [verb] with: start meetings / check emails / visit the plant floor.</div>
+      </div>
+      <div class="phrase-card">
+        <div class="phrase-num">Phrase 3</div>
+        <div class="phrase-en">"There are [number] people on my team."</div>
+        <div class="phrase-context">Use when introducing yourself or your department. Follow with: "We work on [topic]." Instant professional impression in English.</div>
+      </div>
+    </div>
+
+    <div class="cert-wrap">
+      <div class="cert-title">&#127942; Session Certificate</div>
+      <div class="cert-sub">A1.1 &middot; Module 6 &middot; Session 2B &mdash; Production &amp; Fluency Complete</div>
+      <div class="cert-input-row">
+        <input class="cert-name-in" id="certName" type="text" placeholder="Student's full name...">
+        <button class="cert-gen-btn" onclick="generateCert()">Generate &#10022;</button>
+      </div>
+      <div class="cert-output" id="certOut">
+        <h3 id="certNameOut">&mdash;</h3>
+        <p>has successfully completed</p>
+        <p style="color:var(--accent);font-weight:700;font-size:15px;margin:6px 0">A1.1 Module 6 &middot; Session 2B &mdash; Real Interaction</p>
+        <p style="color:var(--muted);font-size:12px">Gabriel Turner English Training &middot; Celaya, Guanajuato &middot; <span id="certDate"></span></p>
+      </div>
+    </div>
+
+    <div style="margin-top:24px;font-family:var(--font-head);font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:10px">&#11088; My Win Today</div>
+    <textarea class="win-textarea" id="myWin" placeholder="Write ONE thing you said in English today that surprised you..."></textarea>
+    <button class="win-btn" onclick="saveWin()">Save My Win &rarr; Earn Badge &#127942;</button>
+    <div class="win-confirm" id="winConfirm">&#10003; Saved! Keep speaking English this week.</div>
+
+    <div class="next-card">
+      <div class="next-label">Next Up &rarr; A1.1 Module 6 &middot; Session 3A</div>
+      <div class="next-title">Real Interaction: Problems &amp; Solutions at Work</div>
+      <div class="next-desc">You will learn to handle simple workplace problems in English: broken equipment, full meeting rooms, missing passes, and scheduling conflicts. Plus: two new colloqial phrases that work in any professional situation. Keep practicing your 3 phrases this week &mdash; your teacher will ask!</div>
+    </div>
+
+    <div class="tn">
+      <div class="tn-label">&#9889; Teacher Note &mdash; Exit Ticket</div>
+      <p>Before students leave: each person says ONE piece of small talk in English to a classmate. It can be anything: <em>"Have a good evening!" / "It was a good class." / "See you next week!"</em> The last English sentence of the class should be casual and confident &mdash; this anchors the positive emotion with the language.</p>
+    </div>
+
+  </div>
+</div>
+
+<footer class="ftr">
+  <div class="ftr-brand">Gabriel Turner &middot; English Training</div>
+  <div class="ftr-file">GT_A1_1_M6_S2B_TEACHER_v1.html</div>
+  <div class="ftr-levels">
+    <div class="flv on">A1.1</div>
+    <div class="flv">A1.2</div>
+    <div class="flv">A2.1</div>
+    <div class="flv">A2.2</div>
+    <div class="flv">B1.1</div>
+    <div class="flv">B1.2</div>
+  </div>
+</footer>
+
+<script>
+// SPEAKING CARDS DATA
+var scData = [
+  {tag:"T–S", num:"Card 1", prompt:"Describe the area where you work. Use 'There is' or 'There are' at least twice. What is near your desk? What is on your floor?", hint:"There is a printer next to... / There are two windows in..."},
+  {tag:"S–S", num:"Card 2", prompt:"Tell your partner about your morning routine using: I always / I usually / I sometimes. Include at least 3 actions.", hint:"I usually check emails first. I sometimes have a meeting at 9..."},
+  {tag:"Class", num:"Card 3", prompt:"Your manager asks: 'What can your team do?' Answer for 30 seconds. Use: can / can't / he-she-they.", hint:"My team can... / They usually... / She can't..."},
+  {tag:"T–S", num:"Card 4", prompt:"Describe a problem you have at work right now. What is it? Where is it? Can someone help? Use: there is / I need / can.", hint:"There is a problem with the... / I need... / Can you...?"},
+  {tag:"S–S", num:"Card 5", prompt:"You meet an international visitor in the hallway. They ask: 'What do you do here?' Answer and ask them one question back.", hint:"I work in... / I'm a... / Do you work in...?"},
+  {tag:"Class", num:"Card 6", prompt:"Describe your company to a new person. Where is it? How many people work there? What do they do?", hint:"My company is in... / There are... people. / We usually..."},
+  {tag:"T–S", num:"Card 7", prompt:"It is Friday afternoon. You see a colleague at the door. Have a complete goodbye small talk conversation in 4 exchanges.", hint:"Have a good weekend! / You too! / See you Monday. / Take care!"},
+  {tag:"S–S", num:"Card 8", prompt:"CHALLENGE: Describe your perfect workday from 7 AM to 6 PM. Use every grammar structure you know from Module 6.", hint:"Use: to be / can / there is-are / always-usually / have / like-need-want"}
+];
+var scIdx = 0;
+
+function nextCard() {
+  scIdx = (scIdx + 1) % scData.length;
+  var item = scData[scIdx];
+  var card = document.getElementById("scCard");
+  card.classList.add("flip");
+  setTimeout(function() {
+    document.getElementById("scTag").textContent = item.tag;
+    document.getElementById("scNum").textContent = item.num;
+    document.getElementById("scPrompt").textContent = item.prompt;
+    document.getElementById("scHint").textContent = item.hint;
+    document.getElementById("scScore").textContent = "Card " + (scIdx + 1) + " of " + scData.length;
+    document.getElementById("scCounter").textContent = "Cards viewed: " + (scIdx + 1);
+    card.classList.remove("flip");
+  }, 200);
+}
+
+// OPEN THE BOX
+var otbCount = 0;
+function openBox(n) {
+  var box = document.getElementById("otbBox" + n);
+  if (box.classList.contains("opened")) return;
+  box.classList.add("opened");
+  otbCount++;
+  if (otbCount >= 5) {
+    document.getElementById("otbDoneMsg").style.display = "block";
+    earnBadge("b3");
+  }
+}
+
+// BADGES
+var badgeEarned = {b1:false,b2:false,b3:false,b4:false,b5:false};
+function earnBadge(id) {
+  if (badgeEarned[id]) return;
+  badgeEarned[id] = true;
+  var el = document.getElementById(id);
+  if (el) el.classList.add("earned");
+  var allDone = Object.keys(badgeEarned).every(function(k) { return badgeEarned[k]; });
+  if (allDone) {
+    launchConfetti();
+    var cm = document.getElementById("confMsg");
+    if (cm) cm.style.display = "block";
+  }
+}
+
+// CONFETTI
+function launchConfetti() {
+  var colors = ["#FF1F5C","#FF4D7A","#FFB800","#00E5A0","#ffffff"];
+  for (var i = 0; i < 90; i++) {
+    (function() {
+      var d = document.createElement("div");
+      d.style.cssText = "position:fixed;top:-10px;pointer-events:none;z-index:9999;border-radius:2px;";
+      d.style.left = Math.random() * 100 + "vw";
+      d.style.width = (6 + Math.random() * 6) + "px";
+      d.style.height = (6 + Math.random() * 6) + "px";
+      d.style.background = colors[Math.floor(Math.random() * colors.length)];
+      d.style.animation = "confFall " + (1.5 + Math.random() * 2) + "s linear forwards";
+      document.body.appendChild(d);
+      setTimeout(function() { if (d.parentNode) d.parentNode.removeChild(d); }, 4000);
+    })();
+  }
+}
+(function() {
+  var s = document.createElement("style");
+  s.textContent = "@keyframes confFall{0%{transform:translateY(-10px) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}";
+  document.head.appendChild(s);
+})();
+
+// TIMER
+var timerIntervals = {};
+function startTimer(arcId, textId, seconds, badgeKey, circumference) {
+  if (timerIntervals[arcId]) clearInterval(timerIntervals[arcId]);
+  var arc = document.getElementById(arcId);
+  var txt = document.getElementById(textId);
+  var rem = seconds;
+  function update() {
+    arc.style.strokeDashoffset = circumference * (1 - rem / seconds);
+    var m = Math.floor(rem / 60), s = rem % 60;
+    txt.textContent = m + ":" + (s < 10 ? "0" : "") + s;
+    if (rem <= 5) arc.style.stroke = "#FF4D6D";
+    if (rem <= 0) { clearInterval(timerIntervals[arcId]); arc.style.stroke = "var(--success)"; if (badgeKey) earnBadge(badgeKey); return; }
+    rem--;
+  }
+  update();
+  timerIntervals[arcId] = setInterval(update, 1000);
+}
+function resetArc(arcId, textId, seconds, circumference) {
+  if (timerIntervals[arcId]) { clearInterval(timerIntervals[arcId]); delete timerIntervals[arcId]; }
+  var arc = document.getElementById(arcId);
+  arc.style.strokeDashoffset = "0";
+  arc.style.stroke = "var(--accent)";
+  var m = Math.floor(seconds / 60), s = seconds % 60;
+  document.getElementById(textId).textContent = m + ":" + (s < 10 ? "0" : "") + s;
+}
+
+// REVEAL
+function toggleReveal(id) {
+  var el = document.getElementById(id);
+  el.classList.toggle("show");
+  el.previousElementSibling.textContent = el.classList.contains("show") ? "▲ Hide Model Answer" : "▼ Show Model Answer";
+}
+
+// STUDENT MODE
+function toggleSM() {
+  document.body.classList.toggle("sm");
+  document.getElementById("smtLabel").textContent = document.body.classList.contains("sm") ? "Student Mode" : "Teacher Mode";
+}
+
+// LEADERBOARD
+var lbData = [];
+function addLbEntry() {
+  var name = document.getElementById("lbName").value.trim();
+  var score = parseInt(document.getElementById("lbScoreIn").value) || 0;
+  if (!name) return;
+  lbData.push({name: name, score: score});
+  lbData.sort(function(a, b) { return b.score - a.score; });
+  document.getElementById("lbName").value = "";
+  document.getElementById("lbScoreIn").value = "";
+  renderLb();
+}
+function renderLb() {
+  var tbody = document.getElementById("lbBody");
+  if (!lbData.length) {
+    tbody.innerHTML = '<tr><td colspan="4" style="color:var(--dim);font-size:13px;text-align:center;padding:20px">No entries yet</td></tr>';
+    return;
+  }
+  var medals = ["🥇", "🥈", "🥉"];
+  tbody.innerHTML = lbData.map(function(e, i) {
+    var status = e.score >= 5 ? "Excellent" : e.score >= 3 ? "Good" : "Keep going!";
+    var medal = i < 3 ? medals[i] : (i + 1);
+    return '<tr><td class="lb-rank">' + medal + '</td><td>' + e.name + '</td><td class="lb-score-cell">' + e.score + ' / 6</td><td style="font-size:11px;color:var(--muted)">' + status + '</td></tr>';
+  }).join("");
+  if (lbData.length >= 3) earnBadge("b4");
+}
+function resetLb() { lbData = []; renderLb(); }
+
+// CHECKLIST
+function toggleCheck(el) {
+  el.classList.toggle("checked");
+  var cb = el.querySelector(".cb");
+  if (cb) cb.textContent = el.classList.contains("checked") ? "✓" : "";
+}
+
+// CERTIFICATE
+function generateCert() {
+  var name = document.getElementById("certName").value.trim();
+  if (!name) return;
+  document.getElementById("certNameOut").textContent = name;
+  document.getElementById("certDate").textContent = new Date().toLocaleDateString("en-US", {year:"numeric",month:"long",day:"numeric"});
+  document.getElementById("certOut").style.display = "block";
+  earnBadge("b5");
+}
+
+// MY WIN
+function saveWin() {
+  var v = document.getElementById("myWin").value.trim();
+  if (!v) return;
+  var c = document.getElementById("winConfirm");
+  if (c) c.style.display = "block";
+  earnBadge("b5");
+}
+
+// PROGRESS BAR
+window.addEventListener("scroll", function() {
+  var h = document.documentElement;
+  var bar = document.getElementById("progressBar");
+  if (bar) bar.style.width = (h.scrollTop / (h.scrollHeight - h.clientHeight) * 100) + "%";
+});
+</script>
+</body>
+</html>
