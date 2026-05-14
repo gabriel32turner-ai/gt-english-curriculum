@@ -998,6 +998,19 @@ footer{background:rgba(8,8,8,.95);border-top:1px solid rgba(139,92,246,.1);paddi
           <button class="btn btn-outline btn-sm" onclick="resetTimer('etArc','etTime',180,364.4)">RESET</button>
         </div>
       </div>
+
+      <button class="reveal-btn" onclick="toggleReveal('mr1')">▼ Show Model Answer — Exit Task M3</button>
+      <div class="model-reveal" id="mr1"><p><em>"Welcome to our office! This way, please. Your meeting is on the 3rd floor. From the airport, it takes about 25 minutes by taxi — go through the tunnel and turn right after the bridge. Your hotel is the Hilton, just five minutes from here. Could you send me the contract? I'll forward it to her — she's our legal manager. Call me when you arrive!"</em></p></div>
+
+      <div class="phrases-box">
+        <div class="ph-hdr">🗣️ 3 Frases del Módulo 3</div>
+        <div class="ph-sub">Las 3 frases más importantes del Módulo 3 — Getting Around for Business. Úsalas esta semana. 💬</div>
+        <div class="ph-cards">
+          <div class="ph-card"><div class="ph-num">1</div><div><div class="ph-en">"Welcome! This way, please."</div><div class="ph-es">¡Bienvenido! Por aquí, por favor.</div><div class="ph-note">✅ Apertura ideal para recibir clientes. Calidez + profesionalismo.</div><button class="ph-play" onclick="speak('Welcome! This way, please.')">🔊 Escuchar</button></div></div>
+          <div class="ph-card"><div class="ph-num">2</div><div><div class="ph-en">"How long does the flight take?"</div><div class="ph-es">¿Cuánto dura el vuelo?</div><div class="ph-note">💼 HOW LONG + does + take. Para viajes y conexiones.</div><button class="ph-play" onclick="speak('How long does the flight take?')">🔊 Escuchar</button></div></div>
+          <div class="ph-card"><div class="ph-num">3</div><div><div class="ph-en">"Please send her the address."</div><div class="ph-es">Por favor envíale la dirección.</div><div class="ph-note">🏆 Object pronouns: send + her + the address. Patrón de M3.</div><button class="ph-play" onclick="speak('Please send her the address.')">🔊 Escuchar</button></div></div>
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -1066,6 +1079,8 @@ footer{background:rgba(8,8,8,.95);border-top:1px solid rgba(139,92,246,.1);paddi
     <button class="btn btn-cyan" style="margin-top:12px" onclick="saveWin()">💾 Save My Win</button>
     <div class="win-result" id="winResult"></div>
   </div>
+
+  <div class="my-win"><div class="mw-lbl">⭐ My Win — What I Learned in Module 3</div><textarea class="mw-ta" id="myWinTA" placeholder="Write one thing you mastered in Module 3 — Getting Around for Business…"></textarea><button class="mw-save" onclick="saveWinNew()">Save My Win</button><div class="mw-saved" id="mwSaved">✓ Saved!</div></div>
 
   <div class="card card-gold" style="margin-top:28px">
     <div class="card-inner">
@@ -1285,6 +1300,14 @@ function saveWin(){
 // ─── INIT ───
 initDrag('order1');
 initDrag('order2');
+
+// ─── M3 S5 GAMIFICATION (v1 prompt additions) ───
+var badgeConf={nb1:{msg:'⚡ Quick Start!'},nb2:{msg:'🎯 Vocab Master!'},nb3:{msg:'🔊 Speaker!'},nb4:{msg:'🧠 Grammar Pro!'},nb5:{msg:'🏆 Module 3 Complete!'}};
+function earnNewBadge(id){var el=document.getElementById(id);if(!el||el.classList.contains('earned'))return;el.classList.add('earned');var c=badgeConf[id];if(c)launchConfetti(c.msg);}
+function launchConfetti(msg){var cv=document.createElement('canvas');cv.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9999';document.body.appendChild(cv);var ctx=cv.getContext('2d');cv.width=window.innerWidth;cv.height=window.innerHeight;var pts=[];for(var i=0;i<120;i++){pts.push({x:Math.random()*cv.width,y:-10,vx:(Math.random()-.5)*4,vy:Math.random()*3+2,col:['#8B5CF6','#00CFFF','#FFB800','#00E5A0','#A78BFA'][Math.floor(Math.random()*5)],sz:Math.random()*6+3,lf:1});}var toast=document.createElement('div');toast.textContent=msg;toast.style.cssText='position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#1a1a2e;color:#fff;padding:12px 24px;border-radius:30px;font-size:14px;font-weight:700;z-index:10000;border:1px solid rgba(255,255,255,.2);box-shadow:0 4px 20px rgba(0,0,0,.4)';document.body.appendChild(toast);function anim(){ctx.clearRect(0,0,cv.width,cv.height);pts.forEach(function(p){p.x+=p.vx;p.y+=p.vy;p.lf-=.015;ctx.globalAlpha=p.lf;ctx.fillStyle=p.col;ctx.fillRect(p.x,p.y,p.sz,p.sz);});pts=pts.filter(function(p){return p.lf>0;});if(pts.length>0)requestAnimationFrame(anim);else document.body.removeChild(cv);}anim();setTimeout(function(){if(toast.parentNode)document.body.removeChild(toast);},3000);}
+function toggleReveal(id){var el=document.getElementById(id);if(!el)return;el.classList.toggle('show');el.classList.toggle('open');earnNewBadge('nb3');var btn=el.previousElementSibling;if(btn&&btn.classList.contains('reveal-btn'))btn.textContent=(el.classList.contains('show'))?'▲ Hide Model Answer':'▼ Show Model Answer';}
+function saveWinNew(){var ta=document.getElementById('myWinTA');if(!ta||!ta.value.trim())return;document.getElementById('mwSaved').style.display='block';earnNewBadge('nb5');}
+function speak(t){if(!window.speechSynthesis)return;speechSynthesis.cancel();var u=new SpeechSynthesisUtterance(t);u.lang='en-US';u.rate=0.85;speechSynthesis.speak(u);}
 </script>
 </body>
 </html>
