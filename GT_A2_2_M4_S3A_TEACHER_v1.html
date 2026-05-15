@@ -1,0 +1,1286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GT A2.2 · M4 · S3A — Business Travel: Confirmed vs Uncertain</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#080808;--surface:#111318;--surface2:#1a1f28;--border:rgba(249,115,22,.18);--accent:#F97316;--accent2:#FB923C;--cyan:#00CFFF;--gold:#FFB800;--green:#00E676;--success:#00E5A0;--danger:#FF4D6D;--warn:#FFB347;--violet:#A78BFA;--txt:#F0F4F8;--muted:#8A9BB0;--dim:rgba(226,226,226,.25);--font-head:'Syne',sans-serif;--font-body:'DM Sans',sans-serif}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--txt);font-family:var(--font-body);font-size:14px;line-height:1.6}
+body.sm .to{display:none!important}
+
+/* HEADER */
+.hdr{background:var(--surface);border-bottom:1px solid var(--border);padding:16px 28px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+.brand{display:flex;align-items:center;gap:10px}
+.dot{width:8px;height:8px;background:var(--accent);border-radius:50%}
+.bname{font-family:var(--font-head);font-weight:800;font-size:13px;letter-spacing:2.5px;text-transform:uppercase;color:#fff}
+.bsub{font-size:10.5px;color:var(--muted);letter-spacing:1px}
+.sess-tag{display:flex;gap:7px;align-items:center;flex-wrap:wrap}
+.tag{display:inline-block;padding:4px 11px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase}
+.to-tag{background:rgba(249,115,22,.15);color:var(--accent);border:1px solid rgba(249,115,22,.3)}
+.tgold{background:rgba(255,184,0,.1);color:var(--gold);border:1px solid rgba(255,184,0,.25)}
+.tc{background:rgba(0,207,255,.1);color:var(--cyan);border:1px solid rgba(0,207,255,.25)}
+.tg{background:rgba(0,230,118,.1);color:var(--green);border:1px solid rgba(0,230,118,.25)}
+
+/* MODE TOGGLE */
+.mode-toggle{position:fixed;top:12px;right:12px;z-index:999;background:var(--accent);border:none;color:#fff;padding:6px 14px;font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:1.5px;cursor:pointer;border-radius:4px;text-transform:uppercase}
+
+/* BADGE STRIP */
+.badge-strip{display:flex;justify-content:center;gap:10px;padding:10px 28px;background:var(--surface);border-bottom:1px solid var(--border)}
+.badge-strip span{font-size:20px;opacity:.25;transition:all .4s;filter:grayscale(1)}
+.badge-strip span.earned{opacity:1;filter:grayscale(0);animation:badgePop .5s ease}
+@keyframes badgePop{0%{transform:scale(1)}50%{transform:scale(1.4)}100%{transform:scale(1)}}
+
+/* PROGRESS BAR */
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--accent);z-index:1000;transition:width .15s}
+
+/* SECTIONS */
+.section{margin:24px 20px;border:1px solid var(--border);border-radius:14px;overflow:hidden;background:var(--surface)}
+.section-header{display:flex;align-items:center;gap:12px;padding:16px 22px;background:linear-gradient(135deg,rgba(249,115,22,.08),transparent);border-bottom:1px solid var(--border)}
+.section-number{font-family:var(--font-head);font-size:10px;font-weight:800;color:var(--accent);letter-spacing:.12em;text-transform:uppercase;background:rgba(249,115,22,.1);border:1px solid var(--border);padding:3px 10px;border-radius:20px}
+.section-title{font-family:var(--font-head);font-size:20px;font-weight:800;color:#fff}
+.section-title em{color:var(--accent);font-style:normal}
+.section-sub{font-size:12px;color:var(--muted)}
+.section-body{padding:22px}
+.dur-tag{font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;color:var(--gold);border:1px solid rgba(255,184,0,.2);padding:3px 10px;display:inline-block;margin-bottom:18px}
+
+/* HERO IMAGES */
+.hero-img{width:100%;height:220px;object-fit:cover;border-radius:10px;filter:brightness(.65);margin-bottom:18px}
+
+/* WARM-UP CARDS */
+.wu-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.wu-card{background:var(--surface2);border:1px solid var(--border);border-radius:10px;overflow:hidden;border-left:3px solid var(--accent)}
+.wu-card-img{width:100%;height:90px;object-fit:cover;filter:brightness(.5)}
+.wu-card-body{padding:12px 14px}
+.wu-card-body strong{color:var(--accent2)}
+.wu-q{font-size:13px;line-height:1.5;color:var(--txt)}
+
+/* QUICK WIN */
+.qw{background:rgba(0,230,118,.04);border:1px solid rgba(0,230,118,.2);border-left:4px solid var(--green);padding:14px 18px;margin-top:16px;border-radius:8px}
+.qw-lbl{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--green);margin-bottom:5px}
+
+/* TEACHER NOTES */
+.tn-wrap{margin-top:12px}
+.tn-btn{background:var(--surface2);border:1px solid var(--border);color:var(--muted);padding:8px 14px;font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:1.5px;cursor:pointer;width:100%;text-align:left;border-radius:6px;margin-bottom:3px;display:flex;justify-content:space-between;align-items:center}
+.tn-btn:hover{border-color:var(--accent)}
+.tn-c1{border-left:3px solid var(--cyan)}
+.tn-c2{border-left:3px solid #E8155A}
+.tn-c3{border-left:3px solid var(--gold)}
+.tn-panel{max-height:0;overflow:hidden;transition:max-height .4s ease}
+.tn-panel.open{max-height:400px}
+.tn-content{padding:12px 16px;font-size:12px;line-height:1.7;color:var(--muted);background:rgba(0,0,0,.2);border-radius:0 0 6px 6px}
+
+/* SPEAKING TOPIC */
+.topic-card{background:var(--surface2);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:18px}
+.topic-card-img{width:100%;height:160px;object-fit:cover;filter:brightness(.55)}
+.topic-card-body{padding:20px}
+.topic-label{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2.5px;color:var(--accent);text-transform:uppercase;margin-bottom:8px}
+.topic-q{font-size:16px;color:#fff;font-weight:600;line-height:1.4;margin-bottom:10px}
+.topic-hint{font-size:12px;color:var(--muted);font-style:italic}
+.round-card{background:var(--surface2);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:10px}
+.round-card-img{width:100%;height:80px;object-fit:cover;filter:brightness(.5)}
+.round-card-body{padding:14px 16px}
+.round-lbl{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2px;color:var(--dim);text-transform:uppercase;margin-bottom:5px}
+.round-q{font-size:14px;color:#fff;font-weight:500;margin-bottom:8px;line-height:1.4}
+.round-hint{font-size:11.5px;color:var(--muted);font-style:italic}
+.model-reveal{background:var(--surface2);border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-top:14px}
+.model-btn{background:var(--accent);border:none;color:#fff;padding:9px 18px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;cursor:pointer;width:100%;text-align:left;border-radius:8px}
+.model-content{max-height:0;overflow:hidden;transition:max-height .4s}
+.model-content.open{max-height:300px}
+.model-text{padding:14px 16px;font-size:12.5px;color:var(--accent2);line-height:1.7;font-style:italic}
+
+/* VOCAB CARDS */
+.vocab-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.vocab-card{background:var(--surface2);border:1px solid var(--border);border-radius:10px;overflow:hidden;cursor:pointer;transition:all .2s}
+.vocab-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.vocab-card-img{width:100%;height:70px;object-fit:cover;display:block;filter:brightness(.5)}
+.vocab-card-body{padding:12px 10px}
+.vc-w{font-family:var(--font-head);font-size:12px;font-weight:700;color:#fff;margin-bottom:2px}
+.vc-p{font-size:10px;color:var(--cyan);margin-bottom:4px;font-style:italic}
+.vc-d{font-size:10.5px;color:var(--muted);line-height:1.4;margin-bottom:6px}
+.vc-e{font-size:10.5px;color:var(--accent2);font-style:italic;border-left:2px solid var(--accent);padding-left:7px}
+.vc-s{font-size:9px;color:var(--dim);margin-top:5px}
+
+/* VOCAB QUIZ */
+.vq-wrap{margin-top:18px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:18px}
+.vq-progress{height:6px;background:rgba(249,115,22,.15);border-radius:3px;margin-bottom:14px;overflow:hidden}
+.vq-bar{height:100%;background:var(--accent);border-radius:3px;transition:width .3s}
+.vq-q{font-size:14px;color:#fff;margin-bottom:12px;font-weight:500}
+.vq-opts{display:flex;flex-direction:column;gap:8px}
+.vq-opt{background:var(--surface);border:1px solid var(--border);padding:10px 14px;font-size:13px;cursor:pointer;border-radius:8px;transition:all .2s;color:var(--txt)}
+.vq-opt:hover:not(.locked){border-color:var(--accent)}
+.vq-opt.correct-ans{background:rgba(0,230,118,.12);border-color:var(--green);color:var(--green)}
+.vq-opt.wrong-ans{background:rgba(255,77,109,.1);border-color:var(--danger);color:var(--danger)}
+.vq-opt.locked{cursor:not-allowed}
+.vq-score{font-family:var(--font-head);font-size:12px;color:var(--accent);letter-spacing:1px;margin-bottom:8px}
+.vq-restart{background:var(--accent);border:none;color:#fff;padding:8px 18px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;cursor:pointer;border-radius:6px;margin-top:10px;display:none}
+
+/* MICRO-SPEAKING */
+.ms{background:rgba(0,207,255,.05);border:1px solid rgba(0,207,255,.2);padding:12px 16px;margin-top:16px;border-radius:8px}
+.ms-l{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--cyan);margin-bottom:5px}
+
+/* COLLOQUIAL CARDS */
+.coll-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.coll-card{background:var(--surface2);border:1px solid var(--border);border-radius:10px;overflow:hidden;cursor:pointer;transition:border-color .2s}
+.coll-card:hover{border-color:var(--accent)}
+.coll-card-img{width:100%;height:90px;object-fit:cover;filter:brightness(.45)}
+.coll-card-body{padding:12px}
+.coll-phrase{font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--accent2);margin-bottom:4px}
+.coll-mean{font-size:11px;color:var(--muted);margin-bottom:6px}
+.coll-ex{font-size:11px;color:var(--txt);font-style:italic;border-left:2px solid var(--accent);padding-left:7px}
+
+/* GRAMMAR */
+.prob{background:rgba(249,115,22,.06);border:1px solid rgba(249,115,22,.22);border-left:4px solid var(--accent);padding:18px 22px;margin-bottom:18px;border-radius:0 10px 10px 0}
+.prob-lbl{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:8px}
+.tool-box{background:rgba(0,230,118,.04);border:1px solid rgba(0,230,118,.2);border-left:4px solid var(--green);padding:14px 18px;margin-bottom:18px;border-radius:0 10px 10px 0}
+.tool-lbl{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--green);margin-bottom:7px}
+
+/* CERTAINTY GAUGE */
+.gauge-wrap{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:18px 0}
+.gauge-card{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:18px;text-align:center}
+.gauge-scenario{font-size:13px;color:#fff;margin-bottom:14px;line-height:1.5;min-height:50px}
+.gauge-slider{width:100%;margin:8px 0;accent-color:var(--accent)}
+.gauge-labels{display:flex;justify-content:space-between;font-size:9px;color:var(--dim);font-family:var(--font-head);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px}
+.gauge-result{font-family:var(--font-head);font-size:12px;font-weight:700;color:var(--accent);min-height:20px;margin-bottom:6px}
+.gauge-explain{font-size:11px;color:var(--muted);min-height:36px;line-height:1.5}
+.gauge-check{background:var(--accent);border:none;color:#fff;padding:7px 16px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1px;cursor:pointer;border-radius:6px;margin-top:8px}
+
+/* COLLAPSIBLE GRAMMAR TABLE */
+.coll-btn{background:var(--surface2);border:1px solid var(--border);color:var(--muted);padding:9px 16px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;cursor:pointer;width:100%;text-align:left;border-radius:6px;margin-bottom:3px;display:flex;justify-content:space-between}
+.coll-panel{max-height:0;overflow:hidden;transition:max-height .4s}
+.coll-panel.open{max-height:600px}
+.gram-table{width:100%;border-collapse:collapse;margin:8px 0}
+.gram-table th{background:var(--surface);padding:10px 14px;text-align:left;font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim);border-bottom:2px solid var(--accent)}
+.gram-table td{padding:10px 14px;border-bottom:1px solid var(--border);font-size:12px;vertical-align:top}
+.gram-table tr:hover td{background:rgba(249,115,22,.04)}
+.ex{color:var(--accent2);font-style:italic}
+
+/* ERROR BOX */
+.err{background:rgba(255,77,109,.05);border:1px solid rgba(255,77,109,.2);padding:13px 17px;margin:14px 0;font-size:12px;color:rgba(255,120,120,.9);line-height:1.8;border-radius:8px}
+.err strong{color:var(--danger)}
+
+/* POLL */
+.poll-wrap{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:16px;margin:16px 0}
+.poll-q{font-size:14px;color:#fff;margin-bottom:12px;font-weight:500}
+.poll-opts{display:flex;flex-direction:column;gap:8px}
+.poll-btn{background:var(--surface);border:1px solid var(--border);padding:10px 14px;font-size:12.5px;cursor:pointer;border-radius:8px;color:var(--txt);transition:all .2s;text-align:left}
+.poll-btn:hover:not(:disabled){border-color:var(--accent)}
+.poll-btn.correct-ans{background:rgba(0,230,118,.12);border-color:var(--green);color:var(--green)}
+.poll-btn.wrong-ans{background:rgba(255,77,109,.1);border-color:var(--danger);color:var(--danger)}
+.poll-btn:disabled{cursor:not-allowed}
+
+/* ACTIVITIES */
+.act-t{font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:11px;padding-top:18px;border-top:1px solid var(--border);margin-top:20px}
+.opt-group{margin-bottom:14px}
+.opt-q{font-size:13px;color:var(--txt);margin-bottom:9px;padding:10px 14px;background:var(--surface);border-left:3px solid var(--accent);line-height:1.5;border-radius:0 6px 6px 0}
+.opts{display:flex;gap:8px;flex-wrap:wrap}
+.opt{background:var(--surface2);border:1px solid var(--border);color:var(--txt);padding:8px 16px;font-family:var(--font-body);font-size:12.5px;cursor:pointer;transition:all .2s;border-radius:6px}
+.opt:hover:not(:disabled){border-color:var(--accent);color:var(--accent)}
+.opt.correct-ans{background:rgba(0,230,118,.12);border-color:var(--green);color:var(--green)}
+.opt.wrong-ans{background:rgba(255,77,109,.1);border-color:var(--danger);color:var(--danger)}
+.opt:disabled{cursor:not-allowed}
+.tf-set{display:flex;flex-direction:column;gap:9px;margin-bottom:14px}
+.tf-row{background:var(--surface);border:1px solid var(--border);padding:12px 15px;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;border-radius:8px}
+.tf-stmt{font-size:12.5px;color:var(--txt);flex:1;line-height:1.5;min-width:180px}
+.tf-btns{display:flex;gap:8px;flex-shrink:0}
+.tf-btn{background:var(--surface2);border:1px solid var(--border);color:var(--txt);padding:7px 16px;font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:1px;cursor:pointer;transition:all .2s;border-radius:6px}
+.tf-btn:hover:not(:disabled){border-color:var(--accent)}
+.tf-btn:disabled{cursor:not-allowed}
+
+/* DRAG & DROP */
+.reorder-list{display:flex;flex-direction:column;gap:7px;margin-bottom:10px;list-style:none;padding-left:0}
+.reorder-item{background:var(--surface);border:1px solid var(--border);padding:10px 13px;cursor:grab;font-size:12.5px;color:var(--txt);display:flex;align-items:center;gap:9px;user-select:none;transition:border-color .2s;border-radius:6px}
+.reorder-item:active{cursor:grabbing}
+.reorder-item.dragging{opacity:.4}
+.reorder-item.drag-over{border-color:var(--accent);border-style:dashed}
+.drag-handle{color:var(--dim);font-size:13px;flex-shrink:0}
+.check-btn{background:var(--accent);border:none;color:#fff;padding:8px 20px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;cursor:pointer;margin-top:7px;border-radius:6px}
+.fb{display:none;padding:9px 13px;font-size:12.5px;margin-top:7px;line-height:1.5;border-radius:6px}
+.fb.show{display:block}
+.fb.ok{background:rgba(0,230,118,.1);border:1px solid rgba(0,230,118,.3);color:var(--green)}
+.fb.no{background:rgba(255,77,109,.08);border:1px solid rgba(255,77,109,.25);color:var(--danger)}
+
+/* READING */
+.reading-card{background:var(--surface);border:1px solid var(--border);padding:24px;border-radius:12px;margin-bottom:16px}
+.av-row{display:flex;align-items:center;gap:13px;margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid var(--border);flex-wrap:wrap}
+.avatar{width:48px;height:48px;border-radius:50%;object-fit:cover;border:2px solid var(--accent);flex-shrink:0}
+.av-name{font-family:var(--font-head);font-size:13px;font-weight:700;color:#fff}
+.av-role{font-size:11px;color:var(--muted)}
+.av-meta{margin-left:auto;font-size:11px;color:var(--muted);text-align:right;line-height:1.6}
+.rb{font-size:13px;line-height:1.95;color:var(--txt)}
+.kw{background:rgba(249,115,22,.06);border:1px solid rgba(249,115,22,.15);padding:11px 15px;margin:14px 0;font-size:11.5px;color:var(--accent2);line-height:1.6;border-radius:8px}
+.hl-cert{color:var(--green);font-weight:600}
+.hl-unc{color:var(--warn);font-weight:600}
+.hl-verb{color:var(--accent2);font-weight:600}
+
+/* LISTENING */
+.player-box{background:var(--surface);border:1px solid var(--border);padding:20px;border-radius:12px;margin-bottom:14px}
+.player-top{display:flex;align-items:center;gap:14px;margin-bottom:12px}
+.play-btn{width:42px;height:42px;background:var(--accent);border:none;border-radius:50%;cursor:pointer;font-size:15px;color:#fff;flex-shrink:0}
+.track-title{font-family:var(--font-head);font-size:12px;font-weight:700;color:#fff;margin-bottom:3px}
+.track-sub{font-size:10px;color:var(--muted)}
+.waveform{display:flex;align-items:center;gap:2px;height:36px;overflow:hidden}
+.wbar{width:3px;background:var(--accent);border-radius:2px;flex-shrink:0}
+.script-toggle{background:none;border:1px solid var(--border);color:var(--muted);padding:7px 14px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;cursor:pointer;margin-bottom:10px;border-radius:6px}
+.script-box{max-height:0;overflow:hidden;transition:max-height .4s}
+.script-box.open{max-height:1200px}
+.script-content{background:rgba(0,207,255,.04);border:1px solid rgba(0,207,255,.15);padding:16px;font-size:12px;color:var(--txt);line-height:1.9;font-style:italic;border-radius:8px}
+.eleven-note{font-size:10px;color:var(--dim);margin-top:7px}
+
+/* PRODUCTION / OPINION METER */
+.meter-wrap{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:18px;margin-bottom:18px;text-align:center}
+.meter-q{font-size:15px;color:#fff;font-weight:600;margin-bottom:14px;line-height:1.4}
+.meter-bar{width:100%;height:28px;background:linear-gradient(90deg,var(--danger),var(--warn),var(--success));border-radius:14px;position:relative;margin-bottom:10px}
+.meter-indicator{position:absolute;top:-4px;width:20px;height:36px;background:#fff;border-radius:10px;transition:left .3s;box-shadow:0 2px 8px rgba(0,0,0,.4)}
+.meter-pct{font-family:var(--font-head);font-size:24px;font-weight:800;color:var(--accent);margin-bottom:8px}
+.meter-btns{display:flex;justify-content:center;gap:10px}
+.meter-btn{padding:8px 22px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;cursor:pointer;border-radius:6px;border:1px solid var(--border);background:var(--surface)}
+.meter-btn.agree{color:var(--green);border-color:rgba(0,230,118,.3)}
+.meter-btn.disagree{color:var(--danger);border-color:rgba(255,77,109,.3)}
+
+/* SPEAKING CARDS */
+.speak-grid{display:flex;flex-direction:column;gap:10px}
+.speak-card{background:var(--surface2);border:1px solid var(--border);border-left:3px solid var(--cyan);border-radius:0 10px 10px 0;overflow:hidden}
+.speak-card-img{width:100%;height:80px;object-fit:cover;filter:brightness(.5)}
+.speak-card-body{padding:14px 16px}
+.sc-lbl{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:5px}
+.sc-q{font-size:14px;color:#fff;font-weight:500;margin-bottom:8px;line-height:1.5}
+.sc-hint{font-size:11px;color:var(--muted);font-style:italic}
+
+/* TIMER SVG */
+.timer-wrap{display:flex;align-items:center;gap:14px;margin:14px 0}
+.timer-text{font-family:var(--font-head);font-size:20px;font-weight:800;color:#fff}
+.timer-start{background:var(--accent);border:none;color:#fff;padding:8px 18px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;cursor:pointer;border-radius:6px}
+
+/* HOT SEAT DICE */
+.dice-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:14px 0}
+.dice-card{background:var(--surface2);border:1px solid var(--border);border-radius:10px;overflow:hidden;cursor:pointer;transition:all .2s;text-align:center}
+.dice-card:hover{border-color:var(--accent);transform:scale(1.03)}
+.dice-card-img{width:100%;height:70px;object-fit:cover;filter:brightness(.5)}
+.dice-card-body{padding:10px}
+.dice-num{font-family:var(--font-head);font-size:18px;font-weight:800;color:var(--accent)}
+.dice-q{font-size:11px;color:var(--muted);line-height:1.4}
+
+/* PHRASES WEEK */
+.ph-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.ph-card{background:var(--surface2);border:1px solid rgba(255,184,0,.2);border-radius:10px;overflow:hidden}
+.ph-card-img{width:100%;height:80px;object-fit:cover;filter:brightness(.5)}
+.ph-card-body{padding:14px}
+.ph-num{font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;color:var(--gold);margin-bottom:6px}
+.ph-phrase{font-family:var(--font-head);font-size:13px;font-weight:700;color:#fff;margin-bottom:7px;line-height:1.4}
+.ph-ctx{font-size:11px;color:var(--muted);line-height:1.5}
+
+/* WRAP-UP */
+.wu3-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:22px}
+.wu3-card{background:var(--surface);border:1px solid var(--border);border-top:3px solid var(--accent);padding:16px;border-radius:0 0 10px 10px}
+.wu3-num{font-family:var(--font-head);font-size:22px;font-weight:800;color:var(--accent);margin-bottom:5px}
+.wu3-txt{font-size:12px;color:var(--muted);line-height:1.5}
+.checklist{display:flex;flex-direction:column;gap:7px;margin-bottom:20px}
+.cl-item{display:flex;align-items:flex-start;gap:11px;background:var(--surface);border:1px solid var(--border);padding:12px 15px;cursor:pointer;transition:all .2s;font-size:12.5px;color:var(--txt);line-height:1.5;border-radius:8px}
+.cl-item:hover{border-color:var(--accent)}
+.cl-item.done{border-color:rgba(0,230,118,.3);background:rgba(0,230,118,.04);color:rgba(0,230,118,.8);text-decoration:line-through;opacity:.7}
+.cl-box{width:15px;height:15px;border:2px solid var(--accent);flex-shrink:0;margin-top:2px;border-radius:3px}
+.cl-item.done .cl-box{background:var(--green);border-color:var(--green)}
+
+/* MY WIN */
+.mywin{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:18px;margin-top:16px}
+.mywin-lbl{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2px;color:var(--accent);text-transform:uppercase;margin-bottom:8px}
+.mywin-ta{width:100%;min-height:70px;background:var(--surface);border:1px solid var(--border);color:var(--txt);padding:12px;font-family:var(--font-body);font-size:13px;border-radius:8px;resize:vertical}
+.mywin-save{background:var(--accent);border:none;color:#fff;padding:8px 18px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;cursor:pointer;border-radius:6px;margin-top:8px}
+
+/* NEXT BOX */
+.next-box{background:var(--surface);border:1px solid var(--border);border-left:4px solid var(--cyan);padding:16px 20px;border-radius:0 10px 10px 0;margin-top:18px}
+.next-lbl{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--cyan);margin-bottom:5px}
+.next-title{font-size:14px;font-weight:600;color:#fff;margin-bottom:3px}
+.next-sub{font-size:11px;color:var(--muted)}
+
+/* FOOTER */
+.ftr{background:var(--surface);border-top:1px solid var(--border);padding:18px 28px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+.fbrand{font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim)}
+.finfo{font-size:11px;color:var(--dim)}
+.flvs{display:flex;gap:3px;flex-wrap:wrap}
+.flv{padding:5px 10px;font-family:var(--font-head);font-size:10px;font-weight:700;background:var(--surface2);color:var(--dim);border-radius:3px}
+.flv.on{background:var(--accent);color:#fff}
+
+/* CONFETTI */
+.confetti{position:fixed;top:-10px;width:8px;height:8px;z-index:9999;border-radius:50%;pointer-events:none;animation:confettiFall 2.5s ease-in forwards}
+@keyframes confettiFall{0%{opacity:1;transform:translateY(0) rotate(0deg)}100%{opacity:0;transform:translateY(100vh) rotate(720deg)}}
+
+/* GT BOX */
+.gt-box{background:rgba(255,184,0,.04);border:1px solid rgba(255,184,0,.18);padding:16px 20px;margin-top:18px;border-radius:10px}
+.gt-hdr{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold);margin-bottom:10px}
+.gt-hdr::before{content:'★ ';font-size:11px}
+.gt-tips{list-style:none;display:flex;flex-direction:column;gap:7px}
+.gt-tips li{font-size:12px;color:rgba(255,184,0,.82);padding-left:14px;position:relative;line-height:1.5}
+.gt-tips li::before{content:'→';position:absolute;left:0;color:var(--gold)}
+
+/* RESPONSIVE */
+@media(max-width:860px){
+  .section{margin:14px 10px}
+  .section-body{padding:14px}
+  .vocab-grid{grid-template-columns:repeat(2,1fr)}
+  .coll-grid{grid-template-columns:1fr}
+  .gauge-wrap{grid-template-columns:1fr}
+  .wu-grid{grid-template-columns:1fr}
+  .ph-grid,.wu3-grid,.dice-grid{grid-template-columns:1fr}
+  .opts{flex-direction:column}
+  .hdr,.ftr{padding:14px 16px}
+  .av-meta{margin-left:0;text-align:left}
+}
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progBar" style="width:0%"></div>
+<button class="mode-toggle" onclick="toggleMode()">Student Mode</button>
+
+<!-- HEADER -->
+<header class="hdr">
+  <div class="brand"><div class="dot"></div><div><div class="bname">Gabriel Turner</div><div class="bsub">English Training · Teacher Edition</div></div></div>
+  <div class="sess-tag">
+    <span class="tag to-tag">A2.2</span>
+    <span class="tag tgold">Module 4</span>
+    <span class="tag tc">Session 3A — Discovery & Drill</span>
+    <span class="tag tg">120 min</span>
+  </div>
+</header>
+
+<!-- BADGE STRIP -->
+<div class="badge-strip">
+  <span id="b1">⚡</span>
+  <span id="b2">📚</span>
+  <span id="b3">🎯</span>
+  <span id="b4">🎧</span>
+  <span id="b5">🏆</span>
+</div>
+
+<!-- §1 WARM-UP -->
+<div class="section">
+  <div class="section-header">
+    <span class="section-number">§1</span>
+    <div><div class="section-title">Business Travel — <em>Confirmed or Uncertain?</em></div><div class="section-sub">Activate thinking about certainty · Connect to real corporate travel situations</div></div>
+  </div>
+  <div class="section-body">
+    <div class="dur-tag">⏱ 5 MIN</div>
+    <img class="hero-img" src="https://images.pexels.com/photos/1004584/pexels-photo-1004584.jpeg?auto=compress&cs=tinysrgb&w=900" alt="Airport departures board">
+
+    <div class="wu-grid">
+      <div class="wu-card">
+        <img class="wu-card-img" src="https://images.pexels.com/photos/2041627/pexels-photo-2041627.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Business traveler with suitcase">
+        <div class="wu-card-body">
+          <div class="wu-q">✈️ <strong>Travel check:</strong> Do you have any business trips planned for the next month? Are they 100% confirmed — or still uncertain?</div>
+        </div>
+      </div>
+      <div class="wu-card">
+        <img class="wu-card-img" src="https://images.pexels.com/photos/3184292/pexels-photo-3184292.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Team meeting planning">
+        <div class="wu-card-body">
+          <div class="wu-q">💬 <strong>Partner activity:</strong> Tell your partner 2 things that are confirmed for next week and 2 things that are uncertain. How do you express the difference?</div>
+        </div>
+      </div>
+      <div class="wu-card">
+        <img class="wu-card-img" src="https://images.pexels.com/photos/3184405/pexels-photo-3184405.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Colleague asking question">
+        <div class="wu-card-body">
+          <div class="wu-q">🧠 <strong>Quick think:</strong> What's the difference? "I'm flying to Guadalajara on Monday" vs "I might fly to Guadalajara." Which one is booked? Which one is just an idea?</div>
+        </div>
+      </div>
+      <div class="wu-card">
+        <img class="wu-card-img" src="https://images.pexels.com/photos/669615/pexels-photo-669615.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Calendar with plans">
+        <div class="wu-card-body to">
+          <div class="wu-q">⚡ <strong>Teacher note:</strong> S3 focuses on the contrast between present continuous (confirmed arrangement) and may/might (uncertain possibility) in business travel context. Core target: "I'm meeting the client on Thursday" vs "I might visit the factory — it depends." If students produce both forms correctly in context by §7, the session succeeded.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="qw">
+      <div class="qw-lbl">⚡ Quick Win — 20 seconds</div>
+      <div style="font-size:13px;color:#fff;line-height:1.6">Say this out loud: <strong>"I'm meeting [someone real] on [a real day]. But I might also [something uncertain]."</strong> Use your real schedule!</div>
+    </div>
+
+    <!-- TIMER -->
+    <div class="timer-wrap">
+      <svg width="88" height="88" viewBox="0 0 88 88">
+        <circle cx="44" cy="44" r="38" fill="none" stroke="rgba(249,115,22,.15)" stroke-width="4"/>
+        <circle id="arc1" cx="44" cy="44" r="38" fill="none" stroke="var(--accent)" stroke-width="4" stroke-dasharray="238.76" stroke-dashoffset="0" stroke-linecap="round" style="transform:rotate(-90deg);transform-origin:center"/>
+      </svg>
+      <div class="timer-text" id="timer1">1:00</div>
+      <button class="timer-start" onclick="startTimer('arc1','timer1',60,'b1',238.76)">▶ START</button>
+    </div>
+
+    <div class="tn-wrap to">
+      <button class="tn-btn tn-c1" onclick="toggleTN('tn1')">🧠 Pedagogical Note <span>▼</span></button>
+      <div class="tn-panel" id="tn1"><div class="tn-content">This warm-up surfaces the core contrast of the session: confirmed vs uncertain future. Don't correct grammar yet — just get students talking about what's "definite" vs "maybe." Collect 3–4 student sentences on the board for later correction in §5. Key insight: students naturally use "going to" for everything — today they learn that Present Continuous signals a CONFIRMED arrangement (ticket bought, meeting in calendar).</div></div>
+      <button class="tn-btn tn-c2" onclick="toggleTN('tn2')">💡 Engagement Tip <span>▼</span></button>
+      <div class="tn-panel" id="tn2"><div class="tn-content">Ask who's traveled for work recently. Get them to describe the trip planning: what was certain, what changed last minute. This creates genuine context. Students in manufacturing often travel Celaya→CDMX or Celaya→Monterrey — use these real routes.</div></div>
+      <button class="tn-btn tn-c3" onclick="toggleTN('tn3')">📈 Retention + Upsell <span>▼</span></button>
+      <div class="tn-panel" id="tn3"><div class="tn-content">Business travel English is a high-value topic for HR managers evaluating program ROI. Students who can confirm appointments, express uncertainty about schedules, and update itineraries in English are immediately more valuable. Reference this when sending progress reports to companies.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- §2 SPEAKING TOPIC -->
+<div class="section">
+  <div class="section-header">
+    <span class="section-number">§2</span>
+    <div><div class="section-title">Business Travel — <em>Your Next Trip</em></div><div class="section-sub">Andrea Soto's travel dilemma · 3 speaking rounds · Grammar in real context</div></div>
+  </div>
+  <div class="section-body">
+    <div class="dur-tag">⏱ 8 MIN</div>
+
+    <div class="topic-card">
+      <img class="topic-card-img" src="https://images.pexels.com/photos/3184416/pexels-photo-3184416.jpeg?auto=compress&cs=tinysrgb&w=900" alt="Professional woman planning trip">
+      <div class="topic-card-body">
+        <div class="topic-label">Andrea Soto's Situation</div>
+        <div class="topic-q">Andrea is planning a business trip to Guadalajara next week. Some things are confirmed — some things are still uncertain. How does she communicate this to her manager?</div>
+        <div class="topic-hint">Focus: "I'm [verb]-ing…" = confirmed &nbsp;·&nbsp; "I might / I may…" = uncertain &nbsp;·&nbsp; "I'm not sure yet" = honest doubt</div>
+      </div>
+    </div>
+
+    <div class="round-card">
+      <img class="round-card-img" src="https://images.pexels.com/photos/1181533/pexels-photo-1181533.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Woman at laptop booking flights">
+      <div class="round-card-body">
+        <div class="round-lbl">Round 1 — Confirmed Plans</div>
+        <div class="round-q">What business trips or meetings do you have confirmed for the next 2 weeks? Tell your partner using "I'm [verb]-ing…" — as if the appointment is in your calendar.</div>
+        <div class="round-hint">💡 "I'm flying to CDMX on Tuesday." · "I'm meeting the supplier at 10 AM." · "We're visiting the plant on Thursday."</div>
+      </div>
+    </div>
+    <div class="round-card">
+      <img class="round-card-img" src="https://images.pexels.com/photos/3182812/pexels-photo-3182812.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Uncertain person thinking">
+      <div class="round-card-body">
+        <div class="round-lbl">Round 2 — Uncertain Possibilities</div>
+        <div class="round-q">What might happen next week that isn't confirmed yet? A possible trip? A meeting that depends on someone else? Use "I might / I may…" + a reason for the uncertainty.</div>
+        <div class="round-hint">💡 "I might travel to Monterrey — it depends on the client." · "The meeting may be cancelled."</div>
+      </div>
+    </div>
+    <div class="round-card">
+      <img class="round-card-img" src="https://images.pexels.com/photos/3184339/pexels-photo-3184339.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Team discussing travel plans">
+      <div class="round-card-body">
+        <div class="round-lbl">Round 3 — Mix: Confirmed + Uncertain</div>
+        <div class="round-q">Give your partner a 60-second travel update mixing confirmed and uncertain plans. Can your partner identify which is which?</div>
+        <div class="round-hint">💡 "I'm checking in at the hotel on Monday — that's confirmed. But I might need to extend my stay — we'll see."</div>
+      </div>
+    </div>
+
+    <div class="model-reveal">
+      <button class="model-btn" onclick="toggleModel('modelA')">▼ Show Model Answer</button>
+      <div class="model-content" id="modelA">
+        <div class="model-text">"Next week I'm flying to Guadalajara on Tuesday morning — the tickets are booked. I'm meeting the regional manager at 2 PM. But I might also visit the new warehouse — it depends on the schedule. And the dinner with the client? I'm not sure yet. It may happen on Wednesday, but she might have a conflict. I'll keep you posted."</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- §3 VOCABULARY -->
+<div class="section">
+  <div class="section-header">
+    <span class="section-number">§3</span>
+    <div><div class="section-title">Travel & Arrangements — <em>Key Vocabulary</em></div><div class="section-sub">12 essential words for business travel · IPA + audio · Click each card</div></div>
+  </div>
+  <div class="section-body">
+    <div class="dur-tag">⏱ 10 MIN</div>
+    <img class="hero-img" src="https://images.pexels.com/photos/3769138/pexels-photo-3769138.jpeg?auto=compress&cs=tinysrgb&w=900" alt="Business travel planning desk" style="height:140px">
+
+    <div class="vocab-grid">
+      <div class="vocab-card" onclick="speak('itinerary')">
+        <img class="vocab-card-img" src="https://images.pexels.com/photos/1303081/pexels-photo-1303081.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Travel itinerary">
+        <div class="vocab-card-body">
+          <div class="vc-w">itinerary</div>
+          <div class="vc-p">/aɪˈtɪnəreri/</div>
+          <div class="vc-d">A detailed plan for a trip</div>
+          <div class="vc-e">"I might change my itinerary — it depends on the client."</div>
+          <div class="vc-s">🔊 Click to hear</div>
+        </div>
+      </div>
+      <div class="vocab-card" onclick="speak('departure')">
+        <img class="vocab-card-img" src="https://images.pexels.com/photos/2026324/pexels-photo-2026324.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Departure gate">
+        <div class="vocab-card-body">
+          <div class="vc-w">departure</div>
+          <div class="vc-p">/dɪˈpɑːrtʃər/</div>
+          <div class="vc-d">The time when a flight/bus leaves</div>
+          <div class="vc-e">"My departure is at 7 AM — it's confirmed."</div>
+          <div class="vc-s">🔊 Click to hear</div>
+        </div>
+      </div>
+      <div class="vocab-card" onclick="speak('arrival')">
+        <img class="vocab-card-img" src="https://images.pexels.com/photos/1571460/pexels-photo-1571460.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Arrival at destination">
+        <div class="vocab-card-body">
+          <div class="vc-w">arrival</div>
+          <div class="vc-p">/əˈraɪvəl/</div>
+          <div class="vc-d">The time when you reach your destination</div>
+          <div class="vc-e">"The arrival may be delayed due to weather."</div>
+          <div class="vc-s">🔊 Click to hear</div>
+        </div>
+      </div>
+      <div class="vocab-card" onclick="speak('layover')">
+        <img class="vocab-card-img" src="https://images.pexels.com/photos/2767767/pexels-photo-2767767.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Airport waiting area">
+        <div class="vocab-card-body">
+          <div class="vc-w">layover</div>
+          <div class="vc-p">/ˈleɪoʊvər/</div>
+          <div class="vc-d">A stop between connecting flights</div>
+          <div class="vc-e">"I have a 3-hour layover in Houston."</div>
+          <div class="vc-s">🔊 Click to hear</div>
+        </div>
+      </div>
+      <div class="vocab-card" onclick="speak('reservation')">
+        <img class="vocab-card-img" src="https://images.pexels.com/photos/271624/pexels-photo-271624.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Hotel reception desk">
+        <div class="vocab-card-body">
+          <div class="vc-w">reservation</div>
+          <div class="vc-p">/ˌrezərˈveɪʃən/</div>
+          <div class="vc-d">A booking made in advance</div>
+          <div class="vc-e">"I'm checking into the hotel — the reservation is confirmed."</div>
+          <div class="vc-s">🔊 Click to hear</div>
+        </div>
+      </div>
+      <div class="vocab-card" onclick="speak('confirmation')">
+        <img class="vocab-card-img" src="https://images.pexels.com/photos/5668859/pexels-photo-5668859.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Confirmation email on phone">
+        <div class="vocab-card-body">
+          <div class="vc-w">confirmation</div>
+          <div class="vc-p">/ˌkɒnfərˈmeɪʃən/</div>
+          <div class="vc-d">Official proof that something is booked</div>
+          <div class="vc-e">"I'm waiting for the flight confirmation."</div>
+          <div class="vc-s">🔊 Click to hear</div>
+        </div>
+      </div>
+      <div class="vocab-card" onclick="speak('boarding pass')">
+        <img class="vocab-card-img" src="https://images.pexels.com/photos/2873486/pexels-photo-2873486.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Boarding pass">
+        <div class="vocab-card-body">
+          <div class="vc-w">boarding pass</div>
+          <div class="vc-p">/ˈbɔːrdɪŋ pæs/</div>
+          <div class="vc-d">Document you need to get on the plane</div>
+          <div class="vc-e">"I already have my boarding pass — gate B7."</div>
+          <div class="vc-s">🔊 Click to hear</div>
+        </div>
+      </div>
+      <div class="vocab-card" onclick="speak('carry-on')">
+        <img class="vocab-card-img" src="https://images.pexels.com/photos/1008155/pexels-photo-1008155.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Carry-on bag">
+        <div class="vocab-card-body">
+          <div class="vc-w">carry-on</div>
+          <div class="vc-p">/ˈkæri ɒn/</div>
+          <div class="vc-d">Small bag you take on the plane</div>
+          <div class="vc-e">"I might only take a carry-on — no checked luggage."</div>
+          <div class="vc-s">🔊 Click to hear</div>
+        </div>
+      </div>
+      <div class="vocab-card" onclick="speak('expense report')">
+        <img class="vocab-card-img" src="https://images.pexels.com/photos/4386366/pexels-photo-4386366.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Expense report on desk">
+        <div class="vocab-card-body">
+          <div class="vc-w">expense report</div>
+          <div class="vc-p">/ɪkˈspens rɪˌpɔːrt/</div>
+          <div class="vc-d">Document listing trip costs for reimbursement</div>
+          <div class="vc-e">"I may need to submit the expense report by Friday."</div>
+          <div class="vc-s">🔊 Click to hear</div>
+        </div>
+      </div>
+      <div class="vocab-card" onclick="speak('reschedule')">
+        <img class="vocab-card-img" src="https://images.pexels.com/photos/3182773/pexels-photo-3182773.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Rescheduling on calendar">
+        <div class="vocab-card-body">
+          <div class="vc-w">reschedule</div>
+          <div class="vc-p">/ˌriːˈʃedjuːl/</div>
+          <div class="vc-d">To change a meeting or event to a new time</div>
+          <div class="vc-e">"We might reschedule the flight to Wednesday."</div>
+          <div class="vc-s">🔊 Click to hear</div>
+        </div>
+      </div>
+      <div class="vocab-card" onclick="speak('availability')">
+        <img class="vocab-card-img" src="https://images.pexels.com/photos/3184328/pexels-photo-3184328.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Checking availability">
+        <div class="vocab-card-body">
+          <div class="vc-w">availability</div>
+          <div class="vc-p">/əˌveɪləˈbɪləti/</div>
+          <div class="vc-d">Whether something or someone is free</div>
+          <div class="vc-e">"Let me check my availability for Thursday."</div>
+          <div class="vc-s">🔊 Click to hear</div>
+        </div>
+      </div>
+      <div class="vocab-card" onclick="speak('extend')">
+        <img class="vocab-card-img" src="https://images.pexels.com/photos/3771097/pexels-photo-3771097.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Extended stay hotel">
+        <div class="vocab-card-body">
+          <div class="vc-w">extend</div>
+          <div class="vc-p">/ɪkˈstend/</div>
+          <div class="vc-d">To make something last longer</div>
+          <div class="vc-e">"I might need to extend my stay one more night."</div>
+          <div class="vc-s">🔊 Click to hear</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- VOCAB QUIZ -->
+    <div class="vq-wrap" id="vqWrap">
+      <div class="vq-score" id="vqScore">Score: 0 / 0</div>
+      <div class="vq-progress"><div class="vq-bar" id="vqBar" style="width:0%"></div></div>
+      <div class="vq-q" id="vqQ"></div>
+      <div class="vq-opts" id="vqOpts"></div>
+      <button class="vq-restart" id="vqRestart" onclick="startQuiz()">↻ Restart Quiz</button>
+    </div>
+
+    <div class="ms">
+      <div class="ms-l">🗣️ Micro-Speaking — 60 seconds</div>
+      <div style="font-size:12px;color:var(--txt);line-height:1.6">Choose 4 words. Make sentences: 2 using present continuous (confirmed) and 2 using may/might (uncertain).<br>
+      Model: <em style="color:var(--accent2)">"I'm checking in at the hotel on Monday — that's confirmed. But I might need to reschedule the return flight."</em></div>
+    </div>
+  </div>
+</div>
+
+<!-- §4 COLLOQUIAL -->
+<div class="section">
+  <div class="section-header">
+    <span class="section-number">§4</span>
+    <div><div class="section-title">Everyday English — <em>Certainty Phrases</em></div><div class="section-sub">5 phrases native speakers use to express certainty and uncertainty at work</div></div>
+  </div>
+  <div class="section-body">
+    <div class="dur-tag">⏱ 5 MIN</div>
+    <img class="hero-img" src="https://images.pexels.com/photos/3184465/pexels-photo-3184465.jpeg?auto=compress&cs=tinysrgb&w=900" alt="Colleagues in casual conversation" style="height:130px">
+
+    <div class="coll-grid">
+      <div class="coll-card" onclick="speak('We'll see.')">
+        <img class="coll-card-img" src="https://images.pexels.com/photos/3184418/pexels-photo-3184418.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Shrugging colleague">
+        <div class="coll-card-body">
+          <div class="coll-phrase">"We'll see."</div>
+          <div class="coll-mean">= Not certain yet, I'll decide later</div>
+          <div class="coll-ex">"Are you flying business class?" — "We'll see. It depends on the budget."</div>
+        </div>
+      </div>
+      <div class="coll-card" onclick="speak('It depends.')">
+        <img class="coll-card-img" src="https://images.pexels.com/photos/7176026/pexels-photo-7176026.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Person weighing options">
+        <div class="coll-card-body">
+          <div class="coll-phrase">"It depends."</div>
+          <div class="coll-mean">= The answer changes based on conditions</div>
+          <div class="coll-ex">"Will you stay an extra day?" — "It depends on the client meeting."</div>
+        </div>
+      </div>
+      <div class="coll-card" onclick="speak('I'll keep you posted.')">
+        <img class="coll-card-img" src="https://images.pexels.com/photos/4050315/pexels-photo-4050315.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Sending update message">
+        <div class="coll-card-body">
+          <div class="coll-phrase">"I'll keep you posted."</div>
+          <div class="coll-mean">= I'll update you when I know more</div>
+          <div class="coll-ex">"Is the flight confirmed?" — "Not yet. I'll keep you posted."</div>
+        </div>
+      </div>
+      <div class="coll-card" onclick="speak('TBD — to be determined.')">
+        <img class="coll-card-img" src="https://images.pexels.com/photos/5965840/pexels-photo-5965840.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Question mark on screen">
+        <div class="coll-card-body">
+          <div class="coll-phrase">"TBD."</div>
+          <div class="coll-mean">= To Be Determined — used in emails and calendars</div>
+          <div class="coll-ex">"What time is the dinner?" — "TBD. We're waiting for the client."</div>
+        </div>
+      </div>
+      <div class="coll-card" onclick="speak('It's in the diary.')">
+        <img class="coll-card-img" src="https://images.pexels.com/photos/1907785/pexels-photo-1907785.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Calendar with events">
+        <div class="coll-card-body">
+          <div class="coll-phrase">"It's in the diary."</div>
+          <div class="coll-mean">= It's confirmed and scheduled</div>
+          <div class="coll-ex">"Is the meeting definite?" — "Yes, it's in the diary."</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tn-wrap to">
+      <button class="tn-btn tn-c1" onclick="toggleTN('tn4')">🧠 Drill Note <span>▼</span></button>
+      <div class="tn-panel" id="tn4"><div class="tn-content">Practice mini-dialogues: Student A asks about a plan, Student B uses one of these 5 phrases to respond. Rotate through all 5. Then reverse. Goal: these become automatic responses. Note: "It's in the diary" is more common in British English; "It's on my calendar" is the American equivalent — teach both.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- §5 GRAMMAR -->
+<div class="section">
+  <div class="section-header">
+    <span class="section-number">§5</span>
+    <div><div class="section-title">May/Might vs Present Continuous — <em>The Certainty Scale</em></div><div class="section-sub">When to use each form · The visual certainty gauge · Interactive practice</div></div>
+  </div>
+  <div class="section-body">
+    <div class="dur-tag">⏱ 10 MIN</div>
+    <img class="hero-img" src="https://images.pexels.com/photos/3184357/pexels-photo-3184357.jpeg?auto=compress&cs=tinysrgb&w=900" alt="Planning whiteboard" style="height:130px">
+
+    <div class="prob">
+      <div class="prob-lbl">🚨 Real Situation — Monday Planning Email</div>
+      <div style="font-size:13px;color:#fff;line-height:1.7;margin-bottom:10px">Your manager asks: <em>"What's happening this week? Give me an update on travel and meetings."</em><br><br>
+      Some things are 100% confirmed (tickets bought, calendar invites sent). Other things are still uncertain (waiting for client reply, budget not approved). <br>
+      <span style="color:var(--muted);font-style:italic">How do you communicate the difference in English?</span></div>
+    </div>
+
+    <div class="tool-box">
+      <div class="tool-lbl">✅ The Tool: Certainty Scale</div>
+      <div style="font-size:13px;color:var(--txt);line-height:1.9">
+        <span style="color:var(--green);font-weight:700">100% CONFIRMED →</span> Present Continuous: <em>"I<strong>'m flying</strong> to GDL on Tuesday."</em><br>
+        <span style="color:var(--warn);font-weight:700">~50% POSSIBLE →</span> May: <em>"The client <strong>may</strong> call tomorrow."</em><br>
+        <span style="color:var(--accent);font-weight:700">~30% LESS CERTAIN →</span> Might: <em>"I <strong>might</strong> need to extend my stay."</em><br>
+        <span style="color:var(--danger);font-weight:700">0% NOT HAPPENING →</span> Won't / Not -ing: <em>"I <strong>won't</strong> travel this week."</em>
+      </div>
+    </div>
+
+    <!-- CERTAINTY GAUGE — VISUAL NUEVO -->
+    <div style="font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:2px;color:var(--accent);text-transform:uppercase;margin:20px 0 10px">🎯 Interactive — Certainty Gauge</div>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:14px">Move the slider to the correct certainty level for each scenario, then click CHECK. The gauge tells you which grammar form to use.</div>
+
+    <div class="gauge-wrap">
+      <div class="gauge-card">
+        <div class="gauge-scenario">📌 "The flight tickets are bought and the hotel is booked for Monterrey on Thursday."</div>
+        <div class="gauge-labels"><span>0% won't</span><span>30% might</span><span>50% may</span><span>100% confirmed</span></div>
+        <input type="range" class="gauge-slider" id="g1" min="0" max="100" value="50">
+        <div class="gauge-result" id="g1r"></div>
+        <div class="gauge-explain" id="g1e"></div>
+        <button class="gauge-check" onclick="checkGauge('g1',100,'I\'m flying to Monterrey on Thursday.','Present Continuous — tickets bought = confirmed arrangement')">CHECK</button>
+      </div>
+      <div class="gauge-card">
+        <div class="gauge-scenario">📌 "The client hasn't replied yet. Maybe she wants to meet, maybe not."</div>
+        <div class="gauge-labels"><span>0% won't</span><span>30% might</span><span>50% may</span><span>100% confirmed</span></div>
+        <input type="range" class="gauge-slider" id="g2" min="0" max="100" value="50">
+        <div class="gauge-result" id="g2r"></div>
+        <div class="gauge-explain" id="g2e"></div>
+        <button class="gauge-check" onclick="checkGauge('g2',30,'She might want to meet — I\'m not sure.','Might — low certainty, no reply yet')">CHECK</button>
+      </div>
+      <div class="gauge-card">
+        <div class="gauge-scenario">📌 "The manager said the budget is probably approved. We're waiting for the email."</div>
+        <div class="gauge-labels"><span>0% won't</span><span>30% might</span><span>50% may</span><span>100% confirmed</span></div>
+        <input type="range" class="gauge-slider" id="g3" min="0" max="100" value="50">
+        <div class="gauge-result" id="g3r"></div>
+        <div class="gauge-explain" id="g3e"></div>
+        <button class="gauge-check" onclick="checkGauge('g3',50,'The budget may be approved — probably yes.','May — reasonable possibility, likely but not confirmed')">CHECK</button>
+      </div>
+      <div class="gauge-card">
+        <div class="gauge-scenario">📌 "The CEO already cancelled the visit. It's not happening."</div>
+        <div class="gauge-labels"><span>0% won't</span><span>30% might</span><span>50% may</span><span>100% confirmed</span></div>
+        <input type="range" class="gauge-slider" id="g4" min="0" max="100" value="50">
+        <div class="gauge-result" id="g4r"></div>
+        <div class="gauge-explain" id="g4e"></div>
+        <button class="gauge-check" onclick="checkGauge('g4',0,'The CEO won\'t visit. It\'s cancelled.','Won\'t — 0% certainty, already cancelled')">CHECK</button>
+      </div>
+    </div>
+
+    <!-- COLLAPSIBLE GRAMMAR TABLE -->
+    <button class="coll-btn" onclick="toggleColl('gramRef')">▼ Grammar Reference Table <span>▼</span></button>
+    <div class="coll-panel" id="gramRef">
+      <table class="gram-table">
+        <thead><tr><th>Certainty</th><th>Structure</th><th>Travel Example</th></tr></thead>
+        <tbody>
+          <tr><td style="color:var(--green);font-family:var(--font-head);font-weight:700">100% Confirmed</td><td>Subject + <strong>am/is/are + -ing</strong></td><td><span class="ex">I'm meeting the client at 10 AM on Thursday.</span></td></tr>
+          <tr><td style="color:var(--warn);font-family:var(--font-head);font-weight:700">~50% May</td><td>Subject + <strong>may</strong> + base verb</td><td><span class="ex">The flight may be delayed due to weather.</span></td></tr>
+          <tr><td style="color:var(--accent);font-family:var(--font-head);font-weight:700">~30% Might</td><td>Subject + <strong>might</strong> + base verb</td><td><span class="ex">I might extend my stay one more night.</span></td></tr>
+          <tr><td style="color:var(--danger);font-family:var(--font-head);font-weight:700">0% Won't</td><td>Subject + <strong>won't</strong> + base verb</td><td><span class="ex">She won't attend the conference this year.</span></td></tr>
+          <tr><td style="color:var(--muted);font-family:var(--font-head);font-weight:700">Negative possibility</td><td>Subject + <strong>may not / might not</strong></td><td><span class="ex">He might not arrive on time — his flight is delayed.</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="err">
+      ⚠️ <strong>Top errors — correct immediately:</strong><br>
+      ✗ "He might to come" → ✅ He might <strong>come</strong> — no "to" after any modal<br>
+      ✗ "I'm going to meet him at 10" (when ticket is booked) → ✅ I<strong>'m meeting</strong> him at 10 — confirmed = present continuous<br>
+      ✗ "She mays call" → ✅ She <strong>may</strong> call — no conjugation on modals<br>
+      ✗ "I might will travel" → ✅ I <strong>might</strong> travel — never two modals together
+    </div>
+
+    <!-- POLL -->
+    <div class="poll-wrap">
+      <div style="font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2px;color:var(--accent);text-transform:uppercase;margin-bottom:8px">📊 Poll — 30 pts</div>
+      <div class="poll-q">Which sentence is correct?</div>
+      <div class="poll-opts" id="poll1">
+        <button class="poll-btn" onclick="checkPoll(this,'p1b','poll1')">A) "I'm might flying to Monterrey."</button>
+        <button class="poll-btn" onclick="checkPoll(this,'p1b','poll1')">B) "I might fly to Monterrey."</button>
+        <button class="poll-btn" onclick="checkPoll(this,'p1b','poll1')">C) "I might to fly to Monterrey."</button>
+      </div>
+    </div>
+
+    <!-- Activity A: Multiple Choice -->
+    <div class="act-t">✏️ Activity A — Choose the Correct Form</div>
+    <div class="opt-group">
+      <div class="opt-q">1. The conference call is in my calendar for 3 PM. → "I _____ a conference call at 3 PM."</div>
+      <div class="opts" id="q1">
+        <button class="opt" onclick="checkOpt(this,'\'m having','q1')">might have</button>
+        <button class="opt" onclick="checkOpt(this,'\'m having','q1')">'m having</button>
+        <button class="opt" onclick="checkOpt(this,'\'m having','q1')">may have</button>
+      </div>
+    </div>
+    <div class="opt-group">
+      <div class="opt-q">2. The supplier hasn't confirmed yet — it's about 30% likely. → "The supplier _____ the order this week."</div>
+      <div class="opts" id="q2">
+        <button class="opt" onclick="checkOpt(this,'might confirm','q2')">is confirming</button>
+        <button class="opt" onclick="checkOpt(this,'might confirm','q2')">might confirm</button>
+        <button class="opt" onclick="checkOpt(this,'might confirm','q2')">will confirms</button>
+      </div>
+    </div>
+    <div class="opt-group">
+      <div class="opt-q">3. We booked the hotel last week — it's definite. → "We _____ at the Hilton on Monday."</div>
+      <div class="opts" id="q3">
+        <button class="opt" onclick="checkOpt(this,'\'re checking in','q3')">might check in</button>
+        <button class="opt" onclick="checkOpt(this,'\'re checking in','q3')">'re checking in</button>
+        <button class="opt" onclick="checkOpt(this,'\'re checking in','q3')">may check in</button>
+      </div>
+    </div>
+    <div class="opt-group">
+      <div class="opt-q">4. There's about a 50% chance of rain tomorrow. → "It _____ rain tomorrow."</div>
+      <div class="opts" id="q4">
+        <button class="opt" onclick="checkOpt(this,'may','q4')">is raining</button>
+        <button class="opt" onclick="checkOpt(this,'may','q4')">may</button>
+        <button class="opt" onclick="checkOpt(this,'may','q4')">will</button>
+      </div>
+    </div>
+    <div class="opt-group">
+      <div class="opt-q">5. She said she probably won't come to the office. → "She _____ come to the office."</div>
+      <div class="opts" id="q5">
+        <button class="opt" onclick="checkOpt(this,'might not','q5')">isn't coming</button>
+        <button class="opt" onclick="checkOpt(this,'might not','q5')">might not</button>
+        <button class="opt" onclick="checkOpt(this,'might not','q5')">doesn't</button>
+      </div>
+    </div>
+
+    <div class="ms" style="margin-top:16px">
+      <div class="ms-l">🗣️ Micro-Speaking — 60 seconds</div>
+      <div style="font-size:12px;color:var(--txt);line-height:1.6">Tell your partner: 1 confirmed plan (present continuous) + 1 uncertain possibility (may/might) + 1 thing that won't happen.</div>
+    </div>
+
+    <!-- Activity B: Drag & Drop -->
+    <div class="act-t">✏️ Activity B — Reorder to Make a Correct Sentence</div>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:12px">Drag the pieces into the correct order.</p>
+    <ol id="order1" class="reorder-list">
+      <li class="reorder-item" draggable="true"><span class="drag-handle">⠿</span>on Thursday morning.</li>
+      <li class="reorder-item" draggable="true"><span class="drag-handle">⠿</span>the regional director</li>
+      <li class="reorder-item" draggable="true"><span class="drag-handle">⠿</span>I'm meeting</li>
+      <li class="reorder-item" draggable="true"><span class="drag-handle">⠿</span>at the GDL office</li>
+    </ol>
+    <button class="check-btn" onclick="checkOrder('order1',['I\'m meeting','the regional director','at the GDL office','on Thursday morning.'],'fb1')">Check Order</button>
+    <div class="fb" id="fb1"></div>
+
+    <div style="margin-top:16px"></div>
+    <ol id="order2" class="reorder-list">
+      <li class="reorder-item" draggable="true"><span class="drag-handle">⠿</span>— it depends on the budget.</li>
+      <li class="reorder-item" draggable="true"><span class="drag-handle">⠿</span>to Monterrey</li>
+      <li class="reorder-item" draggable="true"><span class="drag-handle">⠿</span>next week</li>
+      <li class="reorder-item" draggable="true"><span class="drag-handle">⠿</span>I might travel</li>
+    </ol>
+    <button class="check-btn" onclick="checkOrder('order2',['I might travel','to Monterrey','next week','— it depends on the budget.'],'fb2')">Check Order</button>
+    <div class="fb" id="fb2"></div>
+
+    <div class="gt-box to">
+      <div class="gt-hdr">GT Original — Present Continuous Future in Mexican Business</div>
+      <ul class="gt-tips">
+        <li>🌍 <strong>Register insight:</strong> "I'm meeting the client at 10" sounds MORE professional and committed than "I'm going to meet the client." Teach this upgrade — it signals preparation and reliability.</li>
+        <li>⚠️ <strong>Translation trap:</strong> "Puede que viaje" → students say "I can travel" ✗ → ✅ "I <strong>may/might</strong> travel" — "can" = ability, not possibility</li>
+        <li>🔊 <strong>Pronunciation:</strong> "might" /maɪt/ — make sure students don't confuse it with "meet" /miːt/ in listening exercises</li>
+        <li>💼 <strong>Email tip:</strong> Use "TBD" in calendar invites for uncertain times — it's standard corporate English worldwide</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- §6 LISTENING -->
+<div class="section">
+  <div class="section-header">
+    <span class="section-number">§6</span>
+    <div><div class="section-title">Travel Update Call — <em>What's Confirmed?</em></div><div class="section-sub">Andrea updates her manager on next week's travel · Certain vs uncertain throughout</div></div>
+  </div>
+  <div class="section-body">
+    <div class="dur-tag">⏱ 8 MIN</div>
+
+    <div class="reading-card" style="margin-bottom:18px">
+      <img class="hero-img" src="https://images.pexels.com/photos/3184360/pexels-photo-3184360.jpeg?auto=compress&cs=tinysrgb&w=900" alt="Woman on work call" style="height:120px">
+    </div>
+
+    <div class="player-box">
+      <div class="player-top">
+        <button class="play-btn">▶</button>
+        <div><div class="track-title">Andrea's Travel Update — Next Week</div><div class="track-sub">A2.2 · M4 · S3A · Voice: Lily (American English) · Speed: 0.82</div></div>
+      </div>
+      <div class="waveform" id="wv"></div>
+    </div>
+
+    <button class="script-toggle" onclick="toggleScript()">▼ Show ElevenLabs Script</button>
+    <div class="script-box" id="scriptBox">
+      <div class="script-content">
+        Hi Carlos, here's my travel update for next week.<br><br>
+        OK, so Tuesday is confirmed. I'm flying to Guadalajara at 7 AM — the tickets are booked. I'm checking into the Fiesta Americana hotel around noon. The reservation is confirmed for two nights.<br><br>
+        On Tuesday afternoon, I'm meeting the regional sales team at 3 PM. That's in the calendar already. But the dinner with the Monterrey client? That's still TBD. She might not be available on Tuesday. She may prefer Wednesday evening — I'm waiting for her reply.<br><br>
+        Wednesday is a bit uncertain. I may visit the new warehouse in Zapopan — it depends on whether the operations manager is there. If he's not available, I might stay at the hotel and work on the Q4 report instead.<br><br>
+        My return flight is on Thursday morning at 10 AM — that's booked. But I might need to extend my stay if the client meeting moves to Thursday. I'll keep you posted.<br><br>
+        So: Tuesday and the return flight are confirmed. The client dinner and the warehouse visit might change. I'll send you an update by Monday evening.
+      </div>
+      <div class="eleven-note">📎 ElevenLabs: Voice — Lily (American English) · Speed 0.82 · Pitch 1.0 · A2.2 M4 S3A</div>
+    </div>
+
+    <div class="act-t">✏️ Listening — Multiple Choice</div>
+    <div class="opt-group">
+      <div class="opt-q">1. What time is Andrea flying to Guadalajara on Tuesday?</div>
+      <div class="opts" id="lq1">
+        <button class="opt" onclick="checkOpt(this,'7 AM — confirmed','lq1')">10 AM — she might change it</button>
+        <button class="opt" onclick="checkOpt(this,'7 AM — confirmed','lq1')">7 AM — confirmed</button>
+        <button class="opt" onclick="checkOpt(this,'7 AM — confirmed','lq1')">Noon — TBD</button>
+      </div>
+    </div>
+    <div class="opt-group">
+      <div class="opt-q">2. Why is the client dinner uncertain?</div>
+      <div class="opts" id="lq2">
+        <button class="opt" onclick="checkOpt(this,'The client might not be available Tuesday','lq2')">Andrea cancelled it</button>
+        <button class="opt" onclick="checkOpt(this,'The client might not be available Tuesday','lq2')">The client might not be available Tuesday</button>
+        <button class="opt" onclick="checkOpt(this,'The client might not be available Tuesday','lq2')">The restaurant is fully booked</button>
+      </div>
+    </div>
+
+    <div class="act-t">✏️ Listening — True or False</div>
+    <div class="tf-set">
+      <div class="tf-row">
+        <div class="tf-stmt">Andrea's hotel reservation is confirmed for two nights.</div>
+        <div class="tf-btns">
+          <button class="tf-btn" onclick="checkTF(this,true,'tfl1')">TRUE</button>
+          <button class="tf-btn" onclick="checkTF(this,false,'tfl1')">FALSE</button>
+        </div>
+      </div>
+      <div class="tf-row">
+        <div class="tf-stmt">The warehouse visit on Wednesday is confirmed.</div>
+        <div class="tf-btns">
+          <button class="tf-btn" onclick="checkTF(this,false,'tfl2')">TRUE</button>
+          <button class="tf-btn" onclick="checkTF(this,false,'tfl2')">FALSE</button>
+        </div>
+      </div>
+      <div class="tf-row">
+        <div class="tf-stmt">Andrea might need to extend her stay if the client meeting moves to Thursday.</div>
+        <div class="tf-btns">
+          <button class="tf-btn" onclick="checkTF(this,true,'tfl3')">TRUE</button>
+          <button class="tf-btn" onclick="checkTF(this,false,'tfl3')">FALSE</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- §7 PRODUCTION -->
+<div class="section">
+  <div class="section-header">
+    <span class="section-number">§7</span>
+    <div><div class="section-title">Your Travel Update — <em>Confirmed & Uncertain</em></div><div class="section-sub">Real speaking production · Opinion meter · Hot Seat · Timer challenge</div></div>
+  </div>
+  <div class="section-body">
+    <div class="dur-tag">⏱ 12 MIN</div>
+    <img class="hero-img" src="https://images.pexels.com/photos/3184287/pexels-photo-3184287.jpeg?auto=compress&cs=tinysrgb&w=900" alt="Team discussing travel plans" style="height:140px">
+
+    <!-- OPINION METER -->
+    <div class="meter-wrap">
+      <div class="meter-q">"Business travel is more important than video calls for building client relationships."</div>
+      <div class="meter-bar"><div class="meter-indicator" id="meterInd" style="left:calc(50% - 10px)"></div></div>
+      <div class="meter-pct" id="meterPct">50%</div>
+      <div class="meter-btns">
+        <button class="meter-btn agree" onclick="moveMeter(7)">👍 AGREE</button>
+        <button class="meter-btn disagree" onclick="moveMeter(-7)">👎 DISAGREE</button>
+      </div>
+    </div>
+
+    <!-- SPEAKING CARDS -->
+    <div class="speak-grid">
+      <div class="speak-card">
+        <img class="speak-card-img" src="https://images.pexels.com/photos/3184306/pexels-photo-3184306.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Planning next trip">
+        <div class="speak-card-body">
+          <div class="sc-lbl">Question 1 — Your Schedule</div>
+          <div class="sc-q">Describe your real schedule for next week: 2 confirmed things (present continuous) and 2 uncertain things (may/might). Partner identifies which is which.</div>
+          <div class="sc-hint">💡 "I'm meeting X on Tuesday. But I might also have to…"</div>
+        </div>
+      </div>
+      <div class="speak-card">
+        <img class="speak-card-img" src="https://images.pexels.com/photos/3184311/pexels-photo-3184311.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Booking travel">
+        <div class="speak-card-body">
+          <div class="sc-lbl">Question 2 — Plan a Trip</div>
+          <div class="sc-q">You need to visit a client in CDMX next week. Describe your itinerary: flight, hotel, meetings. What's confirmed? What might change? Use at least 3 different certainty levels.</div>
+          <div class="sc-hint">💡 "I'm flying on Monday — that's booked. I may visit the factory. I might not stay for dinner."</div>
+        </div>
+      </div>
+      <div class="speak-card">
+        <img class="speak-card-img" src="https://images.pexels.com/photos/3184325/pexels-photo-3184325.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Responding to manager">
+        <div class="speak-card-body">
+          <div class="sc-lbl">Question 3 — Manager Update</div>
+          <div class="sc-q">You are Andrea Soto. Your manager asks: "What's confirmed for the Guadalajara trip and what might change?" Give a 4-sentence update.</div>
+          <div class="sc-hint">💡 Use: "I'm [verb]-ing… — that's confirmed. But I might / may… — I'll keep you posted."</div>
+        </div>
+      </div>
+      <div class="speak-card">
+        <img class="speak-card-img" src="https://images.pexels.com/photos/3184338/pexels-photo-3184338.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Colleague asking questions">
+        <div class="speak-card-body">
+          <div class="sc-lbl">Question 4 — Challenge ⭐</div>
+          <div class="sc-q">60-second spoken travel update: 3 confirmed plans + 2 uncertain possibilities + 1 thing that won't happen. No notes. Partner times you.</div>
+          <div class="sc-hint">💡 Model: "Next week I'm flying to… I'm meeting… But I might also… I won't…"</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TIMER -->
+    <div class="timer-wrap">
+      <svg width="88" height="88" viewBox="0 0 88 88">
+        <circle cx="44" cy="44" r="38" fill="none" stroke="rgba(249,115,22,.15)" stroke-width="4"/>
+        <circle id="arc7" cx="44" cy="44" r="38" fill="none" stroke="var(--accent)" stroke-width="4" stroke-dasharray="238.76" stroke-dashoffset="0" stroke-linecap="round" style="transform:rotate(-90deg);transform-origin:center"/>
+      </svg>
+      <div class="timer-text" id="timer7">1:30</div>
+      <button class="timer-start" onclick="startTimer('arc7','timer7',90,'b4',238.76)">▶ START</button>
+    </div>
+
+    <!-- HOT SEAT DICE -->
+    <div style="font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:2px;color:var(--accent);text-transform:uppercase;margin:16px 0 10px">🎲 Hot Seat Dice</div>
+    <div class="dice-grid">
+      <div class="dice-card" onclick="alert('Describe a business trip you took recently. What was confirmed and what changed last minute?')">
+        <img class="dice-card-img" src="https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Past trip">
+        <div class="dice-card-body"><div class="dice-num">1</div><div class="dice-q">A trip that changed</div></div>
+      </div>
+      <div class="dice-card" onclick="alert('Your flight is delayed 3 hours. Call your manager and explain what might happen with your schedule.')">
+        <img class="dice-card-img" src="https://images.pexels.com/photos/3184350/pexels-photo-3184350.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Flight delay">
+        <div class="dice-card-body"><div class="dice-num">2</div><div class="dice-q">Delayed flight</div></div>
+      </div>
+      <div class="dice-card" onclick="alert('You might need to travel to 2 cities next week. Explain the situation to your partner — what is certain, what depends?')">
+        <img class="dice-card-img" src="https://images.pexels.com/photos/2767813/pexels-photo-2767813.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Two destinations">
+        <div class="dice-card-body"><div class="dice-num">3</div><div class="dice-q">Two destinations</div></div>
+      </div>
+      <div class="dice-card" onclick="alert('Book a hotel for a colleague who is visiting your office. Explain what is confirmed and what you are still arranging.')">
+        <img class="dice-card-img" src="https://images.pexels.com/photos/164595/pexels-photo-164595.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Hotel booking">
+        <div class="dice-card-body"><div class="dice-num">4</div><div class="dice-q">Book for a colleague</div></div>
+      </div>
+      <div class="dice-card" onclick="alert('Your manager asks about Thursday. You have 3 meetings: 1 confirmed, 1 probable, 1 unlikely. Describe all three.')">
+        <img class="dice-card-img" src="https://images.pexels.com/photos/3184296/pexels-photo-3184296.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Three meetings">
+        <div class="dice-card-body"><div class="dice-num">5</div><div class="dice-q">Three certainty levels</div></div>
+      </div>
+      <div class="dice-card" onclick="alert('Write a 3-sentence WhatsApp message to your team about tomorrow. Mix confirmed and uncertain plans.')">
+        <img class="dice-card-img" src="https://images.pexels.com/photos/3184317/pexels-photo-3184317.jpeg?auto=compress&cs=tinysrgb&w=400" alt="WhatsApp update">
+        <div class="dice-card-body"><div class="dice-num">6</div><div class="dice-q">WhatsApp update</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- §8 WRAP-UP -->
+<div class="section">
+  <div class="section-header">
+    <span class="section-number">§8</span>
+    <div><div class="section-title">Session <em>Wrap-Up</em></div><div class="section-sub">What you learned · 3 phrases for this week · My Win today</div></div>
+  </div>
+  <div class="section-body">
+    <div class="dur-tag">⏱ 5 MIN</div>
+    <img class="hero-img" src="https://images.pexels.com/photos/3184430/pexels-photo-3184430.jpeg?auto=compress&cs=tinysrgb&w=900" alt="Team celebrating" style="height:120px">
+
+    <div class="wu3-grid">
+      <div class="wu3-card">
+        <div class="wu3-num">01</div>
+        <div class="wu3-txt"><strong style="color:#fff">Present Continuous = CONFIRMED.</strong> "I'm meeting the client at 10" means it's in the calendar, booked, definite. Use it for arrangements.</div>
+      </div>
+      <div class="wu3-card">
+        <div class="wu3-num">02</div>
+        <div class="wu3-txt"><strong style="color:#fff">May (~50%) vs Might (~30%).</strong> Both express possibility but might is less certain. "She may call" vs "She might call" — use both at work.</div>
+      </div>
+      <div class="wu3-card">
+        <div class="wu3-num">03</div>
+        <div class="wu3-txt"><strong style="color:#fff">No "to" after modals. Ever.</strong> "He might come" ✅ · "He might to come" ✗ · This rule applies to may, might, will, can, should, must — all of them.</div>
+      </div>
+    </div>
+
+    <div class="act-t">✅ I Can Now… — Click each one when confident</div>
+    <div class="checklist">
+      <div class="cl-item" onclick="this.classList.toggle('done')"><div class="cl-box"></div>I can use present continuous for confirmed future arrangements: "I'm flying on Tuesday."</div>
+      <div class="cl-item" onclick="this.classList.toggle('done')"><div class="cl-box"></div>I can express possibility with may and might: "She might not be available."</div>
+      <div class="cl-item" onclick="this.classList.toggle('done')"><div class="cl-box"></div>I can describe a business travel itinerary mixing confirmed and uncertain plans.</div>
+      <div class="cl-item" onclick="this.classList.toggle('done')"><div class="cl-box"></div>I can use certainty phrases: "We'll see" / "It depends" / "I'll keep you posted" / "TBD"</div>
+      <div class="cl-item" onclick="this.classList.toggle('done')"><div class="cl-box"></div>I know the bare infinitive rule: no "to" after may/might/will/can/should/must.</div>
+    </div>
+
+    <!-- 3 PHRASES FOR THIS WEEK -->
+    <div style="font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:3px;color:var(--gold);text-transform:uppercase;margin:20px 0 12px">🎯 This week at work</div>
+    <div style="font-family:var(--font-head);font-size:18px;font-weight:800;color:#fff;margin-bottom:16px">3 Phrases You Can Use Starting Tomorrow</div>
+    <div class="ph-grid">
+      <div class="ph-card">
+        <img class="ph-card-img" src="https://images.pexels.com/photos/3184394/pexels-photo-3184394.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Confirming appointment">
+        <div class="ph-card-body">
+          <div class="ph-num">PHRASE 1</div>
+          <div class="ph-phrase">"I'm meeting [person] at [time] on [day]."</div>
+          <div class="ph-ctx">Use this in emails, WhatsApp, and standups to confirm appointments. It sounds professional and signals that you're prepared and organized.</div>
+        </div>
+      </div>
+      <div class="ph-card">
+        <img class="ph-card-img" src="https://images.pexels.com/photos/3184454/pexels-photo-3184454.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Uncertain plan">
+        <div class="ph-card-body">
+          <div class="ph-num">PHRASE 2</div>
+          <div class="ph-phrase">"I might need to [verb] — it depends on [factor]."</div>
+          <div class="ph-ctx">Perfect for uncertain situations. Honest, professional, and shows you're aware of variables. Use in updates and planning calls.</div>
+        </div>
+      </div>
+      <div class="ph-card">
+        <img class="ph-card-img" src="https://images.pexels.com/photos/3184352/pexels-photo-3184352.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Keeping someone updated">
+        <div class="ph-card-body">
+          <div class="ph-num">PHRASE 3</div>
+          <div class="ph-phrase">"I'll keep you posted."</div>
+          <div class="ph-ctx">The go-to phrase when something is uncertain and you'll update later. Works in every context: email, WhatsApp, meetings, calls.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MY WIN -->
+    <div class="mywin">
+      <div class="mywin-lbl">🏆 My Win Today</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:8px">What's one thing you learned or practiced today that you'll use at work this week?</div>
+      <textarea class="mywin-ta" placeholder="Write your win here..."></textarea>
+      <button class="mywin-save" onclick="earnBadge('b5')">Save My Win 🏆</button>
+    </div>
+
+    <div class="next-box">
+      <div class="next-lbl">▶ Next — Session 3B · Application & Mastery</div>
+      <div class="next-title">Business Travel Pitch & Relay</div>
+      <div class="next-sub">Hot Take · Pitch debate · Speed Round · Solo Challenge · Certificate — come ready to produce!</div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="ftr">
+  <div class="fbrand">Gabriel Turner · English Training</div>
+  <div class="finfo">A2.2 · Module 4 · Session 3A · GT_A2_2_M4_S3A_TEACHER_v1</div>
+  <div class="flvs">
+    <div class="flv">A1.1</div><div class="flv">A1.2</div><div class="flv">A2.1</div>
+    <div class="flv on">A2.2</div><div class="flv">B1.1</div><div class="flv">B1.2</div>
+  </div>
+</footer>
+
+<script>
+/* ===== TTS ===== */
+function speak(t){if(!window.speechSynthesis)return;speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='en-US';u.rate=0.82;u.pitch=1;speechSynthesis.speak(u);}
+
+/* ===== TIMER (single definition) ===== */
+let timerRunning={};
+function startTimer(arcId,textId,seconds,badgeKey,circumference){
+  if(timerRunning[arcId])return;timerRunning[arcId]=true;
+  const arc=document.getElementById(arcId),txt=document.getElementById(textId);
+  let remaining=seconds;
+  const iv=setInterval(()=>{
+    remaining--;
+    const m=Math.floor(remaining/60),s=remaining%60;
+    txt.textContent=m+':'+(s<10?'0':'')+s;
+    const offset=circumference*(1-remaining/seconds);
+    arc.style.strokeDashoffset=offset;
+    if(remaining<=5)arc.style.stroke='#FF4D6D';
+    if(remaining<=0){clearInterval(iv);arc.style.stroke='var(--success)';txt.textContent='✓';earnBadge(badgeKey);timerRunning[arcId]=false;}
+  },1000);
+}
+
+/* ===== BADGES ===== */
+function earnBadge(id){const el=document.getElementById(id);if(el&&!el.classList.contains('earned')){el.classList.add('earned');checkAllBadges();}}
+function checkAllBadges(){const all=document.querySelectorAll('.badge-strip span');let earned=0;all.forEach(s=>{if(s.classList.contains('earned'))earned++;});if(earned===all.length)launchConfetti();}
+function launchConfetti(){const colors=['#F97316','#FB923C','#FFB800','#FF4D6D','#00E676'];for(let i=0;i<40;i++){const c=document.createElement('div');c.className='confetti';c.style.left=Math.random()*100+'%';c.style.background=colors[Math.floor(Math.random()*colors.length)];c.style.animationDelay=Math.random()*1.5+'s';c.style.width=(4+Math.random()*6)+'px';c.style.height=c.style.width;document.body.appendChild(c);setTimeout(()=>c.remove(),3000);}}
+
+/* ===== MODE TOGGLE ===== */
+function toggleMode(){document.body.classList.toggle('sm');const btn=document.querySelector('.mode-toggle');btn.textContent=document.body.classList.contains('sm')?'Teacher Mode':'Student Mode';}
+
+/* ===== TEACHER NOTES ===== */
+function toggleTN(id){const p=document.getElementById(id);p.classList.toggle('open');const btn=p.previousElementSibling;const arrow=btn.querySelector('span');if(arrow)arrow.textContent=p.classList.contains('open')?'▲':'▼';}
+
+/* ===== MODEL REVEAL ===== */
+function toggleModel(id){const el=document.getElementById(id);el.classList.toggle('open');}
+
+/* ===== COLLAPSIBLE ===== */
+function toggleColl(id){const el=document.getElementById(id);el.classList.toggle('open');}
+
+/* ===== SCRIPT TOGGLE ===== */
+function toggleScript(){const b=document.getElementById('scriptBox');b.classList.toggle('open');document.querySelector('.script-toggle').textContent=b.classList.contains('open')?'▲ Hide Script':'▼ Show ElevenLabs Script';}
+
+/* ===== MCQ ===== */
+function checkOpt(btn,correct,qid){
+  const c=document.getElementById(qid);
+  c.querySelectorAll('.opt').forEach(b=>{b.disabled=true;if(b.textContent.trim()===correct)b.classList.add('correct-ans');});
+  if(btn.textContent.trim()!==correct)btn.classList.add('wrong-ans');
+}
+
+/* ===== TRUE/FALSE ===== */
+function checkTF(btn,isCorrect,id){
+  const row=btn.closest('.tf-row');
+  row.querySelectorAll('.tf-btn').forEach(b=>b.disabled=true);
+  if(isCorrect){btn.style.cssText='background:rgba(0,230,118,.15);border-color:#00E676;color:#00E676';}
+  else{btn.style.cssText='background:rgba(255,77,109,.12);border-color:#FF4D6D;color:#FF4D6D';
+    const s=row.querySelector('.tf-stmt');if(s)s.style.textDecoration='line-through';
+    const sib=Array.from(row.querySelectorAll('.tf-btn')).find(b=>b!==btn);
+    if(sib)sib.style.cssText='background:rgba(0,230,118,.12);border-color:#00E676;color:#00E676';}
+}
+
+/* ===== POLL ===== */
+const pollMsgs={p1a:'Incorrect — might + base verb, no extra words.',p1b:'Correct! might + base verb, no "to."',p1c:'Incorrect — no "to" after might.'};
+function checkPoll(btn,key,pollId){
+  const c=document.getElementById(pollId);
+  c.querySelectorAll('.poll-btn').forEach(b=>{b.disabled=true;});
+  if(btn.textContent.trim().startsWith('B)')){btn.classList.add('correct-ans');earnBadge('b3');}
+  else{btn.classList.add('wrong-ans');c.querySelectorAll('.poll-btn').forEach(b=>{if(b.textContent.trim().startsWith('B)'))b.classList.add('correct-ans');});}
+}
+
+/* ===== CERTAINTY GAUGE ===== */
+function checkGauge(id,target,sentence,explain){
+  const slider=document.getElementById(id);
+  const val=parseInt(slider.value);
+  const rEl=document.getElementById(id+'r');
+  const eEl=document.getElementById(id+'e');
+  const diff=Math.abs(val-target);
+  if(diff<=15){rEl.textContent='✅ '+sentence;rEl.style.color='var(--green)';
+  }else{rEl.textContent='❌ Try again → '+sentence;rEl.style.color='var(--danger)';}
+  eEl.textContent=explain;
+}
+
+/* ===== DRAG & DROP ===== */
+let dragSrc=null;
+function initDrag(listId){
+  const list=document.getElementById(listId);if(!list)return;
+  list.querySelectorAll('.reorder-item').forEach(item=>{
+    item.addEventListener('dragstart',function(){dragSrc=this;this.classList.add('dragging');});
+    item.addEventListener('dragend',function(){this.classList.remove('dragging');list.querySelectorAll('.reorder-item').forEach(i=>i.classList.remove('drag-over'));});
+    item.addEventListener('dragover',function(e){e.preventDefault();list.querySelectorAll('.reorder-item').forEach(i=>i.classList.remove('drag-over'));if(this!==dragSrc)this.classList.add('drag-over');});
+    item.addEventListener('drop',function(e){e.preventDefault();if(this!==dragSrc){const all=[...list.querySelectorAll('.reorder-item')];if(all.indexOf(dragSrc)<all.indexOf(this))list.insertBefore(dragSrc,this.nextSibling);else list.insertBefore(dragSrc,this);}});
+  });
+}
+function checkOrder(listId,correct,fbId){
+  const list=document.getElementById(listId);
+  const current=[...list.querySelectorAll('.reorder-item')].map(i=>i.textContent.replace('⠿','').trim());
+  const fb=document.getElementById(fbId);
+  if(JSON.stringify(current)===JSON.stringify(correct)){
+    fb.className='fb show ok';fb.textContent='✓ Correct!';
+    list.querySelectorAll('.reorder-item').forEach(i=>{i.style.borderColor='var(--green)';i.style.color='var(--green)';});
+  }else{
+    fb.className='fb show no';fb.textContent='✗ Correct order: '+correct.join(' — ');
+    list.querySelectorAll('.reorder-item').forEach(i=>{i.style.borderColor='var(--danger)';});
+  }
+}
+
+/* ===== VOCAB QUIZ ===== */
+const vqData=[
+  {q:'A detailed plan for your trip:',a:'itinerary',d:['departure','reservation']},
+  {q:'The time when a flight leaves:',a:'departure',d:['arrival','layover']},
+  {q:'A stop between connecting flights:',a:'layover',d:['carry-on','boarding pass']},
+  {q:'A booking made in advance:',a:'reservation',d:['confirmation','expense report']},
+  {q:'Official proof something is booked:',a:'confirmation',d:['availability','itinerary']},
+  {q:'Document you need to board the plane:',a:'boarding pass',d:['expense report','carry-on']},
+  {q:'Small bag you take on the plane:',a:'carry-on',d:['layover','departure']},
+  {q:'Document listing trip costs:',a:'expense report',d:['reservation','boarding pass']},
+  {q:'To change a meeting to a new time:',a:'reschedule',d:['extend','confirmation']},
+  {q:'Whether someone or something is free:',a:'availability',d:['itinerary','reschedule']},
+  {q:'To make something last longer:',a:'extend',d:['departure','arrival']},
+  {q:'The time when you reach your destination:',a:'arrival',d:['departure','layover']}
+];
+let vqI=0,vqScore=0,vqShuffled=[];
+function shuffle(arr){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function startQuiz(){vqShuffled=shuffle(vqData);vqI=0;vqScore=0;document.getElementById('vqRestart').style.display='none';showVQ();}
+function showVQ(){
+  if(vqI>=vqShuffled.length){document.getElementById('vqQ').textContent='Quiz complete!';document.getElementById('vqOpts').innerHTML='';document.getElementById('vqRestart').style.display='inline-block';if(vqScore>=8)earnBadge('b2');return;}
+  const item=vqShuffled[vqI];
+  document.getElementById('vqScore').textContent='Score: '+vqScore+' / '+vqI;
+  document.getElementById('vqBar').style.width=(vqI/vqShuffled.length*100)+'%';
+  document.getElementById('vqQ').textContent=item.q;
+  const opts=shuffle([item.a,...item.d]);
+  const cont=document.getElementById('vqOpts');cont.innerHTML='';
+  opts.forEach(o=>{const btn=document.createElement('button');btn.className='vq-opt';btn.textContent=o;btn.onclick=function(){
+    cont.querySelectorAll('.vq-opt').forEach(b=>{b.classList.add('locked');if(b.textContent===item.a)b.classList.add('correct-ans');});
+    if(o===item.a)vqScore++;else this.classList.add('wrong-ans');
+    setTimeout(()=>{vqI++;showVQ();},1000);
+  };cont.appendChild(btn);});
+}
+startQuiz();
+
+/* ===== OPINION METER ===== */
+let meterVal=50;
+function moveMeter(delta){meterVal=Math.max(5,Math.min(95,meterVal+delta));document.getElementById('meterPct').textContent=meterVal+'%';document.getElementById('meterInd').style.left='calc('+meterVal+'% - 10px)';}
+
+/* ===== WAVEFORM ===== */
+const wv=document.getElementById('wv');
+for(let i=0;i<55;i++){const b=document.createElement('div');b.className='wbar';b.style.height=(6+Math.sin(i*.6)*10+Math.random()*16)+'px';b.style.opacity=.3+Math.random()*.4;wv.appendChild(b);}
+
+/* ===== PROGRESS BAR ===== */
+window.addEventListener('scroll',()=>{const h=document.documentElement.scrollHeight-window.innerHeight;const pct=h>0?(window.scrollY/h*100):0;document.getElementById('progBar').style.width=pct+'%';});
+
+initDrag('order1');
+initDrag('order2');
+</script>
+</body>
+</html>
