@@ -356,6 +356,31 @@ body.student-mode .sec-time{display:none}
       <strong style="color:var(--green)">⚡ Drill Rules:</strong><br>
       (1) Teacher reads ONE scenario aloud. (2) Students speak immediately — 20–30 seconds max. (3) Call on 3 different students per drill. (4) Click the card when done — turns green. (5) SPEED is the point. Mistakes are acceptable. Silence is not.
     </div>
+
+    <!-- ═══ MINI-GAME: SHOULD / SHOULDN'T QUICK-FIRE ═══ -->
+    <div class="ssqf-wrap" style="margin-top:28px;background:#080808;border:1px solid #00CFFF;border-radius:4px;padding:22px;color:#e8e8e8;font-family:Inter,system-ui,sans-serif">
+      <div style="font-family:'Syne',sans-serif;font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#00CFFF;margin-bottom:6px">Mini-Game · Production · Badge b3</div>
+      <div style="font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:700;color:#fff;margin-bottom:10px">Should / Shouldn't Quick-Fire</div>
+      <div style="font-size:13px;color:#a8a8a8;line-height:1.7;margin-bottom:16px">8 scenarios. Type ONE piece of advice using <strong style="color:#00CFFF">should</strong>, <strong style="color:#00CFFF">shouldn't</strong>, or <strong style="color:#00CFFF">why don't you</strong>. Score 6+ to earn the badge.</div>
+
+      <div id="ssqf-card" style="background:rgba(0,207,255,.05);border:1px solid rgba(0,207,255,.25);border-radius:4px;padding:18px;margin-bottom:14px;min-height:90px">
+        <div style="font-family:'Syne',sans-serif;font-size:10px;letter-spacing:2px;color:#00CFFF;margin-bottom:8px">SCENARIO <span id="ssqf-num">1</span> / 8</div>
+        <div id="ssqf-scenario" style="font-size:15px;color:#fff;line-height:1.6">Your colleague is always late to meetings.</div>
+      </div>
+
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:stretch">
+        <input id="ssqf-input" type="text" placeholder="Type your advice using should / shouldn't / why don't you…" style="flex:1;min-width:260px;background:#080808;border:1px solid #444;color:#fff;padding:12px 14px;font-size:14px;font-family:inherit;border-radius:3px;outline:none" />
+        <button id="ssqf-submit" style="background:#00CFFF;color:#080808;border:none;padding:12px 22px;font-family:'Syne',sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;cursor:pointer;border-radius:3px">Submit</button>
+      </div>
+
+      <div id="ssqf-feedback" style="margin-top:12px;font-size:13px;min-height:20px;line-height:1.6"></div>
+
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:14px;padding-top:14px;border-top:1px solid #222">
+        <div style="font-family:'Syne',sans-serif;font-size:11px;letter-spacing:2px;color:#a8a8a8">SCORE: <span id="ssqf-score" style="color:#00CFFF;font-weight:700">0</span> / <span id="ssqf-total">0</span></div>
+        <div id="ssqf-result" style="font-family:'Syne',sans-serif;font-size:11px;letter-spacing:2px"></div>
+      </div>
+    </div>
+
   </div>
 </section>
 
@@ -731,6 +756,57 @@ function buildWave(id){
 }
 buildWave('wv1');
 buildWave('wv2');
+
+/* ═══ MINI-GAME: Should/Shouldn't Quick-Fire ═══ */
+(function(){
+  var scenarios = [
+    "Your colleague is always late to meetings.",
+    "Your friend is exhausted and not sleeping well.",
+    "A teammate hasn't asked the manager for feedback in 6 months.",
+    "Your coworker keeps eating lunch at their desk and feels stressed.",
+    "Someone is nervous about a big job interview next week.",
+    "Your friend works every weekend and never takes a day off.",
+    "A new employee feels confused about company policies.",
+    "Your colleague wants a raise but never speaks to their manager."
+  ];
+  var idx = 0, score = 0, answered = 0;
+  var $num = document.getElementById('ssqf-num');
+  var $sc = document.getElementById('ssqf-scenario');
+  var $in = document.getElementById('ssqf-input');
+  var $btn = document.getElementById('ssqf-submit');
+  var $fb = document.getElementById('ssqf-feedback');
+  var $sco = document.getElementById('ssqf-score');
+  var $tot = document.getElementById('ssqf-total');
+  var $res = document.getElementById('ssqf-result');
+  if(!$btn) return;
+  function next(){
+    idx++;
+    if(idx >= scenarios.length){
+      $btn.disabled = true; $in.disabled = true;
+      var pass = score >= 6;
+      $res.innerHTML = pass
+        ? '<span style="color:#00CFFF">✓ BADGE B3 EARNED · '+score+'/8</span>'
+        : '<span style="color:#f97316">Try again — '+score+'/8 (need 6+)</span>';
+      return;
+    }
+    $num.textContent = idx + 1;
+    $sc.textContent = scenarios[idx];
+    $in.value = ''; $fb.innerHTML = ''; $in.focus();
+  }
+  function submit(){
+    var v = ($in.value || '').toLowerCase().trim();
+    if(!v){ $fb.innerHTML = '<span style="color:#f97316">Type some advice first.</span>'; return; }
+    answered++;
+    var ok = /\bshould\b|\bshouldn'?t\b|\bwhy don'?t\b/.test(v);
+    if(ok){ score++; $fb.innerHTML = '<span style="color:#00CFFF">✓ Good — uses advice structure.</span>'; }
+    else { $fb.innerHTML = '<span style="color:#f97316">✗ Needs "should", "shouldn\'t", or "why don\'t you".</span>'; }
+    $sco.textContent = score; $tot.textContent = answered;
+    setTimeout(next, 900);
+  }
+  $btn.addEventListener('click', submit);
+  $in.addEventListener('keydown', function(e){ if(e.key === 'Enter') submit(); });
+  $tot.textContent = 0;
+})();
 </script>
 </body>
 </html>
