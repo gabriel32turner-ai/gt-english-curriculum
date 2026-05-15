@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GT B1.1 · M4 · S4B — Online Communication · Application &amp; Mastery</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0D1117;--surface:#111318;--surface2:#1a1f28;
+  --accent:#10B981;--accent2:#34D399;
+  --border:rgba(16,185,129,.18);
+  --text:#F0F4F8;--muted:#8A9BB0;--dim:rgba(226,226,226,.25);
+  --danger:#FF4D6D;--success:#00E5A0;--warn:#FFB347;
+  --gold:#FFB800;--cyan:#00CFFF;--violet:#A78BFA;--green:#00E676;
+  --font-head:'Syne',sans-serif;--font-body:'DM Sans',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:14px;line-height:1.6}
+.prog{height:3px;background:var(--accent);position:fixed;top:0;left:0;z-index:999;width:0;transition:width .1s linear;box-shadow:0 0 8px rgba(16,185,129,.6)}
+
+/* HEADER */
+.hdr{background:var(--surface);border-bottom:1px solid var(--border);padding:18px 40px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:3px;z-index:200;backdrop-filter:blur(12px);flex-wrap:wrap;gap:10px}
+.brand{display:flex;align-items:center;gap:10px}
+.dot{width:8px;height:8px;background:var(--accent);border-radius:50%;animation:pulse 2.5s ease-in-out infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(16,185,129,.4)}60%{box-shadow:0 0 0 5px rgba(16,185,129,0)}}
+.bname{font-family:var(--font-head);font-weight:800;font-size:12px;letter-spacing:2.5px;text-transform:uppercase;color:#fff}
+.bsub{font-size:10px;color:var(--muted);letter-spacing:1px}
+.badge-strip{display:flex;gap:6px;align-items:center}
+.badge-strip span{font-size:18px;filter:grayscale(1);opacity:.3;transition:all .4s;cursor:default}
+.badge-strip span.earned{filter:grayscale(0);opacity:1;transform:scale(1.2)}
+.session-badge{background:rgba(16,185,129,.15);border:1px solid rgba(16,185,129,.3);color:var(--accent);padding:3px 10px;font-family:var(--font-head);font-size:9px;font-weight:800;letter-spacing:2px;text-transform:uppercase;border-radius:3px}
+.sess-meta{display:flex;gap:7px;flex-wrap:wrap;align-items:center}
+.tag{display:inline-block;padding:3px 10px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;border-radius:3px}
+.tag-level{background:rgba(16,185,129,.15);color:var(--accent);border:1px solid var(--border)}
+.tag-mod{background:rgba(255,184,0,.1);color:var(--gold);border:1px solid rgba(255,184,0,.25)}
+.tag-sess{background:rgba(0,207,255,.1);color:var(--cyan);border:1px solid rgba(0,207,255,.25)}
+.tag-time{background:rgba(0,230,118,.08);color:var(--green);border:1px solid rgba(0,230,118,.2)}
+
+/* NAV */
+.nav{background:var(--surface2);border-bottom:1px solid var(--border);padding:8px 40px;display:flex;gap:6px;flex-wrap:wrap;overflow-x:auto}
+.nav-link{font-family:var(--font-head);font-size:9.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);text-decoration:none;padding:5px 12px;border-radius:4px;border:1px solid transparent;transition:all .2s;white-space:nowrap}
+.nav-link:hover{color:var(--accent);border-color:var(--border);background:rgba(16,185,129,.06)}
+
+/* SECTIONS */
+.section{margin:24px 32px;border:1px solid var(--border);border-radius:14px;overflow:hidden;background:var(--surface)}
+.section-header{display:flex;align-items:center;gap:14px;padding:16px 22px;background:linear-gradient(135deg,rgba(16,185,129,.08),transparent);border-bottom:1px solid var(--border);flex-wrap:wrap}
+.section-number{font-family:var(--font-head);font-size:10px;font-weight:800;color:var(--accent);letter-spacing:.12em;text-transform:uppercase;background:rgba(16,185,129,.1);border:1px solid var(--border);padding:2px 9px;border-radius:20px}
+.section-title{font-family:var(--font-head);font-size:18px;font-weight:800;color:#fff}
+.section-title em{color:var(--accent);font-style:normal}
+.section-sub{font-size:12px;color:var(--muted);margin-left:auto}
+.dur-tag{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:1.5px;color:var(--gold);border:1px solid rgba(255,184,0,.2);padding:2px 8px;border-radius:3px;margin-left:8px;white-space:nowrap}
+.section-body{padding:22px 24px}
+
+/* IMAGES */
+.img-hero{width:100%;height:220px;object-fit:cover;display:block;filter:brightness(.58)}
+.img-banner{width:100%;height:120px;object-fit:cover;display:block;filter:brightness(.5)}
+.img-card{width:100%;height:80px;object-fit:cover;display:block;filter:brightness(.48)}
+.img-sm{width:100%;height:70px;object-fit:cover;display:block;filter:brightness(.48)}
+
+/* TEACHER NOTES */
+.tn{border-radius:8px;padding:12px 16px;margin-top:14px;font-size:12px;line-height:1.6}
+.tn-c1{background:rgba(0,207,255,.06);border:1px solid rgba(0,207,255,.2);color:rgba(0,207,255,.85)}
+.tn-c2{background:rgba(255,61,114,.06);border:1px solid rgba(255,61,114,.2);color:rgba(255,120,150,.9)}
+.tn-lbl{font-family:var(--font-head);font-size:8.5px;font-weight:800;letter-spacing:2px;text-transform:uppercase;margin-bottom:5px;display:block}
+
+/* TIMER */
+.timer-wrap{display:inline-flex;flex-direction:column;align-items:center;gap:6px}
+.timer-svg{transform:rotate(-90deg)}
+.timer-arc{transition:stroke-dashoffset .9s linear;stroke-linecap:round}
+.timer-text{font-family:var(--font-head);font-size:18px;font-weight:800;fill:#fff}
+.timer-btn{font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;padding:7px 18px;border-radius:5px;cursor:pointer;border:1px solid var(--accent);background:rgba(16,185,129,.1);color:var(--accent);transition:all .2s;margin-top:6px}
+.timer-btn:hover{background:rgba(16,185,129,.2)}
+
+/* HOT TAKE §1 */
+.hot-take-hero{position:relative;border-radius:10px;overflow:hidden;margin-bottom:16px}
+.hot-take-img{width:100%;height:200px;object-fit:cover;display:block;filter:brightness(.48)}
+.hot-take-overlay{position:absolute;bottom:0;left:0;right:0;padding:16px 20px;background:linear-gradient(transparent,rgba(0,0,0,.82))}
+.hot-take-lbl{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--warn);margin-bottom:4px}
+.hot-take-prompt{font-size:15px;font-weight:700;color:#fff;line-height:1.35}
+.badge-rules{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:14px}
+.br-card{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px;text-align:center}
+.br-icon{font-size:20px;margin-bottom:4px}
+.br-name{font-family:var(--font-head);font-size:8px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--accent);margin-bottom:3px}
+.br-rule{font-size:10px;color:var(--muted);line-height:1.4}
+
+/* PITCH §2 */
+.pitch-banner{width:100%;height:100px;object-fit:cover;display:block;filter:brightness(.48);border-radius:8px;margin-bottom:14px}
+.sides-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
+.side-card{border-radius:10px;overflow:hidden;border:1px solid var(--border)}
+.side-card-img{width:100%;height:90px;object-fit:cover;display:block;filter:brightness(.48)}
+.side-card-body{padding:13px 15px;background:var(--surface2)}
+.side-label{font-family:var(--font-head);font-size:9px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:5px}
+.side-name{font-family:var(--font-head);font-size:14px;font-weight:700;color:#fff;margin-bottom:6px}
+.side-starters{list-style:none;display:flex;flex-direction:column;gap:5px}
+.side-starters li{font-size:11.5px;color:var(--accent2);font-style:italic;border-left:2px solid rgba(16,185,129,.3);padding-left:7px;line-height:1.4}
+
+/* RELAY §3 */
+.relay-banner{width:100%;height:100px;object-fit:cover;display:block;filter:brightness(.48);border-radius:8px;margin-bottom:14px}
+.relay-intro{background:rgba(16,185,129,.04);border:1px solid rgba(16,185,129,.15);border-radius:8px;padding:13px 16px;margin-bottom:14px;font-size:12.5px;color:var(--text);line-height:1.6}
+.relay-steps{display:flex;flex-direction:column;gap:10px;margin-bottom:14px}
+.relay-item{background:var(--surface2);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.relay-item-header{display:flex;align-items:center;gap:12px;padding:11px 14px;border-bottom:1px solid var(--border)}
+.relay-num{font-family:var(--font-head);font-size:11px;font-weight:800;color:var(--accent);background:rgba(16,185,129,.12);border:1px solid var(--border);width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.relay-type{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--cyan)}
+.relay-prompt{font-size:13px;color:var(--text);font-style:italic;flex:1;line-height:1.4}
+.relay-body{padding:10px 14px}
+.relay-answer{display:none;background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.15);border-radius:5px;padding:8px 12px;font-size:12.5px;color:var(--accent2);line-height:1.5;margin-top:6px}
+.relay-answer.show{display:block}
+.relay-btn{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:1px;padding:5px 13px;border-radius:4px;cursor:pointer;border:1px solid rgba(16,185,129,.3);background:rgba(16,185,129,.08);color:var(--accent);transition:all .2s}
+.relay-btn:hover{background:rgba(16,185,129,.18)}
+
+/* SPEED ROUND §4 */
+.speed-banner{width:100%;height:80px;object-fit:cover;display:block;filter:brightness(.48);border-radius:8px;margin-bottom:14px}
+.score-bar{display:flex;align-items:center;gap:12px;margin-bottom:16px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:11px 16px}
+.score-lbl{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim)}
+.score-num{font-family:var(--font-head);font-size:22px;font-weight:800;color:var(--accent)}
+.score-total{font-size:13px;color:var(--muted)}
+.speed-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.speed-card{background:var(--surface2);border:1px solid var(--border);border-radius:10px;overflow:hidden;cursor:pointer;transition:all .2s}
+.speed-card:hover{border-color:var(--accent)}
+.speed-card-img{width:100%;height:70px;object-fit:cover;display:block;filter:brightness(.48)}
+.speed-card-body{padding:10px 12px}
+.speed-q{font-size:12.5px;color:var(--text);margin-bottom:8px;line-height:1.4;min-height:38px}
+.speed-opts{display:flex;gap:6px;flex-wrap:wrap}
+.speed-opt{background:var(--surface);border:1px solid var(--border);color:var(--muted);padding:5px 11px;font-size:11px;cursor:pointer;border-radius:4px;transition:all .2s}
+.speed-opt:hover:not(:disabled){border-color:var(--accent);color:var(--accent)}
+.speed-opt.correct{background:rgba(0,229,160,.12);border-color:var(--success);color:var(--success)}
+.speed-opt.wrong{background:rgba(255,77,109,.12);border-color:var(--danger);color:var(--danger)}
+.speed-opt:disabled{cursor:not-allowed}
+
+/* SOLO CHALLENGE §5 */
+.solo-hero{position:relative;border-radius:10px;overflow:hidden;margin-bottom:16px}
+.solo-img{width:100%;height:180px;object-fit:cover;display:block;filter:brightness(.48)}
+.solo-overlay{position:absolute;bottom:0;left:0;right:0;padding:16px 20px;background:linear-gradient(transparent,rgba(0,0,0,.82))}
+.solo-lbl{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--accent);margin-bottom:4px}
+.solo-task{font-size:15px;font-weight:700;color:#fff;line-height:1.3}
+.solo-rules{display:flex;flex-direction:column;gap:7px;margin-bottom:16px}
+.solo-rule{display:flex;align-items:center;gap:10px;font-size:12.5px;color:var(--text);padding:9px 13px;background:var(--surface2);border:1px solid var(--border);border-radius:7px}
+.solo-rule-num{font-family:var(--font-head);font-size:11px;font-weight:800;color:var(--accent);width:18px;flex-shrink:0}
+
+/* SOURCE ANALYSIS §6 */
+.source-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.source-card{background:var(--surface2);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.source-card-img{width:100%;height:100px;object-fit:cover;display:block;filter:brightness(.48)}
+.source-card-body{padding:13px 15px}
+.source-type{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--cyan);margin-bottom:5px}
+.source-content{background:rgba(0,207,255,.04);border:1px solid rgba(0,207,255,.15);border-radius:6px;padding:10px 13px;font-size:12.5px;color:var(--text);line-height:1.55;margin-bottom:9px;font-style:italic}
+.source-q{font-size:12px;color:var(--muted);margin-bottom:8px;line-height:1.4}
+.src-opts{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.src-opt{background:var(--surface);border:1px solid var(--border);color:var(--muted);padding:5px 12px;font-size:11px;cursor:pointer;border-radius:4px;transition:all .2s}
+.src-opt:hover:not(:disabled){border-color:var(--accent);color:var(--accent)}
+.src-opt.correct{background:rgba(0,229,160,.12);border-color:var(--success);color:var(--success)}
+.src-opt.wrong{background:rgba(255,77,109,.12);border-color:var(--danger);color:var(--danger)}
+.src-opt:disabled{cursor:not-allowed}
+
+/* SELF-RATING §7 */
+.rating-banner{width:100%;height:80px;object-fit:cover;display:block;filter:brightness(.48);border-radius:8px;margin-bottom:14px}
+.slider-group{display:flex;flex-direction:column;gap:12px;margin-bottom:16px}
+.slider-row{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:13px 16px}
+.slider-lbl{font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);margin-bottom:5px}
+.slider-q{font-size:13px;color:var(--text);margin-bottom:10px;line-height:1.4}
+.rating-input{width:100%;accent-color:var(--accent);cursor:pointer;margin-bottom:5px}
+.slider-val{font-family:var(--font-head);font-size:18px;font-weight:800;color:var(--accent);text-align:center}
+.rating-feedback{background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.18);border-radius:8px;padding:13px 16px;margin-top:12px;min-height:48px}
+.rf-lbl{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:5px}
+.rf-text{font-size:13px;color:var(--text);line-height:1.55}
+
+/* LEADERBOARD */
+.lb-wrap{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:16px 18px;margin-top:14px}
+.lb-hdr{font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:12px}
+.lb-add{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.lb-input{background:var(--surface);border:1px solid var(--border);color:var(--text);padding:7px 12px;font-family:var(--font-body);font-size:12.5px;border-radius:5px;flex:1;min-width:100px;outline:none;transition:border-color .2s}
+.lb-input:focus{border-color:var(--accent)}
+.lb-btn{font-family:var(--font-head);font-size:9.5px;font-weight:700;letter-spacing:1px;padding:7px 14px;border-radius:5px;cursor:pointer;border:1px solid var(--accent);background:rgba(16,185,129,.12);color:var(--accent);transition:all .2s;white-space:nowrap}
+.lb-btn:hover{background:rgba(16,185,129,.25)}
+.lb-reset{border-color:rgba(255,77,109,.3);background:rgba(255,77,109,.06);color:var(--danger)}
+.lb-reset:hover{background:rgba(255,77,109,.15)}
+.lb-table{width:100%;border-collapse:collapse}
+.lb-table th{padding:8px 12px;text-align:left;font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim);border-bottom:1px solid var(--border)}
+.lb-table td{padding:9px 12px;border-bottom:1px solid rgba(255,255,255,.04);font-size:12.5px}
+.lb-rank{font-family:var(--font-head);font-weight:800;color:var(--accent)}
+.lb-pts{font-family:var(--font-head);font-weight:700;color:var(--accent2)}
+
+/* CERTIFICATE §8 */
+.cert-banner{width:100%;height:100px;object-fit:cover;display:block;filter:brightness(.48);border-radius:8px;margin-bottom:14px}
+.cert-wrap{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:18px 20px;margin-bottom:14px}
+.cert-lbl{font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:10px}
+.cert-row{display:flex;gap:8px;margin-bottom:10px}
+.cert-input{background:var(--surface);border:1px solid var(--border);color:var(--text);padding:8px 13px;font-family:var(--font-body);font-size:13px;border-radius:5px;flex:1;outline:none;transition:border-color .2s}
+.cert-input:focus{border-color:var(--accent)}
+.cert-btn{font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1px;padding:8px 18px;border-radius:5px;cursor:pointer;border:1px solid var(--accent);background:rgba(16,185,129,.12);color:var(--accent);transition:all .2s;white-space:nowrap}
+.cert-btn:hover{background:rgba(16,185,129,.25)}
+.cert-result{display:none;background:linear-gradient(135deg,rgba(16,185,129,.08),rgba(52,211,153,.04));border:1px solid rgba(16,185,129,.3);border-radius:10px;padding:22px 24px;text-align:center}
+.cert-result.show{display:block}
+.cert-emoji{font-size:32px;margin-bottom:8px}
+.cert-name{font-family:var(--font-head);font-size:22px;font-weight:800;color:var(--accent);margin-bottom:4px}
+.cert-body{font-size:13px;color:var(--muted);margin-bottom:12px;line-height:1.6}
+.cert-skills{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-bottom:12px}
+.cert-skill{background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.25);color:var(--accent2);padding:4px 12px;border-radius:20px;font-size:11.5px}
+.cert-date{font-size:11px;color:var(--dim)}
+
+/* PHRASES */
+.phrases-section{background:rgba(255,184,0,.03);border-top:1px solid rgba(255,184,0,.12);border-bottom:1px solid rgba(255,184,0,.12)}
+.ph-lbl{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:7px}
+.ph-title{font-family:var(--font-head);font-size:22px;font-weight:800;color:#fff;margin-bottom:20px;line-height:1.3}
+.ph-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.ph-card{background:var(--surface2);border:1px solid rgba(255,184,0,.2);border-radius:10px;overflow:hidden}
+.ph-card-img{width:100%;height:80px;object-fit:cover;display:block;filter:brightness(.45)}
+.ph-card-body{padding:14px 16px}
+.ph-num{font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;color:var(--gold);margin-bottom:6px}
+.ph-phrase{font-family:var(--font-head);font-size:14px;font-weight:700;color:#fff;margin-bottom:7px;line-height:1.3}
+.ph-ctx{font-size:11.5px;color:var(--muted);line-height:1.55}
+
+/* MY WIN */
+.win-box{background:rgba(255,184,0,.04);border:1px solid rgba(255,184,0,.18);border-radius:10px;padding:16px 18px;margin-top:16px}
+.win-lbl{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold);margin-bottom:8px}
+.win-textarea{width:100%;background:var(--surface);border:1px solid rgba(255,184,0,.2);border-radius:6px;color:var(--text);font-family:var(--font-body);font-size:13px;padding:10px 13px;resize:vertical;min-height:70px;outline:none;line-height:1.5;transition:border-color .2s}
+.win-textarea::placeholder{color:var(--muted)}
+.win-textarea:focus{border-color:var(--gold)}
+.win-save{margin-top:8px;background:rgba(255,184,0,.1);border:1px solid rgba(255,184,0,.3);color:var(--gold);padding:7px 18px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;cursor:pointer;border-radius:5px;transition:all .2s}
+.win-save:hover{background:rgba(255,184,0,.2)}
+
+/* FOOTER */
+.ftr{background:var(--surface);border-top:1px solid var(--border);padding:16px 40px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-top:24px}
+.fbrand{font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim)}
+.finfo{font-size:11px;color:var(--dim)}
+.flevels{display:flex;gap:3px;flex-wrap:wrap}
+.flv{padding:5px 10px;font-family:var(--font-head);font-size:10px;font-weight:700;background:var(--surface2);color:var(--dim);border-radius:3px}
+.flv.active{background:var(--accent);color:#fff}
+
+@media(max-width:860px){
+  .hdr,.ftr{padding:14px 16px}
+  .nav{padding:8px 16px}
+  .section{margin:14px 10px}
+  .section-body{padding:14px 14px}
+  .sides-grid,.source-grid{grid-template-columns:1fr}
+  .speed-grid{grid-template-columns:1fr}
+  .ph-grid{grid-template-columns:1fr}
+  .badge-rules{grid-template-columns:repeat(3,1fr)}
+}
+</style>
+</head>
+<body>
+
+<div class="prog" id="prog"></div>
+
+<!-- HEADER -->
+<header class="hdr">
+  <div class="brand"><div class="dot"></div><div><div class="bname">Gabriel Turner</div><div class="bsub">English Training · Teacher Edition</div></div></div>
+  <div class="badge-strip">
+    <span id="b1" title="Hot Start">🔥</span>
+    <span id="b2" title="Speed Round 7+/10">⚡</span>
+    <span id="b3" title="Solo Star">🎤</span>
+    <span id="b4" title="Analyst — Source 4/4">🔍</span>
+    <span id="b5" title="My Win">🏆</span>
+  </div>
+  <div class="sess-meta">
+    <span class="tag tag-level">B1.1</span>
+    <span class="tag tag-mod">Module 4</span>
+    <span class="tag tag-sess">Session 4B</span>
+    <span class="session-badge">PRODUCTION</span>
+    <span class="tag tag-time">50 min</span>
+  </div>
+</header>
+
+<!-- NAV -->
+<nav class="nav">
+  <a class="nav-link" href="#s1">§1 Hot Take</a>
+  <a class="nav-link" href="#s2">§2 Pitch</a>
+  <a class="nav-link" href="#s3">§3 Relay</a>
+  <a class="nav-link" href="#s4">§4 Speed</a>
+  <a class="nav-link" href="#s5">§5 Solo</a>
+  <a class="nav-link" href="#s6">§6 Sources</a>
+  <a class="nav-link" href="#s7">§7 Rating</a>
+  <a class="nav-link" href="#s8">§8 Certificate</a>
+</nav>
+
+<!-- §1 HOT TAKE -->
+<section class="section" id="s1">
+  <div class="section-header">
+    <span class="section-number">§1</span>
+    <span class="section-title">Hot Take — <em>Misread Message</em></span>
+    <span class="section-sub">60 seconds · No notes · Passive voice cold start</span>
+    <span class="dur-tag">⏱ 5 MIN</span>
+  </div>
+  <div class="section-body">
+    <div class="hot-take-hero">
+      <img class="hot-take-img" src="https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=900&q=80" alt="texting smartphone communication misread message">
+      <div class="hot-take-overlay">
+        <div class="hot-take-lbl">🔥 Hot Take — Cold Start</div>
+        <div class="hot-take-prompt">"60 seconds. You just sent a work message that was completely misread. Your colleague is upset. What do you say NOW? Use passive: 'That was misread', 'My intention was misunderstood', 'The message should have been written differently.' GO!"</div>
+      </div>
+    </div>
+
+    <div style="background:rgba(255,179,71,.05);border:1px solid rgba(255,179,71,.2);border-radius:8px;padding:12px 16px;margin-bottom:14px;font-size:12px;color:var(--warn);line-height:1.6">
+      📋 <strong>Rules:</strong> 60 seconds · No notes · Use passive voice · Describe what happened AND what you would say to de-escalate
+    </div>
+
+    <div style="text-align:center;margin:14px 0">
+      <div class="timer-wrap">
+        <svg width="88" height="88" class="timer-svg">
+          <circle cx="44" cy="44" r="38" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="5"/>
+          <circle id="htArc" cx="44" cy="44" r="38" fill="none" stroke="var(--accent)" stroke-width="5"
+            stroke-dasharray="238.76" stroke-dashoffset="0" class="timer-arc"/>
+          <text id="htTxt" x="44" y="50" text-anchor="middle" class="timer-text">1:00</text>
+        </svg>
+        <button class="timer-btn" onclick="startTimer('htArc','htTxt',60,'b1',238.76)">Start Timer</button>
+      </div>
+    </div>
+
+    <div class="badge-rules">
+      <div class="br-card"><div class="br-icon">🔥</div><div class="br-name">Hot Start</div><div class="br-rule">Complete 60-sec timer</div></div>
+      <div class="br-card"><div class="br-icon">⚡</div><div class="br-name">Speed</div><div class="br-rule">Score 7/10 or higher</div></div>
+      <div class="br-card"><div class="br-icon">🎤</div><div class="br-name">Solo Star</div><div class="br-rule">Complete 2-min solo talk</div></div>
+      <div class="br-card"><div class="br-icon">🔍</div><div class="br-name">Analyst</div><div class="br-rule">4/4 source questions correct</div></div>
+      <div class="br-card"><div class="br-icon">🏆</div><div class="br-name">My Win</div><div class="br-rule">Write My Win Today</div></div>
+    </div>
+
+    <div class="tn tn-c1">
+      <span class="tn-lbl">📘 How to run Hot Take</span>
+      Give the student 20 seconds to recall a real situation (or invent one), then start the timer. The key requirement is passive voice for de-escalation: "That was misread — let me clarify" / "My intention was misunderstood" / "The message should have been written differently." Listen for whether they use passive to avoid blame — that is the pragmatic goal here, not just the grammar. If they say "I wrote it badly" instead of "It was written badly," pause after the timer and note the difference: passive removes the subject and sounds more professional when managing a conflict.
+    </div>
+  </div>
+</section>
+
+<!-- §2 PITCH ROUND -->
+<section class="section" id="s2">
+  <div class="section-header">
+    <span class="section-number">§2</span>
+    <span class="section-title">Pitch Round — <em>Verbal vs. Written</em></span>
+    <span class="section-sub">Two assigned sides · Passive voice arguments · 90 sec per side</span>
+    <span class="dur-tag">⏱ 10 MIN</span>
+  </div>
+  <div class="section-body">
+    <img class="pitch-banner" src="https://images.unsplash.com/photo-1577563908411-5077b6dc7624?w=900&q=80" alt="debate communication verbal written workplace conversation">
+
+    <div style="background:rgba(0,207,255,.04);border:1px solid rgba(0,207,255,.15);border-radius:8px;padding:12px 16px;margin-bottom:14px;font-size:12px;color:var(--cyan);line-height:1.6">
+      💬 <strong>Motion:</strong> <em>"All serious workplace conversations should be held by phone or in person — not by text or email."</em> — Assign sides. Push passive: <em>"Important decisions should be communicated verbally."</em> / <em>"Meetings are wasted when agreements aren't written down."</em>
+    </div>
+
+    <div class="sides-grid">
+      <div class="side-card">
+        <img class="side-card-img" src="https://images.unsplash.com/photo-1577563908411-5077b6dc7624?w=600&q=80" alt="face to face conversation verbal communication workplace meeting">
+        <div class="side-card-body">
+          <div class="side-label">Side A — PRO VERBAL</div>
+          <div class="side-name">"Tone is preserved face-to-face"</div>
+          <ul class="side-starters">
+            <li>"Tone is preserved when conversations are held face-to-face…"</li>
+            <li>"Conflicts are more easily resolved when both parties can be heard…"</li>
+            <li>"Important agreements should be confirmed in person before being written…"</li>
+          </ul>
+        </div>
+      </div>
+      <div class="side-card">
+        <img class="side-card-img" src="https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=600&q=80" alt="email written communication record reference workplace decision">
+        <div class="side-card-body">
+          <div class="side-label">Side B — PRO WRITTEN</div>
+          <div class="side-name">"Written communication can be reviewed later"</div>
+          <ul class="side-starters">
+            <li>"Written communication can be reviewed and referenced later…"</li>
+            <li>"Verbal agreements are often misremembered and later disputed…"</li>
+            <li>"Time is saved when decisions are communicated efficiently by email…"</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div style="text-align:center;margin-top:14px">
+      <div class="timer-wrap">
+        <svg width="78" height="78" class="timer-svg">
+          <circle cx="39" cy="39" r="33" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="4"/>
+          <circle id="pitchArc" cx="39" cy="39" r="33" fill="none" stroke="var(--accent)" stroke-width="4"
+            stroke-dasharray="207.35" stroke-dashoffset="0" class="timer-arc"/>
+          <text id="pitchTxt" x="39" y="45" text-anchor="middle" class="timer-text" style="font-size:15px">1:30</text>
+        </svg>
+        <button class="timer-btn" onclick="startTimer('pitchArc','pitchTxt',90,null,207.35)">Start Pitch Timer</button>
+      </div>
+    </div>
+
+    <div class="tn tn-c2">
+      <span class="tn-lbl">💡 Engagement tip</span>
+      After both sides, flip the question: "What's YOUR real preference — do you prefer to handle difficult conversations verbally or in writing?" Push for a passive rule: "In my team, difficult feedback should be delivered in person" or "In my company, decisions are communicated by email first." That converts the debate into a genuine professional opinion. If they say "it depends on the situation" — that is fine, but push for specifics: "Should be communicated verbally WHEN…" — making the rule contextual is a sign of B1.1 fluency maturity.
+    </div>
+  </div>
+</section>
+
+<!-- §3 RELAY — TRANSFORM IT -->
+<section class="section" id="s3">
+  <div class="section-header">
+    <span class="section-number">§3</span>
+    <span class="section-title">Relay — <em>Transform It</em></span>
+    <span class="section-sub">5 transformations · Active ↔ Passive · Modal passive · Error detection · Personal response</span>
+    <span class="dur-tag">⏱ 8 MIN</span>
+  </div>
+  <div class="section-body">
+    <img class="relay-banner" src="https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=900&q=80" alt="transform relay grammar active passive communication">
+
+    <div class="relay-intro">
+      🔄 <strong>How Transform It works:</strong> Each card shows a sentence to transform — active to passive, passive to active, adding a modal, or fixing an error. The student responds orally. Click "Show Answer" to reveal the model. Card 5 is always personal — no single correct answer.
+    </div>
+
+    <div class="relay-steps">
+
+      <div class="relay-item">
+        <div class="relay-item-header">
+          <div class="relay-num">1</div>
+          <div class="relay-type">Active → Passive</div>
+          <div class="relay-prompt">"My colleague misread my email as criticism."</div>
+        </div>
+        <div class="relay-body">
+          <button class="relay-btn" onclick="revealRelay('rl1',this)">Show Answer</button>
+          <div class="relay-answer" id="rl1">My email <strong>was misread</strong> as criticism by my colleague.</div>
+        </div>
+      </div>
+
+      <div class="relay-item">
+        <div class="relay-item-header">
+          <div class="relay-num">2</div>
+          <div class="relay-type">Passive → Active</div>
+          <div class="relay-prompt">"The meeting was called by the team leader."</div>
+        </div>
+        <div class="relay-body">
+          <button class="relay-btn" onclick="revealRelay('rl2',this)">Show Answer</button>
+          <div class="relay-answer" id="rl2">The team leader <strong>called</strong> the meeting.</div>
+        </div>
+      </div>
+
+      <div class="relay-item">
+        <div class="relay-item-header">
+          <div class="relay-num">3</div>
+          <div class="relay-type">Modal → Passive Modal</div>
+          <div class="relay-prompt">"We should handle conflicts face-to-face." → Make it a rule.</div>
+        </div>
+        <div class="relay-body">
+          <button class="relay-btn" onclick="revealRelay('rl3',this)">Show Answer</button>
+          <div class="relay-answer" id="rl3">Conflicts <strong>should be handled</strong> face-to-face. — (Also accept: "must be handled" / "need to be handled")</div>
+        </div>
+      </div>
+
+      <div class="relay-item">
+        <div class="relay-item-header">
+          <div class="relay-num">4</div>
+          <div class="relay-type">Fix the Error</div>
+          <div class="relay-prompt">"The misunderstanding resolved with a quick call."</div>
+        </div>
+        <div class="relay-body">
+          <button class="relay-btn" onclick="revealRelay('rl4',this)">Show Answer</button>
+          <div class="relay-answer" id="rl4">"The misunderstanding <strong>was resolved</strong> with a quick call." — missing 'was'! Passive voice always requires the auxiliary verb 'be' + past participle.</div>
+        </div>
+      </div>
+
+      <div class="relay-item">
+        <div class="relay-item-header">
+          <div class="relay-num">5</div>
+          <div class="relay-type">Your Reality</div>
+          <div class="relay-prompt">"Rodrigo said feedback should be given by phone, not email. Do you agree? Describe your communication rule using passive."</div>
+        </div>
+        <div class="relay-body">
+          <button class="relay-btn" onclick="revealRelay('rl5',this)">Show Prompt</button>
+          <div class="relay-answer" id="rl5">Open response — "In my team, [type of message] should be communicated by…" — no single correct answer. Listen for modal passive structure (should be / must be / can be + past participle) and encourage genuine, workplace-specific content.</div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="tn tn-c1">
+      <span class="tn-lbl">📘 Facilitation note</span>
+      For cards 1–4, push for speed — the transformation should come in 3–5 seconds. Card 3 (modal passive) is often the hardest — students will say "we should handle" instead of "should be handled." That is the core B1.1 error: modal + passive requires "should be + past participle," not "should + bare infinitive." Card 4 targets the missing auxiliary — "The misunderstanding resolved" sounds complete to many students. Drill the rule: passive = be + past participle; without 'be' it is active simple past. Card 5 should get 20–30 seconds. Write down their exact sentence — it becomes the model for §5 Solo.
+    </div>
+  </div>
+</section>
+
+<!-- §4 SPEED ROUND -->
+<section class="section" id="s4">
+  <div class="section-header">
+    <span class="section-number">§4</span>
+    <span class="section-title">Speed Round — <em>Communication Grammar</em></span>
+    <span class="section-sub">10 cards · Passive voice in workplace communication · Score 7+ for badge</span>
+    <span class="dur-tag">⏱ 6 MIN</span>
+  </div>
+  <div class="section-body">
+    <img class="speed-banner" src="https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=900&q=80" alt="speed quiz grammar passive voice communication workplace">
+    <div class="score-bar">
+      <span class="score-lbl">Score</span>
+      <span class="score-num" id="scoreNum">0</span>
+      <span class="score-total">/ 10</span>
+      <span style="flex:1"></span>
+      <button onclick="resetScore()" style="font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:1px;padding:5px 12px;border-radius:4px;cursor:pointer;border:1px solid var(--border);background:var(--surface2);color:var(--muted);transition:all .2s">Reset</button>
+    </div>
+    <div class="speed-grid">
+
+      <div class="speed-card">
+        <img class="speed-card-img" src="https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=600&q=80" alt="email sent wrong person mistake passive">
+        <div class="speed-card-body">
+          <div class="speed-q">1. The email ______ to the wrong person by mistake.</div>
+          <div class="speed-opts">
+            <button class="speed-opt" onclick="spd(this,'was sent','s1')">was sent</button>
+            <button class="speed-opt" onclick="spd(this,'was sent','s1')">sent</button>
+            <button class="speed-opt" onclick="spd(this,'was sent','s1')">sends</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="speed-card">
+        <img class="speed-card-img" src="https://images.unsplash.com/photo-1577563908411-5077b6dc7624?w=600&q=80" alt="tone misread aggressive direct communication">
+        <div class="speed-card-body">
+          <div class="speed-q">2. Her tone ______ as aggressive, but she was trying to be direct.</div>
+          <div class="speed-opts">
+            <button class="speed-opt" onclick="spd(this,'was misread','s2')">was misread</button>
+            <button class="speed-opt" onclick="spd(this,'was misread','s2')">misread</button>
+            <button class="speed-opt" onclick="spd(this,'was misread','s2')">misreads</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="speed-card">
+        <img class="speed-card-img" src="https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=600&q=80" alt="conflict resolved phone call communication">
+        <div class="speed-card-body">
+          <div class="speed-q">3. The conflict ______ with a 10-minute phone call.</div>
+          <div class="speed-opts">
+            <button class="speed-opt" onclick="spd(this,'was resolved','s3')">was resolved</button>
+            <button class="speed-opt" onclick="spd(this,'was resolved','s3')">resolved</button>
+            <button class="speed-opt" onclick="spd(this,'was resolved','s3')">resolves</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="speed-card">
+        <img class="speed-card-img" src="https://images.unsplash.com/photo-1577563908411-5077b6dc7624?w=600&q=80" alt="feedback written confirmed parties workplace rule">
+        <div class="speed-card-body">
+          <div class="speed-q">4. All feedback ______ in writing and confirmed by both parties.</div>
+          <div class="speed-opts">
+            <button class="speed-opt" onclick="spd(this,'should be given','s4')">should be given</button>
+            <button class="speed-opt" onclick="spd(this,'should be given','s4')">give</button>
+            <button class="speed-opt" onclick="spd(this,'should be given','s4')">gives</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="speed-card">
+        <img class="speed-card-img" src="https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=600&q=80" alt="message misunderstood before sent damage communication">
+        <div class="speed-card-body">
+          <div class="speed-q">5. The message ______ before it was sent — but the damage was done.</div>
+          <div class="speed-opts">
+            <button class="speed-opt" onclick="spd(this,'was misunderstood','s5')">was misunderstood</button>
+            <button class="speed-opt" onclick="spd(this,'was misunderstood','s5')">misunderstood</button>
+            <button class="speed-opt" onclick="spd(this,'was misunderstood','s5')">misunderstands</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="speed-card">
+        <img class="speed-card-img" src="https://images.unsplash.com/photo-1577563908411-5077b6dc7624?w=600&q=80" alt="important decisions made in person not email workplace">
+        <div class="speed-card-body">
+          <div class="speed-q">6. Important decisions ______ in person, not by email.</div>
+          <div class="speed-opts">
+            <button class="speed-opt" onclick="spd(this,'should be made','s6')">should be made</button>
+            <button class="speed-opt" onclick="spd(this,'should be made','s6')">make</button>
+            <button class="speed-opt" onclick="spd(this,'should be made','s6')">are making</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="speed-card">
+        <img class="speed-card-img" src="https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=600&q=80" alt="three drafts written before email meant">
+        <div class="speed-card-body">
+          <div class="speed-q">7. Three drafts ______ before the email said what I actually meant.</div>
+          <div class="speed-opts">
+            <button class="speed-opt" onclick="spd(this,'were written','s7')">were written</button>
+            <button class="speed-opt" onclick="spd(this,'were written','s7')">wrote</button>
+            <button class="speed-opt" onclick="spd(this,'were written','s7')">written</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="speed-card">
+        <img class="speed-card-img" src="https://images.unsplash.com/photo-1577563908411-5077b6dc7624?w=600&q=80" alt="difficult news delivered phone face to face">
+        <div class="speed-card-body">
+          <div class="speed-q">8. Difficult news ______ over the phone or face-to-face.</div>
+          <div class="speed-opts">
+            <button class="speed-opt" onclick="spd(this,'should be delivered','s8')">should be delivered</button>
+            <button class="speed-opt" onclick="spd(this,'should be delivered','s8')">deliver</button>
+            <button class="speed-opt" onclick="spd(this,'should be delivered','s8')">is delivering</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="speed-card">
+        <img class="speed-card-img" src="https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=600&q=80" alt="meeting caused misread Slack message">
+        <div class="speed-card-body">
+          <div class="speed-q">9. The meeting ______ by a misread Slack message.</div>
+          <div class="speed-opts">
+            <button class="speed-opt" onclick="spd(this,'was caused','s9')">was caused</button>
+            <button class="speed-opt" onclick="spd(this,'was caused','s9')">caused</button>
+            <button class="speed-opt" onclick="spd(this,'was caused','s9')">causes</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="speed-card">
+        <img class="speed-card-img" src="https://images.unsplash.com/photo-1577563908411-5077b6dc7624?w=600&q=80" alt="sarcasm lost written communication text">
+        <div class="speed-card-body">
+          <div class="speed-q">10. Sarcasm ______ very easily in written communication.</div>
+          <div class="speed-opts">
+            <button class="speed-opt" onclick="spd(this,'is lost','s10')">is lost</button>
+            <button class="speed-opt" onclick="spd(this,'is lost','s10')">loses</button>
+            <button class="speed-opt" onclick="spd(this,'is lost','s10')">lost</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="tn tn-c1" style="margin-top:14px">
+      <span class="tn-lbl">📘 Speed Round note</span>
+      Run this as call-and-respond — student says the answer aloud before clicking. Score 7 or more earns the Speed badge ⚡. Key errors to watch for: (1) Q4 — "should be given" not "give" — the modal passive requires "be + past participle"; (2) Q7 — "written" without "were" is the classic missing auxiliary error; (3) Q8 — "should be delivered" not "deliver" — same modal passive rule. After the round, ask: "Which question showed you something you still need to practise?" That question becomes the homework focus.
+    </div>
+  </div>
+</section>
+
+<!-- §5 SOLO CHALLENGE -->
+<section class="section" id="s5">
+  <div class="section-header">
+    <span class="section-number">§5</span>
+    <span class="section-title">Solo Challenge — <em>Digital Communication Policy</em></span>
+    <span class="section-sub">120 seconds · Workplace context · 3+ passives · 2+ modal passives · No notes</span>
+    <span class="dur-tag">⏱ 8 MIN</span>
+  </div>
+  <div class="section-body">
+    <div class="solo-hero">
+      <img class="solo-img" src="https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=900&q=80" alt="solo challenge digital communication policy workplace">
+      <div class="solo-overlay">
+        <div class="solo-lbl">🎤 Solo Challenge — 2 Minutes</div>
+        <div class="solo-task">Your Digital Communication Policy — describe how miscommunication happens in your workplace, what rules should be followed, and what you personally do to avoid being misunderstood. Use at least 3 passive sentences and 2 modal passives.</div>
+      </div>
+    </div>
+
+    <div class="solo-rules">
+      <div class="solo-rule"><div class="solo-rule-num">01</div>Describe how miscommunication happens in your workplace — give a real or typical example.</div>
+      <div class="solo-rule"><div class="solo-rule-num">02</div>State what rules should be followed in your team — use modal passives ("should be communicated / must be confirmed").</div>
+      <div class="solo-rule"><div class="solo-rule-num">03</div>Explain what you personally do to avoid being misunderstood — use passive where possible.</div>
+      <div class="solo-rule"><div class="solo-rule-num">04</div>Use at least 3 passive sentences — teacher tracks each one.</div>
+      <div class="solo-rule"><div class="solo-rule-num">05</div>Use at least 2 modal passives — "should be / must be / can be + past participle."</div>
+    </div>
+
+    <div style="text-align:center">
+      <div class="timer-wrap">
+        <svg width="100" height="100" class="timer-svg">
+          <circle cx="50" cy="50" r="46" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="5"/>
+          <circle id="soloArc" cx="50" cy="50" r="46" fill="none" stroke="var(--accent)" stroke-width="5"
+            stroke-dasharray="289.03" stroke-dashoffset="0" class="timer-arc"/>
+          <text id="soloTxt" x="50" y="56" text-anchor="middle" class="timer-text">2:00</text>
+        </svg>
+        <button class="timer-btn" onclick="startTimer('soloArc','soloTxt',120,'b3',289.03)">Start Solo Timer</button>
+      </div>
+    </div>
+
+    <div class="tn tn-c1">
+      <span class="tn-lbl">📘 Assessment</span>
+      Track silently during the 2 minutes: (1) Passive count — 3+ correct passive structures (0–3 pts), (2) Modal passive count — 2+ correct modal passives (0–2 pts), (3) Content quality — workplace-specific, not generic (0–3 pts), (4) Fluency — sustained talk without long pauses (0–2 pts). Max 10 points. The most common errors: "should communicated" instead of "should be communicated" — modal passives require "be"; and "the rule was change" instead of "was changed" — past participle required. Note errors during the talk and correct them after the timer ends using the student's own words.
+    </div>
+  </div>
+</section>
+
+<!-- §6 SOURCE ANALYSIS -->
+<section class="section" id="s6">
+  <div class="section-header">
+    <span class="section-number">§6</span>
+    <span class="section-title">Source Analysis — <em>Communication in the Wild</em></span>
+    <span class="section-sub">4 source cards · Passive voice in authentic workplace contexts · 4/4 correct earns badge</span>
+    <span class="dur-tag">⏱ 8 MIN</span>
+  </div>
+  <div class="section-body">
+    <div class="source-grid">
+
+      <div class="source-card">
+        <img class="source-card-img" src="https://images.unsplash.com/photo-1577563908411-5077b6dc7624?w=600&q=80" alt="Harvard Business Review email tone misread communication research">
+        <div class="source-card-body">
+          <div class="source-type">📰 Harvard Business Review</div>
+          <div class="source-content">"Research shows that the emotional tone of emails is misread approximately 50% of the time. Senders consistently overestimate how clearly their intentions are communicated. The problem is worsened when email is used for complex or emotional topics."</div>
+          <div class="source-q">What is the main finding?</div>
+          <div class="src-opts">
+            <button class="src-opt" onclick="srcCheck(this,'Email tone is misread ~50% of the time','c1')">Email tone is misread ~50% of the time</button>
+            <button class="src-opt" onclick="srcCheck(this,'Email tone is misread ~50% of the time','c1')">Email is always the worst tool</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="source-card">
+        <img class="source-card-img" src="https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=600&q=80" alt="WhatsApp message short context lost sure ambiguous communication">
+        <div class="source-card-body">
+          <div class="source-type">💬 WhatsApp Exchange</div>
+          <div class="source-content">"Hey. Are you free Thursday?" — "Sure." — "Great." — "..."</div>
+          <div class="source-q">What communication problem is shown here?</div>
+          <div class="src-opts">
+            <button class="src-opt" onclick="srcCheck(this,'Messages are short and context is lost','c2')">Messages are short and context is lost</button>
+            <button class="src-opt" onclick="srcCheck(this,'Messages are short and context is lost','c2')">They are very efficient communicators</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="source-card">
+        <img class="source-card-img" src="https://images.unsplash.com/photo-1577563908411-5077b6dc7624?w=600&q=80" alt="company communication guideline feedback person video call written">
+        <div class="source-card-body">
+          <div class="source-type">📋 Company Communication Guideline</div>
+          <div class="source-content">"Feedback on performance is to be delivered in person or by video call. Written summaries may be provided after the conversation has taken place. Criticism should not be communicated by email or instant message."</div>
+          <div class="source-q">When can written feedback be used?</div>
+          <div class="src-opts">
+            <button class="src-opt" onclick="srcCheck(this,'Only after a verbal conversation has happened','c3')">Only after a verbal conversation has happened</button>
+            <button class="src-opt" onclick="srcCheck(this,'Only after a verbal conversation has happened','c3')">Never</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="source-card">
+        <img class="source-card-img" src="https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=600&q=80" alt="grammar detective passive verbs count sentences analysis">
+        <div class="source-card-body">
+          <div class="source-type">🔍 Grammar Detective</div>
+          <div class="source-content">"The conflict was started by a text. Three emails were sent before the issue was identified. The rule was changed after the incident."</div>
+          <div class="source-q">How many passive verb phrases?</div>
+          <div class="src-opts">
+            <button class="src-opt" onclick="srcCheck(this,'4','c4')">4</button>
+            <button class="src-opt" onclick="srcCheck(this,'4','c4')">3</button>
+            <button class="src-opt" onclick="srcCheck(this,'4','c4')">5</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="tn tn-c2">
+      <span class="tn-lbl">💡 Discussion anchor</span>
+      After the 4 cards, ask: "Which source is most relevant to your own communication habits?" Best follow-up for the company guideline (card 3): "The guideline uses passive throughout — 'is to be delivered', 'may be provided', 'should not be communicated'. Why does the author choose passive instead of 'You must deliver feedback in person'?" Target answer: passive voice makes the rule sound institutional and non-personal — it is policy, not a personal instruction. That is the same diplomatic function they practised in the Hot Take. For card 4 (grammar detective), confirm the 4 passives: was started / were sent / was identified / was changed.
+    </div>
+  </div>
+</section>
+
+<!-- §7 SELF-RATING + LEADERBOARD -->
+<section class="section" id="s7">
+  <div class="section-header">
+    <span class="section-number">§7</span>
+    <span class="section-title">Self-Rating — <em>How Did I Do?</em></span>
+    <span class="section-sub">3 sliders · Dynamic feedback · Session Leaderboard</span>
+    <span class="dur-tag">⏱ 5 MIN</span>
+  </div>
+  <div class="section-body">
+    <img class="rating-banner" src="https://images.unsplash.com/photo-1577563908411-5077b6dc7624?w=900&q=80" alt="self assessment rating feedback session communication">
+
+    <div class="slider-group">
+      <div class="slider-row">
+        <div class="slider-lbl">Diplomatic Passive</div>
+        <div class="slider-q">I can use passive voice diplomatically in communication — to describe problems without blaming anyone.</div>
+        <input class="rating-input" type="range" min="1" max="10" value="6" id="sl1" oninput="updateRating()">
+        <div class="slider-val" id="sv1">6</div>
+      </div>
+      <div class="slider-row">
+        <div class="slider-lbl">Communication Fluency</div>
+        <div class="slider-q">I can talk about miscommunication topics for 2+ minutes without losing the thread.</div>
+        <input class="rating-input" type="range" min="1" max="10" value="6" id="sl2" oninput="updateRating()">
+        <div class="slider-val" id="sv2">6</div>
+      </div>
+      <div class="slider-row">
+        <div class="slider-lbl">Modal Passives as Rules</div>
+        <div class="slider-q">I can use modal passives to make professional rules — "feedback should be given / decisions should be made / conflicts must be resolved."</div>
+        <input class="rating-input" type="range" min="1" max="10" value="6" id="sl3" oninput="updateRating()">
+        <div class="slider-val" id="sv3">6</div>
+      </div>
+    </div>
+
+    <div class="rating-feedback">
+      <div class="rf-lbl">Your Feedback</div>
+      <div class="rf-text" id="rfText">Move the sliders to see your personalized feedback…</div>
+    </div>
+
+    <div class="lb-wrap">
+      <div class="lb-hdr">🏆 Session Leaderboard — Online Communication</div>
+      <div class="lb-add">
+        <input class="lb-input" id="lbName" placeholder="Student name…" type="text">
+        <input class="lb-input" id="lbPts" placeholder="Points (0–10)" type="number" min="0" max="10" style="max-width:110px">
+        <button class="lb-btn" onclick="lbAdd()">Add</button>
+        <button class="lb-btn lb-reset" onclick="resetLb()">Reset</button>
+      </div>
+      <table class="lb-table">
+        <thead><tr><th>#</th><th>Student</th><th>Points</th><th>Level</th></tr></thead>
+        <tbody id="lbBody"></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- §8 CERTIFICATE + BADGE SHOWCASE -->
+<section class="section" id="s8">
+  <div class="section-header">
+    <span class="section-number">§8</span>
+    <span class="section-title">Certificate &amp; <em>Badge Showcase</em></span>
+    <span class="section-sub">Session completion · All 5 badges · Personal achievement</span>
+    <span class="dur-tag">⏱ 5 MIN</span>
+  </div>
+  <div class="section-body">
+    <img class="cert-banner" src="https://images.unsplash.com/photo-1577563908411-5077b6dc7624?w=900&q=80" alt="achievement certificate session complete communication mastery">
+
+    <div style="text-align:center;margin-bottom:20px">
+      <div style="font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:10px">Session 4B Badges</div>
+      <div style="display:flex;gap:12px;justify-content:center;font-size:28px">
+        <span id="bd1" title="Hot Start" style="opacity:.3;filter:grayscale(1);transition:all .4s">🔥</span>
+        <span id="bd2" title="Speed" style="opacity:.3;filter:grayscale(1);transition:all .4s">⚡</span>
+        <span id="bd3" title="Solo Star" style="opacity:.3;filter:grayscale(1);transition:all .4s">🎤</span>
+        <span id="bd4" title="Analyst" style="opacity:.3;filter:grayscale(1);transition:all .4s">🔍</span>
+        <span id="bd5" title="My Win" style="opacity:.3;filter:grayscale(1);transition:all .4s">🏆</span>
+      </div>
+      <div style="margin-top:8px;font-size:11px;color:var(--muted)">🔥 Hot Start · ⚡ Speed · 🎤 Solo Star · 🔍 Analyst · 🏆 My Win</div>
+    </div>
+
+    <div class="cert-wrap">
+      <div class="cert-lbl">🎓 Session Certificate Generator</div>
+      <div class="cert-row">
+        <input class="cert-input" id="certName" placeholder="Enter your name…" type="text">
+        <button class="cert-btn" onclick="generateCert()">Generate Certificate</button>
+      </div>
+      <div class="cert-result" id="certResult">
+        <div class="cert-emoji">🏆</div>
+        <div class="cert-name" id="certNameOut"></div>
+        <div class="cert-body">has successfully completed B1.1 · Module 4 · Session 4<br><strong>Online Communication &amp; Misunderstandings — Passive Voice in Professional Contexts</strong></div>
+        <div class="cert-skills">
+          <span class="cert-skill">Diplomatic passive</span>
+          <span class="cert-skill">Modal passives</span>
+          <span class="cert-skill">Communication vocabulary</span>
+          <span class="cert-skill">Conflict de-escalation</span>
+          <span class="cert-skill">2-min fluency</span>
+        </div>
+        <div class="cert-date" id="certDate"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 3 PHRASES FOR THIS WEEK -->
+<section class="section phrases-section">
+  <div class="section-body">
+    <div class="ph-lbl">🎯 This week at work — use these 3 phrases</div>
+    <div class="ph-title">3 Phrases Starting Tomorrow</div>
+    <div class="ph-grid">
+      <div class="ph-card">
+        <img class="ph-card-img" src="https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=600&q=80" alt="that was misread let me clarify passive de-escalate">
+        <div class="ph-card-body">
+          <div class="ph-num">PHRASE 1</div>
+          <div class="ph-phrase">"That was misread — let me clarify."</div>
+          <div class="ph-ctx">De-escalate with passive. Use it whenever a message causes a conflict: "That was misread — let me clarify what I meant." Passive voice removes personal blame — "I was misread" sounds like an accusation, but "That was misread" makes the problem impersonal. This is the most professionally powerful use of passive voice in B1.1. Works in email replies, Slack, and face-to-face.</div>
+        </div>
+      </div>
+      <div class="ph-card">
+        <img class="ph-card-img" src="https://images.unsplash.com/photo-1577563908411-5077b6dc7624?w=600&q=80" alt="conflicts should be resolved phone not text modal passive rule">
+        <div class="ph-card-body">
+          <div class="ph-num">PHRASE 2</div>
+          <div class="ph-phrase">"Conflicts should be resolved by phone, not text."</div>
+          <div class="ph-ctx">Modal passive rule. Use it to propose a team communication norm: "In my opinion, conflicts should be resolved by phone, not text." Modal passive turns a personal preference into an objective-sounding rule. The subject is removed — it is not "I think we should call" but a policy statement. Perfect for proposing communication guidelines in any professional setting.</div>
+        </div>
+      </div>
+      <div class="ph-card">
+        <img class="ph-card-img" src="https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=600&q=80" alt="I think we need to talk not text channel switch professional">
+        <div class="ph-card-body">
+          <div class="ph-num">PHRASE 3</div>
+          <div class="ph-phrase">"I think we need to talk — not text."</div>
+          <div class="ph-ctx">Switch channels professionally. Use it when a written conversation starts to escalate: "I think we need to talk — not text." Simple and direct, but strategic — it signals that the channel is the problem, not the person. Pair it with a passive: "This is getting complicated — it should probably be discussed in person." Use this phrase this week the moment any message thread gets longer than five exchanges.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MY WIN TODAY -->
+<section class="section" style="margin-bottom:0">
+  <div class="section-body">
+    <div class="win-box">
+      <div class="win-lbl">🏆 My Win Today</div>
+      <textarea class="win-textarea" id="winText" placeholder="What is the best passive or modal passive sentence you produced today — in the Hot Take, Pitch, or Solo Challenge? Write it here. That sentence is proof you can use passive voice to communicate professionally."></textarea>
+      <button class="win-save" onclick="saveWin()">Save My Win → Earn Badge 🏆</button>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="ftr">
+  <div class="fbrand">Gabriel Turner · English Training</div>
+  <div class="finfo">B1.1 · Module 4 · Session 4B · GT_B1_1_M4_S4B_TEACHER_v1</div>
+  <div class="flevels">
+    <div class="flv">A1.1</div><div class="flv">A1.2</div><div class="flv">A2.1</div><div class="flv">A2.2</div>
+    <div class="flv active">B1.1</div><div class="flv">B1.2</div><div class="flv">B2.1</div><div class="flv">B2.2</div>
+  </div>
+</footer>
+
+<script>
+/* ══ PROGRESS BAR ══ */
+window.addEventListener('scroll',()=>{
+  const d=document.documentElement;
+  document.getElementById('prog').style.width=Math.min((d.scrollTop/(d.scrollHeight-d.clientHeight))*100,100)+'%';
+},{passive:true});
+
+/* ══ BADGES ══ */
+var earned={};
+function earnBadge(id){
+  if(!id||earned[id])return;earned[id]=true;
+  const el=document.getElementById(id);if(el){el.classList.add('earned');}
+  const mirror=document.getElementById('bd'+id.replace('b',''));
+  if(mirror){mirror.style.opacity='1';mirror.style.filter='grayscale(0)';mirror.style.transform='scale(1.15)';}
+  if(Object.keys(earned).length>=5)launchConfetti();
+}
+function launchConfetti(){
+  const cols=['#10B981','#34D399','#00E5A0','#6EE7B7','#FFB347','#fff'];
+  for(let i=0;i<90;i++){
+    const p=document.createElement('div');const s=Math.random()*7+4;
+    Object.assign(p.style,{position:'fixed',top:'-10px',zIndex:'9999',left:Math.random()*100+'vw',width:s+'px',height:s+'px',background:cols[Math.floor(Math.random()*cols.length)],borderRadius:Math.random()>.5?'50%':'2px',animation:`fall ${1.5+Math.random()*2}s linear forwards`,opacity:'0.9'});
+    document.body.appendChild(p);setTimeout(()=>p.remove(),4000);
+  }
+}
+const cs=document.createElement('style');
+cs.textContent='@keyframes fall{to{transform:translateY(110vh) rotate(720deg);opacity:0}}';
+document.head.appendChild(cs);
+
+/* ══ TIMER ══ */
+var timerRunning={};
+function startTimer(arcId,textId,seconds,badgeKey,circumference){
+  if(timerRunning[arcId])return;timerRunning[arcId]=true;
+  const arc=document.getElementById(arcId),txt=document.getElementById(textId);
+  if(!arc||!txt)return;
+  let rem=seconds;arc.style.stroke='var(--accent)';
+  const iv=setInterval(()=>{
+    rem--;arc.style.strokeDashoffset=circumference*(seconds-rem)/seconds;
+    const m=Math.floor(rem/60),s=rem%60;
+    txt.textContent=m+':'+(s<10?'0':'')+s;
+    if(rem<=5)arc.style.stroke='#FF4D6D';
+    if(rem<=0){clearInterval(iv);arc.style.stroke='var(--success)';txt.textContent='Done';timerRunning[arcId]=false;if(badgeKey)earnBadge(badgeKey);}
+  },1000);
+}
+
+/* ══ RELAY REVEAL ══ */
+function revealRelay(id,btn){
+  const el=document.getElementById(id);if(!el)return;
+  el.classList.toggle('show');
+  btn.textContent=el.classList.contains('show')?'Hide Answer':'Show Answer';
+}
+
+/* ══ SPEED ROUND ══ */
+var scoreVal=0;
+function spd(btn,correct,qid){
+  const card=btn.closest('.speed-card');
+  if(card.dataset.done)return;card.dataset.done='1';
+  card.querySelectorAll('.speed-opt').forEach(b=>{b.disabled=true;if(b.textContent.trim()===correct)b.classList.add('correct');});
+  if(btn.textContent.trim()===correct){
+    scoreVal++;document.getElementById('scoreNum').textContent=scoreVal;
+    if(scoreVal>=7)earnBadge('b2');
+  }else{btn.classList.add('wrong');}
+}
+function resetScore(){
+  scoreVal=0;document.getElementById('scoreNum').textContent='0';
+  document.querySelectorAll('.speed-card').forEach(c=>{delete c.dataset.done;});
+  document.querySelectorAll('.speed-opt').forEach(b=>{b.disabled=false;b.classList.remove('correct','wrong');});
+}
+
+/* ══ SOURCE ANALYSIS ══ */
+var srcScore=0;var srcDone={};
+function srcCheck(btn,correct,qid){
+  if(srcDone[qid])return;srcDone[qid]=true;
+  const wrap=btn.closest('.src-opts');
+  wrap.querySelectorAll('.src-opt').forEach(b=>{b.disabled=true;if(b.textContent.trim()===correct)b.classList.add('correct');});
+  if(btn.textContent.trim()===correct){
+    srcScore++;btn.classList.add('correct');
+    if(srcScore>=4)earnBadge('b4');
+  }else{btn.classList.add('wrong');}
+}
+
+/* ══ SELF-RATING ══ */
+function updateRating(){
+  const v1=parseInt(document.getElementById('sl1').value);
+  const v2=parseInt(document.getElementById('sl2').value);
+  const v3=parseInt(document.getElementById('sl3').value);
+  document.getElementById('sv1').textContent=v1;
+  document.getElementById('sv2').textContent=v2;
+  document.getElementById('sv3').textContent=v3;
+  const avg=(v1+v2+v3)/3;
+  const rfText=document.getElementById('rfText');
+  if(avg>=8){
+    rfText.textContent='🌟 You can now use passive voice strategically — to describe problems without blaming. That\'s professional English. Before M4 S5: try writing a short communication policy for your team (5–7 sentences). Use passive throughout — "Feedback should be given…", "Conflicts must be resolved…", "Decisions are communicated…". Read it aloud until the structure feels natural.';
+  }else if(avg>=5){
+    rfText.textContent='Good progress. Focus on the diplomatic passive before the next session: passive voice removes the subject and makes conflict language less personal. Tonight, write 5 sentences describing a workplace problem — but use passive each time to avoid naming anyone ("A message was misread", "The deadline was missed"). Read them aloud 3 times.';
+  }else{
+    rfText.textContent='Focus on one rule before M4 S5: passive = be + past participle. Simple passive: "It was sent." "It was misread." Modal passive: "It should be communicated." "It must be confirmed." Say these 10 times tonight. Then describe one communication problem in your workplace in 3 passive sentences. Come ready to say them without stopping.';
+  }
+}
+
+/* ══ LEADERBOARD ══ */
+var lbData=[];
+function lbAdd(){
+  const name=document.getElementById('lbName').value.trim();
+  const pts=parseInt(document.getElementById('lbPts').value);
+  if(!name||isNaN(pts))return;
+  lbData.push({name,pts});lbData.sort((a,b)=>b.pts-a.pts);renderLb();
+  document.getElementById('lbName').value='';document.getElementById('lbPts').value='';
+}
+function resetLb(){lbData=[];renderLb();}
+function renderLb(){
+  const tb=document.getElementById('lbBody');
+  const levels=['🥇','🥈','🥉'];
+  tb.innerHTML=lbData.map((d,i)=>`<tr><td class="lb-rank">${levels[i]||i+1}</td><td>${d.name}</td><td class="lb-pts">${d.pts}</td><td><div style="height:6px;background:rgba(16,185,129,.15);border-radius:3px;overflow:hidden"><div style="height:100%;width:${d.pts*10}%;background:var(--accent);border-radius:3px"></div></div></td></tr>`).join('');
+}
+
+/* ══ CERTIFICATE ══ */
+function generateCert(){
+  const name=document.getElementById('certName').value.trim();if(!name)return;
+  document.getElementById('certNameOut').textContent=name;
+  const now=new Date();
+  document.getElementById('certDate').textContent='Issued: '+now.toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'})+' · Gabriel Turner English Training';
+  document.getElementById('certResult').classList.add('show');
+}
+
+/* ══ MY WIN ══ */
+function saveWin(){
+  const t=document.getElementById('winText');
+  if(t&&t.value.trim().length>5){
+    earnBadge('b5');t.style.borderColor='var(--gold)';
+    const btn=t.nextElementSibling;
+    if(btn){btn.textContent='✓ Saved — Badge Earned!';btn.style.background='rgba(255,184,0,.25)';}
+  }
+}
+</script>
+</body>
+</html>
+</section>
