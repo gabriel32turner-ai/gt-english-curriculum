@@ -1,0 +1,1337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GT · B1.1 · M4 · S3A — AI in Daily Life</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0D1117;--surface:#111318;--surface2:#1a1f28;
+  --accent:#10B981;--accent2:#34D399;
+  --border:rgba(16,185,129,.18);
+  --text:#F0F4F8;--muted:#8A9BB0;--dim:rgba(226,226,226,.25);
+  --danger:#FF4D6D;--success:#00E5A0;--warn:#FFB347;
+  --gold:#FFB800;--cyan:#00CFFF;--green:#00E676;--violet:#A78BFA;
+  --font-head:'Syne',sans-serif;--font-body:'DM Sans',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:14px;line-height:1.6}
+.prog{height:3px;background:var(--accent);position:fixed;top:0;left:0;z-index:999;width:0;transition:width .1s linear;box-shadow:0 0 8px rgba(16,185,129,.6)}
+.hdr{background:var(--surface);border-bottom:1px solid var(--border);padding:18px 40px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:3px;z-index:200;backdrop-filter:blur(12px);flex-wrap:wrap;gap:10px}
+.brand{display:flex;align-items:center;gap:10px}
+.dot{width:8px;height:8px;background:var(--accent);border-radius:50%;animation:pulse 2.5s ease-in-out infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(16,185,129,.4)}60%{box-shadow:0 0 0 5px rgba(16,185,129,0)}}
+.bname{font-family:var(--font-head);font-weight:800;font-size:12px;letter-spacing:2.5px;text-transform:uppercase;color:#fff}
+.bsub{font-size:10px;color:var(--muted);letter-spacing:1px}
+.badge-strip{display:flex;gap:6px;align-items:center}
+.badge-strip span{font-size:18px;filter:grayscale(1);opacity:.3;transition:all .4s;cursor:default}
+.badge-strip span.earned{filter:grayscale(0);opacity:1;transform:scale(1.2)}
+.sess-meta{display:flex;gap:7px;flex-wrap:wrap;align-items:center}
+.tag{display:inline-block;padding:3px 10px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;border-radius:3px}
+.tag-level{background:rgba(16,185,129,.15);color:var(--accent);border:1px solid var(--border)}
+.tag-mod{background:rgba(255,184,0,.1);color:var(--gold);border:1px solid rgba(255,184,0,.25)}
+.tag-sess{background:rgba(0,207,255,.1);color:var(--cyan);border:1px solid rgba(0,207,255,.25)}
+.tag-time{background:rgba(0,230,118,.08);color:var(--green);border:1px solid rgba(0,230,118,.2)}
+
+.section{margin:24px 32px;border:1px solid var(--border);border-radius:14px;overflow:hidden;background:var(--surface)}
+.section-header{display:flex;align-items:center;gap:14px;padding:16px 22px;background:linear-gradient(135deg,rgba(16,185,129,.08),transparent);border-bottom:1px solid var(--border);flex-wrap:wrap}
+.section-number{font-family:var(--font-head);font-size:10px;font-weight:800;color:var(--accent);letter-spacing:.12em;text-transform:uppercase;background:rgba(16,185,129,.1);border:1px solid var(--border);padding:2px 9px;border-radius:20px}
+.section-title{font-family:var(--font-head);font-size:18px;font-weight:800;color:#fff}
+.section-title em{color:var(--accent);font-style:normal}
+.section-sub{font-size:12px;color:var(--muted);margin-left:auto}
+.dur-tag{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:1.5px;color:var(--gold);border:1px solid rgba(255,184,0,.2);padding:2px 8px;border-radius:3px;margin-left:8px;white-space:nowrap}
+.section-body{padding:22px 24px}
+
+.img-hero{width:100%;height:220px;object-fit:cover;display:block;filter:brightness(.58)}
+.img-banner{width:100%;height:130px;object-fit:cover;display:block;filter:brightness(.52)}
+.img-card{width:100%;height:80px;object-fit:cover;display:block;filter:brightness(.48)}
+.img-sm{width:100%;height:70px;object-fit:cover;display:block;filter:brightness(.48)}
+
+.tn{border-radius:8px;padding:12px 16px;margin-top:14px;font-size:12px;line-height:1.6}
+.tn-c1{background:rgba(0,207,255,.06);border:1px solid rgba(0,207,255,.2);color:rgba(0,207,255,.85)}
+.tn-c2{background:rgba(255,61,114,.06);border:1px solid rgba(255,61,114,.2);color:rgba(255,120,150,.9)}
+.tn-c3{background:rgba(255,184,0,.05);border:1px solid rgba(255,184,0,.2);color:rgba(255,184,0,.85)}
+.tn-lbl{font-family:var(--font-head);font-size:8.5px;font-weight:800;letter-spacing:2px;text-transform:uppercase;margin-bottom:5px;display:block}
+
+/* WARM-UP */
+.wu-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}
+.wu-card{background:var(--surface2);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.wu-card-img{width:100%;height:90px;object-fit:cover;display:block;filter:brightness(.48)}
+.wu-card-body{padding:12px 14px}
+.wu-q{font-size:13px;color:var(--text);line-height:1.5}
+.wu-hint{font-size:11px;color:var(--muted);font-style:italic;margin-top:5px}
+.quick-win{background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.25);border-radius:10px;padding:14px 18px;margin-top:16px;display:flex;align-items:flex-start;gap:12px}
+.qw-icon{font-size:20px;flex-shrink:0}
+.qw-lbl{font-family:var(--font-head);font-size:8.5px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:5px;display:block}
+.qw-text{font-size:13.5px;color:#fff;line-height:1.5}
+
+/* SPEAKING TOPIC */
+.topic-hero{position:relative;overflow:hidden;border-radius:10px;margin-bottom:16px}
+.topic-hero-img{width:100%;height:180px;object-fit:cover;display:block;filter:brightness(.48)}
+.topic-hero-overlay{position:absolute;bottom:0;left:0;right:0;padding:16px 20px;background:linear-gradient(transparent,rgba(0,0,0,.78))}
+.topic-label{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--accent);margin-bottom:4px}
+.topic-q{font-size:18px;font-weight:700;color:#fff;line-height:1.3}
+.rounds-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.round-card{background:var(--surface2);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.round-card-img{width:100%;height:80px;object-fit:cover;display:block;filter:brightness(.48)}
+.round-card-body{padding:11px 13px}
+.round-num{font-family:var(--font-head);font-size:9px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);margin-bottom:4px}
+.round-q{font-size:12.5px;color:var(--text);line-height:1.4;margin-bottom:6px}
+.model-reveal-btn{background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.3);color:var(--accent);padding:5px 12px;font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:1.5px;cursor:pointer;border-radius:4px;width:100%;text-align:center;transition:all .2s}
+.model-reveal-btn:hover{background:rgba(16,185,129,.2)}
+.model-answer{display:none;margin-top:8px;background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.15);border-radius:6px;padding:10px 12px;font-size:12px;color:var(--text);line-height:1.6;font-style:italic}
+.model-answer.show{display:block}
+.color-passive{color:var(--violet)}
+.color-vocab{color:var(--accent2)}
+.color-coll{color:var(--warn)}
+
+/* VOCAB */
+.vocab-section-banner{width:100%;height:100px;object-fit:cover;display:block;filter:brightness(.48);border-radius:8px;margin-bottom:16px}
+.vocab-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.vocab-card{background:var(--surface2);border:1px solid var(--border);border-radius:10px;overflow:hidden;cursor:pointer;transition:all .2s}
+.vocab-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.vocab-card-img{width:100%;height:70px;object-fit:cover;display:block;filter:brightness(.48)}
+.vocab-card-body{padding:10px 12px}
+.vc-word{font-family:var(--font-head);font-size:13px;font-weight:700;color:#fff;margin-bottom:2px}
+.vc-ipa{font-size:10.5px;color:var(--cyan);margin-bottom:4px;font-style:italic}
+.vc-pos{font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--dim);margin-bottom:4px}
+.vc-def{font-size:11px;color:var(--muted);line-height:1.4;margin-bottom:5px}
+.vc-ex{font-size:11px;color:var(--accent2);font-style:italic;border-left:2px solid rgba(16,185,129,.35);padding-left:6px;line-height:1.4}
+.vc-sp{font-size:9.5px;color:var(--dim);margin-top:5px}
+.micro-speaking{background:rgba(16,185,129,.05);border:1px solid rgba(16,185,129,.18);border-radius:8px;padding:12px 16px;margin-top:14px}
+.ms-lbl{font-family:var(--font-head);font-size:9px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:5px;display:block}
+
+/* VOCAB QUIZ */
+.vquiz-wrap{margin-top:18px}
+.vquiz-lbl{font-family:var(--font-head);font-size:9px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:10px;display:block}
+.vquiz-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.vq-card{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px;cursor:pointer;transition:all .2s}
+.vq-card:hover:not(.answered){border-color:rgba(16,185,129,.4)}
+.vq-es{font-size:13px;color:var(--text);font-weight:600;margin-bottom:6px}
+.vq-opts{display:flex;gap:5px;flex-wrap:wrap}
+.vq-opt{background:var(--surface);border:1px solid var(--border);color:var(--muted);padding:4px 10px;font-family:var(--font-body);font-size:11px;cursor:pointer;border-radius:4px;transition:all .2s}
+.vq-opt:hover:not(:disabled){border-color:var(--accent);color:var(--accent)}
+.vq-opt.correct{background:rgba(0,229,160,.12);border-color:var(--success);color:var(--success)}
+.vq-opt.wrong{background:rgba(255,77,109,.12);border-color:var(--danger);color:var(--danger)}
+.vq-opt:disabled{cursor:not-allowed}
+.vquiz-score{font-family:var(--font-head);font-size:12px;font-weight:700;color:var(--accent);margin-top:10px;padding:8px 14px;background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.15);border-radius:6px;display:inline-block}
+
+/* COLLOQUIAL */
+.coll-banner{width:100%;height:100px;object-fit:cover;display:block;filter:brightness(.48);border-radius:8px;margin-bottom:14px}
+.coll-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.coll-card{background:var(--surface2);border:1px solid rgba(34,211,164,.15);border-radius:10px;overflow:hidden;cursor:pointer;transition:border-color .2s}
+.coll-card:hover{border-color:var(--accent)}
+.coll-card-img{width:100%;height:90px;object-fit:cover;display:block;filter:brightness(.48)}
+.coll-card-body{padding:12px 14px}
+.coll-phrase{font-family:var(--font-head);font-size:13px;font-weight:700;color:#fff;margin-bottom:5px}
+.coll-meaning{font-size:11px;color:var(--muted);line-height:1.5;margin-bottom:6px}
+.coll-ex{font-size:11px;color:var(--accent2);font-style:italic;border-left:2px solid rgba(16,185,129,.3);padding-left:6px;line-height:1.4}
+
+/* GRAMMAR */
+.gram-banner{width:100%;height:120px;object-fit:cover;display:block;filter:brightness(.48);border-radius:8px;margin-bottom:16px}
+.gram-toggle-btn{background:var(--surface2);border:1px solid var(--border);color:var(--muted);padding:9px 16px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;cursor:pointer;width:100%;text-align:left;border-radius:6px;margin-bottom:4px;transition:all .2s}
+.gram-toggle-btn:hover{border-color:var(--accent)}
+.gram-coll{max-height:0;overflow:hidden;transition:max-height .4s ease}
+.gram-coll.open{max-height:900px}
+.gram-table{width:100%;border-collapse:collapse;margin-top:10px;margin-bottom:14px}
+.gram-table th{background:var(--surface2);padding:10px 14px;text-align:left;font-family:var(--font-head);font-size:9.5px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim);border-bottom:2px solid var(--accent)}
+.gram-table td{padding:10px 14px;border-bottom:1px solid var(--border);font-size:12.5px;vertical-align:top}
+.gram-table tr:hover td{background:rgba(16,185,129,.03)}
+.ex-phrase{color:var(--accent2);font-style:italic}
+.rule-note{background:rgba(255,184,0,.04);border:1px solid rgba(255,184,0,.18);border-radius:6px;padding:12px 16px;margin:12px 0;font-size:12px;color:rgba(255,184,0,.85);line-height:1.6}
+.err-box{background:rgba(255,77,109,.05);border:1px solid rgba(255,77,109,.2);border-radius:6px;padding:12px 16px;margin:12px 0;font-size:12px;color:rgba(255,140,160,.9);line-height:1.7}
+.err-box strong{color:var(--danger)}
+
+/* POLL */
+.poll-box{background:rgba(16,185,129,.04);border:1px solid rgba(16,185,129,.15);border-radius:10px;padding:16px 18px;margin-bottom:16px}
+.poll-lbl{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:8px}
+.poll-q{font-size:14px;color:#fff;font-weight:500;margin-bottom:12px;line-height:1.4}
+.poll-opts{display:flex;gap:8px;flex-wrap:wrap}
+.poll-btn{background:var(--surface2);border:1px solid var(--border);color:var(--muted);padding:8px 16px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1px;cursor:pointer;border-radius:5px;transition:all .2s}
+.poll-btn:hover:not(:disabled){border-color:var(--accent);color:var(--accent)}
+.poll-btn.selected{background:rgba(16,185,129,.15);border-color:var(--accent);color:var(--accent)}
+.poll-btn:disabled{cursor:not-allowed}
+.poll-feedback{display:none;margin-top:10px;font-size:12.5px;color:var(--text);line-height:1.5;padding:10px 14px;background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.15);border-radius:6px}
+.poll-feedback.show{display:block}
+
+/* ACTIVITIES */
+.act-title{font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:11px;padding-top:18px;border-top:1px solid var(--border);margin-top:20px}
+.opt-group{margin-bottom:14px}
+.opt-q{font-size:13px;color:var(--text);margin-bottom:9px;padding:10px 14px;background:var(--surface2);border-left:3px solid var(--accent);border-radius:0 6px 6px 0;line-height:1.5}
+.opts{display:flex;gap:7px;flex-wrap:wrap}
+.opt{background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:7px 15px;font-family:var(--font-body);font-size:12.5px;cursor:pointer;border-radius:5px;transition:all .2s}
+.opt:hover:not(:disabled){border-color:var(--accent);color:var(--accent)}
+.opt.correct{background:rgba(0,229,160,.12);border-color:var(--success);color:var(--success)}
+.opt.wrong{background:rgba(255,77,109,.12);border-color:var(--danger);color:var(--danger)}
+.opt:disabled{cursor:not-allowed}
+.tf-set{display:flex;flex-direction:column;gap:8px;margin-bottom:14px}
+.tf-row{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px 15px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.tf-stmt{font-size:12.5px;color:var(--text);flex:1;line-height:1.5;min-width:180px}
+.tf-btns{display:flex;gap:7px;flex-shrink:0}
+.tf-btn{background:var(--surface);border:1px solid var(--border);color:var(--text);padding:6px 15px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1px;cursor:pointer;border-radius:4px;transition:all .2s}
+.tf-btn:hover:not(:disabled){border-color:var(--accent)}
+.tf-btn:disabled{cursor:not-allowed}
+
+/* LISTENING */
+.player-box{background:var(--surface2);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:14px}
+.player-box-img{width:100%;height:90px;object-fit:cover;display:block;filter:brightness(.42)}
+.player-box-body{padding:18px 22px}
+.track-title{font-family:var(--font-head);font-size:12px;font-weight:700;color:#fff;margin-bottom:2px}
+.track-sub{font-size:10.5px;color:var(--muted)}
+.waveform{display:flex;align-items:center;gap:2px;height:36px;overflow:hidden;margin:10px 0}
+.wbar{width:3px;background:var(--accent);border-radius:2px;flex-shrink:0;opacity:.4}
+.script-toggle{background:none;border:1px solid var(--border);color:var(--muted);padding:6px 14px;font-family:var(--font-head);font-size:9.5px;font-weight:700;letter-spacing:1.5px;cursor:pointer;border-radius:4px;margin-bottom:10px;transition:all .2s}
+.script-toggle:hover{border-color:var(--accent)}
+.script-box{max-height:0;overflow:hidden;transition:max-height .45s ease}
+.script-box.open{max-height:1000px}
+.script-content{background:rgba(0,207,255,.04);border:1px solid rgba(0,207,255,.15);border-radius:6px;padding:16px 18px;font-size:12.5px;color:var(--text);line-height:1.9;font-style:italic}
+.eleven-note{font-size:10.5px;color:var(--dim);margin-top:7px}
+
+/* SPEAKING / PRODUCTION */
+.speak-card{background:var(--surface2);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:0 10px 10px 0;overflow:hidden;margin-bottom:10px}
+.speak-card-img{width:100%;height:80px;object-fit:cover;display:block;filter:brightness(.48)}
+.speak-card-body{padding:13px 16px}
+.sc-lbl{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:4px}
+.sc-q{font-size:14px;color:#fff;font-weight:500;margin-bottom:7px;line-height:1.4}
+.sc-hint{font-size:11.5px;color:var(--muted);font-style:italic}
+
+/* TIMER */
+.timer-wrap{display:inline-flex;flex-direction:column;align-items:center;gap:6px;margin-bottom:14px}
+.timer-svg{transform:rotate(-90deg)}
+.timer-arc{transition:stroke-dashoffset .9s linear;stroke-linecap:round}
+.timer-text{font-family:var(--font-head);font-size:18px;font-weight:800;fill:#fff}
+.timer-btn{font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;padding:7px 18px;border-radius:5px;cursor:pointer;border:1px solid var(--accent);background:rgba(16,185,129,.1);color:var(--accent);transition:all .2s;margin-top:6px}
+.timer-btn:hover{background:rgba(16,185,129,.2)}
+
+/* OPINION METER */
+.opinion-meter{background:rgba(16,185,129,.04);border:1px solid rgba(16,185,129,.15);border-radius:10px;padding:14px 18px;margin-bottom:18px}
+.om-lbl{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:8px}
+.om-stmt{font-size:14px;color:#fff;font-weight:500;margin-bottom:12px;line-height:1.4}
+.om-scale{display:flex;gap:6px;flex-wrap:wrap}
+.om-btn{background:var(--surface2);border:1px solid var(--border);color:var(--muted);padding:7px 12px;font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:1px;cursor:pointer;border-radius:4px;transition:all .2s}
+.om-btn:hover{border-color:var(--accent);color:var(--accent)}
+.om-btn.active{background:rgba(16,185,129,.15);border-color:var(--accent);color:var(--accent2)}
+
+/* DICE */
+.dice-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px}
+.dice-card{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px;text-align:center;cursor:pointer;transition:all .2s}
+.dice-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.dice-num{font-family:var(--font-head);font-size:20px;font-weight:800;color:var(--accent);margin-bottom:4px}
+.dice-q{font-size:11.5px;color:var(--text);line-height:1.4}
+
+/* PHRASES */
+.phrases-section{background:rgba(255,184,0,.03);border-top:1px solid rgba(255,184,0,.12);border-bottom:1px solid rgba(255,184,0,.12)}
+.ph-lbl{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:7px}
+.ph-title{font-family:var(--font-head);font-size:22px;font-weight:800;color:#fff;margin-bottom:20px;line-height:1.3}
+.ph-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.ph-card{background:var(--surface2);border:1px solid rgba(255,184,0,.2);border-radius:10px;overflow:hidden}
+.ph-card-img{width:100%;height:80px;object-fit:cover;display:block;filter:brightness(.45)}
+.ph-card-body{padding:14px 16px}
+.ph-num{font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;color:var(--gold);margin-bottom:6px}
+.ph-phrase{font-family:var(--font-head);font-size:14px;font-weight:700;color:#fff;margin-bottom:7px;line-height:1.3}
+.ph-ctx{font-size:11.5px;color:var(--muted);line-height:1.55}
+
+/* WRAP-UP */
+.wu3-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px}
+.wu3-card{background:var(--surface2);border:1px solid var(--border);border-top:3px solid var(--accent);border-radius:0 0 10px 10px;padding:16px 15px}
+.wu3-num{font-family:var(--font-head);font-size:24px;font-weight:800;color:var(--accent);margin-bottom:5px}
+.wu3-txt{font-size:12px;color:var(--muted);line-height:1.55}
+.checklist{display:flex;flex-direction:column;gap:7px;margin-bottom:20px}
+.cl-item{display:flex;align-items:flex-start;gap:11px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:11px 15px;cursor:pointer;transition:all .2s;font-size:12.5px;color:var(--text);line-height:1.5}
+.cl-item:hover{border-color:var(--accent)}
+.cl-item.done{border-color:rgba(0,229,160,.3);background:rgba(0,229,160,.04);color:rgba(0,229,160,.8);text-decoration:line-through;opacity:.7}
+.cl-box{width:15px;height:15px;border:2px solid var(--accent);border-radius:3px;flex-shrink:0;margin-top:2px;transition:all .2s}
+.cl-item.done .cl-box{background:var(--success);border-color:var(--success)}
+.next-box{background:var(--surface2);border:1px solid var(--border);border-left:4px solid var(--cyan);border-radius:0 10px 10px 0;padding:16px 20px}
+.next-lbl{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--cyan);margin-bottom:5px}
+.next-title{font-size:14px;font-weight:600;color:#fff;margin-bottom:3px}
+.next-sub{font-size:11.5px;color:var(--muted)}
+.win-box{background:rgba(255,184,0,.04);border:1px solid rgba(255,184,0,.18);border-radius:10px;padding:16px 18px;margin-top:16px}
+.win-lbl{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold);margin-bottom:8px}
+.win-textarea{width:100%;background:var(--surface);border:1px solid rgba(255,184,0,.2);border-radius:6px;color:var(--text);font-family:var(--font-body);font-size:13px;padding:10px 13px;resize:vertical;min-height:70px;outline:none;line-height:1.5;transition:border-color .2s}
+.win-textarea::placeholder{color:var(--muted)}
+.win-textarea:focus{border-color:var(--gold)}
+.win-save{margin-top:8px;background:rgba(255,184,0,.1);border:1px solid rgba(255,184,0,.3);color:var(--gold);padding:7px 18px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;cursor:pointer;border-radius:5px;transition:all .2s}
+.win-save:hover{background:rgba(255,184,0,.2)}
+
+.ftr{background:var(--surface);border-top:1px solid var(--border);padding:16px 40px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-top:24px}
+.fbrand{font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim)}
+.finfo{font-size:11px;color:var(--dim)}
+.flevels{display:flex;gap:3px;flex-wrap:wrap}
+.flv{padding:5px 10px;font-family:var(--font-head);font-size:10px;font-weight:700;background:var(--surface2);color:var(--dim);border-radius:3px}
+.flv.active{background:var(--accent);color:#fff}
+
+@media(max-width:860px){
+  .hdr,.ftr{padding:14px 16px}
+  .section{margin:14px 10px}
+  .section-body{padding:14px 14px}
+  .wu-grid,.rounds-grid,.vocab-grid,.coll-grid,.dice-grid,.vquiz-grid{grid-template-columns:1fr 1fr}
+  .ph-grid{grid-template-columns:1fr}
+  .wu3-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<div class="prog" id="prog"></div>
+
+<header class="hdr">
+  <div class="brand"><div class="dot"></div><div><div class="bname">Gabriel Turner</div><div class="bsub">English Training · Teacher Edition</div></div></div>
+  <div class="badge-strip">
+    <span id="b1" title="Quick Start">⚡</span>
+    <span id="b2" title="Word Power">📚</span>
+    <span id="b3" title="Grammar Pro">🎯</span>
+    <span id="b4" title="Active Listener">🎧</span>
+    <span id="b5" title="My Win">🏆</span>
+  </div>
+  <div class="sess-meta">
+    <span class="tag tag-level">B1.1</span>
+    <span class="tag tag-mod">Module 4</span>
+    <span class="tag tag-sess">Session 3A — Discovery &amp; Drill</span>
+    <span class="tag tag-time">48 min</span>
+  </div>
+</header>
+
+<!-- §1 WARM-UP -->
+<section class="section">
+  <div class="section-header">
+    <span class="section-number">§1</span>
+    <span class="section-title">Warm-Up — <em>AI Check</em></span>
+    <span class="section-sub">Activate AI vocabulary · Connect to real tech habits</span>
+    <span class="dur-tag">⏱ 5 MIN</span>
+  </div>
+  <div class="section-body">
+    <img class="img-hero" src="https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=900&q=80" alt="AI concept abstract technology">
+    <div class="wu-grid">
+      <div class="wu-card">
+        <img class="wu-card-img" src="https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=600&q=80" alt="AI tools work daily life">
+        <div class="wu-card-body">
+          <div class="wu-q">🤖 Do you use any AI tools in your work or daily life? Which ones?</div>
+          <div class="wu-hint">→ T→S: Ask everyone. Note tools on the board — ChatGPT, Grammarly, Google Translate, Siri, recommendation algorithms. Who uses the most?</div>
+        </div>
+      </div>
+      <div class="wu-card">
+        <img class="wu-card-img" src="https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=600&q=80" alt="AI impressive surprising moment">
+        <div class="wu-card-body">
+          <div class="wu-q">✨ Have you ever been surprised or impressed by something AI did?</div>
+          <div class="wu-hint">→ T→S: Push for a specific moment — "It wrote the whole email in 10 seconds." "It knew what movie I wanted before I did."</div>
+        </div>
+      </div>
+      <div class="wu-card">
+        <img class="wu-card-img" src="https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=600&q=80" alt="AI excited worried opinion">
+        <div class="wu-card-body">
+          <div class="wu-q">🤔 Are you more excited or worried about AI? Why?</div>
+          <div class="wu-hint">→ S→S: Pair up. Encourage honest opinion — "both" is a valid answer. Push for reasons.</div>
+        </div>
+      </div>
+      <div class="wu-card">
+        <img class="wu-card-img" src="https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=600&q=80" alt="AI replace job future work">
+        <div class="wu-card-body">
+          <div class="wu-q">💼 If AI replaced your job tomorrow, what would you do?</div>
+          <div class="wu-hint">→ S→S: Answers reveal assumptions about AI and labour. Connect to today's passive grammar: "Jobs are being replaced by…"</div>
+        </div>
+      </div>
+    </div>
+    <div class="quick-win">
+      <div class="qw-icon">⚡</div>
+      <div>
+        <span class="qw-lbl">Pedagogical Layering</span>
+        <div class="qw-text">Layer 1 (passive naturally emerging): <em>"AI is used to…"</em> / <em>"Jobs are being replaced…"</em> · Layer 2 (opinion): <em>"I think / I believe AI…"</em> · Layer 3 (critical): <em>"Is AI more dangerous than social media?"</em></div>
+      </div>
+    </div>
+    <div style="margin-top:16px;text-align:center">
+      <div style="font-size:12px;color:var(--muted);margin-bottom:10px">⏱ 90-Second Warm-Up Timer — Start when first question is asked</div>
+      <div class="timer-wrap">
+        <svg width="88" height="88" class="timer-svg">
+          <circle cx="44" cy="44" r="38" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="5"/>
+          <circle id="wuArc" cx="44" cy="44" r="38" fill="none" stroke="var(--accent)" stroke-width="5"
+            stroke-dasharray="238.76" stroke-dashoffset="0" class="timer-arc"/>
+          <text id="wuTxt" x="44" y="50" text-anchor="middle" class="timer-text">1:30</text>
+        </svg>
+        <button class="timer-btn" onclick="startTimer('wuArc','wuTxt',90,'b1',238.76)">Start Timer</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- §2 SPEAKING -->
+<section class="section">
+  <div class="section-header">
+    <span class="section-number">§2</span>
+    <span class="section-title">Speaking — <em>How AI Is Changing Your World</em></span>
+    <span class="section-sub">3 rounds · Passive voice emerging naturally · Model B1.1 answer</span>
+    <span class="dur-tag">⏱ 8 MIN</span>
+  </div>
+  <div class="section-body">
+    <div class="topic-hero">
+      <img class="topic-hero-img" src="https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=900&q=80" alt="AI technology daily life change">
+      <div class="topic-hero-overlay">
+        <div class="topic-label">Session Topic</div>
+        <div class="topic-q">AI in Your Daily Life — Exciting or Terrifying?</div>
+      </div>
+    </div>
+    <div class="rounds-grid">
+      <div class="round-card">
+        <img class="round-card-img" src="https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=600&q=80" alt="AI used daily work without realising">
+        <div class="round-card-body">
+          <div class="round-num">Round 1 — 60s · T→S</div>
+          <div class="round-q">Describe one way AI is used in your work or life — even without you realising it.</div>
+          <button class="model-reveal-btn" onclick="revealModel('m1')">▼ Show B1.1 Model Answer</button>
+          <div class="model-answer" id="m1">"AI is used in almost everything I do — even if I don't notice it. My emails are filtered by an algorithm. My Netflix recommendations are generated by AI. At work, reports are sometimes summarized by AI tools now."</div>
+        </div>
+      </div>
+      <div class="round-card">
+        <img class="round-card-img" src="https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=600&q=80" alt="AI decision trust important">
+        <div class="round-card-body">
+          <div class="round-num">Round 2 — 90s · S→S</div>
+          <div class="round-q">Ask your partner: Would you trust an AI to make an important decision for you?</div>
+          <button class="model-reveal-btn" onclick="revealModel('m2')">▼ Show B1.1 Model Answer</button>
+          <div class="model-answer" id="m2">"I think it's exciting and terrifying at the same time. Jobs are being changed — not necessarily eliminated, but transformed. The part that worries me most is bias: decisions about loans, jobs, and medical care are sometimes made by systems that weren't designed to be fair."</div>
+        </div>
+      </div>
+      <div class="round-card">
+        <img class="round-card-img" src="https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=600&q=80" alt="AI government regulation rules who decides">
+        <div class="round-card-body">
+          <div class="round-num">Round 3 — 90s · Class</div>
+          <div class="round-q">Should AI be regulated by governments? Who should make the rules?</div>
+          <button class="model-reveal-btn" onclick="revealModel('m3')">▼ Show B1.1 Model Answer</button>
+          <div class="model-answer" id="m3">"I believe AI should be regulated — but I'm not sure governments understand it well enough yet. The question is: who decides what's fair? Right now, the rules are being written by the companies building the tools."</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="background:rgba(167,139,250,.06);border:1px solid rgba(167,139,250,.2);border-radius:8px;padding:14px 18px;margin-bottom:14px">
+      <div style="font-family:var(--font-head);font-size:9px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--violet);margin-bottom:8px">Model Answer — Color-Coded</div>
+      <div style="font-size:13px;color:var(--text);line-height:1.9">
+        "AI <span class="color-passive">is used</span> in almost everything I do — even if I don't notice it. My emails <span class="color-passive">are filtered</span> by an algorithm. My Netflix recommendations <span class="color-passive">are generated</span> by AI. At work, reports <span class="color-passive">are sometimes summarized</span> by AI tools now. I think it's exciting and terrifying at the same time. Jobs <span class="color-passive">are being changed</span> — not necessarily eliminated, but transformed. The part that worries me most is <span class="color-vocab">bias</span>: <span class="color-vocab">decisions</span> about loans, jobs, and medical care are sometimes <span class="color-passive">made</span> by systems that weren't <span class="color-passive">designed</span> to be fair. I believe AI should <span class="color-passive">be regulated</span> — but <span class="color-coll">I'm not sure governments understand it well enough</span> yet."
+      </div>
+      <div style="display:flex;gap:16px;margin-top:10px;flex-wrap:wrap">
+        <span style="font-size:10.5px;color:var(--violet)">■ Passive Voice</span>
+        <span style="font-size:10.5px;color:var(--accent2)">■ Target Vocabulary</span>
+        <span style="font-size:10.5px;color:var(--warn)">■ Colloquial Phrase</span>
+      </div>
+    </div>
+    <div class="tn tn-c1">
+      <span class="tn-lbl">📘 Context Note</span>
+      Notice how the model answer uses passive voice naturally throughout: "AI is used", "emails are filtered", "decisions are made", "AI should be regulated." Tech and business English are full of passive because it sounds analytical and objective — and because it often hides who is responsible. Help students recognise this as a deliberate rhetorical pattern.
+    </div>
+  </div>
+</section>
+
+<!-- §3 VOCABULARY -->
+<section class="section">
+  <div class="section-header">
+    <span class="section-number">§3</span>
+    <span class="section-title">Vocabulary — <em>AI &amp; Technology</em></span>
+    <span class="section-sub">12 words · Click to hear · Quiz earns 📚 badge</span>
+    <span class="dur-tag">⏱ 10 MIN</span>
+  </div>
+  <div class="section-body">
+    <img class="vocab-section-banner" src="https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=900&q=80" alt="AI technology vocabulary digital">
+    <div style="font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:10px">12 Words — Click any card to hear</div>
+    <div class="vocab-grid">
+      <div class="vocab-card" onclick="speak('AI — artificial intelligence')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=600&q=80" alt="AI artificial intelligence computer">
+        <div class="vocab-card-body">
+          <div class="vc-word">AI</div>
+          <div class="vc-ipa">/ˌeɪˈaɪ/</div>
+          <div class="vc-pos">noun (abbrev.)</div>
+          <div class="vc-def">Artificial intelligence: computer systems that simulate human thinking</div>
+          <div class="vc-ex">"AI is used to detect fraud in banking."</div>
+          <div class="vc-sp">🔊 Click to hear · Say each letter: A-I</div>
+        </div>
+      </div>
+      <div class="vocab-card" onclick="speak('automation')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=600&q=80" alt="automation machine tasks replacing humans">
+        <div class="vocab-card-body">
+          <div class="vc-word">automation</div>
+          <div class="vc-ipa">/ˌɔːtəˈmeɪʃən/</div>
+          <div class="vc-pos">noun</div>
+          <div class="vc-def">Using machines to do tasks previously done by humans</div>
+          <div class="vc-ex">"Automation was introduced to reduce costs."</div>
+          <div class="vc-sp">🔊 Click to hear</div>
+        </div>
+      </div>
+      <div class="vocab-card" onclick="speak('data')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=600&q=80" alt="data digital information stored collected">
+        <div class="vocab-card-body">
+          <div class="vc-word">data</div>
+          <div class="vc-ipa">/ˈdeɪtə/</div>
+          <div class="vc-pos">noun</div>
+          <div class="vc-def">Information collected and stored digitally</div>
+          <div class="vc-ex">"Your data is collected every time you use an app."</div>
+          <div class="vc-sp">🔊 Click to hear</div>
+        </div>
+      </div>
+      <div class="vocab-card" onclick="speak('regulation')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=600&q=80" alt="regulation government rules industry control">
+        <div class="vocab-card-body">
+          <div class="vc-word">regulation</div>
+          <div class="vc-ipa">/ˌrɛɡjʊˈleɪʃən/</div>
+          <div class="vc-pos">noun</div>
+          <div class="vc-def">Rules made by governments to control an industry</div>
+          <div class="vc-ex">"AI regulation is being discussed by lawmakers worldwide."</div>
+          <div class="vc-sp">🔊 Click to hear</div>
+        </div>
+      </div>
+      <div class="vocab-card" onclick="speak('privacy')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=600&q=80" alt="privacy personal data control information">
+        <div class="vocab-card-body">
+          <div class="vc-word">privacy</div>
+          <div class="vc-ipa">/ˈprɪvəsi/</div>
+          <div class="vc-pos">noun</div>
+          <div class="vc-def">Control over your personal information</div>
+          <div class="vc-ex">"Privacy is not guaranteed when using free AI tools."</div>
+          <div class="vc-sp">🔊 Click to hear</div>
+        </div>
+      </div>
+      <div class="vocab-card" onclick="speak('tool')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=600&q=80" alt="tool help task writing design research">
+        <div class="vocab-card-body">
+          <div class="vc-word">tool</div>
+          <div class="vc-ipa">/tuːl/</div>
+          <div class="vc-pos">noun</div>
+          <div class="vc-def">Something used to help do a task</div>
+          <div class="vc-ex">"AI is now used as a tool in writing, design, and research."</div>
+          <div class="vc-sp">🔊 Click to hear</div>
+        </div>
+      </div>
+      <div class="vocab-card" onclick="speak('bias')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=600&q=80" alt="bias unfair prejudice AI system">
+        <div class="vocab-card-body">
+          <div class="vc-word">bias</div>
+          <div class="vc-ipa">/ˈbaɪəs/</div>
+          <div class="vc-pos">noun</div>
+          <div class="vc-def">Unfair preference or prejudice in a system</div>
+          <div class="vc-ex">"Bias was found in the AI hiring system."</div>
+          <div class="vc-sp">🔊 Click to hear · BAI-us</div>
+        </div>
+      </div>
+      <div class="vocab-card" onclick="speak('decision')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=600&q=80" alt="decision choice algorithm AI life">
+        <div class="vocab-card-body">
+          <div class="vc-word">decision</div>
+          <div class="vc-ipa">/dɪˈsɪʒən/</div>
+          <div class="vc-pos">noun</div>
+          <div class="vc-def">A choice made after considering options</div>
+          <div class="vc-ex">"Life-changing decisions are sometimes made by AI algorithms."</div>
+          <div class="vc-sp">🔊 Click to hear</div>
+        </div>
+      </div>
+      <div class="vocab-card" onclick="speak('generate')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=600&q=80" alt="generate produce create AI text image">
+        <div class="vocab-card-body">
+          <div class="vc-word">generate (v)</div>
+          <div class="vc-ipa">/ˈdʒɛnəreɪt/</div>
+          <div class="vc-pos">verb</div>
+          <div class="vc-def">To produce or create something</div>
+          <div class="vc-ex">"This text was generated by an AI in 2 seconds."</div>
+          <div class="vc-sp">🔊 Click to hear · JEN-er-ate</div>
+        </div>
+      </div>
+      <div class="vocab-card" onclick="speak('replace')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=600&q=80" alt="replace automation jobs workers">
+        <div class="vocab-card-body">
+          <div class="vc-word">replace (v)</div>
+          <div class="vc-ipa">/rɪˈpleɪs/</div>
+          <div class="vc-pos">verb</div>
+          <div class="vc-def">To take the place of something or someone</div>
+          <div class="vc-ex">"Some jobs will be replaced by automation."</div>
+          <div class="vc-sp">🔊 Click to hear</div>
+        </div>
+      </div>
+      <div class="vocab-card" onclick="speak('regulate')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=600&q=80" alt="regulate rules control AI harm">
+        <div class="vocab-card-body">
+          <div class="vc-word">regulate (v)</div>
+          <div class="vc-ipa">/ˈrɛɡjʊleɪt/</div>
+          <div class="vc-pos">verb</div>
+          <div class="vc-def">To control by rules</div>
+          <div class="vc-ex">"AI needs to be regulated before it causes serious harm."</div>
+          <div class="vc-sp">🔊 Click to hear</div>
+        </div>
+      </div>
+      <div class="vocab-card" onclick="speak('detect')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=600&q=80" alt="detect discover fraud AI banking">
+        <div class="vocab-card-body">
+          <div class="vc-word">detect (v)</div>
+          <div class="vc-ipa">/dɪˈtɛkt/</div>
+          <div class="vc-pos">verb</div>
+          <div class="vc-def">To discover or identify something</div>
+          <div class="vc-ex">"Fraud is detected automatically by AI banking systems."</div>
+          <div class="vc-sp">🔊 Click to hear</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tn tn-c3">
+      <span class="tn-lbl">⭐ Pronunciation Notes</span>
+      "AI" — say each letter separately: A-I /ˌeɪˈaɪ/, not "ay". · "bias" — two syllables: BAI-us /ˈbaɪəs/. Students may stress the second syllable (Spanish transfer). · "generate" — three syllables: JEN-er-ate /ˈdʒɛnəreɪt/. Stress on first. · "regulation" — five syllables: /ˌrɛɡ-jʊ-ˈleɪ-ʃən/. Stress on "LAY". Model all four before the quiz.
+    </div>
+
+    <!-- VOCAB QUIZ -->
+    <div class="vquiz-wrap">
+      <span class="vquiz-lbl">📚 Vocab Quiz — Match the Spanish translation to the English word · Score 8+/12 to earn the 📚 badge</span>
+      <div class="vquiz-grid" id="vquizGrid">
+
+        <div class="vq-card" id="vq1">
+          <div class="vq-es">inteligencia artificial</div>
+          <div class="vq-opts">
+            <button class="vq-opt" onclick="checkVQ(this,'AI','vq1')">AI</button>
+            <button class="vq-opt" onclick="checkVQ(this,'AI','vq1')">tool</button>
+            <button class="vq-opt" onclick="checkVQ(this,'AI','vq1')">data</button>
+          </div>
+        </div>
+
+        <div class="vq-card" id="vq2">
+          <div class="vq-es">automatización</div>
+          <div class="vq-opts">
+            <button class="vq-opt" onclick="checkVQ(this,'automation','vq2')">regulation</button>
+            <button class="vq-opt" onclick="checkVQ(this,'automation','vq2')">automation</button>
+            <button class="vq-opt" onclick="checkVQ(this,'automation','vq2')">bias</button>
+          </div>
+        </div>
+
+        <div class="vq-card" id="vq3">
+          <div class="vq-es">datos</div>
+          <div class="vq-opts">
+            <button class="vq-opt" onclick="checkVQ(this,'data','vq3')">privacy</button>
+            <button class="vq-opt" onclick="checkVQ(this,'data','vq3')">decision</button>
+            <button class="vq-opt" onclick="checkVQ(this,'data','vq3')">data</button>
+          </div>
+        </div>
+
+        <div class="vq-card" id="vq4">
+          <div class="vq-es">regulación / normativa</div>
+          <div class="vq-opts">
+            <button class="vq-opt" onclick="checkVQ(this,'regulation','vq4')">regulation</button>
+            <button class="vq-opt" onclick="checkVQ(this,'regulation','vq4')">tool</button>
+            <button class="vq-opt" onclick="checkVQ(this,'regulation','vq4')">detect</button>
+          </div>
+        </div>
+
+        <div class="vq-card" id="vq5">
+          <div class="vq-es">privacidad</div>
+          <div class="vq-opts">
+            <button class="vq-opt" onclick="checkVQ(this,'privacy','vq5')">bias</button>
+            <button class="vq-opt" onclick="checkVQ(this,'privacy','vq5')">privacy</button>
+            <button class="vq-opt" onclick="checkVQ(this,'privacy','vq5')">replace</button>
+          </div>
+        </div>
+
+        <div class="vq-card" id="vq6">
+          <div class="vq-es">herramienta</div>
+          <div class="vq-opts">
+            <button class="vq-opt" onclick="checkVQ(this,'tool','vq6')">tool</button>
+            <button class="vq-opt" onclick="checkVQ(this,'tool','vq6')">data</button>
+            <button class="vq-opt" onclick="checkVQ(this,'tool','vq6')">generate</button>
+          </div>
+        </div>
+
+        <div class="vq-card" id="vq7">
+          <div class="vq-es">sesgo / prejuicio</div>
+          <div class="vq-opts">
+            <button class="vq-opt" onclick="checkVQ(this,'bias','vq7')">regulation</button>
+            <button class="vq-opt" onclick="checkVQ(this,'bias','vq7')">decision</button>
+            <button class="vq-opt" onclick="checkVQ(this,'bias','vq7')">bias</button>
+          </div>
+        </div>
+
+        <div class="vq-card" id="vq8">
+          <div class="vq-es">decisión</div>
+          <div class="vq-opts">
+            <button class="vq-opt" onclick="checkVQ(this,'decision','vq8')">decision</button>
+            <button class="vq-opt" onclick="checkVQ(this,'decision','vq8')">detect</button>
+            <button class="vq-opt" onclick="checkVQ(this,'decision','vq8')">privacy</button>
+          </div>
+        </div>
+
+        <div class="vq-card" id="vq9">
+          <div class="vq-es">generar / producir</div>
+          <div class="vq-opts">
+            <button class="vq-opt" onclick="checkVQ(this,'generate','vq9')">replace</button>
+            <button class="vq-opt" onclick="checkVQ(this,'generate','vq9')">regulate</button>
+            <button class="vq-opt" onclick="checkVQ(this,'generate','vq9')">generate</button>
+          </div>
+        </div>
+
+        <div class="vq-card" id="vq10">
+          <div class="vq-es">reemplazar / sustituir</div>
+          <div class="vq-opts">
+            <button class="vq-opt" onclick="checkVQ(this,'replace','vq10')">detect</button>
+            <button class="vq-opt" onclick="checkVQ(this,'replace','vq10')">replace</button>
+            <button class="vq-opt" onclick="checkVQ(this,'replace','vq10')">tool</button>
+          </div>
+        </div>
+
+        <div class="vq-card" id="vq11">
+          <div class="vq-es">regular / controlar</div>
+          <div class="vq-opts">
+            <button class="vq-opt" onclick="checkVQ(this,'regulate','vq11')">generate</button>
+            <button class="vq-opt" onclick="checkVQ(this,'regulate','vq11')">bias</button>
+            <button class="vq-opt" onclick="checkVQ(this,'regulate','vq11')">regulate</button>
+          </div>
+        </div>
+
+        <div class="vq-card" id="vq12">
+          <div class="vq-es">detectar / identificar</div>
+          <div class="vq-opts">
+            <button class="vq-opt" onclick="checkVQ(this,'detect','vq12')">detect</button>
+            <button class="vq-opt" onclick="checkVQ(this,'detect','vq12')">automation</button>
+            <button class="vq-opt" onclick="checkVQ(this,'detect','vq12')">regulation</button>
+          </div>
+        </div>
+
+      </div>
+      <div class="vquiz-score" id="vquizScore" style="display:none"></div>
+    </div>
+  </div>
+</section>
+
+<!-- §4 COLLOQUIAL -->
+<section class="section">
+  <div class="section-header">
+    <span class="section-number">§4</span>
+    <span class="section-title">Colloquial English — <em>Talking About AI</em></span>
+    <span class="section-sub">4 natural phrases · AI &amp; opinion context · Used daily by native speakers</span>
+    <span class="dur-tag">⏱ 5 MIN</span>
+  </div>
+  <div class="section-body">
+    <img class="coll-banner" src="https://images.unsplash.com/photo-1535378917042-10a22c95931a?w=900&q=80" alt="AI future technology discussion opinion">
+    <div class="coll-grid">
+      <div class="coll-card" onclick="speak('I think both sides have a point.')">
+        <img class="coll-card-img" src="https://images.unsplash.com/photo-1535378917042-10a22c95931a?w=600&q=80" alt="balanced opinion debate both sides point">
+        <div class="coll-card-body">
+          <div class="coll-phrase">"I think both sides have a point."</div>
+          <div class="coll-meaning">Balanced opinion in debate. Acknowledges merit on both sides without committing too strongly. Very natural in professional discussions about technology, politics, and ethics.</div>
+          <div class="coll-ex">"Should AI be regulated? <em>I think both sides have a point</em> — freedom and safety matter."</div>
+        </div>
+      </div>
+      <div class="coll-card" onclick="speak('It\'s complicated.')">
+        <img class="coll-card-img" src="https://images.unsplash.com/photo-1535378917042-10a22c95931a?w=600&q=80" alt="complicated complex nuanced AI topic">
+        <div class="coll-card-body">
+          <div class="coll-phrase">"It's complicated."</div>
+          <div class="coll-meaning">Acknowledges complexity without oversimplifying. A powerful hedge in English — it signals you understand the nuance of an issue. Confident speakers use this more than simple yes/no answers.</div>
+          <div class="coll-ex">"Is AI good or bad? <em>It's complicated</em> — the same tool that saves lives can also destroy jobs."</div>
+        </div>
+      </div>
+      <div class="coll-card" onclick="speak('That depends on how it\'s used.')">
+        <img class="coll-card-img" src="https://images.unsplash.com/photo-1535378917042-10a22c95931a?w=600&q=80" alt="depends use context technology answer">
+        <div class="coll-card-body">
+          <div class="coll-phrase">"That depends on how it's used."</div>
+          <div class="coll-meaning">Nuanced response to technology questions. Avoids black-and-white thinking. Very common in B2+ English — it shifts focus from what something is to how it functions in context.</div>
+          <div class="coll-ex">"Is AI dangerous? <em>That depends on how it's used</em> — a hammer can build or break."</div>
+        </div>
+      </div>
+      <div class="coll-card" onclick="speak('I\'m not sure governments understand it well enough.')">
+        <img class="coll-card-img" src="https://images.unsplash.com/photo-1535378917042-10a22c95931a?w=600&q=80" alt="government regulation AI understand enough">
+        <div class="coll-card-body">
+          <div class="coll-phrase">"I'm not sure governments understand it well enough."</div>
+          <div class="coll-meaning">Expresses concern about regulation without being rude. "I'm not sure" softens the criticism. "Well enough" implies a higher standard is needed. Very natural in debates about tech policy.</div>
+          <div class="coll-ex">"People say AI should be regulated, but <em>I'm not sure governments understand it well enough</em> to write good laws."</div>
+        </div>
+      </div>
+    </div>
+    <div class="tn tn-c2">
+      <span class="tn-lbl">💡 Quick Drill</span>
+      A student says "AI will replace all teachers." What do you respond? Push for passive: "Teachers might be replaced by AI in some areas, but…" + opinion language: "That depends on how it's used — AI can't replace the relationship between a teacher and a student." Drill: student makes a strong claim → partner responds with one of today's four phrases.
+    </div>
+  </div>
+</section>
+
+<!-- §5 GRAMMAR -->
+<section class="section">
+  <div class="section-header">
+    <span class="section-number">§5</span>
+    <span class="section-title">Grammar — <em>Passive Voice: AI &amp; Technology Context</em></span>
+    <span class="section-sub">AI news · Referential approach · Modal passives · 2 activities + Poll</span>
+    <span class="dur-tag">⏱ 10 MIN</span>
+  </div>
+  <div class="section-body">
+    <img class="gram-banner" src="https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=900&q=80" alt="AI abstract code passive voice technology">
+
+    <div class="tn tn-c1" style="margin-top:0;margin-bottom:16px">
+      <span class="tn-lbl">📘 Referential Teaching Note</span>
+      Today's key insight: AI news is FULL of passive voice because companies don't want to claim responsibility. "Mistakes were made." "Data was accessed." "Users were affected." Help students recognise this as a rhetorical choice — passive hides the agent. In business English, this is common and intentional. When students read tech news, they should ask: who is the hidden agent?
+    </div>
+
+    <button class="gram-toggle-btn" onclick="toggleGram('gramRef')">▼ Grammar Reference — Passive Voice Structures · Click to expand</button>
+    <div class="gram-coll" id="gramRef">
+      <table class="gram-table">
+        <thead><tr><th>Structure</th><th>Form</th><th>AI Example</th></tr></thead>
+        <tbody>
+          <tr><td style="color:var(--accent);font-family:var(--font-head);font-weight:700">Present Passive</td><td>is/are + past participle</td><td><span class="ex-phrase">"Your data is processed by AI every second."</span></td></tr>
+          <tr><td style="color:var(--accent2);font-family:var(--font-head);font-weight:700">Past Passive</td><td>was/were + past participle</td><td><span class="ex-phrase">"This algorithm was trained on millions of photos."</span></td></tr>
+          <tr><td style="color:var(--gold);font-family:var(--font-head);font-weight:700">Passive + by</td><td>is/are + past part + by</td><td><span class="ex-phrase">"Decisions are made by AI systems, not humans."</span></td></tr>
+          <tr><td style="color:var(--cyan);font-family:var(--font-head);font-weight:700">Passive + modal</td><td>can/must/should + be + past part</td><td><span class="ex-phrase">"AI should be regulated by international bodies."</span></td></tr>
+          <tr><td style="color:var(--danger);font-family:var(--font-head);font-weight:700">Error — missing be</td><td>verb alone</td><td><span style="color:var(--danger)">✗ "This data processed automatically."</span><br><span class="ex-phrase">✅ "This data <strong>is</strong> processed automatically."</span></td></tr>
+        </tbody>
+      </table>
+      <div class="rule-note">💡 <strong>The rule that matters most:</strong> Passive always needs "be." "Data <strong>is</strong> processed." / "This algorithm <strong>was</strong> trained." Without "be," it's an error — the most common mistake at B1.1. For modal passives: should/can/must + <strong>be</strong> + past participle.</div>
+      <div class="err-box">⚠️ <strong>Correct immediately:</strong><br>
+        ✗ "This data processed automatically." → ✅ "This data <strong>is</strong> processed automatically."<br>
+        ✗ "The algorithm trained on millions of images." → ✅ "The algorithm <strong>was</strong> trained on millions of images."<br>
+        ✗ "AI should regulated by governments." → ✅ "AI should <strong>be</strong> regulated by governments."
+      </div>
+    </div>
+
+    <div class="poll-box" style="margin-top:16px">
+      <div class="poll-lbl">⚡ Quick Poll — 30 pts · Earn 🎯 badge at 30</div>
+      <div class="poll-q">1. "This AI tool ______ by a team of 500 engineers over 3 years."</div>
+      <div class="poll-opts" id="pollA">
+        <button class="poll-btn" onclick="doPoll('pollA','pa1',this)">was built</button>
+        <button class="poll-btn" onclick="doPoll('pollA','pa2',this)">builded</button>
+        <button class="poll-btn" onclick="doPoll('pollA','pa3',this)">is building</button>
+      </div>
+      <div class="poll-feedback" id="pa1">✅ Correct! "was built" — Past Passive. "Was" = past of "be" + "built" = irregular past participle of "build". Note: "builded" is not an English word.</div>
+      <div class="poll-feedback" id="pa2">❌ "Builded" is not a word in English. The past participle of "build" is "built". Passive: was + built.</div>
+      <div class="poll-feedback" id="pa3">❌ "Is building" is Present Continuous active. Passive needs: was + past participle → "was built".</div>
+    </div>
+    <div class="poll-box">
+      <div class="poll-q">2. "Millions of images ______ to train the facial recognition system."</div>
+      <div class="poll-opts" id="pollB">
+        <button class="poll-btn" onclick="doPoll('pollB','pb1',this)">were used</button>
+        <button class="poll-btn" onclick="doPoll('pollB','pb2',this)">was used</button>
+        <button class="poll-btn" onclick="doPoll('pollB','pb3',this)">used</button>
+      </div>
+      <div class="poll-feedback" id="pb1">✅ Correct! "were used" — Past Passive. "Millions of images" is plural → "were". "Used" = regular past participle.</div>
+      <div class="poll-feedback" id="pb2">❌ "Was used" uses singular "was" — "millions of images" is plural: use "were used".</div>
+      <div class="poll-feedback" id="pb3">❌ "Used" alone is missing the "be" verb. Passive = were + past participle → "were used".</div>
+    </div>
+    <div class="poll-box">
+      <div class="poll-q">3. "Personal data ______ to third parties without users knowing."</div>
+      <div class="poll-opts" id="pollC">
+        <button class="poll-btn" onclick="doPoll('pollC','pc1',this)">is sold</button>
+        <button class="poll-btn" onclick="doPoll('pollC','pc2',this)">sells</button>
+        <button class="poll-btn" onclick="doPoll('pollC','pc3',this)">was selling</button>
+      </div>
+      <div class="poll-feedback" id="pc1">✅ Correct! "is sold" — Present Passive. "Data" is singular → "is". This is the kind of passive that hides who is doing the selling — deliberately.</div>
+      <div class="poll-feedback" id="pc2">❌ "Sells" is Present Simple active — who sells? The passive "is sold" deliberately hides the agent (the company).</div>
+      <div class="poll-feedback" id="pc3">❌ "Was selling" is Past Continuous active. Passive Present = is + past participle → "is sold".</div>
+    </div>
+
+    <div class="act-title">✏️ Activity A — Choose the Correct Passive Form</div>
+    <div class="opt-group">
+      <div class="opt-q">1. "This algorithm ______ to predict which videos you'll watch next."</div>
+      <div class="opts" id="q1">
+        <button class="opt" onclick="checkOpt(this,'was designed','q1')">was designed</button>
+        <button class="opt" onclick="checkOpt(this,'was designed','q1')">designs</button>
+      </div>
+    </div>
+    <div class="opt-group">
+      <div class="opt-q">2. "AI hiring tools ______ for racial bias in several studies."</div>
+      <div class="opts" id="q2">
+        <button class="opt" onclick="checkOpt(this,'were criticized','q2')">were criticized</button>
+        <button class="opt" onclick="checkOpt(this,'were criticized','q2')">criticized</button>
+      </div>
+    </div>
+    <div class="opt-group">
+      <div class="opt-q">3. "Medical images ______ by AI to detect cancer faster than doctors."</div>
+      <div class="opts" id="q3">
+        <button class="opt" onclick="checkOpt(this,'are analyzed','q3')">are analyzed</button>
+        <button class="opt" onclick="checkOpt(this,'are analyzed','q3')">analyzes</button>
+      </div>
+    </div>
+    <div class="opt-group">
+      <div class="opt-q">4. "New AI regulations ______ by the EU last year."</div>
+      <div class="opts" id="q4">
+        <button class="opt" onclick="checkOpt(this,'were introduced','q4')">were introduced</button>
+        <button class="opt" onclick="checkOpt(this,'were introduced','q4')">introduced</button>
+      </div>
+    </div>
+
+    <div class="act-title">✏️ Activity B — Find the Error (Correct / Error)</div>
+    <div class="tf-set">
+      <div class="tf-row">
+        <div class="tf-stmt">"This AI system trained on 10 billion examples." — Is this grammatically correct?</div>
+        <div class="tf-btns">
+          <button class="tf-btn" onclick="checkTF(this,false,'tf1')">CORRECT</button>
+          <button class="tf-btn" onclick="checkTF(this,true,'tf1')">ERROR</button>
+        </div>
+      </div>
+      <div class="tf-row">
+        <div class="tf-stmt">"AI decisions should be explained to users." — Is this grammatically correct?</div>
+        <div class="tf-btns">
+          <button class="tf-btn" onclick="checkTF(this,true,'tf2')">CORRECT</button>
+          <button class="tf-btn" onclick="checkTF(this,false,'tf2')">ERROR</button>
+        </div>
+      </div>
+      <div class="tf-row">
+        <div class="tf-stmt">"Bias was discovered in the hiring algorithm." — Is this grammatically correct?</div>
+        <div class="tf-btns">
+          <button class="tf-btn" onclick="checkTF(this,true,'tf3')">CORRECT</button>
+          <button class="tf-btn" onclick="checkTF(this,false,'tf3')">ERROR</button>
+        </div>
+      </div>
+      <div class="tf-row">
+        <div class="tf-stmt">"These rules are designed prevent misuse." — Is this grammatically correct?</div>
+        <div class="tf-btns">
+          <button class="tf-btn" onclick="checkTF(this,false,'tf4')">CORRECT</button>
+          <button class="tf-btn" onclick="checkTF(this,true,'tf4')">ERROR</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- §6 LISTENING -->
+<section class="section">
+  <div class="section-header">
+    <span class="section-number">§6</span>
+    <span class="section-title">Listening — <em>Rodrigo and AI at Work</em></span>
+    <span class="section-sub">Sarah (AmE) · Speed 0.82 · Passive voice throughout · MC + T/F</span>
+    <span class="dur-tag">⏱ 8 MIN</span>
+  </div>
+  <div class="section-body">
+    <div class="player-box">
+      <img class="player-box-img" src="https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=900&q=80" alt="AI work productivity output change">
+      <div class="player-box-body">
+        <div class="track-title">Rodrigo and AI at Work</div>
+        <div class="track-sub">B1.1 · M4 · S3A · Voice: Sarah (American English) · Speed: 0.82</div>
+        <div class="waveform" id="wv"></div>
+      </div>
+    </div>
+
+    <button class="script-toggle" onclick="toggleScript()">▼ Show ElevenLabs Script</button>
+    <div class="script-box" id="scriptBox">
+      <div class="script-content">
+        Six months ago, AI tools were introduced at my company. At first, I was worried. My job involves writing reports, analyzing data, and summarizing long meetings — exactly the kind of tasks that are supposed to be replaced by AI. So I thought: am I being made redundant?<br><br>
+        But here's what actually happened. The AI tools were used to handle the repetitive parts — formatting, basic summaries, initial drafts. And what was left for me was the interesting part: judgment, context, relationships. The work that can't be automated easily.<br><br>
+        What surprised me most was this: my output was doubled in the same time. Reports that used to take two hours were finished in forty-five minutes. That time was then used for strategy and client communication. My value didn't decrease — it shifted.<br><br>
+        That said, I'm aware that not everyone's experience is like mine. In manufacturing and logistics, thousands of jobs have been eliminated. The impact is real and unequal. I think AI should be regulated — not to stop it, but to make sure the benefits are distributed fairly. Right now, the productivity gains are captured by companies, not workers. That needs to change.<br><br>
+        I don't think AI is good or bad. I think it depends on who controls it — and that's a political question, not a technical one.
+      </div>
+      <div class="eleven-note">📎 ElevenLabs: Voice — Sarah (American English) · Speed 0.82 · Pitch 1.0 · B1.1 M4 S3A</div>
+    </div>
+
+    <div class="act-title">✏️ Listening — Multiple Choice</div>
+    <div class="opt-group">
+      <div class="opt-q">1. What happened to Rodrigo's work output after AI was introduced?</div>
+      <div class="opts" id="lq1">
+        <button class="opt" onclick="checkOpt(this,'It doubled in the same time','lq1')">It doubled in the same time</button>
+        <button class="opt" onclick="checkOpt(this,'It doubled in the same time','lq1')">It decreased</button>
+        <button class="opt" onclick="checkOpt(this,'It doubled in the same time','lq1')">It stayed the same</button>
+      </div>
+    </div>
+    <div class="opt-group">
+      <div class="opt-q">2. What is Rodrigo's opinion on AI regulation?</div>
+      <div class="opts" id="lq2">
+        <button class="opt" onclick="checkOpt(this,'It should be regulated to distribute benefits fairly','lq2')">It should be regulated to distribute benefits fairly</button>
+        <button class="opt" onclick="checkOpt(this,'It should be regulated to distribute benefits fairly','lq2')">It should be banned</button>
+        <button class="opt" onclick="checkOpt(this,'It should be regulated to distribute benefits fairly','lq2')">It needs no regulation</button>
+      </div>
+    </div>
+
+    <div class="act-title">✏️ Listening — True or False</div>
+    <div class="tf-set">
+      <div class="tf-row">
+        <div class="tf-stmt">Rodrigo's job was completely eliminated when AI was introduced.</div>
+        <div class="tf-btns">
+          <button class="tf-btn" onclick="checkTF(this,false,'tfl1')">TRUE</button>
+          <button class="tf-btn" onclick="checkTF(this,true,'tfl1')">FALSE</button>
+        </div>
+      </div>
+      <div class="tf-row">
+        <div class="tf-stmt">Rodrigo now spends more time on strategy and client communication.</div>
+        <div class="tf-btns">
+          <button class="tf-btn" onclick="checkTF(this,true,'tfl2')">TRUE</button>
+          <button class="tf-btn" onclick="checkTF(this,false,'tfl2')">FALSE</button>
+        </div>
+      </div>
+      <div class="tf-row">
+        <div class="tf-stmt">Rodrigo believes AI regulation is mainly a technical problem.</div>
+        <div class="tf-btns">
+          <button class="tf-btn" onclick="checkTF(this,false,'tfl3')">TRUE</button>
+          <button class="tf-btn" onclick="checkTF(this,true,'tfl3')">FALSE</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="micro-speaking">
+      <span class="ms-lbl">🗣️ Post-Listening Speaking — 60 seconds</span>
+      <div style="font-size:12.5px;color:var(--text);line-height:1.6">Close the script. Tell your partner: <em>"What happened to Rodrigo's job? What changed? What does he believe about AI regulation?"</em><br>
+      Try to use at least one passive sentence from memory: <strong style="color:var(--violet)">"AI tools were introduced…" / "Output was doubled…" / "AI should be regulated to…"</strong></div>
+    </div>
+  </div>
+</section>
+
+<!-- §7 PRODUCTION -->
+<section class="section">
+  <div class="section-header">
+    <span class="section-number">§7</span>
+    <span class="section-title">Production — <em>Your AI Opinion</em></span>
+    <span class="section-sub">Opinion meter · 4 speaking prompts · 90-sec challenge · Hot Seat Dice</span>
+    <span class="dur-tag">⏱ 12 MIN</span>
+  </div>
+  <div class="section-body">
+    <img class="img-hero" src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=900&q=80" alt="group speaking production session discussion">
+
+    <div class="opinion-meter">
+      <div class="om-lbl">📊 Opinion Meter — Where do you stand?</div>
+      <div class="om-stmt">"AI is more dangerous than beneficial."</div>
+      <div class="om-scale">
+        <button class="om-btn" onclick="setOpinion(this)">1 — Strongly Disagree</button>
+        <button class="om-btn" onclick="setOpinion(this)">2 — Disagree</button>
+        <button class="om-btn" onclick="setOpinion(this)">3 — Neutral</button>
+        <button class="om-btn" onclick="setOpinion(this)">4 — Agree</button>
+        <button class="om-btn" onclick="setOpinion(this)">5 — Strongly Agree</button>
+      </div>
+    </div>
+
+    <div style="background:rgba(0,207,255,.04);border:1px solid rgba(0,207,255,.15);border-radius:8px;padding:12px 16px;margin-bottom:18px;font-size:12px;color:var(--cyan);line-height:1.6">
+      💬 <strong>How to run this:</strong> Students answer using passive voice. Partner marks: (1) any missing "be" verb in passive, (2) any modal passive error ("should be regulated" not "should regulated"). Correct after each response. Q1 = structured, Q2 = peer, Q3 = hypothetical, Q4 = critical thinking.
+    </div>
+
+    <div class="speak-card">
+      <img class="speak-card-img" src="https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=600&q=80" alt="AI used industry work passive sentences">
+      <div class="speak-card-body">
+        <div class="sc-lbl">Question 1 — T→S · Passive Warm-Up</div>
+        <div class="sc-q">Describe how AI is used in your industry. Use passive: "AI is used to…", "Decisions are made by…", "Data is processed to…"</div>
+        <div class="sc-hint">💡 Push for specific industry examples — finance, healthcare, retail, education. The passive sounds analytical and shows B1+ grammar naturally.</div>
+      </div>
+    </div>
+
+    <div class="speak-card">
+      <img class="speak-card-img" src="https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=600&q=80" alt="job replaced AI first last partner speaking">
+      <div class="speak-card-body">
+        <div class="sc-lbl">Question 2 — S→S · Partner Question</div>
+        <div class="sc-q">Ask your partner: What job do you think will be replaced by AI first? And last?</div>
+        <div class="sc-hint">💡 Listen for passive: "Jobs will be replaced by…" / "The last job to be replaced will be…" Note any missing "be" verbs and correct after.</div>
+      </div>
+    </div>
+
+    <div class="speak-card">
+      <img class="speak-card-img" src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=600&q=80" alt="AI replace jobs government companies workers response">
+      <div class="speak-card-body">
+        <div class="sc-lbl">Question 3 — T→S · Hypothetical</div>
+        <div class="sc-q">If AI replaced half of all white-collar jobs in Mexico in 5 years, what should be done by governments? Companies? Workers?</div>
+        <div class="sc-hint">💡 Note how the question uses passive: "was replaced." Push for modal passives: "People should be retrained by…" / "Benefits should be distributed…" / "Taxes must be increased to…"</div>
+      </div>
+    </div>
+
+    <div class="speak-card">
+      <img class="speak-card-img" src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=600&q=80" alt="AI international regulation each country decide">
+      <div class="speak-card-body">
+        <div class="sc-lbl">Question 4 — Class · Critical Thinking</div>
+        <div class="sc-q">Should AI be regulated internationally — or should each country decide its own rules?</div>
+        <div class="sc-hint">💡 Push for: "AI should be regulated by…" / "Standards must be agreed on…" — modal passive as analytical tool. Who is the hidden agent if AI regulates itself?</div>
+      </div>
+    </div>
+
+    <div style="background:rgba(16,185,129,.04);border:1px solid rgba(16,185,129,.2);border-radius:10px;padding:18px 20px;margin-top:14px;text-align:center">
+      <div style="font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:8px">⭐ 90-Second Speaking Challenge — Earn 🎯 badge</div>
+      <div style="font-size:14px;color:#fff;font-weight:500;margin-bottom:14px;line-height:1.4">Your AI Opinion — describe how AI is used in your work or life, whether you think it should be regulated, and what you believe will happen in the next 10 years. Use at least <strong>3 passive sentences</strong>. No notes.</div>
+      <div class="timer-wrap">
+        <svg width="88" height="88" class="timer-svg">
+          <circle cx="44" cy="44" r="38" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="5"/>
+          <circle id="chalArc" cx="44" cy="44" r="38" fill="none" stroke="var(--accent)" stroke-width="5"
+            stroke-dasharray="238.76" stroke-dashoffset="0" class="timer-arc"/>
+          <text id="chalTxt" x="44" y="50" text-anchor="middle" class="timer-text">1:30</text>
+        </svg>
+        <button class="timer-btn" onclick="startTimer('chalArc','chalTxt',90,'b3',238.76)">Start Timer</button>
+      </div>
+    </div>
+
+    <div style="margin-top:20px">
+      <div style="font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:12px">🎲 Hot Seat Dice — Roll and answer without preparation</div>
+      <div class="dice-grid">
+        <div class="dice-card" onclick="speak('Name one task at work that could be replaced by AI. Would you miss it?')">
+          <div class="dice-num">1</div>
+          <div class="dice-q">"Name one task at work that could be replaced by AI. Would you miss it?"</div>
+        </div>
+        <div class="dice-card" onclick="speak('Has any AI decision ever been made about you — a credit score, a job application filter?')">
+          <div class="dice-num">2</div>
+          <div class="dice-q">"Has any AI decision ever been made about you — a credit score, a job application filter?"</div>
+        </div>
+        <div class="dice-card" onclick="speak('If AI was banned tomorrow, what would change in your daily life?')">
+          <div class="dice-num">3</div>
+          <div class="dice-q">"If AI was banned tomorrow, what would change in your daily life?"</div>
+        </div>
+        <div class="dice-card" onclick="speak('Should AI systems be required to explain their decisions to users?')">
+          <div class="dice-num">4</div>
+          <div class="dice-q">"Should AI systems be required to explain their decisions to users?"</div>
+        </div>
+        <div class="dice-card" onclick="speak('Do you trust AI more or less than you trust other humans?')">
+          <div class="dice-num">5</div>
+          <div class="dice-q">"Do you trust AI more or less than you trust other humans?"</div>
+        </div>
+        <div class="dice-card" onclick="speak('Name one AI tool you have used this week. Was it designed to help you — or the company?')">
+          <div class="dice-num">6</div>
+          <div class="dice-q">"Name one AI tool you've used this week. Was it designed to help you — or the company?"</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- §NEW: 3 PHRASES FOR THIS WEEK -->
+<section class="section phrases-section">
+  <div class="section-body">
+    <div class="ph-lbl">🎯 This week — use these 3 phrases</div>
+    <div class="ph-title">3 Phrases Starting Tomorrow</div>
+    <div class="ph-grid">
+      <div class="ph-card">
+        <img class="ph-card-img" src="https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=600&q=80" alt="passive voice designed maximize profit not users">
+        <div class="ph-card-body">
+          <div class="ph-num">PHRASE 1</div>
+          <div class="ph-phrase">"This was designed to maximize profit, not protect users."</div>
+          <div class="ph-ctx">Passive voice used critically — about AI tools, apps, and platforms. Use it next time someone defends a tech company's data practices. Shows B1+ grammar and analytical thinking in one sentence.</div>
+        </div>
+      </div>
+      <div class="ph-card">
+        <img class="ph-card-img" src="https://images.unsplash.com/photo-1535378917042-10a22c95931a?w=600&q=80" alt="depends how used nuanced tech opinion">
+        <div class="ph-card-body">
+          <div class="ph-num">PHRASE 2</div>
+          <div class="ph-phrase">"That depends on how it's used."</div>
+          <div class="ph-ctx">Nuanced tech opinion. Use it whenever anyone asks a black-and-white question about AI — "Is it good?" / "Is it safe?" It signals you understand complexity, which is exactly what B1+ sounds like.</div>
+        </div>
+      </div>
+      <div class="ph-card">
+        <img class="ph-card-img" src="https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=600&q=80" alt="AI should be regulated carefully opinion passive modal">
+        <div class="ph-card-body">
+          <div class="ph-num">PHRASE 3</div>
+          <div class="ph-phrase">"I believe AI should be regulated — but carefully."</div>
+          <div class="ph-ctx">Opinion + passive modal in one sentence. Use it in any conversation about technology, government, or the future of work. It's balanced, sophisticated, and shows you can use modal passives naturally.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- §8 WRAP-UP -->
+<section class="section">
+  <div class="section-header">
+    <span class="section-number">§8</span>
+    <span class="section-title">Wrap-Up — <em>Session Checklist</em></span>
+    <span class="section-sub">5 can-do items · 3 key points · My Win</span>
+    <span class="dur-tag">⏱ 5 MIN</span>
+  </div>
+  <div class="section-body">
+    <img class="img-banner" src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=900&q=80" alt="achievement dashboard wrap up session complete">
+    <div style="height:14px"></div>
+
+    <div style="text-align:center;margin-bottom:20px">
+      <div style="font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:10px">Session Badges Earned</div>
+      <div style="display:flex;gap:10px;justify-content:center;font-size:26px">
+        <span id="bd1" style="opacity:.3;filter:grayscale(1);transition:all .4s">⚡</span>
+        <span id="bd2" style="opacity:.3;filter:grayscale(1);transition:all .4s">📚</span>
+        <span id="bd3" style="opacity:.3;filter:grayscale(1);transition:all .4s">🎯</span>
+        <span id="bd4" style="opacity:.3;filter:grayscale(1);transition:all .4s">🎧</span>
+        <span id="bd5" style="opacity:.3;filter:grayscale(1);transition:all .4s">🏆</span>
+      </div>
+    </div>
+
+    <div class="wu3-grid">
+      <div class="wu3-card">
+        <div class="wu3-num">01</div>
+        <div class="wu3-txt"><strong style="color:#fff">Passive always needs "be."</strong> "Data is processed." / "This was trained on…" / "AI should be regulated." Without "be," it's an error — the #1 mistake at B1.1. This applies to modal passives too: should <em>be</em> regulated, not "should regulated".</div>
+      </div>
+      <div class="wu3-card">
+        <div class="wu3-num">02</div>
+        <div class="wu3-txt"><strong style="color:#fff">AI hides the agent.</strong> "Mistakes were made." "Data was accessed." "Users were affected." Who did these things? The passive removes them from the sentence — deliberately. Now you see this pattern every time you read a tech press release.</div>
+      </div>
+      <div class="wu3-card">
+        <div class="wu3-num">03</div>
+        <div class="wu3-txt"><strong style="color:#fff">AI is a political question.</strong> AI, automation, data, bias, regulation, privacy — these are the words for the debate. If you can describe how AI affects your work and whether it should be regulated for 90 seconds using passive voice, you're at B1.1+.</div>
+      </div>
+    </div>
+
+    <div class="act-title">✅ I Can Now… — Click each one when confident</div>
+    <div class="checklist">
+      <div class="cl-item" onclick="this.classList.toggle('done')"><div class="cl-box"></div>Talk about AI: tools, automation, data, bias, regulation — use these words naturally in conversation</div>
+      <div class="cl-item" onclick="this.classList.toggle('done')"><div class="cl-box"></div>Use Passive Voice with modals: "should be regulated", "can be replaced", "must be explained" — I never forget "be"</div>
+      <div class="cl-item" onclick="this.classList.toggle('done')"><div class="cl-box"></div>Avoid the #1 error: always include "be" — "was trained" not "trained"; "should be regulated" not "should regulated"</div>
+      <div class="cl-item" onclick="this.classList.toggle('done')"><div class="cl-box"></div>Use opinion language naturally: "I think / I believe / In my opinion / That depends on…"</div>
+      <div class="cl-item" onclick="this.classList.toggle('done')"><div class="cl-box"></div>Describe AI's impact on my work for 90+ seconds using at least 3 passive sentences</div>
+    </div>
+
+    <div class="next-box">
+      <div class="next-lbl">▶ Next Class — Session 3B</div>
+      <div class="next-title">AI in Daily Life — Consolidation</div>
+      <div class="next-sub">Passive voice review · Extended listening · Writing task: "My AI Story" · Full opinion consolidation</div>
+    </div>
+
+    <div class="win-box">
+      <div class="win-lbl">🏆 My Win Today</div>
+      <textarea class="win-textarea" id="winText" placeholder="What's the most natural English sentence you produced today about AI? Write it here — try to use passive voice or a modal passive…"></textarea>
+      <button class="win-save" onclick="saveWin()">Save My Win → Earn Badge 🏆</button>
+    </div>
+
+    <div class="tn tn-c3">
+      <span class="tn-lbl">⭐ Retention Note</span>
+      S3A is the most analytically rich session of M4 — every student has an opinion about AI and a personal connection. If any student mentioned a specific AI tool or experience during the warm-up, circle back: "Say that as a passive sentence — what was generated? What was replaced? What should be regulated?" Personalized grammar practice = 5x retention.
+    </div>
+  </div>
+</section>
+
+<footer class="ftr">
+  <div class="fbrand">Gabriel Turner · English Training</div>
+  <div class="finfo">B1.1 · Module 4 · Session 3A · GT_B1_1_M4_S3A_TEACHER_v1</div>
+  <div class="flevels">
+    <div class="flv">A1.1</div><div class="flv">A1.2</div><div class="flv">A2.1</div><div class="flv">A2.2</div>
+    <div class="flv active">B1.1</div><div class="flv">B1.2</div><div class="flv">B2.1</div><div class="flv">B2.2</div>
+  </div>
+</footer>
+
+<script>
+/* PROGRESS BAR */
+window.addEventListener('scroll',()=>{
+  const d=document.documentElement;
+  document.getElementById('prog').style.width=Math.min((d.scrollTop/(d.scrollHeight-d.clientHeight))*100,100)+'%';
+},{passive:true});
+
+/* SPEAK */
+function speak(t){
+  if(!window.speechSynthesis)return;
+  speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(t.replace(/[""''""]/g,'').trim());
+  u.lang='en-US';u.rate=0.85;u.pitch=1;
+  const v=speechSynthesis.getVoices().find(v=>v.lang==='en-US')||speechSynthesis.getVoices().find(v=>v.lang.startsWith('en'));
+  if(v)u.voice=v;
+  speechSynthesis.speak(u);
+}
+window.speechSynthesis.onvoiceschanged=()=>speechSynthesis.getVoices();
+
+/* BADGES */
+var earned={};
+function earnBadge(id){
+  if(earned[id])return;
+  earned[id]=true;
+  const el=document.getElementById(id);
+  if(el){el.classList.add('earned');}
+  const mirror=document.getElementById('bd'+id.replace('b',''));
+  if(mirror){mirror.style.opacity='1';mirror.style.filter='grayscale(0)';mirror.style.transform='scale(1.15)';}
+  if(Object.keys(earned).length>=5)launchConfetti();
+}
+function launchConfetti(){
+  const cols=['#10B981','#34D399','#00E5A0','#6EE7B7','#fff'];
+  for(let i=0;i<90;i++){
+    const p=document.createElement('div');const s=Math.random()*7+4;
+    Object.assign(p.style,{position:'fixed',top:'-10px',zIndex:'9999',left:Math.random()*100+'vw',width:s+'px',height:s+'px',background:cols[Math.floor(Math.random()*cols.length)],borderRadius:Math.random()>.5?'50%':'2px',animation:`fall ${1.5+Math.random()*2}s linear forwards`,opacity:'0.9'});
+    document.body.appendChild(p);setTimeout(()=>p.remove(),4000);
+  }
+}
+const cs=document.createElement('style');
+cs.textContent='@keyframes fall{to{transform:translateY(110vh) rotate(720deg);opacity:0}}';
+document.head.appendChild(cs);
+
+/* TIMER */
+var timerRunning=false;
+function startTimer(arcId,textId,seconds,badgeKey,circumference){
+  if(timerRunning)return;timerRunning=true;
+  const arc=document.getElementById(arcId),txt=document.getElementById(textId);
+  if(!arc||!txt)return;
+  let rem=seconds;arc.style.stroke='var(--accent)';
+  const iv=setInterval(()=>{
+    rem--;arc.style.strokeDashoffset=circumference*(seconds-rem)/seconds;
+    const m=Math.floor(rem/60),s=rem%60;
+    txt.textContent=m+':'+(s<10?'0':'')+s;
+    if(rem<=5)arc.style.stroke='#FF4D6D';
+    if(rem<=0){clearInterval(iv);arc.style.stroke='var(--success)';txt.textContent='Done';timerRunning=false;earnBadge(badgeKey);}
+  },1000);
+}
+
+/* MODEL REVEAL */
+function revealModel(id){
+  const el=document.getElementById(id);if(!el)return;
+  el.classList.toggle('show');
+  const btn=el.previousElementSibling;
+  btn.textContent=el.classList.contains('show')?'▲ Hide Model Answer':'▼ Show B1.1 Model Answer';
+}
+
+/* GRAMMAR TOGGLE */
+function toggleGram(id){
+  const el=document.getElementById(id);el.classList.toggle('open');
+  const btn=el.previousElementSibling;
+  btn.textContent=el.classList.contains('open')?'▲ Grammar Reference — Passive Voice Structures · Click to collapse':'▼ Grammar Reference — Passive Voice Structures · Click to expand';
+}
+
+/* SCRIPT TOGGLE */
+function toggleScript(){
+  const b=document.getElementById('scriptBox');b.classList.toggle('open');
+  document.querySelector('.script-toggle').textContent=b.classList.contains('open')?'▲ Hide Script':'▼ Show ElevenLabs Script';
+}
+
+/* POLL */
+function doPoll(groupId,msgKey,btn){
+  const grp=document.getElementById(groupId);
+  if(!grp||grp.dataset.done)return;grp.dataset.done='1';
+  grp.querySelectorAll('.poll-btn').forEach(b=>{b.disabled=true;});
+  btn.classList.add('selected');
+  const fb=document.getElementById(msgKey);
+  if(fb){fb.classList.add('show');}
+  earnBadge('b3');
+}
+
+/* MC ACTIVITY */
+function checkOpt(btn,correct,qid){
+  const c=document.getElementById(qid);if(!c||c.dataset.done)return;c.dataset.done='1';
+  c.querySelectorAll('.opt').forEach(b=>{b.disabled=true;if(b.textContent.trim()===correct)b.classList.add('correct');});
+  if(btn.textContent.trim()!==correct)btn.classList.add('wrong');
+  if(qid.startsWith('lq'))earnBadge('b4');else earnBadge('b3');
+}
+
+/* TRUE / FALSE */
+function checkTF(btn,isCorrect,id){
+  const row=btn.closest('.tf-row');if(!row||row.dataset.done)return;row.dataset.done='1';
+  row.querySelectorAll('.tf-btn').forEach(b=>b.disabled=true);
+  if(isCorrect){
+    btn.style.cssText='background:rgba(0,229,160,.15);border-color:var(--success);color:var(--success)';
+  }else{
+    btn.style.cssText='background:rgba(255,77,109,.12);border-color:var(--danger);color:var(--danger)';
+    const sib=Array.from(row.querySelectorAll('.tf-btn')).find(b=>b!==btn);
+    if(sib)sib.style.cssText='background:rgba(0,229,160,.12);border-color:var(--success);color:var(--success)';
+  }
+  if(id&&id.startsWith('tfl'))earnBadge('b4');
+}
+
+/* VOCAB QUIZ */
+var vqScore=0;var vqAnswered=0;var vqTotal=12;
+function checkVQ(btn,correct,cardId){
+  const card=document.getElementById(cardId);if(!card||card.dataset.done)return;card.dataset.done='1';
+  card.querySelectorAll('.vq-opt').forEach(b=>{b.disabled=true;});
+  if(btn.textContent.trim()===correct){
+    btn.classList.add('correct');vqScore++;
+  }else{
+    btn.classList.add('wrong');
+    card.querySelectorAll('.vq-opt').forEach(b=>{if(b.textContent.trim()===correct)b.classList.add('correct');});
+  }
+  vqAnswered++;
+  if(vqAnswered>=vqTotal){
+    const sc=document.getElementById('vquizScore');
+    if(sc){sc.style.display='inline-block';sc.textContent='Score: '+vqScore+' / '+vqTotal+(vqScore>=8?' — 📚 Badge Earned!':' — Try again next session');}
+    if(vqScore>=8)earnBadge('b2');
+  }
+}
+
+/* OPINION METER */
+function setOpinion(btn){
+  document.querySelectorAll('.om-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+/* MY WIN */
+function saveWin(){
+  const t=document.getElementById('winText');
+  if(t&&t.value.trim().length>5){
+    earnBadge('b5');t.style.borderColor='var(--gold)';
+    const btn=t.nextElementSibling;
+    if(btn){btn.textContent='✓ Saved — Badge Earned!';btn.style.background='rgba(255,184,0,.25)';}
+  }
+}
+
+/* WAVEFORM */
+const wv=document.getElementById('wv');
+if(wv){for(let i=0;i<60;i++){const b=document.createElement('div');b.className='wbar';b.style.height=(8+Math.sin(i*.6)*10+Math.random()*18)+'px';b.style.opacity=.25+Math.random()*.45;wv.appendChild(b);}}
+
+/* AUTO-BADGE ON SCROLL */
+window.addEventListener('scroll',()=>{
+  const s=document.documentElement.scrollTop;
+  if(s>200)earnBadge('b1');
+  if(s>2400)earnBadge('b4');
+},{passive:true});
+</script>
+</body>
+</html>
