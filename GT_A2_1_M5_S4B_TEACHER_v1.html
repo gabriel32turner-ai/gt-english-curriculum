@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GT A2.1 · M5 · S4B — Client Communication: Will in Action — Application &amp; Mastery</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#080808;--surface:#111318;--surface2:#1a1f28;--border:rgba(0,207,255,.18);--accent:#00CFFF;--accent2:#67E8F9;--text:#F0F4F8;--muted:#8A9BB0;--dim:rgba(226,226,226,.25);--danger:#FF4D6D;--success:#00E5A0;--warn:#FFB347;--gold:#FFB800;--green:#00E676;--violet:#A78BFA;--font-head:'Syne',sans-serif;--font-body:'DM Sans',sans-serif}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:14px;line-height:1.6}
+/* HEADER */
+.hdr{background:var(--surface);border-bottom:1px solid var(--border);padding:16px 48px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+.brand{display:flex;align-items:center;gap:10px}
+.dot{width:8px;height:8px;background:var(--accent);border-radius:50%}
+.bname{font-family:var(--font-head);font-weight:800;font-size:13px;letter-spacing:2.5px;text-transform:uppercase;color:#fff}
+.bsub{font-size:11px;color:var(--muted);letter-spacing:1px}
+.sess-tag{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.tag{display:inline-block;padding:4px 12px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;border-radius:4px}
+.t-level{background:rgba(0,207,255,.12);color:var(--accent);border:1px solid rgba(0,207,255,.3)}
+.t-mod{background:rgba(255,184,0,.1);color:var(--gold);border:1px solid rgba(255,184,0,.25)}
+.t-sess{background:rgba(0,207,255,.08);color:var(--accent2);border:1px solid rgba(0,207,255,.2)}
+.t-time{background:rgba(0,230,118,.08);color:var(--green);border:1px solid rgba(0,230,118,.2)}
+.session-badge{background:var(--accent);color:#080808;padding:3px 10px;font-family:var(--font-head);font-size:9px;font-weight:800;letter-spacing:2px;border-radius:4px;margin-left:6px}
+/* BADGES */
+.badge-strip{display:flex;gap:6px;align-items:center}
+.badge-strip span{font-size:18px;opacity:.25;transition:all .4s;cursor:default}
+.badge-strip span.earned{opacity:1;animation:badgePop .5s ease}
+@keyframes badgePop{0%{transform:scale(1)}50%{transform:scale(1.5)}100%{transform:scale(1)}}
+/* PROGRESS BAR */
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--accent);z-index:999;transition:width .15s;width:0}
+/* MODE TOGGLE */
+.mode-toggle{position:fixed;bottom:20px;right:20px;z-index:99;background:var(--surface);border:1px solid var(--border);padding:8px 16px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);cursor:pointer;border-radius:6px}
+body.student-mode .teacher-note{display:none!important}
+/* STICKY NAV */
+.sticky-nav{position:sticky;top:0;z-index:800;background:rgba(8,8,8,.9);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none}
+.sticky-nav::-webkit-scrollbar{display:none}
+.nav-inner{max-width:1200px;margin:0 auto;display:flex;gap:0;padding:0 24px}
+.nav-inner a{font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:.06em;color:var(--muted);text-decoration:none;padding:10px 12px;border-bottom:2px solid transparent;white-space:nowrap;transition:all .2s}
+.nav-inner a:hover{color:var(--accent);border-color:var(--accent)}
+/* SECTIONS */
+.section{margin:0 auto 48px;max-width:1200px;border:1px solid var(--border);border-radius:16px;overflow:hidden;background:var(--surface)}
+.section-header{display:flex;align-items:center;gap:14px;padding:18px 24px;background:linear-gradient(135deg,rgba(0,207,255,.08),transparent);border-bottom:1px solid var(--border)}
+.section-number{font-family:var(--font-head);font-size:11px;font-weight:800;color:var(--accent);letter-spacing:.12em;text-transform:uppercase;background:rgba(0,207,255,.1);border:1px solid var(--border);padding:3px 10px;border-radius:20px}
+.section-title{font-family:var(--font-head);font-size:22px;font-weight:800;color:#fff}
+.section-title em{color:var(--accent);font-style:normal}
+.section-sub{font-size:12px;color:var(--muted)}
+.section-body{padding:24px}
+.dur-tag{font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;color:var(--gold);border:1px solid rgba(255,184,0,.2);padding:3px 10px;display:inline-block;margin-bottom:20px;border-radius:4px}
+/* HERO BANNER */
+.hero-banner{background:linear-gradient(135deg,rgba(0,207,255,.1),rgba(103,232,249,.05));border:1px solid var(--border);border-radius:12px;padding:32px 36px;margin:32px auto 0;max-width:1200px;position:relative;overflow:hidden}
+.hero-banner::after{content:'M5';position:absolute;right:20px;top:-10px;font-family:var(--font-head);font-size:160px;font-weight:800;color:rgba(0,207,255,.05);line-height:1;pointer-events:none}
+.hero-label{font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:10px}
+.hero-title{font-family:var(--font-head);font-size:40px;font-weight:800;color:#fff;line-height:1}
+.hero-title em{color:var(--accent);font-style:normal;display:block}
+.hero-sub{font-size:13px;color:var(--muted);margin-top:12px;line-height:1.6;max-width:580px}
+.hero-chips{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap}
+.chip{padding:5px 14px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:20px;border:1px solid var(--border)}
+.chip-blue{background:rgba(0,207,255,.1);color:var(--accent);border-color:rgba(0,207,255,.3)}
+.chip-gold{background:rgba(255,184,0,.08);color:var(--gold);border-color:rgba(255,184,0,.25)}
+.chip-green{background:rgba(0,230,118,.08);color:var(--green);border-color:rgba(0,230,118,.2)}
+.chip-violet{background:rgba(167,139,250,.08);color:var(--violet);border-color:rgba(167,139,250,.25)}
+/* TEACHER NOTES */
+.teacher-note{border-radius:8px;padding:12px 16px;margin:10px 0;font-size:12px;line-height:1.6}
+.tn-c1{background:rgba(0,207,255,.05);border:1px solid rgba(0,207,255,.18);color:rgba(0,207,255,.85)}
+.tn-c2{background:rgba(232,21,90,.05);border:1px solid rgba(232,21,90,.18);color:rgba(232,21,90,.85)}
+.tn-c3{background:rgba(255,184,0,.05);border:1px solid rgba(255,184,0,.18);color:rgba(255,184,0,.85)}
+/* TIMER */
+.timer-wrap{display:flex;align-items:center;gap:14px;margin:12px 0}
+.timer-text{font-family:var(--font-head);font-size:20px;font-weight:800;color:var(--accent)}
+.btn-primary{background:var(--accent);border:none;color:#080808;padding:8px 20px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;cursor:pointer;border-radius:6px}
+.btn-ghost{background:transparent;border:1px solid var(--border);color:var(--muted);padding:8px 16px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;cursor:pointer;border-radius:6px}
+.btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
+/* HOT TAKE */
+.hot-take-card{background:var(--surface2);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:16px}
+.hot-take-body{padding:20px}
+.hot-take-prompt{font-size:16px;color:#fff;font-weight:600;line-height:1.5;margin:12px 0;border-left:4px solid var(--accent);padding-left:16px}
+.hot-take-rules{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px}
+.ht-rule{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px;text-align:center}
+.ht-rule-icon{font-size:20px;margin-bottom:4px}
+.ht-rule-txt{font-size:10px;color:var(--muted);line-height:1.4}
+/* DEBATE SIDES */
+.side-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.side-card{background:var(--surface2);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.side-card-body{padding:14px 16px}
+.side-label{font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px}
+.side-a .side-label{color:var(--accent)}
+.side-b .side-label{color:var(--warn)}
+.side-starters{list-style:none;display:flex;flex-direction:column;gap:5px}
+.side-starters li{font-size:12px;color:var(--muted);font-style:italic;padding-left:12px;position:relative;line-height:1.5}
+.side-starters li::before{content:'›';position:absolute;left:0;color:var(--accent);font-style:normal}
+/* RELAY */
+.relay-card{background:var(--surface2);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:10px}
+.relay-body{padding:14px 16px}
+.relay-num{font-family:var(--font-head);font-size:10px;font-weight:700;color:var(--accent);letter-spacing:1.5px;margin-bottom:4px}
+.relay-prompt{font-size:13px;color:#fff;margin-bottom:6px;line-height:1.5}
+.relay-answer{font-size:12px;color:var(--muted);font-style:italic}
+/* SPEED ROUND */
+.speed-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.speed-card{background:var(--surface2);border:1px solid var(--border);border-radius:10px;overflow:hidden;cursor:pointer;transition:all .2s}
+.speed-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.speed-card.answered{opacity:.5;pointer-events:none}
+.speed-body{padding:12px 14px}
+.speed-q{font-size:12.5px;color:#fff;line-height:1.4;margin-bottom:6px}
+.speed-hint{font-size:11px;color:var(--muted);font-style:italic}
+.speed-counter{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:16px;text-align:center;margin:14px 0}
+.speed-score{font-family:var(--font-head);font-size:28px;font-weight:800;color:var(--accent)}
+/* SOLO CHALLENGE */
+.solo-card{background:var(--surface2);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.solo-body{padding:20px}
+.solo-rules{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:12px 0}
+.solo-rule{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 12px;font-size:11.5px;color:var(--muted);line-height:1.5}
+.solo-rule strong{color:#fff}
+/* SOURCE ANALYSIS */
+.source-card{background:var(--surface2);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:12px}
+.source-body{padding:14px 16px}
+.source-type{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:6px}
+.source-text{font-size:13px;color:#fff;line-height:1.8;margin-bottom:8px;background:var(--surface);padding:14px 16px;border-radius:6px;border-left:3px solid var(--accent)}
+.source-text mark{background:rgba(0,207,255,.18);color:var(--accent);border-radius:3px;padding:0 2px}
+.source-meta-q{font-size:11.5px;color:var(--warn);font-style:italic;margin-top:8px}
+.source-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.src-tag{padding:3px 10px;font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:1px;border-radius:12px}
+.src-tag-sp{background:rgba(0,207,255,.1);color:var(--accent);border:1px solid rgba(0,207,255,.25)}
+.src-tag-pr{background:rgba(255,184,0,.1);color:var(--gold);border:1px solid rgba(255,184,0,.25)}
+.src-tag-pd{background:rgba(0,229,160,.1);color:var(--success);border:1px solid rgba(0,229,160,.25)}
+/* LEADERBOARD */
+.lb-box{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:16px;margin-top:16px}
+.lb-input-row{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.lb-input{background:var(--surface);border:1px solid var(--border);color:var(--text);padding:8px 12px;font-size:13px;border-radius:6px;font-family:var(--font-body);flex:1;min-width:120px}
+.lb-input:focus{outline:none;border-color:var(--accent)}
+.lb-table{width:100%;border-collapse:collapse}
+.lb-table th{padding:8px 12px;text-align:left;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--dim);border-bottom:2px solid var(--accent)}
+.lb-table td{padding:8px 12px;border-bottom:1px solid var(--border);font-size:13px}
+.lb-table tr:first-child td{color:var(--accent);font-weight:600}
+/* CERT */
+.cert-box{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:20px;margin:16px 0}
+.cert-input{width:100%;background:var(--surface);border:1px solid var(--border);color:var(--text);padding:10px 14px;font-size:14px;border-radius:6px;font-family:var(--font-body);margin-bottom:10px}
+.cert-input:focus{outline:none;border-color:var(--accent)}
+.cert-result{display:none;background:linear-gradient(135deg,rgba(0,207,255,.06),rgba(103,232,249,.03));border:2px solid var(--accent);border-radius:12px;padding:28px;text-align:center;margin-top:14px}
+.cert-result.show{display:block}
+.cert-title{font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:6px}
+.cert-name{font-family:var(--font-head);font-size:24px;font-weight:800;color:#fff;margin-bottom:4px}
+.cert-detail{font-size:12px;color:var(--muted);line-height:1.6}
+/* PHRASES */
+.ph-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:13px;margin-top:16px}
+.ph-card{background:var(--surface2);border:1px solid rgba(255,184,0,.2);border-radius:10px;padding:16px}
+.ph-num{font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;color:var(--gold);margin-bottom:5px}
+.ph-phrase{font-family:var(--font-head);font-size:13px;font-weight:700;color:#fff;margin-bottom:6px;line-height:1.4}
+.ph-ctx{font-size:11px;color:var(--muted);line-height:1.6}
+/* MY WIN */
+.win-box{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:16px;margin-top:14px}
+.win-ta{width:100%;background:var(--surface);border:1px solid var(--border);color:var(--text);padding:12px;font-size:13px;border-radius:6px;resize:vertical;min-height:60px;font-family:var(--font-body)}
+.win-ta:focus{outline:none;border-color:var(--accent)}
+.win-save{background:var(--accent);border:none;color:#080808;padding:8px 18px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;cursor:pointer;border-radius:6px;margin-top:8px}
+/* NEXT */
+.next-box{background:var(--surface2);border:1px solid var(--border);border-left:4px solid var(--accent);padding:17px 21px;border-radius:0 10px 10px 0}
+.next-lbl{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:5px}
+.next-title{font-size:14px;font-weight:600;color:#fff;margin-bottom:3px}
+.next-sub{font-size:11.5px;color:var(--muted)}
+/* CONFETTI */
+.confetti-piece{position:fixed;width:8px;height:8px;z-index:1000;pointer-events:none;animation:confettiFall 2.5s ease-out forwards}
+@keyframes confettiFall{0%{opacity:1;transform:translateY(0) rotate(0)}100%{opacity:0;transform:translateY(100vh) rotate(720deg)}}
+/* FOOTER */
+.ftr{background:var(--surface);border-top:1px solid var(--border);padding:18px 48px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:11px}
+.fbrand{font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim)}
+.finfo{font-size:11px;color:var(--dim)}
+.flvs{display:flex;gap:3px;flex-wrap:wrap}
+.flv{padding:5px 10px;font-family:var(--font-head);font-size:10px;font-weight:700;background:var(--surface2);color:var(--dim);border-radius:3px}
+.flv.on{background:var(--accent);color:#080808}
+/* CLIENT WILL CLASSIFIER MINI-GAME (scoped .cwc-*) */
+.cwc-wrap{background:var(--surface2);border:2px solid rgba(0,207,255,.3);border-radius:14px;padding:24px;margin:18px 0}
+.cwc-hdr{font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:4px}
+.cwc-title{font-family:var(--font-head);font-size:18px;font-weight:800;color:#fff;margin-bottom:6px}
+.cwc-meta{font-size:12px;color:var(--muted);margin-bottom:14px;line-height:1.5}
+.cwc-score-row{display:flex;align-items:center;gap:14px;margin-bottom:16px}
+.cwc-score{font-family:var(--font-head);font-size:24px;font-weight:800;color:var(--accent)}
+.cwc-progress{flex:1;height:6px;background:var(--surface);border-radius:3px;overflow:hidden}
+.cwc-prog-fill{height:100%;background:var(--accent);border-radius:3px;transition:width .3s;width:0}
+.cwc-counter{font-family:var(--font-head);font-size:11px;font-weight:700;color:var(--muted);letter-spacing:1px}
+.cwc-scenario{background:var(--surface);border-left:3px solid var(--muted);border-radius:0 8px 8px 0;padding:10px 14px;font-size:12px;color:var(--muted);margin-bottom:8px;line-height:1.5}
+.cwc-response{background:var(--surface);border-left:3px solid var(--accent);border-radius:0 8px 8px 0;padding:12px 16px;font-size:14px;color:#fff;font-weight:600;line-height:1.7;margin-bottom:14px}
+.cwc-btns{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.cwc-btn{padding:9px 18px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;border-radius:20px;border:2px solid var(--border);background:var(--surface);color:var(--text);cursor:pointer;transition:all .2s}
+.cwc-btn:hover:not(:disabled){border-color:var(--accent);color:var(--accent)}
+.cwc-btn:disabled{cursor:not-allowed;opacity:.5}
+.cwc-fb{margin-top:10px;padding:10px 14px;border-radius:6px;font-size:13px;line-height:1.5;display:none}
+.cwc-fb.show{display:block}
+.cwc-fb.ok{background:rgba(0,229,160,.1);border:1px solid rgba(0,229,160,.3);color:var(--success)}
+.cwc-fb.no{background:rgba(255,77,109,.08);border:1px solid rgba(255,77,109,.25);color:var(--danger)}
+.cwc-next{background:var(--accent);border:none;color:#080808;padding:8px 22px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;cursor:pointer;border-radius:6px;margin-top:10px;display:none}
+.cwc-done{text-align:center;padding:28px;background:rgba(0,229,160,.05);border:1px solid var(--success);border-radius:10px}
+.cwc-done-score{font-family:var(--font-head);font-size:44px;font-weight:800;color:var(--success)}
+.cwc-done-msg{font-size:14px;color:var(--muted);margin-top:8px}
+@media(max-width:860px){
+  .hdr,.ftr{padding:15px 18px}
+  .section-body{padding:16px}
+  .side-grid,.speed-grid{grid-template-columns:1fr}
+  .hot-take-rules,.solo-rules{grid-template-columns:1fr}
+  .ph-grid{grid-template-columns:1fr}
+  .cwc-btns{flex-direction:column}
+}
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progressBar"></div>
+<button class="mode-toggle" onclick="toggleMode()">&#128065; Student Mode</button>
+
+<!-- HEADER -->
+<header class="hdr">
+  <div class="brand"><div class="dot"></div><div><div class="bname">Gabriel Turner</div><div class="bsub">English Training &middot; Teacher Edition</div></div></div>
+  <div class="badge-strip" id="badges">
+    <span id="b1">&#128293;</span><span id="b2">&#9889;</span><span id="b3">&#127908;</span><span id="b4">&#128269;</span><span id="b5">&#127942;</span>
+  </div>
+  <div class="sess-tag">
+    <span class="tag t-level">A2.1</span>
+    <span class="tag t-mod">Module 5</span>
+    <span class="tag t-sess">Session 4B &mdash; Application &amp; Mastery<span class="session-badge">PRODUCTION</span></span>
+    <span class="tag t-time">90 min</span>
+  </div>
+</header>
+
+<!-- STICKY NAV -->
+<nav class="sticky-nav">
+  <div class="nav-inner">
+    <a href="#hero">Hero</a>
+    <a href="#s1">&sect;1 Hot Take</a>
+    <a href="#s2">&sect;2 Pitch Debate</a>
+    <a href="#s3">&sect;3 Relay</a>
+    <a href="#s4">&sect;4 Speed Round</a>
+    <a href="#s5">&sect;5 Solo Challenge</a>
+    <a href="#s6">&sect;6 Source Analysis</a>
+    <a href="#s7">&sect;7 Badge &amp; Cert</a>
+  </div>
+</nav>
+
+<!-- HERO / MASTERY BANNER -->
+<div id="hero" class="hero-banner">
+  <div class="hero-label">A2.1 &middot; Module 5 &middot; Session 4B &mdash; Application &amp; Mastery</div>
+  <div class="hero-title">Client Communication:<br><em>Will in Action</em></div>
+  <div class="hero-sub">Pure production session &mdash; no new grammar. Students apply every Will function (offer, spontaneous decision, promise, prediction, polite request) in real client communication pressure scenarios. This is the final production gate before the M5 Module Capstone.</div>
+  <div class="hero-chips">
+    <span class="chip chip-blue">I'll (offer)</span>
+    <span class="chip chip-gold">won't (promise)</span>
+    <span class="chip chip-green">Will you...? (request)</span>
+    <span class="chip chip-blue">will + adverb (prediction)</span>
+    <span class="chip chip-violet">Client Champion</span>
+    <span class="chip chip-gold">Module Capstone Ready</span>
+  </div>
+</div>
+
+<div style="height:32px"></div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- §1 HOT TAKE -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div id="s1" class="section">
+  <div class="section-header">
+    <span class="section-number">&sect;1</span>
+    <div>
+      <div class="section-title">Hot Take &mdash; <em>"Grammar Doesn't Matter When A Client Is Angry."</em></div>
+      <div class="section-sub">Instant opinion &middot; Apply Will under pressure &middot; 60 seconds &middot; b1 badge</div>
+    </div>
+  </div>
+  <div class="section-body">
+    <div class="dur-tag">&#9201; 5 MIN</div>
+
+    <div class="hot-take-card">
+      <div class="hot-take-body">
+        <div style="font-size:12px;color:var(--muted);margin-bottom:8px">
+          <strong style="color:var(--accent)">Context:</strong> A client is furious. Your colleague says: <em>"Forget the English &mdash; just say ANYTHING to calm them down. Grammar is irrelevant when someone is upset."</em> You disagree: using the right will form actually changes how the client responds.
+        </div>
+        <div class="hot-take-prompt">
+          "Perfect English grammar doesn't matter in a client crisis &mdash; what matters is speed and empathy, not whether you say 'I'll fix it' or 'I'm going to fix it.' Agree or disagree &mdash; you have 60 seconds."
+        </div>
+        <div class="hot-take-rules">
+          <div class="ht-rule"><div class="ht-rule-icon">&#9201;</div><div class="ht-rule-txt">60 seconds<br>No preparation</div></div>
+          <div class="ht-rule"><div class="ht-rule-icon">&#127919;</div><div class="ht-rule-txt">Use at least 2 will sentences<br>in your argument</div></div>
+          <div class="ht-rule"><div class="ht-rule-icon">&#127942;</div><div class="ht-rule-txt">Badge earned<br>when timer ends</div></div>
+        </div>
+        <div class="timer-wrap">
+          <svg width="56" height="56" viewBox="0 0 100 100" style="transform:rotate(-90deg)">
+            <circle cx="50" cy="50" r="38" fill="none" stroke="var(--surface2)" stroke-width="6"/>
+            <circle id="htArc" cx="50" cy="50" r="38" fill="none" stroke="var(--accent)" stroke-width="6" stroke-dasharray="238.76" stroke-dashoffset="0" stroke-linecap="round"/>
+          </svg>
+          <span class="timer-text" id="htTime">60</span>
+          <button class="btn-primary" onclick="startTimer('htArc','htTime',60,'b1',238.76)">Start Hot Take</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="teacher-note tn-c1">&#128161; <strong>Layer 1 &mdash; Accuracy:</strong> The right answer is "both matter." 'I'll fix it now' (spontaneous + immediate) vs 'I'm going to fix it' (suggests you're still planning) actually changes client perception. Speed AND correct form signal competence. Listen: does the student argue this nuance, or just pick a side?</div>
+    <div class="teacher-note tn-c3">&#128293; <strong>Layer 3 &mdash; Authenticity:</strong> Ask: "Has a client ever reacted differently to how you said something &mdash; not WHAT you said, but HOW? Was there a moment when choosing better English would have changed the outcome?"</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- §2 CLIENT PITCH DEBATE -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div id="s2" class="section">
+  <div class="section-header">
+    <span class="section-number">&sect;2</span>
+    <div>
+      <div class="section-title">Client Pitch Debate &mdash; <em>"Handling Complaints: Direct or Diplomatic?"</em></div>
+      <div class="section-sub">2 students &middot; Each defends a complaint-handling strategy &middot; Must use Will + target functions</div>
+    </div>
+  </div>
+  <div class="section-body">
+    <div class="dur-tag">&#9201; 10 MIN</div>
+
+    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:14px 18px;margin-bottom:16px">
+      <div style="font-size:13px;color:#fff;line-height:1.6">
+        <strong style="color:var(--accent)">Scenario:</strong> A key client just complained about a three-day delivery delay. Your team must decide how to respond. Side A believes in the direct approach: be honest immediately, make a clear promise, no softening. Side B believes in the diplomatic approach: acknowledge, explain context, then commit. Both use Will &mdash; but differently. Defend your approach.
+      </div>
+    </div>
+
+    <div class="side-grid">
+      <div class="side-card side-a">
+        <div class="side-card-body">
+          <div class="side-label">Side A &mdash; Direct &amp; Immediate</div>
+          <div style="font-size:12.5px;color:var(--text);margin-bottom:10px;line-height:1.5">
+            "'I'm sorry. I'll fix this today.' That's it. No explanation, no excuses. Clients respect speed and honesty above everything."
+          </div>
+          <ul class="side-starters">
+            <li>"I'll call the client right now &mdash; not tomorrow, not this afternoon. Now."</li>
+            <li>"We won't make the same mistake twice. I'll set up a monitoring system before we hang up."</li>
+            <li>"'I'll send you a replacement by Friday' &mdash; specific, immediate, no filler. That's the promise."</li>
+            <li>"Will you give me one chance to make this right? Direct ask. No corporate language."</li>
+          </ul>
+        </div>
+      </div>
+      <div class="side-card side-b">
+        <div class="side-card-body">
+          <div class="side-label" style="color:var(--warn)">Side B &mdash; Diplomatic &amp; Context-Aware</div>
+          <div style="font-size:12.5px;color:var(--text);margin-bottom:10px;line-height:1.5">
+            "'I completely understand your frustration. I'll personally look into what happened and I'll have a full update for you by end of day.' Context before commitment &mdash; that's professionalism."
+          </div>
+          <ul class="side-starters">
+            <li>"I'll investigate the root cause first &mdash; that way, I won't make a promise I can't keep."</li>
+            <li>"The client will definitely feel better if I explain WHY it happened, not just fix it."</li>
+            <li>"I'll probably need 24 hours to give you the full picture &mdash; but I won't leave you without an update tonight."</li>
+            <li>"Will you allow me to schedule a call with our operations team? That shows we're taking this seriously."</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="teacher-note tn-c2">&#127917; <strong>Layer 2 &mdash; Engagement:</strong> Both strategies use Will correctly &mdash; the debate is about style, not grammar. This is intentional. After 3 minutes: debrief on which FORM was used for which function. "Side A used 'I'll' three times &mdash; all spontaneous decisions. Side B mixed in 'will definitely' &mdash; a confident prediction. Which function tells us most about the speaker's personality and role?"</div>
+    <div class="teacher-note tn-c1">&#128161; <strong>Pedagogical focus:</strong> The key production target: students should be producing "I'll" automatically for spontaneous offers, "won't" for negative promises, and "will + adverb" for predictions. This debate forces all three in rapid succession. Count how many distinct will functions each student uses &mdash; that's the real rubric.</div>
+
+    <div class="timer-wrap" style="margin-top:14px">
+      <svg width="50" height="50" viewBox="0 0 100 100" style="transform:rotate(-90deg)">
+        <circle cx="50" cy="50" r="38" fill="none" stroke="var(--surface2)" stroke-width="6"/>
+        <circle id="debArc" cx="50" cy="50" r="38" fill="none" stroke="var(--accent)" stroke-width="6" stroke-dasharray="238.76" stroke-dashoffset="0" stroke-linecap="round"/>
+      </svg>
+      <span class="timer-text" id="debTime">180</span>
+      <button class="btn-primary" onclick="startTimer('debArc','debTime',180,null,238.76)">Start Debate (3 min)</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- §3 RELAY CHAIN -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div id="s3" class="section">
+  <div class="section-header">
+    <span class="section-number">&sect;3</span>
+    <div>
+      <div class="section-title">Relay Chain &mdash; <em>"The Client Recovery Call"</em></div>
+      <div class="section-sub">Team relay &middot; Each student handles one phase of a client recovery call &middot; Target will function specified</div>
+    </div>
+  </div>
+  <div class="section-body">
+    <div class="dur-tag">&#9201; 8 MIN</div>
+
+    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:14px 18px;margin-bottom:16px">
+      <div style="font-size:13px;color:#fff;line-height:1.6">
+        <strong style="color:var(--accent)">Situation:</strong> Your team is on a joint call with a furious client &mdash; Se&ntilde;or Romero &mdash; who says a major shipment arrived late and damaged. Each person on your team handles one phase of the call. The card tells you which Will function to use.
+      </div>
+    </div>
+
+    <div class="relay-card">
+      <div class="relay-body">
+        <div class="relay-num">RELAY CARD 1 &mdash; OPENING OFFER (I'LL)</div>
+        <div class="relay-prompt">Se&ntilde;or Romero just explained the problem. You speak first. Make an immediate spontaneous offer using I'll.</div>
+        <div class="relay-answer">Model: "Se&ntilde;or Romero, I'll personally look into this right away. I'll call our logistics team while we're on this call."</div>
+      </div>
+    </div>
+    <div class="relay-card">
+      <div class="relay-body">
+        <div class="relay-num">RELAY CARD 2 &mdash; NEGATIVE PROMISE (WON'T)</div>
+        <div class="relay-prompt">Se&ntilde;or Romero says: "This has happened twice before." Reassure him with a strong negative promise.</div>
+        <div class="relay-answer">Model: "I understand, and I can assure you it won't happen again. We won't ship another order without a quality check on our end."</div>
+      </div>
+    </div>
+    <div class="relay-card">
+      <div class="relay-body">
+        <div class="relay-num">RELAY CARD 3 &mdash; PREDICTION (WILL + ADVERB)</div>
+        <div class="relay-prompt">Se&ntilde;or Romero asks: "When will the replacement arrive?" Predict a realistic timeline with an adverb.</div>
+        <div class="relay-answer">Model: "The replacement will definitely arrive within 48 hours &mdash; we have stock ready. I'll confirm the exact time by email this afternoon."</div>
+      </div>
+    </div>
+    <div class="relay-card">
+      <div class="relay-body">
+        <div class="relay-num">RELAY CARD 4 &mdash; POLITE REQUEST (WILL YOU...?)</div>
+        <div class="relay-prompt">You need Se&ntilde;or Romero's delivery address and a photo of the damaged goods. Ask politely using Will you...?</div>
+        <div class="relay-answer">Model: "Will you send me a photo of the damage so I can process the claim? And will you confirm the delivery address for the replacement?"</div>
+      </div>
+    </div>
+    <div class="relay-card">
+      <div class="relay-body">
+        <div class="relay-num">RELAY CARD 5 &mdash; CLOSING COMMITMENT (I'LL / WON'T)</div>
+        <div class="relay-prompt">Close the call. Make one positive promise and one negative guarantee to lock in trust before hanging up.</div>
+        <div class="relay-answer">Model: "I'll send you a written confirmation of everything we've discussed in the next 30 minutes. And I won't close this case until you confirm the replacement arrived in perfect condition."</div>
+      </div>
+    </div>
+
+    <div class="teacher-note tn-c1">&#128161; <strong>Layer 1 &mdash; Function tracking:</strong> Write the 5 Will functions on the board before starting: Offer (I'll) / Negative promise (won't) / Prediction (will+adverb) / Request (Will you?) / Commitment (I'll + won't). As each student speaks, check the correct function. The relay tests whether students can deploy specific functions on demand &mdash; this is the A2.1 mastery gate.</div>
+    <div class="teacher-note tn-c2">&#127917; <strong>Layer 2 &mdash; Escalation:</strong> Once the relay is done, replay it with the same cards but challenge mode: students cannot look at the cards &mdash; the teacher paraphrases the situation verbally and students respond live. This replicates a real phone call where the client doesn't give you time to prepare.</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- §4 SPEED ROUND -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div id="s4" class="section">
+  <div class="section-header">
+    <span class="section-number">&sect;4</span>
+    <div>
+      <div class="section-title">Speed Round &mdash; <em>Client Crisis: React Now</em></div>
+      <div class="section-sub">8 clickable client situation cards &middot; Produce an immediate Will sentence &middot; 3-second rule</div>
+    </div>
+  </div>
+  <div class="section-body">
+    <div class="dur-tag">&#9201; 7 MIN</div>
+
+    <div class="speed-counter">
+      <div style="font-size:11px;color:var(--muted);margin-bottom:4px">Cards Completed</div>
+      <div class="speed-score" id="speedScore">0 / 8</div>
+    </div>
+
+    <div class="speed-grid" id="speedGrid">
+      <div class="speed-card" onclick="speedAnswer(this)">
+        <div class="speed-body">
+          <div class="speed-q">&#128231; A client emails at 9am: "Where is my invoice? I needed it yesterday for my board meeting."</div>
+          <div class="speed-hint">Model: "I'll send it right now &mdash; it'll be in your inbox in two minutes. I'm sorry for the delay."</div>
+        </div>
+      </div>
+      <div class="speed-card" onclick="speedAnswer(this)">
+        <div class="speed-body">
+          <div class="speed-q">&#128222; A client calls and says: "I've been on hold for 20 minutes." First thing you say:</div>
+          <div class="speed-hint">Model: "I'll connect you to the right person immediately. I won't keep you waiting another minute."</div>
+        </div>
+      </div>
+      <div class="speed-card" onclick="speedAnswer(this)">
+        <div class="speed-body">
+          <div class="speed-q">&#128197; A client asks: "Will you be available for a call next Thursday at 3pm?"</div>
+          <div class="speed-hint">Model: "I'll check my calendar right now. [pause] Yes, I'll be there &mdash; I'll send the invite today."</div>
+        </div>
+      </div>
+      <div class="speed-card" onclick="speedAnswer(this)">
+        <div class="speed-body">
+          <div class="speed-q">&#128548; A client says: "Your team promised to deliver by Friday. It's Monday and nothing arrived."</div>
+          <div class="speed-hint">Model: "I'll investigate this today and call you back within two hours. It won't happen again."</div>
+        </div>
+      </div>
+      <div class="speed-card" onclick="speedAnswer(this)">
+        <div class="speed-body">
+          <div class="speed-q">&#128176; A client asks: "Do you think the new pricing will hurt our budget next quarter?"</div>
+          <div class="speed-hint">Model: "It'll probably stay within your budget &mdash; the new prices reflect only a 4% increase. We'll definitely find a plan that works for you."</div>
+        </div>
+      </div>
+      <div class="speed-card" onclick="speedAnswer(this)">
+        <div class="speed-body">
+          <div class="speed-q">&#128203; You need to send a client a proposal but you don't have their full company name for the header.</div>
+          <div class="speed-hint">Model: "Will you confirm your company's full legal name? I want to make sure the proposal is exactly right."</div>
+        </div>
+      </div>
+      <div class="speed-card" onclick="speedAnswer(this)">
+        <div class="speed-body">
+          <div class="speed-q">&#128680; A client says: "I'm thinking of moving to your competitor." You have 15 seconds to respond.</div>
+          <div class="speed-hint">Model: "I'll set up a call with our director this week. We won't let you go without exploring every option &mdash; you have my word."</div>
+        </div>
+      </div>
+      <div class="speed-card" onclick="speedAnswer(this)">
+        <div class="speed-body">
+          <div class="speed-q">&#9989; A client just signed a major contract. Thank them and make one forward-looking promise.</div>
+          <div class="speed-hint">Model: "Thank you so much. I'll personally make sure your onboarding goes smoothly. This partnership will definitely be worth it."</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="teacher-note tn-c2">&#127917; <strong>Layer 2 &mdash; Speed pressure:</strong> The teacher clicks cards for the student &mdash; don't let them click themselves. Read the situation aloud and start counting to 3. The student must begin speaking before "3." Track: spontaneous will = correct; going to = flag ("that sounds planned &mdash; was this already decided?"); no will at all = immediate redo.</div>
+    <div class="teacher-note tn-c1">&#128161; <strong>Layer 1 &mdash; Common errors:</strong> Card 5 is the trap: "will probably" not "going to probably" (it's an opinion, not evidence). Card 3 is a mini-trap: "I'll check" (spontaneous) not "I'm going to check" (implies it was already planned). Discuss these two after the speed round.</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- §5 SOLO CHALLENGE -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div id="s5" class="section">
+  <div class="section-header">
+    <span class="section-number">&sect;5</span>
+    <div>
+      <div class="section-title">Solo Challenge &mdash; <em>Client Recovery Monologue</em></div>
+      <div class="section-sub">90-sec timed production &middot; &ge;2 I'll sentences &middot; &ge;1 won't sentence &middot; &ge;1 will+adverb &middot; &ge;1 Will you? &middot; b3 badge</div>
+    </div>
+  </div>
+  <div class="section-body">
+    <div class="dur-tag">&#9201; 12 MIN</div>
+
+    <div class="solo-card">
+      <div class="solo-body">
+        <div style="font-size:12px;color:var(--muted);margin-bottom:10px">
+          <strong style="color:var(--accent)">Brief:</strong> You are on a call with an upset client. They had a bad experience with your company. You have 90 seconds to handle the full call: acknowledge, offer, promise, predict, and close. Every Will function must appear at least once.
+        </div>
+        <div class="solo-rules">
+          <div class="solo-rule"><strong>&ge; 2</strong> I'LL sentences<br><em style="font-size:10px">Offer + spontaneous decision</em></div>
+          <div class="solo-rule"><strong>&ge; 1</strong> WON'T sentence<br><em style="font-size:10px">Negative guarantee</em></div>
+          <div class="solo-rule"><strong>&ge; 1</strong> WILL + ADVERB<br><em style="font-size:10px">Prediction with confidence level</em></div>
+          <div class="solo-rule"><strong>&ge; 1</strong> WILL YOU...?<br><em style="font-size:10px">Polite request to client</em></div>
+        </div>
+        <div class="timer-wrap">
+          <svg width="56" height="56" viewBox="0 0 100 100" style="transform:rotate(-90deg)">
+            <circle cx="50" cy="50" r="38" fill="none" stroke="var(--surface2)" stroke-width="6"/>
+            <circle id="soloArc" cx="50" cy="50" r="38" fill="none" stroke="var(--accent)" stroke-width="6" stroke-dasharray="238.76" stroke-dashoffset="0" stroke-linecap="round"/>
+          </svg>
+          <span class="timer-text" id="soloTime">90</span>
+          <button class="btn-primary" onclick="startTimer('soloArc','soloTime',90,'b3',238.76)">Start Monologue (90 sec)</button>
+        </div>
+        <div style="background:rgba(0,207,255,.05);border:1px solid rgba(0,207,255,.15);border-radius:8px;padding:14px;margin-top:14px">
+          <div style="font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:8px">Model (teacher reference only)</div>
+          <div style="font-size:12px;color:var(--text);line-height:1.9;font-style:italic">
+            "Se&ntilde;ora Mart&iacute;nez, thank you for taking the time to explain this. I completely understand why you're frustrated, and I want to make this right immediately.<br><br>
+            I'll escalate this to our operations team right now &mdash; this call ends with a resolution. And I'll send you a written summary of everything we agree on before 5pm today.<br><br>
+            I can assure you this won't happen again. We're introducing a new delivery check this week specifically to prevent this.<br><br>
+            Now, the replacement: it'll probably arrive by Thursday &mdash; we have stock ready. If the logistics team confirms today, it will definitely be there by Wednesday.<br><br>
+            One thing I need from you: will you send me a photo of the damaged packaging? It'll help me process the replacement and the credit note faster.<br><br>
+            Thank you, Se&ntilde;ora Mart&iacute;nez. You'll hear from me before 5pm. I promise."
+          </div>
+          <div style="font-size:10.5px;color:var(--muted);margin-top:8px">Tally: I'll &times;2, won't &times;1, will+adverb &times;2 (probably/definitely), Will you? &times;1. Above rubric on all counts. Total run time: ~75 seconds.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="teacher-note tn-c3">&#128293; <strong>Layer 3 &mdash; Real stakes:</strong> Have the student think of an actual client or colleague they need to follow up with. Use that real relationship as the scenario. Real emotional stakes produce real language &mdash; students who rehearse on a real client situation are internalizing professional English, not performing a classroom exercise.</div>
+    <div class="teacher-note tn-c1">&#128161; <strong>Rubric:</strong> &ge;2 I'll + &ge;1 won't + &ge;1 will+adverb + &ge;1 Will you? = b3. The most common gap: students forget Will you? &mdash; they tend to use "Can you send me...?" instead. Flag it: "That's also correct, but 'Will you send me...' is softer and more professional in a client recovery situation. It invites cooperation rather than requesting compliance."</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- §6 SOURCE ANALYSIS -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div id="s6" class="section">
+  <div class="section-header">
+    <span class="section-number">&sect;6</span>
+    <div>
+      <div class="section-title">Source Analysis &mdash; <em>Client Recovery Email in the Wild</em></div>
+      <div class="section-sub">Professional client email using all 5 Will functions &middot; Identify function &middot; Spot the one error</div>
+    </div>
+  </div>
+  <div class="section-body">
+    <div class="dur-tag">&#9201; 8 MIN</div>
+
+    <div class="source-card">
+      <div class="source-body">
+        <div class="source-type">&#128231; Client Recovery Email &mdash; After Service Failure</div>
+        <div class="source-text">
+          Subject: Immediate Follow-Up &mdash; Your Account<br><br>
+          Dear Mr. Delgado,<br><br>
+          Thank you for your patience on the call earlier today. I wanted to follow up in writing to confirm our commitments.<br><br>
+          First and most importantly: <mark>we won't</mark> let this happen again. I have already flagged this incident to our operations director.<br><br>
+          Here is what we <mark>will</mark> do: <mark>I'll</mark> personally verify that your replacement order ships by tomorrow morning. <mark>We'll</mark> also issue a credit note for 20% of the invoice value &mdash; <mark>I'll</mark> send it to your billing team by end of today.<br><br>
+          On the question of timing: the replacement <mark>will probably</mark> arrive Thursday &mdash; possibly Wednesday if the courier confirms the slot this afternoon. <mark>It'll</mark> definitely include the quality certificate you requested.<br><br>
+          One request: <mark>will you</mark> confirm receipt once it arrives? This allows us to close the case on our end.<br><br>
+          Going forward, we <mark>are going to</mark> introduce a mandatory pre-shipment check for all priority accounts &mdash; we had this planned before today, but your case has accelerated the timeline.<br><br>
+          You have my word.<br><br>
+          Laura S&aacute;nchez &middot; Account Director
+        </div>
+        <div class="source-tags">
+          <span class="src-tag src-tag-pr">won't (promise)</span>
+          <span class="src-tag src-tag-sp">I'll (offer)</span>
+          <span class="src-tag src-tag-pd">will+adverb (prediction)</span>
+          <span class="src-tag src-tag-pr">Will you? (request)</span>
+          <span class="src-tag src-tag-sp">going to (planned)</span>
+        </div>
+        <div class="source-meta-q">&#128161; For each highlighted form: (1) Which Will function is it? (2) Why does Laura use going to for the pre-shipment check? (3) Find the one sentence where "will" could be replaced by "going to" &mdash; which sentence, and what changes if you make the swap?</div>
+      </div>
+    </div>
+
+    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:12px">
+      <div style="font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:10px">Analysis Key</div>
+      <div style="font-size:12.5px;color:var(--text);line-height:1.9">
+        <strong style="color:var(--accent)">"we won't"</strong> &mdash; negative promise (binding guarantee not to repeat)<br>
+        <strong style="color:var(--accent)">"will do"</strong> &mdash; promise/commitment (announces what follows)<br>
+        <strong style="color:var(--accent)">"I'll personally verify"</strong> &mdash; spontaneous commitment/offer (she decided this right now, or appears to)<br>
+        <strong style="color:var(--accent)">"We'll also issue a credit note"</strong> &mdash; promise (commitment to a specific action)<br>
+        <strong style="color:var(--accent)">"I'll send it"</strong> &mdash; spontaneous commitment (immediate action)<br>
+        <strong style="color:var(--accent)">"will probably arrive Thursday"</strong> &mdash; prediction, moderate confidence (timeline uncertain)<br>
+        <strong style="color:var(--accent)">"It'll definitely include"</strong> &mdash; prediction, high confidence (they control this)<br>
+        <strong style="color:var(--accent)">"will you confirm"</strong> &mdash; polite request (inviting client cooperation)<br>
+        <strong style="color:var(--accent)">"are going to introduce"</strong> &mdash; pre-planned action (the check was already planned before today)<br>
+        <strong style="color:var(--gold)">Swap candidate:</strong> "I'll personally verify that your replacement ships by tomorrow" &mdash; could be "I'm going to personally verify..." (implies it's scheduled/planned), but "I'll" sounds more immediate and responsive &mdash; the will form is actually stronger here.
+      </div>
+    </div>
+
+    <div style="background:var(--surface2);border:1px solid rgba(255,184,0,.18);border-radius:10px;padding:14px 16px">
+      <div style="font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:8px">Discussion Questions</div>
+      <div style="font-size:12.5px;color:var(--text);line-height:1.9">
+        1. Laura says the pre-shipment check was "already planned before today." Why does this make going to the correct choice? <em>(Because it's a pre-existing plan, not a spontaneous decision triggered by this email.)</em><br>
+        2. Why does Laura use "will probably arrive Thursday &mdash; possibly Wednesday"? Why not just say "definitely Thursday"? <em>(The timeline is genuinely uncertain &mdash; probably + possibly = honest hedging. "Definitely Thursday" would be a promise she can't fully control.)</em><br>
+        3. Count all the Will uses in this email. Which function appears most often, and why does it make sense for a client recovery context? <em>(Promise and spontaneous offer dominate &mdash; in a recovery situation, the sender needs to demonstrate commitment and immediate action.)</em>
+      </div>
+    </div>
+
+    <div class="teacher-note tn-c1">&#128161; <strong>Layer 1 &mdash; Key insight:</strong> The going to example at the end is crucial &mdash; it shows that a real professional email mixes will AND going to. The pre-shipment check was planned before today's crisis, so going to is correct. If Laura had said "we'll introduce a pre-shipment check," it would imply she's deciding this spontaneously in the email &mdash; which she isn't. Accuracy here changes the meaning.</div>
+    <div class="teacher-note tn-c3">&#128293; <strong>Layer 3 &mdash; Output extension:</strong> Challenge: "Write your own client recovery email &mdash; real or fictional &mdash; using at least: 1&times; won't, 2&times; I'll, 1&times; will+adverb, 1&times; Will you?, 1&times; going to." Students who complete this have produced a real professional document at near-B1 level.</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- §7 MINI-GAME + BADGE + CERT + MY WIN + PREVIEW -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div id="s7" class="section">
+  <div class="section-header">
+    <span class="section-number">&sect;7</span>
+    <div>
+      <div class="section-title">Client Will Classifier, <em>Badge Showcase</em> &amp; My Win</div>
+      <div class="section-sub">Mini-game &middot; Certificate &middot; My Win reflection &middot; Module 5 Capstone preview</div>
+    </div>
+  </div>
+  <div class="section-body">
+    <div class="dur-tag">&#9201; 12 MIN</div>
+
+    <!-- CLIENT WILL CLASSIFIER MINI-GAME -->
+    <div style="font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:6px">&#127918; Mini-Game</div>
+    <div style="font-family:var(--font-head);font-size:18px;font-weight:800;color:#fff;margin-bottom:4px">Client Will Classifier</div>
+
+    <div class="cwc-wrap" id="cwcWrap">
+      <div class="cwc-hdr">Client Will Classifier</div>
+      <div class="cwc-title">Identify the Will Function</div>
+      <div class="cwc-meta">8 client scenarios + model responses. Click OFFER, PROMISE, PREDICTION, or REQUEST to classify the highlighted Will usage. 6/8 correct = b2 badge.</div>
+      <div class="cwc-score-row">
+        <div class="cwc-score" id="cwcScore">0 / 8</div>
+        <div class="cwc-progress"><div class="cwc-prog-fill" id="cwcFill"></div></div>
+        <div class="cwc-counter" id="cwcCounter">Question 1 of 8</div>
+      </div>
+      <div id="cwcArea">
+        <div class="cwc-scenario" id="cwcScenario"></div>
+        <div class="cwc-response" id="cwcResponse"></div>
+        <div class="cwc-btns">
+          <button class="cwc-btn" onclick="cwcAnswer('offer')">OFFER</button>
+          <button class="cwc-btn" onclick="cwcAnswer('promise')">PROMISE</button>
+          <button class="cwc-btn" onclick="cwcAnswer('prediction')">PREDICTION</button>
+          <button class="cwc-btn" onclick="cwcAnswer('request')">REQUEST</button>
+        </div>
+        <div class="cwc-fb" id="cwcFb"></div>
+        <button class="cwc-next" id="cwcNextBtn" onclick="cwcNext()">Next &rarr;</button>
+      </div>
+    </div>
+
+    <!-- LEADERBOARD -->
+    <div class="lb-box">
+      <div style="font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:10px">&#127942; Class Leaderboard</div>
+      <div class="lb-input-row">
+        <input class="lb-input" id="lbName" placeholder="Student name">
+        <input class="lb-input" id="lbPoints" placeholder="Points (1–100)" type="number" min="1" max="100">
+        <button class="btn-primary" onclick="addToLb()">Add</button>
+        <button class="btn-ghost" onclick="resetLb()">Reset</button>
+      </div>
+      <table class="lb-table" id="lbTable">
+        <thead><tr><th>#</th><th>Name</th><th>Points</th></tr></thead>
+        <tbody id="lbBody"></tbody>
+      </table>
+    </div>
+
+    <!-- BADGE SHOWCASE -->
+    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:16px;margin:16px 0;text-align:center">
+      <div style="font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:10px">&#127942; Badge Showcase</div>
+      <div style="display:flex;justify-content:center;gap:16px;font-size:28px;flex-wrap:wrap">
+        <div><span id="bs1" style="opacity:.25">&#128293;</span><div style="font-size:9px;color:var(--muted);margin-top:2px">Hot Take</div></div>
+        <div><span id="bs2" style="opacity:.25">&#9889;</span><div style="font-size:9px;color:var(--muted);margin-top:2px">Classifier</div></div>
+        <div><span id="bs3" style="opacity:.25">&#127908;</span><div style="font-size:9px;color:var(--muted);margin-top:2px">Solo</div></div>
+        <div><span id="bs4" style="opacity:.25">&#128269;</span><div style="font-size:9px;color:var(--muted);margin-top:2px">Analysis</div></div>
+        <div><span id="bs5" style="opacity:.25">&#127942;</span><div style="font-size:9px;color:var(--muted);margin-top:2px">My Win</div></div>
+      </div>
+    </div>
+
+    <!-- CERTIFICATE -->
+    <div class="cert-box">
+      <div style="font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:10px">&#128220; Session Certificate</div>
+      <input class="cert-input" id="certName" placeholder="Enter your full name">
+      <button class="btn-primary" onclick="generateCert()">Generate Certificate</button>
+      <div class="cert-result" id="certResult">
+        <div class="cert-title">Gabriel Turner &middot; English Training</div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:14px">Certificate of Completion</div>
+        <div class="cert-name" id="certDisplay"></div>
+        <div style="font-size:12px;color:var(--accent);margin:8px 0">A2.1 &middot; Module 5 &middot; Session 4B</div>
+        <div class="cert-detail">
+          Has demonstrated production mastery in:<br>
+          &#10003; I'll for spontaneous offers &amp; decisions &middot; &#10003; Won't for negative promises<br>
+          &#10003; Will + adverb for professional predictions &middot; &#10003; Will you? for polite client requests<br>
+          &#10003; Client recovery language &mdash; full Will system mastered
+        </div>
+        <div style="font-size:11px;color:var(--dim);margin-top:14px" id="certDate"></div>
+      </div>
+    </div>
+
+    <!-- 3 PHRASES FOR THE WEEK -->
+    <div style="font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin:24px 0 12px">&#127919; This week at work</div>
+    <div style="font-family:var(--font-head);font-size:18px;font-weight:800;color:#fff;margin-bottom:16px">3 Client Will Phrases You Can Use Starting Tomorrow</div>
+    <div class="ph-grid">
+      <div class="ph-card">
+        <div class="ph-num">PHRASE 1</div>
+        <div class="ph-phrase">"I'll look into this right now and call you back within the hour."</div>
+        <div class="ph-ctx">The crisis opener. Combines spontaneous offer (I'll look into) with a time-bound commitment (call you back within the hour). Two will forms in one sentence &mdash; immediate and specific.</div>
+      </div>
+      <div class="ph-card">
+        <div class="ph-num">PHRASE 2</div>
+        <div class="ph-phrase">"It won't happen again &mdash; you have my word."</div>
+        <div class="ph-ctx">The recovery closer. "Won't" = the strongest negative promise in English. "You have my word" amplifies it without additional grammar. This sentence ends client recovery calls with maximum trust.</div>
+      </div>
+      <div class="ph-card">
+        <div class="ph-num">PHRASE 3</div>
+        <div class="ph-phrase">"It'll probably [outcome] &mdash; but I'll personally make sure [action]."</div>
+        <div class="ph-ctx">The honest prediction + personal commitment template. The "probably" is professional honesty (not overconfidence). The "I'll personally" shifts accountability to the speaker. Together: credible, responsible, professional.</div>
+      </div>
+    </div>
+
+    <!-- MY WIN -->
+    <div class="win-box">
+      <div style="font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:8px">&#127942; My Win Today</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:8px">Think of a real client, colleague, or internal stakeholder. What ONE Will sentence will you use with them this week &mdash; and which function will it serve (offer, promise, prediction, or request)?</div>
+      <textarea class="win-ta" id="winTA" placeholder="This week, with [client/colleague], I will say: '______' — Function: [offer / promise / prediction / request]"></textarea>
+      <button class="win-save" onclick="saveWin()">Save My Win &#127942;</button>
+    </div>
+
+    <!-- NEXT SESSION PREVIEW -->
+    <div class="next-box" style="margin-top:20px">
+      <div class="next-lbl">&#9654; Next Class &mdash; M5 &middot; Session 5 (Module Capstone)</div>
+      <div class="next-title">Module 5 Capstone &mdash; Will Mastery Assessment</div>
+      <div class="next-sub">Full module review &middot; Real-world speaking assessment &middot; Will functions in live client scenarios &middot; M6 preview: Second Conditional (If you studied more, you would...) &middot; Graduation from the Will module</div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="ftr">
+  <div class="fbrand">Gabriel Turner &middot; English Training</div>
+  <div class="finfo">A2.1 &middot; Module 5 &middot; Session 4B &middot; GT_A2_1_M5_S4B_TEACHER_v1</div>
+  <div class="flvs">
+    <div class="flv">A1.1</div><div class="flv">A1.2</div><div class="flv on">A2.1</div>
+    <div class="flv">A2.2</div><div class="flv">B1.1</div><div class="flv">B1.2</div>
+  </div>
+</footer>
+
+<script>
+/* ── MODE TOGGLE ── */
+function toggleMode(){
+  document.body.classList.toggle('student-mode');
+  const b=document.querySelector('.mode-toggle');
+  b.textContent=document.body.classList.contains('student-mode')?'\u{1F441} Teacher Mode':'\u{1F441} Student Mode';
+}
+
+/* ── TIMER ── */
+let timerRunning={};
+function startTimer(arcId,textId,seconds,badgeKey,circumference){
+  if(timerRunning[arcId])return;
+  timerRunning[arcId]=true;
+  const arc=document.getElementById(arcId);
+  const txt=document.getElementById(textId);
+  let remaining=seconds;
+  const iv=setInterval(()=>{
+    remaining--;
+    txt.textContent=remaining;
+    const offset=circumference*(1-remaining/seconds);
+    arc.style.strokeDashoffset=offset;
+    if(remaining<=5){arc.style.stroke='#FF4D6D';txt.style.color='#FF4D6D';}
+    if(remaining<=0){
+      clearInterval(iv);
+      arc.style.stroke='var(--success)';
+      txt.style.color='var(--success)';
+      txt.textContent='✓';
+      timerRunning[arcId]=false;
+      if(badgeKey)earnBadge(badgeKey);
+    }
+  },1000);
+}
+
+/* ── BADGES ── */
+const badgesEarned=new Set();
+function earnBadge(id){
+  if(badgesEarned.has(id))return;
+  badgesEarned.add(id);
+  const el=document.getElementById(id);
+  if(el)el.classList.add('earned');
+  const bs=document.getElementById('bs'+id.charAt(1));
+  if(bs)bs.style.opacity='1';
+  if(badgesEarned.size>=5)launchConfetti();
+}
+function launchConfetti(){
+  const colors=['#00CFFF','#67E8F9','#00E676','#FFB800','#A78BFA'];
+  for(let i=0;i<60;i++){
+    const c=document.createElement('div');
+    c.className='confetti-piece';
+    c.style.left=Math.random()*100+'vw';
+    c.style.top='-10px';
+    c.style.background=colors[Math.floor(Math.random()*colors.length)];
+    c.style.animationDelay=Math.random()*1.5+'s';
+    c.style.borderRadius=Math.random()>.5?'50%':'0';
+    document.body.appendChild(c);
+    setTimeout(()=>c.remove(),4000);
+  }
+}
+
+/* ── SPEED ROUND ── */
+let speedCount=0;
+function speedAnswer(card){
+  card.classList.add('answered');
+  speedCount++;
+  document.getElementById('speedScore').textContent=speedCount+' / 8';
+}
+
+/* ── LEADERBOARD ── */
+let lbData=[];
+function addToLb(){
+  const name=document.getElementById('lbName').value.trim();
+  const pts=parseInt(document.getElementById('lbPoints').value);
+  if(!name||isNaN(pts))return;
+  lbData.push({name,pts});
+  lbData.sort((a,b)=>b.pts-a.pts);
+  renderLb();
+  document.getElementById('lbName').value='';
+  document.getElementById('lbPoints').value='';
+}
+function resetLb(){lbData=[];renderLb();}
+function renderLb(){
+  document.getElementById('lbBody').innerHTML=lbData.map((d,i)=>`<tr><td>${i+1}</td><td>${d.name}</td><td>${d.pts}</td></tr>`).join('');
+}
+
+/* ── CERTIFICATE ── */
+function generateCert(){
+  const name=document.getElementById('certName').value.trim();
+  if(!name)return;
+  document.getElementById('certDisplay').textContent=name;
+  const d=new Date();
+  document.getElementById('certDate').textContent=d.toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  document.getElementById('certResult').classList.add('show');
+  earnBadge('b4');
+}
+
+/* ── MY WIN ── */
+function saveWin(){
+  const ta=document.getElementById('winTA');
+  if(ta.value.trim().length>0){earnBadge('b5');ta.style.borderColor='var(--success)';}
+}
+
+/* ── PROGRESS BAR ── */
+window.addEventListener('scroll',function(){
+  const h=document.documentElement.scrollHeight-window.innerHeight;
+  const pct=h>0?(window.scrollY/h*100):0;
+  document.getElementById('progressBar').style.width=pct+'%';
+});
+
+/* ══════════════════════════════════════════
+   CLIENT WILL CLASSIFIER MINI-GAME
+   8 client scenarios + model responses.
+   Student clicks which Will FUNCTION was used:
+   OFFER / PROMISE / PREDICTION / REQUEST.
+   6+/8 correct → b2 badge.
+   Scoped .cwc-* CSS.
+══════════════════════════════════════════ */
+const cwcQs=[
+  {
+    scenario:"The client just received the wrong product.",
+    response:"'I'll arrange a collection and send the correct one today.'",
+    correct:"offer",
+    explain:"Spontaneous offer — triggered by the new situation. I'll = immediate commitment to act for the client."
+  },
+  {
+    scenario:"The client says this is the third mistake this month.",
+    response:"'It won't happen again. I'll put a personal review system in place from today.'",
+    correct:"promise",
+    explain:"Negative promise (won't) + positive commitment (I'll). Both are binding — the strongest Will form combination in client recovery."
+  },
+  {
+    scenario:"The client asks: 'How long will the refund take?'",
+    response:"'It'll probably take 3–5 working days, but I'll push to accelerate it.'",
+    correct:"prediction",
+    explain:"Prediction with hedging (probably) — honest because the timeline depends on the bank. The I'll at the end is an offer to add urgency."
+  },
+  {
+    scenario:"You need the client's purchase order number to process a return.",
+    response:"'Will you send me the PO number when you have a moment?'",
+    correct:"request",
+    explain:"Polite question form — Will you? invites cooperation rather than demanding it. More client-friendly than 'Can you' in high-tension situations."
+  },
+  {
+    scenario:"The client says: 'I'm not sure this partnership is working.'",
+    response:"'I'll schedule a call with our director this week. We won't give up on this relationship.'",
+    correct:"offer",
+    explain:"Spontaneous offer (I'll schedule — decision made at this moment) + negative promise (won't give up = commitment). The offer signals urgency; the promise signals long-term intent."
+  },
+  {
+    scenario:"A client asks about the new pricing model launching in Q2.",
+    response:"'It'll definitely be competitive — we've benchmarked against the top three providers. You'll probably see a cost improvement.'",
+    correct:"prediction",
+    explain:"Strong prediction (definitely = high confidence from benchmarking) + hedged prediction (probably = not guaranteed). Adverb choice shows credible confidence, not empty promises."
+  },
+  {
+    scenario:"The client confirms they received the replacement shipment in perfect condition.",
+    response:"'I'll send the final case report by end of day. You'll receive a credit note this week as well.'",
+    correct:"promise",
+    explain:"Forward commitment (I'll send) + future guarantee (You'll receive). Both are promises — binding statements about future actions the speaker controls."
+  },
+  {
+    scenario:"You want the client to confirm the meeting agenda before Thursday.",
+    response:"'Will you review the agenda and let me know if anything needs changing by Wednesday?'",
+    correct:"request",
+    explain:"Polite Will you? request with a deadline. Professional and non-confrontational — essential for maintaining client relationships."
+  }
+];
+
+let cwcIdx=0;
+let cwcCorrect=0;
+let cwcAnswered=false;
+
+function cwcLoad(){
+  if(cwcIdx>=cwcQs.length){
+    const pct=Math.round(cwcCorrect/cwcQs.length*100);
+    document.getElementById('cwcWrap').innerHTML=`
+      <div class="cwc-done">
+        <div class="cwc-done-score">${cwcCorrect} / ${cwcQs.length}</div>
+        <div class="cwc-done-msg">${pct}% &mdash; ${cwcCorrect>=6?'Excellent! b2 badge earned &mdash; all 5 Will functions mastered in client context.':'Review: Offer (I\'ll — immediate); Promise (I\'ll + won\'t — binding); Prediction (will + adverb — future likelihood); Request (Will you? — polite ask). Focus on which function the speaker INTENDS, not just the form.'}</div>
+        <button class="btn-primary" style="margin-top:16px" onclick="cwcRestart()">Play Again</button>
+      </div>`;
+    if(cwcCorrect>=6)earnBadge('b2');
+    return;
+  }
+  cwcAnswered=false;
+  const q=cwcQs[cwcIdx];
+  document.getElementById('cwcScenario').textContent='Scenario: '+q.scenario;
+  document.getElementById('cwcResponse').textContent='Response: '+q.response;
+  document.getElementById('cwcCounter').textContent='Question '+(cwcIdx+1)+' of '+cwcQs.length;
+  document.getElementById('cwcScore').textContent=cwcCorrect+' / '+cwcQs.length;
+  document.getElementById('cwcFill').style.width=(cwcIdx/cwcQs.length*100)+'%';
+  const fb=document.getElementById('cwcFb');
+  fb.className='cwc-fb';
+  fb.textContent='';
+  document.getElementById('cwcNextBtn').style.display='none';
+  // re-enable all buttons
+  document.querySelectorAll('.cwc-btn').forEach(btn=>{
+    btn.disabled=false;
+    btn.style.background='';
+    btn.style.borderColor='';
+    btn.style.color='';
+  });
+}
+
+function cwcAnswer(chosen){
+  if(cwcAnswered)return;
+  cwcAnswered=true;
+  const q=cwcQs[cwcIdx];
+  const btns=document.querySelectorAll('.cwc-btn');
+  btns.forEach(b=>b.disabled=true);
+  const fb=document.getElementById('cwcFb');
+  // find the clicked button
+  const clickedBtn=Array.from(btns).find(b=>b.textContent.toLowerCase()===chosen);
+  if(chosen===q.correct){
+    cwcCorrect++;
+    if(clickedBtn){
+      clickedBtn.style.background='rgba(0,229,160,.2)';
+      clickedBtn.style.borderColor='var(--success)';
+      clickedBtn.style.color='var(--success)';
+    }
+    fb.className='cwc-fb ok show';
+    fb.textContent='✓ Correct! '+q.explain;
+  } else {
+    if(clickedBtn){
+      clickedBtn.style.background='rgba(255,77,109,.15)';
+      clickedBtn.style.borderColor='var(--danger)';
+      clickedBtn.style.color='var(--danger)';
+    }
+    // highlight correct answer button
+    btns.forEach(b=>{
+      if(b.textContent.toLowerCase()===q.correct){
+        b.style.borderColor='var(--success)';
+        b.style.color='var(--success)';
+      }
+    });
+    fb.className='cwc-fb no show';
+    fb.textContent='✕ Not quite. The correct function is "'+q.correct+'". '+q.explain;
+  }
+  document.getElementById('cwcNextBtn').style.display='inline-block';
+}
+
+function cwcNext(){
+  cwcIdx++;
+  cwcLoad();
+}
+
+function cwcRestart(){
+  cwcIdx=0;cwcCorrect=0;cwcAnswered=false;
+  document.getElementById('cwcWrap').innerHTML=`
+    <div class="cwc-hdr">Client Will Classifier</div>
+    <div class="cwc-title">Identify the Will Function</div>
+    <div class="cwc-meta">8 client scenarios + model responses. Click OFFER, PROMISE, PREDICTION, or REQUEST to classify the highlighted Will usage. 6/8 correct = b2 badge.</div>
+    <div class="cwc-score-row">
+      <div class="cwc-score" id="cwcScore">0 / 8</div>
+      <div class="cwc-progress"><div class="cwc-prog-fill" id="cwcFill"></div></div>
+      <div class="cwc-counter" id="cwcCounter">Question 1 of 8</div>
+    </div>
+    <div id="cwcArea">
+      <div class="cwc-scenario" id="cwcScenario"></div>
+      <div class="cwc-response" id="cwcResponse"></div>
+      <div class="cwc-btns">
+        <button class="cwc-btn" onclick="cwcAnswer('offer')">OFFER</button>
+        <button class="cwc-btn" onclick="cwcAnswer('promise')">PROMISE</button>
+        <button class="cwc-btn" onclick="cwcAnswer('prediction')">PREDICTION</button>
+        <button class="cwc-btn" onclick="cwcAnswer('request')">REQUEST</button>
+      </div>
+      <div class="cwc-fb" id="cwcFb"></div>
+      <button class="cwc-next" id="cwcNextBtn" onclick="cwcNext()">Next &rarr;</button>
+    </div>`;
+  cwcLoad();
+}
+
+// init
+cwcLoad();
+</script>
+</body>
+</html>
