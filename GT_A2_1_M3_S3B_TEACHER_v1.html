@@ -196,6 +196,23 @@ body{background:var(--bg);color:var(--txt);font-family:var(--font-body);font-siz
 .ph-phrase{font-family:var(--font-head);font-size:13px;font-weight:700;color:#fff;margin-bottom:7px;line-height:1.4}
 .ph-ctx{font-size:11.5px;color:var(--muted);line-height:1.6}
 
+/* PAST MATCH MINI-GAME */
+.pm-wrap{background:var(--surface);border:1px solid var(--ac);padding:18px;margin:14px 0}
+.pm-meta{display:flex;justify-content:space-between;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:12px}
+.pm-meta strong{color:var(--ac)}
+.pm-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:10px}
+.pm-tile{background:var(--surface2);border:1px solid var(--border);padding:14px 8px;text-align:center;font-family:var(--font-head);font-size:13px;font-weight:700;color:#fff;cursor:pointer;transition:transform .15s,border-color .2s,background .2s;min-height:48px;display:flex;align-items:center;justify-content:center}
+.pm-tile:hover:not(.locked):not(.selected){border-color:var(--ac);transform:translateY(-1px)}
+.pm-tile.selected{border-color:var(--ac);background:rgba(0,207,255,.12);color:var(--ac)}
+.pm-tile.locked{background:rgba(0,229,160,.12);border-color:var(--success);color:var(--success);cursor:default;pointer-events:none}
+.pm-tile.flash-wrong{background:rgba(255,77,109,.18);border-color:var(--danger);color:var(--danger);animation:pmShake .35s}
+@keyframes pmShake{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+.pm-status{font-size:13px;text-align:center;color:var(--muted);min-height:18px;font-family:var(--font-head);letter-spacing:.06em}
+.pm-status.win{color:var(--success);font-weight:800}
+.pm-reset{display:block;margin:10px auto 0;background:none;border:1px solid var(--border);color:var(--muted);padding:7px 16px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1px;cursor:pointer}
+.pm-reset:hover{border-color:var(--ac);color:var(--ac)}
+@media(max-width:640px){.pm-grid{grid-template-columns:repeat(2,1fr)}}
+
 /* MY WIN */
 .my-win{background:var(--surface);border:1px solid var(--border);padding:18px;margin-top:16px}
 .my-win-lbl{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:8px}
@@ -694,6 +711,28 @@ body{background:var(--bg);color:var(--txt);font-family:var(--font-body);font-siz
   </div>
 </section>
 
+<!-- S6b PRESENTATION PAST MATCH MINI-GAME -->
+<section class="sec">
+  <div class="sec-hdr">
+    <span class="sec-num">S6b &mdash; Past Match</span>
+    <div>
+      <div class="sec-title">Presentation <em>Past Match</em></div>
+      <div class="sec-sub">Click pairs &middot; Match infinitive &rarr; past form &middot; 8 meeting/presentation verbs</div>
+    </div>
+    <span class="dur-tag">5 MIN</span>
+  </div>
+  <div class="sec-body">
+    <div class="tn tn-c1">&#127918; <strong>How to play:</strong> Click any tile, then click its match (infinitive &harr; past). Correct pairs lock GREEN. Wrong pairs flash RED and reset. Beat the board with 0 errors for the &#9889; Speed Master badge boost.</div>
+    <div class="pm-wrap">
+      <div class="pm-meta"><span>Pairs matched: <strong id="pmDone">0</strong> / 8</span><span>Errors: <strong id="pmErr">0</strong></span></div>
+      <div class="pm-grid" id="pmGrid"></div>
+      <div class="pm-status" id="pmStatus">Click an infinitive, then its past form.</div>
+      <button class="pm-reset" onclick="pmReset()">&#8634; Shuffle &amp; Reset</button>
+    </div>
+    <div class="tn tn-c3" style="margin-top:14px">&#11088; <strong>Verbs to know:</strong> present/presented, lead/led, run/ran, give/gave, discuss/discussed, agree/agreed, decide/decided, win/won &mdash; the eight most useful past forms for talking about meetings and presentations.</div>
+  </div>
+</section>
+
 <!-- S7 SELF-RATING + LEADERBOARD -->
 <section class="sec">
   <div class="sec-hdr">
@@ -876,6 +915,52 @@ function renderLB(){
 renderLB();
 
 function generateCert(){var n=document.getElementById('certName').value.trim();if(!n)return;document.getElementById('certNameOut').textContent=n;var d=new Date();var months=['January','February','March','April','May','June','July','August','September','October','November','December'];document.getElementById('certDate').textContent='Issued: '+months[d.getMonth()]+' '+d.getDate()+', '+d.getFullYear()+' &middot; Gabriel Turner English Training &middot; Celaya, Guanajuato, M\u00e9xico';var r=document.getElementById('certResult');r.classList.add('show');earnBadge('b4');}
+
+/* PAST MATCH MINI-GAME */
+var pmPairs=[['present','presented'],['lead','led'],['run','ran'],['give','gave'],['discuss','discussed'],['agree','agreed'],['decide','decided'],['win','won']];
+var pmTiles=[],pmFirst=null,pmDone=0,pmErr=0;
+function pmShuffle(arr){return arr.map(function(v){return [Math.random(),v];}).sort(function(a,b){return a[0]-b[0];}).map(function(v){return v[1];});}
+function pmBuild(){
+  var flat=[];
+  pmPairs.forEach(function(p,i){flat.push({w:p[0],id:i,role:'inf'});flat.push({w:p[1],id:i,role:'past'});});
+  pmTiles=pmShuffle(flat);
+  var grid=document.getElementById('pmGrid');grid.innerHTML='';
+  pmTiles.forEach(function(t,idx){
+    var el=document.createElement('div');
+    el.className='pm-tile';el.textContent=t.w;el.dataset.id=t.id;el.dataset.idx=idx;
+    el.onclick=function(){pmClick(el);};
+    grid.appendChild(el);
+  });
+  pmFirst=null;pmDone=0;pmErr=0;
+  document.getElementById('pmDone').textContent='0';
+  document.getElementById('pmErr').textContent='0';
+  document.getElementById('pmStatus').textContent='Click an infinitive, then its past form.';
+  document.getElementById('pmStatus').className='pm-status';
+}
+function pmClick(el){
+  if(el.classList.contains('locked')||el.classList.contains('selected'))return;
+  if(!pmFirst){pmFirst=el;el.classList.add('selected');return;}
+  var a=pmFirst,b=el;
+  if(a.dataset.id===b.dataset.id){
+    a.classList.remove('selected');a.classList.add('locked');b.classList.add('locked');
+    pmDone++;document.getElementById('pmDone').textContent=pmDone;pmFirst=null;
+    if(pmDone===pmPairs.length){
+      var st=document.getElementById('pmStatus');
+      st.textContent='\u2728 Board cleared! '+pmErr+' error(s).';st.className='pm-status win';
+      earnBadge('b3');if(pmErr===0)earnBadge('b4');
+    } else {
+      document.getElementById('pmStatus').textContent='\u2705 Match! Keep going.';
+    }
+  } else {
+    b.classList.add('flash-wrong');a.classList.add('flash-wrong');a.classList.remove('selected');
+    pmErr++;document.getElementById('pmErr').textContent=pmErr;
+    document.getElementById('pmStatus').textContent='\u274c Not a pair. Try again.';
+    setTimeout(function(){a.classList.remove('flash-wrong');b.classList.remove('flash-wrong');},400);
+    pmFirst=null;
+  }
+}
+function pmReset(){pmBuild();}
+pmBuild();
 
 function saveWin(){var t=document.getElementById('myWinText').value.trim();if(t.length<3)return;earnBadge('b5');var btn=document.querySelector('.my-win-btn');btn.textContent='\u2713 Saved!';btn.style.background='var(--success)';}
 </script>

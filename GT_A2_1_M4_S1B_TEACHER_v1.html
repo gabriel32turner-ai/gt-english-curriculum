@@ -73,7 +73,7 @@ body.student-mode .teacher-note{display:none!important}
 .relay-num{font-family:var(--font-head);font-size:10px;font-weight:700;color:var(--accent);letter-spacing:1.5px;margin-bottom:4px}
 .relay-prompt{font-size:13px;color:#fff;margin-bottom:6px;line-height:1.5}
 .relay-answer{font-size:12px;color:var(--muted);font-style:italic}
-/* VISUAL NUEVO: Plan vs Reality Simulator */
+/* NEW VISUAL: Plan vs Reality Simulator */
 .pvr-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin:16px 0}
 .pvr-card{background:var(--surface2);border:1px solid var(--border);border-radius:10px;overflow:hidden;transition:all .3s}
 .pvr-card-img{width:100%;height:80px;object-fit:cover;filter:brightness(.45)}
@@ -169,6 +169,28 @@ body.student-mode .teacher-note{display:none!important}
 .flv.on{background:var(--accent);color:#080808}
 .confetti-piece{position:fixed;width:8px;height:8px;z-index:1000;pointer-events:none;animation:confettiFall 2.5s ease-out forwards}
 @keyframes confettiFall{0%{opacity:1;transform:translateY(0) rotate(0)}100%{opacity:0;transform:translateY(100vh) rotate(720deg)}}
+/* GOING-TO QUICK-FIRE MINI-GAME (scoped) */
+.gtqf-card{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:20px;margin:14px 0}
+.gtqf-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px}
+.gtqf-counter{font-family:'Syne',sans-serif;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#00CFFF}
+.gtqf-score{font-family:'Syne',sans-serif;font-size:16px;font-weight:800;color:#00CFFF}
+.gtqf-cue{background:var(--surface);border-left:3px solid #00CFFF;border-radius:0 8px 8px 0;padding:14px 18px;margin-bottom:12px}
+.gtqf-context{font-size:12px;color:var(--muted);margin-bottom:6px;font-style:italic}
+.gtqf-prompt{font-family:'Syne',sans-serif;font-size:18px;font-weight:700;color:#fff;line-height:1.4}
+.gtqf-prompt .gtqf-verb{color:#00CFFF}
+.gtqf-input{width:100%;background:var(--surface);border:1px solid var(--border);color:var(--text);padding:11px 14px;font-size:14px;border-radius:6px;font-family:'DM Sans',sans-serif;margin-bottom:10px}
+.gtqf-input:focus{outline:none;border-color:#00CFFF}
+.gtqf-btns{display:flex;gap:8px;flex-wrap:wrap}
+.gtqf-btn{background:#00CFFF;border:none;color:#080808;padding:9px 22px;font-family:'Syne',sans-serif;font-size:11px;font-weight:700;letter-spacing:1.5px;cursor:pointer;border-radius:6px}
+.gtqf-btn-ghost{background:transparent;border:1px solid var(--border);color:var(--muted);padding:9px 18px;font-family:'Syne',sans-serif;font-size:11px;font-weight:700;letter-spacing:1.5px;cursor:pointer;border-radius:6px}
+.gtqf-btn-ghost:hover{border-color:#00CFFF;color:#00CFFF}
+.gtqf-fb{margin-top:10px;padding:10px 14px;border-radius:6px;font-size:13px;line-height:1.5;display:none}
+.gtqf-fb.show{display:block}
+.gtqf-fb.ok{background:rgba(0,229,160,.1);border:1px solid rgba(0,229,160,.3);color:var(--success)}
+.gtqf-fb.no{background:rgba(255,77,109,.08);border:1px solid rgba(255,77,109,.25);color:var(--danger)}
+.gtqf-progress{width:100%;height:6px;background:var(--surface);border-radius:3px;margin-bottom:14px;overflow:hidden}
+.gtqf-fill{height:100%;background:#00CFFF;border-radius:3px;transition:width .3s;width:0}
+.gtqf-done{text-align:center;padding:18px;font-family:'Syne',sans-serif;font-size:16px;font-weight:700;color:#00CFFF}
 @media(max-width:860px){
   .hdr,.ftr{padding:15px 18px}
   .section-body{padding:16px}
@@ -290,7 +312,7 @@ body.student-mode .teacher-note{display:none!important}
 </div>
 
 <!-- ═══════════════════════════════════════ -->
-<!-- §3 RELAY — VISUAL NUEVO: Plan vs Reality Simulator -->
+<!-- §3 RELAY — NEW VISUAL: Plan vs Reality Simulator -->
 <!-- ═══════════════════════════════════════ -->
 <div class="section">
   <div class="section-header">
@@ -425,6 +447,26 @@ body.student-mode .teacher-note{display:none!important}
         <div class="speed-body"><div class="speed-q">🎉 Your project finished successfully! What are you going to celebrate?</div></div>
       </div>
     </div>
+
+    <!-- GOING-TO QUICK-FIRE MINI-GAME -->
+    <div class="gtqf-card" id="gtqfCard">
+      <div class="gtqf-header">
+        <div class="gtqf-counter" id="gtqfCounter">Round 1 of 8</div>
+        <div class="gtqf-score" id="gtqfScore">0 / 8</div>
+      </div>
+      <div class="gtqf-progress"><div class="gtqf-fill" id="gtqfFill"></div></div>
+      <div class="gtqf-cue">
+        <div class="gtqf-context" id="gtqfContext">Context loading...</div>
+        <div class="gtqf-prompt"><span id="gtqfSubject">I</span> + <span class="gtqf-verb" id="gtqfVerb">verb</span></div>
+      </div>
+      <input class="gtqf-input" id="gtqfInput" placeholder='Type the full "going to" sentence here...' onkeydown="if(event.key==='Enter')checkGtqf()">
+      <div class="gtqf-btns">
+        <button class="gtqf-btn" onclick="checkGtqf()">Check</button>
+        <button class="gtqf-btn-ghost" onclick="skipGtqf()">Skip</button>
+      </div>
+      <div class="gtqf-fb" id="gtqfFb"></div>
+    </div>
+    <div class="teacher-note tn-c1">⚡ <strong>Going-To Quick-Fire:</strong> 8 prompts. Student types a "going to" sentence using the subject + verb shown. Validation checks for "going to" + verb base form. Hit Enter or Check to advance.</div>
   </div>
 </div>
 
@@ -826,6 +868,58 @@ window.addEventListener('scroll',function(){
   const pct=h>0?(window.scrollY/h*100):0;
   document.getElementById('progressBar').style.width=pct+'%';
 });
+
+/* ── GOING-TO QUICK-FIRE MINI-GAME ── */
+const gtqfPrompts=[
+  {context:'Tomorrow morning at the office',subject:'I',verb:'launch',example:"I'm going to launch the product tomorrow."},
+  {context:'Next Monday at the team meeting',subject:'We',verb:'present',example:"We're going to present the report on Monday."},
+  {context:'This Friday at the supplier',subject:'She',verb:'visit',example:"She's going to visit the supplier on Friday."},
+  {context:'Next quarter at Solaris',subject:'They',verb:'implement',example:"They're going to implement the new system next quarter."},
+  {context:'Tonight before the deadline',subject:'I',verb:'finish',example:"I'm going to finish the proposal tonight."},
+  {context:'Next week with the client',subject:'We',verb:'reschedule',example:"We're going to reschedule the meeting next week."},
+  {context:'On Wednesday at the standup',subject:'He',verb:'update',example:"He's going to update the timeline on Wednesday."},
+  {context:'Next month at the warehouse',subject:'They',verb:'organize',example:"They're going to organize the training next month."}
+];
+let gtqfIdx=0,gtqfScore=0;
+function loadGtqf(){
+  if(gtqfIdx>=gtqfPrompts.length){
+    document.getElementById('gtqfCard').innerHTML='<div class="gtqf-done">Quick-Fire complete! Score: '+gtqfScore+' / '+gtqfPrompts.length+'</div>';
+    if(gtqfScore>=6)earnBadge('b2');
+    return;
+  }
+  const p=gtqfPrompts[gtqfIdx];
+  document.getElementById('gtqfCounter').textContent='Round '+(gtqfIdx+1)+' of '+gtqfPrompts.length;
+  document.getElementById('gtqfScore').textContent=gtqfScore+' / '+gtqfPrompts.length;
+  document.getElementById('gtqfFill').style.width=(gtqfIdx/gtqfPrompts.length*100)+'%';
+  document.getElementById('gtqfContext').textContent=p.context;
+  document.getElementById('gtqfSubject').textContent=p.subject;
+  document.getElementById('gtqfVerb').textContent=p.verb;
+  document.getElementById('gtqfInput').value='';
+  document.getElementById('gtqfInput').disabled=false;
+  document.getElementById('gtqfFb').className='gtqf-fb';
+  document.getElementById('gtqfInput').focus();
+}
+function checkGtqf(){
+  const p=gtqfPrompts[gtqfIdx];
+  const val=document.getElementById('gtqfInput').value.trim().toLowerCase();
+  const fb=document.getElementById('gtqfFb');
+  // Must contain "going to" + the base verb (not -ed/-ing form)
+  const hasGoingTo=val.includes('going to');
+  const verbRegex=new RegExp('\\bgoing to\\s+'+p.verb+'\\b','i');
+  const correct=hasGoingTo&&verbRegex.test(val);
+  if(correct){
+    gtqfScore++;
+    fb.className='gtqf-fb show ok';
+    fb.textContent='✓ Nice! Model: '+p.example;
+  }else{
+    fb.className='gtqf-fb show no';
+    fb.textContent='✗ Needs "going to" + base verb. Model: '+p.example;
+  }
+  document.getElementById('gtqfInput').disabled=true;
+  setTimeout(()=>{gtqfIdx++;loadGtqf();},1600);
+}
+function skipGtqf(){gtqfIdx++;loadGtqf();}
+loadGtqf();
 </script>
 </body>
 </html>

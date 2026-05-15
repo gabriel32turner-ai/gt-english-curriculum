@@ -213,7 +213,7 @@ body{background:var(--bg);color:var(--txt);font-family:var(--fb);font-size:14px;
 </header>
 
 <div class="badge-strip">
-  <span class="bl">Badges de hoy:</span>
+  <span class="bl">Today's Badges:</span>
   <span id="b1" title="Hot Take">&#128293;</span>
   <span id="b2" title="Debate Champion">&#9889;</span>
   <span id="b3" title="Repair Expert">&#128295;</span>
@@ -470,6 +470,28 @@ body{background:var(--bg);color:var(--txt);font-family:var(--fb);font-size:14px;
   </div>
 </section>
 
+<!-- S4.5 MEETING VERB RACE — typed past-form game -->
+<section class="sec">
+  <div class="sec-hdr">
+    <span class="sec-num">S4.5 &mdash; Verb Race</span>
+    <div>
+      <div class="sec-title">Meeting Verb <em>Race</em></div>
+      <div class="sec-sub">Type the Simple Past form &middot; 8 meeting verbs &middot; Score 0/8 &middot; Spelling counts</div>
+    </div>
+    <span class="dur-tag">5 MIN</span>
+  </div>
+  <img class="img-banner" src="https://images.unsplash.com/photo-1557804506-669a67965ba0?w=900&q=80" alt="meeting verbs typing race speed past form">
+  <div class="body">
+    <div class="tn tn-c1" style="margin-bottom:14px">&#9889; <strong>How to play:</strong> 8 meeting verbs &mdash; type the correct Simple Past form (irregular AND regular). Spelling must match exactly. Click <strong>Score My Race</strong> when finished. 8/8 unlocks a bonus point in the leaderboard.</div>
+    <div id="vr-grid" style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px"></div>
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+      <button class="btn-start" onclick="scoreVerbRace()">SCORE MY RACE</button>
+      <button class="btn-reset" onclick="resetVerbRace()">RESET</button>
+      <div id="vr-result" style="font-family:var(--fh);font-size:13px;color:var(--ac);margin-left:8px"></div>
+    </div>
+  </div>
+</section>
+
 <!-- S5 SOLO CHALLENGE -->
 <section class="sec">
   <div class="sec-hdr">
@@ -645,7 +667,7 @@ body{background:var(--bg);color:var(--txt);font-family:var(--fb);font-size:14px;
 <!-- 3 PHRASES FOR THIS WEEK -->
 <section class="sec phrases-sec">
   <div class="body">
-    <div class="ph-lbl">&#127919; Esta semana en el trabajo</div>
+    <div class="ph-lbl">&#127919; This Week At Work</div>
     <div class="ph-title">3 Phrases to Use Before Your Next Meeting</div>
     <div class="ph-grid">
       <div class="ph-card">
@@ -729,6 +751,38 @@ renderLB();
 function generateCert(){var n=document.getElementById('certName').value.trim();if(!n)return;document.getElementById('certNameOut').textContent=n;var d=new Date();var months=['January','February','March','April','May','June','July','August','September','October','November','December'];document.getElementById('certDate').textContent='Issued: '+months[d.getMonth()]+' '+d.getDate()+', '+d.getFullYear()+' · Gabriel Turner English Training · Celaya, Guanajuato, México';document.getElementById('certResult').classList.add('show');earnBadge('b5');}
 
 function saveWin(){var t=document.getElementById('myWinText').value.trim();if(t.length<3)return;earnBadge('b5');var btn=document.querySelector('.my-win-btn');btn.textContent='✓ Saved!';btn.style.background='var(--success)';btn.style.color='#080808';}
+
+/* MEETING VERB RACE — type past form, 8 meeting verbs, exact spelling */
+var verbRace=[
+  {p:'present',c:'presented'},{p:'lead',c:'led'},
+  {p:'run',c:'ran'},{p:'give',c:'gave'},
+  {p:'hold',c:'held'},{p:'send',c:'sent'},
+  {p:'write',c:'wrote'},{p:'agree',c:'agreed'}
+];
+function buildVerbRace(){
+  var g=document.getElementById('vr-grid');if(!g)return;
+  g.innerHTML=verbRace.map(function(v,i){
+    return '<div style="background:var(--s1);border:1px solid var(--border);padding:12px 14px;display:flex;align-items:center;gap:10px"><label style="font-family:var(--fh);font-size:12px;font-weight:700;color:var(--ac);min-width:80px;letter-spacing:.5px">'+v.p+' &rarr;</label><input id="vr-i'+i+'" type="text" autocomplete="off" spellcheck="false" placeholder="past form" style="flex:1;background:var(--s2);border:1px solid var(--border);color:var(--txt);padding:7px 10px;font-family:var(--fb);font-size:13px;outline:none"></div>';
+  }).join('');
+}
+function scoreVerbRace(){
+  var score=0;
+  verbRace.forEach(function(v,i){
+    var el=document.getElementById('vr-i'+i);if(!el)return;
+    var ans=(el.value||'').trim().toLowerCase();
+    if(ans===v.c){el.style.borderColor='var(--success)';el.style.color='var(--success)';score++;}
+    else{el.style.borderColor='var(--danger)';el.style.color='var(--danger)';el.title='Correct: '+v.c;}
+  });
+  var r=document.getElementById('vr-result');
+  r.textContent=score+'/8 correct'+(score===8?' — perfect! Bonus point earned.':'');
+  r.style.color=score===8?'var(--success)':(score>=5?'var(--ac2)':'var(--danger)');
+  if(score===8)earnBadge('b3');
+}
+function resetVerbRace(){
+  verbRace.forEach(function(_,i){var el=document.getElementById('vr-i'+i);if(el){el.value='';el.style.borderColor='var(--border)';el.style.color='var(--txt)';el.title='';}});
+  document.getElementById('vr-result').textContent='';
+}
+buildVerbRace();
 </script>
 </body>
 </html>
