@@ -275,6 +275,7 @@ footer{background:#0a0a0a;border-top:1px solid rgba(0,207,255,.08);padding:20px 
   <a href="#s4">§4 Grammar Review</a>
   <a href="#s6">§6 Listening</a>
   <a href="#s7">§7 Exit Task</a>
+  <a href="#s75">§7.5 Capstone</a>
   <a href="#s8">§8 Module Close</a>
 </nav>
 
@@ -921,6 +922,35 @@ footer{background:#0a0a0a;border-top:1px solid rgba(0,207,255,.08);padding:20px 
   </div>
 </section>
 
+<!-- ══════════ §7.5 FINAL PAST RESULTS BUILDER — capstone consolidation game ══════════ -->
+<section id="s75">
+  <div class="s-banner">
+    <img src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=900&q=80" alt="building results past narrative capstone consolidation board">
+    <div class="s-banner-overlay"></div>
+    <div class="s-banner-content">
+      <div class="s-num">07.5</div>
+      <div class="s-info">
+        <div class="s-label">&sect;7.5 &mdash; CAPSTONE GAME</div>
+        <div class="s-title">Final Past Results Builder &mdash; 5-Slot Narrative</div>
+        <div class="s-time">&#9201; 6 min &middot; Self-validated &middot; Capstone Badge &#127942;</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card card-cyan">
+    <div class="card-inner">
+      <p style="font-family:var(--hd);font-size:.85rem;letter-spacing:.1em;text-transform:uppercase;color:var(--cyan);margin-bottom:14px">&#127919; BUILD A 5-SLOT PAST NARRATIVE</p>
+      <p style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:14px">Type one full sentence per slot using your real work. Each sentence must be at least 3 words, contain a past form (irregular OR regular -ed), and end with a period. The builder validates each slot live. 5/5 unlocks the Module 3 capstone badge.</p>
+      <div id="prb-grid" style="display:flex;flex-direction:column;gap:12px;margin-bottom:14px"></div>
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+        <button class="btn btn-cyan btn-sm" onclick="scorePRB()">&#9989; Validate All Slots</button>
+        <button class="btn btn-outline btn-sm" onclick="resetPRB()">RESET</button>
+        <div id="prb-result" style="font-family:var(--hd);font-size:13px;color:var(--cyan);margin-left:6px"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- ══════════ §8 MODULE CLOSE ══════════ -->
 <section id="s8">
   <div class="s-banner">
@@ -1200,6 +1230,58 @@ function saveWin(){
   r.innerHTML='🏆 <strong>Module 3 win:</strong> "'+t+'" — Keep this. It\'s evidence of your progress.';
   earnBadge('b5');
 }
+
+// ─── FINAL PAST RESULTS BUILDER — capstone consolidation ───
+const prbSlots=[
+  {label:'1. Goal',hint:'What was the goal? (e.g., "Our goal was to reduce defects by 10%.")'},
+  {label:'2. What we did first',hint:'First past action (e.g., "First, we identified the main blocker.")'},
+  {label:'3. Then',hint:'Next past action (e.g., "Then, we implemented a new check.")'},
+  {label:'4. Challenge faced',hint:'A challenge with negative or was/were (e.g., "We didn\'t reach 10% — the supplier wasn\'t ready.")'},
+  {label:'5. Outcome',hint:'Final outcome (e.g., "In the end, we achieved 7.5% and the team was proud.")'}
+];
+const prbIrreg=['went','had','gave','met','said','told','made','took','came','saw','knew','got','found','thought','brought','bought','ran','ran','sent','wrote','spoke','heard','held','led','kept','left','lost','paid','put','read','set','sat','stood','taught','understood','won','wore','built','sold','spent','meant','felt','fell','drove','rose','rang','sang','swam'];
+function buildPRB(){
+  const g=document.getElementById('prb-grid');if(!g)return;
+  g.innerHTML=prbSlots.map((s,i)=>{
+    return '<div style="background:var(--bg-card);border:1px solid rgba(0,207,255,.15);border-radius:var(--r);padding:14px 16px"><div style="font-family:var(--hd);font-size:11px;font-weight:700;letter-spacing:.1em;color:var(--cyan);text-transform:uppercase;margin-bottom:6px">'+s.label+'</div><textarea id="prb-i'+i+'" placeholder="'+s.hint+'" rows="2" style="width:100%;background:rgba(0,207,255,.04);border:1px solid rgba(0,207,255,.2);border-radius:var(--r);color:var(--text);font-family:var(--bd);font-size:13.5px;padding:10px 12px;resize:vertical;outline:none"></textarea><div id="prb-fb'+i+'" style="font-size:12px;margin-top:6px;color:var(--mu);min-height:16px"></div></div>';
+  }).join('');
+}
+function validatePRBSlot(text){
+  const t=(text||'').trim();
+  if(t.split(/\s+/).filter(Boolean).length<3)return{ok:false,why:'Need at least 3 words.'};
+  if(!/[.!?]\s*$/.test(t))return{ok:false,why:'Must end with a period.'};
+  // Past form: irregular list OR regular \b\w+ed\b
+  const lower=t.toLowerCase();
+  const hasIrr=prbIrreg.some(v=>new RegExp('\\b'+v+'\\b').test(lower));
+  const hasReg=/\b\w{2,}ed\b/.test(lower);
+  const hasState=/\b(was|were|wasn'?t|weren'?t)\b/.test(lower);
+  if(!hasIrr&&!hasReg&&!hasState)return{ok:false,why:'Add a past form (e.g., -ed verb, irregular past, or was/were).'};
+  return{ok:true,why:'✓ Valid past sentence.'};
+}
+function scorePRB(){
+  let n=0;
+  prbSlots.forEach((_,i)=>{
+    const inp=document.getElementById('prb-i'+i);const fb=document.getElementById('prb-fb'+i);
+    if(!inp||!fb)return;
+    const r=validatePRBSlot(inp.value);
+    fb.textContent=r.why;fb.style.color=r.ok?'var(--ok)':'var(--danger)';
+    inp.style.borderColor=r.ok?'var(--ok)':'var(--danger)';
+    if(r.ok)n++;
+  });
+  const res=document.getElementById('prb-result');
+  res.textContent=n+'/5 valid past sentences'+(n===5?' — capstone badge unlocked!':'');
+  res.style.color=n===5?'var(--ok)':(n>=3?'var(--gold)':'var(--danger)');
+  if(n===5)earnBadge('b5');
+}
+function resetPRB(){
+  prbSlots.forEach((_,i)=>{
+    const inp=document.getElementById('prb-i'+i);const fb=document.getElementById('prb-fb'+i);
+    if(inp){inp.value='';inp.style.borderColor='rgba(0,207,255,.2)';}
+    if(fb){fb.textContent='';fb.style.color='var(--mu)';}
+  });
+  document.getElementById('prb-result').textContent='';
+}
+buildPRB();
 
 // ─── INIT ───
 initDrag('order1');
