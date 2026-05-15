@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GT A2.1 · M5 · S4A — Client Communication: Will in Action</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#080808;--surface:#111318;--surface2:#1a1f28;--border:rgba(0,207,255,.18);--accent:#00CFFF;--accent2:#67E8F9;--text:#F0F4F8;--muted:#8A9BB0;--dim:rgba(226,226,226,.25);--danger:#FF4D6D;--success:#00E5A0;--warn:#FFB347;--gold:#FFB800;--green:#00E676;--violet:#A78BFA;--font-head:'Syne',sans-serif;--font-body:'DM Sans',sans-serif}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:14px;line-height:1.6}
+.hdr{background:var(--surface);border-bottom:1px solid var(--border);padding:16px 48px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+.brand{display:flex;align-items:center;gap:10px}
+.dot{width:8px;height:8px;background:var(--accent);border-radius:50%}
+.bname{font-family:var(--font-head);font-weight:800;font-size:13px;letter-spacing:2.5px;text-transform:uppercase;color:#fff}
+.bsub{font-size:11px;color:var(--muted);letter-spacing:1px}
+.sess-tag{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.tag{display:inline-block;padding:4px 12px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;border-radius:4px}
+.t-level{background:rgba(0,207,255,.12);color:var(--accent);border:1px solid rgba(0,207,255,.3)}
+.t-mod{background:rgba(255,184,0,.1);color:var(--gold);border:1px solid rgba(255,184,0,.25)}
+.t-sess{background:rgba(0,207,255,.08);color:var(--accent2);border:1px solid rgba(0,207,255,.2)}
+.t-time{background:rgba(0,230,118,.08);color:var(--green);border:1px solid rgba(0,230,118,.2)}
+.badge-strip{display:flex;gap:6px;align-items:center}
+.badge-strip span{font-size:18px;opacity:.25;transition:all .4s;cursor:default}
+.badge-strip span.earned{opacity:1;animation:badgePop .5s ease}
+@keyframes badgePop{0%{transform:scale(1)}50%{transform:scale(1.5)}100%{transform:scale(1)}}
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--accent);z-index:999;transition:width .15s;width:0}
+.mode-toggle{position:fixed;bottom:20px;right:20px;z-index:99;background:var(--surface);border:1px solid var(--border);padding:8px 16px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);cursor:pointer;border-radius:6px}
+body.student-mode .teacher-note{display:none!important}
+.sticky-nav{position:sticky;top:0;z-index:800;background:rgba(8,8,8,.9);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none}
+.sticky-nav::-webkit-scrollbar{display:none}
+.nav-inner{max-width:1200px;margin:0 auto;display:flex;gap:0;padding:0 24px}
+.nav-inner a{font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:.06em;color:var(--muted);text-decoration:none;padding:10px 12px;border-bottom:2px solid transparent;white-space:nowrap;transition:all .2s}
+.nav-inner a:hover{color:var(--accent);border-color:var(--accent)}
+.section{margin:0 auto 48px;max-width:1200px;border:1px solid var(--border);border-radius:16px;overflow:hidden;background:var(--surface)}
+.section-header{display:flex;align-items:center;gap:14px;padding:18px 24px;background:linear-gradient(135deg,rgba(0,207,255,.08),transparent);border-bottom:1px solid var(--border)}
+.section-number{font-family:var(--font-head);font-size:11px;font-weight:800;color:var(--accent);letter-spacing:.12em;text-transform:uppercase;background:rgba(0,207,255,.1);border:1px solid var(--border);padding:3px 10px;border-radius:20px}
+.section-title{font-family:var(--font-head);font-size:22px;font-weight:800;color:#fff}
+.section-title em{color:var(--accent);font-style:normal}
+.section-sub{font-size:12px;color:var(--muted)}
+.section-body{padding:24px}
+.dur-tag{font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;color:var(--gold);border:1px solid rgba(255,184,0,.2);padding:3px 10px;display:inline-block;margin-bottom:20px;border-radius:4px}
+.hero-banner{background:linear-gradient(135deg,rgba(0,207,255,.1),rgba(103,232,249,.05));border:1px solid var(--border);border-radius:12px;padding:32px 36px;margin-bottom:28px;position:relative;overflow:hidden}
+.hero-banner::after{content:'M5';position:absolute;right:20px;top:-10px;font-family:var(--font-head);font-size:160px;font-weight:800;color:rgba(0,207,255,.05);line-height:1;pointer-events:none}
+.hero-label{font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:10px}
+.hero-title{font-family:var(--font-head);font-size:42px;font-weight:800;color:#fff;line-height:1}
+.hero-title em{color:var(--accent);font-style:normal;display:block}
+.hero-sub{font-size:13px;color:var(--muted);margin-top:12px;line-height:1.6;max-width:580px}
+.hero-chips{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap}
+.chip{padding:5px 14px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:20px;border:1px solid var(--border)}
+.chip-blue{background:rgba(0,207,255,.1);color:var(--accent);border-color:rgba(0,207,255,.3)}
+.chip-gold{background:rgba(255,184,0,.08);color:var(--gold);border-color:rgba(255,184,0,.25)}
+.chip-green{background:rgba(0,230,118,.08);color:var(--green);border-color:rgba(0,230,118,.2)}
+.chip-violet{background:rgba(167,139,250,.08);color:var(--violet);border-color:rgba(167,139,250,.25)}
+.teacher-note{border-radius:8px;padding:12px 16px;margin:10px 0;font-size:12px;line-height:1.6}
+.tn-c1{background:rgba(0,207,255,.05);border:1px solid rgba(0,207,255,.18);color:rgba(0,207,255,.85)}
+.tn-c2{background:rgba(232,21,90,.05);border:1px solid rgba(232,21,90,.18);color:rgba(232,21,90,.85)}
+.tn-c3{background:rgba(255,184,0,.05);border:1px solid rgba(255,184,0,.18);color:rgba(255,184,0,.85)}
+.wu-card{background:var(--surface2);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:10px}
+.wu-card-body{padding:14px 16px}
+.wu-q{font-size:13px;line-height:1.6;color:var(--text)}
+.wu-q strong{color:#fff}
+.qw{background:rgba(0,230,118,.04);border:1px solid rgba(0,230,118,.2);border-left:4px solid var(--green);padding:16px 20px;border-radius:8px;margin-top:16px}
+.qw-lbl{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--green);margin-bottom:5px}
+.timer-wrap{display:flex;align-items:center;gap:14px;margin:12px 0}
+.timer-text{font-family:var(--font-head);font-size:20px;font-weight:800;color:var(--accent)}
+.fcw-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px}
+.fcw-card{height:140px;perspective:600px;cursor:pointer}
+.fcw-inner{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform .4s cubic-bezier(.4,0,.2,1)}
+.fcw-card.on .fcw-inner{transform:rotateY(180deg)}
+.fcw-front,.fcw-back{position:absolute;width:100%;height:100%;backface-visibility:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:10px;text-align:center;border-radius:8px}
+.fcw-front{background:var(--surface2);border:1px solid var(--border)}
+.fcw-front-word{font-family:var(--font-head);font-size:11px;font-weight:800;color:#fff;line-height:1.3}
+.fcw-front-hint{font-size:9px;color:var(--dim);margin-top:5px;letter-spacing:1px;text-transform:uppercase;font-family:var(--font-head)}
+.fcw-back{background:rgba(0,207,255,.06);border:1px solid rgba(0,207,255,.22);transform:rotateY(180deg)}
+.fcw-back-en{font-family:var(--font-head);font-size:10px;font-weight:800;color:var(--accent);margin-bottom:3px;line-height:1.3}
+.fcw-back-def{font-size:9px;color:var(--muted);font-style:italic;line-height:1.4}
+.quiz-box{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:20px;margin-top:20px}
+.quiz-q{font-size:14px;color:#fff;margin-bottom:12px;line-height:1.5}
+.quiz-opts{display:flex;gap:8px;flex-wrap:wrap}
+.quiz-opt{background:var(--surface);border:1px solid var(--border);color:var(--text);padding:9px 18px;font-family:var(--font-body);font-size:13px;cursor:pointer;border-radius:6px;transition:all .2s}
+.quiz-opt:hover:not(:disabled){border-color:var(--accent);color:var(--accent)}
+.quiz-opt.correct-ans{background:rgba(0,229,160,.12);border-color:var(--success);color:var(--success)}
+.quiz-opt.wrong-ans{background:rgba(255,77,109,.12);border-color:var(--danger);color:var(--danger)}
+.quiz-opt:disabled{cursor:not-allowed}
+.quiz-score{font-family:var(--font-head);font-size:12px;color:var(--accent);letter-spacing:1px;margin-top:12px}
+.gram-table{width:100%;border-collapse:collapse;margin:12px 0;font-size:12.5px}
+.gram-table th{background:var(--surface);padding:11px 15px;text-align:left;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim);border-bottom:2px solid var(--accent)}
+.gram-table td{padding:11px 15px;border-bottom:1px solid var(--border);vertical-align:top}
+.gram-table tr:hover td{background:rgba(0,207,255,.03)}
+.gram-table td.func{font-family:var(--font-head);font-weight:700;color:#fff;font-size:12px}
+.gram-table td.form-will{color:var(--accent);font-weight:600}
+.gram-table td.form-going{color:var(--gold);font-weight:600}
+.gram-table td.ex{color:var(--accent2);font-style:italic;font-size:12px}
+.err-box{background:rgba(255,77,109,.05);border:1px solid rgba(255,77,109,.2);padding:14px 18px;margin:14px 0;font-size:12px;color:rgba(255,120,120,.9);line-height:1.9;border-radius:8px}
+.err-box strong{color:var(--danger)}
+.corr-box{background:rgba(0,229,160,.05);border:1px solid rgba(0,229,160,.2);padding:14px 18px;margin:8px 0;font-size:12px;color:rgba(0,229,160,.9);line-height:1.9;border-radius:8px}
+.poll-box{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:16px 18px;margin:14px 0}
+.poll-q{font-size:13px;color:#fff;margin-bottom:10px;line-height:1.5}
+.poll-opts{display:flex;gap:8px;flex-wrap:wrap}
+.poll-btn{background:var(--surface);border:1px solid var(--border);color:var(--text);padding:9px 18px;font-size:13px;cursor:pointer;border-radius:6px;transition:all .2s}
+.poll-btn:hover:not(:disabled){border-color:var(--accent);color:var(--accent)}
+.poll-btn.correct-ans{background:rgba(0,229,160,.12);border-color:var(--success);color:var(--success)}
+.poll-btn.wrong-ans{background:rgba(255,77,109,.12);border-color:var(--danger);color:var(--danger)}
+.poll-btn:disabled{cursor:not-allowed}
+.drag-zone{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:16px;margin:12px 0}
+.drag-zone-lbl{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+.drag-items{display:flex;gap:8px;flex-wrap:wrap;min-height:42px}
+.drag-item{background:var(--surface);border:1px solid var(--border);color:var(--text);padding:7px 14px;font-size:12px;cursor:grab;border-radius:6px;transition:all .2s;user-select:none}
+.drag-item:hover{border-color:var(--accent)}
+.drag-item.dragging{opacity:.4}
+.drop-target{background:var(--surface2);border:2px dashed var(--border);border-radius:8px;padding:12px;min-height:50px;margin:8px 0;transition:border-color .2s}
+.drop-target.drag-over{border-color:var(--accent)}
+.drop-target-lbl{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:7px}
+.dropped-items{display:flex;gap:7px;flex-wrap:wrap;min-height:30px}
+.check-btn{background:var(--accent);border:none;color:#080808;padding:8px 20px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;cursor:pointer;margin-top:7px;border-radius:6px}
+.fb{display:none;padding:9px 13px;font-size:12.5px;margin-top:7px;line-height:1.5;border-radius:6px}
+.fb.show{display:block}
+.fb.ok{background:rgba(0,229,160,.1);border:1px solid rgba(0,229,160,.3);color:var(--success)}
+.fb.no{background:rgba(255,77,109,.08);border:1px solid rgba(255,77,109,.25);color:var(--danger)}
+.act-t{font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:11px;padding-top:20px;border-top:1px solid var(--border);margin-top:22px}
+.opt-group{margin-bottom:16px}
+.opt-q{font-size:13px;color:var(--text);margin-bottom:9px;padding:10px 14px;background:var(--surface2);border-left:3px solid var(--accent);line-height:1.5;border-radius:0 6px 6px 0}
+.opts{display:flex;gap:8px;flex-wrap:wrap}
+.opt{background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:8px 16px;font-family:var(--font-body);font-size:12.5px;cursor:pointer;transition:all .2s;border-radius:6px}
+.opt:hover:not(:disabled){border-color:var(--accent);color:var(--accent)}
+.opt.correct{background:rgba(0,229,160,.12);border-color:var(--success);color:var(--success)}
+.opt.wrong{background:rgba(255,77,109,.12);border-color:var(--danger);color:var(--danger)}
+.opt:disabled{cursor:not-allowed}
+.tf-set{display:flex;flex-direction:column;gap:9px;margin-bottom:14px}
+.tf-row{background:var(--surface2);border:1px solid var(--border);padding:12px 15px;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;border-radius:8px}
+.tf-stmt{font-size:12.5px;color:var(--text);flex:1;line-height:1.5;min-width:180px}
+.tf-btns{display:flex;gap:8px;flex-shrink:0}
+.tf-btn{background:var(--surface);border:1px solid var(--border);color:var(--text);padding:7px 16px;font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:1px;cursor:pointer;transition:all .2s;border-radius:5px}
+.tf-btn:hover:not(:disabled){border-color:var(--accent)}
+.tf-btn:disabled{cursor:not-allowed}
+.player-box{background:var(--surface2);border:1px solid var(--border);padding:22px;border-radius:12px;margin-bottom:14px}
+.player-top{display:flex;align-items:center;gap:15px;margin-bottom:12px}
+.play-btn{width:42px;height:42px;background:var(--accent);border:none;border-radius:50%;cursor:pointer;font-size:15px;color:#080808;flex-shrink:0}
+.track-title{font-family:var(--font-head);font-size:12.5px;font-weight:700;color:#fff;margin-bottom:3px}
+.track-sub{font-size:10.5px;color:var(--muted)}
+.script-toggle{background:none;border:1px solid var(--border);color:var(--muted);padding:7px 15px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;cursor:pointer;margin-bottom:11px;border-radius:6px}
+.script-box{max-height:0;overflow:hidden;transition:max-height .4s}
+.script-box.open{max-height:1200px}
+.script-content{background:rgba(0,207,255,.04);border:1px solid rgba(0,207,255,.15);padding:16px;font-size:12px;color:var(--text);line-height:1.9;font-style:italic;border-radius:8px}
+.eleven-note{font-size:10.5px;color:var(--dim);margin-top:7px}
+.round-card{background:var(--surface2);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:10px}
+.round-body{padding:14px 16px}
+.round-lbl{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:5px}
+.round-q{font-size:14px;color:#fff;font-weight:500;margin-bottom:8px;line-height:1.5}
+.round-hint{font-size:11.5px;color:var(--muted);font-style:italic}
+/* CAPSTONE: Client Call Builder */
+.ccb-wrap{background:var(--surface2);border:1px solid rgba(0,207,255,.25);border-radius:14px;padding:22px;margin:18px 0}
+.ccb-hdr{font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:4px}
+.ccb-title{font-family:var(--font-head);font-size:18px;font-weight:800;color:#fff;margin-bottom:10px}
+.ccb-progress{height:6px;background:var(--surface);border-radius:3px;overflow:hidden;margin-bottom:16px}
+.ccb-prog-fill{height:100%;background:var(--accent);border-radius:3px;transition:width .3s;width:0}
+.ccb-slot{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:10px;opacity:.4;transition:opacity .3s}
+.ccb-slot.active{opacity:1;border-color:var(--accent)}
+.ccb-slot.done{opacity:1;border-color:var(--success);background:rgba(0,229,160,.04)}
+.ccb-slot-lbl{font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;color:var(--accent);margin-bottom:5px;text-transform:uppercase}
+.ccb-slot.done .ccb-slot-lbl{color:var(--success)}
+.ccb-slot-q{font-size:13px;color:#fff;margin-bottom:8px;line-height:1.5}
+.ccb-ta{width:100%;background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:9px 12px;font-size:13px;border-radius:6px;resize:vertical;min-height:50px;font-family:var(--font-body)}
+.ccb-ta:focus{outline:none;border-color:var(--accent)}
+.ccb-ta:disabled{opacity:.6}
+.ccb-submit{background:var(--accent);border:none;color:#080808;padding:7px 16px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;cursor:pointer;margin-top:7px;border-radius:6px}
+.ccb-submit:disabled{opacity:.5;cursor:not-allowed}
+.ccb-fb{font-size:12px;margin-top:6px;line-height:1.5}
+.ccb-fb.ok{color:var(--success)}
+.ccb-fb.no{color:var(--danger)}
+.ccb-done{text-align:center;padding:24px;background:rgba(0,229,160,.06);border:1px solid var(--success);border-radius:10px;display:none}
+.ccb-done.show{display:block}
+.ccb-done-title{font-family:var(--font-head);font-size:22px;font-weight:800;color:var(--success);margin-bottom:8px}
+.win-box{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:16px;margin-top:14px}
+.win-ta{width:100%;background:var(--surface);border:1px solid var(--border);color:var(--text);padding:12px;font-size:13px;border-radius:6px;resize:vertical;min-height:60px;font-family:var(--font-body)}
+.win-ta:focus{outline:none;border-color:var(--accent)}
+.win-save{background:var(--accent);border:none;color:#080808;padding:8px 18px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;cursor:pointer;border-radius:6px;margin-top:8px}
+.next-box{background:var(--surface2);border:1px solid var(--border);border-left:4px solid var(--accent);padding:17px 21px;border-radius:0 10px 10px 0}
+.next-lbl{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:5px}
+.next-title{font-size:14px;font-weight:600;color:#fff;margin-bottom:3px}
+.next-sub{font-size:11.5px;color:var(--muted)}
+.checklist{display:flex;flex-direction:column;gap:7px;margin-bottom:22px}
+.cl-item{display:flex;align-items:flex-start;gap:11px;background:var(--surface2);border:1px solid var(--border);padding:12px 15px;cursor:pointer;transition:all .2s;font-size:12.5px;color:var(--text);line-height:1.5;border-radius:8px}
+.cl-item:hover{border-color:var(--accent)}
+.cl-item.done{border-color:rgba(0,229,160,.3);background:rgba(0,229,160,.04);color:rgba(0,229,160,.8);text-decoration:line-through;opacity:.7}
+.cl-box{width:15px;height:15px;border:2px solid var(--accent);flex-shrink:0;margin-top:2px;border-radius:3px}
+.cl-item.done .cl-box{background:var(--success);border-color:var(--success)}
+.framework{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:14px 0}
+.fw-step{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center}
+.fw-num{font-family:var(--font-head);font-size:22px;font-weight:800;color:var(--accent);margin-bottom:6px}
+.fw-step-title{font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:1px;color:#fff;margin-bottom:6px;text-transform:uppercase}
+.fw-step-ex{font-size:11px;color:var(--muted);font-style:italic;line-height:1.5}
+.ft{text-align:center;padding:24px;color:var(--muted);font-size:11px}
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progressBar"></div>
+
+<div class="hdr">
+  <div class="brand"><div class="dot"></div><div><div class="bname">Gabe Turner · A2.1</div><div class="bsub">Business English · México</div></div></div>
+  <div class="sess-tag">
+    <span class="tag t-level">A2.1</span>
+    <span class="tag t-mod">M5</span>
+    <span class="tag t-sess">S4A</span>
+    <span class="tag t-time">90 MIN</span>
+  </div>
+  <div class="badge-strip">
+    <span id="b1" title="Warm-up">⚡</span>
+    <span id="b2" title="Vocabulary">📘</span>
+    <span id="b3" title="Grammar">🎯</span>
+    <span id="b4" title="Client Champion">🏆</span>
+    <span id="b5" title="My Win">🌟</span>
+  </div>
+</div>
+
+<nav class="sticky-nav"><div class="nav-inner">
+  <a href="#s1">§1 Warm-Up</a>
+  <a href="#s2">§2 Vocabulary</a>
+  <a href="#s3">§3 Grammar Integration</a>
+  <a href="#s4">§4 Call Framework</a>
+  <a href="#s5">§5 Role-Play</a>
+  <a href="#s6">§6 Listening</a>
+  <a href="#s7">§7 Capstone Builder</a>
+  <a href="#s8">§8 Module Preview</a>
+</div></nav>
+
+<div style="padding:32px 24px 0">
+  <div class="hero-banner">
+    <div class="hero-label">Module 5 · Session 4A · Capstone-Feeder</div>
+    <h1 class="hero-title">Client Communication: <em>Will in Action</em></h1>
+    <p class="hero-sub">Integrate every Will function (offers · spontaneous decisions · promises · predictions · adverbs) with Going-To contrast — applied to real client scenarios. By the end of this session, you handle an upset client professionally in English.</p>
+    <div class="hero-chips">
+      <span class="chip chip-blue">I'll · We'll</span>
+      <span class="chip chip-blue">won't</span>
+      <span class="chip chip-blue">Will you...?</span>
+      <span class="chip chip-gold">Going-to contrast</span>
+      <span class="chip chip-violet">probably · definitely</span>
+      <span class="chip chip-green">Client Champion</span>
+    </div>
+  </div>
+</div>
+
+<!-- §1 WARM-UP -->
+<section class="section" id="s1">
+  <div class="section-header"><div class="section-number">§1</div><div><div class="section-title">Warm-Up: Client Crisis Mode</div><div class="section-sub">React fast with the right Will function</div></div></div>
+  <div class="section-body">
+    <span class="dur-tag">8 MIN</span>
+    <div class="teacher-note tn-c1"><strong>Layer 1 — Activate:</strong> Drop three client-crisis scenarios cold. Students must react in 5 seconds using Will. Listen for spontaneous decisions (I'll), promises (won't), and reflexive offers.</div>
+    <div class="teacher-note tn-c2"><strong>Layer 2 — Watch for:</strong> Students who default to "I'm going to" for spontaneous moments. Correct gently — "Right now, in this moment" = Will.</div>
+    <div class="teacher-note tn-c3"><strong>Layer 3 — Production target:</strong> Every student produces at least one Will sentence per scenario, no Spanish filler.</div>
+
+    <div class="wu-card"><div class="wu-card-body"><div class="wu-q"><strong>Crisis A.</strong> A key client just emailed: "The product I received is wrong." You see the email right now. <em>React in one sentence using Will.</em></div></div></div>
+    <div class="wu-card"><div class="wu-card-body"><div class="wu-q"><strong>Crisis B.</strong> Your team accidentally sent a wrong invoice. The client calls to complain. <em>Make two commitments using Will (one offer + one promise).</em></div></div></div>
+    <div class="wu-card"><div class="wu-card-body"><div class="wu-q"><strong>Crisis C.</strong> A new client asks: "Will this project really finish on time?" <em>Make a prediction using Will + adverb (probably / definitely).</em></div></div></div>
+
+    <div class="timer-wrap"><div class="timer-text" id="t1">0:90</div><button class="check-btn" onclick="startTimer('t1',90,'b1')">Start 90 sec</button></div>
+
+    <div class="qw">
+      <div class="qw-lbl">Quick Win</div>
+      <div style="font-size:13px;color:var(--text)">Each student must respond aloud within 5 seconds of the prompt. Slow responses = re-do. We're training reflex Will.</div>
+    </div>
+  </div>
+</section>
+
+<!-- §2 VOCABULARY -->
+<section class="section" id="s2">
+  <div class="section-header"><div class="section-number">§2</div><div><div class="section-title">Vocabulary: <em>Client-Pro Phrases</em></div><div class="section-sub">10 phrases that protect the client relationship</div></div></div>
+  <div class="section-body">
+    <span class="dur-tag">12 MIN</span>
+    <div class="teacher-note tn-c1"><strong>Layer 1 — Drill:</strong> Flip each card, read the English aloud, then close eyes and recall it. Goal: instant retrieval, no translation lag.</div>
+    <div class="teacher-note tn-c2"><strong>Layer 2 — Function tag:</strong> After each phrase, ask the student: "Offer, promise, or prediction?" This builds metacognition.</div>
+    <div class="teacher-note tn-c3"><strong>Layer 3 — Output:</strong> Student must produce 2 of these phrases in a client micro-roleplay before moving on.</div>
+
+    <div class="fcw-grid">
+      <div class="fcw-card" onclick="this.classList.toggle('on')"><div class="fcw-inner">
+        <div class="fcw-front"><div class="fcw-front-word">I'll look into that right away</div><div class="fcw-front-hint">offer</div></div>
+        <div class="fcw-back"><div class="fcw-back-en">→ Spontaneous offer</div><div class="fcw-back-def">Lo voy a revisar ahora mismo. Use when problem arises in real time.</div></div>
+      </div></div>
+      <div class="fcw-card" onclick="this.classList.toggle('on')"><div class="fcw-inner">
+        <div class="fcw-front"><div class="fcw-front-word">We'll have an answer for you by Friday</div><div class="fcw-front-hint">promise</div></div>
+        <div class="fcw-back"><div class="fcw-back-en">→ Time-bound commitment</div><div class="fcw-back-def">Tendremos respuesta el viernes. Specific deadline = trust.</div></div>
+      </div></div>
+      <div class="fcw-card" onclick="this.classList.toggle('on')"><div class="fcw-inner">
+        <div class="fcw-front"><div class="fcw-front-word">I can assure you we won't repeat that mistake</div><div class="fcw-front-hint">negative promise</div></div>
+        <div class="fcw-back"><div class="fcw-back-en">→ "won't" + assurance verb</div><div class="fcw-back-def">Le aseguro que no volveremos a... Use to recover after an error.</div></div>
+      </div></div>
+      <div class="fcw-card" onclick="this.classList.toggle('on')"><div class="fcw-inner">
+        <div class="fcw-front"><div class="fcw-front-word">It'll be resolved within 48 hours</div><div class="fcw-front-hint">prediction</div></div>
+        <div class="fcw-back"><div class="fcw-back-en">→ Time-frame prediction</div><div class="fcw-back-def">Quedará resuelto en 48 horas. Concrete timing = confidence.</div></div>
+      </div></div>
+      <div class="fcw-card" onclick="this.classList.toggle('on')"><div class="fcw-inner">
+        <div class="fcw-front"><div class="fcw-front-word">I'll personally make sure of that</div><div class="fcw-front-hint">commitment</div></div>
+        <div class="fcw-back"><div class="fcw-back-en">→ Personal ownership</div><div class="fcw-back-def">Yo personalmente me aseguraré. "I" + "personally" doubles the weight.</div></div>
+      </div></div>
+      <div class="fcw-card" onclick="this.classList.toggle('on')"><div class="fcw-inner">
+        <div class="fcw-front"><div class="fcw-front-word">We'll keep you updated</div><div class="fcw-front-hint">promise</div></div>
+        <div class="fcw-back"><div class="fcw-back-en">→ Ongoing communication</div><div class="fcw-back-def">Lo mantendremos informado. Use to close a touchy moment.</div></div>
+      </div></div>
+      <div class="fcw-card" onclick="this.classList.toggle('on')"><div class="fcw-inner">
+        <div class="fcw-front"><div class="fcw-front-word">I promise we'll deliver on time</div><div class="fcw-front-hint">strong promise</div></div>
+        <div class="fcw-back"><div class="fcw-back-en">→ "I promise" + Will</div><div class="fcw-back-def">Le prometo que entregaremos a tiempo. Reserved for high-stakes moments.</div></div>
+      </div></div>
+      <div class="fcw-card" onclick="this.classList.toggle('on')"><div class="fcw-inner">
+        <div class="fcw-front"><div class="fcw-front-word">It'll definitely improve</div><div class="fcw-front-hint">strong prediction</div></div>
+        <div class="fcw-back"><div class="fcw-back-en">→ Will + adverb of certainty</div><div class="fcw-back-def">Va a mejorar sin duda. "Definitely" = highest confidence.</div></div>
+      </div></div>
+      <div class="fcw-card" onclick="this.classList.toggle('on')"><div class="fcw-inner">
+        <div class="fcw-front"><div class="fcw-front-word">Will you give me 24 hours?</div><div class="fcw-front-hint">request</div></div>
+        <div class="fcw-back"><div class="fcw-back-en">→ Polite question form</div><div class="fcw-back-def">¿Me da 24 horas? Buys time without sounding defensive.</div></div>
+      </div></div>
+      <div class="fcw-card" onclick="this.classList.toggle('on')"><div class="fcw-inner">
+        <div class="fcw-front"><div class="fcw-front-word">You have my word</div><div class="fcw-front-hint">closing promise</div></div>
+        <div class="fcw-back"><div class="fcw-back-en">→ Strong closer</div><div class="fcw-back-def">Tiene mi palabra. The non-grammar way to lock a Will promise.</div></div>
+      </div></div>
+    </div>
+
+    <div class="quiz-box">
+      <div class="quiz-q" id="qq">Loading…</div>
+      <div class="quiz-opts" id="qo"></div>
+      <div class="quiz-score" id="qs">Question 1 of 5</div>
+    </div>
+  </div>
+</section>
+
+<!-- §3 GRAMMAR INTEGRATION -->
+<section class="section" id="s3">
+  <div class="section-header"><div class="section-number">§3</div><div><div class="section-title">Grammar Integration: <em>Will's Full System</em></div><div class="section-sub">All 5 Will functions + Going-To contrast — one master reference</div></div></div>
+  <div class="section-body">
+    <span class="dur-tag">15 MIN</span>
+    <div class="teacher-note tn-c1"><strong>Layer 1 — Anchor:</strong> Walk through the master table once. Highlight that Will = 5 functions but Going-To = 2 (pre-planned + evidence prediction).</div>
+    <div class="teacher-note tn-c2"><strong>Layer 2 — Diagnose:</strong> The 3 errors below are the typical A2.1 mistakes Mexican students make. Each error corresponds to a different function confusion. Fix on the board.</div>
+    <div class="teacher-note tn-c3"><strong>Layer 3 — Output:</strong> Students sort 8 sentences by function via drag-and-drop. Aim for 6/8 minimum before moving on.</div>
+
+    <table class="gram-table">
+      <thead><tr><th>Function</th><th>Form</th><th>Example</th></tr></thead>
+      <tbody>
+        <tr><td class="func">1. Spontaneous decision</td><td class="form-will">Will / I'll</td><td class="ex">"I'll send you the report right now."</td></tr>
+        <tr><td class="func">2. Offer</td><td class="form-will">Will / I'll</td><td class="ex">"I'll handle that for you."</td></tr>
+        <tr><td class="func">3. Promise (positive / negative)</td><td class="form-will">Will / won't</td><td class="ex">"We'll deliver on time." / "It won't happen again."</td></tr>
+        <tr><td class="func">4. Prediction (opinion)</td><td class="form-will">Will + adverb</td><td class="ex">"It'll <em>probably</em> succeed."</td></tr>
+        <tr><td class="func">5. Polite request</td><td class="form-will">Will you...?</td><td class="ex">"Will you confirm by Friday?"</td></tr>
+        <tr><td class="func">6. Pre-planned action</td><td class="form-going">Going to</td><td class="ex">"We're going to launch the campaign in March (scheduled)."</td></tr>
+        <tr><td class="func">7. Prediction (evidence)</td><td class="form-going">Going to</td><td class="ex">"Look at these numbers — it's going to be a record quarter."</td></tr>
+      </tbody>
+    </table>
+
+    <div class="poll-box">
+      <div class="poll-q">Which form is correct? "Your package is late. Don't worry — _____ check the system right now."</div>
+      <div class="poll-opts">
+        <button class="poll-btn" onclick="pollAns(this,false)">I'm going to</button>
+        <button class="poll-btn" onclick="pollAns(this,true)">I'll</button>
+        <button class="poll-btn" onclick="pollAns(this,false)">I check</button>
+      </div>
+      <div class="fb ok" id="poll1-fb">Correct. "Right now" = spontaneous decision = Will.</div>
+    </div>
+
+    <div class="err-box">
+      <strong>❌ Common error 1:</strong> "I'm going to call you back in five minutes." (just decided)<br>
+      <strong>❌ Common error 2:</strong> "Will we launch the new portal next Monday?" (already on the calendar)<br>
+      <strong>❌ Common error 3:</strong> "I think it's going to be fine." (pure opinion, no evidence)
+    </div>
+    <div class="corr-box">
+      <strong>✓ Correct 1:</strong> "I'll call you back in five minutes." (spontaneous)<br>
+      <strong>✓ Correct 2:</strong> "Are we going to launch the new portal next Monday?" (pre-planned)<br>
+      <strong>✓ Correct 3:</strong> "I think it'll be fine." (opinion-based prediction)
+    </div>
+
+    <p class="act-t">Activity: Sort by function (drag &amp; drop)</p>
+    <div class="drag-zone">
+      <div class="drag-zone-lbl">Drag each sentence to the right function zone</div>
+      <div class="drag-items" id="dragSource">
+        <div class="drag-item" draggable="true" data-func="offer">I'll get that for you.</div>
+        <div class="drag-item" draggable="true" data-func="promise">We won't disappoint you.</div>
+        <div class="drag-item" draggable="true" data-func="prediction">Sales will probably grow.</div>
+        <div class="drag-item" draggable="true" data-func="planned">We're going to release the update tomorrow.</div>
+        <div class="drag-item" draggable="true" data-func="offer">I'll send that document right away.</div>
+        <div class="drag-item" draggable="true" data-func="prediction">The client will definitely accept.</div>
+        <div class="drag-item" draggable="true" data-func="planned">We're going to meet on Thursday.</div>
+        <div class="drag-item" draggable="true" data-func="promise">I'll never miss another deadline.</div>
+      </div>
+      <div class="drop-target" data-zone="offer"><div class="drop-target-lbl" style="color:var(--accent)">Will → OFFER</div><div class="dropped-items"></div></div>
+      <div class="drop-target" data-zone="promise"><div class="drop-target-lbl" style="color:var(--accent)">Will → PROMISE</div><div class="dropped-items"></div></div>
+      <div class="drop-target" data-zone="prediction"><div class="drop-target-lbl" style="color:var(--accent)">Will → PREDICTION</div><div class="dropped-items"></div></div>
+      <div class="drop-target" data-zone="planned"><div class="drop-target-lbl" style="color:var(--gold)">Going-To → PLANNED</div><div class="dropped-items"></div></div>
+      <button class="check-btn" onclick="checkDrag()">Check</button>
+      <div class="fb" id="drag-fb"></div>
+    </div>
+  </div>
+</section>
+
+<!-- §4 CALL FRAMEWORK -->
+<section class="section" id="s4">
+  <div class="section-header"><div class="section-number">§4</div><div><div class="section-title">Client Call Framework: <em>A · O · P · P</em></div><div class="section-sub">Four steps for every difficult client conversation</div></div></div>
+  <div class="section-body">
+    <span class="dur-tag">10 MIN</span>
+    <div class="teacher-note tn-c1"><strong>Layer 1 — The model:</strong> Acknowledge → Offer → Promise → Predict. Drill this order. It's how senior managers handle 90% of escalations.</div>
+    <div class="teacher-note tn-c2"><strong>Layer 2 — Watch for:</strong> Students who skip Acknowledge and jump straight to Offer. The client feels unheard. Force the pause.</div>
+    <div class="teacher-note tn-c3"><strong>Layer 3 — Production:</strong> Each student plans a 60-sec response using the framework before they speak. No improvising in this step.</div>
+
+    <div class="framework">
+      <div class="fw-step"><div class="fw-num">1</div><div class="fw-step-title">Acknowledge</div><div class="fw-step-ex">"I understand you're frustrated."</div></div>
+      <div class="fw-step"><div class="fw-num">2</div><div class="fw-step-title">Offer (Will)</div><div class="fw-step-ex">"I'll personally review your account today."</div></div>
+      <div class="fw-step"><div class="fw-num">3</div><div class="fw-step-title">Promise (Will + won't)</div><div class="fw-step-ex">"I promise we won't let it happen again."</div></div>
+      <div class="fw-step"><div class="fw-num">4</div><div class="fw-step-title">Predict (Will + adverb)</div><div class="fw-step-ex">"It'll definitely be resolved within 48 hours."</div></div>
+    </div>
+
+    <p class="act-t">Planning grid (60 seconds — write before speaking)</p>
+    <div class="round-card"><div class="round-body">
+      <div class="round-lbl">Scenario</div>
+      <div class="round-q">An angry client just emailed: their order arrived damaged AND late. You're the account manager.</div>
+      <div class="round-hint">Plan ONE sentence per framework step. Then speak the full response in 60 seconds.</div>
+    </div></div>
+    <div class="timer-wrap"><div class="timer-text" id="t4">1:00</div><button class="check-btn" onclick="startTimer('t4',60,'b3')">Start 60 sec</button></div>
+  </div>
+</section>
+
+<!-- §5 ROLE-PLAY -->
+<section class="section" id="s5">
+  <div class="section-header"><div class="section-number">§5</div><div><div class="section-title">Role-Play: <em>Live Client Calls</em></div><div class="section-sub">3 rounds, escalating difficulty</div></div></div>
+  <div class="section-body">
+    <span class="dur-tag">18 MIN</span>
+    <div class="teacher-note tn-c1"><strong>Layer 1 — Scaffold:</strong> Round 1 is friendly (information request). Round 2 is mildly stressed (complaint). Round 3 is angry (escalation). Match difficulty to student readiness.</div>
+    <div class="teacher-note tn-c2"><strong>Layer 2 — Force-functions:</strong> In Round 2, student must use at least 1 of each — offer, promise, prediction. Track on the rubric.</div>
+    <div class="teacher-note tn-c3"><strong>Layer 3 — Recovery:</strong> If a student blanks, freeze the call, give 5 seconds to plan, restart from the previous turn. No Spanish.</div>
+
+    <div class="round-card"><div class="round-body">
+      <div class="round-lbl">Round 1 · Friendly inquiry</div>
+      <div class="round-q">The client asks: "When will the new dashboard be ready?" Respond with a Will offer + a Will prediction.</div>
+      <div class="round-hint">Target sentence: "I'll check the timeline now — it'll probably be ready by mid-March."</div>
+    </div></div>
+    <div class="round-card"><div class="round-body">
+      <div class="round-lbl">Round 2 · Complaint</div>
+      <div class="round-q">The client says: "I haven't received my invoice — it's been a week." Use ALL 5 Will functions in your response.</div>
+      <div class="round-hint">Targets: I'll [offer] / I'll [spontaneous] / I promise we'll [promise] / It won't happen [negative promise] / it'll definitely [prediction].</div>
+    </div></div>
+    <div class="round-card"><div class="round-body">
+      <div class="round-lbl">Round 3 · Escalation (3-min solo)</div>
+      <div class="round-q">The client is angry: "This is the third time. I'm considering switching providers." De-escalate using the A·O·P·P framework.</div>
+      <div class="round-hint">Don't argue. Acknowledge first. Then commit using Will. End with a prediction grounded in a planned (Going-To) action.</div>
+    </div></div>
+  </div>
+</section>
+
+<!-- §6 LISTENING -->
+<section class="section" id="s6">
+  <div class="section-header"><div class="section-number">§6</div><div><div class="section-title">Listening: <em>Isabel Torres handles a difficult client</em></div><div class="section-sub">Customer Success Manager · single-speaker · ElevenLabs Sarah AmE @ 0.82×</div></div></div>
+  <div class="section-body">
+    <span class="dur-tag">15 MIN</span>
+    <div class="teacher-note tn-c1"><strong>Layer 1 — Pre-listen:</strong> Tell students to listen for all 5 Will functions. They'll tally them on the second listen.</div>
+    <div class="teacher-note tn-c2"><strong>Layer 2 — Decode:</strong> Pause after each key sentence. Ask: "Offer, promise, or prediction?" Build the function-mapping reflex.</div>
+    <div class="teacher-note tn-c3"><strong>Layer 3 — Output:</strong> After the MCQ/TF, students must produce 2 of Isabel's sentences from memory — exact wording, with intonation.</div>
+
+    <div class="player-box">
+      <div class="player-top">
+        <button class="play-btn">▶</button>
+        <div><div class="track-title">Isabel Torres · Customer Success Manager · Difficult Client</div><div class="track-sub">~ 215 words · 95 sec · Sarah (en-US) @ 0.82×</div></div>
+      </div>
+      <button class="script-toggle" onclick="this.nextElementSibling.classList.toggle('open')">Show script</button>
+      <div class="script-box"><div class="script-content">
+        "Mr. Fuentes, thank you for calling. I understand you're frustrated, and I want to address your concerns right now. First — I'll personally review your account today. I promise I won't leave the office until I have a full picture of what happened. Second, our technical team is going to send you a detailed report by Thursday — that was already scheduled. But beyond that, I'll make sure you receive a direct call from our Director by tomorrow morning. Now, about the timeline issue. It'll definitely be resolved within 48 hours. I can assure you we won't repeat this mistake. Will there be any service credit? Yes, there will. I'll arrange that immediately. What about next month? I think the process will run much more smoothly — we're going to implement new tracking software next week, and it will probably eliminate these delays completely. I know this has been frustrating, Mr. Fuentes. But I'm confident this partnership will improve significantly. I'll send you a summary email in the next hour. You have my word."
+      </div></div>
+      <div class="eleven-note">ElevenLabs: Voice = Sarah (Pre-made, American English). Speed = 0.82. Stability 0.55. Style 0.30.</div>
+    </div>
+
+    <p class="act-t">Comprehension — Multiple Choice</p>
+
+    <div class="opt-group">
+      <div class="opt-q">Q1. What will Isabel personally review today?</div>
+      <div class="opts">
+        <button class="opt" onclick="this.classList.add('wrong');this.disabled=true">The technical report</button>
+        <button class="opt" onclick="this.classList.add('wrong');this.disabled=true">The new tracking software</button>
+        <button class="opt" onclick="this.classList.add('correct');markB('b3');this.disabled=true">Mr. Fuentes's account</button>
+        <button class="opt" onclick="this.classList.add('wrong');this.disabled=true">The Director's calendar</button>
+      </div>
+    </div>
+    <div class="opt-group">
+      <div class="opt-q">Q2. When is the Director going to call?</div>
+      <div class="opts">
+        <button class="opt" onclick="this.classList.add('wrong');this.disabled=true">Today</button>
+        <button class="opt" onclick="this.classList.add('correct');this.disabled=true">By tomorrow morning</button>
+        <button class="opt" onclick="this.classList.add('wrong');this.disabled=true">By Thursday</button>
+        <button class="opt" onclick="this.classList.add('wrong');this.disabled=true">Next week</button>
+      </div>
+    </div>
+    <div class="opt-group">
+      <div class="opt-q">Q3. Within how many hours will the timeline issue be resolved?</div>
+      <div class="opts">
+        <button class="opt" onclick="this.classList.add('wrong');this.disabled=true">24 hours</button>
+        <button class="opt" onclick="this.classList.add('wrong');this.disabled=true">72 hours</button>
+        <button class="opt" onclick="this.classList.add('correct');this.disabled=true">48 hours</button>
+        <button class="opt" onclick="this.classList.add('wrong');this.disabled=true">One week</button>
+      </div>
+    </div>
+    <div class="opt-group">
+      <div class="opt-q">Q4. What is going to be implemented next week?</div>
+      <div class="opts">
+        <button class="opt" onclick="this.classList.add('wrong');this.disabled=true">A new client portal</button>
+        <button class="opt" onclick="this.classList.add('wrong');this.disabled=true">A new pricing system</button>
+        <button class="opt" onclick="this.classList.add('correct');this.disabled=true">New tracking software</button>
+        <button class="opt" onclick="this.classList.add('wrong');this.disabled=true">A new team structure</button>
+      </div>
+    </div>
+
+    <p class="act-t">True / False</p>
+    <div class="tf-set">
+      <div class="tf-row"><div class="tf-stmt">TF1. Isabel promises to leave the office before reviewing the account.</div><div class="tf-btns">
+        <button class="tf-btn" onclick="tfAns(this,false)">True</button>
+        <button class="tf-btn" onclick="tfAns(this,true)">False</button>
+      </div></div>
+      <div class="tf-row"><div class="tf-stmt">TF2. A service credit will be arranged.</div><div class="tf-btns">
+        <button class="tf-btn" onclick="tfAns(this,true)">True</button>
+        <button class="tf-btn" onclick="tfAns(this,false)">False</button>
+      </div></div>
+      <div class="tf-row"><div class="tf-stmt">TF3. The technical report was already scheduled for Thursday.</div><div class="tf-btns">
+        <button class="tf-btn" onclick="tfAns(this,true)">True</button>
+        <button class="tf-btn" onclick="tfAns(this,false)">False</button>
+      </div></div>
+      <div class="tf-row"><div class="tf-stmt">TF4. Isabel predicts the tracking software will definitely not help.</div><div class="tf-btns">
+        <button class="tf-btn" onclick="tfAns(this,false)">True</button>
+        <button class="tf-btn" onclick="tfAns(this,true)">False</button>
+      </div></div>
+    </div>
+  </div>
+</section>
+
+<!-- §7 PRODUCTION / CAPSTONE -->
+<section class="section" id="s7">
+  <div class="section-header"><div class="section-number">§7</div><div><div class="section-title">Capstone: <em>Client Call Builder</em></div><div class="section-sub">Build a full client response — 4 slots, sequential unlock</div></div></div>
+  <div class="section-body">
+    <span class="dur-tag">15 MIN</span>
+    <div class="teacher-note tn-c1"><strong>Layer 1 — Setup:</strong> The 4 slots map directly to the A·O·P·P framework, plus a Going-To planned-step exit. Slots unlock one at a time.</div>
+    <div class="teacher-note tn-c2"><strong>Layer 2 — Validate:</strong> Each slot has different validation: I'll/We'll (offer), won't (negative promise), Will + probably/definitely (prediction), Going to (planned step). Don't accept Spanish anywhere.</div>
+    <div class="teacher-note tn-c3"><strong>Layer 3 — Award:</strong> 4/4 unlocks the Client Champion badge + confetti. If a student stalls, they re-do that slot — no skipping.</div>
+
+    <div class="ccb-wrap">
+      <div class="ccb-hdr">Capstone Mini-Game</div>
+      <div class="ccb-title">Client Call Builder</div>
+      <div class="ccb-progress"><div class="ccb-prog-fill" id="ccbProg"></div></div>
+
+      <div class="ccb-slot active" id="slot1">
+        <div class="ccb-slot-lbl">Slot 1 · Spontaneous offer</div>
+        <div class="ccb-slot-q">What will you offer the client immediately?</div>
+        <textarea class="ccb-ta" id="ta1" placeholder='Use "I&apos;ll" or "We&apos;ll" + at least 4 words…'></textarea>
+        <button class="ccb-submit" onclick="ccbCheck(1)">Submit Slot 1</button>
+        <div class="ccb-fb" id="fb1"></div>
+      </div>
+      <div class="ccb-slot" id="slot2">
+        <div class="ccb-slot-lbl">Slot 2 · Negative promise</div>
+        <div class="ccb-slot-q">What do you promise won't happen again?</div>
+        <textarea class="ccb-ta" id="ta2" disabled placeholder='Use "won&apos;t" + at least 4 words…'></textarea>
+        <button class="ccb-submit" onclick="ccbCheck(2)" disabled>Submit Slot 2</button>
+        <div class="ccb-fb" id="fb2"></div>
+      </div>
+      <div class="ccb-slot" id="slot3">
+        <div class="ccb-slot-lbl">Slot 3 · Confident prediction</div>
+        <div class="ccb-slot-q">What will you predict about the outcome?</div>
+        <textarea class="ccb-ta" id="ta3" disabled placeholder='Use "will" + an adverb (probably / definitely / certainly)…'></textarea>
+        <button class="ccb-submit" onclick="ccbCheck(3)" disabled>Submit Slot 3</button>
+        <div class="ccb-fb" id="fb3"></div>
+      </div>
+      <div class="ccb-slot" id="slot4">
+        <div class="ccb-slot-lbl">Slot 4 · Planned next step</div>
+        <div class="ccb-slot-q">What is going to happen as a planned next step?</div>
+        <textarea class="ccb-ta" id="ta4" disabled placeholder='Use "going to" + at least 4 words…'></textarea>
+        <button class="ccb-submit" onclick="ccbCheck(4)" disabled>Submit Slot 4</button>
+        <div class="ccb-fb" id="fb4"></div>
+      </div>
+
+      <div class="ccb-done" id="ccbDone">
+        <div class="ccb-done-title">🏆 Client Champion!</div>
+        <div style="font-size:13px;color:var(--text);line-height:1.7">All 4 slots completed. You now own the A·O·P·P framework — Acknowledge, Offer, Promise, Predict — and you've bridged Will with Going-To in a real client scenario.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- §8 MODULE PREVIEW / MY WIN -->
+<section class="section" id="s8">
+  <div class="section-header"><div class="section-number">§8</div><div><div class="section-title">Wrap & Module Preview</div><div class="section-sub">One step from S5 capstone</div></div></div>
+  <div class="section-body">
+    <span class="dur-tag">5 MIN</span>
+
+    <div class="checklist">
+      <div class="cl-item" onclick="this.classList.toggle('done')"><div class="cl-box"></div><div>I can use I'll / We'll for spontaneous offers in real time.</div></div>
+      <div class="cl-item" onclick="this.classList.toggle('done')"><div class="cl-box"></div><div>I can make negative promises with won't naturally.</div></div>
+      <div class="cl-item" onclick="this.classList.toggle('done')"><div class="cl-box"></div><div>I can make Will predictions with probably/definitely/certainly.</div></div>
+      <div class="cl-item" onclick="this.classList.toggle('done')"><div class="cl-box"></div><div>I can switch correctly between Will (spontaneous) and Going-To (planned).</div></div>
+      <div class="cl-item" onclick="this.classList.toggle('done')"><div class="cl-box"></div><div>I can de-escalate a client call using the A·O·P·P framework.</div></div>
+    </div>
+
+    <div class="win-box">
+      <div style="font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:1.5px;color:var(--accent);margin-bottom:7px;text-transform:uppercase">My Win Today</div>
+      <textarea class="win-ta" id="myWin" placeholder="One thing you'll use this week in English with a real client…"></textarea>
+      <button class="win-save" onclick="document.getElementById('b5').classList.add('earned');this.textContent='Saved ✓'">Save My Win</button>
+    </div>
+
+    <div class="next-box" style="margin-top:20px">
+      <div class="next-lbl">Next Session</div>
+      <div class="next-title">S5 — Will Module Close · Final Builder + Module 5 Graduate badge</div>
+      <div class="next-sub">Integrate all of Will, all of Going-To, all of M5 in a single capstone monologue. We finish the M5 trail with confetti.</div>
+    </div>
+  </div>
+</section>
+
+<div class="ft">A2.1 · M5 · S4A — Client Communication: Will in Action</div>
+<button class="mode-toggle" onclick="document.body.classList.toggle('student-mode');this.textContent=document.body.classList.contains('student-mode')?'Teacher view':'Student view'">Student view</button>
+
+<script>
+// PROGRESS BAR
+window.addEventListener('scroll',()=>{const s=window.scrollY,h=document.documentElement.scrollHeight-window.innerHeight;document.getElementById('progressBar').style.width=(s/h*100)+'%'});
+
+// BADGE
+function markB(id){const b=document.getElementById(id);if(b)b.classList.add('earned')}
+
+// TIMER
+function startTimer(id,sec,badge){const el=document.getElementById(id);let r=sec;const i=setInterval(()=>{r--;el.textContent=Math.floor(r/60)+':'+String(r%60).padStart(2,'0');if(r<=0){clearInterval(i);el.textContent='✓ Done';if(badge)markB(badge)}},1000)}
+
+// POLL
+function pollAns(btn,correct){const sib=btn.parentElement.querySelectorAll('button');sib.forEach(b=>b.disabled=true);btn.classList.add(correct?'correct-ans':'wrong-ans');const fb=btn.parentElement.parentElement.querySelector('.fb');if(fb&&correct){fb.classList.add('show')}}
+
+// TF
+function tfAns(btn,correct){const row=btn.closest('.tf-row');row.querySelectorAll('button').forEach(b=>b.disabled=true);btn.classList.add(correct?'correct-ans':'wrong-ans');btn.style.borderColor=correct?'var(--success)':'var(--danger)';btn.style.color=correct?'var(--success)':'var(--danger)'}
+
+// VOCAB QUIZ
+const quizData=[
+  {q:'Which phrase is a spontaneous offer?',o:["I'll look into that right away","We'll have an answer by Friday","It'll be resolved in 48 hours","I promise we'll deliver"],a:0},
+  {q:'"It\'ll definitely improve." — Which function?',o:['Offer','Promise','Strong prediction','Polite request'],a:2},
+  {q:'Best response to recover after a team mistake:',o:['Will we fix it?','We\'re going to talk later','I can assure you we won\'t repeat that mistake','I\'m not sure'],a:2},
+  {q:'Which uses Going-To (pre-planned)?',o:["I'll send it now","We're going to launch the campaign in March","It\'ll be fine","Will you confirm?"],a:1},
+  {q:'A polite request using Will:',o:['You will give me 24 hours.','Will you give me 24 hours?','I\'ll give you 24 hours.','You\'re going to give me 24 hours.'],a:1}
+];
+let qi=0,qs=0;
+function loadQ(){const d=quizData[qi];document.getElementById('qq').textContent=d.q;const oh=document.getElementById('qo');oh.innerHTML='';d.o.forEach((opt,idx)=>{const b=document.createElement('button');b.className='quiz-opt';b.textContent=opt;b.onclick=()=>{document.querySelectorAll('#qo .quiz-opt').forEach(x=>x.disabled=true);if(idx===d.a){b.classList.add('correct-ans');qs++}else{b.classList.add('wrong-ans');document.querySelectorAll('#qo .quiz-opt')[d.a].classList.add('correct-ans')}setTimeout(()=>{qi++;if(qi>=quizData.length){document.getElementById('qq').textContent='Quiz complete — '+qs+'/5';document.getElementById('qo').innerHTML='';document.getElementById('qs').textContent='Final score: '+qs+'/5';if(qs>=4)markB('b2')}else{loadQ();document.getElementById('qs').textContent='Question '+(qi+1)+' of 5'}},1200)};oh.appendChild(b)})}
+loadQ();
+
+// DRAG & DROP
+let dragged=null;
+document.querySelectorAll('.drag-item').forEach(item=>{item.addEventListener('dragstart',e=>{dragged=item;item.classList.add('dragging')});item.addEventListener('dragend',()=>{item.classList.remove('dragging');dragged=null})});
+document.querySelectorAll('.drop-target').forEach(target=>{target.addEventListener('dragover',e=>{e.preventDefault();target.classList.add('drag-over')});target.addEventListener('dragleave',()=>target.classList.remove('drag-over'));target.addEventListener('drop',e=>{e.preventDefault();target.classList.remove('drag-over');if(dragged){target.querySelector('.dropped-items').appendChild(dragged)}})});
+function checkDrag(){let correct=0,total=0;document.querySelectorAll('.drop-target').forEach(target=>{const zone=target.dataset.zone;target.querySelectorAll('.drag-item').forEach(item=>{total++;if(item.dataset.func===zone){correct++;item.style.background='rgba(0,229,160,.12)';item.style.borderColor='var(--success)';item.style.color='var(--success)'}else{item.style.background='rgba(255,77,109,.08)';item.style.borderColor='var(--danger)';item.style.color='var(--danger)'}})});const fb=document.getElementById('drag-fb');fb.className='fb show '+(correct>=6?'ok':'no');fb.textContent=correct+'/8 correct. '+(correct>=6?'Mastery threshold reached. Good.':'Re-read the master table and try again.');if(correct>=6)markB('b3')}
+
+// CCB CAPSTONE
+const ccbValid=[
+  {re:/(i'?ll|we'?ll|i will|we will)/i,err:'Use I\'ll, We\'ll, I will, or We will'},
+  {re:/won'?t|will not/i,err:'Use won\'t or will not'},
+  {re:/\b(will|'ll)\b.*\b(probably|definitely|certainly|likely)\b/i,err:'Use will + probably/definitely/certainly/likely'},
+  {re:/going to/i,err:'Use going to'}
+];
+let ccbDone=0;
+function ccbCheck(n){const txt=document.getElementById('ta'+n).value.trim();const fb=document.getElementById('fb'+n);const words=txt.split(/\s+/).filter(Boolean).length;const v=ccbValid[n-1];if(words<4){fb.className='ccb-fb no';fb.textContent='Need at least 4 words.';return}if(!v.re.test(txt)){fb.className='ccb-fb no';fb.textContent='Missing the target structure. '+v.err+'.';return}fb.className='ccb-fb ok';fb.textContent='✓ Locked in.';document.getElementById('slot'+n).classList.add('done');document.getElementById('ta'+n).disabled=true;document.querySelector('#slot'+n+' .ccb-submit').disabled=true;ccbDone++;document.getElementById('ccbProg').style.width=(ccbDone*25)+'%';if(n<4){const next=document.getElementById('slot'+(n+1));next.classList.add('active');document.getElementById('ta'+(n+1)).disabled=false;document.querySelector('#slot'+(n+1)+' .ccb-submit').disabled=false}else{document.getElementById('ccbDone').classList.add('show');markB('b4');launchConfetti()}}
+
+function launchConfetti(){for(let i=0;i<60;i++){const d=document.createElement('div');d.style.cssText='position:fixed;width:8px;height:8px;background:'+(['#00CFFF','#FFB800','#00E676','#A78BFA'][i%4])+';left:'+(Math.random()*100)+'vw;top:-10px;border-radius:50%;z-index:9999;pointer-events:none';document.body.appendChild(d);const dur=2+Math.random()*2;d.animate([{transform:'translateY(0) rotate(0)',opacity:1},{transform:'translateY('+window.innerHeight+'px) rotate(720deg)',opacity:0}],{duration:dur*1000,easing:'cubic-bezier(.5,0,.5,1)'});setTimeout(()=>d.remove(),dur*1000)}}
+
+// ACTIVE NAV
+const navLinks=document.querySelectorAll('.nav-inner a');const sections=document.querySelectorAll('.section');window.addEventListener('scroll',()=>{let cur='';sections.forEach(s=>{const t=s.offsetTop-120;if(window.scrollY>=t)cur=s.id});navLinks.forEach(l=>{l.style.borderColor='transparent';l.style.color='var(--muted)';if(l.getAttribute('href')==='#'+cur){l.style.borderColor='var(--accent)';l.style.color='var(--accent)'}})});
+</script>
+</body>
+</html>
