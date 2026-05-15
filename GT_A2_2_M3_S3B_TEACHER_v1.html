@@ -697,6 +697,45 @@ body.student-mode .teacher-only{display:none}
   </div>
 </section>
 
+<!-- §6.5 MINI-GAME: ADVICE MATCH -->
+<section class="section">
+  <div class="section-header">
+    <span class="section-number">§6.5</span>
+    <div>
+      <div class="section-title">Mini-Game — <em>Advice Match</em></div>
+      <div class="section-sub">8 workplace scenarios · Match each to the best advice response · 6+/8 unlocks badge</div>
+    </div>
+    <span class="dur-tag">⏱ 5 MIN</span>
+  </div>
+  <div class="section-body">
+    <div class="info-orange">🎯 Click a scenario on the left, then click the advice on the right that best responds. Aim for 6+ correct out of 8.</div>
+    <style>
+      .am-board{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
+      .am-col-lbl{font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+      .am-list{display:flex;flex-direction:column;gap:8px}
+      .am-card{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 12px;font-size:12.5px;color:var(--text);cursor:pointer;transition:all .2s}
+      .am-card:hover{border-color:var(--accent)}
+      .am-card.am-sel{background:rgba(0,207,255,.1);border-color:var(--cyan);color:#fff}
+      .am-card.am-done-ok{background:rgba(0,229,160,.15);border-color:var(--success);color:var(--success);cursor:default;pointer-events:none}
+      .am-card.am-done-bad{background:rgba(255,77,109,.12);border-color:var(--danger);color:var(--danger)}
+      .am-score{margin-top:14px;font-family:var(--font-head);font-size:13px;font-weight:700;color:#fff;text-align:center;padding:10px;background:var(--surface2);border:1px solid var(--border);border-radius:8px}
+      .am-badge{display:none;margin-top:10px;padding:12px;background:rgba(0,229,160,.12);border:1px solid var(--success);border-radius:8px;color:var(--success);font-family:var(--font-head);font-weight:700;text-align:center;letter-spacing:1px}
+    </style>
+    <div class="am-board">
+      <div>
+        <div class="am-col-lbl">Scenarios</div>
+        <div class="am-list" id="amScenarios"></div>
+      </div>
+      <div>
+        <div class="am-col-lbl">Advice Responses</div>
+        <div class="am-list" id="amAdvice"></div>
+      </div>
+    </div>
+    <div class="am-score" id="amScore">Score: 0 / 8 · Matches: 0</div>
+    <div class="am-badge" id="amBadge">🏆 Badge unlocked — Advice Match Pro!</div>
+  </div>
+</section>
+
 <!-- §7 SELF-RATING + LEADERBOARD -->
 <section class="section">
   <div class="section-header">
@@ -1050,6 +1089,29 @@ window.addEventListener('scroll',()=>{
 
 // INIT SLIDERS
 updateSliders();
+
+// ADVICE MATCH MINI-GAME
+(function(){
+  const PAIRS=[
+    {s:"My boss gives me too much work every week.",a:"You should talk to your manager about prioritizing tasks."},
+    {s:"I have a job interview tomorrow and I'm very nervous.",a:"You could practice answers out loud the night before."},
+    {s:"My coworker takes credit for my ideas in meetings.",a:"You had better document your contributions in writing."},
+    {s:"I have to give a presentation in English next week.",a:"Why don't you rehearse with a colleague for feedback?"},
+    {s:"I made a small mistake on a client email yesterday.",a:"You should send a quick follow-up to correct it."},
+    {s:"I'm thinking about applying for an internal promotion.",a:"You could ask your manager for an informal chat first."},
+    {s:"A teammate is constantly late to our standups.",a:"You shouldn't ignore it — bring it up politely one-on-one."},
+    {s:"I feel close to burnout after three intense projects.",a:"If I were you, I'd take a real day off this week."}
+  ];
+  const adv=PAIRS.map((p,i)=>({txt:p.a,idx:i})).sort(()=>Math.random()-.5);
+  const scEl=document.getElementById('amScenarios'),adEl=document.getElementById('amAdvice');
+  if(!scEl||!adEl)return;
+  PAIRS.forEach((p,i)=>{const d=document.createElement('div');d.className='am-card';d.dataset.idx=i;d.textContent=(i+1)+". "+p.s;d.onclick=()=>pickS(d);scEl.appendChild(d);});
+  adv.forEach(a=>{const d=document.createElement('div');d.className='am-card';d.dataset.idx=a.idx;d.textContent=a.txt;d.onclick=()=>pickA(d);adEl.appendChild(d);});
+  let selS=null,selA=null,score=0,matches=0;
+  function pickS(d){if(selS)selS.classList.remove('am-sel');selS=d;d.classList.add('am-sel');tryMatch();}
+  function pickA(d){if(selA)selA.classList.remove('am-sel');selA=d;d.classList.add('am-sel');tryMatch();}
+  function tryMatch(){if(!selS||!selA)return;const ok=selS.dataset.idx===selA.dataset.idx;if(ok){selS.classList.remove('am-sel');selA.classList.remove('am-sel');selS.classList.add('am-done-ok');selA.classList.add('am-done-ok');score++;matches++;}else{selS.classList.add('am-done-bad');selA.classList.add('am-done-bad');matches++;setTimeout(()=>{selS.classList.remove('am-done-bad','am-sel');selA.classList.remove('am-done-bad','am-sel');selS=null;selA=null;},700);return;}selS=null;selA=null;document.getElementById('amScore').textContent="Score: "+score+" / 8 · Matches: "+matches;if(score>=6){document.getElementById('amBadge').style.display='block';if(typeof markBadge==='function')markBadge('b3');}}
+})();
 </script>
 </body>
 </html>

@@ -619,6 +619,39 @@ body.student-mode .teacher-only{display:none}
   </div>
 </section>
 
+<!-- §6.5 MINI-GAME: MAY/MIGHT SPECULATION QUICK-FIRE -->
+<section class="section">
+  <div class="section-header">
+    <span class="section-number">§6.5</span>
+    <div>
+      <div class="section-title">Mini-Game — <em>May/Might Speculation Quick-Fire</em></div>
+      <div class="section-sub">8 ambiguous situations · Type a speculation using <strong>may</strong> or <strong>might</strong> · 6+/8 unlocks badge</div>
+    </div>
+    <span class="dur-tag">⏱ 6 MIN</span>
+  </div>
+  <div class="section-body">
+    <div class="info-orange">🎯 Read each situation. Type one sentence speculating about WHY using <strong>may</strong> or <strong>might</strong> + verb. Example: "He may be stuck in traffic."</div>
+    <style>
+      .mmsq-list{display:flex;flex-direction:column;gap:12px;margin-top:14px}
+      .mmsq-row{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px 14px}
+      .mmsq-q{font-size:13px;color:#fff;margin-bottom:8px}
+      .mmsq-q .mmsq-num{font-family:var(--font-head);color:var(--accent);font-weight:700;margin-right:6px}
+      .mmsq-in{display:flex;gap:8px}
+      .mmsq-in input{flex:1;background:var(--surface);border:1px solid var(--border);color:#fff;padding:8px 12px;font-family:inherit;font-size:13px;border-radius:6px;outline:none}
+      .mmsq-in input:focus{border-color:var(--cyan)}
+      .mmsq-in button{background:var(--cyan);color:#000;border:none;padding:8px 14px;font-family:var(--font-head);font-weight:700;font-size:11px;letter-spacing:1px;border-radius:6px;cursor:pointer}
+      .mmsq-fb{margin-top:6px;font-size:11.5px;font-family:var(--font-head);font-weight:700;letter-spacing:1px;text-transform:uppercase}
+      .mmsq-fb.ok{color:var(--success)}
+      .mmsq-fb.bad{color:var(--danger)}
+      .mmsq-score{margin-top:14px;font-family:var(--font-head);font-size:13px;font-weight:700;color:#fff;text-align:center;padding:10px;background:var(--surface2);border:1px solid var(--border);border-radius:8px}
+      .mmsq-badge{display:none;margin-top:10px;padding:12px;background:rgba(0,229,160,.12);border:1px solid var(--success);border-radius:8px;color:var(--success);font-family:var(--font-head);font-weight:700;text-align:center;letter-spacing:1px}
+    </style>
+    <div class="mmsq-list" id="mmsqList"></div>
+    <div class="mmsq-score" id="mmsqScore">Score: 0 / 8</div>
+    <div class="mmsq-badge" id="mmsqBadge">🏆 Badge unlocked — Speculation Master!</div>
+  </div>
+</section>
+
 <!-- §7 SELF-RATING + LEADERBOARD -->
 <section class="section">
   <div class="section-header">
@@ -796,6 +829,34 @@ function saveWin(){const v=document.getElementById('myWinArea').value.trim();if(
 
 window.addEventListener('scroll',()=>{const e=document.documentElement,p=(e.scrollTop/(e.scrollHeight-e.clientHeight))*100;document.getElementById('progressFill').style.width=p+'%';if(p>8)earnBadge('b1');});
 updateSliders();
+
+// MAY/MIGHT SPECULATION QUICK-FIRE
+(function(){
+  const PROMPTS=[
+    "Your colleague is 30 minutes late to the meeting and hasn't replied to messages.",
+    "The client cancelled the call this morning without giving a clear reason.",
+    "Your manager has been in closed-door meetings with HR all day.",
+    "The supplier sent a vague email saying 'we'll be in touch about the delivery'.",
+    "Your usually punctual teammate hasn't logged in yet today.",
+    "The Friday team lunch was suddenly moved to next week.",
+    "Your director wants to meet you privately tomorrow at 9 AM.",
+    "The Q4 budget meeting was rescheduled twice this week."
+  ];
+  const list=document.getElementById('mmsqList');
+  if(!list)return;
+  const re=/\b(may|might)\b\s+\S+/i;
+  let score=0,answered=new Set();
+  PROMPTS.forEach((p,i)=>{
+    const row=document.createElement('div');row.className='mmsq-row';
+    row.innerHTML='<div class="mmsq-q"><span class="mmsq-num">'+(i+1)+'.</span>'+p+'</div>'+
+      '<div class="mmsq-in"><input type="text" placeholder="He/She/They may... or might..." data-i="'+i+'"><button>Check</button></div>'+
+      '<div class="mmsq-fb" id="mmsqFb'+i+'"></div>';
+    list.appendChild(row);
+    const inp=row.querySelector('input'),btn=row.querySelector('button'),fb=row.querySelector('.mmsq-fb');
+    function check(){if(answered.has(i))return;const v=inp.value.trim();const ok=re.test(v)&&v.split(/\s+/).length>=3;if(ok){fb.textContent='✓ Good speculation';fb.className='mmsq-fb ok';score++;answered.add(i);inp.disabled=true;btn.disabled=true;document.getElementById('mmsqScore').textContent='Score: '+score+' / 8';if(score>=6){document.getElementById('mmsqBadge').style.display='block';if(typeof earnBadge==='function')earnBadge('b3');}}else{fb.textContent='✗ Include "may" or "might" + a verb';fb.className='mmsq-fb bad';}}
+    btn.addEventListener('click',check);inp.addEventListener('keydown',e=>{if(e.key==='Enter')check();});
+  });
+})();
 </script>
 </body>
 </html>
