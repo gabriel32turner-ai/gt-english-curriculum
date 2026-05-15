@@ -1,0 +1,1124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GT A2.1 · M6 S4A · Spoken Integration</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#080808;--surface:#111318;--surface2:#1a1f28;
+  --accent:#00CFFF;--accent2:#67E8F9;
+  --border:rgba(0,207,255,.18);
+  --text:#F0F4F8;--muted:#8A9BB0;--dim:rgba(226,226,226,.25);
+  --danger:#FF4D6D;--success:#00E5A0;--warn:#FFB347;
+  --cyan:#00CFFF;--gold:#FFB800;
+  --font-head:'Syne',sans-serif;--font-body:'DM Sans',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:15px;line-height:1.6}
+.prog-wrap{position:fixed;top:0;left:0;width:100%;height:3px;background:rgba(0,207,255,.1);z-index:1000}
+.prog-bar{height:3px;background:var(--accent);width:0%;transition:width .3s}
+.hdr{position:sticky;top:3px;background:rgba(8,8,8,.92);backdrop-filter:blur(14px);border-bottom:1px solid var(--border);padding:12px 32px;display:flex;align-items:center;justify-content:space-between;z-index:900;flex-wrap:wrap;gap:10px}
+.brand{display:flex;align-items:center;gap:10px}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 8px var(--accent)}
+.bname{font-family:var(--font-head);font-size:15px;font-weight:700}
+.bsub{font-size:11px;color:var(--muted)}
+.sess-tags{display:flex;gap:6px;flex-wrap:wrap}
+.tag{font-family:var(--font-head);font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;letter-spacing:.5px}
+.t-lv{background:rgba(0,207,255,.15);color:var(--accent);border:1px solid var(--border)}
+.t-mod{background:rgba(255,184,0,.1);color:var(--gold);border:1px solid rgba(255,184,0,.2)}
+.t-sess{background:rgba(255,255,255,.06);color:var(--text);border:1px solid rgba(255,255,255,.08)}
+.t-time{background:rgba(0,229,160,.1);color:var(--success);border:1px solid rgba(0,229,160,.2)}
+.badge-strip{display:flex;align-items:center;gap:12px;padding:14px 32px;background:var(--surface);border-bottom:1px solid var(--border);flex-wrap:wrap}
+.badge-strip span[id]{font-size:22px;filter:grayscale(1);opacity:.25;transition:all .4s}
+.badge-strip span[id].earned{filter:none;opacity:1;animation:badgePop .5s ease}
+@keyframes badgePop{0%{transform:scale(1)}50%{transform:scale(1.35)}100%{transform:scale(1)}}
+.badge-label{font-size:11px;color:var(--muted);margin-left:auto}
+#confMsg{display:none;font-family:var(--font-head);font-size:12px;color:var(--gold);font-weight:700}
+.section{margin:0;border-bottom:1px solid var(--border)}
+.sec-img{width:100%;height:180px;object-fit:cover;display:block;filter:brightness(.45)}
+.sec-hdr{padding:18px 32px 10px;display:flex;align-items:center;gap:14px;background:linear-gradient(135deg,rgba(0,207,255,.07),transparent)}
+.sec-num{font-family:var(--font-head);font-size:11px;font-weight:800;background:var(--accent);color:#000;padding:3px 9px;border-radius:20px;letter-spacing:.5px}
+.sec-title{font-family:var(--font-head);font-size:19px;font-weight:800}
+.sec-sub{font-size:12px;color:var(--muted);margin-left:auto}
+.sec-body{padding:20px 32px 28px}
+.tn{background:rgba(0,207,255,.06);border-left:3px solid var(--cyan);border-radius:0 8px 8px 0;padding:12px 16px;margin:14px 0;font-size:13px;color:var(--muted)}
+.tn-label{font-family:var(--font-head);font-size:10px;font-weight:700;color:var(--cyan);letter-spacing:.8px;margin-bottom:5px}
+.tn-c2{border-left-color:#FF3D72;background:rgba(255,61,114,.06)}
+.tn-c2 .tn-label{color:#FF3D72}
+.tn-c3{border-left-color:var(--gold);background:rgba(255,184,0,.06)}
+.tn-c3 .tn-label{color:var(--gold)}
+body.sm .tn{display:none}
+.wu-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0}
+.wu-img-wrap{position:relative;border-radius:10px;overflow:hidden;height:160px}
+.wu-img-wrap img{width:100%;height:100%;object-fit:cover;filter:brightness(.45)}
+.wu-label{position:absolute;bottom:10px;left:12px;font-family:var(--font-head);font-size:13px;font-weight:700;color:#fff}
+.wu-q{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:13px 16px;font-size:14px;margin:8px 0}
+.wu-q span{color:var(--accent);font-weight:600;margin-right:6px}
+.quick-win{background:linear-gradient(135deg,rgba(0,207,255,.12),rgba(0,229,160,.06));border:1px solid rgba(0,207,255,.25);border-radius:10px;padding:16px 20px;margin:16px 0}
+.qw-title{font-family:var(--font-head);font-size:12px;font-weight:700;color:var(--accent);letter-spacing:.6px;margin-bottom:6px}
+.qw-text{font-size:14px}
+.btn{font-family:var(--font-head);font-size:11px;font-weight:700;padding:7px 16px;border-radius:20px;border:1px solid var(--border);background:var(--surface2);color:var(--text);cursor:pointer;letter-spacing:.5px;transition:all .2s}
+.btn:hover{border-color:var(--accent);color:var(--accent)}
+.btn-accent{background:var(--accent);color:#000;border-color:var(--accent)}
+.btn-accent:hover{background:var(--accent2);border-color:var(--accent2);color:#000}
+.round-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin:14px 0}
+.round-card img{width:100%;height:140px;object-fit:cover;filter:brightness(.45)}
+.round-card-body{padding:14px 18px}
+.round-q{font-size:14px;margin:8px 0}
+.reveal-btn{font-family:var(--font-head);font-size:11px;font-weight:700;background:transparent;border:1px solid var(--border);color:var(--muted);padding:6px 14px;border-radius:20px;cursor:pointer;transition:all .2s;margin-top:8px}
+.reveal-btn:hover{border-color:var(--accent);color:var(--accent)}
+.model-reveal{max-height:0;overflow:hidden;transition:max-height .4s}
+.model-reveal.show{max-height:300px}
+.model-reveal p{padding:10px 0;font-size:13.5px;color:var(--muted);border-top:1px solid var(--border);margin-top:8px}
+.round-tags{display:flex;gap:6px;margin-bottom:8px}
+.rt{font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;font-family:var(--font-head)}
+.rt-ts{background:rgba(0,207,255,.15);color:var(--cyan)}
+.rt-ss{background:rgba(255,184,0,.15);color:var(--gold)}
+.rt-cl{background:rgba(0,229,160,.15);color:var(--success)}
+.vocab-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:16px 0}
+.vocab-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;cursor:pointer;transition:all .25s}
+.vocab-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.vc-img{height:90px;object-fit:cover;width:100%;filter:brightness(.45)}
+.vc-body{padding:10px 12px}
+.vc-word{font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--accent);margin-bottom:3px}
+.vc-def{font-size:11.5px;color:var(--muted);line-height:1.4}
+.vc-ex{font-size:11px;color:var(--dim);margin-top:4px;font-style:italic}
+.vc-audio{font-size:10px;color:var(--cyan);margin-top:4px}
+
+/* MATCHING PAIRS MEMORY GAME */
+.mp-wrap{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;margin:18px 0}
+.mp-title{font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--accent);margin-bottom:14px}
+.mp-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin:12px 0}
+.mp-card{aspect-ratio:1;background:var(--surface2);border:1px solid var(--border);border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px;text-align:center;padding:6px;transition:all .3s;user-select:none;font-family:var(--font-head)}
+.mp-card.flipped{background:rgba(0,207,255,.1);border-color:var(--accent);color:var(--accent)}
+.mp-card.matched{background:rgba(0,229,160,.1);border-color:var(--success);color:var(--success);cursor:default}
+.mp-card.wrong{background:rgba(255,77,109,.1);border-color:var(--danger);color:var(--danger)}
+.mp-score{font-family:var(--font-head);font-size:13px;color:var(--accent);margin-top:8px}
+.mp-back{font-size:20px;color:var(--muted)}
+
+/* SPEAKING CARDS */
+.sc-wrap{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;margin:18px 0}
+.sc-title{font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--accent);margin-bottom:14px}
+.sc-stage{position:relative;min-height:160px;margin:12px 0}
+.sc-card{background:linear-gradient(135deg,rgba(0,207,255,.1),rgba(0,229,160,.05));border:1px solid rgba(0,207,255,.3);border-radius:12px;padding:24px 20px;text-align:center;display:none}
+.sc-card.active{display:block;animation:cardIn .3s ease}
+@keyframes cardIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.sc-prompt{font-size:16px;font-weight:500;margin-bottom:10px;line-height:1.5}
+.sc-tense{font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:.6px;margin-bottom:6px}
+.sc-hint{font-size:12px;color:var(--muted);font-style:italic}
+.sc-nav{display:flex;gap:10px;justify-content:center;margin-top:12px;flex-wrap:wrap}
+.sc-counter{font-family:var(--font-head);font-size:12px;color:var(--muted);margin-top:8px;text-align:center}
+
+.collo-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:16px 0}
+.collo-card{background:var(--surface);border:1px solid rgba(255,179,71,.2);border-radius:10px;overflow:hidden}
+.collo-img{height:100px;width:100%;object-fit:cover;filter:brightness(.4)}
+.collo-body{padding:12px 14px}
+.collo-phrase{font-family:var(--font-head);font-size:14px;font-weight:700;color:var(--warn);margin-bottom:5px}
+.collo-ctx{font-size:12px;color:var(--muted);line-height:1.5}
+.collo-ex{font-size:11.5px;color:var(--dim);margin-top:5px;font-style:italic}
+.gram-intro{background:rgba(0,207,255,.06);border:1px solid var(--border);border-radius:10px;padding:18px;margin:14px 0}
+.gram-situation{font-size:14px;line-height:1.65}
+.gram-situation strong{color:var(--accent)}
+.gram-table{width:100%;border-collapse:collapse;font-size:13px;margin:14px 0}
+.gram-table th{background:rgba(0,207,255,.12);color:var(--accent);font-family:var(--font-head);font-size:11px;font-weight:700;padding:9px 12px;text-align:left;border:1px solid var(--border)}
+.gram-table td{padding:8px 12px;border:1px solid var(--border);color:var(--text)}
+.gram-table tr:nth-child(even) td{background:rgba(255,255,255,.03)}
+.gram-table .hl{color:var(--accent);font-weight:600}
+.gram-table .hl2{color:var(--success);font-weight:600}
+.gram-table .hl3{color:var(--warn);font-weight:600}
+.activity-wrap{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px;margin:16px 0}
+.activity-title{font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--accent);margin-bottom:14px}
+.q-item{margin:12px 0}
+.q-text{font-size:14px;margin-bottom:8px}
+.q-opts{display:flex;gap:8px;flex-wrap:wrap}
+.q-opt{background:var(--surface2);border:1px solid var(--border);color:var(--text);border-radius:20px;padding:7px 16px;cursor:pointer;font-size:12.5px;transition:all .2s}
+.q-opt:hover{border-color:var(--accent)}
+.q-opt.correct{background:rgba(0,229,160,.15);border-color:var(--success);color:var(--success)}
+.q-opt.wrong{background:rgba(255,77,109,.12);border-color:var(--danger);color:var(--danger)}
+.q-fb{font-size:12px;color:var(--muted);margin-top:5px;min-height:16px}
+.activity-score{font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--accent);margin-top:12px}
+.drag-list{list-style:none;padding:0;display:flex;flex-direction:column;gap:8px;margin:12px 0}
+.drag-item{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;cursor:grab;font-size:13.5px;display:flex;align-items:center;gap:10px;transition:all .2s}
+.drag-item:hover{border-color:var(--accent)}
+.drag-item.drag-over{border-color:var(--accent);background:rgba(0,207,255,.1)}
+.drag-handle{color:var(--muted);font-size:14px}
+.drag-fb{font-size:13px;padding:10px 14px;border-radius:8px;margin-top:8px;display:none}
+.drag-fb.ok{display:block;background:rgba(0,229,160,.1);color:var(--success);border:1px solid rgba(0,229,160,.2)}
+.drag-fb.err{display:block;background:rgba(255,77,109,.08);color:var(--danger);border:1px solid rgba(255,77,109,.15)}
+.timer-wrap{display:flex;align-items:center;gap:14px;margin:14px 0}
+.timer-svg{transform:rotate(-90deg)}
+.timer-bg{fill:none;stroke:rgba(255,255,255,.08)}
+.timer-arc{fill:none;stroke:var(--accent);stroke-linecap:round;transition:stroke-dashoffset .5s,stroke .3s}
+.timer-text{font-family:var(--font-head);font-size:12px;fill:var(--text);transform:rotate(90deg);transform-origin:45px 45px;font-weight:700;text-anchor:middle}
+.timer-label{font-family:var(--font-body);font-size:7.5px;fill:var(--muted);transform:rotate(90deg);transform-origin:45px 45px;text-anchor:middle}
+.listen-player{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin:14px 0}
+.listen-player img{width:100%;height:120px;object-fit:cover;filter:brightness(.4)}
+.listen-inner{padding:16px;display:flex;align-items:center;gap:14px}
+.play-btn{width:44px;height:44px;border-radius:50%;background:var(--accent);border:none;color:#000;font-size:16px;cursor:pointer;flex-shrink:0;font-weight:700}
+.track-title{font-family:var(--font-head);font-size:13px;font-weight:700}
+.track-sub{font-size:11px;color:var(--muted);margin-top:2px}
+.waveform{display:flex;align-items:center;gap:2px;height:32px;margin-left:auto}
+.wbar{width:3px;border-radius:2px;background:var(--accent)}
+.script-toggle{font-family:var(--font-head);font-size:11px;font-weight:700;background:transparent;border:1px solid var(--border);color:var(--muted);padding:7px 16px;border-radius:20px;cursor:pointer;transition:all .2s;display:block;margin:8px 0}
+.script-toggle:hover{border-color:var(--accent);color:var(--accent)}
+.script-box{max-height:0;overflow:hidden;transition:max-height .4s;font-size:13.5px;color:var(--muted);line-height:1.7;background:var(--surface);border-radius:8px}
+.script-box.open{max-height:600px;padding:14px 18px;border:1px solid var(--border);margin-top:8px}
+.mc-item{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px 16px;margin:10px 0}
+.mc-stmt{font-size:13.5px;margin-bottom:8px}
+.mc-opts{display:flex;gap:8px;flex-wrap:wrap}
+.mc-opt{font-family:var(--font-head);font-size:11px;font-weight:700;padding:6px 14px;border-radius:20px;border:1px solid var(--border);background:var(--surface2);color:var(--text);cursor:pointer;transition:all .2s}
+.mc-opt:hover{border-color:var(--accent);color:var(--accent)}
+.sp-wrap{display:flex;flex-direction:column;gap:12px;margin:14px 0}
+.sp-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px}
+.sp-num{font-family:var(--font-head);font-size:10px;font-weight:700;color:var(--accent);letter-spacing:.6px;margin-bottom:4px}
+.sp-q{font-size:14.5px;margin-bottom:5px}
+.sp-hint{font-size:12px;color:var(--muted);font-style:italic}
+.phrases-wrap{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:16px 0}
+.phrase-card{background:linear-gradient(135deg,rgba(255,184,0,.08),rgba(0,207,255,.05));border:1px solid rgba(255,184,0,.25);border-radius:10px;padding:16px}
+.phrase-en{font-family:var(--font-head);font-size:15px;font-weight:700;color:var(--gold);margin-bottom:6px}
+.phrase-ctx{font-size:12px;color:var(--muted);line-height:1.5}
+.wrapup-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:14px 0}
+.wrapup-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center}
+.wrapup-icon{font-size:24px;margin-bottom:8px}
+.wrapup-point{font-family:var(--font-head);font-size:13px;font-weight:700;margin-bottom:4px}
+.wrapup-desc{font-size:12px;color:var(--muted)}
+.checklist{list-style:none;padding:0;display:flex;flex-direction:column;gap:8px;margin:14px 0}
+.check-item{display:flex;align-items:center;gap:10px;font-size:14px;cursor:pointer}
+.check-box{width:20px;height:20px;border-radius:5px;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0}
+.check-item.done .check-box{background:var(--success);border-color:var(--success)}
+.check-item.done .check-box::after{content:'✓';color:#000;font-weight:700;font-size:12px}
+.check-item.done span{color:var(--muted);text-decoration:line-through}
+.next-card{background:rgba(0,207,255,.06);border:1px solid rgba(0,207,255,.2);border-radius:10px;padding:16px;margin:14px 0}
+.next-label{font-family:var(--font-head);font-size:10px;font-weight:700;color:var(--cyan);letter-spacing:.6px;margin-bottom:6px}
+.win-wrap{margin:18px 0}
+.win-ta{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:14px;color:var(--text);font-size:14px;font-family:var(--font-body);resize:vertical;min-height:80px}
+.win-ta:focus{outline:none;border-color:var(--accent)}
+#winConfirm{display:none;color:var(--success);font-size:13px;margin-top:8px;font-style:italic}
+.ftr{background:var(--surface);border-top:1px solid var(--border);padding:18px 32px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-top:40px}
+.fbrand{font-family:var(--font-head);font-size:13px;font-weight:700}
+.flevels{display:flex;gap:6px;flex-wrap:wrap}
+.flv{font-size:10px;font-family:var(--font-head);font-weight:700;padding:3px 9px;border-radius:20px;background:rgba(255,255,255,.04);color:var(--muted)}
+.flv.on{background:rgba(0,207,255,.15);color:var(--accent);border:1px solid var(--border)}
+.sm-btn{position:fixed;bottom:20px;right:20px;background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:8px 18px;font-family:var(--font-head);font-size:11px;font-weight:700;color:var(--muted);cursor:pointer;z-index:800;transition:all .2s}
+.sm-btn:hover{border-color:var(--accent);color:var(--accent)}
+@media(max-width:860px){
+  .vocab-grid{grid-template-columns:1fr 1fr}
+  .wu-grid{grid-template-columns:1fr 1fr}
+  .collo-grid{grid-template-columns:1fr}
+  .wrapup-grid{grid-template-columns:1fr 1fr}
+  .phrases-wrap{grid-template-columns:1fr}
+  .mp-grid{grid-template-columns:repeat(4,1fr)}
+  .hdr{padding:10px 16px}
+  .sec-body{padding:16px 16px 22px}
+  .sec-hdr{padding:14px 16px 8px}
+  .badge-strip{padding:10px 16px}
+  .ftr{padding:14px 16px}
+  .sm-btn{bottom:14px;right:14px}
+}
+</style>
+</head>
+<body>
+
+<div class="prog-wrap"><div class="prog-bar" id="progressBar"></div></div>
+
+<header class="hdr">
+  <div class="brand">
+    <div class="dot"></div>
+    <div>
+      <div class="bname">Gabriel Turner · English Training</div>
+      <div class="bsub">Teacher Edition</div>
+    </div>
+  </div>
+  <div class="sess-tags">
+    <span class="tag t-lv">A2.1</span>
+    <span class="tag t-mod">Module 6</span>
+    <span class="tag t-sess">Session 4A — Discovery &amp; Drill</span>
+    <span class="tag t-time">70 min</span>
+  </div>
+</header>
+
+<div class="badge-strip">
+  <span id="b1">🗣️</span>
+  <span id="b2">🃏</span>
+  <span id="b3">⚡</span>
+  <span id="b4">🎧</span>
+  <span id="b5">🎖️</span>
+  <span class="badge-label">Earn all 5 badges today</span>
+  <span id="confMsg">¡Cuatro de cinco! Un paso más. 🎉</span>
+</div>
+
+<!-- §1 WARM-UP -->
+<section class="section" id="s1">
+  <img class="sec-img" src="https://images.unsplash.com/photo-1664575610130-ddb29e17b0b7?w=900&q=80" alt="Business conversation">
+  <div class="sec-hdr">
+    <span class="sec-num">§1</span>
+    <span class="sec-title">Warm-Up — The Real Business Conversation</span>
+    <span class="sec-sub">5–8 min</span>
+  </div>
+  <div class="sec-body">
+
+    <div class="tn">
+      <div class="tn-label">⚡ TEACHER NOTE — S4A FRAME</div>
+      <p>This is the penultimate A session of A2.1. Frame it: <em>"We've covered past, plans, and commitments in reports, projects, and emails. Today we put it all together in the most common situation at work: a real conversation."</em> S4A is spoken integration — the final A2.1 grammar point (Wh- questions in all three tenses) is introduced here, completing the full system.</p>
+    </div>
+
+    <div class="wu-grid">
+      <div class="wu-img-wrap">
+        <img src="https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=600&q=80" alt="Quick check-in" loading="lazy">
+        <div class="wu-label">Quick check-in</div>
+      </div>
+      <div class="wu-img-wrap">
+        <img src="https://images.unsplash.com/photo-1542744094-3a31f272c490?w=600&q=80" alt="Q and A meeting" loading="lazy">
+        <div class="wu-label">Q&amp;A session</div>
+      </div>
+      <div class="wu-img-wrap">
+        <img src="https://images.unsplash.com/photo-1609921212029-bb5a28e60960?w=600&q=80" alt="Phone call" loading="lazy">
+        <div class="wu-label">Phone update</div>
+      </div>
+      <div class="wu-img-wrap">
+        <img src="https://images.unsplash.com/photo-1557804506-669a67965ba0?w=600&q=80" alt="Client meeting" loading="lazy">
+        <div class="wu-label">Client conversation</div>
+      </div>
+    </div>
+
+    <div class="wu-q"><span>1.</span>Think of a conversation you had at work this week in Spanish. What was the topic? Could you have had it in English?</div>
+    <div class="wu-q"><span>2.</span>When someone asks you a question at work — in a meeting — do you answer immediately or take time to think? How would that change in English?</div>
+    <div class="wu-q"><span>3.</span>What's the hardest type of work question to answer in English: past, future, or spontaneous decisions?</div>
+    <div class="wu-q"><span>4.</span>Review challenge: your partner asks you 3 rapid questions — one per tense. You answer each in under 5 seconds.</div>
+
+    <div class="quick-win">
+      <div class="qw-title">⚡ QUICK WIN — 30 seconds</div>
+      <div class="qw-text">Answer these three out loud RIGHT NOW — no thinking: <strong>"What did you do yesterday?"</strong> → <strong>"What are you going to do next week?"</strong> → <strong>"What will you do right after class?"</strong> Three tenses. Three seconds each. Go.</div>
+    </div>
+
+    <div class="tn tn-c2">
+      <div class="tn-label">💡 ENGAGEMENT NOTE</div>
+      <p>Q3 is a valuable diagnostic. Students who say "future" have nailed past tense but are still planning-vocabulary limited. Students who say "spontaneous" are at the will/going-to boundary — the key distinction you've been drilling since S2A. Use their answers to calibrate the speaking challenges in §SP today.</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- §2 SPEAKING TOPIC -->
+<section class="section" id="s2">
+  <img class="sec-img" src="https://images.unsplash.com/photo-1573497620053-ea5300f94f21?w=900&q=80" alt="Business dialogue">
+  <div class="sec-hdr">
+    <span class="sec-num">§2</span>
+    <span class="sec-title">Speaking — The Full Business Conversation</span>
+    <span class="sec-sub">8–10 min</span>
+  </div>
+  <div class="sec-body">
+
+    <div class="tn">
+      <div class="tn-label">⚡ TEACHER NOTE — SCENARIO SETUP</div>
+      <p>Daniel Ochoa calls Valeria for an unscheduled check-in — he has questions about the Apex project across all three tenses. Students role-play both sides. Key: the conversation must feel natural, not scripted. Tell students: <em>"This is not a grammar exercise — this is a Monday morning phone call."</em></p>
+    </div>
+
+    <div class="round-card">
+      <img src="https://images.unsplash.com/photo-1708521778015-8c36d0c9f9a0?w=600&q=80" alt="Phone conversation" loading="lazy">
+      <div class="round-card-body">
+        <div class="round-tags"><span class="rt rt-ts">T-S</span></div>
+        <div class="round-q">Teacher plays Daniel. Student plays Valeria. Daniel asks these 3 questions — one per tense:<br><br>
+        1. <em>"What did you do last week with the Apex supplier?"</em><br>
+        2. <em>"What are you going to do about the delivery schedule?"</em><br>
+        3. <em>"I need the report now — can you do something?"</em> (spontaneous)</div>
+        <button class="reveal-btn" onclick="toggleReveal('m1')">▼ Show Model Answers</button>
+        <div class="model-reveal" id="m1"><p>1. <em>"Last week I called the supplier twice and we discussed the delay. We agreed on a new timeline."</em><br>2. <em>"We're going to renegotiate the contract next week. I already set up the meeting."</em><br>3. <em>"I'll send it to you in 10 minutes — I just need to add the final numbers."</em></p></div>
+      </div>
+    </div>
+
+    <div class="round-card">
+      <img src="https://images.unsplash.com/photo-1664575610022-eb60b83a5685?w=600&q=80" alt="Pair roleplay" loading="lazy">
+      <div class="round-card-body">
+        <div class="round-tags"><span class="rt rt-ss">S-S</span></div>
+        <div class="round-q">Pairs role-play a real check-in call. Partner A: the manager — ask at least 4 questions across all three tenses. Partner B: the team member — answer naturally, then add information the manager didn't ask for (proactive communication). Switch after 90 seconds.</div>
+        <button class="reveal-btn" onclick="toggleReveal('m2')">▼ Show Model Interaction</button>
+        <div class="model-reveal" id="m2"><p>A: <em>"What happened with the budget?"</em> B: <em>"We stayed within budget — actually we saved 8%. And I'm going to reallocate the savings to the training next month."</em> A: <em>"Good. What will you do today?"</em> B: <em>"I'll update the cost report and send it before noon."</em> — Note: Valeria answered AND added information. That's professional English.</p></div>
+      </div>
+    </div>
+
+    <div class="round-card">
+      <img src="https://images.unsplash.com/photo-1543269865-cbf427effbad?w=600&q=80" alt="Class challenge" loading="lazy">
+      <div class="round-card-body">
+        <div class="round-tags"><span class="rt rt-cl">Class</span></div>
+        <div class="round-q">Class challenge — The Rapid Fire Round: Teacher asks 10 questions as fast as possible, alternating tenses. Students answer in under 4 seconds each. No full sentences required — just the key tense element. Score: class vs. clock. Can you answer all 10 in under 45 seconds total?</div>
+        <button class="reveal-btn" onclick="toggleReveal('m3')">▼ Show Question Bank</button>
+        <div class="model-reveal" id="m3"><p>Past: "What did you submit?" / "When did you call?" / "Who did you meet?"<br>Going to: "What are you going to present?" / "When is the meeting going to happen?"<br>Will: "Who will send the report?" / "What will you do next?" / "Will you call the client?" — Mix freely. Keep the energy high. This is a race.</p></div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- §3 VOCABULARY -->
+<section class="section" id="s3">
+  <img class="sec-img" src="https://images.unsplash.com/photo-1664575608026-db56b1dd2cf7?w=900&q=80" alt="Vocabulary">
+  <div class="sec-hdr">
+    <span class="sec-num">§3</span>
+    <span class="sec-title">Vocabulary — Conversation &amp; Meeting Language</span>
+    <span class="sec-sub">10 min</span>
+  </div>
+  <div class="sec-body">
+
+    <div class="tn">
+      <div class="tn-label">⚡ TEACHER NOTE — SPOKEN VS. WRITTEN</div>
+      <p>These 12 words bridge written and spoken business English — they appear in meetings, calls, and presentations, not just emails. Ask after each card: <em>"Is this more formal (email) or more spoken (meeting)?"</em> Some are both. This register awareness is a key A2.1 → A2.2 transition skill.</p>
+    </div>
+
+    <div class="vocab-grid">
+      <div class="vocab-card" onclick="speak('mention')">
+        <img class="vc-img" src="https://images.unsplash.com/photo-1517048676732-d65bc937f952?w=600&q=80" alt="mention" loading="lazy">
+        <div class="vc-body">
+          <div class="vc-word">mention</div>
+          <div class="vc-def">To refer briefly to something in a conversation</div>
+          <div class="vc-ex">"She mentioned the budget issue in Monday's call."</div>
+          <div class="vc-audio">🔊 Click to hear</div>
+        </div>
+      </div>
+      <div class="vocab-card" onclick="speak('raise')">
+        <img class="vc-img" src="https://images.unsplash.com/photo-1531498681704-a9e3e34add7f?w=600&q=80" alt="raise" loading="lazy">
+        <div class="vc-body">
+          <div class="vc-word">raise (a point)</div>
+          <div class="vc-def">To introduce a topic or concern in a meeting</div>
+          <div class="vc-ex">"I want to raise a concern about the delivery timeline."</div>
+          <div class="vc-audio">🔊 Click to hear</div>
+        </div>
+      </div>
+      <div class="vocab-card" onclick="speak('address')">
+        <img class="vc-img" src="https://images.unsplash.com/photo-1528901166007-3784c7dd3653?w=600&q=80" alt="address" loading="lazy">
+        <div class="vc-body">
+          <div class="vc-word">address</div>
+          <div class="vc-def">To deal with or respond to a problem or question</div>
+          <div class="vc-ex">"We addressed the supplier issue last Thursday."</div>
+          <div class="vc-audio">🔊 Click to hear</div>
+        </div>
+      </div>
+      <div class="vocab-card" onclick="speak('propose')">
+        <img class="vc-img" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&q=80" alt="propose" loading="lazy">
+        <div class="vc-body">
+          <div class="vc-word">propose</div>
+          <div class="vc-def">To formally suggest a plan or idea</div>
+          <div class="vc-ex">"I'm going to propose a new schedule at the meeting."</div>
+          <div class="vc-audio">🔊 Click to hear</div>
+        </div>
+      </div>
+      <div class="vocab-card" onclick="speak('resolve')">
+        <img class="vc-img" src="https://images.unsplash.com/photo-1506784365847-bbad939e9335?w=600&q=80" alt="resolve" loading="lazy">
+        <div class="vc-body">
+          <div class="vc-word">resolve</div>
+          <div class="vc-def">To find a solution to a problem</div>
+          <div class="vc-ex">"We resolved the payment issue by end of last week."</div>
+          <div class="vc-audio">🔊 Click to hear</div>
+        </div>
+      </div>
+      <div class="vocab-card" onclick="speak('clarification')">
+        <img class="vc-img" src="https://images.unsplash.com/photo-1664575606149-7d7ddb0a8e8a?w=600&q=80" alt="clarification" loading="lazy">
+        <div class="vc-body">
+          <div class="vc-word">clarification</div>
+          <div class="vc-def">An explanation that makes something easier to understand</div>
+          <div class="vc-ex">"I need some clarification on the new procedure."</div>
+          <div class="vc-audio">🔊 Click to hear</div>
+        </div>
+      </div>
+      <div class="vocab-card" onclick="speak('commitment')">
+        <img class="vc-img" src="https://images.unsplash.com/photo-1664575605796-e5dd0c5f8124?w=600&q=80" alt="commitment" loading="lazy">
+        <div class="vc-body">
+          <div class="vc-word">commitment</div>
+          <div class="vc-def">A firm promise or obligation you take on</div>
+          <div class="vc-ex">"I made a commitment to deliver by Friday — I'll honor it."</div>
+          <div class="vc-audio">🔊 Click to hear</div>
+        </div>
+      </div>
+      <div class="vocab-card" onclick="speak('concern')">
+        <img class="vc-img" src="https://images.unsplash.com/photo-1664575604971-45c4bfa18adc?w=600&q=80" alt="concern" loading="lazy">
+        <div class="vc-body">
+          <div class="vc-word">concern</div>
+          <div class="vc-def">A worry or potential problem</div>
+          <div class="vc-ex">"My main concern is the production schedule for Q2."</div>
+          <div class="vc-audio">🔊 Click to hear</div>
+        </div>
+      </div>
+      <div class="vocab-card" onclick="speak('implement')">
+        <img class="vc-img" src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=600&q=80" alt="implement" loading="lazy">
+        <div class="vc-body">
+          <div class="vc-word">implement</div>
+          <div class="vc-def">To put a plan or decision into action</div>
+          <div class="vc-ex">"We're going to implement the new system next quarter."</div>
+          <div class="vc-audio">🔊 Click to hear</div>
+        </div>
+      </div>
+      <div class="vocab-card" onclick="speak('initiative')">
+        <img class="vc-img" src="https://images.unsplash.com/photo-1522071901873-fc79f1b7d78c?w=600&q=80" alt="initiative" loading="lazy">
+        <div class="vc-body">
+          <div class="vc-word">initiative</div>
+          <div class="vc-def">A new plan or action to achieve a goal</div>
+          <div class="vc-ex">"This is a key initiative for the second half of the year."</div>
+          <div class="vc-audio">🔊 Click to hear</div>
+        </div>
+      </div>
+      <div class="vocab-card" onclick="speak('accountable')">
+        <img class="vc-img" src="https://images.unsplash.com/photo-1664575604355-5a18b47b4db5?w=600&q=80" alt="accountable" loading="lazy">
+        <div class="vc-body">
+          <div class="vc-word">accountable</div>
+          <div class="vc-def">Responsible for results and expected to explain them</div>
+          <div class="vc-ex">"I'm accountable for the project — it's my responsibility."</div>
+          <div class="vc-audio">🔊 Click to hear</div>
+        </div>
+      </div>
+      <div class="vocab-card" onclick="speak('outcome')">
+        <img class="vc-img" src="https://images.unsplash.com/photo-1664575603807-d386c9f36e16?w=600&q=80" alt="outcome" loading="lazy">
+        <div class="vc-body">
+          <div class="vc-word">outcome</div>
+          <div class="vc-def">The result or effect of an action or situation</div>
+          <div class="vc-ex">"The outcome of the negotiation was better than expected."</div>
+          <div class="vc-audio">🔊 Click to hear</div>
+        </div>
+      </div>
+    </div>
+
+    <p style="font-size:13px;color:var(--muted);margin:8px 0 16px">🗣️ Quick: Use 3 of these words in spoken sentences — as if you were in a meeting right now.</p>
+
+    <!-- MATCHING PAIRS MEMORY GAME -->
+    <div class="mp-wrap">
+      <div class="mp-title">🃏 MINI-GAME: MATCHING PAIRS — Word Memory</div>
+      <div class="tn" style="margin-bottom:12px">
+        <div class="tn-label">TEACHER NOTE — HOW TO RUN</div>
+        <p>Project the board. Students take turns clicking two cards to find matching pairs (word + definition). Wrong pair = both flip back. Correct = stay visible. First student to find 6 pairs wins. Works great with 2-4 students competing around one screen, or the whole class calling out which cards to flip.</p>
+      </div>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:12px">Click two cards to find matching pairs.</p>
+      <div class="mp-grid" id="mpGrid"></div>
+      <button class="btn" style="margin-top:10px" onclick="initMP()">↺ Reset Game</button>
+      <div class="mp-score" id="mpScore"></div>
+    </div>
+
+  </div>
+</section>
+
+<!-- §4 COLLOQUIAL -->
+<section class="section" id="s4">
+  <img class="sec-img" src="https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=900&q=80" alt="Natural conversation">
+  <div class="sec-hdr">
+    <span class="sec-num">§4</span>
+    <span class="sec-title">Colloquial — Spoken Business Fillers &amp; Transitions</span>
+    <span class="sec-sub">5 min</span>
+  </div>
+  <div class="sec-body">
+
+    <div class="tn">
+      <div class="tn-label">⚡ TEACHER NOTE — WHY FILLERS MATTER</div>
+      <p>Mexican professionals often go silent when thinking in English — which reads as hesitation or lack of confidence to international colleagues. These 4 phrases buy thinking time AND sound professional. Say: <em>"In English, silence is uncomfortable. These phrases keep you in control while you think."</em> Drill each one with a 3-second pause to simulate real thinking time.</p>
+    </div>
+
+    <div class="collo-grid">
+      <div class="collo-card">
+        <img class="collo-img" src="https://images.unsplash.com/photo-1513128034602-7814ccaddd4e?w=600&q=80" alt="That's a good point" loading="lazy">
+        <div class="collo-body">
+          <div class="collo-phrase">"That's a good point."</div>
+          <div class="collo-ctx">Buys 2–3 seconds while sounding engaged. Use before adding your own perspective. Never just agree and stop.</div>
+          <div class="collo-ex">"That's a good point. I think we also need to consider the supplier timeline."</div>
+        </div>
+      </div>
+      <div class="collo-card">
+        <img class="collo-img" src="https://images.unsplash.com/photo-1664575603229-72b819f45e5e?w=600&q=80" alt="Let me think" loading="lazy">
+        <div class="collo-body">
+          <div class="collo-phrase">"Let me think about that for a second."</div>
+          <div class="collo-ctx">Professional pause. Much better than silence or "Ummm." Signals you're taking the question seriously.</div>
+          <div class="collo-ex">"Let me think about that for a second… I think we went over budget on the installation."</div>
+        </div>
+      </div>
+      <div class="collo-card">
+        <img class="collo-img" src="https://images.unsplash.com/photo-1551076805-e1869033e919?w=600&q=80" alt="To be honest" loading="lazy">
+        <div class="collo-body">
+          <div class="collo-phrase">"To be honest..."</div>
+          <div class="collo-ctx">Signals a direct, sincere answer is coming. Builds trust in professional conversations. Use for opinions or concerns.</div>
+          <div class="collo-ex">"To be honest, I'm not 100% confident we'll meet the deadline."</div>
+        </div>
+      </div>
+      <div class="collo-card">
+        <img class="collo-img" src="https://images.unsplash.com/photo-1553484604-9f524520c793?w=600&q=80" alt="Moving on" loading="lazy">
+        <div class="collo-body">
+          <div class="collo-phrase">"Moving on..."</div>
+          <div class="collo-ctx">Transition phrase to change topics in a meeting or presentation. Smooth, professional, universally understood.</div>
+          <div class="collo-ex">"Great. Moving on — let's talk about the Q2 targets."</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tn tn-c3">
+      <div class="tn-label">💰 RETENTION + UPSELL NOTE</div>
+      <p>"To be honest" and "Let me think about that" are the two highest-value phrases in this session. They directly address the #1 fear of A2.1 students in English conversations: being put on the spot. Assign them as their "comfort phrases" for the week. These two phrases alone can transform a student's perception of their own fluency.</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- §5 GRAMMAR -->
+<section class="section" id="s5">
+  <img class="sec-img" src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=900&q=80" alt="Grammar questions">
+  <div class="sec-hdr">
+    <span class="sec-num">§5</span>
+    <span class="sec-title">Grammar — Wh- Questions in All Three Tenses</span>
+    <span class="sec-sub">12–15 min</span>
+  </div>
+  <div class="sec-body">
+
+    <div class="gram-intro">
+      <div class="gram-situation">
+        <strong>Real situation:</strong> You're in a meeting and your manager asks:<br><br>
+        <em>"What did you do?" / "What are you going to do?" / "What will you do?"</em><br><br>
+        Three questions. Three tenses. Same Wh- word. The structure changes each time — and if you get it wrong, the tense collapses.<br><br>
+        <strong>The tool:</strong> Wh- question formation across Simple Past, Going To, and Will.
+      </div>
+    </div>
+
+    <table class="gram-table">
+      <tr><th>Tense</th><th>Wh- Question Structure</th><th>Example</th></tr>
+      <tr>
+        <td><span class="hl">Simple Past</span></td>
+        <td>Wh- + <strong>did</strong> + subject + base verb?</td>
+        <td>"<span class="hl">What did</span> you <span class="hl">do</span> last week?"</td>
+      </tr>
+      <tr>
+        <td><span class="hl2">Going To</span></td>
+        <td>Wh- + <strong>am/is/are</strong> + subject + <strong>going to</strong> + base?</td>
+        <td>"<span class="hl2">What are</span> you <span class="hl2">going to present</span> on Friday?"</td>
+      </tr>
+      <tr>
+        <td><span class="hl3">Will</span></td>
+        <td>Wh- + <strong>will</strong> + subject + base verb?</td>
+        <td>"<span class="hl3">Who will</span> <span class="hl3">handle</span> the client call?"</td>
+      </tr>
+      <tr>
+        <td colspan="3" style="color:var(--muted);font-size:12px;padding:8px 12px">Common Wh- words: What / When / Where / Who / Why / How / How long / How many</td>
+      </tr>
+    </table>
+
+    <div class="tn">
+      <div class="tn-label">⚡ TEACHER NOTE — THE HIDDEN ERROR</div>
+      <p>The most common error: <em>"What you did last week?"</em> (missing auxiliary). Students transfer Spanish word order directly. Say: <em>"In English, the auxiliary does the work — 'did', 'are going to', 'will' — you can't drop it."</em> Run a quick substitution drill: same question, all three tenses. "What did / are going to / will you [verb]?" — students produce all three versions for the same situation.</p>
+    </div>
+
+    <!-- ACTIVITY A — BUILD THE QUESTION -->
+    <div class="activity-wrap">
+      <div class="activity-title">ACTIVITY A — Choose the Correct Question Form</div>
+      <div id="actAScore" class="activity-score"></div>
+
+      <div class="q-item" id="qa1">
+        <div class="q-text">1. You want to ask your colleague about their past actions: "___ you do last Friday?"</div>
+        <div class="q-opts">
+          <button class="q-opt" onclick="checkOpt(this,'What did','qa1','fb1')">What did</button>
+          <button class="q-opt" onclick="checkOpt(this,'What are','qa1','fb1')">What are</button>
+          <button class="q-opt" onclick="checkOpt(this,'What will','qa1','fb1')">What will</button>
+        </div>
+        <div class="q-fb" id="fb1"></div>
+      </div>
+
+      <div class="q-item" id="qa2">
+        <div class="q-text">2. You want to ask about a planned future action: "___ the team going to present on Tuesday?"</div>
+        <div class="q-opts">
+          <button class="q-opt" onclick="checkOpt(this,'What is','qa2','fb2')">What is</button>
+          <button class="q-opt" onclick="checkOpt(this,'What did','qa2','fb2')">What did</button>
+          <button class="q-opt" onclick="checkOpt(this,'What will','qa2','fb2')">What will</button>
+        </div>
+        <div class="q-fb" id="fb2"></div>
+      </div>
+
+      <div class="q-item" id="qa3">
+        <div class="q-text">3. In the meeting right now, you offer to do something. Your manager asks: "___ you do?" (spontaneous)</div>
+        <div class="q-opts">
+          <button class="q-opt" onclick="checkOpt(this,'What will','qa3','fb3')">What will</button>
+          <button class="q-opt" onclick="checkOpt(this,'What did','qa3','fb3')">What did</button>
+          <button class="q-opt" onclick="checkOpt(this,'What are going to','qa3','fb3')">What are going to</button>
+        </div>
+        <div class="q-fb" id="fb3"></div>
+      </div>
+
+      <div class="q-item" id="qa4">
+        <div class="q-text">4. "___ the supplier deliver the components?" (past — asking about a specific event)</div>
+        <div class="q-opts">
+          <button class="q-opt" onclick="checkOpt(this,'When did','qa4','fb4')">When did</button>
+          <button class="q-opt" onclick="checkOpt(this,'When is','qa4','fb4')">When is</button>
+          <button class="q-opt" onclick="checkOpt(this,'When will','qa4','fb4')">When will</button>
+        </div>
+        <div class="q-fb" id="fb4"></div>
+      </div>
+
+      <div class="q-item" id="qa5">
+        <div class="q-text">5. "___ handle the Guadalajara account next quarter?" (asking about future responsibility)</div>
+        <div class="q-opts">
+          <button class="q-opt" onclick="checkOpt(this,'Who will','qa5','fb5')">Who will</button>
+          <button class="q-opt" onclick="checkOpt(this,'Who did','qa5','fb5')">Who did</button>
+          <button class="q-opt" onclick="checkOpt(this,'Who is going to','qa5','fb5')">Who is going to</button>
+        </div>
+        <div class="q-fb" id="fb5"></div>
+      </div>
+
+    </div>
+
+    <p style="font-size:13px;color:var(--muted);margin:8px 0 16px">🗣️ Quick: Ask your partner the same question in all three tenses: <em>"What did/are you going to/will you [verb]?"</em></p>
+
+    <!-- ACTIVITY B — DRAG SCRAMBLED DIALOGUE -->
+    <div class="activity-wrap">
+      <div class="activity-title">ACTIVITY B — REORDER: The Check-In Dialogue</div>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:12px">These lines from a check-in conversation are scrambled. Put them in the correct logical order.</p>
+
+      <ul class="drag-list" id="order1">
+        <li class="drag-item" draggable="true"><span class="drag-handle">⠿</span>I'll send you the updated risk report this afternoon.</li>
+        <li class="drag-item" draggable="true"><span class="drag-handle">⠿</span>Daniel: What did you work on last week?</li>
+        <li class="drag-item" draggable="true"><span class="drag-handle">⠿</span>Valeria: I worked on the Apex quality audit. We finished it by Thursday.</li>
+        <li class="drag-item" draggable="true"><span class="drag-handle">⠿</span>Daniel: Good. What are you going to do about the risk report?</li>
+      </ul>
+
+      <button class="btn btn-accent" style="margin-top:10px" onclick="checkOrder(\'order1\',[\'Daniel: What did you work on last week?\',\'Valeria: I worked on the Apex quality audit. We finished it by Thursday.\',\'Daniel: Good. What are you going to do about the risk report?\',\'I\'ll send you the updated risk report this afternoon.\'],\'drag1fb\')">✓ Check Order</button>
+      <div class="drag-fb" id="drag1fb"></div>
+    </div>
+
+    <div class="timer-wrap">
+      <svg class="timer-svg" width="90" height="90" viewBox="0 0 90 90">
+        <circle class="timer-bg" cx="45" cy="45" r="38" stroke-width="6"/>
+        <circle class="timer-arc" id="tArcGram" cx="45" cy="45" r="38" stroke-width="6" stroke-dasharray="238.76" stroke-dashoffset="0"/>
+        <text class="timer-text" id="tTextGram" x="45" y="44">2:00</text>
+        <text class="timer-label" x="45" y="57">question drill</text>
+      </svg>
+      <div>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:8px">Write 3 Wh- questions — one per tense — about a real work topic.</p>
+        <button class="btn btn-accent" onclick="startTimer('tArcGram','tTextGram',120,'b3',238.76)">START</button>
+        <button class="btn" style="margin-left:8px" onclick="resetArc('tArcGram','tTextGram',120,238.76)">RESET</button>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- §6 LISTENING -->
+<section class="section" id="s6">
+  <img class="sec-img" src="https://images.unsplash.com/photo-1544531586-fde5298cdd40?w=900&q=80" alt="Listening">
+  <div class="sec-hdr">
+    <span class="sec-num">§6</span>
+    <span class="sec-title">Listening — The Monday Check-In Call</span>
+    <span class="sec-sub">8–10 min</span>
+  </div>
+  <div class="sec-body">
+
+    <div class="tn">
+      <div class="tn-label">⚡ TEACHER NOTE — PRE-LISTENING</div>
+      <p>Tell students: <em>"Listen for two things: (1) How many Wh- questions does Daniel ask? (2) Which tense does he use for each?"</em> Students make two columns in their notebook: Question / Tense. Compare answers after the audio. Then play again for full comprehension.</p>
+    </div>
+
+    <div class="listen-player">
+      <img src="https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?w=900&q=80" alt="Phone call" loading="lazy">
+      <div class="listen-inner">
+        <button class="play-btn">▶</button>
+        <div>
+          <div class="track-title">Daniel &amp; Valeria — Monday Check-In, Solaris Manufacturing</div>
+          <div class="track-sub">A2.1 · M6 · S4A · Voices: Daniel &amp; Valeria · Speed: 0.82</div>
+        </div>
+        <div class="waveform" id="wv"></div>
+      </div>
+    </div>
+
+    <button class="script-toggle" onclick="toggleScript()">▼ Show ElevenLabs Script</button>
+    <div class="script-box" id="scriptBox">
+      Daniel: Good morning, Valeria. Do you have a few minutes?
+
+      Valeria: Of course, Daniel. Go ahead.
+
+      Daniel: Great. Let me start with last week. What did you work on for the Apex project?
+
+      Valeria: Last week I focused on the supplier coordination. I called them on Monday and Thursday, and we reviewed the new delivery schedule. We also identified a small quality issue with component seven, but we resolved it by Wednesday.
+
+      Daniel: Good. And what did the Apex coordinator say about the delay?
+
+      Valeria: He understood the situation. He said the delay was acceptable and he appreciated the communication. We're back on track.
+
+      Daniel: Excellent. Now, moving on — what are you going to do about the Q2 production review?
+
+      Valeria: We're going to schedule it for the third week of next month. I'm going to send the agenda to all stakeholders by Friday. The review is going to cover both the Apex results and the new initiative for the second semester.
+
+      Daniel: Perfect. And one more thing — I need a cost summary for the board meeting. What will you do?
+
+      Valeria: I'll prepare the summary today and send it to you before five. I'll also include the risk analysis — I think the board will want to see it.
+
+      Daniel: Great. That's exactly what I needed. To be honest, Valeria, this project is going very well under your management.
+
+      Valeria: Thank you, Daniel. I'll keep you posted on anything that changes.
+
+      Daniel: Perfect. Let's pick this up again next Monday. Have a good week.
+    </div>
+
+    <!-- MC COMPREHENSION -->
+    <div style="margin-top:18px">
+      <p style="font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--accent);margin-bottom:12px">COMPREHENSION — Multiple Choice</p>
+
+      <div class="mc-item" id="mc1">
+        <div class="mc-stmt">1. What quality issue did Valeria mention?</div>
+        <div class="mc-opts">
+          <button class="mc-opt" onclick="doMC(this,false,'mc1')">An issue with the delivery schedule</button>
+          <button class="mc-opt" onclick="doMC(this,true,'mc1')">A quality issue with component seven</button>
+          <button class="mc-opt" onclick="doMC(this,false,'mc1')">A problem with the Q2 budget</button>
+        </div>
+      </div>
+
+      <div class="mc-item" id="mc2">
+        <div class="mc-stmt">2. When is Valeria going to send the agenda for the Q2 review?</div>
+        <div class="mc-opts">
+          <button class="mc-opt" onclick="doMC(this,false,'mc2')">Today, before 5pm</button>
+          <button class="mc-opt" onclick="doMC(this,true,'mc2')">By Friday</button>
+          <button class="mc-opt" onclick="doMC(this,false,'mc2')">Next Monday</button>
+        </div>
+      </div>
+
+      <div class="mc-item" id="mc3">
+        <div class="mc-stmt">3. What will Valeria send Daniel before 5pm today?</div>
+        <div class="mc-opts">
+          <button class="mc-opt" onclick="doMC(this,false,'mc3')">The Q2 production review agenda</button>
+          <button class="mc-opt" onclick="doMC(this,false,'mc3')">The supplier delivery schedule</button>
+          <button class="mc-opt" onclick="doMC(this,true,'mc3')">The cost summary and risk analysis</button>
+        </div>
+      </div>
+
+      <div class="mc-item" id="mc4">
+        <div class="mc-stmt">4. Which colloquial phrases from this module did you hear in the dialogue?</div>
+        <div class="mc-opts">
+          <button class="mc-opt" onclick="doMC(this,true,'mc4')">"We're back on track" / "Moving on" / "To be honest" / "Let's pick this up" / "I'll keep you posted"</button>
+          <button class="mc-opt" onclick="doMC(this,false,'mc4')">"Let's wrap this up" / "Are we on the same page?" / "Keep me in the loop"</button>
+          <button class="mc-opt" onclick="doMC(this,false,'mc4')">"Please find attached" / "I look forward to hearing from you"</button>
+        </div>
+      </div>
+
+    </div>
+
+    <p style="font-size:13px;color:var(--muted);margin-top:16px">🗣️ Quick: Count how many Wh- questions Daniel asked. Which tense did he use for each?</p>
+
+  </div>
+</section>
+
+<!-- §SP SPEAKING PRACTICE -->
+<section class="section" id="ssp">
+  <img class="sec-img" src="https://images.unsplash.com/photo-1664575600796-fcc6a83db1e7?w=900&q=80" alt="Speaking pairs">
+  <div class="sec-hdr">
+    <span class="sec-num">§SP</span>
+    <span class="sec-title">Speaking Practice — Speaking Cards: The Real Conversation</span>
+    <span class="sec-sub">10–12 min</span>
+  </div>
+  <div class="sec-body">
+
+    <div class="tn">
+      <div class="tn-label">⚡ TEACHER NOTE — SPEAKING CARDS INTEGRATION</div>
+      <p>The Speaking Cards below integrate the vocabulary from §3, the fillers from §4, and the Wh- questions from §5 — all in one production activity. Students draw a card, use the filler phrase, answer using the correct tense, and add a Wh- question back to their partner. This is the closest simulation to a real conversation they'll have in A2.1.</p>
+    </div>
+
+    <!-- SPEAKING CARDS MINI-GAME -->
+    <div class="sc-wrap">
+      <div class="sc-title">🗣️ SPEAKING CARDS — Draw a Prompt</div>
+
+      <div class="sc-stage">
+        <div class="sc-card active" id="sc0">
+          <div class="sc-tense" style="color:var(--accent)">SIMPLE PAST</div>
+          <div class="sc-prompt">"What did you <strong>resolve</strong> at work last week?"</div>
+          <div class="sc-hint">Start with: "Let me think about that for a second..." — then answer in Simple Past.</div>
+        </div>
+        <div class="sc-card" id="sc1">
+          <div class="sc-tense" style="color:var(--success)">GOING TO</div>
+          <div class="sc-prompt">"What initiative are you going to <strong>implement</strong> next month?"</div>
+          <div class="sc-hint">Start with: "To be honest..." — then use going to + time expression.</div>
+        </div>
+        <div class="sc-card" id="sc2">
+          <div class="sc-tense" style="color:var(--warn)">WILL</div>
+          <div class="sc-prompt">"Your manager just <strong>raised a concern</strong> about the deadline. What will you do?"</div>
+          <div class="sc-hint">Spontaneous decision — use will immediately. Then add: "I'll keep you posted."</div>
+        </div>
+        <div class="sc-card" id="sc3">
+          <div class="sc-tense" style="color:var(--accent)">SIMPLE PAST</div>
+          <div class="sc-prompt">"Who did you <strong>address</strong> a problem with last week? What was the outcome?"</div>
+          <div class="sc-hint">"That's a good point. Last week I addressed... The outcome was..."</div>
+        </div>
+        <div class="sc-card" id="sc4">
+          <div class="sc-tense" style="color:var(--success)">GOING TO</div>
+          <div class="sc-prompt">"Are you going to <strong>propose</strong> any changes to your team's process? When?"</div>
+          <div class="sc-hint">Answer with going to + specific time. Then ask your partner the same question.</div>
+        </div>
+        <div class="sc-card" id="sc5">
+          <div class="sc-tense" style="color:var(--gold)">ALL THREE</div>
+          <div class="sc-prompt">"Give your partner a 60-second project update: past + going to + will. Use at least 3 vocab words from §3."</div>
+          <div class="sc-hint">Partner listens and counts the vocab words used. Minimum: 3 words. Badge if you hit 5+.</div>
+        </div>
+      </div>
+
+      <div class="sc-nav">
+        <button class="btn" onclick="scNav(-1)">← Prev</button>
+        <button class="btn btn-accent" onclick="scNav(1)">Next Card →</button>
+      </div>
+      <div class="sc-counter" id="scCounter">Card 1 of 6</div>
+    </div>
+
+    <div class="sp-wrap">
+      <div class="sp-card">
+        <div class="sp-num">QUESTION 5 · Class</div>
+        <div class="sp-q">Class vote: which pair had the most natural-sounding conversation? No grammar police — vote on FLUENCY and confidence only.</div>
+        <div class="sp-hint">Criteria: Did they use fillers naturally? Did they add information without being asked? Did it feel like a real conversation?</div>
+      </div>
+    </div>
+
+    <div class="timer-wrap">
+      <svg class="timer-svg" width="90" height="90" viewBox="0 0 90 90">
+        <circle class="timer-bg" cx="45" cy="45" r="38" stroke-width="6"/>
+        <circle class="timer-arc" id="tArcSP" cx="45" cy="45" r="38" stroke-width="6" stroke-dasharray="238.76" stroke-dashoffset="0"/>
+        <text class="timer-text" id="tTextSP" x="45" y="44">1:30</text>
+        <text class="timer-label" x="45" y="57">per card</text>
+      </svg>
+      <div>
+        <button class="btn btn-accent" onclick="startTimer('tArcSP','tTextSP',90,'b1',238.76)">START</button>
+        <button class="btn" style="margin-left:8px" onclick="resetArc('tArcSP','tTextSP',90,238.76)">RESET</button>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- §PHRASES -->
+<section class="section" id="sphrases">
+  <div class="sec-hdr" style="background:linear-gradient(135deg,rgba(255,184,0,.1),rgba(0,207,255,.05))">
+    <span class="sec-num" style="background:var(--gold);color:#000">🎯</span>
+    <span class="sec-title">3 Phrases for This Week</span>
+    <span class="sec-sub">For your next real conversation at work</span>
+  </div>
+  <div class="sec-body">
+    <div class="phrases-wrap">
+      <div class="phrase-card">
+        <div class="phrase-en">"Let me think about that for a second."</div>
+        <div class="phrase-ctx">Use it this week every time someone asks you a question in English and you need 3 seconds. Never go silent — use this phrase.</div>
+      </div>
+      <div class="phrase-card">
+        <div class="phrase-en">"To be honest, I think..."</div>
+        <div class="phrase-ctx">When you need to give a direct opinion in a meeting. Sounds confident and professional. Use it once this week in a real meeting.</div>
+      </div>
+      <div class="phrase-card">
+        <div class="phrase-en">"What did / are you going to / will you do?"</div>
+        <div class="phrase-ctx">Practice asking Wh- questions across tenses. Ask a colleague one question in each tense about a project this week.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- §7 WRAP-UP -->
+<section class="section" id="s7">
+  <img class="sec-img" src="https://images.unsplash.com/photo-1529900748604-07564a03e7a6?w=900&q=80" alt="Wrap up achievement">
+  <div class="sec-hdr">
+    <span class="sec-num">§7</span>
+    <span class="sec-title">Wrap-Up — The Full A2.1 Conversation Toolkit</span>
+    <span class="sec-sub">5–8 min</span>
+  </div>
+  <div class="sec-body">
+
+    <div class="timer-wrap" style="margin-bottom:18px">
+      <svg class="timer-svg" width="90" height="90" viewBox="0 0 90 90">
+        <circle class="timer-bg" cx="45" cy="45" r="38" stroke-width="6"/>
+        <circle class="timer-arc" id="tArcWrap" cx="45" cy="45" r="38" stroke-width="6" stroke-dasharray="238.76" stroke-dashoffset="0"/>
+        <text class="timer-text" id="tTextWrap" x="45" y="44">0:45</text>
+        <text class="timer-label" x="45" y="57">exit drill</text>
+      </svg>
+      <div>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:8px">45-sec: each student says one Wh- question per tense about their own project.</p>
+        <button class="btn btn-accent" onclick="startTimer('tArcWrap','tTextWrap',45,'b5',238.76)">START</button>
+        <button class="btn" style="margin-left:8px" onclick="resetArc('tArcWrap','tTextWrap',45,238.76)">RESET</button>
+      </div>
+    </div>
+
+    <div class="wrapup-grid">
+      <div class="wrapup-card">
+        <div class="wrapup-icon">❓</div>
+        <div class="wrapup-point">Wh- Questions × 3</div>
+        <div class="wrapup-desc">What did / What are you going to / What will — same Wh-, three different auxiliaries, three different moments in time.</div>
+      </div>
+      <div class="wrapup-card">
+        <div class="wrapup-icon">🗣️</div>
+        <div class="wrapup-point">Fillers = Fluency</div>
+        <div class="wrapup-desc">"Let me think..." / "To be honest..." / "That's a good point." — buy thinking time AND sound professional.</div>
+      </div>
+      <div class="wrapup-card">
+        <div class="wrapup-icon">🔗</div>
+        <div class="wrapup-point">Full Integration</div>
+        <div class="wrapup-desc">S4A completes the A2.1 spoken system: questions + answers + fillers + transitions across all three tenses.</div>
+      </div>
+    </div>
+
+    <p style="font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--accent);margin:18px 0 10px">I Can Now...</p>
+    <ul class="checklist">
+      <li class="check-item" onclick="this.classList.toggle('done')"><div class="check-box"></div><span>Form Wh- questions in Simple Past, Going To, and Will</span></li>
+      <li class="check-item" onclick="this.classList.toggle('done')"><div class="check-box"></div><span>Use professional fillers to buy thinking time in English</span></li>
+      <li class="check-item" onclick="this.classList.toggle('done')"><div class="check-box"></div><span>Hold a natural 90-second check-in conversation using all three tenses</span></li>
+      <li class="check-item" onclick="this.classList.toggle('done')"><div class="check-box"></div><span>Ask and answer questions about past work, future plans, and commitments</span></li>
+      <li class="check-item" onclick="this.classList.toggle('done')"><div class="check-box"></div><span>Add information proactively in a conversation (not just answer — also volunteer)</span></li>
+    </ul>
+
+    <div class="next-card">
+      <div class="next-label">NEXT SESSION — S4B · Production &amp; Fluency — THEN S5 EXIT PROJECT</div>
+      <p style="font-size:13px;color:var(--muted)">S4B is the final production session before the Exit Project. Prepare your real project update — you'll present it, write the email, and answer spontaneous questions. The Exit Project follows in S5: a 4-minute integrated assessment. Start thinking now.</p>
+    </div>
+
+    <div class="win-wrap">
+      <p style="font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--gold);margin-bottom:10px">🎖️ My Win Today</p>
+      <textarea id="myWin" class="win-ta" placeholder="Write the best question or answer you produced today in English. This is S4A — you're almost at the Exit Project."></textarea>
+      <button class="btn btn-accent" style="margin-top:10px" onclick="saveWin()">Save My Win</button>
+      <div id="winConfirm">✓ Saved! One more session before the Exit Project. You've got this.</div>
+    </div>
+
+  </div>
+</section>
+
+<footer class="ftr">
+  <div class="fbrand">Gabriel Turner · English Training</div>
+  <div style="font-size:11px;color:var(--muted)">A2.1 · M6 · S4A · GT_A2_1_M6_S4A_TEACHER_v1.html</div>
+  <div class="flevels">
+    <div class="flv">A1.1</div><div class="flv">A1.2</div><div class="flv on">A2.1</div>
+    <div class="flv">A2.2</div><div class="flv">B1.1</div><div class="flv">B1.2</div>
+  </div>
+</footer>
+
+<button class="sm-btn" onclick="toggleSM()"><span id="smt-label">Teacher Mode</span></button>
+
+<script>
+function speak(t){if(!window.speechSynthesis)return;speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='en-US';u.rate=0.82;u.pitch=1;speechSynthesis.speak(u);}
+
+const badgeEarned={b1:false,b2:false,b3:false,b4:false,b5:false};
+function earnBadge(id){if(badgeEarned[id])return;badgeEarned[id]=true;const el=document.getElementById(id);if(el)el.classList.add('earned');if(Object.values(badgeEarned).every(Boolean)){launchConfetti();const cm=document.getElementById('confMsg');if(cm)cm.style.display='block';}}
+function launchConfetti(){const colors=['#00CFFF','#67E8F9','#00E5A0','#FFB800','#ffffff','#FF4D6D'];for(let i=0;i<90;i++){const d=document.createElement('div');d.style.cssText='position:fixed;top:-10px;pointer-events:none;z-index:9999;border-radius:2px;';d.style.left=Math.random()*100+'vw';d.style.width=(6+Math.random()*6)+'px';d.style.height=(6+Math.random()*6)+'px';d.style.background=colors[Math.floor(Math.random()*colors.length)];d.style.animation='confFall '+(1.5+Math.random()*2)+'s linear forwards';document.body.appendChild(d);setTimeout(()=>d.remove(),4000);}}
+
+let timerIntervals={};
+function startTimer(arcId,textId,seconds,badgeKey,circumference){
+  if(timerIntervals[arcId])clearInterval(timerIntervals[arcId]);
+  const arc=document.getElementById(arcId),txt=document.getElementById(textId);let rem=seconds;
+  function update(){arc.style.strokeDashoffset=circumference*(1-rem/seconds);const m=Math.floor(rem/60),s=rem%60;txt.textContent=m+':'+(s<10?'0':'')+s;if(rem<=5)arc.style.stroke='#FF4D6D';if(rem<=0){clearInterval(timerIntervals[arcId]);arc.style.stroke='var(--success)';if(badgeKey)earnBadge(badgeKey);return;}rem--;}
+  update();timerIntervals[arcId]=setInterval(update,1000);
+}
+function resetArc(arcId,textId,seconds,circumference){if(timerIntervals[arcId]){clearInterval(timerIntervals[arcId]);delete timerIntervals[arcId];}const arc=document.getElementById(arcId);arc.style.strokeDashoffset='0';arc.style.stroke='var(--accent)';const m=Math.floor(seconds/60),s=seconds%60;document.getElementById(textId).textContent=m+':'+(s<10?'0':'')+s;}
+
+function toggleReveal(id){const el=document.getElementById(id);el.classList.toggle('show');el.previousElementSibling.textContent=el.classList.contains('show')?'▲ Hide Model Answer':'▼ Show Model Answer';}
+function toggleScript(){const b=document.getElementById('scriptBox');b.classList.toggle('open');document.querySelector('.script-toggle').textContent=b.classList.contains('open')?'▲ Hide Script':'▼ Show ElevenLabs Script';}
+function saveWin(){const v=document.getElementById('myWin').value.trim();if(!v)return;const c=document.getElementById('winConfirm');if(c)c.style.display='block';earnBadge('b5');}
+
+// GRAMMAR ACTIVITY A
+const correctA={qa1:'What did',qa2:'What is',qa3:'What will',qa4:'When did',qa5:'Who will'};
+const expA={qa1:'Past time marker "last Friday" → Simple Past: What did you do?',qa2:'Pre-scheduled plan → going to: What is the team going to present?',qa3:'Spontaneous decision asked right now → will: What will you do?',qa4:'Past specific event → Simple Past: When did the supplier deliver?',qa5:'Future responsibility → will or going to both work; will is more spontaneous here.'};
+let actA_correct=0;
+function checkOpt(btn,answer,qId,fbId){
+  const group=document.getElementById(qId);group.querySelectorAll('.q-opt').forEach(b=>b.disabled=true);
+  const correct=correctA[qId];
+  if(answer===correct){btn.classList.add('correct');document.getElementById(fbId).textContent='✓ '+expA[qId];actA_correct++;}
+  else{btn.classList.add('wrong');document.getElementById(fbId).textContent='✗ '+expA[qId];group.querySelectorAll('.q-opt').forEach(b=>{if(b.textContent.trim()===correct)b.classList.add('correct');});}
+  if(actA_correct>=4){earnBadge('b3');const sc=document.getElementById('actAScore');if(sc)sc.textContent='Score: '+actA_correct+'/5 — Badge earned! ⚡';}
+}
+
+// MC
+function doMC(btn,isCorrect,qId){
+  const group=document.getElementById(qId);group.querySelectorAll('.mc-opt').forEach(b=>b.disabled=true);
+  if(isCorrect){btn.style.cssText='background:rgba(0,229,160,.15);border-color:var(--success);color:var(--success)';}
+  else{btn.style.cssText='background:rgba(255,77,109,.12);border-color:var(--danger);color:var(--danger)';}
+  earnBadge('b4');
+}
+
+// DRAG
+function initDrag(listId){
+  const list=document.getElementById(listId);if(!list)return;
+  let dragging=null;
+  list.querySelectorAll('.drag-item').forEach(item=>{
+    item.addEventListener('dragstart',()=>{dragging=item;item.style.opacity='.4';});
+    item.addEventListener('dragend',()=>{item.style.opacity='1';dragging=null;});
+    item.addEventListener('dragover',e=>{e.preventDefault();item.classList.add('drag-over');});
+    item.addEventListener('dragleave',()=>item.classList.remove('drag-over'));
+    item.addEventListener('drop',e=>{e.preventDefault();item.classList.remove('drag-over');if(dragging&&dragging!==item)list.insertBefore(dragging,item);});
+  });
+}
+function checkOrder(listId,correctOrder,fbId){
+  const list=document.getElementById(listId);
+  const items=Array.from(list.querySelectorAll('.drag-item')).map(i=>i.textContent.replace('⠿','').trim());
+  const fb=document.getElementById(fbId);
+  let allOk=items.every((item,i)=>item===correctOrder[i]);
+  if(allOk){fb.className='drag-fb ok';fb.textContent='✓ Perfect! Question (Past) → Answer (Past) → Question (Going To) → Answer (Will). Natural dialogue flow.';}
+  else{fb.className='drag-fb err';fb.textContent='✗ Not quite. Think: Daniel asks past → Valeria answers past → Daniel asks going to → Valeria answers with will commitment.';}
+}
+
+// MATCHING PAIRS MEMORY
+const mpPairs=[
+  ['mention','To refer briefly to something'],
+  ['resolve','To find a solution to a problem'],
+  ['concern','A worry or potential problem'],
+  ['implement','To put a plan into action'],
+  ['accountable','Responsible for results'],
+  ['propose','To formally suggest a plan'],
+];
+let mpCards=[],mpFlipped=[],mpMatched=0;
+function initMP(){
+  mpFlipped=[];mpMatched=0;
+  document.getElementById('mpScore').textContent='';
+  const pairs=[...mpPairs];
+  const flat=[];
+  pairs.forEach(([w,d],i)=>{flat.push({text:w,pair:i,type:'word'});flat.push({text:d,pair:i,type:'def'});});
+  flat.sort(()=>Math.random()-.5);
+  mpCards=flat;
+  const grid=document.getElementById('mpGrid');
+  grid.innerHTML='';
+  flat.forEach((item,idx)=>{
+    const card=document.createElement('div');
+    card.className='mp-card';
+    card.innerHTML='<span class="mp-back">?</span>';
+    card.dataset.idx=idx;
+    card.onclick=()=>mpFlip(card,item,idx);
+    grid.appendChild(card);
+  });
+}
+function mpFlip(card,item,idx){
+  if(card.classList.contains('matched')||card.classList.contains('flipped'))return;
+  if(mpFlipped.length>=2)return;
+  card.classList.add('flipped');
+  card.textContent=item.text;
+  card.style.fontSize=item.text.length>15?'10px':'12px';
+  mpFlipped.push({card,item,idx});
+  if(mpFlipped.length===2){
+    const [a,b]=mpFlipped;
+    if(a.item.pair===b.item.pair&&a.item.type!==b.item.type){
+      a.card.classList.replace('flipped','matched');
+      b.card.classList.replace('flipped','matched');
+      mpMatched++;
+      document.getElementById('mpScore').textContent='Matched: '+mpMatched+'/'+mpPairs.length+(mpMatched===mpPairs.length?' 🃏 Badge earned!':'');
+      if(mpMatched===mpPairs.length)earnBadge('b2');
+      mpFlipped=[];
+    } else {
+      setTimeout(()=>{
+        a.card.classList.add('wrong');b.card.classList.add('wrong');
+        setTimeout(()=>{
+          a.card.classList.remove('flipped','wrong');a.card.innerHTML='<span class="mp-back">?</span>';
+          b.card.classList.remove('flipped','wrong');b.card.innerHTML='<span class="mp-back">?</span>';
+          mpFlipped=[];
+        },500);
+      },700);
+    }
+  }
+}
+
+// SPEAKING CARDS
+let scIdx=0;
+const scTotal=6;
+function scNav(dir){
+  document.getElementById('sc'+scIdx).classList.remove('active');
+  scIdx=(scIdx+dir+scTotal)%scTotal;
+  document.getElementById('sc'+scIdx).classList.add('active');
+  document.getElementById('scCounter').textContent='Card '+(scIdx+1)+' of '+scTotal;
+}
+
+// WAVEFORM
+(function(){const wv=document.getElementById('wv');if(!wv)return;for(let i=0;i<60;i++){const b=document.createElement('div');b.className='wbar';b.style.height=(8+Math.sin(i*.6)*10+Math.random()*18)+'px';b.style.opacity=.3+Math.random()*.4;wv.appendChild(b);}})();
+
+window.addEventListener('scroll',()=>{const h=document.documentElement;const bar=document.getElementById('progressBar');if(bar)bar.style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight)*100)+'%';});
+function toggleSM(){document.body.classList.toggle('sm');document.getElementById('smt-label').textContent=document.body.classList.contains('sm')?'Student Mode':'Teacher Mode';}
+(function(){const s=document.createElement('style');s.textContent='@keyframes confFall{0%{transform:translateY(-10px) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}';document.head.appendChild(s);})();
+
+// INIT
+initMP();
+initDrag('order1');
+</script>
+</body>
+</html>

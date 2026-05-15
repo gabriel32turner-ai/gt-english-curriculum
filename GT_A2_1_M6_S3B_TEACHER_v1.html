@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GT A2.1 · M6 S3B · Production &amp; Fluency</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#080808;--surface:#111318;--surface2:#1a1f28;
+  --accent:#00CFFF;--accent2:#67E8F9;
+  --border:rgba(0,207,255,.18);
+  --text:#F0F4F8;--muted:#8A9BB0;--dim:rgba(226,226,226,.25);
+  --danger:#FF4D6D;--success:#00E5A0;--warn:#FFB347;
+  --cyan:#00CFFF;--gold:#FFB800;
+  --font-head:'Syne',sans-serif;--font-body:'DM Sans',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:15px;line-height:1.6}
+.prog-wrap{position:fixed;top:0;left:0;width:100%;height:3px;background:rgba(0,207,255,.1);z-index:1000}
+.prog-bar{height:3px;background:var(--accent);width:0%;transition:width .3s}
+.hdr{position:sticky;top:3px;background:rgba(8,8,8,.92);backdrop-filter:blur(14px);border-bottom:1px solid var(--border);padding:12px 32px;display:flex;align-items:center;justify-content:space-between;z-index:900;flex-wrap:wrap;gap:10px}
+.brand{display:flex;align-items:center;gap:10px}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 8px var(--accent)}
+.bname{font-family:var(--font-head);font-size:15px;font-weight:700}
+.bsub{font-size:11px;color:var(--muted)}
+.sess-tags{display:flex;gap:6px;flex-wrap:wrap}
+.tag{font-family:var(--font-head);font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;letter-spacing:.5px}
+.t-lv{background:rgba(0,207,255,.15);color:var(--accent);border:1px solid var(--border)}
+.t-mod{background:rgba(255,184,0,.1);color:var(--gold);border:1px solid rgba(255,184,0,.2)}
+.t-sess{background:rgba(255,255,255,.06);color:var(--text);border:1px solid rgba(255,255,255,.08)}
+.t-time{background:rgba(0,229,160,.1);color:var(--success);border:1px solid rgba(0,229,160,.2)}
+.badge-strip{display:flex;align-items:center;gap:12px;padding:14px 32px;background:var(--surface);border-bottom:1px solid var(--border);flex-wrap:wrap}
+.badge-strip span[id]{font-size:22px;filter:grayscale(1);opacity:.25;transition:all .4s}
+.badge-strip span[id].earned{filter:none;opacity:1;animation:badgePop .5s ease}
+@keyframes badgePop{0%{transform:scale(1)}50%{transform:scale(1.35)}100%{transform:scale(1)}}
+.badge-label{font-size:11px;color:var(--muted);margin-left:auto}
+#confMsg{display:none;font-family:var(--font-head);font-size:12px;color:var(--gold);font-weight:700}
+.section{margin:0;border-bottom:1px solid var(--border)}
+.sec-img{width:100%;height:180px;object-fit:cover;display:block;filter:brightness(.45)}
+.sec-hdr{padding:18px 32px 10px;display:flex;align-items:center;gap:14px;background:linear-gradient(135deg,rgba(0,207,255,.07),transparent)}
+.sec-num{font-family:var(--font-head);font-size:11px;font-weight:800;background:var(--accent);color:#000;padding:3px 9px;border-radius:20px;letter-spacing:.5px}
+.sec-title{font-family:var(--font-head);font-size:19px;font-weight:800}
+.sec-sub{font-size:12px;color:var(--muted);margin-left:auto}
+.sec-body{padding:20px 32px 28px}
+.tn{background:rgba(0,207,255,.06);border-left:3px solid var(--cyan);border-radius:0 8px 8px 0;padding:12px 16px;margin:14px 0;font-size:13px;color:var(--muted)}
+.tn-label{font-family:var(--font-head);font-size:10px;font-weight:700;color:var(--cyan);letter-spacing:.8px;margin-bottom:5px}
+.tn-c2{border-left-color:#FF3D72;background:rgba(255,61,114,.06)}
+.tn-c2 .tn-label{color:#FF3D72}
+.tn-c3{border-left-color:var(--gold);background:rgba(255,184,0,.06)}
+.tn-c3 .tn-label{color:var(--gold)}
+body.sm .tn{display:none}
+.btn{font-family:var(--font-head);font-size:11px;font-weight:700;padding:7px 16px;border-radius:20px;border:1px solid var(--border);background:var(--surface2);color:var(--text);cursor:pointer;letter-spacing:.5px;transition:all .2s}
+.btn:hover{border-color:var(--accent);color:var(--accent)}
+.btn-accent{background:var(--accent);color:#000;border-color:var(--accent)}
+.btn-accent:hover{background:var(--accent2);border-color:var(--accent2);color:#000}
+
+/* OPINION METER */
+.om-wrap{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;margin:14px 0}
+.om-statement{font-size:16px;font-style:italic;color:var(--text);margin-bottom:14px;text-align:center;line-height:1.5}
+.om-track{height:10px;background:rgba(255,255,255,.08);border-radius:10px;position:relative;margin:12px 0}
+.om-bar{height:10px;background:linear-gradient(90deg,var(--danger),var(--accent));border-radius:10px;transition:width .3s}
+.om-needle{position:absolute;top:-4px;width:18px;height:18px;border-radius:50%;background:var(--text);border:2px solid var(--accent);transform:translateX(-50%);transition:left .3s}
+.om-labels{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-top:4px}
+.om-btns{display:flex;gap:10px;margin-top:12px;justify-content:center}
+.om-pct{text-align:center;font-family:var(--font-head);font-size:22px;font-weight:700;color:var(--accent);margin-top:8px}
+.om-disagree{background:rgba(255,77,109,.1);border:1px solid rgba(255,77,109,.3);color:var(--danger);font-family:var(--font-head);font-size:12px;font-weight:700;padding:8px 20px;border-radius:20px;cursor:pointer}
+.om-agree{background:rgba(0,207,255,.1);border:1px solid rgba(0,207,255,.3);color:var(--cyan);font-family:var(--font-head);font-size:12px;font-weight:700;padding:8px 20px;border-radius:20px;cursor:pointer}
+
+/* PITCH CARD */
+.pitch-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin:14px 0}
+.pitch-card img{width:100%;height:130px;object-fit:cover;filter:brightness(.45)}
+.pitch-body{padding:14px 18px}
+.pitch-label{font-family:var(--font-head);font-size:10px;font-weight:700;color:var(--accent);letter-spacing:.6px;margin-bottom:6px}
+.pitch-text{font-size:14px;line-height:1.65;margin-bottom:8px}
+.pitch-hint{font-size:12px;color:var(--muted);font-style:italic}
+.reveal-btn{font-family:var(--font-head);font-size:11px;font-weight:700;background:transparent;border:1px solid var(--border);color:var(--muted);padding:6px 14px;border-radius:20px;cursor:pointer;transition:all .2s;margin-top:8px}
+.reveal-btn:hover{border-color:var(--accent);color:var(--accent)}
+.model-reveal{max-height:0;overflow:hidden;transition:max-height .4s}
+.model-reveal.show{max-height:400px}
+.model-reveal p{padding:10px 0;font-size:13.5px;color:var(--muted);border-top:1px solid var(--border);margin-top:8px;white-space:pre-line}
+.round-tags{display:flex;gap:6px;margin-bottom:8px}
+.rt{font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;font-family:var(--font-head)}
+.rt-ts{background:rgba(0,207,255,.15);color:var(--cyan)}
+.rt-ss{background:rgba(255,184,0,.15);color:var(--gold)}
+.rt-cl{background:rgba(0,229,160,.15);color:var(--success)}
+
+/* EMAIL ASSEMBLY LINE — unique S3B relay */
+.eal-wrap{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;margin:14px 0}
+.eal-title{font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--accent);margin-bottom:14px}
+.eal-preview{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:18px;margin:12px 0;font-size:13.5px;line-height:1.8}
+.eal-header{border-bottom:1px solid var(--border);padding-bottom:10px;margin-bottom:12px;font-size:12px;color:var(--muted)}
+.eal-field{display:flex;gap:8px;margin:3px 0}
+.eal-field-label{font-family:var(--font-head);font-size:10px;font-weight:700;color:var(--muted);min-width:48px}
+.eal-slot{border-left:3px solid var(--border);padding:8px 14px;margin:6px 0;border-radius:0 6px 6px 0;font-size:13px;color:var(--dim);font-style:italic;transition:all .3s;min-height:36px}
+.eal-slot.past{border-left-color:var(--accent)}
+.eal-slot.plan{border-left-color:var(--success)}
+.eal-slot.will{border-left-color:var(--warn)}
+.eal-slot.filled{font-style:normal;color:var(--text)}
+.eal-slot.past.filled{color:var(--accent)}
+.eal-slot.plan.filled{color:var(--success)}
+.eal-slot.will.filled{color:var(--warn)}
+.eal-inputs{display:flex;flex-direction:column;gap:8px;margin:14px 0}
+.eal-input-row{display:flex;align-items:center;gap:8px}
+.eal-input-label{font-family:var(--font-head);font-size:10px;font-weight:700;min-width:90px;letter-spacing:.4px}
+.eal-input-label.past{color:var(--accent)}
+.eal-input-label.plan{color:var(--success)}
+.eal-input-label.will{color:var(--warn)}
+.eal-textarea{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--text);font-family:var(--font-body);font-size:13px;flex:1;resize:none;min-height:40px}
+.eal-textarea:focus{outline:none;border-color:var(--accent)}
+
+/* SPEED ROUND */
+.speed-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0}
+.speed-card{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px;cursor:pointer;transition:all .2s;text-align:center;min-height:80px;display:flex;align-items:center;justify-content:center}
+.speed-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.speed-card.flipped{background:rgba(0,207,255,.1);border-color:var(--accent)}
+.speed-front{font-size:12.5px;color:var(--text);line-height:1.4}
+.speed-back{font-size:12px;color:var(--accent);display:none;font-weight:600;line-height:1.4}
+.speed-card.flipped .speed-front{display:none}
+.speed-card.flipped .speed-back{display:block}
+
+/* TIMER */
+.timer-wrap{display:flex;align-items:center;gap:14px;margin:14px 0}
+.timer-svg{transform:rotate(-90deg)}
+.timer-bg{fill:none;stroke:rgba(255,255,255,.08)}
+.timer-arc{fill:none;stroke:var(--accent);stroke-linecap:round;transition:stroke-dashoffset .5s,stroke .3s}
+.timer-text{font-family:var(--font-head);font-size:12px;fill:var(--text);transform:rotate(90deg);transform-origin:45px 45px;font-weight:700;text-anchor:middle}
+.timer-label{font-family:var(--font-body);font-size:7.5px;fill:var(--muted);transform:rotate(90deg);transform-origin:45px 45px;text-anchor:middle}
+
+/* SOLO CHALLENGE */
+.solo-wrap{background:linear-gradient(135deg,rgba(0,207,255,.08),rgba(0,229,160,.04));border:1px solid rgba(0,207,255,.25);border-radius:12px;padding:22px;margin:14px 0}
+.solo-title{font-family:var(--font-head);font-size:14px;font-weight:700;color:var(--accent);margin-bottom:10px}
+.solo-task{font-size:14px;line-height:1.7;margin-bottom:16px}
+
+/* SPEAKING CARDS */
+.sc-wrap{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;margin:18px 0}
+.sc-title{font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--accent);margin-bottom:14px}
+.sc-stage{min-height:160px;margin:12px 0}
+.sc-card{background:linear-gradient(135deg,rgba(0,207,255,.1),rgba(0,229,160,.05));border:1px solid rgba(0,207,255,.3);border-radius:12px;padding:22px 20px;display:none}
+.sc-card.active{display:block;animation:cardIn .3s ease}
+@keyframes cardIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.sc-tense-tag{font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:.6px;margin-bottom:8px}
+.sc-prompt{font-size:15px;font-weight:500;line-height:1.55;margin-bottom:8px}
+.sc-hint{font-size:12px;color:var(--muted);font-style:italic}
+.sc-nav{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.sc-counter{font-family:var(--font-head);font-size:12px;color:var(--muted);margin-top:8px}
+
+/* LEADERBOARD */
+.lb-wrap{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;margin:14px 0}
+.lb-title{font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--accent);margin-bottom:14px}
+.lb-inputs{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.lb-input{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--text);font-family:var(--font-body);font-size:13px;flex:1;min-width:120px}
+.lb-input:focus{outline:none;border-color:var(--accent)}
+.lb-list{display:flex;flex-direction:column;gap:6px}
+.lb-row{display:flex;align-items:center;gap:12px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 14px}
+.lb-rank{font-family:var(--font-head);font-size:16px;font-weight:800;color:var(--muted);min-width:28px}
+.lb-rank.gold{color:var(--gold)}
+.lb-rank.silver{color:#C0C0C0}
+.lb-rank.bronze{color:#CD7F32}
+.lb-name{font-family:var(--font-head);font-size:13px;font-weight:700;flex:1}
+.lb-pts{font-family:var(--font-head);font-size:14px;font-weight:800;color:var(--accent)}
+
+/* PHRASES */
+.phrases-wrap{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:16px 0}
+.phrase-card{background:linear-gradient(135deg,rgba(255,184,0,.08),rgba(0,207,255,.05));border:1px solid rgba(255,184,0,.25);border-radius:10px;padding:16px}
+.phrase-en{font-family:var(--font-head);font-size:14px;font-weight:700;color:var(--gold);margin-bottom:6px}
+.phrase-ctx{font-size:12px;color:var(--muted);line-height:1.5}
+
+/* WRAP-UP */
+.wrapup-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:14px 0}
+.wrapup-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center}
+.wrapup-icon{font-size:24px;margin-bottom:8px}
+.wrapup-point{font-family:var(--font-head);font-size:13px;font-weight:700;margin-bottom:4px}
+.wrapup-desc{font-size:12px;color:var(--muted)}
+.checklist{list-style:none;padding:0;display:flex;flex-direction:column;gap:8px;margin:14px 0}
+.check-item{display:flex;align-items:center;gap:10px;font-size:14px;cursor:pointer}
+.check-box{width:20px;height:20px;border-radius:5px;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0}
+.check-item.done .check-box{background:var(--success);border-color:var(--success)}
+.check-item.done .check-box::after{content:'✓';color:#000;font-weight:700;font-size:12px}
+.check-item.done span{color:var(--muted);text-decoration:line-through}
+.cert-strip{background:linear-gradient(135deg,rgba(0,207,255,.08),rgba(255,184,0,.05));border:1px solid rgba(255,184,0,.25);border-radius:10px;padding:16px 20px;margin:14px 0;text-align:center}
+.cert-name-input{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 16px;color:var(--text);font-family:var(--font-head);font-size:14px;font-weight:700;text-align:center;width:100%;max-width:280px;margin:10px 0}
+.cert-name-input:focus{outline:none;border-color:var(--gold)}
+.cert-output{display:none;background:var(--surface2);border:1px solid var(--gold);border-radius:10px;padding:16px;margin-top:12px;font-size:13px;color:var(--muted);line-height:1.8}
+.cert-output.show{display:block}
+.next-card{background:rgba(0,207,255,.06);border:1px solid rgba(0,207,255,.2);border-radius:10px;padding:16px;margin:14px 0}
+.next-label{font-family:var(--font-head);font-size:10px;font-weight:700;color:var(--cyan);letter-spacing:.6px;margin-bottom:6px}
+.win-wrap{margin:18px 0}
+.win-ta{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:14px;color:var(--text);font-size:14px;font-family:var(--font-body);resize:vertical;min-height:80px}
+.win-ta:focus{outline:none;border-color:var(--accent)}
+#winConfirm{display:none;color:var(--success);font-size:13px;margin-top:8px;font-style:italic}
+.ftr{background:var(--surface);border-top:1px solid var(--border);padding:18px 32px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-top:40px}
+.fbrand{font-family:var(--font-head);font-size:13px;font-weight:700}
+.flevels{display:flex;gap:6px;flex-wrap:wrap}
+.flv{font-size:10px;font-family:var(--font-head);font-weight:700;padding:3px 9px;border-radius:20px;background:rgba(255,255,255,.04);color:var(--muted)}
+.flv.on{background:rgba(0,207,255,.15);color:var(--accent);border:1px solid var(--border)}
+.sm-btn{position:fixed;bottom:20px;right:20px;background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:8px 18px;font-family:var(--font-head);font-size:11px;font-weight:700;color:var(--muted);cursor:pointer;z-index:800;transition:all .2s}
+.sm-btn:hover{border-color:var(--accent);color:var(--accent)}
+@media(max-width:860px){
+  .speed-grid{grid-template-columns:1fr 1fr}
+  .wrapup-grid{grid-template-columns:1fr 1fr}
+  .phrases-wrap{grid-template-columns:1fr}
+  .eal-inputs .eal-input-row{flex-direction:column;align-items:flex-start}
+  .hdr{padding:10px 16px}
+  .sec-body{padding:16px 16px 22px}
+  .sec-hdr{padding:14px 16px 8px}
+  .badge-strip{padding:10px 16px}
+  .ftr{padding:14px 16px}
+}
+</style>
+</head>
+<body>
+
+<div class="prog-wrap"><div class="prog-bar" id="progressBar"></div></div>
+
+<header class="hdr">
+  <div class="brand">
+    <div class="dot"></div>
+    <div>
+      <div class="bname">Gabriel Turner · English Training</div>
+      <div class="bsub">Teacher Edition</div>
+    </div>
+  </div>
+  <div class="sess-tags">
+    <span class="tag t-lv">A2.1</span>
+    <span class="tag t-mod">Module 6</span>
+    <span class="tag t-sess">Session 3B — Production &amp; Fluency</span>
+    <span class="tag t-time">70 min</span>
+  </div>
+</header>
+
+<div class="badge-strip">
+  <span id="b1">✉️</span>
+  <span id="b2">📬</span>
+  <span id="b3">🖊️</span>
+  <span id="b4">📤</span>
+  <span id="b5">🏆</span>
+  <span class="badge-label">Earn all 5 — Email production mastery</span>
+  <span id="confMsg">¡Email profesional dominado! 🎉</span>
+</div>
+
+<!-- §1 HOT TAKE -->
+<section class="section" id="s1">
+  <img class="sec-img" src="https://images.unsplash.com/photo-1563986768494-4dee2763ff3f?w=900&q=80" alt="Email hot take">
+  <div class="sec-hdr">
+    <span class="sec-num">§1</span>
+    <span class="sec-title">Hot Take — Is Email Still the Most Important Tool at Work?</span>
+    <span class="sec-sub">8 min</span>
+  </div>
+  <div class="sec-body">
+
+    <div class="tn">
+      <div class="tn-label">⚡ TEACHER NOTE — B SESSION OPENER</div>
+      <p>Callback to S3A: <em>"Last session we learned the three-paragraph email structure and 12 email vocabulary words. Today you write, speak, and perform. No grammar study — pure production."</em> The Hot Take question is designed to generate real debate among Mexican professionals: WhatsApp/Teams have largely replaced email in many factories — some students will disagree strongly. Let the debate run — it IS the warm-up production.</p>
+    </div>
+
+    <div class="om-wrap">
+      <div class="om-statement">"In 2025, WhatsApp and Teams have replaced email at work. Writing a professional email in English is less important than it was five years ago."</div>
+      <div class="om-track">
+        <div class="om-bar" id="omBar" style="width:50%"></div>
+        <div class="om-needle" id="omNeedle" style="left:50%"></div>
+      </div>
+      <div class="om-labels"><span>Disagree</span><span>50/50</span><span>Agree</span></div>
+      <div class="om-btns">
+        <button class="om-disagree" onclick="updateMeter(-8)">Disagree</button>
+        <button class="om-agree" onclick="updateMeter(8)">Agree</button>
+      </div>
+      <div class="om-pct" id="omPct">50%</div>
+    </div>
+
+    <div class="tn tn-c2">
+      <div class="tn-label">💡 ENGAGEMENT NOTE</div>
+      <p>After voting, ask: <em>"Who sent a work email in English this week?"</em> Then: <em>"Who sent a WhatsApp in English?"</em> Then: <em>"Which required more correct grammar?"</em> The answer reveals the real stakes. Spoiler: formal emails still carry the most professional weight with international clients — and that's the S3B context.</p>
+    </div>
+
+    <div class="timer-wrap">
+      <svg class="timer-svg" width="90" height="90" viewBox="0 0 90 90">
+        <circle class="timer-bg" cx="45" cy="45" r="38" stroke-width="6"/>
+        <circle class="timer-arc" id="tArcHot" cx="45" cy="45" r="38" stroke-width="6" stroke-dasharray="238.76" stroke-dashoffset="0"/>
+        <text class="timer-text" id="tTextHot" x="45" y="44">1:00</text>
+        <text class="timer-label" x="45" y="57">debate</text>
+      </svg>
+      <div>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:8px">60 sec: justify your vote. Use email vocabulary from S3A.</p>
+        <button class="btn btn-accent" onclick="startTimer('tArcHot','tTextHot',60,'b1',238.76)">START</button>
+        <button class="btn" style="margin-left:8px" onclick="resetArc('tArcHot','tTextHot',60,238.76)">RESET</button>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- §2 PITCH ROUND -->
+<section class="section" id="s2">
+  <img class="sec-img" src="https://images.unsplash.com/photo-1497032628192-86f99bcd76bc?w=900&q=80" alt="Email pitch">
+  <div class="sec-hdr">
+    <span class="sec-num">§2</span>
+    <span class="sec-title">Pitch Round — Email Makeover</span>
+    <span class="sec-sub">12 min</span>
+  </div>
+  <div class="sec-body">
+
+    <div class="tn">
+      <div class="tn-label">⚡ TEACHER NOTE — EMAIL MAKEOVER FORMAT</div>
+      <p>Show each "before" email — it's grammatically incorrect or uses Spanglish closings. Students identify the errors verbally, then the partner reads the corrected version. Round 1 is T-S (teacher shows, student corrects). Round 2 is S-S (partners take turns catching errors). This is peer correction at production level — no grammar tables needed.</p>
+    </div>
+
+    <div class="pitch-card">
+      <img src="https://images.unsplash.com/photo-1456324504439-367cee3b3c32?w=600&q=80" alt="Bad email" loading="lazy">
+      <div class="pitch-body">
+        <div class="round-tags"><span class="rt rt-ts">T-S · ROUND 1</span></div>
+        <div class="pitch-label">EMAIL MAKEOVER — Find 5 errors</div>
+        <div class="pitch-text" style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px;font-size:13px;font-family:monospace;line-height:2">
+          Dear Mr. Johnson,<br>
+          I write you to give update about the Apex project.<br>
+          Last week we are working on the quality audit. We will finish it last Thursday.<br>
+          Next month we going to present the results.<br>
+          I attach the report. I will wait for your response.<br>
+          Regards and hugs,<br>
+          Valeria
+        </div>
+        <div class="pitch-hint">Find all 5 errors. Then read the corrected version aloud.</div>
+        <button class="reveal-btn" onclick="toggleReveal('pitch1')">▼ Show Corrected Version</button>
+        <div class="model-reveal" id="pitch1"><p>1. "I write you" → "I am writing to you" (or "I wanted to write")
+2. "we are working" → "we worked" (last week = past)
+3. "We will finish it last Thursday" → "We finished it last Thursday" (will = future)
+4. "we going to present" → "we are going to present" (missing auxiliary "are")
+5. "Regards and hugs" → "Best regards" (calco del español — nunca se usa en inglés profesional)
+
+CORRECTED: "Dear Mr. Johnson, I am writing to give you an update on the Apex project. Last week we worked on the quality audit and finished it by Thursday. Next month we are going to present the results to the team. Please find the report attached. I look forward to hearing from you. Best regards, Valeria Torres"</p></div>
+      </div>
+    </div>
+
+    <div class="pitch-card">
+      <img src="https://images.unsplash.com/photo-1501504905252-473c47e087f8?w=600&q=80" alt="Email challenge" loading="lazy">
+      <div class="pitch-body">
+        <div class="round-tags"><span class="rt rt-ss">S-S · ROUND 2</span></div>
+        <div class="pitch-label">PAIR CHALLENGE — Write & critique</div>
+        <div class="pitch-text">Partner A writes a 4-sentence email opening (30 seconds, no notes) about their real project — using the 3-paragraph structure. Partner B reads it and identifies: (1) which tense each sentence uses, (2) any vocabulary from S3A that appears, (3) one improvement. Then switch.</div>
+        <div class="pitch-hint">Goal: natural email English, not perfect grammar. Does it sound like a real professional email?</div>
+        <button class="reveal-btn" onclick="toggleReveal('pitch2')">▼ Show Evaluation Criteria</button>
+        <div class="model-reveal" id="pitch2"><p>Strong email opening criteria:
+✓ Greeting + purpose statement (1-2 lines)
+✓ Clear past context using Simple Past
+✓ At least 1 going to sentence for plans
+✓ At least 1 will commitment
+✓ Professional closing phrase from S3A
+
+Award 2 points if partner identifies all 3 criteria correctly. Award 1 bonus point if they spot a vocabulary word from S3A.</p></div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- §3 RELAY — Email Assembly Line -->
+<section class="section" id="s3">
+  <img class="sec-img" src="https://images.unsplash.com/photo-1462396240927-52058a6a84ec?w=900&q=80" alt="Email assembly line">
+  <div class="sec-hdr">
+    <span class="sec-num">§3</span>
+    <span class="sec-title">Relay — The Email Assembly Line</span>
+    <span class="sec-sub">12 min</span>
+  </div>
+  <div class="sec-body">
+
+    <div class="tn">
+      <div class="tn-label">⚡ TEACHER NOTE — EMAIL ASSEMBLY LINE</div>
+      <p>This is the unique visual relay for S3B. The class builds one professional email together — each student contributes one section. Student 1 writes the greeting + past paragraph. Student 2 writes the going to paragraph. Student 3 writes the will commitments. Student 4 writes the closing. Teacher assembles it live on screen using the slots below. Award 2 points per section that uses the correct tense AND sounds natural.</p>
+    </div>
+
+    <div class="eal-wrap">
+      <div class="eal-title">📧 EMAIL ASSEMBLY LINE — Build one email together</div>
+
+      <p style="font-size:13px;color:var(--muted);margin-bottom:14px">Each student writes one section. Type your contribution in the input, then click "Add to Email" to see it appear in the email preview.</p>
+
+      <div class="eal-inputs">
+        <div class="eal-input-row">
+          <span class="eal-input-label past">PAST (S1)</span>
+          <textarea class="eal-textarea" id="ealPast" placeholder="Last week we... / Yesterday I... / In January we..." rows="2"></textarea>
+          <button class="btn" onclick="addToEmail('past')">Add</button>
+        </div>
+        <div class="eal-input-row">
+          <span class="eal-input-label plan">GOING TO (S2)</span>
+          <textarea class="eal-textarea" id="ealPlan" placeholder="Next month we are going to... / On Friday we're going to..." rows="2"></textarea>
+          <button class="btn" onclick="addToEmail('plan')">Add</button>
+        </div>
+        <div class="eal-input-row">
+          <span class="eal-input-label will">WILL (S3)</span>
+          <textarea class="eal-textarea" id="ealWill" placeholder="I'll send you... / I will call... / I'll copy you on..." rows="2"></textarea>
+          <button class="btn" onclick="addToEmail('will')">Add</button>
+        </div>
+      </div>
+
+      <p style="font-family:var(--font-head);font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.5px;margin:14px 0 8px">📬 EMAIL PREVIEW</p>
+      <div class="eal-preview">
+        <div class="eal-header">
+          <div class="eal-field"><span class="eal-field-label">TO</span><span>daniel.ochoa@solarismfg.com</span></div>
+          <div class="eal-field"><span class="eal-field-label">SUBJ</span><span>Apex Project — Weekly Update</span></div>
+        </div>
+        <p style="margin-bottom:8px">Hi Daniel, I hope you are doing well.</p>
+        <div class="eal-slot past" id="slotPast">[ Student 1 — Simple Past paragraph ]</div>
+        <div class="eal-slot plan" id="slotPlan">[ Student 2 — Going To paragraph ]</div>
+        <div class="eal-slot will" id="slotWill">[ Student 3 — Will commitments ]</div>
+        <p style="margin-top:10px;color:var(--muted)">I look forward to hearing from you.<br>Best regards,<br>Valeria Torres · Operations Coordinator · Solaris Manufacturing</p>
+      </div>
+
+      <button class="btn" style="margin-top:8px" onclick="resetEmail()">↺ Reset Email</button>
+    </div>
+
+    <div class="timer-wrap">
+      <svg class="timer-svg" width="90" height="90" viewBox="0 0 90 90">
+        <circle class="timer-bg" cx="45" cy="45" r="38" stroke-width="6"/>
+        <circle class="timer-arc" id="tArcRelay" cx="45" cy="45" r="38" stroke-width="6" stroke-dasharray="238.76" stroke-dashoffset="0"/>
+        <text class="timer-text" id="tTextRelay" x="45" y="44">1:00</text>
+        <text class="timer-label" x="45" y="57">per student</text>
+      </svg>
+      <div>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:8px">60 sec per student to write their section. No notes.</p>
+        <button class="btn btn-accent" onclick="startTimer('tArcRelay','tTextRelay',60,'b2',238.76)">START</button>
+        <button class="btn" style="margin-left:8px" onclick="resetArc('tArcRelay','tTextRelay',60,238.76)">RESET</button>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- §4 SPEED ROUND -->
+<section class="section" id="s4">
+  <img class="sec-img" src="https://images.unsplash.com/photo-1432888498266-38ffec3eaf0a?w=900&q=80" alt="Email vocabulary speed">
+  <div class="sec-hdr">
+    <span class="sec-num">§4</span>
+    <span class="sec-title">Speed Round — Email Vocabulary Flip Cards</span>
+    <span class="sec-sub">8 min</span>
+  </div>
+  <div class="sec-body">
+
+    <div class="tn">
+      <div class="tn-label">⚡ TEACHER NOTE — SPEED ROUND FORMAT</div>
+      <p>Front = a real email situation in Spanish or English context. Back = the correct vocabulary word + a ready-to-use sentence. Students see the front, call out the word, then flip to verify. First correct call = 1 point. Second round: students must use the word in a sentence BEFORE flipping — if their sentence matches the example, 2 points. Keep the pace fast.</p>
+    </div>
+
+    <div class="speed-grid">
+      <div class="speed-card" onclick="this.classList.toggle('flipped')">
+        <div class="speed-front">You want to say "Sobre el tema del contrato..." formally</div>
+        <div class="speed-back">REGARDING · "Regarding the contract, we need to discuss..."</div>
+      </div>
+      <div class="speed-card" onclick="this.classList.toggle('flipped')">
+        <div class="speed-front">You sent a PDF with the email</div>
+        <div class="speed-back">ATTACHED · "Please find the report attached."</div>
+      </div>
+      <div class="speed-card" onclick="this.classList.toggle('flipped')">
+        <div class="speed-front">You want to explain something that was confusing</div>
+        <div class="speed-back">CLARIFY · "I wanted to clarify the delivery date."</div>
+      </div>
+      <div class="speed-card" onclick="this.classList.toggle('flipped')">
+        <div class="speed-front">You want to check on something you discussed before</div>
+        <div class="speed-back">FOLLOW UP · "I'm writing to follow up on our conversation."</div>
+      </div>
+      <div class="speed-card" onclick="this.classList.toggle('flipped')">
+        <div class="speed-front">The meeting needs to move to a later date</div>
+        <div class="speed-back">POSTPONE · "We had to postpone the meeting to next week."</div>
+      </div>
+      <div class="speed-card" onclick="this.classList.toggle('flipped')">
+        <div class="speed-front">You confirm you received a message or document</div>
+        <div class="speed-back">ACKNOWLEDGE · "Please acknowledge receipt of this email."</div>
+      </div>
+      <div class="speed-card" onclick="this.classList.toggle('flipped')">
+        <div class="speed-front">You send someone else's email to a third person</div>
+        <div class="speed-back">FORWARD · "I'll forward the supplier's email to you."</div>
+      </div>
+      <div class="speed-card" onclick="this.classList.toggle('flipped')">
+        <div class="speed-front">You need a response right away — it cannot wait</div>
+        <div class="speed-back">URGENT · "This is urgent — please reply before end of day."</div>
+      </div>
+      <div class="speed-card" onclick="this.classList.toggle('flipped')">
+        <div class="speed-front">You include your manager in an email as secondary recipient</div>
+        <div class="speed-back">COPY (CC) · "I'll copy Daniel on this email."</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- §5 SOLO CHALLENGE -->
+<section class="section" id="s5">
+  <img class="sec-img" src="https://images.unsplash.com/photo-1586281380349-632531db7ed4?w=900&q=80" alt="Write email solo">
+  <div class="sec-hdr">
+    <span class="sec-num">§5</span>
+    <span class="sec-title">Solo Challenge — Write &amp; Read: The Real Email</span>
+    <span class="sec-sub">12 min</span>
+  </div>
+  <div class="sec-body">
+
+    <div class="tn">
+      <div class="tn-label">⚡ TEACHER NOTE — SOLO FORMAT</div>
+      <p>This is the highest-value activity of S3B. Each student writes a real email (4 minutes) then reads it aloud to their partner (1 minute). The partner listens and gives ONE piece of feedback: <em>"The strongest part was [paragraph]"</em> and <em>"I'd change [one thing]."</em> No grammar police — evaluate whether it sounds professional, not whether it's perfect. This simulates real peer review in international companies.</p>
+    </div>
+
+    <div class="solo-wrap">
+      <div class="solo-title">🖊️ SOLO CHALLENGE — Write Your Real Email</div>
+      <div class="solo-task">
+        <strong>Your mission:</strong> Write a real professional email about a real project at your company.<br><br>
+        Requirements:<br>
+        ✓ <strong>Paragraph 1 (Past):</strong> What happened — 2-3 sentences, Simple Past<br>
+        ✓ <strong>Paragraph 2 (Going To):</strong> What's planned — 2 sentences, going to<br>
+        ✓ <strong>Paragraph 3 (Will):</strong> Your commitments — 2 sentences, will<br>
+        ✓ <strong>Closing:</strong> Use "Please find attached" OR "I look forward to hearing from you"<br>
+        ✓ <strong>At least 3 vocabulary words</strong> from S3A used naturally<br><br>
+        <em>4 minutes to write. Then read it aloud to your partner. One piece of feedback each.</em>
+      </div>
+
+      <div class="timer-wrap" style="justify-content:center">
+        <svg class="timer-svg" width="110" height="110" viewBox="0 0 90 90">
+          <circle class="timer-bg" cx="45" cy="45" r="38" stroke-width="6"/>
+          <circle class="timer-arc" id="tArcSolo" cx="45" cy="45" r="38" stroke-width="6" stroke-dasharray="238.76" stroke-dashoffset="0"/>
+          <text class="timer-text" id="tTextSolo" x="45" y="44">4:00</text>
+          <text class="timer-label" x="45" y="57">write</text>
+        </svg>
+        <div>
+          <button class="btn btn-accent" onclick="startTimer('tArcSolo','tTextSolo',240,'b3',238.76)">▶ START WRITING</button>
+          <br><br>
+          <button class="btn" onclick="resetArc('tArcSolo','tTextSolo',240,238.76)">↺ RESET</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="tn tn-c3">
+      <div class="tn-label">💰 RETENTION + UPSELL NOTE</div>
+      <p>After the read-aloud, ask students to keep their email. Say: <em>"This email — with small edits — is something you can actually send at work this week. That's what A2.1 looks like in real life."</em> If a student produced a strong email, ask permission to share it as a class model. Peer recognition is the most powerful retention tool in adult learning.</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- §6 SPEAKING CARDS -->
+<section class="section" id="s6">
+  <img class="sec-img" src="https://images.unsplash.com/photo-1518655048521-f130df041f66?w=900&q=80" alt="Speaking cards email">
+  <div class="sec-hdr">
+    <span class="sec-num">§6</span>
+    <span class="sec-title">Speaking Cards — Email Phrases in Context</span>
+    <span class="sec-sub">10 min</span>
+  </div>
+  <div class="sec-body">
+
+    <div class="tn">
+      <div class="tn-label">⚡ TEACHER NOTE — SPEAKING CARDS FORMAT</div>
+      <p>Each card gives an email situation. The student must respond using the correct phrase from S3A — spoken aloud, as if reading from a real email. The class votes: does it sound natural? Does it fit the context? Award 2 points per natural response, 1 point for correct but stiff. This tests register awareness — knowing WHEN to use each phrase is the A2.1 → A2.2 skill jump.</p>
+    </div>
+
+    <div class="sc-wrap">
+      <div class="sc-title">🃏 SPEAKING CARDS — What do you say in this email situation?</div>
+
+      <div class="sc-stage">
+        <div class="sc-card active" id="sc0">
+          <div class="sc-tense-tag" style="color:var(--warn)">CLOSING PHRASE</div>
+          <div class="sc-prompt">You just sent a long project report. How do you tell the recipient that you included a file?</div>
+          <div class="sc-hint">Use: "Please find [X] attached." — then add one will sentence: what you will do if they have questions.</div>
+        </div>
+        <div class="sc-card" id="sc1">
+          <div class="sc-tense-tag" style="color:var(--accent)">EMAIL OPENER · PAST</div>
+          <div class="sc-prompt">You're following up on a meeting you had last week. How do you open the email?</div>
+          <div class="sc-hint">"I'm writing to follow up on our meeting last [day]." Then add: what happened + what's the plan now.</div>
+        </div>
+        <div class="sc-card" id="sc2">
+          <div class="sc-tense-tag" style="color:var(--success)">GOING TO + REGARD</div>
+          <div class="sc-prompt">You need to open a formal email about the supplier contract. Use "regarding" + going to in the same email.</div>
+          <div class="sc-hint">"Regarding the [topic] — we are going to [action] on [date]." Make it real.</div>
+        </div>
+        <div class="sc-card" id="sc3">
+          <div class="sc-tense-tag" style="color:var(--warn)">URGENT + WILL</div>
+          <div class="sc-prompt">Something went wrong and you need an immediate response from a client. Write the opening and closing in 2 sentences.</div>
+          <div class="sc-hint">Use "urgent" in the opening + a will commitment in the closing. Keep it professional, not panicked.</div>
+        </div>
+        <div class="sc-card" id="sc4">
+          <div class="sc-tense-tag" style="color:var(--accent)">FULL EMAIL · ALL 3 TENSES</div>
+          <div class="sc-prompt">Speak the full email out loud — as if you're dictating it to an assistant. Past paragraph + going to paragraph + will commitment + professional closing. Use your real project.</div>
+          <div class="sc-hint">Class counts: how many tenses? How many email vocab words? How professional does it sound?</div>
+        </div>
+        <div class="sc-card" id="sc5">
+          <div class="sc-tense-tag" style="color:var(--gold)">PEER FEEDBACK</div>
+          <div class="sc-prompt">Your partner just read their email to you. Give them structured feedback: "The strongest part was [paragraph] because... I'd improve [element] by..."</div>
+          <div class="sc-hint">Focus on: tense accuracy, professional vocabulary, natural closings. One strength, one improvement. Maximum 30 seconds.</div>
+        </div>
+      </div>
+
+      <div class="sc-nav">
+        <button class="btn" onclick="scNav(-1)">← Prev</button>
+        <button class="btn btn-accent" onclick="scNav(1)">Next Card →</button>
+      </div>
+      <div class="sc-counter" id="scCounter">Card 1 of 6</div>
+
+      <div class="timer-wrap" style="margin-top:14px">
+        <svg class="timer-svg" width="90" height="90" viewBox="0 0 90 90">
+          <circle class="timer-bg" cx="45" cy="45" r="38" stroke-width="6"/>
+          <circle class="timer-arc" id="tArcSC" cx="45" cy="45" r="38" stroke-width="6" stroke-dasharray="238.76" stroke-dashoffset="0"/>
+          <text class="timer-text" id="tTextSC" x="45" y="44">0:45</text>
+          <text class="timer-label" x="45" y="57">per card</text>
+        </svg>
+        <div>
+          <button class="btn btn-accent" onclick="startTimer('tArcSC','tTextSC',45,'b4',238.76)">START</button>
+          <button class="btn" style="margin-left:8px" onclick="resetArc('tArcSC','tTextSC',45,238.76)">RESET</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- §7 LEADERBOARD + WRAP-UP -->
+<section class="section" id="s7">
+  <img class="sec-img" src="https://images.unsplash.com/photo-1516321165247-4aa89a48be55?w=900&q=80" alt="Wrap up leaderboard">
+  <div class="sec-hdr">
+    <span class="sec-num">§7</span>
+    <span class="sec-title">Leaderboard + Wrap-Up</span>
+    <span class="sec-sub">8 min</span>
+  </div>
+  <div class="sec-body">
+
+    <div class="lb-wrap">
+      <div class="lb-title">🏆 SESSION LEADERBOARD</div>
+      <div class="tn" style="margin-bottom:12px">
+        <div class="tn-label">TEACHER NOTE — HOW TO SCORE</div>
+        <p>Hot Take (2pts debate) · Email Makeover (2pts per error found + 2pts corrected version) · Assembly Line (2pts per natural section) · Speed Round (1pt per correct shout + 2pts for sentence) · Solo Challenge (up to 10pts + 3 bonus vocab) · Speaking Cards (2pts per thumbs-up). Top scorer reads their S5 Solo email aloud at the start of next session.</p>
+      </div>
+      <div class="lb-inputs">
+        <input class="lb-input" id="lbName" placeholder="Student name" maxlength="30">
+        <input class="lb-input" id="lbPts" placeholder="Points" type="number" min="0" max="40" style="max-width:100px">
+        <button class="btn btn-accent" onclick="addToLB()">+ Add</button>
+      </div>
+      <div class="lb-list" id="lbList"></div>
+    </div>
+
+    <!-- 3 PHRASES -->
+    <p style="font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--gold);margin:20px 0 10px">🎯 3 Phrases for This Week — Use Them In Real Emails</p>
+    <div class="phrases-wrap">
+      <div class="phrase-card">
+        <div class="phrase-en">"Please find [X] attached."</div>
+        <div class="phrase-ctx">Replace "I attach / I send" in every professional email this week. Use it once today — in a real email.</div>
+      </div>
+      <div class="phrase-card">
+        <div class="phrase-en">"I'm writing to follow up on..."</div>
+        <div class="phrase-ctx">Open any follow-up message with this. Works in email AND Teams/WhatsApp for professional tone.</div>
+      </div>
+      <div class="phrase-card">
+        <div class="phrase-en">"I look forward to hearing from you."</div>
+        <div class="phrase-ctx">End every email this week with this — not "I wait for your answer." One phrase. Instant upgrade.</div>
+      </div>
+    </div>
+
+    <!-- WRAP-UP -->
+    <div class="wrapup-grid" style="margin-top:20px">
+      <div class="wrapup-card">
+        <div class="wrapup-icon">✉️</div>
+        <div class="wrapup-point">3-Para Structure</div>
+        <div class="wrapup-desc">Past (what happened) → Going To (plans) → Will (commitments). Every professional email. Every time.</div>
+      </div>
+      <div class="wrapup-card">
+        <div class="wrapup-icon">📝</div>
+        <div class="wrapup-point">12 Email Words Active</div>
+        <div class="wrapup-desc">regarding · attached · clarify · confirm · follow up · forward · urgent · summarize · agenda · postpone · copy · acknowledge</div>
+      </div>
+      <div class="wrapup-card">
+        <div class="wrapup-icon">📤</div>
+        <div class="wrapup-point">Natural Closings</div>
+        <div class="wrapup-desc">"Please find attached" · "I look forward to hearing from you" · "Do not hesitate to contact me" · "Best regards"</div>
+      </div>
+    </div>
+
+    <p style="font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--accent);margin:18px 0 10px">I Can Now...</p>
+    <ul class="checklist">
+      <li class="check-item" onclick="this.classList.toggle('done')"><div class="check-box"></div><span>Write a complete 3-paragraph professional email using all three tenses</span></li>
+      <li class="check-item" onclick="this.classList.toggle('done')"><div class="check-box"></div><span>Use email vocabulary naturally: attached, regarding, follow up, urgent, acknowledge</span></li>
+      <li class="check-item" onclick="this.classList.toggle('done')"><div class="check-box"></div><span>Spot and correct tense errors in emails (will vs. past, missing auxiliaries)</span></li>
+      <li class="check-item" onclick="this.classList.toggle('done')"><div class="check-box"></div><span>Open and close professional emails using the correct English phrases</span></li>
+      <li class="check-item" onclick="this.classList.toggle('done')"><div class="check-box"></div><span>Give and receive structured peer feedback on email quality</span></li>
+    </ul>
+
+    <div class="cert-strip">
+      <p style="font-family:var(--font-head);font-size:12px;font-weight:700;color:var(--gold);margin-bottom:8px">🏆 Session Complete — Generate Certificate</p>
+      <input class="cert-name-input" id="certName" type="text" placeholder="Student name">
+      <br>
+      <button class="btn btn-accent" onclick="generateCert()">Generate</button>
+      <div class="cert-output" id="certOut">
+        <strong id="certNameDisplay"></strong> has completed A2.1 · Module 6 · Session 3B — Production &amp; Fluency. Skills demonstrated: professional email writing, three-tense structure, email vocabulary in context, and peer feedback.
+        <br><br><em style="color:var(--dim)">Gabriel Turner English Training · Celaya, Guanajuato</em>
+      </div>
+    </div>
+
+    <div class="next-card">
+      <div class="next-label">NEXT SESSION — S4A · Discovery &amp; Drill</div>
+      <p style="font-size:13px;color:var(--muted)">S4A introduces the final grammar point of A2.1: Wh- questions across all three tenses, plus meeting and conversation vocabulary. Prepare: think of 3 questions you want to ask your manager about a project — you'll use them in class.</p>
+    </div>
+
+    <div class="win-wrap">
+      <p style="font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--gold);margin-bottom:10px">🏆 My Win Today</p>
+      <textarea id="myWin" class="win-ta" placeholder="Write the best sentence from your email today. Or write the email phrase you will use first at work this week."></textarea>
+      <button class="btn btn-accent" style="margin-top:10px" onclick="saveWin()">Save My Win</button>
+      <div id="winConfirm">✓ Saved! Send that email this week. See you in S4A.</div>
+    </div>
+
+  </div>
+</section>
+
+<footer class="ftr">
+  <div class="fbrand">Gabriel Turner · English Training</div>
+  <div style="font-size:11px;color:var(--muted)">A2.1 · M6 · S3B · GT_A2_1_M6_S3B_TEACHER_v1.html</div>
+  <div class="flevels">
+    <div class="flv">A1.1</div><div class="flv">A1.2</div><div class="flv on">A2.1</div>
+    <div class="flv">A2.2</div><div class="flv">B1.1</div><div class="flv">B1.2</div>
+  </div>
+</footer>
+
+<button class="sm-btn" onclick="toggleSM()"><span id="smt-label">Teacher Mode</span></button>
+
+<script>
+const badgeEarned={b1:false,b2:false,b3:false,b4:false,b5:false};
+function earnBadge(id){if(badgeEarned[id])return;badgeEarned[id]=true;const el=document.getElementById(id);if(el)el.classList.add('earned');if(Object.values(badgeEarned).every(Boolean)){launchConfetti();const cm=document.getElementById('confMsg');if(cm)cm.style.display='block';}}
+function launchConfetti(){const colors=['#00CFFF','#67E8F9','#00E5A0','#FFB800','#ffffff','#FF4D6D'];for(let i=0;i<90;i++){const d=document.createElement('div');d.style.cssText='position:fixed;top:-10px;pointer-events:none;z-index:9999;border-radius:2px;';d.style.left=Math.random()*100+'vw';d.style.width=(6+Math.random()*6)+'px';d.style.height=(6+Math.random()*6)+'px';d.style.background=colors[Math.floor(Math.random()*colors.length)];d.style.animation='confFall '+(1.5+Math.random()*2)+'s linear forwards';document.body.appendChild(d);setTimeout(()=>d.remove(),4000);}}
+
+let timerIntervals={};
+function startTimer(arcId,textId,seconds,badgeKey,circumference){
+  if(timerIntervals[arcId])clearInterval(timerIntervals[arcId]);
+  const arc=document.getElementById(arcId),txt=document.getElementById(textId);let rem=seconds;
+  function update(){arc.style.strokeDashoffset=circumference*(1-rem/seconds);const m=Math.floor(rem/60),s=rem%60;txt.textContent=m+':'+(s<10?'0':'')+s;if(rem<=5)arc.style.stroke='#FF4D6D';if(rem<=0){clearInterval(timerIntervals[arcId]);arc.style.stroke='var(--success)';if(badgeKey)earnBadge(badgeKey);return;}rem--;}
+  update();timerIntervals[arcId]=setInterval(update,1000);
+}
+function resetArc(arcId,textId,seconds,circumference){if(timerIntervals[arcId]){clearInterval(timerIntervals[arcId]);delete timerIntervals[arcId];}const arc=document.getElementById(arcId);arc.style.strokeDashoffset='0';arc.style.stroke='var(--accent)';const m=Math.floor(seconds/60),s=seconds%60;document.getElementById(textId).textContent=m+':'+(s<10?'0':'')+s;}
+
+let meterVal=50;
+function updateMeter(delta){meterVal=Math.max(5,Math.min(95,meterVal+delta));document.getElementById('omBar').style.width=meterVal+'%';const needle=document.getElementById('omNeedle');if(needle)needle.style.left=meterVal+'%';document.getElementById('omPct').textContent=meterVal+'%';}
+
+function toggleReveal(id){const el=document.getElementById(id);el.classList.toggle('show');el.previousElementSibling.textContent=el.classList.contains('show')?'▲ Hide':'▼ Show Answer';}
+
+// EMAIL ASSEMBLY LINE
+function addToEmail(type){
+  const inputId={past:'ealPast',plan:'ealPlan',will:'ealWill'}[type];
+  const slotId={past:'slotPast',plan:'slotPlan',will:'slotWill'}[type];
+  const text=document.getElementById(inputId).value.trim();
+  if(!text)return;
+  const slot=document.getElementById(slotId);
+  slot.textContent=text;
+  slot.classList.add('filled');
+  const allFilled=['slotPast','slotPlan','slotWill'].every(id=>document.getElementById(id).classList.contains('filled'));
+  if(allFilled)earnBadge('b2');
+}
+function resetEmail(){
+  ['slotPast','slotPlan','slotWill'].forEach(function(id){
+    const el=document.getElementById(id);
+    const labels={slotPast:'[ Student 1 — Simple Past paragraph ]',slotPlan:'[ Student 2 — Going To paragraph ]',slotWill:'[ Student 3 — Will commitments ]'};
+    el.textContent=labels[id];
+    el.classList.remove('filled');
+  });
+  ['ealPast','ealPlan','ealWill'].forEach(function(id){document.getElementById(id).value='';});
+}
+
+// SPEAKING CARDS
+let scIdx=0;
+const scTotal=6;
+function scNav(dir){
+  document.getElementById('sc'+scIdx).classList.remove('active');
+  scIdx=(scIdx+dir+scTotal)%scTotal;
+  document.getElementById('sc'+scIdx).classList.add('active');
+  document.getElementById('scCounter').textContent='Card '+(scIdx+1)+' of '+scTotal;
+}
+
+// LEADERBOARD
+let lbData=[];
+function addToLB(){
+  const name=document.getElementById('lbName').value.trim();
+  const pts=parseInt(document.getElementById('lbPts').value)||0;
+  if(!name)return;
+  const existing=lbData.find(r=>r.name===name);
+  if(existing){existing.pts+=pts;}else{lbData.push({name,pts});}
+  lbData.sort((a,b)=>b.pts-a.pts);
+  document.getElementById('lbName').value='';
+  document.getElementById('lbPts').value='';
+  renderLB();
+  if(lbData.length>=3)earnBadge('b5');
+}
+function renderLB(){
+  const list=document.getElementById('lbList');
+  const medals=['🥇','🥈','🥉'];
+  const rankClasses=['gold','silver','bronze'];
+  list.innerHTML=lbData.map((r,i)=>
+    `<div class="lb-row"><span class="lb-rank ${rankClasses[i]||''}">${medals[i]||('#'+(i+1))}</span><span class="lb-name">${r.name}</span><span class="lb-pts">${r.pts} pts</span></div>`
+  ).join('');
+}
+
+function generateCert(){
+  const name=document.getElementById('certName').value.trim();
+  if(!name)return;
+  document.getElementById('certNameDisplay').textContent=name;
+  document.getElementById('certOut').classList.add('show');
+  earnBadge('b5');
+}
+function saveWin(){const v=document.getElementById('myWin').value.trim();if(!v)return;const c=document.getElementById('winConfirm');if(c)c.style.display='block';}
+window.addEventListener('scroll',()=>{const h=document.documentElement;const bar=document.getElementById('progressBar');if(bar)bar.style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight)*100)+'%';});
+function toggleSM(){document.body.classList.toggle('sm');document.getElementById('smt-label').textContent=document.body.classList.contains('sm')?'Student Mode':'Teacher Mode';}
+(function(){const s=document.createElement('style');s.textContent='@keyframes confFall{0%{transform:translateY(-10px) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}';document.head.appendChild(s);})();
+</script>
+</body>
+</html>

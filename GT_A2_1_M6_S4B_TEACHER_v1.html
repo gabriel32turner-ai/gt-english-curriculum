@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GT A2.1 · M6 S4B · Production &amp; Fluency</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#080808;--surface:#111318;--surface2:#1a1f28;
+  --accent:#00CFFF;--accent2:#67E8F9;
+  --border:rgba(0,207,255,.18);
+  --text:#F0F4F8;--muted:#8A9BB0;--dim:rgba(226,226,226,.25);
+  --danger:#FF4D6D;--success:#00E5A0;--warn:#FFB347;
+  --cyan:#00CFFF;--gold:#FFB800;
+  --font-head:'Syne',sans-serif;--font-body:'DM Sans',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:15px;line-height:1.6}
+.prog-wrap{position:fixed;top:0;left:0;width:100%;height:3px;background:rgba(0,207,255,.1);z-index:1000}
+.prog-bar{height:3px;background:var(--accent);width:0%;transition:width .3s}
+.hdr{position:sticky;top:3px;background:rgba(8,8,8,.92);backdrop-filter:blur(14px);border-bottom:1px solid var(--border);padding:12px 32px;display:flex;align-items:center;justify-content:space-between;z-index:900;flex-wrap:wrap;gap:10px}
+.brand{display:flex;align-items:center;gap:10px}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 8px var(--accent)}
+.bname{font-family:var(--font-head);font-size:15px;font-weight:700}
+.bsub{font-size:11px;color:var(--muted)}
+.sess-tags{display:flex;gap:6px;flex-wrap:wrap}
+.tag{font-family:var(--font-head);font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;letter-spacing:.5px}
+.t-lv{background:rgba(0,207,255,.15);color:var(--accent);border:1px solid var(--border)}
+.t-mod{background:rgba(255,184,0,.1);color:var(--gold);border:1px solid rgba(255,184,0,.2)}
+.t-sess{background:rgba(255,255,255,.06);color:var(--text);border:1px solid rgba(255,255,255,.08)}
+.t-time{background:rgba(0,229,160,.1);color:var(--success);border:1px solid rgba(0,229,160,.2)}
+.badge-strip{display:flex;align-items:center;gap:12px;padding:14px 32px;background:var(--surface);border-bottom:1px solid var(--border);flex-wrap:wrap}
+.badge-strip span[id]{font-size:22px;filter:grayscale(1);opacity:.25;transition:all .4s}
+.badge-strip span[id].earned{filter:none;opacity:1;animation:badgePop .5s ease}
+@keyframes badgePop{0%{transform:scale(1)}50%{transform:scale(1.35)}100%{transform:scale(1)}}
+.badge-label{font-size:11px;color:var(--muted);margin-left:auto}
+#confMsg{display:none;font-family:var(--font-head);font-size:12px;color:var(--gold);font-weight:700}
+.section{margin:0;border-bottom:1px solid var(--border)}
+.sec-img{width:100%;height:180px;object-fit:cover;display:block;filter:brightness(.45)}
+.sec-hdr{padding:18px 32px 10px;display:flex;align-items:center;gap:14px;background:linear-gradient(135deg,rgba(0,207,255,.07),transparent)}
+.sec-num{font-family:var(--font-head);font-size:11px;font-weight:800;background:var(--accent);color:#000;padding:3px 9px;border-radius:20px;letter-spacing:.5px}
+.sec-title{font-family:var(--font-head);font-size:19px;font-weight:800}
+.sec-sub{font-size:12px;color:var(--muted);margin-left:auto}
+.sec-body{padding:20px 32px 28px}
+.tn{background:rgba(0,207,255,.06);border-left:3px solid var(--cyan);border-radius:0 8px 8px 0;padding:12px 16px;margin:14px 0;font-size:13px;color:var(--muted)}
+.tn-label{font-family:var(--font-head);font-size:10px;font-weight:700;color:var(--cyan);letter-spacing:.8px;margin-bottom:5px}
+.tn-c2{border-left-color:#FF3D72;background:rgba(255,61,114,.06)}
+.tn-c2 .tn-label{color:#FF3D72}
+.tn-c3{border-left-color:var(--gold);background:rgba(255,184,0,.06)}
+.tn-c3 .tn-label{color:var(--gold)}
+body.sm .tn{display:none}
+.btn{font-family:var(--font-head);font-size:11px;font-weight:700;padding:7px 16px;border-radius:20px;border:1px solid var(--border);background:var(--surface2);color:var(--text);cursor:pointer;letter-spacing:.5px;transition:all .2s}
+.btn:hover{border-color:var(--accent);color:var(--accent)}
+.btn-accent{background:var(--accent);color:#000;border-color:var(--accent)}
+.btn-accent:hover{background:var(--accent2);border-color:var(--accent2);color:#000}
+
+/* OPINION METER */
+.om-wrap{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;margin:14px 0}
+.om-statement{font-size:16px;font-style:italic;color:var(--text);margin-bottom:14px;text-align:center;line-height:1.5}
+.om-track{height:10px;background:rgba(255,255,255,.08);border-radius:10px;position:relative;margin:12px 0}
+.om-bar{height:10px;background:linear-gradient(90deg,var(--danger),var(--accent));border-radius:10px;transition:width .3s}
+.om-needle{position:absolute;top:-4px;width:18px;height:18px;border-radius:50%;background:var(--text);border:2px solid var(--accent);transform:translateX(-50%);transition:left .3s}
+.om-labels{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-top:4px}
+.om-btns{display:flex;gap:10px;margin-top:12px;justify-content:center}
+.om-pct{text-align:center;font-family:var(--font-head);font-size:22px;font-weight:700;color:var(--accent);margin-top:8px}
+.om-disagree{background:rgba(255,77,109,.1);border:1px solid rgba(255,77,109,.3);color:var(--danger);font-family:var(--font-head);font-size:12px;font-weight:700;padding:8px 20px;border-radius:20px;cursor:pointer}
+.om-agree{background:rgba(0,207,255,.1);border:1px solid rgba(0,207,255,.3);color:var(--cyan);font-family:var(--font-head);font-size:12px;font-weight:700;padding:8px 20px;border-radius:20px;cursor:pointer}
+
+/* PITCH CARD */
+.pitch-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin:14px 0}
+.pitch-card img{width:100%;height:130px;object-fit:cover;filter:brightness(.45)}
+.pitch-body{padding:14px 18px}
+.reveal-btn{font-family:var(--font-head);font-size:11px;font-weight:700;background:transparent;border:1px solid var(--border);color:var(--muted);padding:6px 14px;border-radius:20px;cursor:pointer;transition:all .2s;margin-top:8px}
+.reveal-btn:hover{border-color:var(--accent);color:var(--accent)}
+.model-reveal{max-height:0;overflow:hidden;transition:max-height .4s}
+.model-reveal.show{max-height:400px}
+.model-reveal p{padding:10px 0;font-size:13.5px;color:var(--muted);border-top:1px solid var(--border);margin-top:8px}
+.round-tags{display:flex;gap:6px;margin-bottom:8px}
+.rt{font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;font-family:var(--font-head)}
+.rt-ts{background:rgba(0,207,255,.15);color:var(--cyan)}
+.rt-ss{background:rgba(255,184,0,.15);color:var(--gold)}
+.rt-cl{background:rgba(0,229,160,.15);color:var(--success)}
+
+/* INTERVIEW SIMULATOR — unique S4B relay */
+.isim-wrap{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;margin:14px 0}
+.isim-title{font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--accent);margin-bottom:14px}
+.isim-exchange{display:flex;flex-direction:column;gap:10px;margin:14px 0}
+.isim-q{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:14px 16px}
+.isim-q-hdr{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.isim-role{font-family:var(--font-head);font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;letter-spacing:.5px}
+.isim-role.manager{background:rgba(255,77,109,.15);color:var(--danger)}
+.isim-role.team{background:rgba(0,207,255,.15);color:var(--cyan)}
+.isim-role.client{background:rgba(255,184,0,.15);color:var(--gold)}
+.isim-q-text{font-size:14px;color:var(--text)}
+.isim-q-tense{font-size:11px;color:var(--muted);font-style:italic;margin-top:4px}
+.isim-answer-zone{min-height:44px;background:rgba(0,207,255,.04);border:1px dashed rgba(0,207,255,.2);border-radius:8px;padding:10px 14px;font-size:13px;color:var(--dim);margin-top:8px}
+.isim-current{border-color:var(--accent);background:rgba(0,207,255,.08)}
+.isim-done{border-color:var(--success);background:rgba(0,229,160,.05);color:var(--success)}
+
+/* SPEED ROUND */
+.speed-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0}
+.speed-card{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px;cursor:pointer;transition:all .2s;text-align:center;min-height:80px;display:flex;align-items:center;justify-content:center}
+.speed-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.speed-card.flipped{background:rgba(0,207,255,.1);border-color:var(--accent)}
+.speed-front{font-size:12.5px;color:var(--text);line-height:1.4}
+.speed-back{font-size:12px;color:var(--accent);display:none;font-weight:600;line-height:1.4}
+.speed-card.flipped .speed-front{display:none}
+.speed-card.flipped .speed-back{display:block}
+
+/* TIMER */
+.timer-wrap{display:flex;align-items:center;gap:14px;margin:14px 0}
+.timer-svg{transform:rotate(-90deg)}
+.timer-bg{fill:none;stroke:rgba(255,255,255,.08)}
+.timer-arc{fill:none;stroke:var(--accent);stroke-linecap:round;transition:stroke-dashoffset .5s,stroke .3s}
+.timer-text{font-family:var(--font-head);font-size:12px;fill:var(--text);transform:rotate(90deg);transform-origin:45px 45px;font-weight:700;text-anchor:middle}
+.timer-label{font-family:var(--font-body);font-size:7.5px;fill:var(--muted);transform:rotate(90deg);transform-origin:45px 45px;text-anchor:middle}
+
+/* SOLO CHALLENGE */
+.solo-wrap{background:linear-gradient(135deg,rgba(0,207,255,.08),rgba(0,229,160,.04));border:1px solid rgba(0,207,255,.25);border-radius:12px;padding:22px;margin:14px 0}
+.solo-title{font-family:var(--font-head);font-size:14px;font-weight:700;color:var(--accent);margin-bottom:10px}
+.solo-task{font-size:14px;line-height:1.7;margin-bottom:16px}
+
+/* OPEN THE BOX */
+.otb-wrap{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;margin:18px 0}
+.otb-title{font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--accent);margin-bottom:14px}
+.otb-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:12px 0}
+.otb-box{aspect-ratio:1;background:var(--surface2);border:2px solid var(--border);border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:var(--font-head);font-size:20px;font-weight:800;color:var(--muted);transition:all .3s;overflow:hidden}
+.otb-box:hover{border-color:var(--accent);color:var(--accent)}
+.otb-box.opened{border-color:var(--gold);background:rgba(255,184,0,.08);cursor:default}
+.otb-num{font-size:22px}
+.otb-prompt{display:none;font-size:10.5px;font-weight:400;font-family:var(--font-body);color:var(--gold);text-align:center;padding:6px;line-height:1.4}
+.otb-box.opened .otb-num{display:none}
+.otb-box.opened .otb-prompt{display:block}
+
+/* LEADERBOARD */
+.lb-wrap{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;margin:14px 0}
+.lb-title{font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--accent);margin-bottom:14px}
+.lb-inputs{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.lb-input{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--text);font-family:var(--font-body);font-size:13px;flex:1;min-width:120px}
+.lb-input:focus{outline:none;border-color:var(--accent)}
+.lb-list{display:flex;flex-direction:column;gap:6px}
+.lb-row{display:flex;align-items:center;gap:12px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 14px}
+.lb-rank{font-family:var(--font-head);font-size:16px;font-weight:800;color:var(--muted);min-width:28px}
+.lb-rank.gold{color:var(--gold)}
+.lb-rank.silver{color:#C0C0C0}
+.lb-rank.bronze{color:#CD7F32}
+.lb-name{font-family:var(--font-head);font-size:13px;font-weight:700;flex:1}
+.lb-pts{font-family:var(--font-head);font-size:14px;font-weight:800;color:var(--accent)}
+
+/* EXIT PREVIEW CARD */
+.exit-preview{background:linear-gradient(135deg,rgba(255,77,109,.08),rgba(0,207,255,.05));border:1px solid rgba(255,77,109,.25);border-radius:12px;padding:20px;margin:14px 0}
+.ep-title{font-family:var(--font-head);font-size:14px;font-weight:800;color:var(--danger);margin-bottom:10px}
+.ep-body{font-size:13.5px;line-height:1.75;color:var(--muted)}
+.ep-body strong{color:var(--text)}
+
+/* PHRASES */
+.phrases-wrap{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:16px 0}
+.phrase-card{background:linear-gradient(135deg,rgba(255,184,0,.08),rgba(0,207,255,.05));border:1px solid rgba(255,184,0,.25);border-radius:10px;padding:16px}
+.phrase-en{font-family:var(--font-head);font-size:14px;font-weight:700;color:var(--gold);margin-bottom:6px}
+.phrase-ctx{font-size:12px;color:var(--muted);line-height:1.5}
+
+/* WRAP-UP */
+.wrapup-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:14px 0}
+.wrapup-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center}
+.wrapup-icon{font-size:24px;margin-bottom:8px}
+.wrapup-point{font-family:var(--font-head);font-size:13px;font-weight:700;margin-bottom:4px}
+.wrapup-desc{font-size:12px;color:var(--muted)}
+.checklist{list-style:none;padding:0;display:flex;flex-direction:column;gap:8px;margin:14px 0}
+.check-item{display:flex;align-items:center;gap:10px;font-size:14px;cursor:pointer}
+.check-box{width:20px;height:20px;border-radius:5px;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0}
+.check-item.done .check-box{background:var(--success);border-color:var(--success)}
+.check-item.done .check-box::after{content:'✓';color:#000;font-weight:700;font-size:12px}
+.check-item.done span{color:var(--muted);text-decoration:line-through}
+.cert-strip{background:linear-gradient(135deg,rgba(0,207,255,.08),rgba(255,184,0,.05));border:1px solid rgba(255,184,0,.25);border-radius:10px;padding:16px 20px;margin:14px 0;text-align:center}
+.cert-name-input{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 16px;color:var(--text);font-family:var(--font-head);font-size:14px;font-weight:700;text-align:center;width:100%;max-width:280px;margin:10px 0}
+.cert-name-input:focus{outline:none;border-color:var(--gold)}
+.cert-output{display:none;background:var(--surface2);border:1px solid var(--gold);border-radius:10px;padding:16px;margin-top:12px;font-size:13px;color:var(--muted);line-height:1.8}
+.cert-output.show{display:block}
+.win-wrap{margin:18px 0}
+.win-ta{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:14px;color:var(--text);font-size:14px;font-family:var(--font-body);resize:vertical;min-height:80px}
+.win-ta:focus{outline:none;border-color:var(--accent)}
+#winConfirm{display:none;color:var(--success);font-size:13px;margin-top:8px;font-style:italic}
+.ftr{background:var(--surface);border-top:1px solid var(--border);padding:18px 32px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-top:40px}
+.fbrand{font-family:var(--font-head);font-size:13px;font-weight:700}
+.flevels{display:flex;gap:6px;flex-wrap:wrap}
+.flv{font-size:10px;font-family:var(--font-head);font-weight:700;padding:3px 9px;border-radius:20px;background:rgba(255,255,255,.04);color:var(--muted)}
+.flv.on{background:rgba(0,207,255,.15);color:var(--accent);border:1px solid var(--border)}
+.sm-btn{position:fixed;bottom:20px;right:20px;background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:8px 18px;font-family:var(--font-head);font-size:11px;font-weight:700;color:var(--muted);cursor:pointer;z-index:800;transition:all .2s}
+.sm-btn:hover{border-color:var(--accent);color:var(--accent)}
+@media(max-width:860px){
+  .speed-grid{grid-template-columns:1fr 1fr}
+  .otb-grid{grid-template-columns:repeat(3,1fr)}
+  .wrapup-grid{grid-template-columns:1fr 1fr}
+  .phrases-wrap{grid-template-columns:1fr}
+  .hdr{padding:10px 16px}
+  .sec-body{padding:16px 16px 22px}
+  .sec-hdr{padding:14px 16px 8px}
+  .badge-strip{padding:10px 16px}
+  .ftr{padding:14px 16px}
+}
+</style>
+</head>
+<body>
+
+<div class="prog-wrap"><div class="prog-bar" id="progressBar"></div></div>
+
+<header class="hdr">
+  <div class="brand">
+    <div class="dot"></div>
+    <div>
+      <div class="bname">Gabriel Turner · English Training</div>
+      <div class="bsub">Teacher Edition</div>
+    </div>
+  </div>
+  <div class="sess-tags">
+    <span class="tag t-lv">A2.1</span>
+    <span class="tag t-mod">Module 6</span>
+    <span class="tag t-sess">Session 4B — Production &amp; Fluency</span>
+    <span class="tag t-time">70 min</span>
+  </div>
+</header>
+
+<div class="badge-strip">
+  <span id="b1">❓</span>
+  <span id="b2">🎤</span>
+  <span id="b3">💡</span>
+  <span id="b4">🔥</span>
+  <span id="b5">🎓</span>
+  <span class="badge-label">Final B session before the Exit Project — earn them all</span>
+  <span id="confMsg">¡Listo para el Exit Project! 🎉</span>
+</div>
+
+<!-- §1 HOT TAKE -->
+<section class="section" id="s1">
+  <img class="sec-img" src="https://images.unsplash.com/photo-1575089976121-8ed7b2a54265?w=900&q=80" alt="Final session hot take">
+  <div class="sec-hdr">
+    <span class="sec-num">§1</span>
+    <span class="sec-title">Hot Take — Are You Ready for the Exit Project?</span>
+    <span class="sec-sub">8 min</span>
+  </div>
+  <div class="sec-body">
+
+    <div class="tn">
+      <div class="tn-label">⚡ TEACHER NOTE — FINAL B SESSION FRAME</div>
+      <p>This is the last B session before the Exit Project. Open with full transparency: <em>"Next session is S5 — your Exit Project. It's a 4-minute presentation in English, alone, about a real project. Today is your last practice. Everything we do in S4B is Exit Project preparation."</em> The Hot Take is designed to surface anxiety — and turn it into energy.</p>
+    </div>
+
+    <div class="om-wrap">
+      <div class="om-statement">"After four sessions of Module 6, I feel confident enough to give a 4-minute project update in English to my real manager — right now, without preparation."</div>
+      <div class="om-track">
+        <div class="om-bar" id="omBar" style="width:30%"></div>
+        <div class="om-needle" id="omNeedle" style="left:30%"></div>
+      </div>
+      <div class="om-labels"><span>Not at all</span><span>Getting there</span><span>100% ready</span></div>
+      <div class="om-btns">
+        <button class="om-disagree" onclick="updateMeter(-8)">Not ready</button>
+        <button class="om-agree" onclick="updateMeter(8)">Ready!</button>
+      </div>
+      <div class="om-pct" id="omPct">30%</div>
+    </div>
+
+    <div class="tn tn-c2">
+      <div class="tn-label">💡 ENGAGEMENT NOTE</div>
+      <p>After voting, call on 2–3 students who voted low. Ask: <em>"What's the one thing you're most worried about?"</em> Common answers: vocabulary gap, tense errors, going blank. For each, give a quick solution: vocabulary → the word bank in your notes. Tense errors → "Let me think about that." Going blank → start with "Last week I..." — the past is always the easiest entry point. Every fear has a tool.</p>
+    </div>
+
+    <div class="timer-wrap">
+      <svg class="timer-svg" width="90" height="90" viewBox="0 0 90 90">
+        <circle class="timer-bg" cx="45" cy="45" r="38" stroke-width="6"/>
+        <circle class="timer-arc" id="tArcHot" cx="45" cy="45" r="38" stroke-width="6" stroke-dasharray="238.76" stroke-dashoffset="0"/>
+        <text class="timer-text" id="tTextHot" x="45" y="44">1:00</text>
+        <text class="timer-label" x="45" y="57">justify</text>
+      </svg>
+      <div>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:8px">60 sec: justify your score. What can you do well? What do you need to practice more?</p>
+        <button class="btn btn-accent" onclick="startTimer('tArcHot','tTextHot',60,'b1',238.76)">START</button>
+        <button class="btn" style="margin-left:8px" onclick="resetArc('tArcHot','tTextHot',60,238.76)">RESET</button>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- §2 PITCH ROUND -->
+<section class="section" id="s2">
+  <img class="sec-img" src="https://images.unsplash.com/photo-1562564055-71e051d33c19?w=900&q=80" alt="Pitch debate round">
+  <div class="sec-hdr">
+    <span class="sec-num">§2</span>
+    <span class="sec-title">Pitch Round — The Wh- Question Gauntlet</span>
+    <span class="sec-sub">12 min</span>
+  </div>
+  <div class="sec-body">
+
+    <div class="tn">
+      <div class="tn-label">⚡ TEACHER NOTE — WH- GAUNTLET FORMAT</div>
+      <p>This is a rapid-fire Wh- question drill disguised as a debate. One student is "on the hot seat" — they must answer 9 Wh- questions (3 per tense) in under 90 seconds total. The class times them. Every answer that uses the correct tense earns 1 point. Every answer that uses a vocabulary word from S4A earns a bonus point. Run 3 students minimum.</p>
+    </div>
+
+    <div class="pitch-card">
+      <img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=600&q=80" alt="Hot seat" loading="lazy">
+      <div class="pitch-body">
+        <div class="round-tags"><span class="rt rt-ts">T-S · HOT SEAT</span></div>
+        <div style="font-family:var(--font-head);font-size:11px;font-weight:700;color:var(--accent);letter-spacing:.5px;margin-bottom:10px">WH- QUESTION GAUNTLET — 9 questions, 90 seconds</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;font-size:13px">
+          <div style="background:rgba(0,207,255,.08);border-radius:8px;padding:10px">
+            <div style="font-family:var(--font-head);font-size:9px;color:var(--cyan);margin-bottom:6px">SIMPLE PAST</div>
+            <div style="margin-bottom:5px">What did you do last week?</div>
+            <div style="margin-bottom:5px">Who did you meet with?</div>
+            <div>When did you resolve the issue?</div>
+          </div>
+          <div style="background:rgba(0,229,160,.06);border-radius:8px;padding:10px">
+            <div style="font-family:var(--font-head);font-size:9px;color:var(--success);margin-bottom:6px">GOING TO</div>
+            <div style="margin-bottom:5px">What are you going to present?</div>
+            <div style="margin-bottom:5px">When is the team going to meet?</div>
+            <div>What initiative is going to launch?</div>
+          </div>
+          <div style="background:rgba(255,184,0,.06);border-radius:8px;padding:10px">
+            <div style="font-family:var(--font-head);font-size:9px;color:var(--gold);margin-bottom:6px">WILL</div>
+            <div style="margin-bottom:5px">What will you do today?</div>
+            <div style="margin-bottom:5px">Who will address the concern?</div>
+            <div>How will you implement this?</div>
+          </div>
+        </div>
+        <button class="reveal-btn" style="margin-top:12px" onclick="toggleReveal('gm1')">▼ Show Model Answers</button>
+        <div class="model-reveal" id="gm1"><p>Past: "Last week I resolved a quality concern with our supplier." / "I met with Daniel and the Guadalajara team." / "We resolved it by Thursday morning."<br>Going to: "I'm going to present the Q2 results next Tuesday." / "The team is going to meet on Friday — it's scheduled." / "The new initiative is going to launch next quarter."<br>Will: "I'll call the client this afternoon." / "I'll address the concern — that's my accountability." / "I'll implement it by end of the month."</p></div>
+      </div>
+    </div>
+
+    <div class="pitch-card">
+      <img src="https://images.unsplash.com/photo-1521791055366-0d553872952f?w=600&q=80" alt="Pair challenge" loading="lazy">
+      <div class="pitch-body">
+        <div class="round-tags"><span class="rt rt-ss">S-S · PAIRS</span></div>
+        <div style="font-family:var(--font-head);font-size:12px;font-weight:700;margin-bottom:8px">PAIR GAUNTLET — Ask &amp; Answer with Fillers</div>
+        <div style="font-size:14px;line-height:1.65;margin-bottom:8px">Same format, pairs. Partner A asks 3 rapid-fire Wh- questions (one per tense). Partner B must start EVERY answer with a filler from S4A before giving the real answer:<br><br>
+        <span style="color:var(--accent)">"That's a good point."</span> / <span style="color:var(--success)">"Let me think about that for a second..."</span> / <span style="color:var(--warn)">"To be honest..."</span><br><br>
+        No filler = no point. Natural filler = 2 points. Then switch.</div>
+        <button class="reveal-btn" onclick="toggleReveal('gm2')">▼ Show Example Exchange</button>
+        <div class="model-reveal" id="gm2"><p>A: "What did you work on last week?"<br>B: "That's a good point. Last week I worked on the supplier contract — we renegotiated the scope."<br>A: "What are you going to propose next month?"<br>B: "Let me think about that for a second... We're going to propose a new risk management initiative."<br>A: "What will you do if the client raises a concern?"<br>B: "To be honest, I'll address it directly — I'm accountable for the outcome."</p></div>
+      </div>
+    </div>
+
+    <div class="timer-wrap">
+      <svg class="timer-svg" width="90" height="90" viewBox="0 0 90 90">
+        <circle class="timer-bg" cx="45" cy="45" r="38" stroke-width="6"/>
+        <circle class="timer-arc" id="tArcPitch" cx="45" cy="45" r="38" stroke-width="6" stroke-dasharray="238.76" stroke-dashoffset="0"/>
+        <text class="timer-text" id="tTextPitch" x="45" y="44">1:30</text>
+        <text class="timer-label" x="45" y="57">gauntlet</text>
+      </svg>
+      <div>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:8px">90 sec: answer all 9 questions. Go.</p>
+        <button class="btn btn-accent" onclick="startTimer('tArcPitch','tTextPitch',90,'b1',238.76)">START</button>
+        <button class="btn" style="margin-left:8px" onclick="resetArc('tArcPitch','tTextPitch',90,238.76)">RESET</button>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- §3 RELAY — Interview Simulator -->
+<section class="section" id="s3">
+  <img class="sec-img" src="https://images.unsplash.com/photo-1556761175-4b46a572b786?w=900&q=80" alt="Interview simulator">
+  <div class="sec-hdr">
+    <span class="sec-num">§3</span>
+    <span class="sec-title">Relay — The Interview Simulator</span>
+    <span class="sec-sub">12 min</span>
+  </div>
+  <div class="sec-body">
+
+    <div class="tn">
+      <div class="tn-label">⚡ TEACHER NOTE — INTERVIEW SIMULATOR</div>
+      <p>This is the unique visual relay for S4B — and the closest simulation of the Exit Project format. One student is the "presenter" (Valeria). Three others play different roles: manager, team member, international client. Each asks their scripted question. The presenter must answer naturally, use fillers, and add proactive information. Teacher marks each answer on the rubric (natural / correct tense / vocabulary used). Run 2 full rounds with different presenters.</p>
+    </div>
+
+    <div class="isim-wrap">
+      <div class="isim-title">🎤 INTERVIEW SIMULATOR — One presenter, three questioners</div>
+
+      <div class="isim-exchange">
+        <div class="isim-q">
+          <div class="isim-q-hdr">
+            <span class="isim-role manager">MANAGER</span>
+            <span style="font-size:11px;color:var(--muted)">Question 1 of 5</span>
+          </div>
+          <div class="isim-q-text">"Good morning. What did you accomplish last week? Give me the highlights."</div>
+          <div class="isim-q-tense">Expected tense: Simple Past · Expected vocabulary: resolve, address, outcome</div>
+          <div class="isim-answer-zone isim-current" id="ans1">Presenter answers here — use a filler first, then Simple Past.</div>
+          <button class="btn" style="margin-top:8px;font-size:10px" onclick="markDone('ans1')">✓ Done</button>
+        </div>
+
+        <div class="isim-q">
+          <div class="isim-q-hdr">
+            <span class="isim-role manager">MANAGER</span>
+            <span style="font-size:11px;color:var(--muted)">Question 2 of 5</span>
+          </div>
+          <div class="isim-q-text">"What concern did you raise in last Tuesday's meeting, and how did you address it?"</div>
+          <div class="isim-q-tense">Expected tense: Simple Past Wh- · Vocabulary: raise, concern, address</div>
+          <div class="isim-answer-zone" id="ans2">Wh- question about past — use "I raised... / I addressed..." structure.</div>
+          <button class="btn" style="margin-top:8px;font-size:10px" onclick="markDone('ans2')">✓ Done</button>
+        </div>
+
+        <div class="isim-q">
+          <div class="isim-q-hdr">
+            <span class="isim-role team">TEAM MEMBER</span>
+            <span style="font-size:11px;color:var(--muted)">Question 3 of 5</span>
+          </div>
+          <div class="isim-q-text">"What initiative are we going to implement next quarter? I want to make sure I understand the plan."</div>
+          <div class="isim-q-tense">Expected tense: Going To · Vocabulary: initiative, implement, propose</div>
+          <div class="isim-answer-zone" id="ans3">Going To answer — describe a pre-decided plan with time expression.</div>
+          <button class="btn" style="margin-top:8px;font-size:10px" onclick="markDone('ans3')">✓ Done</button>
+        </div>
+
+        <div class="isim-q">
+          <div class="isim-q-hdr">
+            <span class="isim-role client">INTERNATIONAL CLIENT</span>
+            <span style="font-size:11px;color:var(--muted)">Question 4 of 5</span>
+          </div>
+          <div class="isim-q-text">"We need clarification on the delivery timeline. Who will handle our account going forward?"</div>
+          <div class="isim-q-tense">Expected tense: Will · Vocabulary: clarification, accountable, commitment</div>
+          <div class="isim-answer-zone" id="ans4">Will answer — spontaneous commitment + accountability statement.</div>
+          <button class="btn" style="margin-top:8px;font-size:10px" onclick="markDone('ans4')">✓ Done</button>
+        </div>
+
+        <div class="isim-q">
+          <div class="isim-q-hdr">
+            <span class="isim-role manager">MANAGER</span>
+            <span style="font-size:11px;color:var(--muted)">Question 5 of 5 — Freeform</span>
+          </div>
+          <div class="isim-q-text">"Moving on — anything else you want to mention before we wrap up?"</div>
+          <div class="isim-q-tense">Free choice of tense · Use: "Moving on..." / "To be honest..." / any colloquial from M6</div>
+          <div class="isim-answer-zone" id="ans5">Free production — use fillers, add proactive info, close naturally.</div>
+          <button class="btn" style="margin-top:8px;font-size:10px" onclick="markDone('ans5')">✓ Done</button>
+        </div>
+      </div>
+
+      <button class="btn" onclick="resetSimulator()">↺ Reset Simulator</button>
+    </div>
+
+    <div class="timer-wrap">
+      <svg class="timer-svg" width="90" height="90" viewBox="0 0 90 90">
+        <circle class="timer-bg" cx="45" cy="45" r="38" stroke-width="6"/>
+        <circle class="timer-arc" id="tArcRelay" cx="45" cy="45" r="38" stroke-width="6" stroke-dasharray="238.76" stroke-dashoffset="0"/>
+        <text class="timer-text" id="tTextRelay" x="45" y="44">0:45</text>
+        <text class="timer-label" x="45" y="57">per answer</text>
+      </svg>
+      <div>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:8px">45 sec per answer. Click ✓ Done when finished.</p>
+        <button class="btn btn-accent" onclick="startTimer('tArcRelay','tTextRelay',45,'b2',238.76)">START</button>
+        <button class="btn" style="margin-left:8px" onclick="resetArc('tArcRelay','tTextRelay',45,238.76)">RESET</button>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- §4 SPEED ROUND -->
+<section class="section" id="s4">
+  <img class="sec-img" src="https://images.unsplash.com/photo-1518611012118-696072aa579a?w=900&q=80" alt="Speed round meeting vocab">
+  <div class="sec-hdr">
+    <span class="sec-num">§4</span>
+    <span class="sec-title">Speed Round — Meeting Vocabulary &amp; Fillers</span>
+    <span class="sec-sub">8 min</span>
+  </div>
+  <div class="sec-body">
+
+    <div class="tn">
+      <div class="tn-label">⚡ TEACHER NOTE — SPEED ROUND FORMAT</div>
+      <p>Front = a meeting situation. Back = the correct vocabulary word or filler phrase + a sentence. First correct call = 1 point. For an extra challenge, have the student use the word in a Wh- question (not just a statement) — 2 points for a correct question. This directly prepares the Wh- question production for the Exit Project.</p>
+    </div>
+
+    <div class="speed-grid">
+      <div class="speed-card" onclick="this.classList.toggle('flipped')">
+        <div class="speed-front">You bring up a problem in the meeting for the first time</div>
+        <div class="speed-back">RAISE (a point) · "I want to raise a concern about the timeline."</div>
+      </div>
+      <div class="speed-card" onclick="this.classList.toggle('flipped')">
+        <div class="speed-front">You deal with a problem or question directly</div>
+        <div class="speed-back">ADDRESS · "We addressed the concern last Thursday."</div>
+      </div>
+      <div class="speed-card" onclick="this.classList.toggle('flipped')">
+        <div class="speed-front">You find the solution to a problem</div>
+        <div class="speed-back">RESOLVE · "We resolved the issue by end of the week."</div>
+      </div>
+      <div class="speed-card" onclick="this.classList.toggle('flipped')">
+        <div class="speed-front">You formally suggest a new plan or idea</div>
+        <div class="speed-back">PROPOSE · "I'm going to propose a new schedule on Friday."</div>
+      </div>
+      <div class="speed-card" onclick="this.classList.toggle('flipped')">
+        <div class="speed-front">You are responsible for results and must explain them</div>
+        <div class="speed-back">ACCOUNTABLE · "I'm accountable for this project."</div>
+      </div>
+      <div class="speed-card" onclick="this.classList.toggle('flipped')">
+        <div class="speed-front">You need 3 seconds to think — what do you say?</div>
+        <div class="speed-back">"Let me think about that for a second..." → then answer</div>
+      </div>
+      <div class="speed-card" onclick="this.classList.toggle('flipped')">
+        <div class="speed-front">You want to agree and add your perspective</div>
+        <div class="speed-back">"That's a good point. I also think that..."</div>
+      </div>
+      <div class="speed-card" onclick="this.classList.toggle('flipped')">
+        <div class="speed-front">You want to say something honestly and directly</div>
+        <div class="speed-back">"To be honest, I think we need more time."</div>
+      </div>
+      <div class="speed-card" onclick="this.classList.toggle('flipped')">
+        <div class="speed-front">You want to change topics in a meeting</div>
+        <div class="speed-back">"Moving on — let's talk about the Q3 targets."</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- §5 SOLO CHALLENGE -->
+<section class="section" id="s5">
+  <img class="sec-img" src="https://images.unsplash.com/photo-1491438590914-bc09fcaaf77a?w=900&q=80" alt="Exit project rehearsal">
+  <div class="sec-hdr">
+    <span class="sec-num">§5</span>
+    <span class="sec-title">Solo Challenge — Exit Project Dress Rehearsal</span>
+    <span class="sec-sub">14 min</span>
+  </div>
+  <div class="sec-body">
+
+    <div class="tn">
+      <div class="tn-label">⚡ TEACHER NOTE — DRESS REHEARSAL FORMAT</div>
+      <p>This IS the Exit Project — same format, same rubric, same time. The only difference: it's practice, not assessment. Run it exactly like S5. Give each student 4 minutes. After each presentation, give feedback using ONLY two sentences: <em>"The strongest moment was [specific sentence/moment]"</em> and <em>"For S5, try [one specific improvement]."</em> No grade. Just preparation. Students who do well here are already passing S5.</p>
+    </div>
+
+    <div class="solo-wrap">
+      <div class="solo-title">🎓 EXIT PROJECT DRESS REHEARSAL — 4 Minutes</div>
+      <div class="solo-task">
+        <strong>This is your S5 practice run.</strong> Same rules, same time, same rubric.<br><br>
+        ✓ <strong>Simple Past</strong> — what you did last week / month (at least 3 sentences)<br>
+        ✓ <strong>Going To</strong> — your team's confirmed plans (at least 2 sentences)<br>
+        ✓ <strong>Will</strong> — your personal commitments right now (at least 2 sentences)<br>
+        ✓ <strong>Wh- questions</strong> — answer 2 spontaneous questions from the class after your pitch<br>
+        ✓ <strong>Vocabulary</strong> — use at least 4 words from any S4A vocabulary list<br>
+        ✓ <strong>Fillers</strong> — use at least 1 filler phrase when answering questions<br>
+        ✓ <strong>Colloquial</strong> — end with at least 1 phrase from any M6 session<br><br>
+        <em>No notes. Real project. Professional English. This is it.</em>
+      </div>
+
+      <div class="timer-wrap" style="justify-content:center">
+        <svg class="timer-svg" width="110" height="110" viewBox="0 0 90 90">
+          <circle class="timer-bg" cx="45" cy="45" r="38" stroke-width="6"/>
+          <circle class="timer-arc" id="tArcSolo" cx="45" cy="45" r="38" stroke-width="6" stroke-dasharray="238.76" stroke-dashoffset="0"/>
+          <text class="timer-text" id="tTextSolo" x="45" y="44">4:00</text>
+          <text class="timer-label" x="45" y="57">rehearsal</text>
+        </svg>
+        <div>
+          <button class="btn btn-accent" onclick="startTimer('tArcSolo','tTextSolo',240,'b3',238.76)">▶ START REHEARSAL</button>
+          <br><br>
+          <button class="btn" onclick="resetArc('tArcSolo','tTextSolo',240,238.76)">↺ RESET</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="tn tn-c3">
+      <div class="tn-label">💰 RETENTION + UPSELL NOTE</div>
+      <p>After the dress rehearsal, ask: <em>"Who feels more ready for S5 now than before this session?"</em> Hands will go up — even from students who struggled. This is the moment to reinforce: <em>"You just did the Exit Project. S5 is the same thing — but it counts. And you already showed me you can do it."</em> This is how you retain 90%+ of students into A2.2. The confidence moment matters more than the grammar.</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- §6 OPEN THE BOX — Final Spontaneous Production -->
+<section class="section" id="s6">
+  <img class="sec-img" src="https://images.unsplash.com/photo-1553028826-f4804a6dba3b?w=900&q=80" alt="Open the box final">
+  <div class="sec-hdr">
+    <span class="sec-num">§6</span>
+    <span class="sec-title">Open the Box — Final Spontaneous Round</span>
+    <span class="sec-sub">8 min</span>
+  </div>
+  <div class="sec-body">
+
+    <div class="tn">
+      <div class="tn-label">⚡ TEACHER NOTE — FINAL OPEN THE BOX</div>
+      <p>This is the last unscripted production activity before S5. High energy, fast pace. Each box = one spontaneous prompt. Students have 30 seconds — no preparation. Class votes thumbs up (natural English) or thumbs down (forced/wrong tense). Award 2 points per thumbs-up. This simulates the Q&A portion of the Exit Project — the part students fear most.</p>
+    </div>
+
+    <div class="otb-wrap">
+      <div class="otb-title">📦 FINAL OPEN THE BOX — Last spontaneous production before S5</div>
+      <div class="otb-grid">
+        <div class="otb-box" id="box1" onclick="openBox(1)">
+          <span class="otb-num">1</span>
+          <span class="otb-prompt">Your manager just asked: "What will you do if the client raises a concern about the scope?" Answer with will + accountable + filler.</span>
+        </div>
+        <div class="otb-box" id="box2" onclick="openBox(2)">
+          <span class="otb-num">2</span>
+          <span class="otb-prompt">PAST: "What did you resolve at work this month? Give me 3 sentences — no stopping."</span>
+        </div>
+        <div class="otb-box" id="box3" onclick="openBox(3)">
+          <span class="otb-num">3</span>
+          <span class="otb-prompt">GOING TO: "What initiative is your team going to implement? When? Who's accountable?" Answer all three questions.</span>
+        </div>
+        <div class="otb-box" id="box4" onclick="openBox(4)">
+          <span class="otb-num">4</span>
+          <span class="otb-prompt">A client from the US asks: "Are we on the same page about the timeline?" Reply naturally — include going to + will + one colloquial phrase.</span>
+        </div>
+        <div class="otb-box" id="box5" onclick="openBox(5)">
+          <span class="otb-num">5</span>
+          <span class="otb-prompt">FULL INTEGRATION: Give your Exit Project in 30 seconds — compressed. Past + going to + will + one filler + one closing phrase. Go.</span>
+        </div>
+      </div>
+
+      <div class="timer-wrap" style="margin-top:16px">
+        <svg class="timer-svg" width="90" height="90" viewBox="0 0 90 90">
+          <circle class="timer-bg" cx="45" cy="45" r="38" stroke-width="6"/>
+          <circle class="timer-arc" id="tArcBox" cx="45" cy="45" r="38" stroke-width="6" stroke-dasharray="238.76" stroke-dashoffset="0"/>
+          <text class="timer-text" id="tTextBox" x="45" y="44">0:30</text>
+          <text class="timer-label" x="45" y="57">respond</text>
+        </svg>
+        <div>
+          <button class="btn btn-accent" onclick="startTimer('tArcBox','tTextBox',30,'b4',238.76)">START</button>
+          <button class="btn" style="margin-left:8px" onclick="resetArc('tArcBox','tTextBox',30,238.76)">RESET</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- §7 LEADERBOARD + WRAP-UP + EXIT PREVIEW -->
+<section class="section" id="s7">
+  <img class="sec-img" src="https://images.unsplash.com/photo-1465101162946-4377e57745c3?w=900&q=80" alt="Final session wrap up">
+  <div class="sec-hdr">
+    <span class="sec-num">§7</span>
+    <span class="sec-title">Leaderboard + Wrap-Up + Exit Project Preview</span>
+    <span class="sec-sub">8 min</span>
+  </div>
+  <div class="sec-body">
+
+    <div class="lb-wrap">
+      <div class="lb-title">🏆 SESSION LEADERBOARD</div>
+      <div class="tn" style="margin-bottom:12px">
+        <div class="tn-label">TEACHER NOTE — HOW TO SCORE</div>
+        <p>Hot Take (1pt justification) · Wh- Gauntlet (1pt/answer + 1pt bonus vocab, max 18pts) · Filler Pairs (2pts/natural answer) · Interview Simulator (2pts/answer, max 10pts) · Speed Round (1pt call + 2pts sentence) · Dress Rehearsal (up to 20pts rubric) · Open the Box (2pts/thumbs-up). Top scorer presents first in S5 — that's the prize.</p>
+      </div>
+      <div class="lb-inputs">
+        <input class="lb-input" id="lbName" placeholder="Student name" maxlength="30">
+        <input class="lb-input" id="lbPts" placeholder="Points" type="number" min="0" max="60" style="max-width:100px">
+        <button class="btn btn-accent" onclick="addToLB()">+ Add</button>
+      </div>
+      <div class="lb-list" id="lbList"></div>
+    </div>
+
+    <!-- EXIT PROJECT PREVIEW -->
+    <div class="exit-preview">
+      <div class="ep-title">🎓 NEXT SESSION — S5: Exit Project</div>
+      <div class="ep-body">
+        <strong>Format:</strong> 4-minute spoken presentation + 1-minute Q&A with teacher<br>
+        <strong>Topic:</strong> A real project from your work — your choice<br>
+        <strong>Requirements:</strong> Simple Past (3+ sentences) · Going To (2+) · Will (2+) · 4+ vocabulary words · 1+ colloquial phrase · No notes<br>
+        <strong>Rubric:</strong> Tense accuracy · Fluency · Vocabulary range · Coherence · Colloquial use (5 criteria × 4 points = 20 points max)<br><br>
+        <strong>Tonight:</strong> Think about your project. What happened? What's planned? What will you commit to? Sleep on it. Come ready.
+      </div>
+    </div>
+
+    <!-- 3 PHRASES -->
+    <p style="font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--gold);margin:20px 0 10px">🎯 3 Phrases for the Exit Project</p>
+    <div class="phrases-wrap">
+      <div class="phrase-card">
+        <div class="phrase-en">"Let me think about that for a second."</div>
+        <div class="phrase-ctx">Your safety net for Q&A. Use it every time the teacher asks a spontaneous question. Buys 3 seconds. Sounds professional.</div>
+      </div>
+      <div class="phrase-card">
+        <div class="phrase-en">"To be honest, I think..."</div>
+        <div class="phrase-ctx">Opens your opinion or concern section. Signals confidence and directness. Use it once in your Exit Project presentation.</div>
+      </div>
+      <div class="phrase-card">
+        <div class="phrase-en">"I'll keep you posted on any changes."</div>
+        <div class="phrase-ctx">The perfect closing line for your Exit Project. Ends with a will commitment + follow-up signal. Professional. Natural. Memorable.</div>
+      </div>
+    </div>
+
+    <!-- WRAP-UP -->
+    <div class="wrapup-grid" style="margin-top:20px">
+      <div class="wrapup-card">
+        <div class="wrapup-icon">❓</div>
+        <div class="wrapup-point">Wh- × 3 Tenses</div>
+        <div class="wrapup-desc">What did / What are you going to / What will — master all three. They ARE the Exit Project Q&A.</div>
+      </div>
+      <div class="wrapup-card">
+        <div class="wrapup-icon">💡</div>
+        <div class="wrapup-point">Fillers = Confidence</div>
+        <div class="wrapup-desc">"Let me think..." / "To be honest..." / "That's a good point" — use them. They don't show weakness. They show control.</div>
+      </div>
+      <div class="wrapup-card">
+        <div class="wrapup-icon">🎓</div>
+        <div class="wrapup-point">S5 = Your Moment</div>
+        <div class="wrapup-desc">You've done the dress rehearsal. You know the format. You know the vocabulary. S5 is just doing it — for real.</div>
+      </div>
+    </div>
+
+    <p style="font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--accent);margin:18px 0 10px">I Can Now...</p>
+    <ul class="checklist">
+      <li class="check-item" onclick="this.classList.toggle('done')"><div class="check-box"></div><span>Answer Wh- questions in all three tenses under time pressure</span></li>
+      <li class="check-item" onclick="this.classList.toggle('done')"><div class="check-box"></div><span>Use professional fillers to buy thinking time without losing fluency</span></li>
+      <li class="check-item" onclick="this.classList.toggle('done')"><div class="check-box"></div><span>Simulate a full 4-minute project presentation with Q&A</span></li>
+      <li class="check-item" onclick="this.classList.toggle('done')"><div class="check-box"></div><span>Handle spontaneous manager and client questions in English</span></li>
+      <li class="check-item" onclick="this.classList.toggle('done')"><div class="check-box"></div><span>Use all M6 colloquial phrases naturally in conversation</span></li>
+    </ul>
+
+    <div class="cert-strip">
+      <p style="font-family:var(--font-head);font-size:12px;font-weight:700;color:var(--gold);margin-bottom:8px">🎓 S4B Complete — Generate Certificate</p>
+      <input class="cert-name-input" id="certName" type="text" placeholder="Student name">
+      <br>
+      <button class="btn btn-accent" onclick="generateCert()">Generate</button>
+      <div class="cert-output" id="certOut">
+        <strong id="certNameDisplay"></strong> has completed A2.1 · Module 6 · Session 4B — Production &amp; Fluency. Skills demonstrated: Wh- question production × 3 tenses, professional fillers, interview simulation, and Exit Project dress rehearsal.
+        <br><br><em style="color:var(--dim)">Gabriel Turner English Training · Celaya, Guanajuato · Ready for S5</em>
+      </div>
+    </div>
+
+    <div class="win-wrap">
+      <p style="font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--gold);margin-bottom:10px">🎓 My Win Today</p>
+      <textarea id="myWin" class="win-ta" placeholder="Write the sentence that felt most natural today — the one that surprised you. That's your Exit Project opening line."></textarea>
+      <button class="btn btn-accent" style="margin-top:10px" onclick="saveWin()">Save My Win</button>
+      <div id="winConfirm">✓ Saved! Tomorrow: S5. You are ready. Go in confident.</div>
+    </div>
+
+  </div>
+</section>
+
+<footer class="ftr">
+  <div class="fbrand">Gabriel Turner · English Training</div>
+  <div style="font-size:11px;color:var(--muted)">A2.1 · M6 · S4B · GT_A2_1_M6_S4B_TEACHER_v1.html</div>
+  <div class="flevels">
+    <div class="flv">A1.1</div><div class="flv">A1.2</div><div class="flv on">A2.1</div>
+    <div class="flv">A2.2</div><div class="flv">B1.1</div><div class="flv">B1.2</div>
+  </div>
+</footer>
+
+<button class="sm-btn" onclick="toggleSM()"><span id="smt-label">Teacher Mode</span></button>
+
+<script>
+const badgeEarned={b1:false,b2:false,b3:false,b4:false,b5:false};
+function earnBadge(id){if(badgeEarned[id])return;badgeEarned[id]=true;const el=document.getElementById(id);if(el)el.classList.add('earned');if(Object.values(badgeEarned).every(Boolean)){launchConfetti();const cm=document.getElementById('confMsg');if(cm)cm.style.display='block';}}
+function launchConfetti(){const colors=['#00CFFF','#67E8F9','#00E5A0','#FFB800','#ffffff','#FF4D6D'];for(let i=0;i<90;i++){const d=document.createElement('div');d.style.cssText='position:fixed;top:-10px;pointer-events:none;z-index:9999;border-radius:2px;';d.style.left=Math.random()*100+'vw';d.style.width=(6+Math.random()*6)+'px';d.style.height=(6+Math.random()*6)+'px';d.style.background=colors[Math.floor(Math.random()*colors.length)];d.style.animation='confFall '+(1.5+Math.random()*2)+'s linear forwards';document.body.appendChild(d);setTimeout(()=>d.remove(),4000);}}
+
+let timerIntervals={};
+function startTimer(arcId,textId,seconds,badgeKey,circumference){
+  if(timerIntervals[arcId])clearInterval(timerIntervals[arcId]);
+  const arc=document.getElementById(arcId),txt=document.getElementById(textId);let rem=seconds;
+  function update(){arc.style.strokeDashoffset=circumference*(1-rem/seconds);const m=Math.floor(rem/60),s=rem%60;txt.textContent=m+':'+(s<10?'0':'')+s;if(rem<=5)arc.style.stroke='#FF4D6D';if(rem<=0){clearInterval(timerIntervals[arcId]);arc.style.stroke='var(--success)';if(badgeKey)earnBadge(badgeKey);return;}rem--;}
+  update();timerIntervals[arcId]=setInterval(update,1000);
+}
+function resetArc(arcId,textId,seconds,circumference){if(timerIntervals[arcId]){clearInterval(timerIntervals[arcId]);delete timerIntervals[arcId];}const arc=document.getElementById(arcId);arc.style.strokeDashoffset='0';arc.style.stroke='var(--accent)';const m=Math.floor(seconds/60),s=seconds%60;document.getElementById(textId).textContent=m+':'+(s<10?'0':'')+s;}
+
+let meterVal=30;
+function updateMeter(delta){meterVal=Math.max(5,Math.min(95,meterVal+delta));document.getElementById('omBar').style.width=meterVal+'%';const needle=document.getElementById('omNeedle');if(needle)needle.style.left=meterVal+'%';document.getElementById('omPct').textContent=meterVal+'%';}
+
+function toggleReveal(id){const el=document.getElementById(id);el.classList.toggle('show');el.previousElementSibling.textContent=el.classList.contains('show')?'▲ Hide':'▼ Show Model Answers';}
+
+// INTERVIEW SIMULATOR
+let simDone=0;
+function markDone(id){
+  const zone=document.getElementById(id);
+  zone.classList.remove('isim-current');
+  zone.classList.add('isim-done');
+  zone.textContent='✓ Answered';
+  simDone++;
+  if(simDone>=5){earnBadge('b2');document.getElementById('b2').title='Interview Simulator Complete!';}
+}
+function resetSimulator(){
+  simDone=0;
+  const zones=['ans1','ans2','ans3','ans4','ans5'];
+  const texts=['Presenter answers here — use a filler first, then Simple Past.',
+    'Wh- question about past — use "I raised... / I addressed..." structure.',
+    'Going To answer — describe a pre-decided plan with time expression.',
+    'Will answer — spontaneous commitment + accountability statement.',
+    'Free production — use fillers, add proactive info, close naturally.'];
+  zones.forEach(function(id,i){
+    const el=document.getElementById(id);
+    el.classList.remove('isim-done','isim-current');
+    el.textContent=texts[i];
+  });
+  document.getElementById('ans1').classList.add('isim-current');
+}
+
+// OPEN THE BOX
+function openBox(n){
+  const box=document.getElementById('box'+n);
+  if(box.classList.contains('opened'))return;
+  box.classList.add('opened');
+}
+
+// LEADERBOARD
+let lbData=[];
+function addToLB(){
+  const name=document.getElementById('lbName').value.trim();
+  const pts=parseInt(document.getElementById('lbPts').value)||0;
+  if(!name)return;
+  const existing=lbData.find(r=>r.name===name);
+  if(existing){existing.pts+=pts;}else{lbData.push({name,pts});}
+  lbData.sort((a,b)=>b.pts-a.pts);
+  document.getElementById('lbName').value='';
+  document.getElementById('lbPts').value='';
+  renderLB();
+  if(lbData.length>=3)earnBadge('b5');
+}
+function renderLB(){
+  const list=document.getElementById('lbList');
+  const medals=['🥇','🥈','🥉'];
+  const rankClasses=['gold','silver','bronze'];
+  list.innerHTML=lbData.map((r,i)=>
+    `<div class="lb-row"><span class="lb-rank ${rankClasses[i]||''}">${medals[i]||('#'+(i+1))}</span><span class="lb-name">${r.name}</span><span class="lb-pts">${r.pts} pts</span></div>`
+  ).join('');
+}
+
+function generateCert(){
+  const name=document.getElementById('certName').value.trim();
+  if(!name)return;
+  document.getElementById('certNameDisplay').textContent=name;
+  document.getElementById('certOut').classList.add('show');
+  earnBadge('b5');
+}
+function saveWin(){const v=document.getElementById('myWin').value.trim();if(!v)return;const c=document.getElementById('winConfirm');if(c)c.style.display='block';}
+window.addEventListener('scroll',()=>{const h=document.documentElement;const bar=document.getElementById('progressBar');if(bar)bar.style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight)*100)+'%';});
+function toggleSM(){document.body.classList.toggle('sm');document.getElementById('smt-label').textContent=document.body.classList.contains('sm')?'Student Mode':'Teacher Mode';}
+(function(){const s=document.createElement('style');s.textContent='@keyframes confFall{0%{transform:translateY(-10px) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}';document.head.appendChild(s);})();
+</script>
+</body>
+</html>

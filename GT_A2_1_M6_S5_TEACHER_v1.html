@@ -1,0 +1,1124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GT A2.1 · M6 S5 · Exit Lesson — Full Integration</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#080808;--surface:#111318;--surface2:#1a1f28;
+  --accent:#00CFFF;--accent2:#67E8F9;
+  --border:rgba(0,207,255,.18);
+  --text:#F0F4F8;--muted:#8A9BB0;--dim:rgba(226,226,226,.25);
+  --danger:#FF4D6D;--success:#00E5A0;--warn:#FFB347;
+  --cyan:#00CFFF;--gold:#FFB800;
+  --font-head:'Syne',sans-serif;--font-body:'DM Sans',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:15px;line-height:1.6}
+
+/* HERO */
+.hero{position:relative;min-height:420px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:60px 32px 40px;overflow:hidden}
+.hero-bg{position:absolute;inset:0;object-fit:cover;width:100%;height:100%;filter:brightness(.22)}
+.hero-content{position:relative;z-index:2;max-width:700px}
+.hero-eyebrow{font-family:var(--font-head);font-size:11px;font-weight:700;color:var(--accent);letter-spacing:2px;margin-bottom:14px;opacity:.9}
+.hero-title{font-family:var(--font-head);font-size:42px;font-weight:800;line-height:1.1;margin-bottom:14px}
+.hero-sub{font-size:16px;color:var(--muted);margin-bottom:24px;max-width:520px;margin-left:auto;margin-right:auto}
+.hero-meta{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.hmeta{font-family:var(--font-head);font-size:10px;font-weight:700;padding:4px 14px;border-radius:20px;letter-spacing:.5px}
+.hm-lv{background:rgba(0,207,255,.2);color:var(--accent);border:1px solid var(--border)}
+.hm-mod{background:rgba(255,184,0,.15);color:var(--gold);border:1px solid rgba(255,184,0,.25)}
+.hm-time{background:rgba(0,229,160,.12);color:var(--success);border:1px solid rgba(0,229,160,.2)}
+.hm-exit{background:rgba(255,77,109,.12);color:var(--danger);border:1px solid rgba(255,77,109,.2)}
+
+/* STICKY NAV */
+.snav{position:sticky;top:0;background:rgba(8,8,8,.95);backdrop-filter:blur(14px);border-bottom:1px solid var(--border);padding:10px 32px;display:flex;gap:6px;flex-wrap:wrap;z-index:900;align-items:center}
+.snav-brand{font-family:var(--font-head);font-size:12px;font-weight:700;color:var(--accent);margin-right:10px}
+.snav a{font-family:var(--font-head);font-size:10px;font-weight:700;color:var(--muted);text-decoration:none;padding:4px 10px;border-radius:20px;border:1px solid transparent;transition:all .2s;letter-spacing:.3px}
+.snav a:hover{border-color:var(--border);color:var(--accent)}
+
+/* PROGRESS */
+.prog-wrap{position:fixed;top:0;left:0;width:100%;height:3px;background:rgba(0,207,255,.1);z-index:1000}
+.prog-bar{height:3px;background:var(--accent);width:0%;transition:width .3s}
+
+/* BADGE STRIP */
+.badge-strip{display:flex;align-items:center;gap:12px;padding:14px 32px;background:var(--surface);border-bottom:1px solid var(--border);flex-wrap:wrap}
+.badge-strip span[id]{font-size:22px;filter:grayscale(1);opacity:.25;transition:all .4s}
+.badge-strip span[id].earned{filter:none;opacity:1;animation:badgePop .5s ease}
+@keyframes badgePop{0%{transform:scale(1)}50%{transform:scale(1.35)}100%{transform:scale(1)}}
+.badge-label{font-size:11px;color:var(--muted);margin-left:auto}
+#confMsg{display:none;font-family:var(--font-head);font-size:12px;color:var(--gold);font-weight:700;letter-spacing:.5px}
+
+/* SECTIONS */
+.section{margin:0;border-bottom:1px solid var(--border)}
+.sec-img{width:100%;height:180px;object-fit:cover;display:block;filter:brightness(.4)}
+.sec-hdr{padding:18px 32px 10px;display:flex;align-items:center;gap:14px;background:linear-gradient(135deg,rgba(0,207,255,.07),transparent)}
+.sec-num{font-family:var(--font-head);font-size:11px;font-weight:800;background:var(--accent);color:#000;padding:3px 9px;border-radius:20px;letter-spacing:.5px}
+.sec-title{font-family:var(--font-head);font-size:19px;font-weight:800}
+.sec-sub{font-size:12px;color:var(--muted);margin-left:auto}
+.sec-body{padding:20px 32px 28px}
+
+/* COLLAPSIBLE TEACHER NOTES (S5 style) */
+.tn-toggle{display:flex;align-items:center;gap:8px;background:rgba(0,207,255,.06);border:1px solid rgba(0,207,255,.2);border-radius:8px;padding:10px 14px;cursor:pointer;margin:12px 0;transition:all .2s}
+.tn-toggle:hover{border-color:var(--accent)}
+.tn-toggle-label{font-family:var(--font-head);font-size:11px;font-weight:700;color:var(--cyan);letter-spacing:.6px;flex:1}
+.tn-arr{font-size:10px;color:var(--muted);transition:transform .3s}
+.tn-panel{max-height:0;overflow:hidden;transition:max-height .4s;font-size:13px;color:var(--muted)}
+.tn-panel.open{max-height:400px}
+.tn-panel-inner{padding:12px 14px;border-left:3px solid var(--cyan);background:rgba(0,207,255,.04);border-radius:0 8px 8px 0;margin-top:4px}
+.tn-c2-toggle{background:rgba(255,61,114,.06);border-color:rgba(255,61,114,.2)}
+.tn-c2-toggle .tn-toggle-label{color:#FF3D72}
+.tn-c2-panel .tn-panel-inner{border-left-color:#FF3D72;background:rgba(255,61,114,.04)}
+.tn-c3-toggle{background:rgba(255,184,0,.06);border-color:rgba(255,184,0,.2)}
+.tn-c3-toggle .tn-toggle-label{color:var(--gold)}
+.tn-c3-panel .tn-panel-inner{border-left-color:var(--gold);background:rgba(255,184,0,.04)}
+body.sm .tn-toggle,.body.sm .tn-panel{display:none}
+
+/* WU GRID */
+.wu-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:14px 0}
+.wu-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.wu-card img{width:100%;height:100px;object-fit:cover;filter:brightness(.4)}
+.wu-card-body{padding:10px 12px}
+.wu-card-label{font-family:var(--font-head);font-size:11px;font-weight:700;color:var(--accent);margin-bottom:4px}
+.wu-card-q{font-size:12px;color:var(--muted)}
+
+/* SPEAKING */
+.round-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin:14px 0}
+.round-card img{width:100%;height:130px;object-fit:cover;filter:brightness(.4)}
+.round-card-body{padding:14px 18px}
+.round-q{font-size:14px;margin:8px 0}
+.reveal-btn{font-family:var(--font-head);font-size:11px;font-weight:700;background:transparent;border:1px solid var(--border);color:var(--muted);padding:6px 14px;border-radius:20px;cursor:pointer;transition:all .2s;margin-top:8px}
+.reveal-btn:hover{border-color:var(--accent);color:var(--accent)}
+.model-reveal{max-height:0;overflow:hidden;transition:max-height .4s}
+.model-reveal.show{max-height:300px}
+.model-reveal p{padding:10px 0;font-size:13.5px;color:var(--muted);border-top:1px solid var(--border);margin-top:8px}
+.round-tags{display:flex;gap:6px;margin-bottom:8px}
+.rt{font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;font-family:var(--font-head)}
+.rt-ts{background:rgba(0,207,255,.15);color:var(--cyan)}
+.rt-ss{background:rgba(255,184,0,.15);color:var(--gold)}
+.rt-cl{background:rgba(0,229,160,.15);color:var(--success)}
+
+/* FLASH CARDS */
+.fc-wrap{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;margin:18px 0}
+.fc-title{font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--accent);margin-bottom:14px}
+.fc-stage{position:relative;perspective:800px;height:180px;max-width:400px;margin:0 auto;cursor:pointer}
+.fc-card{position:absolute;inset:0;transform-style:preserve-3d;transition:transform .5s;border-radius:12px}
+.fc-card.flipped{transform:rotateY(180deg)}
+.fc-face{position:absolute;inset:0;backface-visibility:hidden;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;text-align:center}
+.fc-front{background:var(--surface2);border:1px solid var(--border)}
+.fc-back{background:rgba(0,207,255,.08);border:1px solid rgba(0,207,255,.25);transform:rotateY(180deg)}
+.fc-front-word{font-family:var(--font-head);font-size:20px;font-weight:800;color:var(--accent);margin-bottom:6px}
+.fc-front-cat{font-size:10px;color:var(--muted);font-family:var(--font-head);letter-spacing:.5px}
+.fc-back-def{font-size:13px;color:var(--text);margin-bottom:6px;line-height:1.5}
+.fc-back-ex{font-size:11.5px;color:var(--muted);font-style:italic}
+.fc-nav{display:flex;align-items:center;justify-content:center;gap:14px;margin-top:14px;flex-wrap:wrap}
+.fc-counter{font-family:var(--font-head);font-size:12px;color:var(--muted)}
+.fc-progress{height:4px;background:rgba(255,255,255,.08);border-radius:4px;margin-top:12px}
+.fc-progress-bar{height:4px;background:var(--accent);border-radius:4px;transition:width .3s}
+
+/* COLLO GRID */
+.collo-poll{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:14px 0}
+.collo-poll-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;cursor:pointer;transition:all .2s;text-align:center}
+.collo-poll-card:hover{border-color:var(--accent)}
+.collo-poll-card.voted{border-color:var(--accent);background:rgba(0,207,255,.08)}
+.collo-phrase-text{font-family:var(--font-head);font-size:12px;font-weight:700;color:var(--warn);margin-bottom:6px}
+.collo-votes{font-size:11px;color:var(--muted)}
+
+/* GRAM TABLE */
+.gram-review-table{width:100%;border-collapse:collapse;font-size:13px;margin:14px 0}
+.gram-review-table th{background:rgba(0,207,255,.12);color:var(--accent);font-family:var(--font-head);font-size:11px;font-weight:700;padding:9px 12px;text-align:left;border:1px solid var(--border)}
+.gram-review-table td{padding:8px 12px;border:1px solid var(--border);color:var(--text)}
+.gram-review-table tr:nth-child(even) td{background:rgba(255,255,255,.03)}
+.gram-review-table .hl{color:var(--accent);font-weight:600}
+.gram-review-table .hl2{color:var(--success);font-weight:600}
+.gram-review-table .hl3{color:var(--warn);font-weight:600}
+
+/* ACTIVITY */
+.activity-wrap{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px;margin:16px 0}
+.activity-title{font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--accent);margin-bottom:14px}
+.q-item{margin:12px 0}
+.q-text{font-size:14px;margin-bottom:8px}
+.q-opts{display:flex;gap:8px;flex-wrap:wrap}
+.q-opt{background:var(--surface2);border:1px solid var(--border);color:var(--text);border-radius:20px;padding:7px 16px;cursor:pointer;font-size:12.5px;transition:all .2s}
+.q-opt:hover{border-color:var(--accent)}
+.q-opt.correct{background:rgba(0,229,160,.15);border-color:var(--success);color:var(--success)}
+.q-opt.wrong{background:rgba(255,77,109,.12);border-color:var(--danger);color:var(--danger)}
+.q-fb{font-size:12px;color:var(--muted);margin-top:5px;min-height:16px}
+.activity-score{font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--accent);margin-top:12px}
+.drag-list{list-style:none;padding:0;display:flex;flex-direction:column;gap:8px;margin:12px 0}
+.drag-item{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;cursor:grab;font-size:13px;display:flex;align-items:center;gap:10px;transition:all .2s}
+.drag-item:hover{border-color:var(--accent)}
+.drag-item.drag-over{border-color:var(--accent);background:rgba(0,207,255,.1)}
+.drag-handle{color:var(--muted)}
+.drag-fb{font-size:13px;padding:10px 14px;border-radius:8px;margin-top:8px;display:none}
+.drag-fb.ok{display:block;background:rgba(0,229,160,.1);color:var(--success);border:1px solid rgba(0,229,160,.2)}
+.drag-fb.err{display:block;background:rgba(255,77,109,.08);color:var(--danger);border:1px solid rgba(255,77,109,.15)}
+
+/* LISTENING */
+.listen-player{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin:14px 0}
+.listen-player img{width:100%;height:120px;object-fit:cover;filter:brightness(.4)}
+.listen-inner{padding:16px;display:flex;align-items:center;gap:14px}
+.play-btn{width:44px;height:44px;border-radius:50%;background:var(--accent);border:none;color:#000;font-size:16px;cursor:pointer;flex-shrink:0;font-weight:700}
+.track-title{font-family:var(--font-head);font-size:13px;font-weight:700}
+.track-sub{font-size:11px;color:var(--muted);margin-top:2px}
+.waveform{display:flex;align-items:center;gap:2px;height:32px;margin-left:auto}
+.wbar{width:3px;border-radius:2px;background:var(--accent)}
+.script-toggle{font-family:var(--font-head);font-size:11px;font-weight:700;background:transparent;border:1px solid var(--border);color:var(--muted);padding:7px 16px;border-radius:20px;cursor:pointer;transition:all .2s;display:block;margin:8px 0}
+.script-toggle:hover{border-color:var(--accent);color:var(--accent)}
+.script-box{max-height:0;overflow:hidden;transition:max-height .4s;font-size:13.5px;color:var(--muted);line-height:1.7;background:var(--surface);border-radius:8px}
+.script-box.open{max-height:800px;padding:14px 18px;border:1px solid var(--border);margin-top:8px}
+.tf-item{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px 16px;margin:10px 0}
+.tf-stmt{font-size:13.5px;margin-bottom:8px}
+.tf-btns{display:flex;gap:8px}
+.tf-btn{font-family:var(--font-head);font-size:11px;font-weight:700;padding:6px 16px;border-radius:20px;border:1px solid var(--border);background:var(--surface2);color:var(--text);cursor:pointer;transition:all .2s}
+.tf-btn:hover{border-color:var(--accent);color:var(--accent)}
+
+/* EXIT TASK */
+.exit-task{background:linear-gradient(135deg,rgba(255,77,109,.08),rgba(0,207,255,.05));border:1px solid rgba(255,77,109,.25);border-radius:14px;padding:24px;margin:14px 0}
+.exit-task-title{font-family:var(--font-head);font-size:16px;font-weight:800;color:var(--danger);margin-bottom:10px}
+.exit-task-desc{font-size:14px;line-height:1.7;margin-bottom:16px}
+.exit-task-desc strong{color:var(--text)}
+.rubric{width:100%;border-collapse:collapse;font-size:12.5px;margin:14px 0}
+.rubric th{background:rgba(255,77,109,.12);color:var(--danger);font-family:var(--font-head);font-size:10px;font-weight:700;padding:8px 10px;text-align:left;border:1px solid rgba(255,77,109,.2)}
+.rubric td{padding:8px 10px;border:1px solid var(--border);color:var(--text);cursor:pointer;transition:all .2s}
+.rubric td:hover{background:rgba(0,207,255,.08)}
+.rubric td.rubric-selected{background:rgba(0,229,160,.12);color:var(--success);border-color:rgba(0,229,160,.3)}
+.rubric-score{font-family:var(--font-head);font-size:14px;font-weight:700;color:var(--accent);margin-top:10px}
+
+/* TIMER */
+.timer-wrap{display:flex;align-items:center;gap:14px;margin:14px 0}
+.timer-svg{transform:rotate(-90deg)}
+.timer-bg{fill:none;stroke:rgba(255,255,255,.08)}
+.timer-arc{fill:none;stroke:var(--accent);stroke-linecap:round;transition:stroke-dashoffset .5s,stroke .3s}
+.timer-text{font-family:var(--font-head);font-size:12px;fill:var(--text);transform:rotate(90deg);transform-origin:45px 45px;font-weight:700;text-anchor:middle}
+.timer-label{font-family:var(--font-body);font-size:7.5px;fill:var(--muted);transform:rotate(90deg);transform-origin:45px 45px;text-anchor:middle}
+.btn{font-family:var(--font-head);font-size:11px;font-weight:700;padding:7px 16px;border-radius:20px;border:1px solid var(--border);background:var(--surface2);color:var(--text);cursor:pointer;letter-spacing:.5px;transition:all .2s}
+.btn:hover{border-color:var(--accent);color:var(--accent)}
+.btn-accent{background:var(--accent);color:#000;border-color:var(--accent)}
+.btn-accent:hover{background:var(--accent2);border-color:var(--accent2);color:#000}
+.btn-danger{background:rgba(255,77,109,.1);border-color:rgba(255,77,109,.3);color:var(--danger)}
+
+/* MODULE MAP */
+.module-map{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:16px 0}
+.mm-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;position:relative}
+.mm-num{font-family:var(--font-head);font-size:22px;font-weight:800;color:rgba(0,207,255,.15);margin-bottom:6px}
+.mm-title{font-family:var(--font-head);font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px}
+.mm-tags{display:flex;flex-direction:column;gap:3px}
+.mm-tag{font-size:10px;color:var(--muted)}
+.mm-check{position:absolute;top:10px;right:10px;font-size:16px}
+
+/* CERTIFICATE */
+.cert-wrap{background:linear-gradient(135deg,rgba(0,207,255,.08),rgba(255,184,0,.05));border:2px solid rgba(0,207,255,.3);border-radius:16px;padding:32px;margin:20px 0;text-align:center}
+.cert-title{font-family:var(--font-head);font-size:24px;font-weight:800;color:var(--gold);margin-bottom:8px}
+.cert-sub{font-size:14px;color:var(--muted);margin-bottom:20px}
+.cert-name-input{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px 20px;color:var(--text);font-family:var(--font-head);font-size:16px;font-weight:700;text-align:center;width:100%;max-width:320px;margin-bottom:14px}
+.cert-name-input:focus{outline:none;border-color:var(--accent)}
+.cert-card{display:none;background:var(--surface2);border:1px solid var(--gold);border-radius:12px;padding:24px;margin:14px auto;max-width:500px}
+.cert-card.show{display:block}
+.cert-card-title{font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--gold);letter-spacing:1px;margin-bottom:6px}
+.cert-card-name{font-family:var(--font-head);font-size:22px;font-weight:800;color:var(--text);margin:10px 0}
+.cert-card-body{font-size:13px;color:var(--muted);line-height:1.7}
+.cert-card-level{font-family:var(--font-head);font-size:11px;color:var(--accent);margin-top:12px;letter-spacing:.5px}
+
+/* MODULE COMPLETE */
+.module-complete{background:linear-gradient(135deg,rgba(0,229,160,.1),rgba(0,207,255,.06));border:1px solid rgba(0,229,160,.3);border-radius:14px;padding:24px;text-align:center;margin:20px 0}
+.mc-icon{font-size:40px;margin-bottom:10px}
+.mc-title{font-family:var(--font-head);font-size:20px;font-weight:800;color:var(--success);margin-bottom:8px}
+.mc-desc{font-size:14px;color:var(--muted);line-height:1.7}
+.next-level{background:rgba(0,207,255,.06);border:1px solid rgba(0,207,255,.2);border-radius:10px;padding:16px;margin:14px 0}
+.nl-label{font-family:var(--font-head);font-size:10px;font-weight:700;color:var(--cyan);letter-spacing:.6px;margin-bottom:6px}
+
+/* WIN */
+.win-wrap{margin:18px 0}
+.win-ta{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:14px;color:var(--text);font-size:14px;font-family:var(--font-body);resize:vertical;min-height:80px}
+.win-ta:focus{outline:none;border-color:var(--accent)}
+#winConfirm{display:none;color:var(--success);font-size:13px;margin-top:8px;font-style:italic}
+
+/* FOOTER */
+.ftr{background:var(--surface);border-top:1px solid var(--border);padding:18px 32px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-top:40px}
+.fbrand{font-family:var(--font-head);font-size:13px;font-weight:700}
+.flevels{display:flex;gap:6px;flex-wrap:wrap}
+.flv{font-size:10px;font-family:var(--font-head);font-weight:700;padding:3px 9px;border-radius:20px;background:rgba(255,255,255,.04);color:var(--muted)}
+.flv.on{background:rgba(0,207,255,.15);color:var(--accent);border:1px solid var(--border)}
+.sm-btn{position:fixed;bottom:20px;right:20px;background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:8px 18px;font-family:var(--font-head);font-size:11px;font-weight:700;color:var(--muted);cursor:pointer;z-index:800;transition:all .2s}
+.sm-btn:hover{border-color:var(--accent);color:var(--accent)}
+@media(max-width:860px){
+  .hero-title{font-size:28px}
+  .wu-grid{grid-template-columns:1fr 1fr}
+  .module-map{grid-template-columns:1fr 1fr}
+  .collo-poll{grid-template-columns:1fr 1fr}
+  .snav{padding:8px 16px;gap:4px}
+  .sec-body{padding:16px 16px 22px}
+  .sec-hdr{padding:14px 16px 8px}
+  .badge-strip{padding:10px 16px}
+  .ftr{padding:14px 16px}
+  .sm-btn{bottom:14px;right:14px}
+}
+</style>
+</head>
+<body>
+
+<div class="prog-wrap"><div class="prog-bar" id="progressBar"></div></div>
+
+<!-- HERO -->
+<div class="hero">
+  <img class="hero-bg" src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=1200&q=80" alt="Achievement">
+  <div class="hero-content">
+    <div class="hero-eyebrow">GABRIEL TURNER · ENGLISH TRAINING · TEACHER EDITION</div>
+    <div class="hero-title">Module 6 Exit Lesson</div>
+    <div class="hero-sub">Full A2.1 Integration — Simple Past · Going To · Will · The Complete System</div>
+    <div class="hero-meta">
+      <span class="hmeta hm-lv">A2.1</span>
+      <span class="hmeta hm-mod">Module 6 · Session 5</span>
+      <span class="hmeta hm-time">90 min</span>
+      <span class="hmeta hm-exit">Exit Project</span>
+    </div>
+  </div>
+</div>
+
+<!-- STICKY NAV -->
+<nav class="snav">
+  <span class="snav-brand">M6 · S5</span>
+  <a href="#s1">§1 Warm-Up</a>
+  <a href="#s2">§2 Speaking</a>
+  <a href="#s3">§3 Vocab</a>
+  <a href="#s4">§4 Colloquial</a>
+  <a href="#s5">§5 Grammar</a>
+  <a href="#s6">§6 Listening</a>
+  <a href="#s7">§7 Exit Task</a>
+  <a href="#s8">§8 Certificate</a>
+</nav>
+
+<!-- BADGE STRIP -->
+<div class="badge-strip">
+  <span id="b1">🗓️</span>
+  <span id="b2">📚</span>
+  <span id="b3">✍️</span>
+  <span id="b4">🎧</span>
+  <span id="b5">🎓</span>
+  <span class="badge-label">Complete all 5 to finish A2.1 Module 6</span>
+  <span id="confMsg">¡MÓDULO 6 COMPLETADO! A2.1 ACHIEVEMENT UNLOCKED 🎉</span>
+</div>
+
+<!-- §1 WARM-UP — Module Quick-Fire -->
+<section class="section" id="s1">
+  <img class="sec-img" src="https://images.unsplash.com/photo-1627556704283-07ba75713574?w=900&q=80" alt="Module review">
+  <div class="sec-hdr">
+    <span class="sec-num">§1</span>
+    <span class="sec-title">Warm-Up — Module 6 Quick-Fire Review</span>
+    <span class="sec-sub">8 min</span>
+  </div>
+  <div class="sec-body">
+
+    <div class="tn-toggle" onclick="toggleTN('tn1')">
+      <span class="tn-toggle-label">⚡ TEACHER NOTE — S5 OPENING RITUAL</span>
+      <span class="tn-arr" id="arr-tn1">▼</span>
+    </div>
+    <div class="tn-panel" id="tn1">
+      <div class="tn-panel-inner">
+        Say: <em>"This is the last session of Module 6 — and of A2.1. Everything you've learned — Simple Past, going to, will, Wh- questions, business vocabulary, professional emails — it all comes together today."</em> Let that land. Then run the quick-fire review below as a whole-class activity. Fast pace, high energy, no notes.
+      </div>
+    </div>
+
+    <p style="font-size:13px;color:var(--muted);margin-bottom:12px">One question from each session. No notes. Fast answers. 🔥</p>
+
+    <div class="wu-grid">
+      <div class="wu-card">
+        <img src="https://images.unsplash.com/photo-1572021335469-31706a17aaef?w=600&q=80" alt="S1A" loading="lazy">
+        <div class="wu-card-body">
+          <div class="wu-card-label">FROM S1A</div>
+          <div class="wu-card-q">Give one sentence in each tense about the SAME topic at work. Past → Going To → Will.</div>
+        </div>
+      </div>
+      <div class="wu-card">
+        <img src="https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?w=600&q=80" alt="S2A" loading="lazy">
+        <div class="wu-card-body">
+          <div class="wu-card-label">FROM S2A</div>
+          <div class="wu-card-q">What's the difference between will and going to? Give a real work example of each.</div>
+        </div>
+      </div>
+      <div class="wu-card">
+        <img src="https://images.unsplash.com/photo-1608742213509-815b97c30b36?w=600&q=80" alt="S3A" loading="lazy">
+        <div class="wu-card-body">
+          <div class="wu-card-label">FROM S3A</div>
+          <div class="wu-card-q">What are the three paragraphs of a professional email? Give the opener for each.</div>
+        </div>
+      </div>
+      <div class="wu-card">
+        <img src="https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=600&q=80" alt="S4A" loading="lazy">
+        <div class="wu-card-body">
+          <div class="wu-card-label">FROM S4A</div>
+          <div class="wu-card-q">Ask your partner a Wh- question in all three tenses about their project. Right now.</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="background:rgba(0,207,255,.06);border:1px solid var(--border);border-radius:10px;padding:16px 20px;margin:14px 0">
+      <div style="font-family:var(--font-head);font-size:12px;font-weight:700;color:var(--accent);letter-spacing:.6px;margin-bottom:6px">⚡ QUICK WIN — 30 seconds</div>
+      <div style="font-size:14px">Say this out loud — the complete A2.1 sentence: <strong>"Last week I worked on the Apex project. Next month we're going to launch the new system. I'll send you the report today."</strong> That's three tenses. That's A2.1. You've mastered it.</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- §2 SPEAKING — Integrated -->
+<section class="section" id="s2">
+  <img class="sec-img" src="https://images.unsplash.com/photo-1638203703631-0c7e65e7c7c3?w=900&q=80" alt="Integrated speaking">
+  <div class="sec-hdr">
+    <span class="sec-num">§2</span>
+    <span class="sec-title">Speaking — Full Integration Role-Play</span>
+    <span class="sec-sub">10 min</span>
+  </div>
+  <div class="sec-body">
+
+    <div class="tn-toggle tn-c2-toggle" onclick="toggleTN('tn2')">
+      <span class="tn-toggle-label">💡 ENGAGEMENT NOTE — THE FINAL ROLE-PLAY</span>
+      <span class="tn-arr" id="arr-tn2">▼</span>
+    </div>
+    <div class="tn-panel tn-c2-panel" id="tn2">
+      <div class="tn-panel-inner">
+        This is the last speaking practice before the Exit Project. Keep stakes real: <em>"This is your final practice. The Exit Project is the same format — a conversation with me, your manager, about a real project. Use what you know."</em> Resist the urge to over-correct. Note errors quietly and address in the group debrief after all pairs finish.
+      </div>
+    </div>
+
+    <div class="round-card">
+      <img src="https://images.unsplash.com/photo-1640158615573-cd28feb1bf4e?w=600&q=80" alt="Executive meeting" loading="lazy">
+      <div class="round-card-body">
+        <div class="round-tags"><span class="rt rt-ts">T-S</span></div>
+        <div class="round-q">Valeria presents the full Apex project to the regional director for the first time. She needs to cover: what happened in M6 / what the team is planning / what commitments she makes right now. You are the director — ask three questions across all tenses after the presentation.</div>
+        <button class="reveal-btn" onclick="toggleReveal('m1')">▼ Show Model Presentation</button>
+        <div class="model-reveal" id="m1"><p>Opening: <em>"Good morning. I'm going to give you a full update on the Apex project."</em><br>Past: <em>"Last quarter we had some delays, but we resolved them. We completed the quality audit and delivered the Phase 1 report on time."</em><br>Plans: <em>"Next quarter we're going to start Phase 2 and add a new supplier from Guadalajara."</em><br>Commitment: <em>"I'll send you the full summary today, and I'll keep you posted on any changes."</em><br>Closing: <em>"Do you have any questions?"</em></p></div>
+      </div>
+    </div>
+
+    <div class="round-card">
+      <img src="https://images.unsplash.com/photo-1642790106117-e829e14a795f?w=600&q=80" alt="Pair role-play" loading="lazy">
+      <div class="round-card-body">
+        <div class="round-tags"><span class="rt rt-ss">S-S</span></div>
+        <div class="round-q">Use your OWN real project from work. Partner A: manager, asks 5 questions across all three tenses — must include at least one Wh- question per tense. Partner B: answers fully, adds proactive information, uses at least 3 colloquial phrases from any session. Switch roles after 2 minutes.</div>
+        <button class="reveal-btn" onclick="toggleReveal('m2')">▼ Show Model Exchange</button>
+        <div class="model-reveal" id="m2"><p>A: <em>"What did you accomplish last month?"</em> B: <em>"Last month we implemented the new quality procedure. We're back on track after the delay."</em> A: <em>"What are you going to do about the budget?"</em> B: <em>"We're going to renegotiate next week — and to be honest, I think we can save 10%."</em> A: <em>"What will you do today?"</em> B: <em>"I'll send you the updated cost report. I'll keep you posted."</em></p></div>
+      </div>
+    </div>
+
+    <div class="round-card">
+      <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600&q=80" alt="Class vote" loading="lazy">
+      <div class="round-card-body">
+        <div class="round-tags"><span class="rt rt-cl">Class</span></div>
+        <div class="round-q">Class vote on the best performance: which pair used all three tenses most naturally? Which pair used the most colloquial phrases? Which pair sounded most like a real professional conversation? Vote on fluency only — no grammar police.</div>
+        <button class="reveal-btn" onclick="toggleReveal('m3')">▼ Show Evaluation Criteria</button>
+        <div class="model-reveal" id="m3"><p>Look for: natural tense switching without pausing, use of fillers ("To be honest" / "Let me think"), proactive volunteering of information, correct spontaneous/planned distinction, at least 3 colloquial phrases. These are the Exit Project rubric criteria.</p></div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- §3 VOCABULARY REVIEW -->
+<section class="section" id="s3">
+  <img class="sec-img" src="https://images.unsplash.com/photo-1546410531-bb4caa6b424d?w=900&q=80" alt="Vocabulary review">
+  <div class="sec-hdr">
+    <span class="sec-num">§3</span>
+    <span class="sec-title">Vocabulary Review — Full Module Flash Cards</span>
+    <span class="sec-sub">10 min</span>
+  </div>
+  <div class="sec-body">
+
+    <div class="tn-toggle" onclick="toggleTN('tn3')">
+      <span class="tn-toggle-label">⚡ TEACHER NOTE — 36-CARD REVIEW STRATEGY</span>
+      <span class="tn-arr" id="arr-tn3">▼</span>
+    </div>
+    <div class="tn-panel" id="tn3">
+      <div class="tn-panel-inner">
+        36 cards covering all four sessions. Run 10 minutes: first 5 minutes students go through all cards individually (self-assess). Then for the last 5 minutes, teacher draws 5 random cards and asks students to use each word in a sentence with a specific tense. Badge awarded at card 36.
+      </div>
+    </div>
+
+    <div class="fc-wrap">
+      <div class="fc-title">🃏 FLASH CARDS — All Module 6 Vocabulary (36 words)</div>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:14px">Click to flip. Navigate with arrows. Badge at card 36.</p>
+      <div class="fc-stage" onclick="flipCard()">
+        <div class="fc-card" id="fcCard">
+          <div class="fc-face fc-front">
+            <div class="fc-front-cat" id="fcCat">S1A · CORE</div>
+            <div class="fc-front-word" id="fcWord">project</div>
+            <div style="font-size:11px;color:var(--muted);margin-top:6px">Click to see definition</div>
+          </div>
+          <div class="fc-face fc-back">
+            <div class="fc-back-def" id="fcDef">A planned piece of work with a goal and deadline</div>
+            <div class="fc-back-ex" id="fcEx">"We finished the project last Friday."</div>
+          </div>
+        </div>
+      </div>
+      <div class="fc-progress"><div class="fc-progress-bar" id="fcProgBar" style="width:2.8%"></div></div>
+      <div class="fc-nav">
+        <button class="btn" onclick="fcNav(-1)">← Prev</button>
+        <span class="fc-counter" id="fcCounter">1 / 36</span>
+        <button class="btn" onclick="fcNav(1)">Next →</button>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- §4 COLLOQUIAL REVIEW -->
+<section class="section" id="s4">
+  <img class="sec-img" src="https://images.unsplash.com/photo-1556761175-b413da4baf72?w=900&q=80" alt="Colloquial phrases">
+  <div class="sec-hdr">
+    <span class="sec-num">§4</span>
+    <span class="sec-title">Colloquial Review — Vote for Your Favourite</span>
+    <span class="sec-sub">6 min</span>
+  </div>
+  <div class="sec-body">
+
+    <div class="tn-toggle tn-c3-toggle" onclick="toggleTN('tn4')">
+      <span class="tn-toggle-label">💰 RETENTION + UPSELL NOTE</span>
+      <span class="tn-arr" id="arr-tn4">▼</span>
+    </div>
+    <div class="tn-panel tn-c3-panel" id="tn4">
+      <div class="tn-panel-inner">
+        After the poll, ask: <em>"Which of these did you actually use this week?"</em> Students who used them in real situations get a badge mention. This creates peer accountability and surfaces real-world usage evidence. For upsell: <em>"In A2.2, you get a completely new set of these — for networking, negotiation, and career conversations."</em>
+      </div>
+    </div>
+
+    <p style="font-size:13px;color:var(--muted);margin-bottom:12px">Click your favourite phrase from Module 6. Then use it in a sentence.</p>
+
+    <div class="collo-poll">
+      <div class="collo-poll-card" onclick="voteCollo(this,'I\'ll keep you posted')">
+        <div class="collo-phrase-text">"I'll keep you posted."</div>
+        <div class="collo-votes" id="cv1">0 votes</div>
+      </div>
+      <div class="collo-poll-card" onclick="voteCollo(this,'We\'re back on track')">
+        <div class="collo-phrase-text">"We're back on track."</div>
+        <div class="collo-votes" id="cv2">0 votes</div>
+      </div>
+      <div class="collo-poll-card" onclick="voteCollo(this,'Let\'s wrap this up')">
+        <div class="collo-phrase-text">"Let's wrap this up."</div>
+        <div class="collo-votes" id="cv3">0 votes</div>
+      </div>
+      <div class="collo-poll-card" onclick="voteCollo(this,'Keep me in the loop')">
+        <div class="collo-phrase-text">"Keep me in the loop."</div>
+        <div class="collo-votes" id="cv4">0 votes</div>
+      </div>
+      <div class="collo-poll-card" onclick="voteCollo(this,'Are we on the same page?')">
+        <div class="collo-phrase-text">"Are we on the same page?"</div>
+        <div class="collo-votes" id="cv5">0 votes</div>
+      </div>
+      <div class="collo-poll-card" onclick="voteCollo(this,'Please find attached')">
+        <div class="collo-phrase-text">"Please find attached."</div>
+        <div class="collo-votes" id="cv6">0 votes</div>
+      </div>
+      <div class="collo-poll-card" onclick="voteCollo(this,'To be honest...')">
+        <div class="collo-phrase-text">"To be honest..."</div>
+        <div class="collo-votes" id="cv7">0 votes</div>
+      </div>
+      <div class="collo-poll-card" onclick="voteCollo(this,'Let me think about that')">
+        <div class="collo-phrase-text">"Let me think about that."</div>
+        <div class="collo-votes" id="cv8">0 votes</div>
+      </div>
+    </div>
+
+    <div id="colloPollResult" style="font-family:var(--font-head);font-size:13px;color:var(--gold);margin-top:8px"></div>
+
+  </div>
+</section>
+
+<!-- §5 GRAMMAR REVIEW -->
+<section class="section" id="s5">
+  <img class="sec-img" src="https://images.unsplash.com/photo-1642983982830-9b8d8b88f6cd?w=900&q=80" alt="Grammar system">
+  <div class="sec-hdr">
+    <span class="sec-num">§5</span>
+    <span class="sec-title">Grammar Review — The Full A2.1 Tense System</span>
+    <span class="sec-sub">12 min</span>
+  </div>
+  <div class="sec-body">
+
+    <div class="tn-toggle" onclick="toggleTN('tn5')">
+      <span class="tn-toggle-label">⚡ TEACHER NOTE — GRAMMAR REVIEW STRATEGY</span>
+      <span class="tn-arr" id="arr-tn5">▼</span>
+    </div>
+    <div class="tn-panel" id="tn5">
+      <div class="tn-panel-inner">
+        Don't re-teach. Frame it as confirmation: <em>"You already know all of this. Let's confirm it."</em> Run Activity A as a self-check — students compare their answers in pairs before you reveal. Activity B (error correction) uses real errors collected from M6 sessions; if you noted student errors, substitute them here. This is always the most memorable review.
+      </div>
+    </div>
+
+    <table class="gram-review-table">
+      <tr><th>Tense</th><th>Form</th><th>Wh- Question</th><th>Typical Signal Words</th></tr>
+      <tr>
+        <td><span class="hl">Simple Past</span></td>
+        <td>V-ed / irregular · did/didn't</td>
+        <td>What <span class="hl">did</span> you do?</td>
+        <td>yesterday · last week · last month · ago · in [year]</td>
+      </tr>
+      <tr>
+        <td><span class="hl2">Going To</span></td>
+        <td>am/is/are + going to + base</td>
+        <td>What <span class="hl2">are</span> you <span class="hl2">going to</span> do?</td>
+        <td>next week · next month · on Friday · this quarter · soon</td>
+      </tr>
+      <tr>
+        <td><span class="hl3">Will</span></td>
+        <td>will + base / won't + base</td>
+        <td>What <span class="hl3">will</span> you do?</td>
+        <td>right now · today · this afternoon · immediately · I promise</td>
+      </tr>
+    </table>
+
+    <!-- ERROR CORRECTION -->
+    <div class="activity-wrap">
+      <div class="activity-title">ACTIVITY A — ERROR CORRECTION: Fix the Tense</div>
+      <div id="actAScore" class="activity-score"></div>
+
+      <div class="q-item" id="qa1">
+        <div class="q-text">1. "Tomorrow I will present the Q2 results — I already confirmed it with Daniel last week."</div>
+        <div class="q-opts">
+          <button class="q-opt" onclick="checkOpt(this,'Error — use going to','qa1','fb1')">Error — use <em>going to</em></button>
+          <button class="q-opt" onclick="checkOpt(this,'Correct','qa1','fb1')">Correct</button>
+        </div>
+        <div class="q-fb" id="fb1"></div>
+      </div>
+
+      <div class="q-item" id="qa2">
+        <div class="q-text">2. "Last week, we didn't received the components on time."</div>
+        <div class="q-opts">
+          <button class="q-opt" onclick="checkOpt(this,'Error — use receive (base verb after didn\'t)','qa2','fb2')">Error — use <em>receive</em></button>
+          <button class="q-opt" onclick="checkOpt(this,'Correct','qa2','fb2')">Correct</button>
+        </div>
+        <div class="q-fb" id="fb2"></div>
+      </div>
+
+      <div class="q-item" id="qa3">
+        <div class="q-text">3. "The meeting is finishing — let me think about that for a second. I will handle the report." (spontaneous)</div>
+        <div class="q-opts">
+          <button class="q-opt" onclick="checkOpt(this,'Correct','qa3','fb3')">Correct</button>
+          <button class="q-opt" onclick="checkOpt(this,'Error — use going to','qa3','fb3')">Error — use <em>going to</em></button>
+        </div>
+        <div class="q-fb" id="fb3"></div>
+      </div>
+
+      <div class="q-item" id="qa4">
+        <div class="q-text">4. "What you did last week with the supplier?" (question)</div>
+        <div class="q-opts">
+          <button class="q-opt" onclick="checkOpt(this,'Error — missing auxiliary: What did you do...','qa4','fb4')">Error — missing auxiliary</button>
+          <button class="q-opt" onclick="checkOpt(this,'Correct','qa4','fb4')">Correct</button>
+        </div>
+        <div class="q-fb" id="fb4"></div>
+      </div>
+
+      <div class="q-item" id="qa5">
+        <div class="q-text">5. "We are going to presented the results on Friday — it's confirmed."</div>
+        <div class="q-opts">
+          <button class="q-opt" onclick="checkOpt(this,'Error — going to + base verb: are going to present','qa5','fb5')">Error — going to + base verb</button>
+          <button class="q-opt" onclick="checkOpt(this,'Correct','qa5','fb5')">Correct</button>
+        </div>
+        <div class="q-fb" id="fb5"></div>
+      </div>
+
+    </div>
+
+    <!-- DRAG REORDER — Complete email -->
+    <div class="activity-wrap">
+      <div class="activity-title">ACTIVITY B — REORDER: The Complete Exit Email</div>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:12px">Put these parts of a three-tense business email in the correct order.</p>
+
+      <ul class="drag-list" id="order1">
+        <li class="drag-item" draggable="true"><span class="drag-handle">⠿</span>I will send you the final project report by end of Friday. Please find the summary attached.</li>
+        <li class="drag-item" draggable="true"><span class="drag-handle">⠿</span>Next quarter, we are going to launch Phase 2 and add a second supplier from Guadalajara.</li>
+        <li class="drag-item" draggable="true"><span class="drag-handle">⠿</span>Dear Mr. Reyes, I hope you are doing well. I am writing to give you a full update on the Apex project.</li>
+        <li class="drag-item" draggable="true"><span class="drag-handle">⠿</span>Last quarter was challenging but productive. We resolved the supplier delay and completed the quality audit on schedule.</li>
+        <li class="drag-item" draggable="true"><span class="drag-handle">⠿</span>I look forward to hearing from you. Best regards, Valeria Torres.</li>
+      </ul>
+
+      <button class="btn btn-accent" style="margin-top:10px" onclick="checkOrder(\'order1\',[\'Dear Mr. Reyes, I hope you are doing well. I am writing to give you a full update on the Apex project.\',\'Last quarter was challenging but productive. We resolved the supplier delay and completed the quality audit on schedule.\',\'Next quarter, we are going to launch Phase 2 and add a second supplier from Guadalajara.\',\'I will send you the final project report by end of Friday. Please find the summary attached.\',\'I look forward to hearing from you. Best regards, Valeria Torres.\'],\'drag1fb\')">✓ Check Order</button>
+      <div class="drag-fb" id="drag1fb"></div>
+    </div>
+
+  </div>
+</section>
+
+<!-- §6 LISTENING — Integrated -->
+<section class="section" id="s6">
+  <img class="sec-img" src="https://images.unsplash.com/photo-1643114422001-0e6fcacef34b?w=900&q=80" alt="Integrated listening">
+  <div class="sec-hdr">
+    <span class="sec-num">§6</span>
+    <span class="sec-title">Listening — Valeria's Full Module 6 Report</span>
+    <span class="sec-sub">10 min</span>
+  </div>
+  <div class="sec-body">
+
+    <div class="tn-toggle" onclick="toggleTN('tn6')">
+      <span class="tn-toggle-label">⚡ TEACHER NOTE — INTEGRATED LISTENING TASK</span>
+      <span class="tn-arr" id="arr-tn6">▼</span>
+    </div>
+    <div class="tn-panel" id="tn6">
+      <div class="tn-panel-inner">
+        This is the longest listening of A2.1 — ~185 words, approximately 60 seconds at speed 0.82. It integrates every grammar structure and colloquial phrase from Module 6. Use it as a final benchmark: if students can follow this script with 80%+ comprehension, they are ready to exit A2.1.
+      </div>
+    </div>
+
+    <div class="listen-player">
+      <img src="https://images.unsplash.com/photo-1643305339982-4f7f9adb27e2?w=900&q=80" alt="Final listening" loading="lazy">
+      <div class="listen-inner">
+        <button class="play-btn">▶</button>
+        <div>
+          <div class="track-title">Valeria's Full Module 6 Report — Solaris Manufacturing, Celaya</div>
+          <div class="track-sub">A2.1 · M6 · S5 · Voice: Valeria (Mexican accent) · Speed: 0.82 · ~60 sec</div>
+        </div>
+        <div class="waveform" id="wv"></div>
+      </div>
+    </div>
+
+    <button class="script-toggle" onclick="toggleScript()">▼ Show ElevenLabs Script</button>
+    <div class="script-box" id="scriptBox">
+      Good morning, everyone. I want to give you a complete summary of the Apex project — everything we did, what we're planning, and what I'll do next.
+
+      Let me start with the past. Last quarter was difficult. We had three supplier delays, two quality issues, and one budget overrun. But we didn't give up. We resolved every problem — we worked extra hours, we renegotiated the contract, and we added a second supplier from Guadalajara. By the end of the quarter, we were back on track. We also completed the quality audit and delivered the Phase 1 report on time. The outcome was very positive.
+
+      Now, looking ahead. Next quarter, we are going to start Phase 2 of the integration. We are also going to present the new risk management plan to all stakeholders. I already scheduled that meeting — it's on the 18th. And we're going to implement a new communication protocol to keep everyone in the loop.
+
+      Finally, my immediate commitments. I will send you the full Phase 2 scope document today. I will also copy Daniel on all future supplier communications. And I will call the Guadalajara supplier this afternoon to confirm their capacity for Q3.
+
+      To be honest, I'm proud of what this team accomplished. Are we on the same page? Let's move forward together. Thank you.
+    </div>
+
+    <!-- T/F -->
+    <div style="margin-top:18px">
+      <p style="font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--accent);margin-bottom:12px">TRUE / FALSE</p>
+
+      <div class="tf-item" id="tf1">
+        <div class="tf-stmt">1. The team had three supplier delays and two quality issues last quarter.</div>
+        <div class="tf-btns">
+          <button class="tf-btn" onclick="doTF(this,true,'tf1')">TRUE</button>
+          <button class="tf-btn" onclick="doTF(this,false,'tf1')">FALSE</button>
+        </div>
+      </div>
+      <div class="tf-item" id="tf2">
+        <div class="tf-stmt">2. The team didn't complete the Phase 1 report.</div>
+        <div class="tf-btns">
+          <button class="tf-btn" onclick="doTF(this,false,'tf2')">TRUE</button>
+          <button class="tf-btn" onclick="doTF(this,true,'tf2')">FALSE</button>
+        </div>
+      </div>
+      <div class="tf-item" id="tf3">
+        <div class="tf-stmt">3. The stakeholder meeting is already scheduled for the 18th.</div>
+        <div class="tf-btns">
+          <button class="tf-btn" onclick="doTF(this,true,'tf3')">TRUE</button>
+          <button class="tf-btn" onclick="doTF(this,false,'tf3')">FALSE</button>
+        </div>
+      </div>
+      <div class="tf-item" id="tf4">
+        <div class="tf-stmt">4. Valeria will contact the Guadalajara supplier next week.</div>
+        <div class="tf-btns">
+          <button class="tf-btn" onclick="doTF(this,false,'tf4')">TRUE</button>
+          <button class="tf-btn" onclick="doTF(this,true,'tf4')">FALSE</button>
+        </div>
+      </div>
+      <div class="tf-item" id="tf5">
+        <div class="tf-stmt">5. Valeria used at least 3 colloquial phrases from Module 6 in her report.</div>
+        <div class="tf-btns">
+          <button class="tf-btn" onclick="doTF(this,true,'tf5')">TRUE</button>
+          <button class="tf-btn" onclick="doTF(this,false,'tf5')">FALSE</button>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</section>
+
+<!-- §7 EXIT TASK -->
+<section class="section" id="s7">
+  <img class="sec-img" src="https://images.unsplash.com/photo-1454923634634-bd1614719a7b?w=900&q=80" alt="Exit task">
+  <div class="sec-hdr">
+    <span class="sec-num">§7</span>
+    <span class="sec-title">Exit Task — A2.1 Module 6 Exit Project</span>
+    <span class="sec-sub">20 min</span>
+  </div>
+  <div class="sec-body">
+
+    <div class="exit-task">
+      <div class="exit-task-title">🎯 Exit Project A2.1</div>
+      <div class="exit-task-desc">
+        <strong>Format:</strong> 4-minute spoken presentation + teacher Q&amp;A (1 min)<br>
+        <strong>Topic:</strong> A real work project — past, present plans, and commitments<br><br>
+        Students must:<br>
+        1. Describe a past work experience using <strong>Simple Past</strong> (at least 4 sentences)<br>
+        2. Explain current projects using <strong>going to</strong> (at least 2 sentences)<br>
+        3. Make commitments using <strong>will</strong> (at least 2 sentences)<br>
+        4. Answer 3 spontaneous teacher questions across all three tenses<br>
+        5. Use at least <strong>3 colloquial phrases</strong> from any module naturally<br><br>
+        <strong>No notes allowed.</strong> Natural, professional English.
+      </div>
+
+      <p style="font-family:var(--font-head);font-size:11px;font-weight:700;color:var(--danger);letter-spacing:.5px;margin-bottom:10px">CEFR RUBRIC — Click a cell to mark it</p>
+      <table class="rubric">
+        <tr>
+          <th>Criterion</th>
+          <th>4 — Excellent</th>
+          <th>3 — Good</th>
+          <th>2 — Developing</th>
+          <th>1 — Needs Work</th>
+        </tr>
+        <tr>
+          <td style="font-weight:600">Tense Accuracy</td>
+          <td onclick="rubricClick(this,'rr1')">No tense errors; all three used correctly</td>
+          <td onclick="rubricClick(this,'rr1')">1–2 minor errors; intent clear</td>
+          <td onclick="rubricClick(this,'rr1')">Frequent errors; some confusion</td>
+          <td onclick="rubricClick(this,'rr1')">Unable to distinguish tenses</td>
+        </tr>
+        <tr>
+          <td style="font-weight:600">Fluency</td>
+          <td onclick="rubricClick(this,'rr2')">Natural pace; minimal hesitation</td>
+          <td onclick="rubricClick(this,'rr2')">Occasional pauses; recovers well</td>
+          <td onclick="rubricClick(this,'rr2')">Frequent stops; relies on fillers</td>
+          <td onclick="rubricClick(this,'rr2')">Cannot maintain flow</td>
+        </tr>
+        <tr>
+          <td style="font-weight:600">Vocabulary Range</td>
+          <td onclick="rubricClick(this,'rr3')">Uses 6+ module words naturally</td>
+          <td onclick="rubricClick(this,'rr3')">Uses 4–5 words appropriately</td>
+          <td onclick="rubricClick(this,'rr3')">Uses 2–3 words; mostly basic</td>
+          <td onclick="rubricClick(this,'rr3')">Vocabulary very limited</td>
+        </tr>
+        <tr>
+          <td style="font-weight:600">Coherence</td>
+          <td onclick="rubricClick(this,'rr4')">Clear structure; Past → Plans → Will</td>
+          <td onclick="rubricClick(this,'rr4')">Mostly clear; minor gaps</td>
+          <td onclick="rubricClick(this,'rr4')">Hard to follow; jumps topics</td>
+          <td onclick="rubricClick(this,'rr4')">No clear structure</td>
+        </tr>
+        <tr>
+          <td style="font-weight:600">Colloquial Use</td>
+          <td onclick="rubricClick(this,'rr5')">3+ phrases used naturally</td>
+          <td onclick="rubricClick(this,'rr5')">2 phrases; mostly natural</td>
+          <td onclick="rubricClick(this,'rr5')">1 phrase; sounds rehearsed</td>
+          <td onclick="rubricClick(this,'rr5')">No colloquial phrases used</td>
+        </tr>
+      </table>
+      <div class="rubric-score" id="rubricTotal"></div>
+    </div>
+
+    <div class="timer-wrap">
+      <svg class="timer-svg" width="90" height="90" viewBox="0 0 90 90">
+        <circle class="timer-bg" cx="45" cy="45" r="38" stroke-width="6"/>
+        <circle class="timer-arc" id="tArcExit" cx="45" cy="45" r="38" stroke-width="6" stroke-dasharray="238.76" stroke-dashoffset="0"/>
+        <text class="timer-text" id="tTextExit" x="45" y="44">4:00</text>
+        <text class="timer-label" x="45" y="57">exit project</text>
+      </svg>
+      <div>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:8px">4-minute presentation. No notes. Start when ready.</p>
+        <button class="btn btn-danger" onclick="startTimer('tArcExit','tTextExit',240,'b3',238.76)">▶ START TIMER</button>
+        <button class="btn" style="margin-left:8px" onclick="resetArc('tArcExit','tTextExit',240,238.76)">RESET</button>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- §8 MODULE CLOSE & CERTIFICATE -->
+<section class="section" id="s8">
+  <img class="sec-img" src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=900&q=80" alt="Graduation achievement">
+  <div class="sec-hdr">
+    <span class="sec-num">§8</span>
+    <span class="sec-title">Module Close — A2.1 Completed</span>
+    <span class="sec-sub">10 min</span>
+  </div>
+  <div class="sec-body">
+
+    <!-- MODULE MAP -->
+    <p style="font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--accent);margin-bottom:12px">A2.1 Module 6 — What You Covered</p>
+    <div class="module-map">
+      <div class="mm-card">
+        <div class="mm-num">S1</div>
+        <div class="mm-title">Three-Tense Integration</div>
+        <div class="mm-tags">
+          <div class="mm-tag">Simple Past + Going To + Will</div>
+          <div class="mm-tag">Project vocabulary (12 words)</div>
+          <div class="mm-tag">Colloquial closings</div>
+        </div>
+        <div class="mm-check">✅</div>
+      </div>
+      <div class="mm-card">
+        <div class="mm-num">S2</div>
+        <div class="mm-title">Project Presentations</div>
+        <div class="mm-tags">
+          <div class="mm-tag">Will vs. Going To (contrast)</div>
+          <div class="mm-tag">PM vocabulary (12 words)</div>
+          <div class="mm-tag">Project conversation phrases</div>
+        </div>
+        <div class="mm-check">✅</div>
+      </div>
+      <div class="mm-card">
+        <div class="mm-num">S3</div>
+        <div class="mm-title">Business Email Writing</div>
+        <div class="mm-tags">
+          <div class="mm-tag">3-paragraph email structure</div>
+          <div class="mm-tag">Email vocabulary (12 words)</div>
+          <div class="mm-tag">Professional sign-offs</div>
+        </div>
+        <div class="mm-check">✅</div>
+      </div>
+      <div class="mm-card">
+        <div class="mm-num">S4</div>
+        <div class="mm-title">Spoken Integration</div>
+        <div class="mm-tags">
+          <div class="mm-tag">Wh- questions × 3 tenses</div>
+          <div class="mm-tag">Meeting vocabulary (12 words)</div>
+          <div class="mm-tag">Professional fillers</div>
+        </div>
+        <div class="mm-check">✅</div>
+      </div>
+    </div>
+
+    <!-- MODULE COMPLETE MESSAGE -->
+    <div class="module-complete">
+      <div class="mc-icon">🎓</div>
+      <div class="mc-title">A2.1 Module 6 — Complete!</div>
+      <div class="mc-desc">
+        You've reached the end of A2.1 — the full intermediate foundation of English.<br>
+        You can now communicate about the past, the future, and real-time decisions in professional English.<br>
+        You can write business emails, give project updates, and hold check-in conversations.<br><br>
+        <strong>Next: A2.2</strong> — Modal verbs (should, must, may/might), used to, comparatives, and networking English.
+      </div>
+    </div>
+
+    <div class="next-level">
+      <div class="nl-label">NEXT LEVEL — A2.2</div>
+      <p style="font-size:13px;color:var(--muted)">At A2.2 you'll master: <em>used to</em> (past habits), the complete modal system (should/shouldn't, must/have to, may/might), comparatives and superlatives, and networking language. The world gets more nuanced — and so does your English.</p>
+    </div>
+
+    <!-- CERTIFICATE -->
+    <div class="cert-wrap">
+      <div class="cert-title">Certificate of Completion</div>
+      <div class="cert-sub">Enter your name to generate your A2.1 Module 6 certificate</div>
+      <input class="cert-name-input" id="certName" type="text" placeholder="Your full name">
+      <br>
+      <button class="btn btn-accent" onclick="generateCert()">Generate Certificate</button>
+      <div class="cert-card" id="certCard">
+        <div class="cert-card-title">GABRIEL TURNER · ENGLISH TRAINING</div>
+        <div class="cert-card-body">This is to certify that</div>
+        <div class="cert-card-name" id="certDisplayName">—</div>
+        <div class="cert-card-body">
+          has successfully completed<br>
+          <strong style="color:var(--text)">A2.1 — Module 6: Full Integration</strong><br>
+          demonstrating command of Simple Past, Going To, and Will<br>
+          in professional business communication contexts.
+        </div>
+        <div class="cert-card-level">A2.1 · Module 6 of 6 · Celaya, Guanajuato · Gabriel Turner English Training</div>
+      </div>
+    </div>
+
+    <!-- MY WIN -->
+    <div class="win-wrap" style="margin-top:24px">
+      <p style="font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--gold);margin-bottom:10px">🎓 My Win from A2.1 Module 6</p>
+      <textarea id="myWin" class="win-ta" placeholder="Write the most important thing you learned or can do in English after Module 6. This is your A2.1 legacy statement."></textarea>
+      <button class="btn btn-accent" style="margin-top:10px" onclick="saveWin()">Save My Win</button>
+      <div id="winConfirm">✓ Saved! You've completed A2.1 Module 6. ¡Felicidades! See you in A2.2.</div>
+    </div>
+
+  </div>
+</section>
+
+<footer class="ftr">
+  <div class="fbrand">Gabriel Turner · English Training</div>
+  <div style="font-size:11px;color:var(--muted)">A2.1 · M6 · S5 · GT_A2_1_M6_S5_TEACHER_v1.html</div>
+  <div class="flevels">
+    <div class="flv">A1.1</div><div class="flv">A1.2</div><div class="flv on">A2.1</div>
+    <div class="flv">A2.2</div><div class="flv">B1.1</div><div class="flv">B1.2</div>
+  </div>
+</footer>
+
+<button class="sm-btn" onclick="toggleSM()"><span id="smt-label">Teacher Mode</span></button>
+
+<script>
+// TTS
+function speak(t){if(!window.speechSynthesis)return;speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='en-US';u.rate=0.82;speechSynthesis.speak(u);}
+
+// BADGES
+const badgeEarned={b1:false,b2:false,b3:false,b4:false,b5:false};
+function earnBadge(id){if(badgeEarned[id])return;badgeEarned[id]=true;const el=document.getElementById(id);if(el)el.classList.add('earned');if(Object.values(badgeEarned).every(Boolean)){launchConfetti();const cm=document.getElementById('confMsg');if(cm)cm.style.display='block';}}
+function launchConfetti(){const colors=['#00CFFF','#67E8F9','#00E5A0','#FFB800','#ffffff','#FF4D6D'];for(let i=0;i<120;i++){const d=document.createElement('div');d.style.cssText='position:fixed;top:-10px;pointer-events:none;z-index:9999;border-radius:2px;';d.style.left=Math.random()*100+'vw';d.style.width=(6+Math.random()*8)+'px';d.style.height=(6+Math.random()*8)+'px';d.style.background=colors[Math.floor(Math.random()*colors.length)];d.style.animation='confFall '+(2+Math.random()*3)+'s linear forwards';document.body.appendChild(d);setTimeout(()=>d.remove(),6000);}}
+
+// TIMER
+let timerIntervals={};
+function startTimer(arcId,textId,seconds,badgeKey,circumference){
+  if(timerIntervals[arcId])clearInterval(timerIntervals[arcId]);
+  const arc=document.getElementById(arcId),txt=document.getElementById(textId);let rem=seconds;
+  function update(){arc.style.strokeDashoffset=circumference*(1-rem/seconds);const m=Math.floor(rem/60),s=rem%60;txt.textContent=m+':'+(s<10?'0':'')+s;if(rem<=5)arc.style.stroke='#FF4D6D';if(rem<=0){clearInterval(timerIntervals[arcId]);arc.style.stroke='var(--success)';if(badgeKey)earnBadge(badgeKey);return;}rem--;}
+  update();timerIntervals[arcId]=setInterval(update,1000);
+}
+function resetArc(arcId,textId,seconds,circumference){if(timerIntervals[arcId]){clearInterval(timerIntervals[arcId]);delete timerIntervals[arcId];}const arc=document.getElementById(arcId);arc.style.strokeDashoffset='0';arc.style.stroke='var(--accent)';const m=Math.floor(seconds/60),s=seconds%60;document.getElementById(textId).textContent=m+':'+(s<10?'0':'')+s;}
+
+// REVEAL
+function toggleReveal(id){const el=document.getElementById(id);el.classList.toggle('show');el.previousElementSibling.textContent=el.classList.contains('show')?'▲ Hide':'▼ Show Model Answer';}
+
+// SCRIPT TOGGLE
+function toggleScript(){const b=document.getElementById('scriptBox');b.classList.toggle('open');document.querySelector('.script-toggle').textContent=b.classList.contains('open')?'▲ Hide Script':'▼ Show ElevenLabs Script';}
+
+// COLLAPSIBLE TN
+function toggleTN(id){const panel=document.getElementById(id);panel.classList.toggle('open');document.getElementById('arr-'+id).textContent=panel.classList.contains('open')?'▲':'▼';}
+
+// T/F
+function doTF(btn,isCorrect,qId){
+  const group=document.getElementById(qId);group.querySelectorAll('.tf-btn').forEach(b=>b.disabled=true);
+  if(isCorrect){btn.style.cssText='background:rgba(0,229,160,.15);border-color:var(--success);color:var(--success)';}
+  else{btn.style.cssText='background:rgba(255,77,109,.12);border-color:var(--danger);color:var(--danger)';const sib=Array.from(group.querySelectorAll('.tf-btn')).find(b=>b!==btn);if(sib)sib.style.cssText='background:rgba(0,229,160,.12);border-color:var(--success);color:var(--success)';}
+  earnBadge('b4');
+}
+
+// GRAMMAR ACTIVITY A
+const correctA={qa1:'Error — use going to',qa2:'Error — use receive (base verb after didn\'t)',qa3:'Correct',qa4:'Error — missing auxiliary: What did you do...',qa5:'Error — going to + base verb: are going to present'};
+const expA={qa1:'"Already confirmed last week" = pre-planned → going to: I\'m going to present...',qa2:'After didn\'t, always use the base verb: didn\'t receive (NOT received).',qa3:'Spontaneous decision made right now → will is correct.',qa4:'English Wh- questions need auxiliary: What did you do? (not: What you did?)',qa5:'Going to is followed by the BASE verb: are going to present (NOT presented).'};
+let actA_correct=0;
+function checkOpt(btn,answer,qId,fbId){
+  const group=document.getElementById(qId);group.querySelectorAll('.q-opt').forEach(b=>b.disabled=true);
+  const correct=correctA[qId];
+  if(answer===correct){btn.classList.add('correct');document.getElementById(fbId).textContent='✓ '+expA[qId];actA_correct++;}
+  else{btn.classList.add('wrong');document.getElementById(fbId).textContent='✗ '+expA[qId];group.querySelectorAll('.q-opt').forEach(b=>{if(b.textContent.trim()===correct)b.classList.add('correct');});}
+  if(actA_correct>=4){earnBadge('b1');const sc=document.getElementById('actAScore');if(sc)sc.textContent='Score: '+actA_correct+'/5 — Badge earned! 🗓️';}
+}
+
+// DRAG
+function initDrag(listId){
+  const list=document.getElementById(listId);if(!list)return;
+  let dragging=null;
+  list.querySelectorAll('.drag-item').forEach(item=>{
+    item.addEventListener('dragstart',()=>{dragging=item;item.style.opacity='.4';});
+    item.addEventListener('dragend',()=>{item.style.opacity='1';dragging=null;});
+    item.addEventListener('dragover',e=>{e.preventDefault();item.classList.add('drag-over');});
+    item.addEventListener('dragleave',()=>item.classList.remove('drag-over'));
+    item.addEventListener('drop',e=>{e.preventDefault();item.classList.remove('drag-over');if(dragging&&dragging!==item)list.insertBefore(dragging,item);});
+  });
+}
+function checkOrder(listId,correctOrder,fbId){
+  const list=document.getElementById(listId);
+  const items=Array.from(list.querySelectorAll('.drag-item')).map(i=>i.textContent.replace('⠿','').trim());
+  const fb=document.getElementById(fbId);
+  const allOk=items.every((item,i)=>item===correctOrder[i]);
+  if(allOk){fb.className='drag-fb ok';fb.textContent='✓ Perfect! Greeting → Past context → Going To plans → Will commitments → Closing. This is the A2.1 email template.';earnBadge('b2');}
+  else{fb.className='drag-fb err';fb.textContent='✗ Not quite. Order: Greeting → Past paragraph → Going To paragraph → Will paragraph → Closing.';}
+}
+
+// COLLOQUIAL POLL
+let colloVotes={};let colloTotal=0;
+function voteCollo(card,phrase){
+  if(!colloVotes[phrase])colloVotes[phrase]=0;
+  colloVotes[phrase]++;colloTotal++;
+  card.classList.add('voted');
+  updateColloDisplay();
+  document.getElementById('colloPollResult').textContent='Most popular so far: "'+Object.keys(colloVotes).sort((a,b)=>colloVotes[b]-colloVotes[a])[0]+'" — now use it in a sentence!';
+}
+function updateColloDisplay(){
+  const ids=['cv1','cv2','cv3','cv4','cv5','cv6','cv7','cv8'];
+  const phrases=["I'll keep you posted","We're back on track","Let's wrap this up","Keep me in the loop","Are we on the same page?","Please find attached","To be honest...","Let me think about that"];
+  ids.forEach((id,i)=>{const el=document.getElementById(id);if(el)el.textContent=(colloVotes[phrases[i]]||0)+' votes';});
+}
+
+// RUBRIC
+const rubricScores={};
+function rubricClick(cell,rowId){
+  const row=cell.parentElement;
+  row.querySelectorAll('td').forEach(td=>{if(td!==cell&&td.style.fontWeight!=='600')td.classList.remove('rubric-selected');});
+  cell.classList.toggle('rubric-selected');
+  const selected=row.querySelectorAll('td.rubric-selected').length;
+  const allCells=[...row.querySelectorAll('td')].filter(td=>td.style.fontWeight!=='600');
+  const idx=allCells.indexOf(cell);
+  rubricScores[rowId]=cell.classList.contains('rubric-selected')?4-idx:0;
+  const total=Object.values(rubricScores).reduce((a,b)=>a+b,0);
+  const sc=document.getElementById('rubricTotal');
+  if(sc&&Object.keys(rubricScores).length>0){
+    sc.textContent='Score: '+total+' / '+(Object.keys(rubricScores).length*4)+' — '+(total>=Object.keys(rubricScores).length*3?'✓ Exit Project PASSED':'Keep working on it');
+    if(Object.keys(rubricScores).length>=5)earnBadge('b3');
+  }
+}
+
+// FLASH CARDS — 36 words from all 4 sessions
+const fcData=[
+  // S1A vocab
+  {cat:'S1A',w:'project',d:'A planned piece of work with a goal and deadline.',ex:'"We finished the project last Friday."'},
+  {cat:'S1A',w:'agreement',d:'A decision both parties accept.',ex:'"We made a new agreement with the supplier."'},
+  {cat:'S1A',w:'commitment',d:'A firm promise or obligation.',ex:'"I made a commitment to deliver by Thursday."'},
+  {cat:'S1A',w:'timeline',d:'A schedule showing when things happen.',ex:'"I\'ll send you the updated timeline today."'},
+  {cat:'S1A',w:'launch',d:'To officially start something new.',ex:'"We\'re going to launch the new product next month."'},
+  {cat:'S1A',w:'supplier',d:'A company that provides materials or goods.',ex:'"We discussed the delay with our supplier."'},
+  {cat:'S1A',w:'deadline',d:'The latest time by which something must be done.',ex:'"We\'re going to meet the deadline — I promise."'},
+  {cat:'S1A',w:'negotiate',d:'To discuss terms to reach an agreement.',ex:'"We negotiated a better price last week."'},
+  // S2A vocab
+  {cat:'S2A',w:'scope',d:'The range of work included in a project.',ex:'"We changed the scope of the project last month."'},
+  {cat:'S2A',w:'milestone',d:'An important stage or achievement in a project.',ex:'"We reached the first milestone ahead of schedule."'},
+  {cat:'S2A',w:'delay',d:'When something takes longer than expected.',ex:'"There was a two-week delay in the delivery."'},
+  {cat:'S2A',w:'budget',d:'The amount of money allocated for a project.',ex:'"We completed the project under budget."'},
+  {cat:'S2A',w:'stakeholder',d:'A person with an interest in the project outcome.',ex:'"We presented the results to all stakeholders."'},
+  {cat:'S2A',w:'approval',d:'Official permission to proceed with a plan.',ex:'"We got approval from the regional director last week."'},
+  {cat:'S2A',w:'risk',d:'A potential problem that could affect the project.',ex:'"We identified three main risks in the plan."'},
+  {cat:'S2A',w:'handover',d:'The transfer of responsibility from one person to another.',ex:'"The handover meeting is going to happen on Friday."'},
+  // S3A vocab
+  {cat:'S3A',w:'regarding',d:'About / in reference to (formal email opener).',ex:'"Regarding the contract — we need to discuss the timeline."'},
+  {cat:'S3A',w:'attached',d:'A file included with the email.',ex:'"Please find the updated report attached."'},
+  {cat:'S3A',w:'clarify',d:'To explain something more clearly.',ex:'"I wanted to clarify the delivery date."'},
+  {cat:'S3A',w:'follow up',d:'To check on the status of something previously discussed.',ex:'"I\'m writing to follow up on our conversation."'},
+  {cat:'S3A',w:'forward',d:'To send a received email to another person.',ex:'"I\'ll forward the supplier\'s email to you."'},
+  {cat:'S3A',w:'agenda',d:'A list of topics to discuss in a meeting.',ex:'"I\'ll send the agenda for Friday\'s meeting."'},
+  {cat:'S3A',w:'postpone',d:'To move something to a later date.',ex:'"We had to postpone the presentation."'},
+  {cat:'S3A',w:'acknowledge',d:'To confirm you received or understood something.',ex:'"Please acknowledge receipt of this email."'},
+  // S4A vocab
+  {cat:'S4A',w:'mention',d:'To refer briefly to something in a conversation.',ex:'"She mentioned the budget issue in Monday\'s call."'},
+  {cat:'S4A',w:'raise (a point)',d:'To introduce a topic or concern in a meeting.',ex:'"I want to raise a concern about the timeline."'},
+  {cat:'S4A',w:'address',d:'To deal with or respond to a problem.',ex:'"We addressed the supplier issue last Thursday."'},
+  {cat:'S4A',w:'resolve',d:'To find a solution to a problem.',ex:'"We resolved the payment issue by end of last week."'},
+  {cat:'S4A',w:'concern',d:'A worry or potential problem.',ex:'"My main concern is the production schedule."'},
+  {cat:'S4A',w:'implement',d:'To put a plan or decision into action.',ex:'"We\'re going to implement the new system next quarter."'},
+  {cat:'S4A',w:'initiative',d:'A new plan or action to achieve a goal.',ex:'"This is a key initiative for the second half of the year."'},
+  {cat:'S4A',w:'accountable',d:'Responsible for results and expected to explain them.',ex:'"I\'m accountable for the project — it\'s my responsibility."'},
+  // Bonus colloquial
+  {cat:'COLLOQUIAL',w:'"I\'ll keep you posted."',d:'Signal you\'ll share updates as the situation develops.',ex:'After any commitment or decision — add this phrase.'},
+  {cat:'COLLOQUIAL',w:'"We\'re back on track."',d:'The project is recovering after a problem or delay.',ex:'"We had a delay, but we\'re back on track now."'},
+  {cat:'COLLOQUIAL',w:'"To be honest..."',d:'Signals a direct, sincere answer. Builds trust.',ex:'"To be honest, I\'m not sure we\'ll meet the deadline."'},
+  {cat:'COLLOQUIAL',w:'"Let me think about that."',d:'Professional pause phrase — buys thinking time.',ex:'Use it every time someone asks a question you need 3 seconds for.'},
+];
+let fcIdx=0;
+function renderFC(){
+  const card=document.getElementById('fcCard');
+  card.classList.remove('flipped');
+  document.getElementById('fcCat').textContent=fcData[fcIdx].cat;
+  document.getElementById('fcWord').textContent=fcData[fcIdx].w;
+  document.getElementById('fcDef').textContent=fcData[fcIdx].d;
+  document.getElementById('fcEx').textContent=fcData[fcIdx].ex;
+  document.getElementById('fcCounter').textContent=(fcIdx+1)+' / '+fcData.length;
+  document.getElementById('fcProgBar').style.width=((fcIdx+1)/fcData.length*100)+'%';
+  if(fcIdx===fcData.length-1)earnBadge('b2');
+}
+function flipCard(){document.getElementById('fcCard').classList.toggle('flipped');}
+function fcNav(dir){fcIdx=(fcIdx+dir+fcData.length)%fcData.length;renderFC();}
+
+// CERTIFICATE
+function generateCert(){
+  const name=document.getElementById('certName').value.trim();
+  if(!name)return;
+  document.getElementById('certDisplayName').textContent=name;
+  document.getElementById('certCard').classList.add('show');
+  earnBadge('b5');
+}
+
+// MY WIN
+function saveWin(){const v=document.getElementById('myWin').value.trim();if(!v)return;const c=document.getElementById('winConfirm');if(c)c.style.display='block';}
+
+// PROGRESS BAR
+window.addEventListener('scroll',()=>{const h=document.documentElement;const bar=document.getElementById('progressBar');if(bar)bar.style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight)*100)+'%';});
+
+// STUDENT MODE
+function toggleSM(){document.body.classList.toggle('sm');document.getElementById('smt-label').textContent=document.body.classList.contains('sm')?'Student Mode':'Teacher Mode';}
+
+// WAVEFORM
+(function(){const wv=document.getElementById('wv');if(!wv)return;for(let i=0;i<60;i++){const b=document.createElement('div');b.className='wbar';b.style.height=(8+Math.sin(i*.6)*10+Math.random()*18)+'px';b.style.opacity=.3+Math.random()*.4;wv.appendChild(b);}})();
+
+// CONFETTI KEYFRAMES
+(function(){const s=document.createElement('style');s.textContent='@keyframes confFall{0%{transform:translateY(-10px) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}';document.head.appendChild(s);})();
+
+// DRAG INIT — always last
+initDrag('order1');
+</script>
+</body>
+</html>
