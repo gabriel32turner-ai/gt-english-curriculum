@@ -174,6 +174,26 @@ body.sm .to{display:none!important}
 .flv{padding:5px 10px;font-family:var(--font-head);font-size:10px;font-weight:700;background:var(--surface2);color:var(--dim);border-radius:3px}
 .flv.on{background:var(--accent);color:#fff}
 .confetti{position:fixed;top:-10px;width:8px;height:8px;z-index:9999;border-radius:50%;pointer-events:none;animation:confettiFall 2.5s ease-in forwards}
+/* COU MINI-GAME — Confirmed or Uncertain? */
+.cou-wrap{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:18px;margin:14px 0}
+.cou-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px}
+.cou-title{font-family:var(--font-head);font-size:11px;font-weight:800;letter-spacing:2px;color:var(--accent);text-transform:uppercase}
+.cou-score{font-family:var(--font-head);font-size:14px;font-weight:800;color:var(--accent)}
+.cou-grid{display:flex;flex-direction:column;gap:10px}
+.cou-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 16px;display:flex;flex-direction:column;gap:10px;transition:all .25s}
+.cou-card.right{border-color:var(--success);background:rgba(0,229,160,.07)}
+.cou-card.wrong{border-color:var(--danger);background:rgba(255,77,109,.07)}
+.cou-sentence{font-size:13px;color:#fff;line-height:1.5;font-style:italic}
+.cou-btns{display:flex;gap:8px;flex-wrap:wrap}
+.cou-btn{flex:1;min-width:120px;background:var(--surface2);border:1px solid var(--border);color:var(--txt);padding:8px 14px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;cursor:pointer;border-radius:6px;transition:all .15s}
+.cou-btn:hover{border-color:var(--accent);color:var(--accent)}
+.cou-btn.picked-ok{background:rgba(0,229,160,.15);border-color:var(--success);color:var(--success)}
+.cou-btn.picked-bad{background:rgba(255,77,109,.15);border-color:var(--danger);color:var(--danger)}
+.cou-feedback{display:none;font-size:11.5px;color:var(--muted);line-height:1.5;padding:8px 12px;background:rgba(0,0,0,.25);border-radius:6px;border-left:3px solid var(--accent)}
+.cou-card.locked .cou-feedback{display:block}
+.cou-card.locked .cou-btn{cursor:default;opacity:.55}
+.cou-card.locked .cou-btn.picked-ok,.cou-card.locked .cou-btn.picked-bad{opacity:1}
+.cou-reset{background:none;border:1px solid var(--border);color:var(--muted);padding:7px 16px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;cursor:pointer;border-radius:6px;margin-top:10px}
 @keyframes confettiFall{0%{opacity:1;transform:translateY(0) rotate(0deg)}100%{opacity:0;transform:translateY(100vh) rotate(720deg)}}
 @media(max-width:860px){
   .section{margin:14px 10px}
@@ -218,6 +238,8 @@ body.sm .to{display:none!important}
   </div>
   <div class="section-body">
     <div class="dur-tag">⏱ 5 MIN</div>
+
+    <img src="https://images.unsplash.com/photo-1581553680321-4fffae59fccd?w=800&auto=format&fit=crop" alt="Rolling luggage in airport — business travel" style="width:100%;height:200px;object-fit:cover;border-radius:8px;margin-bottom:14px">
 
     <div class="ht-scenario">
       <img class="ht-scenario-img" src="https://images.pexels.com/photos/3760529/pexels-photo-3760529.jpeg?auto=compress&cs=tinysrgb&w=900" alt="Woman stressed about travel change">
@@ -422,6 +444,7 @@ body.sm .to{display:none!important}
   </div>
   <div class="section-body">
     <div class="dur-tag">⏱ 6 MIN</div>
+    <img src="https://images.unsplash.com/photo-1542296140-47fd7d838e76?w=800&auto=format&fit=crop" alt="Flight delay board — travel uncertainty" style="width:100%;height:200px;object-fit:cover;border-radius:8px;margin-bottom:14px">
     <img class="hero-img" src="https://images.pexels.com/photos/3184423/pexels-photo-3184423.jpeg?auto=compress&cs=tinysrgb&w=900" alt="Team in quick meeting" style="height:120px">
     <div class="speed-score">Score: <span id="speedScore">0</span> / 10</div>
 
@@ -469,6 +492,17 @@ body.sm .to{display:none!important}
     </div>
     <button class="speed-btn" onclick="document.getElementById('speedScore').textContent=prompt('Enter your score (0-10):')">📝 Enter Score</button>
     <button class="speed-btn" style="background:var(--green)" onclick="earnBadge('b3')">🎤 Award Badge</button>
+
+    <!-- §4.5 MINI-GAME: Confirmed or Uncertain? -->
+    <div class="cou-wrap" id="couGame">
+      <div class="cou-hdr">
+        <div class="cou-title">🎯 Mini-Game · Confirmed or Uncertain?</div>
+        <div class="cou-score" id="couScore">0 / 8</div>
+      </div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:12px;line-height:1.5">Read each business-travel sentence. Click <strong style="color:var(--success)">CONFIRMED</strong> if it uses Present Continuous for a real arrangement. Click <strong style="color:var(--warn)">UNCERTAIN</strong> if it uses will / may / might. Score 6+ to earn the 🎤 badge.</div>
+      <div class="cou-grid" id="couGrid"></div>
+      <button class="cou-reset" onclick="couReset()">↻ Reset</button>
+    </div>
   </div>
 </div>
 
@@ -516,6 +550,8 @@ body.sm .to{display:none!important}
   </div>
   <div class="section-body">
     <div class="dur-tag">⏱ 8 MIN</div>
+
+    <img src="https://images.unsplash.com/photo-1530521954074-e64f6810b32d?w=800&auto=format&fit=crop" alt="Passport and boarding pass — confirmed travel documents" style="width:100%;height:200px;object-fit:cover;border-radius:8px;margin-bottom:14px">
 
     <div class="source-grid">
       <div class="source-card">
@@ -781,6 +817,40 @@ function generateCert(){
 
 /* PROGRESS BAR */
 window.addEventListener('scroll',()=>{const h=document.documentElement.scrollHeight-window.innerHeight;document.getElementById('progBar').style.width=(h>0?(window.scrollY/h*100):0)+'%';});
+
+/* COU MINI-GAME — Confirmed or Uncertain? */
+const couItems=[
+  {s:"I'm flying to Mexico City on Tuesday at 6 AM — ticket booked.",a:"CONFIRMED",why:"Present Continuous + booked ticket = real arrangement."},
+  {s:"I might extend the trip by one day if the client needs more time.",a:"UNCERTAIN",why:"'might' = possibility, not arranged."},
+  {s:"We're meeting the supplier at 10 on Wednesday — calendar invite accepted.",a:"CONFIRMED",why:"Present Continuous + accepted invite = confirmed."},
+  {s:"The plant visit may be cancelled — the manager is sick.",a:"UNCERTAIN",why:"'may' = ~50% possibility, not certain."},
+  {s:"I'm checking in at the Marriott at noon Thursday — reservation confirmed.",a:"CONFIRMED",why:"Present Continuous + confirmed reservation."},
+  {s:"The return flight will probably be delayed because of the storm.",a:"UNCERTAIN",why:"'will probably' = prediction, not arranged."},
+  {s:"We're having dinner with the regional director on Friday — both sides agreed.",a:"CONFIRMED",why:"Present Continuous + mutual agreement = arrangement."},
+  {s:"I might rebook for Monday if the meeting moves.",a:"UNCERTAIN",why:"'might' + conditional 'if' = uncertain."}
+];
+let couAnswered=0,couRight=0;
+function couRender(){
+  const g=document.getElementById('couGrid');if(!g)return;
+  g.innerHTML='';couAnswered=0;couRight=0;
+  document.getElementById('couScore').textContent='0 / 8';
+  couItems.forEach((it,i)=>{
+    const card=document.createElement('div');card.className='cou-card';card.id='cou'+i;
+    card.innerHTML='<div class="cou-sentence">"'+it.s+'"</div><div class="cou-btns"><button class="cou-btn" data-pick="CONFIRMED" onclick="couPick('+i+',\'CONFIRMED\',this)">✅ CONFIRMED</button><button class="cou-btn" data-pick="UNCERTAIN" onclick="couPick('+i+',\'UNCERTAIN\',this)">⚠️ UNCERTAIN</button></div><div class="cou-feedback">'+it.why+'</div>';
+    g.appendChild(card);
+  });
+}
+function couPick(i,pick,btn){
+  const card=document.getElementById('cou'+i);if(card.classList.contains('locked'))return;
+  const correct=couItems[i].a===pick;
+  card.classList.add('locked',correct?'right':'wrong');
+  btn.classList.add(correct?'picked-ok':'picked-bad');
+  couAnswered++;if(correct)couRight++;
+  document.getElementById('couScore').textContent=couRight+' / 8';
+  if(couAnswered===8&&couRight>=6)earnBadge('b3');
+}
+function couReset(){couRender();}
+document.addEventListener('DOMContentLoaded',couRender);
 </script>
 </body>
 </html>
