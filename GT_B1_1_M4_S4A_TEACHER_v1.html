@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GT · B1.1 · M4 · S4A — Online Communication &amp; Misunderstandings</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0D1117;--surface:#111318;--surface2:#1a1f28;
+  --accent:#10B981;--accent2:#34D399;
+  --border:rgba(16,185,129,.18);
+  --text:#F0F4F8;--muted:#8A9BB0;--dim:rgba(226,226,226,.25);
+  --danger:#FF4D6D;--success:#00E5A0;--warn:#FFB347;
+  --gold:#FFB800;--cyan:#00CFFF;--green:#00E676;--violet:#A78BFA;
+  --font-head:'Syne',sans-serif;--font-body:'DM Sans',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:14px;line-height:1.6}
+.prog{height:3px;background:var(--accent);position:fixed;top:0;left:0;z-index:999;width:0;transition:width .1s linear;box-shadow:0 0 8px rgba(16,185,129,.6)}
+.hdr{background:var(--surface);border-bottom:1px solid var(--border);padding:18px 40px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:3px;z-index:200;backdrop-filter:blur(12px);flex-wrap:wrap;gap:10px}
+.brand{display:flex;align-items:center;gap:10px}
+.dot{width:8px;height:8px;background:var(--accent);border-radius:50%;animation:pulse 2.5s ease-in-out infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(16,185,129,.4)}60%{box-shadow:0 0 0 5px rgba(16,185,129,0)}}
+.bname{font-family:var(--font-head);font-weight:800;font-size:12px;letter-spacing:2.5px;text-transform:uppercase;color:#fff}
+.bsub{font-size:10px;color:var(--muted);letter-spacing:1px}
+.badge-strip{display:flex;gap:6px;align-items:center}
+.badge-strip span{font-size:18px;filter:grayscale(1);opacity:.3;transition:all .4s;cursor:default}
+.badge-strip span.earned{filter:grayscale(0);opacity:1;transform:scale(1.2)}
+.sess-meta{display:flex;gap:7px;flex-wrap:wrap;align-items:center}
+.tag{display:inline-block;padding:3px 10px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;border-radius:3px}
+.tag-level{background:rgba(16,185,129,.15);color:var(--accent);border:1px solid var(--border)}
+.tag-mod{background:rgba(255,184,0,.1);color:var(--gold);border:1px solid rgba(255,184,0,.25)}
+.tag-sess{background:rgba(0,207,255,.1);color:var(--cyan);border:1px solid rgba(0,207,255,.25)}
+.tag-time{background:rgba(0,230,118,.08);color:var(--green);border:1px solid rgba(0,230,118,.2)}
+
+.section{margin:24px 32px;border:1px solid var(--border);border-radius:14px;overflow:hidden;background:var(--surface)}
+.section-header{display:flex;align-items:center;gap:14px;padding:16px 22px;background:linear-gradient(135deg,rgba(16,185,129,.08),transparent);border-bottom:1px solid var(--border);flex-wrap:wrap}
+.section-number{font-family:var(--font-head);font-size:10px;font-weight:800;color:var(--accent);letter-spacing:.12em;text-transform:uppercase;background:rgba(16,185,129,.1);border:1px solid var(--border);padding:2px 9px;border-radius:20px}
+.section-title{font-family:var(--font-head);font-size:18px;font-weight:800;color:#fff}
+.section-title em{color:var(--accent);font-style:normal}
+.section-sub{font-size:12px;color:var(--muted);margin-left:auto}
+.dur-tag{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:1.5px;color:var(--gold);border:1px solid rgba(255,184,0,.2);padding:2px 8px;border-radius:3px;margin-left:8px;white-space:nowrap}
+.section-body{padding:22px 24px}
+
+.img-hero{width:100%;height:220px;object-fit:cover;display:block;filter:brightness(.58)}
+.img-banner{width:100%;height:130px;object-fit:cover;display:block;filter:brightness(.52)}
+.img-card{width:100%;height:80px;object-fit:cover;display:block;filter:brightness(.48)}
+.img-sm{width:100%;height:70px;object-fit:cover;display:block;filter:brightness(.48)}
+
+.tn{border-radius:8px;padding:12px 16px;margin-top:14px;font-size:12px;line-height:1.6}
+.tn-c1{background:rgba(0,207,255,.06);border:1px solid rgba(0,207,255,.2);color:rgba(0,207,255,.85)}
+.tn-c2{background:rgba(255,61,114,.06);border:1px solid rgba(255,61,114,.2);color:rgba(255,120,150,.9)}
+.tn-c3{background:rgba(255,184,0,.05);border:1px solid rgba(255,184,0,.2);color:rgba(255,184,0,.85)}
+.tn-lbl{font-family:var(--font-head);font-size:8.5px;font-weight:800;letter-spacing:2px;text-transform:uppercase;margin-bottom:5px;display:block}
+
+/* WARM-UP */
+.wu-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}
+.wu-card{background:var(--surface2);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.wu-card-img{width:100%;height:90px;object-fit:cover;display:block;filter:brightness(.48)}
+.wu-card-body{padding:12px 14px}
+.wu-q{font-size:13px;color:var(--text);line-height:1.5}
+.wu-hint{font-size:11px;color:var(--muted);font-style:italic;margin-top:5px}
+.quick-win{background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.25);border-radius:10px;padding:14px 18px;margin-top:16px;display:flex;align-items:flex-start;gap:12px}
+.qw-icon{font-size:20px;flex-shrink:0}
+.qw-lbl{font-family:var(--font-head);font-size:8.5px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:5px;display:block}
+.qw-text{font-size:13.5px;color:#fff;line-height:1.5}
+
+/* SPEAKING TOPIC */
+.topic-hero{position:relative;overflow:hidden;border-radius:10px;margin-bottom:16px}
+.topic-hero-img{width:100%;height:180px;object-fit:cover;display:block;filter:brightness(.48)}
+.topic-hero-overlay{position:absolute;bottom:0;left:0;right:0;padding:16px 20px;background:linear-gradient(transparent,rgba(0,0,0,.78))}
+.topic-label{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--accent);margin-bottom:4px}
+.topic-q{font-size:18px;font-weight:700;color:#fff;line-height:1.3}
+.rounds-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.round-card{background:var(--surface2);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.round-card-img{width:100%;height:80px;object-fit:cover;display:block;filter:brightness(.48)}
+.round-card-body{padding:11px 13px}
+.round-num{font-family:var(--font-head);font-size:9px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);margin-bottom:4px}
+.round-q{font-size:12.5px;color:var(--text);line-height:1.4;margin-bottom:6px}
+.model-reveal-btn{background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.3);color:var(--accent);padding:5px 12px;font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:1.5px;cursor:pointer;border-radius:4px;width:100%;text-align:center;transition:all .2s}
+.model-reveal-btn:hover{background:rgba(16,185,129,.2)}
+.model-answer{display:none;margin-top:8px;background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.15);border-radius:6px;padding:10px 12px;font-size:12px;color:var(--text);line-height:1.6;font-style:italic}
+.model-answer.show{display:block}
+.color-passive{color:var(--violet)}
+.color-vocab{color:var(--accent2)}
+.color-coll{color:var(--warn)}
+
+/* VOCAB */
+.vocab-section-banner{width:100%;height:100px;object-fit:cover;display:block;filter:brightness(.48);border-radius:8px;margin-bottom:16px}
+.vocab-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.vocab-card{background:var(--surface2);border:1px solid var(--border);border-radius:10px;overflow:hidden;cursor:pointer;transition:all .2s}
+.vocab-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.vocab-card-img{width:100%;height:70px;object-fit:cover;display:block;filter:brightness(.48)}
+.vocab-card-body{padding:10px 12px}
+.vc-word{font-family:var(--font-head);font-size:13px;font-weight:700;color:#fff;margin-bottom:2px}
+.vc-ipa{font-size:10.5px;color:var(--cyan);margin-bottom:4px;font-style:italic}
+.vc-pos{font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--dim);margin-bottom:4px}
+.vc-def{font-size:11px;color:var(--muted);line-height:1.4;margin-bottom:5px}
+.vc-ex{font-size:11px;color:var(--accent2);font-style:italic;border-left:2px solid rgba(16,185,129,.35);padding-left:6px;line-height:1.4}
+.vc-sp{font-size:9.5px;color:var(--dim);margin-top:5px}
+.micro-speaking{background:rgba(16,185,129,.05);border:1px solid rgba(16,185,129,.18);border-radius:8px;padding:12px 16px;margin-top:14px}
+.ms-lbl{font-family:var(--font-head);font-size:9px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:5px;display:block}
+
+/* VOCAB QUIZ */
+.vquiz-wrap{margin-top:18px}
+.vquiz-lbl{font-family:var(--font-head);font-size:9px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:10px;display:block}
+.vquiz-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.vq-card{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px;cursor:pointer;transition:all .2s}
+.vq-card:hover:not(.answered){border-color:rgba(16,185,129,.4)}
+.vq-es{font-size:13px;color:var(--text);font-weight:600;margin-bottom:6px}
+.vq-opts{display:flex;gap:5px;flex-wrap:wrap}
+.vq-opt{background:var(--surface);border:1px solid var(--border);color:var(--muted);padding:4px 10px;font-family:var(--font-body);font-size:11px;cursor:pointer;border-radius:4px;transition:all .2s}
+.vq-opt:hover:not(:disabled){border-color:var(--accent);color:var(--accent)}
+.vq-opt.correct{background:rgba(0,229,160,.12);border-color:var(--success);color:var(--success)}
+.vq-opt.wrong{background:rgba(255,77,109,.12);border-color:var(--danger);color:var(--danger)}
+.vq-opt:disabled{cursor:not-allowed}
+.vquiz-score{font-family:var(--font-head);font-size:12px;font-weight:700;color:var(--accent);margin-top:10px;padding:8px 14px;background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.15);border-radius:6px;display:inline-block}
+
+/* COLLOQUIAL */
+.coll-banner{width:100%;height:100px;object-fit:cover;display:block;filter:brightness(.48);border-radius:8px;margin-bottom:14px}
+.coll-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.coll-card{background:var(--surface2);border:1px solid rgba(34,211,164,.15);border-radius:10px;overflow:hidden;cursor:pointer;transition:border-color .2s}
+.coll-card:hover{border-color:var(--accent)}
+.coll-card-img{width:100%;height:90px;object-fit:cover;display:block;filter:brightness(.48)}
+.coll-card-body{padding:12px 14px}
+.coll-phrase{font-family:var(--font-head);font-size:13px;font-weight:700;color:#fff;margin-bottom:5px}
+.coll-meaning{font-size:11px;color:var(--muted);line-height:1.5;margin-bottom:6px}
+.coll-ex{font-size:11px;color:var(--accent2);font-style:italic;border-left:2px solid rgba(16,185,129,.3);padding-left:6px;line-height:1.4}
+
+/* GRAMMAR */
+.gram-banner{width:100%;height:120px;object-fit:cover;display:block;filter:brightness(.48);border-radius:8px;margin-bottom:16px}
+.gram-toggle-btn{background:var(--surface2);border:1px solid var(--border);color:var(--muted);padding:9px 16px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;cursor:pointer;width:100%;text-align:left;border-radius:6px;margin-bottom:4px;transition:all .2s}
+.gram-toggle-btn:hover{border-color:var(--accent)}
+.gram-coll{max-height:0;overflow:hidden;transition:max-height .4s ease}
+.gram-coll.open{max-height:900px}
+.gram-table{width:100%;border-collapse:collapse;margin-top:10px;margin-bottom:14px}
+.gram-table th{background:var(--surface2);padding:10px 14px;text-align:left;font-family:var(--font-head);font-size:9.5px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim);border-bottom:2px solid var(--accent)}
+.gram-table td{padding:10px 14px;border-bottom:1px solid var(--border);font-size:12.5px;vertical-align:top}
+.gram-table tr:hover td{background:rgba(16,185,129,.03)}
+.ex-phrase{color:var(--accent2);font-style:italic}
+.rule-note{background:rgba(255,184,0,.04);border:1px solid rgba(255,184,0,.18);border-radius:6px;padding:12px 16px;margin:12px 0;font-size:12px;color:rgba(255,184,0,.85);line-height:1.6}
+.err-box{background:rgba(255,77,109,.05);border:1px solid rgba(255,77,109,.2);border-radius:6px;padding:12px 16px;margin:12px 0;font-size:12px;color:rgba(255,140,160,.9);line-height:1.7}
+.err-box strong{color:var(--danger)}
+
+/* POLL */
+.poll-box{background:rgba(16,185,129,.04);border:1px solid rgba(16,185,129,.15);border-radius:10px;padding:16px 18px;margin-bottom:16px}
+.poll-lbl{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:8px}
+.poll-q{font-size:14px;color:#fff;font-weight:500;margin-bottom:12px;line-height:1.4}
+.poll-opts{display:flex;gap:8px;flex-wrap:wrap}
+.poll-btn{background:var(--surface2);border:1px solid var(--border);color:var(--muted);padding:8px 16px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1px;cursor:pointer;border-radius:5px;transition:all .2s}
+.poll-btn:hover:not(:disabled){border-color:var(--accent);color:var(--accent)}
+.poll-btn.selected{background:rgba(16,185,129,.15);border-color:var(--accent);color:var(--accent)}
+.poll-btn:disabled{cursor:not-allowed}
+.poll-feedback{display:none;margin-top:10px;font-size:12.5px;color:var(--text);line-height:1.5;padding:10px 14px;background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.15);border-radius:6px}
+.poll-feedback.show{display:block}
+
+/* ACTIVITIES */
+.act-title{font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:11px;padding-top:18px;border-top:1px solid var(--border);margin-top:20px}
+.opt-group{margin-bottom:14px}
+.opt-q{font-size:13px;color:var(--text);margin-bottom:9px;padding:10px 14px;background:var(--surface2);border-left:3px solid var(--accent);border-radius:0 6px 6px 0;line-height:1.5}
+.opts{display:flex;gap:7px;flex-wrap:wrap}
+.opt{background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:7px 15px;font-family:var(--font-body);font-size:12.5px;cursor:pointer;border-radius:5px;transition:all .2s}
+.opt:hover:not(:disabled){border-color:var(--accent);color:var(--accent)}
+.opt.correct{background:rgba(0,229,160,.12);border-color:var(--success);color:var(--success)}
+.opt.wrong{background:rgba(255,77,109,.12);border-color:var(--danger);color:var(--danger)}
+.opt:disabled{cursor:not-allowed}
+.tf-set{display:flex;flex-direction:column;gap:8px;margin-bottom:14px}
+.tf-row{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px 15px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.tf-stmt{font-size:12.5px;color:var(--text);flex:1;line-height:1.5;min-width:180px}
+.tf-btns{display:flex;gap:7px;flex-shrink:0}
+.tf-btn{background:var(--surface);border:1px solid var(--border);color:var(--text);padding:6px 15px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1px;cursor:pointer;border-radius:4px;transition:all .2s}
+.tf-btn:hover:not(:disabled){border-color:var(--accent)}
+.tf-btn:disabled{cursor:not-allowed}
+
+/* LISTENING */
+.player-box{background:var(--surface2);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:14px}
+.player-box-img{width:100%;height:90px;object-fit:cover;display:block;filter:brightness(.42)}
+.player-box-body{padding:18px 22px}
+.track-title{font-family:var(--font-head);font-size:12px;font-weight:700;color:#fff;margin-bottom:2px}
+.track-sub{font-size:10.5px;color:var(--muted)}
+.waveform{display:flex;align-items:center;gap:2px;height:36px;overflow:hidden;margin:10px 0}
+.wbar{width:3px;background:var(--accent);border-radius:2px;flex-shrink:0;opacity:.4}
+.script-toggle{background:none;border:1px solid var(--border);color:var(--muted);padding:6px 14px;font-family:var(--font-head);font-size:9.5px;font-weight:700;letter-spacing:1.5px;cursor:pointer;border-radius:4px;margin-bottom:10px;transition:all .2s}
+.script-toggle:hover{border-color:var(--accent)}
+.script-box{max-height:0;overflow:hidden;transition:max-height .45s ease}
+.script-box.open{max-height:1000px}
+.script-content{background:rgba(0,207,255,.04);border:1px solid rgba(0,207,255,.15);border-radius:6px;padding:16px 18px;font-size:12.5px;color:var(--text);line-height:1.9;font-style:italic}
+.eleven-note{font-size:10.5px;color:var(--dim);margin-top:7px}
+
+/* SPEAKING / PRODUCTION */
+.speak-card{background:var(--surface2);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:0 10px 10px 0;overflow:hidden;margin-bottom:10px}
+.speak-card-img{width:100%;height:80px;object-fit:cover;display:block;filter:brightness(.48)}
+.speak-card-body{padding:13px 16px}
+.sc-lbl{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:4px}
+.sc-q{font-size:14px;color:#fff;font-weight:500;margin-bottom:7px;line-height:1.4}
+.sc-hint{font-size:11.5px;color:var(--muted);font-style:italic}
+
+/* TIMER */
+.timer-wrap{display:inline-flex;flex-direction:column;align-items:center;gap:6px;margin-bottom:14px}
+.timer-svg{transform:rotate(-90deg)}
+.timer-arc{transition:stroke-dashoffset .9s linear;stroke-linecap:round}
+.timer-text{font-family:var(--font-head);font-size:18px;font-weight:800;fill:#fff}
+.timer-btn{font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;padding:7px 18px;border-radius:5px;cursor:pointer;border:1px solid var(--accent);background:rgba(16,185,129,.1);color:var(--accent);transition:all .2s;margin-top:6px}
+.timer-btn:hover{background:rgba(16,185,129,.2)}
+
+/* OPINION METER */
+.opinion-meter{background:rgba(16,185,129,.04);border:1px solid rgba(16,185,129,.15);border-radius:10px;padding:14px 18px;margin-bottom:18px}
+.om-lbl{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:8px}
+.om-stmt{font-size:14px;color:#fff;font-weight:500;margin-bottom:12px;line-height:1.4}
+.om-scale{display:flex;gap:6px;flex-wrap:wrap}
+.om-btn{background:var(--surface2);border:1px solid var(--border);color:var(--muted);padding:7px 12px;font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:1px;cursor:pointer;border-radius:4px;transition:all .2s}
+.om-btn:hover{border-color:var(--accent);color:var(--accent)}
+.om-btn.active{background:rgba(16,185,129,.15);border-color:var(--accent);color:var(--accent2)}
+
+/* DICE */
+.dice-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px}
+.dice-card{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px;text-align:center;cursor:pointer;transition:all .2s}
+.dice-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.dice-num{font-family:var(--font-head);font-size:20px;font-weight:800;color:var(--accent);margin-bottom:4px}
+.dice-q{font-size:11.5px;color:var(--text);line-height:1.4}
+
+/* PHRASES */
+.phrases-section{background:rgba(255,184,0,.03);border-top:1px solid rgba(255,184,0,.12);border-bottom:1px solid rgba(255,184,0,.12)}
+.ph-lbl{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:7px}
+.ph-title{font-family:var(--font-head);font-size:22px;font-weight:800;color:#fff;margin-bottom:20px;line-height:1.3}
+.ph-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.ph-card{background:var(--surface2);border:1px solid rgba(255,184,0,.2);border-radius:10px;overflow:hidden}
+.ph-card-img{width:100%;height:80px;object-fit:cover;display:block;filter:brightness(.45)}
+.ph-card-body{padding:14px 16px}
+.ph-num{font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;color:var(--gold);margin-bottom:6px}
+.ph-phrase{font-family:var(--font-head);font-size:14px;font-weight:700;color:#fff;margin-bottom:7px;line-height:1.3}
+.ph-ctx{font-size:11.5px;color:var(--muted);line-height:1.55}
+
+/* WRAP-UP */
+.wu3-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px}
+.wu3-card{background:var(--surface2);border:1px solid var(--border);border-top:3px solid var(--accent);border-radius:0 0 10px 10px;padding:16px 15px}
+.wu3-num{font-family:var(--font-head);font-size:24px;font-weight:800;color:var(--accent);margin-bottom:5px}
+.wu3-txt{font-size:12px;color:var(--muted);line-height:1.55}
+.checklist{display:flex;flex-direction:column;gap:7px;margin-bottom:20px}
+.cl-item{display:flex;align-items:flex-start;gap:11px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:11px 15px;cursor:pointer;transition:all .2s;font-size:12.5px;color:var(--text);line-height:1.5}
+.cl-item:hover{border-color:var(--accent)}
+.cl-item.done{border-color:rgba(0,229,160,.3);background:rgba(0,229,160,.04);color:rgba(0,229,160,.8);text-decoration:line-through;opacity:.7}
+.cl-box{width:15px;height:15px;border:2px solid var(--accent);border-radius:3px;flex-shrink:0;margin-top:2px;transition:all .2s}
+.cl-item.done .cl-box{background:var(--success);border-color:var(--success)}
+.next-box{background:var(--surface2);border:1px solid var(--border);border-left:4px solid var(--cyan);border-radius:0 10px 10px 0;padding:16px 20px}
+.next-lbl{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--cyan);margin-bottom:5px}
+.next-title{font-size:14px;font-weight:600;color:#fff;margin-bottom:3px}
+.next-sub{font-size:11.5px;color:var(--muted)}
+.win-box{background:rgba(255,184,0,.04);border:1px solid rgba(255,184,0,.18);border-radius:10px;padding:16px 18px;margin-top:16px}
+.win-lbl{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold);margin-bottom:8px}
+.win-textarea{width:100%;background:var(--surface);border:1px solid rgba(255,184,0,.2);border-radius:6px;color:var(--text);font-family:var(--font-body);font-size:13px;padding:10px 13px;resize:vertical;min-height:70px;outline:none;line-height:1.5;transition:border-color .2s}
+.win-textarea::placeholder{color:var(--muted)}
+.win-textarea:focus{border-color:var(--gold)}
+.win-save{margin-top:8px;background:rgba(255,184,0,.1);border:1px solid rgba(255,184,0,.3);color:var(--gold);padding:7px 18px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;cursor:pointer;border-radius:5px;transition:all .2s}
+.win-save:hover{background:rgba(255,184,0,.2)}
+
+.ftr{background:var(--surface);border-top:1px solid var(--border);padding:16px 40px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-top:24px}
+.fbrand{font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim)}
+.finfo{font-size:11px;color:var(--dim)}
+.flevels{display:flex;gap:3px;flex-wrap:wrap}
+.flv{padding:5px 10px;font-family:var(--font-head);font-size:10px;font-weight:700;background:var(--surface2);color:var(--dim);border-radius:3px}
+.flv.active{background:var(--accent);color:#fff}
+
+@media(max-width:860px){
+  .hdr,.ftr{padding:14px 16px}
+  .section{margin:14px 10px}
+  .section-body{padding:14px 14px}
+  .wu-grid,.rounds-grid,.vocab-grid,.coll-grid,.dice-grid,.vquiz-grid{grid-template-columns:1fr 1fr}
+  .ph-grid{grid-template-columns:1fr}
+  .wu3-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<div class="prog" id="prog"></div>
+
+<header class="hdr">
+  <div class="brand"><div class="dot"></div><div><div class="bname">Gabriel Turner</div><div class="bsub">English Training · Teacher Edition</div></div></div>
+  <div class="badge-strip">
+    <span id="b1" title="Quick Start">⚡</span>
+    <span id="b2" title="Word Power">📚</span>
+    <span id="b3" title="Grammar Pro">🎯</span>
+    <span id="b4" title="Active Listener">🎧</span>
+    <span id="b5" title="My Win">🏆</span>
+  </div>
+  <div class="sess-meta">
+    <span class="tag tag-level">B1.1</span>
+    <span class="tag tag-mod">Module 4</span>
+    <span class="tag tag-sess">Session 4A — Discovery &amp; Drill</span>
+    <span class="tag tag-time">48 min</span>
+  </div>
+</header>
+
+<!-- §1 WARM-UP -->
+<section class="section">
+  <div class="section-header">
+    <span class="section-number">§1</span>
+    <span class="section-title">Warm-Up — <em>Text Gone Wrong</em></span>
+    <span class="section-sub">Activate experience · Connect to real miscommunication</span>
+    <span class="dur-tag">⏱ 5 MIN</span>
+  </div>
+  <div class="section-body">
+    <img class="img-hero" src="https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=900&q=80" alt="phone texting communication">
+    <div class="wu-grid">
+      <div class="wu-card">
+        <img class="wu-card-img" src="https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=600&q=80" alt="text message misunderstood phone">
+        <div class="wu-card-body">
+          <div class="wu-q">📱 Have you ever been misunderstood in a text or email? What happened?</div>
+          <div class="wu-hint">→ T→S: Ask everyone. Encourage specific stories. Note passive naturally: "The message was misread" / "I was misunderstood."</div>
+        </div>
+      </div>
+      <div class="wu-card">
+        <img class="wu-card-img" src="https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=600&q=80" alt="text email call in person prefer communicate">
+        <div class="wu-card-body">
+          <div class="wu-q">💬 Do you prefer to communicate by text, email, call, or in person? Why?</div>
+          <div class="wu-hint">→ T→S: Push for reasons. "I prefer call because tone is not lost" — connect to today's theme.</div>
+        </div>
+      </div>
+      <div class="wu-card">
+        <img class="wu-card-img" src="https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=600&q=80" alt="written message problem work colleague">
+        <div class="wu-card-body">
+          <div class="wu-q">🏢 When was the last time a written message caused a problem at work?</div>
+          <div class="wu-hint">→ S→S: Pair discussion. Real workplace stories activate authentic language. Note passive: "The message was misinterpreted."</div>
+        </div>
+      </div>
+      <div class="wu-card">
+        <img class="wu-card-img" src="https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=600&q=80" alt="change digital communication one thing future">
+        <div class="wu-card-body">
+          <div class="wu-q">🔄 If you could change one thing about how people communicate digitally, what would it be?</div>
+          <div class="wu-hint">→ S→S: Push for modal passives: "Rules should be set…" / "Tone should be expressed more clearly…"</div>
+        </div>
+      </div>
+    </div>
+    <div class="quick-win">
+      <div class="qw-icon">⚡</div>
+      <div>
+        <span class="qw-lbl">Pedagogical Layering</span>
+        <div class="qw-text">Layer 1 (passive naturally): <em>"The message was misread"</em> · Layer 2 (present perfect): <em>"Have you ever been misunderstood?"</em> · Layer 3 (critical): <em>"Why is it easier to misunderstand written vs. spoken communication?"</em></div>
+      </div>
+    </div>
+    <div style="margin-top:16px;text-align:center">
+      <div style="font-size:12px;color:var(--muted);margin-bottom:10px">⏱ 90-Second Warm-Up Timer — Start when first question is asked</div>
+      <div class="timer-wrap">
+        <svg width="88" height="88" class="timer-svg">
+          <circle cx="44" cy="44" r="38" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="5"/>
+          <circle id="wuArc" cx="44" cy="44" r="38" fill="none" stroke="var(--accent)" stroke-width="5"
+            stroke-dasharray="238.76" stroke-dashoffset="0" class="timer-arc"/>
+          <text id="wuTxt" x="44" y="50" text-anchor="middle" class="timer-text">1:30</text>
+        </svg>
+        <button class="timer-btn" onclick="startTimer('wuArc','wuTxt',90,'b1',238.76)">Start Timer</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- §2 SPEAKING -->
+<section class="section">
+  <div class="section-header">
+    <span class="section-number">§2</span>
+    <span class="section-title">Speaking — <em>The Digital Miscommunication Problem</em></span>
+    <span class="section-sub">3 rounds · Passive voice emerging naturally · Model B1.1 answer</span>
+    <span class="dur-tag">⏱ 8 MIN</span>
+  </div>
+  <div class="section-body">
+    <div class="topic-hero">
+      <img class="topic-hero-img" src="https://images.unsplash.com/photo-1577563908411-5077b6dc7624?w=900&q=80" alt="messaging confusion digital communication">
+      <div class="topic-hero-overlay">
+        <div class="topic-label">Session Topic</div>
+        <div class="topic-q">Why Does Written Communication Cause So Many Problems?</div>
+      </div>
+    </div>
+    <div class="rounds-grid">
+      <div class="round-card">
+        <img class="round-card-img" src="https://images.unsplash.com/photo-1577563908411-5077b6dc7624?w=600&q=80" alt="text message misread misunderstood story">
+        <div class="round-card-body">
+          <div class="round-num">Round 1 — 60s · T→S</div>
+          <div class="round-q">Describe a time you were misunderstood in a text — or misread someone else's message.</div>
+          <button class="model-reveal-btn" onclick="revealModel('m1')">▼ Show B1.1 Model Answer</button>
+          <div class="model-answer" id="m1">"Last month, a message I sent was misread by my manager. I wrote 'Fine, let's do it that way' — it was interpreted as sarcasm."</div>
+        </div>
+      </div>
+      <div class="round-card">
+        <img class="round-card-img" src="https://images.unsplash.com/photo-1577563908411-5077b6dc7624?w=600&q=80" alt="partner conversation difficult text or call rule">
+        <div class="round-card-body">
+          <div class="round-num">Round 2 — 90s · S→S</div>
+          <div class="round-q">Ask your partner: What's your communication rule for difficult conversations — text or call?</div>
+          <button class="model-reveal-btn" onclick="revealModel('m2')">▼ Show B1.1 Model Answer</button>
+          <div class="model-answer" id="m2">"My rule is: if it's sensitive, it should be handled by phone. Tone is completely lost in written messages — especially when context is removed."</div>
+        </div>
+      </div>
+      <div class="round-card">
+        <img class="round-card-img" src="https://images.unsplash.com/photo-1577563908411-5077b6dc7624?w=600&q=80" alt="work conflict resolved phone not text class discussion">
+        <div class="round-card-body">
+          <div class="round-num">Round 3 — 90s · Class</div>
+          <div class="round-q">Should work conflicts be resolved by phone, not text? Why?</div>
+          <button class="model-reveal-btn" onclick="revealModel('m3')">▼ Show B1.1 Model Answer</button>
+          <div class="model-answer" id="m3">"I believe conflicts should always be resolved by phone or face-to-face — not text. The more we communicate digitally, the more we misunderstand each other."</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="background:rgba(167,139,250,.06);border:1px solid rgba(167,139,250,.2);border-radius:8px;padding:14px 18px;margin-bottom:14px">
+      <div style="font-family:var(--font-head);font-size:9px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--violet);margin-bottom:8px">Model Answer — Color-Coded</div>
+      <div style="font-size:13px;color:var(--text);line-height:1.9">
+        "Last month, a message I sent <span class="color-passive">was misread</span> by my manager. I wrote 'Fine, let's do it that way' — and it <span class="color-passive">was interpreted</span> as sarcasm, not agreement. A meeting <span class="color-passive">was called</span>, feelings <span class="color-passive">were hurt</span>, and the whole thing <span class="color-passive">was caused</span> by three words without <span class="color-vocab">context</span>. I've learned that <span class="color-vocab">tone</span> is completely lost in written messages. Difficult conversations should <span class="color-passive">be handled</span> by phone or face-to-face — not text. The irony is that the more we communicate digitally, the more we <span class="color-vocab">misunderstand</span> each other."
+      </div>
+      <div style="display:flex;gap:16px;margin-top:10px;flex-wrap:wrap">
+        <span style="font-size:10.5px;color:var(--violet)">■ Passive Voice</span>
+        <span style="font-size:10.5px;color:var(--accent2)">■ Target Vocabulary</span>
+        <span style="font-size:10.5px;color:var(--warn)">■ Colloquial Phrase</span>
+      </div>
+    </div>
+    <div class="tn tn-c1">
+      <span class="tn-lbl">📘 Context Note</span>
+      Notice how the model answer uses passive voice naturally: "was misread", "was interpreted", "was called", "were hurt", "was caused", "should be handled." When things go wrong in communication, passive voice appears because we describe outcomes without assigning blame directly — this is exactly how diplomatic professional English works. Help students see the pattern.
+    </div>
+  </div>
+</section>
+
+<!-- §3 VOCABULARY -->
+<section class="section">
+  <div class="section-header">
+    <span class="section-number">§3</span>
+    <span class="section-title">Vocabulary — <em>Online Communication</em></span>
+    <span class="section-sub">12 words · Click to hear · Quiz earns 📚 badge</span>
+    <span class="dur-tag">⏱ 10 MIN</span>
+  </div>
+  <div class="section-body">
+    <img class="vocab-section-banner" src="https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=900&q=80" alt="online communication vocabulary digital">
+    <div style="font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:10px">12 Words — Click any card to hear</div>
+    <div class="vocab-grid">
+
+      <div class="vocab-card" onclick="speak('tone')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=600&q=80" alt="tone feeling attitude communication">
+        <div class="vocab-card-body">
+          <div class="vc-word">tone</div>
+          <div class="vc-ipa">/təʊn/</div>
+          <div class="vc-pos">noun</div>
+          <div class="vc-def">The feeling or attitude expressed in communication</div>
+          <div class="vc-ex">"The tone of the email was misread as aggressive."</div>
+          <div class="vc-sp">🔊 Click to hear</div>
+        </div>
+      </div>
+
+      <div class="vocab-card" onclick="speak('conflict')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1577563908411-5077b6dc7624?w=600&q=80" alt="conflict disagreement argument text">
+        <div class="vocab-card-body">
+          <div class="vc-word">conflict</div>
+          <div class="vc-ipa">/ˈkɒnflɪkt/</div>
+          <div class="vc-pos">noun</div>
+          <div class="vc-def">A disagreement or argument</div>
+          <div class="vc-ex">"The conflict was started by a misunderstood text."</div>
+          <div class="vc-sp">🔊 Click to hear</div>
+        </div>
+      </div>
+
+      <div class="vocab-card" onclick="speak('misunderstanding')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=600&q=80" alt="misunderstanding failure understand correctly">
+        <div class="vocab-card-body">
+          <div class="vc-word">misunderstanding</div>
+          <div class="vc-ipa">/ˌmɪsʌndəˈstændɪŋ/</div>
+          <div class="vc-pos">noun</div>
+          <div class="vc-def">A failure to understand correctly</div>
+          <div class="vc-ex">"The whole situation was a misunderstanding caused by poor punctuation."</div>
+          <div class="vc-sp">🔊 Click to hear</div>
+        </div>
+      </div>
+
+      <div class="vocab-card" onclick="speak('context')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1577563908411-5077b6dc7624?w=600&q=80" alt="context circumstances explain meaning message">
+        <div class="vocab-card-body">
+          <div class="vc-word">context</div>
+          <div class="vc-ipa">/ˈkɒntɛkst/</div>
+          <div class="vc-pos">noun</div>
+          <div class="vc-def">The circumstances that help explain meaning</div>
+          <div class="vc-ex">"Without context, messages are often misinterpreted."</div>
+          <div class="vc-sp">🔊 Click to hear</div>
+        </div>
+      </div>
+
+      <div class="vocab-card" onclick="speak('punctuation')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=600&q=80" alt="punctuation marks writing clarify meaning">
+        <div class="vocab-card-body">
+          <div class="vc-word">punctuation</div>
+          <div class="vc-ipa">/ˌpʌŋktʃuˈeɪʃən/</div>
+          <div class="vc-pos">noun</div>
+          <div class="vc-def">Marks used in writing to clarify meaning</div>
+          <div class="vc-ex">"A period at the end can be interpreted as cold or final."</div>
+          <div class="vc-sp">🔊 Click to hear</div>
+        </div>
+      </div>
+
+      <div class="vocab-card" onclick="speak('emoji')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1577563908411-5077b6dc7624?w=600&q=80" alt="emoji digital symbols emotion tone">
+        <div class="vocab-card-body">
+          <div class="vc-word">emoji</div>
+          <div class="vc-ipa">/ɪˈməʊdʒi/</div>
+          <div class="vc-pos">noun</div>
+          <div class="vc-def">Digital symbols that express emotion</div>
+          <div class="vc-ex">"Emojis are used to add tone to written messages."</div>
+          <div class="vc-sp">🔊 Click to hear · eh-MOH-jee</div>
+        </div>
+      </div>
+
+      <div class="vocab-card" onclick="speak('nuance')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=600&q=80" alt="nuance subtle difference meaning feeling">
+        <div class="vocab-card-body">
+          <div class="vc-word">nuance</div>
+          <div class="vc-ipa">/ˈnjuːɑːns/</div>
+          <div class="vc-pos">noun</div>
+          <div class="vc-def">A subtle difference in meaning or feeling</div>
+          <div class="vc-ex">"Nuance is lost when communication is reduced to text."</div>
+          <div class="vc-sp">🔊 Click to hear · NYOO-ance (French origin)</div>
+        </div>
+      </div>
+
+      <div class="vocab-card" onclick="speak('misread')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1577563908411-5077b6dc7624?w=600&q=80" alt="misread interpret incorrectly message">
+        <div class="vocab-card-body">
+          <div class="vc-word">misread (v)</div>
+          <div class="vc-ipa">/ˌmɪsˈriːd/</div>
+          <div class="vc-pos">verb</div>
+          <div class="vc-def">To interpret incorrectly</div>
+          <div class="vc-ex">"Her message was misread as a complaint."</div>
+          <div class="vc-sp">🔊 Click to hear · past tense: misread /mɪsˈrɛd/</div>
+        </div>
+      </div>
+
+      <div class="vocab-card" onclick="speak('interpret')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=600&q=80" alt="interpret explain understand meaning">
+        <div class="vocab-card-body">
+          <div class="vc-word">interpret (v)</div>
+          <div class="vc-ipa">/ɪnˈtɜːprɪt/</div>
+          <div class="vc-pos">verb</div>
+          <div class="vc-def">To explain or understand the meaning of something</div>
+          <div class="vc-ex">"A simple 'ok' can be interpreted 10 different ways."</div>
+          <div class="vc-sp">🔊 Click to hear · in-TUR-prit</div>
+        </div>
+      </div>
+
+      <div class="vocab-card" onclick="speak('clarify')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1577563908411-5077b6dc7624?w=600&q=80" alt="clarify make clearer misunderstanding phone">
+        <div class="vocab-card-body">
+          <div class="vc-word">clarify (v)</div>
+          <div class="vc-ipa">/ˈklærɪfaɪ/</div>
+          <div class="vc-pos">verb</div>
+          <div class="vc-def">To make something clearer</div>
+          <div class="vc-ex">"The misunderstanding was clarified with a quick phone call."</div>
+          <div class="vc-sp">🔊 Click to hear · KLAR-ih-fy</div>
+        </div>
+      </div>
+
+      <div class="vocab-card" onclick="speak('avoid')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=600&q=80" alt="avoid keep away conflict channel">
+        <div class="vocab-card-body">
+          <div class="vc-word">avoid (v)</div>
+          <div class="vc-ipa">/əˈvɔɪd/</div>
+          <div class="vc-pos">verb</div>
+          <div class="vc-def">To keep away from something</div>
+          <div class="vc-ex">"Conflicts can be avoided by choosing the right channel."</div>
+          <div class="vc-sp">🔊 Click to hear</div>
+        </div>
+      </div>
+
+      <div class="vocab-card" onclick="speak('express')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1577563908411-5077b6dc7624?w=600&q=80" alt="express communicate feeling idea writing">
+        <div class="vocab-card-body">
+          <div class="vc-word">express (v)</div>
+          <div class="vc-ipa">/ɪkˈsprɛs/</div>
+          <div class="vc-pos">verb</div>
+          <div class="vc-def">To communicate a feeling or idea</div>
+          <div class="vc-ex">"Sarcasm is difficult to express in writing."</div>
+          <div class="vc-sp">🔊 Click to hear</div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="tn tn-c3">
+      <span class="tn-lbl">⭐ Pronunciation Notes</span>
+      "nuance" — NYOO-ance /ˈnjuːɑːns/ (French origin — unusual spelling, stress on first syllable). · "misread" — present tense /mɪsˈriːd/ ("reed"), but past tense is also spelled "misread" and pronounced /mɪsˈrɛd/ ("red") — warn students this is a spelling trap. · "interpret" — in-TUR-prit /ɪnˈtɜːprɪt/ (stress on second syllable, not first). · "punctuation" — five syllables: /ˌpʌŋk-tʃu-ˈeɪ-ʃən/ — stress on "AY".
+    </div>
+
+    <!-- VOCAB QUIZ -->
+    <div class="vquiz-wrap">
+      <span class="vquiz-lbl">📚 Vocab Quiz — Match the Spanish translation to the English word · Score 8+/12 to earn the 📚 badge</span>
+      <div class="vquiz-grid" id="vquizGrid">
+
+        <div class="vq-card" id="vq1">
+          <div class="vq-es">tono / actitud</div>
+          <div class="vq-opts">
+            <button class="vq-opt" onclick="checkVQ(this,'tone','vq1')">tone</button>
+            <button class="vq-opt" onclick="checkVQ(this,'tone','vq1')">context</button>
+            <button class="vq-opt" onclick="checkVQ(this,'tone','vq1')">nuance</button>
+          </div>
+        </div>
+
+        <div class="vq-card" id="vq2">
+          <div class="vq-es">conflicto / disputa</div>
+          <div class="vq-opts">
+            <button class="vq-opt" onclick="checkVQ(this,'conflict','vq2')">misunderstanding</button>
+            <button class="vq-opt" onclick="checkVQ(this,'conflict','vq2')">conflict</button>
+            <button class="vq-opt" onclick="checkVQ(this,'conflict','vq2')">emoji</button>
+          </div>
+        </div>
+
+        <div class="vq-card" id="vq3">
+          <div class="vq-es">malentendido</div>
+          <div class="vq-opts">
+            <button class="vq-opt" onclick="checkVQ(this,'misunderstanding','vq3')">misunderstanding</button>
+            <button class="vq-opt" onclick="checkVQ(this,'misunderstanding','vq3')">punctuation</button>
+            <button class="vq-opt" onclick="checkVQ(this,'misunderstanding','vq3')">tone</button>
+          </div>
+        </div>
+
+        <div class="vq-card" id="vq4">
+          <div class="vq-es">contexto / circunstancias</div>
+          <div class="vq-opts">
+            <button class="vq-opt" onclick="checkVQ(this,'context','vq4')">conflict</button>
+            <button class="vq-opt" onclick="checkVQ(this,'context','vq4')">context</button>
+            <button class="vq-opt" onclick="checkVQ(this,'context','vq4')">avoid</button>
+          </div>
+        </div>
+
+        <div class="vq-card" id="vq5">
+          <div class="vq-es">puntuación (ortografía)</div>
+          <div class="vq-opts">
+            <button class="vq-opt" onclick="checkVQ(this,'punctuation','vq5')">emoji</button>
+            <button class="vq-opt" onclick="checkVQ(this,'punctuation','vq5')">nuance</button>
+            <button class="vq-opt" onclick="checkVQ(this,'punctuation','vq5')">punctuation</button>
+          </div>
+        </div>
+
+        <div class="vq-card" id="vq6">
+          <div class="vq-es">emoji / símbolo digital</div>
+          <div class="vq-opts">
+            <button class="vq-opt" onclick="checkVQ(this,'emoji','vq6')">emoji</button>
+            <button class="vq-opt" onclick="checkVQ(this,'emoji','vq6')">clarify</button>
+            <button class="vq-opt" onclick="checkVQ(this,'emoji','vq6')">interpret</button>
+          </div>
+        </div>
+
+        <div class="vq-card" id="vq7">
+          <div class="vq-es">matiz / sutileza</div>
+          <div class="vq-opts">
+            <button class="vq-opt" onclick="checkVQ(this,'nuance','vq7')">context</button>
+            <button class="vq-opt" onclick="checkVQ(this,'nuance','vq7')">express</button>
+            <button class="vq-opt" onclick="checkVQ(this,'nuance','vq7')">nuance</button>
+          </div>
+        </div>
+
+        <div class="vq-card" id="vq8">
+          <div class="vq-es">malinterpretar / leer mal</div>
+          <div class="vq-opts">
+            <button class="vq-opt" onclick="checkVQ(this,'misread','vq8')">misread</button>
+            <button class="vq-opt" onclick="checkVQ(this,'misread','vq8')">avoid</button>
+            <button class="vq-opt" onclick="checkVQ(this,'misread','vq8')">conflict</button>
+          </div>
+        </div>
+
+        <div class="vq-card" id="vq9">
+          <div class="vq-es">interpretar / entender</div>
+          <div class="vq-opts">
+            <button class="vq-opt" onclick="checkVQ(this,'interpret','vq9')">clarify</button>
+            <button class="vq-opt" onclick="checkVQ(this,'interpret','vq9')">express</button>
+            <button class="vq-opt" onclick="checkVQ(this,'interpret','vq9')">interpret</button>
+          </div>
+        </div>
+
+        <div class="vq-card" id="vq10">
+          <div class="vq-es">aclarar / explicar mejor</div>
+          <div class="vq-opts">
+            <button class="vq-opt" onclick="checkVQ(this,'clarify','vq10')">misread</button>
+            <button class="vq-opt" onclick="checkVQ(this,'clarify','vq10')">clarify</button>
+            <button class="vq-opt" onclick="checkVQ(this,'clarify','vq10')">tone</button>
+          </div>
+        </div>
+
+        <div class="vq-card" id="vq11">
+          <div class="vq-es">evitar / alejarse de</div>
+          <div class="vq-opts">
+            <button class="vq-opt" onclick="checkVQ(this,'avoid','vq11')">interpret</button>
+            <button class="vq-opt" onclick="checkVQ(this,'avoid','vq11')">nuance</button>
+            <button class="vq-opt" onclick="checkVQ(this,'avoid','vq11')">avoid</button>
+          </div>
+        </div>
+
+        <div class="vq-card" id="vq12">
+          <div class="vq-es">expresar / comunicar</div>
+          <div class="vq-opts">
+            <button class="vq-opt" onclick="checkVQ(this,'express','vq12')">express</button>
+            <button class="vq-opt" onclick="checkVQ(this,'express','vq12')">punctuation</button>
+            <button class="vq-opt" onclick="checkVQ(this,'express','vq12')">misunderstanding</button>
+          </div>
+        </div>
+
+      </div>
+      <div class="vquiz-score" id="vquizScore" style="display:none"></div>
+    </div>
+  </div>
+</section>
+
+<!-- §4 COLLOQUIAL -->
+<section class="section">
+  <div class="section-header">
+    <span class="section-number">§4</span>
+    <span class="section-title">Colloquial English — <em>Talking About Digital Miscommunication</em></span>
+    <span class="section-sub">4 natural phrases · Professional de-escalation · Used daily by native speakers</span>
+    <span class="dur-tag">⏱ 5 MIN</span>
+  </div>
+  <div class="section-body">
+    <img class="coll-banner" src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=900&q=80" alt="digital communication phone screen office">
+    <div class="coll-grid">
+      <div class="coll-card" onclick="speak('That didn\'t come across the way I meant it.')">
+        <img class="coll-card-img" src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=600&q=80" alt="message misunderstood didn't come across">
+        <div class="coll-card-body">
+          <div class="coll-phrase">"That didn't come across the way I meant it."</div>
+          <div class="coll-meaning">When a message was misunderstood. "Come across" = how something is perceived. Very natural for apologizing without saying sorry directly — professional and diplomatic.</div>
+          <div class="coll-ex">"I sent that report feedback and my colleague was upset. <em>That didn't come across the way I meant it.</em>"</div>
+        </div>
+      </div>
+      <div class="coll-card" onclick="speak('I think we need to talk — not text.')">
+        <img class="coll-card-img" src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=600&q=80" alt="switch to voice call not text important">
+        <div class="coll-card-body">
+          <div class="coll-phrase">"I think we need to talk — not text."</div>
+          <div class="coll-meaning">When switching to voice communication. The pause "—" adds emphasis. Signals the conversation has become too complex for written messages. Direct but not aggressive.</div>
+          <div class="coll-ex">"This conversation is getting complicated. <em>I think we need to talk — not text.</em>"</div>
+        </div>
+      </div>
+      <div class="coll-card" onclick="speak('I was being sarcastic — but you can\'t tell in writing.')">
+        <img class="coll-card-img" src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=600&q=80" alt="sarcasm writing explanation misunderstanding">
+        <div class="coll-card-body">
+          <div class="coll-phrase">"I was being sarcastic — but you can't tell in writing."</div>
+          <div class="coll-meaning">Explaining miscommunication after the fact. "You can't tell" = it's impossible to know. Very common when tone is lost in text — honest and self-aware.</div>
+          <div class="coll-ex">"When I wrote 'great idea', <em>I was being sarcastic — but you can't tell in writing.</em>"</div>
+        </div>
+      </div>
+      <div class="coll-card" onclick="speak('Let me clarify what I meant.')">
+        <img class="coll-card-img" src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=600&q=80" alt="clarify meaning email misread fix professional">
+        <div class="coll-card-body">
+          <div class="coll-phrase">"Let me clarify what I meant."</div>
+          <div class="coll-meaning">Fixing a misunderstanding. "Let me" softens the correction — it sounds helpful, not defensive. Standard professional phrase when you realize your message was misread.</div>
+          <div class="coll-ex">"I think my email was misread. <em>Let me clarify what I meant</em> — I was agreeing, not criticizing."</div>
+        </div>
+      </div>
+    </div>
+    <div class="tn tn-c2">
+      <span class="tn-lbl">💡 Quick Drill</span>
+      Your colleague sent "OK." (with a period) to your proposal. How do you feel? What do you say next? Push for: "I think that was misread as negative — let me clarify." Then drill all four phrases: teacher describes a digital miscommunication scenario → student responds with the most appropriate phrase from today's four.
+    </div>
+  </div>
+</section>
