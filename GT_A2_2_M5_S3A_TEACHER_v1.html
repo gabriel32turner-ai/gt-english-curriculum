@@ -1,0 +1,1242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GT A2.2 · M5 · S3A — Comparing Travel Options</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#080808;--surface:#111318;--surface2:#1a1f28;
+  --border:rgba(249,115,22,.18);--border-dim:rgba(255,255,255,0.07);
+  --accent:#F97316;--accent2:#FB923C;
+  --cyan:#00CFFF;--gold:#FFB800;--green:#00E676;
+  --danger:#FF4D6D;--success:#00E5A0;--warn:#FFB347;
+  --txt:#F0F4F8;--muted:#8A9BB0;--dim:rgba(226,226,226,.25);
+  --font-head:'Syne',sans-serif;--font-body:'DM Sans',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--txt);font-family:var(--font-body);font-size:14px;line-height:1.6;overflow-x:hidden}
+.hdr{background:var(--surface);border-bottom:1px solid var(--border);padding:16px 48px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;position:sticky;top:0;z-index:100}
+.brand{display:flex;align-items:center;gap:10px}
+.dot{width:8px;height:8px;background:var(--accent);border-radius:50%}
+.bname{font-family:var(--font-head);font-weight:800;font-size:13px;letter-spacing:2.5px;text-transform:uppercase;color:#fff}
+.bsub{font-size:10px;color:var(--muted);letter-spacing:1px}
+.sess-tag{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.tag{display:inline-block;padding:3px 10px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase}
+.t-or{background:rgba(249,115,22,.15);color:var(--accent);border:1px solid rgba(249,115,22,.3)}
+.t-go{background:rgba(0,230,118,.1);color:var(--green);border:1px solid rgba(0,230,118,.25)}
+.t-cy{background:rgba(0,207,255,.1);color:var(--cyan);border:1px solid rgba(0,207,255,.25)}
+.t-gd{background:rgba(255,184,0,.1);color:var(--gold);border:1px solid rgba(255,184,0,.25)}
+.badge-strip{display:flex;gap:6px;align-items:center}
+.badge-strip span{width:28px;height:28px;border-radius:50%;background:var(--surface2);border:1px solid var(--border-dim);display:flex;align-items:center;justify-content:center;font-size:13px;filter:grayscale(1);opacity:.4;transition:all .4s}
+.badge-strip span.earned{filter:none;opacity:1;border-color:var(--accent);background:rgba(249,115,22,.15);transform:scale(1.1)}
+.progress-bar{height:2px;background:var(--surface2);position:sticky;top:57px;z-index:99}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));width:0%;transition:width .3s}
+.section{margin:0 0 3px 0;overflow:hidden}
+.sec-hdr{display:flex;align-items:center;gap:14px;padding:20px 48px;background:linear-gradient(135deg,rgba(249,115,22,.06),transparent);border-bottom:1px solid var(--border)}
+.sec-num{font-family:var(--font-head);font-size:10px;font-weight:800;color:var(--accent);letter-spacing:.15em;text-transform:uppercase;background:rgba(249,115,22,.1);border:1px solid rgba(249,115,22,.25);padding:3px 10px;border-radius:20px;white-space:nowrap}
+.sec-label{font-family:var(--font-head);font-size:22px;font-weight:800;color:#fff}
+.sec-label em{color:var(--accent);font-style:normal}
+.sec-sub{font-size:12px;color:var(--muted);margin-top:2px}
+.sec-dur{font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;color:var(--gold);border:1px solid rgba(255,184,0,.2);padding:2px 9px;margin-left:auto;white-space:nowrap}
+.sec-body{padding:28px 48px}
+.img-hero{width:100%;height:260px;object-fit:cover;display:block;filter:brightness(.52);border-bottom:1px solid var(--border)}
+.img-banner{width:100%;height:150px;object-fit:cover;display:block;filter:brightness(.5);border-radius:10px;margin-bottom:16px}
+.wu-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:16px}
+.wu-card{background:var(--surface);border:1px solid var(--border-dim);border-radius:10px;overflow:hidden;border-left:3px solid var(--accent)}
+.wu-card-img{width:100%;height:90px;object-fit:cover;display:block;filter:brightness(.5)}
+.wu-card-body{padding:13px 15px}
+.wu-card-q{font-size:13px;color:var(--txt);line-height:1.5}
+.wu-card-hint{font-size:11px;color:var(--muted);font-style:italic;margin-top:6px}
+.quick-win{background:rgba(249,115,22,.07);border:1px solid rgba(249,115,22,.25);border-radius:10px;padding:16px 20px;margin-top:16px;display:flex;align-items:flex-start;gap:14px}
+.qw-icon{font-size:22px;flex-shrink:0;margin-top:2px}
+.qw-label{font-family:var(--font-head);font-size:9px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:5px}
+.qw-text{font-size:13.5px;color:#fff;line-height:1.55}
+.qw-try{font-size:12px;color:var(--accent2);margin-top:6px;font-style:italic}
+.timer-wrap{display:flex;flex-direction:column;align-items:center;gap:6px}
+.timer-svg{transform:rotate(-90deg)}
+.tn{background:var(--surface2);border:1px solid var(--border-dim);border-left:3px solid var(--gold);border-radius:8px;padding:13px 16px;margin-top:14px}
+.tn-lbl{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:6px}
+.tn-text{font-size:12px;color:rgba(255,184,0,.82);line-height:1.6}
+.tn-cy{border-left-color:var(--cyan)}
+.tn-cy .tn-lbl{color:var(--cyan)}
+.tn-cy .tn-text{color:rgba(0,207,255,.82)}
+.vocab-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:16px}
+.vocab-card{background:var(--surface);border:1px solid var(--border-dim);border-radius:10px;overflow:hidden;cursor:pointer;transition:all .2s}
+.vocab-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.vocab-card-img{width:100%;height:72px;object-fit:cover;display:block;filter:brightness(.48)}
+.vocab-card-body{padding:11px 12px}
+.vc-word{font-family:var(--font-head);font-size:13px;font-weight:700;color:#fff;margin-bottom:2px}
+.vc-ipa{font-size:10px;color:var(--cyan);margin-bottom:5px;font-style:italic}
+.vc-def{font-size:11px;color:var(--muted);line-height:1.4;margin-bottom:6px}
+.vc-ex{font-size:11px;color:var(--accent2);font-style:italic;border-left:2px solid var(--accent);padding-left:7px;line-height:1.4}
+.vc-sp{font-size:10px;color:var(--dim);margin-top:6px}
+.quiz-wrap{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-top:20px}
+.quiz-hdr{padding:14px 20px;background:rgba(249,115,22,.08);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.quiz-hdr-title{font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent)}
+.quiz-progress{height:4px;background:var(--surface2)}
+.quiz-progress-fill{height:100%;background:var(--accent);width:0%;transition:width .4s}
+.quiz-body{padding:22px 24px}
+.quiz-q{font-size:14.5px;color:#fff;font-weight:500;margin-bottom:16px;line-height:1.5}
+.quiz-opts{display:flex;flex-direction:column;gap:8px}
+.quiz-opt{background:var(--surface2);border:1px solid var(--border-dim);border-radius:8px;padding:11px 16px;font-size:13px;color:var(--txt);cursor:pointer;transition:all .2s;text-align:left}
+.quiz-opt:hover:not(:disabled){border-color:var(--accent);color:var(--accent)}
+.quiz-opt.qcorrect{background:rgba(0,229,160,.12);border-color:var(--success);color:var(--success)}
+.quiz-opt.qwrong{background:rgba(255,77,109,.12);border-color:var(--danger);color:var(--danger)}
+.quiz-opt:disabled{cursor:not-allowed}
+.quiz-score{font-family:var(--font-head);font-size:12px;font-weight:700;color:var(--muted)}
+.quiz-feedback{font-size:12px;color:var(--muted);margin-top:8px;min-height:18px}
+.quiz-restart{background:var(--accent);border:none;color:#fff;padding:9px 22px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;cursor:pointer;border-radius:6px;margin-top:14px;display:none}
+.micro-speak{background:rgba(0,207,255,.05);border:1px solid rgba(0,207,255,.2);border-radius:8px;padding:13px 17px;margin-top:16px;display:flex;gap:12px;align-items:flex-start}
+.ms-icon{font-size:16px;flex-shrink:0;margin-top:2px}
+.ms-label{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--cyan);margin-bottom:4px}
+.ms-text{font-size:12.5px;color:var(--txt);line-height:1.55}
+.coll-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:16px}
+.coll-card{background:var(--surface);border:1px solid var(--border-dim);border-radius:10px;overflow:hidden;cursor:pointer;transition:all .2s}
+.coll-card:hover{border-color:var(--accent)}
+.coll-card-img{width:100%;height:88px;object-fit:cover;display:block;filter:brightness(.47)}
+.coll-body{padding:12px 14px}
+.coll-phrase{font-family:var(--font-head);font-size:13px;font-weight:700;color:#fff;margin-bottom:5px}
+.coll-ctx{font-size:11.5px;color:var(--muted);line-height:1.45}
+.coll-ex{font-size:11px;color:var(--accent2);font-style:italic;margin-top:6px;border-left:2px solid var(--accent);padding-left:7px}
+.trav-table-wrap{background:var(--surface);border:1px solid var(--border-dim);border-radius:12px;overflow:hidden;margin:18px 0}
+.trav-table-hdr{padding:12px 18px;background:rgba(249,115,22,.08);border-bottom:1px solid var(--border-dim);font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent)}
+table.trav{width:100%;border-collapse:collapse}
+table.trav th{background:var(--surface2);padding:10px 14px;text-align:left;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--dim);border-bottom:2px solid var(--accent)}
+table.trav td{padding:11px 14px;border-bottom:1px solid var(--border-dim);font-size:12.5px;vertical-align:middle}
+table.trav tr:hover td{background:rgba(249,115,22,.03)}
+.tv-good{color:var(--success);font-weight:600}
+.tv-warn{color:var(--warn);font-weight:600}
+.tv-bad{color:var(--danger);font-weight:600}
+.prob-card{background:rgba(255,77,109,.06);border:1px solid rgba(255,77,109,.22);border-radius:10px;padding:18px 22px;margin-bottom:14px}
+.prob-lbl{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--danger);margin-bottom:8px}
+.prob-scenario{font-size:13.5px;color:#fff;line-height:1.7}
+.prob-thought{font-size:12px;color:rgba(255,120,120,.85);font-style:italic;margin-top:8px;border-left:2px solid var(--danger);padding-left:10px}
+.tool-card{background:rgba(249,115,22,.06);border:1px solid rgba(249,115,22,.25);border-radius:10px;padding:18px 22px;margin-bottom:18px}
+.tool-lbl{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:8px}
+.tool-text{font-size:13.5px;color:var(--txt);line-height:1.85}
+.gram-table{width:100%;border-collapse:collapse;margin:14px 0}
+.gram-table th{background:var(--surface2);padding:10px 14px;text-align:left;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim);border-bottom:2px solid var(--accent)}
+.gram-table td{padding:11px 14px;border-bottom:1px solid var(--border-dim);font-size:12.5px;vertical-align:top}
+.gram-table tr:hover td{background:rgba(249,115,22,.03)}
+.g-ex{color:var(--accent2);font-style:italic}
+.g-green{color:var(--green);font-family:var(--font-head);font-weight:700}
+.g-cy{color:var(--cyan);font-family:var(--font-head);font-weight:700}
+.err-box{background:rgba(255,77,109,.05);border:1px solid rgba(255,77,109,.2);border-radius:8px;padding:13px 17px;margin:14px 0;font-size:12px;color:rgba(255,120,120,.9);line-height:1.8}
+.err-box strong{color:var(--danger)}
+.act-title{font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:11px;padding-top:20px;border-top:1px solid var(--border-dim);margin-top:22px}
+.opt-group{margin-bottom:16px}
+.opt-q{font-size:13px;color:var(--txt);margin-bottom:9px;padding:11px 14px;background:var(--surface);border-left:3px solid var(--accent);border-radius:4px;line-height:1.5}
+.opts{display:flex;gap:8px;flex-wrap:wrap}
+.opt{background:var(--surface2);border:1px solid var(--border-dim);color:var(--txt);padding:8px 16px;font-family:var(--font-body);font-size:12.5px;cursor:pointer;transition:all .2s;border-radius:6px}
+.opt:hover:not(:disabled){border-color:var(--accent);color:var(--accent)}
+.opt.correct{background:rgba(0,229,160,.12);border-color:var(--success);color:var(--success)}
+.opt.wrong{background:rgba(255,77,109,.12);border-color:var(--danger);color:var(--danger)}
+.opt:disabled{cursor:not-allowed}
+.tf-set{display:flex;flex-direction:column;gap:9px;margin-bottom:14px}
+.tf-row{background:var(--surface);border:1px solid var(--border-dim);border-radius:8px;padding:12px 15px;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
+.tf-stmt{font-size:12.5px;color:var(--txt);flex:1;line-height:1.5;min-width:180px}
+.tf-btns{display:flex;gap:8px;flex-shrink:0}
+.tf-btn{background:var(--surface2);border:1px solid var(--border-dim);color:var(--txt);padding:7px 16px;font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:1px;cursor:pointer;transition:all .2s;border-radius:5px}
+.tf-btn:hover:not(:disabled){border-color:var(--accent)}
+.tf-btn:disabled{cursor:not-allowed}
+.reorder-list{display:flex;flex-direction:column;gap:7px;margin-bottom:10px;list-style:none;padding-left:0}
+.reorder-item{background:var(--surface);border:1px solid var(--border-dim);border-radius:8px;padding:10px 13px;cursor:grab;font-size:12.5px;color:var(--txt);display:flex;align-items:center;gap:9px;user-select:none;transition:border-color .2s}
+.reorder-item:active{cursor:grabbing}
+.reorder-item.dragging{opacity:.4}
+.reorder-item.drag-over{border-color:var(--accent);border-style:dashed}
+.drag-handle{color:var(--dim);font-size:13px;flex-shrink:0}
+.check-btn{background:var(--accent);border:none;color:#fff;padding:9px 22px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;cursor:pointer;border-radius:6px;margin-top:8px}
+.fb{display:none;padding:10px 14px;font-size:12.5px;margin-top:8px;line-height:1.5;border-radius:7px}
+.fb.show{display:block}
+.fb.ok{background:rgba(0,229,160,.1);border:1px solid rgba(0,229,160,.3);color:var(--success)}
+.fb.no{background:rgba(255,77,109,.08);border:1px solid rgba(255,77,109,.25);color:var(--danger)}
+.gsort-wrap{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-top:20px}
+.gsort-hdr{padding:14px 20px;background:rgba(249,115,22,.08);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.gsort-hdr-title{font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent)}
+.gsort-score-lbl{font-family:var(--font-head);font-size:11px;font-weight:700;color:var(--muted)}
+.gsort-body{padding:20px 24px}
+.gsort-items{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px;min-height:52px;padding:10px;background:var(--surface2);border:1px dashed var(--border-dim);border-radius:8px}
+.gsort-item{background:var(--surface);border:1px solid var(--border-dim);border-radius:6px;padding:7px 13px;font-size:12px;color:var(--txt);cursor:pointer;transition:all .2s;user-select:none}
+.gsort-item:hover{border-color:var(--accent);color:var(--accent)}
+.gsort-item.placed{opacity:.4;cursor:not-allowed;pointer-events:none}
+.gsort-buckets{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.gsort-bucket{background:var(--surface2);border:2px dashed var(--border-dim);border-radius:10px;padding:12px;min-height:100px;transition:border-color .2s;cursor:pointer}
+.gsort-bucket:hover{border-color:var(--accent)}
+.gsort-bucket-lbl{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:8px}
+.gsort-bucket-items{display:flex;flex-wrap:wrap;gap:6px;min-height:40px}
+.gsort-dropped{background:var(--surface);border:1px solid var(--border-dim);border-radius:5px;padding:5px 10px;font-size:11.5px;color:var(--txt)}
+.gsort-dropped.ok{border-color:var(--success);color:var(--success)}
+.gsort-dropped.no{border-color:var(--danger);color:var(--danger)}
+.gsort-check-btn{background:var(--accent);border:none;color:#fff;padding:9px 22px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;cursor:pointer;border-radius:6px;margin-top:12px}
+.gsort-result{font-size:12.5px;margin-top:10px;padding:10px 14px;border-radius:7px;display:none}
+.gsort-result.show{display:block}
+.gsort-result.ok{background:rgba(0,229,160,.1);border:1px solid rgba(0,229,160,.3);color:var(--success)}
+.gsort-result.no{background:rgba(255,77,109,.08);border:1px solid rgba(255,77,109,.25);color:var(--danger)}
+.reading-card{background:var(--surface);border:1px solid var(--border-dim);border-radius:12px;overflow:hidden;margin-bottom:18px}
+.av-row{display:flex;align-items:center;gap:13px;padding:18px 20px;border-bottom:1px solid var(--border-dim);flex-wrap:wrap}
+.avatar{width:48px;height:48px;border-radius:50%;object-fit:cover;border:2px solid var(--accent);flex-shrink:0}
+.av-name{font-family:var(--font-head);font-size:13px;font-weight:700;color:#fff}
+.av-role{font-size:11px;color:var(--muted)}
+.av-meta{margin-left:auto;font-size:11px;color:var(--muted);text-align:right;line-height:1.6}
+.reading-body{padding:20px;font-size:13px;line-height:1.95;color:var(--txt)}
+.kw-box{margin:0 20px 16px;background:rgba(249,115,22,.06);border:1px solid rgba(249,115,22,.15);border-radius:7px;padding:11px 14px;font-size:11.5px;color:var(--accent2);line-height:1.6}
+.comp-hi{color:var(--accent);font-weight:700}
+.sup-hi{color:var(--cyan);font-weight:700}
+.as-hi{color:var(--green);font-weight:700}
+.player-box{background:var(--surface);border:1px solid var(--border-dim);border-radius:12px;padding:22px;margin-bottom:14px}
+.player-top{display:flex;align-items:center;gap:15px;margin-bottom:12px}
+.play-btn-aud{width:42px;height:42px;background:var(--accent);border:none;border-radius:50%;cursor:pointer;font-size:16px;color:#fff;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.track-title{font-family:var(--font-head);font-size:12.5px;font-weight:700;color:#fff;margin-bottom:3px}
+.track-sub{font-size:10.5px;color:var(--muted)}
+.waveform{display:flex;align-items:center;gap:2px;height:38px;overflow:hidden}
+.wbar{width:3px;background:var(--accent);border-radius:2px;flex-shrink:0;opacity:.35}
+.script-toggle{background:none;border:1px solid var(--border-dim);color:var(--muted);padding:8px 18px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;cursor:pointer;border-radius:6px;transition:all .2s;margin-bottom:12px}
+.script-toggle:hover{border-color:var(--accent);color:var(--accent)}
+.script-box{background:var(--surface2);border:1px solid var(--border-dim);border-radius:8px;padding:18px 22px;font-size:12.5px;color:var(--muted);line-height:1.9;display:none}
+.script-box.open{display:block}
+.speak-grid{display:flex;flex-direction:column;gap:12px;margin-top:14px}
+.speak-card{background:var(--surface);border:1px solid var(--border-dim);border-radius:10px;padding:16px 20px}
+.speak-num{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:6px}
+.speak-q{font-size:14.5px;color:#fff;line-height:1.55;margin-bottom:6px}
+.speak-hint{font-size:11.5px;color:var(--muted);font-style:italic}
+.speak-tag{display:inline-block;padding:2px 9px;font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:1px;border-radius:4px;text-transform:uppercase;margin-right:7px}
+.st-ts{background:rgba(249,115,22,.12);color:var(--accent);border:1px solid rgba(249,115,22,.25)}
+.st-ss{background:rgba(0,229,160,.08);color:var(--success);border:1px solid rgba(0,229,160,.2)}
+.st-cl{background:rgba(0,207,255,.08);color:var(--cyan);border:1px solid rgba(0,207,255,.2)}
+.om-wrap{background:var(--surface);border:1px solid var(--border-dim);border-radius:12px;padding:20px 24px;margin-top:16px}
+.om-stmt{font-size:14px;color:#fff;font-style:italic;margin-bottom:16px;padding:13px 18px;background:var(--surface2);border-left:3px solid var(--accent);border-radius:6px;line-height:1.6}
+.om-track{height:10px;background:var(--surface2);border-radius:10px;overflow:hidden;margin-bottom:8px}
+.om-bar{height:100%;background:linear-gradient(90deg,var(--danger),var(--accent),var(--success));width:50%;transition:width .3s}
+.om-labels{display:flex;justify-content:space-between;font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--dim);margin-bottom:14px}
+.om-btns{display:flex;gap:10px;margin-bottom:8px}
+.om-btn{flex:1;padding:9px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1px;cursor:pointer;border-radius:7px;transition:all .2s;border:1px solid}
+.om-dis{background:rgba(255,77,109,.08);border-color:rgba(255,77,109,.3);color:var(--danger)}
+.om-dis:hover{background:rgba(255,77,109,.18)}
+.om-agr{background:rgba(0,229,160,.08);border-color:rgba(0,229,160,.3);color:var(--success)}
+.om-agr:hover{background:rgba(0,229,160,.18)}
+.om-pct{font-family:var(--font-head);font-size:14px;font-weight:800;color:var(--accent);text-align:center}
+.gt-box{background:rgba(255,184,0,.04);border:1px solid rgba(255,184,0,.18);border-radius:10px;padding:16px 20px;margin-top:18px}
+.gt-hdr{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold);margin-bottom:9px}
+.gt-hdr::before{content:'\2605 ';font-size:11px}
+.gt-tips{list-style:none;display:flex;flex-direction:column;gap:7px}
+.gt-tips li{font-size:12px;color:rgba(255,184,0,.82);padding-left:14px;position:relative;line-height:1.5}
+.gt-tips li::before{content:'\2192';position:absolute;left:0;color:var(--gold)}
+.phrases-wrap{padding:28px 48px;background:rgba(255,184,0,.03);border-top:1px solid rgba(255,184,0,.12);border-bottom:1px solid rgba(255,184,0,.12)}
+.phrases-hdr{font-family:var(--font-head);font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:6px}
+.phrases-sub{font-size:12px;color:var(--muted);margin-bottom:18px}
+.phrases-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.phrase-card{background:var(--surface);border:1px solid rgba(255,184,0,.2);border-radius:10px;padding:16px 18px;border-top:3px solid var(--gold)}
+.phrase-en{font-family:var(--font-head);font-size:13.5px;font-weight:700;color:#fff;margin-bottom:6px}
+.phrase-ctx{font-size:11.5px;color:var(--muted);line-height:1.5}
+.wrapup-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px}
+.wu-key{background:var(--surface);border:1px solid var(--border-dim);border-radius:10px;padding:16px 18px;border-top:3px solid var(--accent)}
+.wu-key-title{font-family:var(--font-head);font-size:12px;font-weight:700;color:var(--accent);margin-bottom:6px}
+.wu-key-text{font-size:12px;color:var(--muted);line-height:1.55}
+.cl-wrap{display:flex;flex-direction:column;gap:8px;margin:16px 0}
+.cl-item{background:var(--surface);border:1px solid var(--border-dim);border-radius:8px;padding:12px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:all .2s;font-size:13px;color:var(--txt)}
+.cl-item.done{border-color:var(--success);color:var(--success);background:rgba(0,229,160,.06)}
+.cl-check{font-size:16px;flex-shrink:0}
+.next-card{background:var(--surface);border:1px solid rgba(0,207,255,.25);border-radius:10px;padding:18px 22px;border-left:3px solid var(--cyan);margin-top:14px}
+.next-label{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--cyan);margin-bottom:6px}
+.next-title{font-size:14px;font-weight:600;color:#fff;margin-bottom:4px}
+.next-sub{font-size:12px;color:var(--muted);line-height:1.55}
+.win-area{background:var(--surface);border:1px solid var(--border-dim);border-radius:10px;padding:18px 22px;margin-top:14px}
+.win-lbl{font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:8px}
+.win-ta{width:100%;background:var(--surface2);border:1px solid var(--border-dim);color:var(--txt);padding:12px 14px;font-family:var(--font-body);font-size:13px;border-radius:7px;resize:vertical;min-height:80px}
+.win-ta:focus{outline:none;border-color:var(--accent)}
+.win-btn{background:var(--accent);border:none;color:#fff;padding:9px 22px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;cursor:pointer;border-radius:6px;margin-top:10px}
+.win-ok{display:none;margin-top:8px;font-size:12px;color:var(--success)}
+.ftr{background:var(--surface);border-top:1px solid var(--border);padding:16px 48px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+.fbrand{font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim)}
+.finfo{font-size:11px;color:var(--dim)}
+.flvs{display:flex;gap:3px}
+.flv{padding:5px 10px;font-family:var(--font-head);font-size:10px;font-weight:700;background:var(--surface2);color:var(--dim)}
+.flv.on{background:var(--accent);color:#fff}
+@media(max-width:860px){
+  .hdr,.ftr,.phrases-wrap{padding:14px 18px}
+  .sec-body{padding:20px 18px}
+  .sec-hdr{padding:16px 18px}
+  .wu-grid,.vocab-grid{grid-template-columns:repeat(2,1fr)}
+  .coll-grid{grid-template-columns:1fr 1fr}
+  .phrases-grid,.wrapup-grid{grid-template-columns:1fr}
+  .gsort-buckets{grid-template-columns:1fr}
+  .opts{flex-direction:column}
+  .av-meta{margin-left:0;text-align:left}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="hdr">
+  <div class="brand">
+    <div class="dot"></div>
+    <div><div class="bname">Gabriel Turner</div><div class="bsub">English Training · Teacher Edition</div></div>
+  </div>
+  <div class="sess-tag">
+    <span class="tag t-or">A2.2</span>
+    <span class="tag t-gd">Module 5</span>
+    <span class="tag t-cy">Session 3A — Discovery &amp; Drill</span>
+    <span class="tag t-go">120 min</span>
+  </div>
+  <div class="badge-strip">
+    <span id="b1" title="Warm-Up">&#9992;&#65039;</span>
+    <span id="b2" title="Vocabulary">&#128717;</span>
+    <span id="b3" title="Grammar">&#128204;</span>
+    <span id="b4" title="Listening">&#127897;&#65039;</span>
+    <span id="b5" title="Win">&#127942;</span>
+  </div>
+</header>
+<div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+
+<!-- ═══ §1 WARM-UP -->
+<div class="section">
+  <div class="sec-hdr">
+    <div class="sec-num">§1</div>
+    <div>
+      <div class="sec-label">Warm-Up — <em>How do you travel for work?</em></div>
+      <div class="sec-sub">Activate travel experience · connect comparatives to real trips · 5–8 min</div>
+    </div>
+    <div class="sec-dur">&#9201; 5–8 MIN</div>
+  </div>
+  <img class="img-hero" src="https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=900&q=80" alt="Business travel" loading="lazy">
+  <div class="sec-body">
+    <p style="font-size:13px;color:var(--muted);margin-bottom:14px">Remember from S1 and S2: <strong style="color:var(--accent)">more + adj + than</strong> · <strong style="color:var(--cyan)">the most + adj</strong> · <strong style="color:var(--green)">as + adj + as</strong>. Today: same toolkit, new context — <strong style="color:#fff">business travel</strong>.</p>
+    <div class="wu-grid">
+      <div class="wu-card">
+        <img class="wu-card-img" src="https://images.unsplash.com/photo-1506784983877-45594efa4cbe?w=600&q=80" alt="Travel planning" loading="lazy">
+        <div class="wu-card-body">
+          <div class="wu-card-q">&#9992;&#65039; <strong>Do you travel for work?</strong> Where do you go most often? How do you travel — by car, bus, or plane? If no: does your company send colleagues on trips?</div>
+          <div class="wu-card-hint">&#128161; Collect travel vocabulary in Spanish — note on board to translate in §2. Let students discuss freely before any grammar correction.</div>
+        </div>
+      </div>
+      <div class="wu-card">
+        <img class="wu-card-img" src="https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=600&q=80" alt="Comparing flight options" loading="lazy">
+        <div class="wu-card-body">
+          <div class="wu-card-q">&#128203; <strong>Quick comparison:</strong> If you had to travel from Celaya to Mexico City for a client meeting — would you go by car, by bus, or by plane? Which is faster? Which is cheaper? Which is more comfortable?</div>
+          <div class="wu-card-hint">&#128161; Let students debate without correction. Collect errors (more faster, more cheap) on the board. Use them in §4 Grammar as examples to fix.</div>
+        </div>
+      </div>
+      <div class="wu-card">
+        <img class="wu-card-img" src="https://images.unsplash.com/photo-1529543544282-ea669407fca3?w=600&q=80" alt="Hotel vs Airbnb" loading="lazy">
+        <div class="wu-card-body">
+          <div class="wu-card-q">&#127970; <strong>Hotel vs Airbnb:</strong> For a 3-night business trip, which is better — a hotel or an Airbnb? Which is more professional? Which gives you more privacy? Which is the most convenient?</div>
+          <div class="wu-card-hint">&#128161; No right answer — use to activate opinions from personal experience. Students who use &quot;no-brainer&quot; or &quot;tough call&quot; from previous sessions should be celebrated.</div>
+        </div>
+      </div>
+      <div class="wu-card">
+        <img class="wu-card-img" src="https://images.unsplash.com/photo-1543007630-9710e4a00a20?w=600&q=80" alt="Andrea travel planning" loading="lazy">
+        <div class="wu-card-body">
+          <div class="wu-card-q">&#128105;&#8205;&#128188; <strong>Andrea&apos;s trip:</strong> Andrea needs to travel from Celaya to Guadalajara for a 2-day supplier meeting. Option A: direct flight ($2,800 MXN, 1 hour). Option B: first-class bus ($420 MXN, 3.5 hours). Which would you choose?</div>
+          <div class="wu-card-hint">&#128161; This scenario anchors the reading, listening and grammar. Ask: &quot;What would your company&apos;s travel policy say?&quot; — makes it real.</div>
+        </div>
+      </div>
+    </div>
+    <div class="quick-win">
+      <div class="qw-icon">&#9992;&#65039;</div>
+      <div>
+        <div class="qw-label">Quick Win — 20 seconds</div>
+        <div class="qw-text">Say this out loud: <strong>&quot;The direct flight is more expensive than the bus, but it is much faster and more convenient for a business trip.&quot;</strong></div>
+        <div class="qw-try">3 comparatives in one breath. Today you build the full travel vocabulary to make any version of this sentence your own.</div>
+      </div>
+      <div class="timer-wrap">
+        <svg class="timer-svg" width="54" height="54" viewBox="0 0 54 54">
+          <circle cx="27" cy="27" r="23" stroke="rgba(249,115,22,.2)" stroke-width="4" fill="none"/>
+          <circle id="arcQW" cx="27" cy="27" r="23" stroke="var(--accent)" stroke-width="4" fill="none" stroke-dasharray="144.51" stroke-dashoffset="0"/>
+          <text id="txtQW" x="27" y="32" text-anchor="middle" font-family="Syne,sans-serif" font-size="13" font-weight="800" fill="var(--accent)">20</text>
+        </svg>
+      </div>
+    </div>
+    <div class="tn">
+      <div class="tn-lbl">&#9889; Teacher Note — Warm-Up</div>
+      <div class="tn-text">S3A introduces the third comparison domain: business travel. S1 = products/suppliers, S2 = people/candidates, S3 = travel options. Say explicitly: &quot;Same grammar — different world. You can compare anything in English once you know the structure.&quot; The Andrea scenario (Card 4) is the narrative anchor — return to it in every section. Layer 3 (fastest): &quot;What if Andrea also had the option of driving? How would that change your comparison?&quot;</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ §2 VOCABULARY -->
+<div class="section">
+  <div class="sec-hdr">
+    <div class="sec-num">§2</div>
+    <div>
+      <div class="sec-label">Vocabulary — <em>Business Travel Language</em></div>
+      <div class="sec-sub">10 key words · IPA · click to hear · quiz · Group Sort game · 10–12 min</div>
+    </div>
+    <div class="sec-dur">&#9201; 10–12 MIN</div>
+  </div>
+  <img class="img-banner" src="https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?w=900&q=80" alt="Airport travel" loading="lazy">
+  <div class="sec-body">
+    <div class="vocab-grid">
+      <div class="vocab-card" onclick="speak('direct')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=600&q=80" alt="direct flight" loading="lazy">
+        <div class="vocab-card-body">
+          <div class="vc-word">direct</div>
+          <div class="vc-ipa">/daɪˈrekt/</div>
+          <div class="vc-def">without stops; goes straight to the destination</div>
+          <div class="vc-ex">The direct flight is faster than the connecting one, but more expensive.</div>
+          <div class="vc-sp">directo / sin escalas</div>
+        </div>
+      </div>
+      <div class="vocab-card" onclick="speak('layover')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1529543544282-ea669407fca3?w=600&q=80" alt="layover airport" loading="lazy">
+        <div class="vocab-card-body">
+          <div class="vc-word">layover</div>
+          <div class="vc-ipa">/ˈleɪ.əʊ.vər/</div>
+          <div class="vc-def">a stop between two flights at a connecting airport</div>
+          <div class="vc-ex">The cheaper ticket has a 2-hour layover in Mexico City.</div>
+          <div class="vc-sp">escala / parada entre vuelos</div>
+        </div>
+      </div>
+      <div class="vocab-card" onclick="speak('itinerary')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1506784983877-45594efa4cbe?w=600&q=80" alt="travel itinerary" loading="lazy">
+        <div class="vocab-card-body">
+          <div class="vc-word">itinerary</div>
+          <div class="vc-ipa">/aɪˈtɪn.ər.ər.i/</div>
+          <div class="vc-def">a detailed plan of a journey with dates, times and places</div>
+          <div class="vc-ex">Andrea sent the full itinerary to her manager before the trip.</div>
+          <div class="vc-sp">itinerario / plan de viaje</div>
+        </div>
+      </div>
+      <div class="vocab-card" onclick="speak('fare')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1455390582262-044cdead277a?w=600&q=80" alt="ticket fare" loading="lazy">
+        <div class="vocab-card-body">
+          <div class="vc-word">fare</div>
+          <div class="vc-ipa">/feər/</div>
+          <div class="vc-def">the price paid for a journey by plane, bus, or train</div>
+          <div class="vc-ex">The bus fare is significantly lower than the airfare for this route.</div>
+          <div class="vc-sp">tarifa / costo del viaje</div>
+        </div>
+      </div>
+      <div class="vocab-card" onclick="speak('accommodation')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1502152518851-c4dca0b45a14?w=600&q=80" alt="hotel accommodation" loading="lazy">
+        <div class="vocab-card-body">
+          <div class="vc-word">accommodation</div>
+          <div class="vc-ipa">/əˌkɒm.əˈdeɪ.ʃən/</div>
+          <div class="vc-def">a place to stay during a trip, such as a hotel or apartment</div>
+          <div class="vc-ex">The accommodation near the client office is more expensive than downtown.</div>
+          <div class="vc-sp">alojamiento / hospedaje</div>
+        </div>
+      </div>
+      <div class="vocab-card" onclick="speak('reimbursement')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1543269664-76bc3997d9ea?w=600&q=80" alt="reimbursement form" loading="lazy">
+        <div class="vocab-card-body">
+          <div class="vc-word">reimbursement</div>
+          <div class="vc-ipa">/ˌriː.ɪmˈbɜːs.mənt/</div>
+          <div class="vc-def">money paid back for work expenses</div>
+          <div class="vc-ex">The reimbursement process is faster now — it only takes 3 days.</div>
+          <div class="vc-sp">reembolso</div>
+        </div>
+      </div>
+      <div class="vocab-card" onclick="speak('departure')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600&q=80" alt="departure board" loading="lazy">
+        <div class="vocab-card-body">
+          <div class="vc-word">departure</div>
+          <div class="vc-ipa">/dɪˈpɑː.tʃər/</div>
+          <div class="vc-def">the time or act of leaving for a journey</div>
+          <div class="vc-ex">The early departure is more convenient than the afternoon flight.</div>
+          <div class="vc-sp">salida / partida</div>
+        </div>
+      </div>
+      <div class="vocab-card" onclick="speak('budget')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1551135049-8a33b5883817?w=600&q=80" alt="travel budget" loading="lazy">
+        <div class="vocab-card-body">
+          <div class="vc-word">budget</div>
+          <div class="vc-ipa">/ˈbʌdʒ.ɪt/</div>
+          <div class="vc-def">the amount of money available for a specific purpose</div>
+          <div class="vc-ex">The bus is the most budget-friendly option for this route.</div>
+          <div class="vc-sp">presupuesto</div>
+        </div>
+      </div>
+      <div class="vocab-card" onclick="speak('punctual')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=600&q=80" alt="punctual on-time" loading="lazy">
+        <div class="vocab-card-body">
+          <div class="vc-word">punctual</div>
+          <div class="vc-ipa">/ˈpʌŋk.tʃu.əl/</div>
+          <div class="vc-def">arriving or leaving exactly on time; reliable for schedules</div>
+          <div class="vc-ex">The train service is more punctual than the bus on this route.</div>
+          <div class="vc-sp">puntual</div>
+        </div>
+      </div>
+      <div class="vocab-card" onclick="speak('route')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1423666639041-f56000c27a9a?w=600&q=80" alt="travel route map" loading="lazy">
+        <div class="vocab-card-body">
+          <div class="vc-word">route</div>
+          <div class="vc-ipa">/ruːt/</div>
+          <div class="vc-def">the path taken to travel from one place to another</div>
+          <div class="vc-ex">Which route is shorter — via Irapuato or via Salamanca?</div>
+          <div class="vc-sp">ruta / camino</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tn">
+      <div class="tn-lbl">&#9889; Teacher Note — Vocabulary</div>
+      <div class="tn-text">Pronunciation focus: &quot;itinerary&quot; /aɪˈtɪn.ər.ər.i/ — Spanish speakers often say &quot;ee-tee-ne-RA-rio.&quot; Drill: i-TIN-er-ary. &quot;Reimbursement&quot; by syllable: re-im-BURSE-ment. False friend: &quot;fare&quot; ≠ &quot;feria&quot; (festival). &quot;Fare&quot; = precio de transporte. Pair drill: teacher reads a sentence with a blank, students supply the word. &quot;The _____ from Celaya to CDMX by plane is about $3,000 MXN.&quot; (fare)</div>
+    </div>
+
+    <!-- VOCAB QUIZ -->
+    <div class="quiz-wrap" style="margin-top:22px">
+      <div class="quiz-hdr">
+        <div class="quiz-hdr-title">&#9889; Vocabulary Quiz — 10 Questions</div>
+        <div class="quiz-score" id="quizScore">0 / 10</div>
+      </div>
+      <div class="quiz-progress"><div class="quiz-progress-fill" id="quizProg"></div></div>
+      <div class="quiz-body">
+        <div class="quiz-q" id="quizQ">Loading...</div>
+        <div class="quiz-opts" id="quizOpts"></div>
+        <div class="quiz-feedback" id="quizFB"></div>
+        <button class="quiz-restart" id="quizRestart" onclick="startQuiz()">Try Again</button>
+      </div>
+    </div>
+
+    <!-- GROUP SORT -->
+    <div class="gsort-wrap" style="margin-top:20px">
+      <div class="gsort-hdr">
+        <div class="gsort-hdr-title">&#127922; Group Sort — Travel Categories</div>
+        <div class="gsort-score-lbl">Score: <span id="gsortScore">0</span> / 10</div>
+      </div>
+      <div class="gsort-body">
+        <p style="font-size:12px;color:var(--muted);margin-bottom:10px">Click a word, then click the correct category. Choose the PRIMARY travel meaning for each word.</p>
+        <div class="gsort-items" id="gsortItems"></div>
+        <div class="gsort-buckets">
+          <div class="gsort-bucket" id="bucket-flight" onclick="placeInBucket('flight')">
+            <div class="gsort-bucket-lbl">&#9992;&#65039; Flight / Air Travel</div>
+            <div class="gsort-bucket-items" id="bi-flight"></div>
+          </div>
+          <div class="gsort-bucket" id="bucket-ground" onclick="placeInBucket('ground')">
+            <div class="gsort-bucket-lbl">&#128652; Ground Transport</div>
+            <div class="gsort-bucket-items" id="bi-ground"></div>
+          </div>
+          <div class="gsort-bucket" id="bucket-cost" onclick="placeInBucket('cost')">
+            <div class="gsort-bucket-lbl">&#128176; Cost &amp; Budget</div>
+            <div class="gsort-bucket-items" id="bi-cost"></div>
+          </div>
+        </div>
+        <button class="gsort-check-btn" onclick="checkGSort()">Check My Sort</button>
+        <div class="gsort-result" id="gsortResult"></div>
+      </div>
+    </div>
+
+    <div class="tn tn-cy">
+      <div class="tn-lbl">&#9889; Teacher Note — Group Sort</div>
+      <div class="tn-text">Run individually (2 min), then review as a class. Some words are debatable — &quot;departure&quot; could be flight or ground. Accept reasonable justifications. After the sort: &quot;Which category has the most words that could go in a different bucket?&quot; — triggers discussion about word flexibility. Scoring: 1 point per correct placement, bonus point for a sentence using the sorted word in context.</div>
+    </div>
+
+    <div class="micro-speak">
+      <div class="ms-icon">&#128483;&#65039;</div>
+      <div>
+        <div class="ms-label">Micro-Speaking</div>
+        <div class="ms-text">Quick: say 3 sentences using today&apos;s travel vocabulary to describe a real or imagined work trip. Example: &quot;The direct flight has a higher fare than the bus, but the accommodation near the airport is more convenient.&quot; 45 seconds — go!</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ §3 COLLOQUIAL -->
+<div class="section">
+  <div class="sec-hdr">
+    <div class="sec-num">§3</div>
+    <div>
+      <div class="sec-label">Colloquial — <em>Travel &amp; Decision Language</em></div>
+      <div class="sec-sub">4 phrases used in real business travel conversations · 5 min</div>
+    </div>
+    <div class="sec-dur">&#9201; 5 MIN</div>
+  </div>
+  <div class="sec-body">
+    <div class="coll-grid">
+      <div class="coll-card" onclick="speak('It saves a lot of time.')">
+        <img class="coll-card-img" src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600&q=80" alt="saving time" loading="lazy">
+        <div class="coll-body">
+          <div class="coll-phrase">"It saves a lot of time."</div>
+          <div class="coll-ctx">Use to justify choosing a faster — usually more expensive — option. The time saving justifies the higher cost.</div>
+          <div class="coll-ex">"The direct flight is more expensive, but it saves a lot of time — I arrive 3 hours earlier."</div>
+        </div>
+      </div>
+      <div class="coll-card" onclick="speak('It is not worth the hassle.')">
+        <img class="coll-card-img" src="https://images.unsplash.com/photo-1529543544282-ea669407fca3?w=600&q=80" alt="travel hassle" loading="lazy">
+        <div class="coll-body">
+          <div class="coll-phrase">"It is not worth the hassle."</div>
+          <div class="coll-ctx">Use when a cheaper option has too many complications. The inconvenience outweighs the savings.</div>
+          <div class="coll-ex">"The connecting flight is cheaper, but with a 4-hour layover, it is not worth the hassle."</div>
+        </div>
+      </div>
+      <div class="coll-card" onclick="speak('It is the most cost-effective option.')">
+        <img class="coll-card-img" src="https://images.unsplash.com/photo-1551135049-8a33b5883817?w=600&q=80" alt="cost effective" loading="lazy">
+        <div class="coll-body">
+          <div class="coll-phrase">"It is the most cost-effective option."</div>
+          <div class="coll-ctx">Use when recommending an option that gives the best result for the money. More professional than "it is the cheapest."</div>
+          <div class="coll-ex">"The first-class bus is the most cost-effective option — lower fare and still comfortable enough."</div>
+        </div>
+      </div>
+      <div class="coll-card" onclick="speak('It depends on your priorities.')">
+        <img class="coll-card-img" src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=600&q=80" alt="weighing priorities" loading="lazy">
+        <div class="coll-body">
+          <div class="coll-phrase">"It depends on your priorities."</div>
+          <div class="coll-ctx">Use when both options have real advantages. The best choice depends on what matters most: time, cost, or comfort.</div>
+          <div class="coll-ex">"It depends on your priorities — if the budget is tight, take the bus. If time is critical, fly."</div>
+        </div>
+      </div>
+    </div>
+    <div class="tn">
+      <div class="tn-lbl">&#9889; Teacher Note — Colloquial</div>
+      <div class="tn-text">Connect to module arc: &quot;It saves a lot of time&quot; pairs with S1 &quot;the pros outweigh the cons&quot; — both justify paying more for something better. &quot;It depends on your priorities&quot; shows critical thinking without being confrontational. Drill: teacher gives a scenario (&quot;Flight $2,800. Bus $420. Client meeting at 9am.&quot;), students respond with the correct colloquial phrase. Rotation: each student uses a different phrase. 3 min.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ §4 GRAMMAR -->
+<div class="section">
+  <div class="sec-hdr">
+    <div class="sec-num">§4</div>
+    <div>
+      <div class="sec-label">Grammar — <em>Intensifiers + Comparative Adverbs</em></div>
+      <div class="sec-sub">Problem → Tool format · much/far/slightly/significantly · adj vs adverb · 2 activities · 12–15 min</div>
+    </div>
+    <div class="sec-dur">&#9201; 12–15 MIN</div>
+  </div>
+  <img class="img-banner" src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=900&q=80" alt="Travel comparison" loading="lazy">
+  <div class="sec-body">
+
+    <div class="trav-table-wrap">
+      <div class="trav-table-hdr">&#128204; Andrea&apos;s Travel Options — Celaya to Guadalajara</div>
+      <table class="trav">
+        <thead><tr><th>Factor</th><th>Option A — Direct Flight</th><th>Option B — First-Class Bus</th></tr></thead>
+        <tbody>
+          <tr><td>Total time</td><td class="tv-good">~3 hrs (travel + airport)</td><td class="tv-warn">3.5 hrs door to door</td></tr>
+          <tr><td>Fare</td><td class="tv-bad">$2,800 MXN</td><td class="tv-good">$420 MXN</td></tr>
+          <tr><td>Comfort</td><td class="tv-good">High</td><td class="tv-warn">Good</td></tr>
+          <tr><td>Punctuality</td><td class="tv-warn">Sometimes delayed</td><td class="tv-good">Very punctual</td></tr>
+          <tr><td>Reimbursement</td><td class="tv-bad">5–7 days (complex)</td><td class="tv-good">1–2 days (simple)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="prob-card">
+      <div class="prob-lbl">&#128680; Real Work Situation</div>
+      <div class="prob-scenario">Andrea wants to write to her manager: "El vuelo llega mucho más rápido pero cuesta bastante más." She knows the basic comparatives, but how does she say "mucho más" (much more) and "un poco más rápido" (a little faster)? And how does she compare HOW something happens — not just what it is?</div>
+      <div class="prob-thought">You think: "I know faster than and more expensive than — but how do I say MUCH faster? A LITTLE more expensive? And how do I compare HOW something runs — not just what it is?"</div>
+    </div>
+
+    <div class="tool-card">
+      <div class="tool-lbl">&#128295; New Tools — Intensifiers + Comparative Adverbs</div>
+      <div class="tool-text">
+        <strong style="color:var(--green)">Intensifiers</strong> — how big is the difference?<br>
+        &nbsp;&nbsp;<strong>much / far</strong> = big difference: "The flight is <em>much faster</em> than the bus."<br>
+        &nbsp;&nbsp;<strong>a little / slightly</strong> = small difference: "The bus is <em>slightly slower</em> than the flight."<br>
+        &nbsp;&nbsp;<strong>significantly</strong> = clear, measurable: "The fare is <em>significantly lower</em> by bus."<br><br>
+        <strong style="color:var(--cyan)">Comparative Adverbs</strong> — compare HOW something is done (after action verbs):<br>
+        &nbsp;&nbsp;"The bus arrives <em>more punctually</em> than the flight on this route."<br>
+        &nbsp;&nbsp;"You can work <em>more comfortably</em> on the bus than on a plane."<br>
+        &nbsp;&nbsp;After IS → use adjective: "It is more <em>comfortable</em>." After RUNS / ARRIVES → use adverb: "It runs more <em>punctually</em>."
+      </div>
+    </div>
+
+    <table class="gram-table">
+      <thead><tr><th>Structure</th><th>Use</th><th>Travel Example</th></tr></thead>
+      <tbody>
+        <tr><td><span class="g-green">much / far + comparative</span></td><td>Big difference</td><td class="g-ex">The flight is <strong>much faster</strong>. The fare is <strong>far more expensive</strong>.</td></tr>
+        <tr><td><span class="g-green">slightly / a little + comparative</span></td><td>Small difference</td><td class="g-ex">The bus is <strong>slightly slower</strong> — about 30 minutes difference.</td></tr>
+        <tr><td><span class="g-green">significantly + comparative</span></td><td>Clear, measurable</td><td class="g-ex">The bus fare is <strong>significantly lower</strong> than the airfare.</td></tr>
+        <tr><td><span class="g-cy">more + adverb (long)</span></td><td>Compare HOW — after action verbs</td><td class="g-ex">The bus runs <strong>more punctually</strong>. You work <strong>more comfortably</strong>.</td></tr>
+        <tr><td><span class="g-cy">adverb + -er (short)</span></td><td>Compare HOW — short adverbs</td><td class="g-ex">The flight arrives <strong>faster</strong>. The bus connects <strong>closer</strong> to the hotel.</td></tr>
+      </tbody>
+    </table>
+
+    <div class="err-box">
+      &#9888;&#65039; <strong>Common Errors:</strong><br>
+      &#10007; "The flight is <strong>much more faster</strong>." → &#10003; <strong>much faster</strong> (never "more" + "-er")<br>
+      &#10007; "It is <strong>more comfortably</strong> to fly." → &#10003; It is <strong>more comfortable</strong> (adjective after "is")<br>
+      &#10007; "The bus runs <strong>more punctual</strong>." → &#10003; more <strong>punctually</strong> (adverb after action verb "runs")<br>
+      &#10007; "The fare is <strong>significanter</strong> lower." → &#10003; <strong>significantly</strong> lower (adverb, not adjective)
+    </div>
+
+    <div class="act-title">&#9889; ACTIVITY A — Choose the Correct Intensifier or Adverb</div>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:14px">Use the Andrea travel table above. Think about the size of the difference before choosing.</p>
+
+    <div class="opt-group">
+      <div class="opt-q">1. The bus fare ($420) vs the flight ($2,800) — the bus is _____ cheaper than the flight.</div>
+      <div class="opts" id="q1">
+        <button class="opt" onclick="checkOpt(this,'far','q1')">slightly</button>
+        <button class="opt" onclick="checkOpt(this,'far','q1')">far</button>
+        <button class="opt" onclick="checkOpt(this,'far','q1')">a little</button>
+      </div>
+    </div>
+    <div class="opt-group">
+      <div class="opt-q">2. The flight (3 hrs total) vs the bus (3.5 hrs) — the flight is _____ faster than the bus.</div>
+      <div class="opts" id="q2">
+        <button class="opt" onclick="checkOpt(this,'slightly','q2')">much</button>
+        <button class="opt" onclick="checkOpt(this,'slightly','q2')">slightly</button>
+        <button class="opt" onclick="checkOpt(this,'slightly','q2')">significantly</button>
+      </div>
+    </div>
+    <div class="opt-group">
+      <div class="opt-q">3. "You can prepare for your meeting _____ on the bus — more space and fewer distractions."</div>
+      <div class="opts" id="q3">
+        <button class="opt" onclick="checkOpt(this,'more comfortably','q3')">more comfortable</button>
+        <button class="opt" onclick="checkOpt(this,'more comfortably','q3')">comfortabler</button>
+        <button class="opt" onclick="checkOpt(this,'more comfortably','q3')">more comfortably</button>
+      </div>
+    </div>
+    <div class="opt-group">
+      <div class="opt-q">4. "The bus arrives _____ than the flight — almost no delays on this route."</div>
+      <div class="opts" id="q4">
+        <button class="opt" onclick="checkOpt(this,'more punctually','q4')">more punctual</button>
+        <button class="opt" onclick="checkOpt(this,'more punctually','q4')">more punctually</button>
+        <button class="opt" onclick="checkOpt(this,'more punctually','q4')">punctualler</button>
+      </div>
+    </div>
+    <div class="opt-group">
+      <div class="opt-q">5. "The reimbursement for the bus is _____ simpler than for the flight."</div>
+      <div class="opts" id="q5">
+        <button class="opt" onclick="checkOpt(this,'significantly','q5')">significanter</button>
+        <button class="opt" onclick="checkOpt(this,'significantly','q5')">significantly</button>
+        <button class="opt" onclick="checkOpt(this,'significantly','q5')">very more</button>
+      </div>
+    </div>
+
+    <div class="micro-speak" style="margin-top:16px">
+      <div class="ms-icon">&#128483;&#65039;</div>
+      <div>
+        <div class="ms-label">Micro-Speaking</div>
+        <div class="ms-text">Compare two ways you travel to work or to a client. Use an intensifier + a comparative adverb. Example: "I arrive much more quickly by car than by bus, but driving is significantly more stressful." 45 seconds — go!</div>
+      </div>
+    </div>
+
+    <div class="act-title">&#9889; ACTIVITY B — Unjumble the Travel Comparison</div>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:14px">Drag and drop each fragment into the correct order.</p>
+
+    <p style="font-size:12.5px;color:var(--txt);margin-bottom:8px"><strong>Sentence 1:</strong></p>
+    <ul class="reorder-list" id="order1">
+      <li class="reorder-item" draggable="true"><span class="drag-handle">&#x2807;</span>than the direct flight,</li>
+      <li class="reorder-item" draggable="true"><span class="drag-handle">&#x2807;</span>but it is far more expensive.</li>
+      <li class="reorder-item" draggable="true"><span class="drag-handle">&#x2807;</span>The connecting flight is slightly faster</li>
+    </ul>
+    <button class="check-btn" onclick="checkOrder('order1',['The connecting flight is slightly faster','than the direct flight,','but it is far more expensive.'],'fb1')">Check Order</button>
+    <div class="fb" id="fb1"></div>
+
+    <p style="font-size:12.5px;color:var(--txt);margin-bottom:8px;margin-top:18px"><strong>Sentence 2:</strong></p>
+    <ul class="reorder-list" id="order2">
+      <li class="reorder-item" draggable="true"><span class="drag-handle">&#x2807;</span>more punctually than the flight</li>
+      <li class="reorder-item" draggable="true"><span class="drag-handle">&#x2807;</span>and the fare is significantly lower.</li>
+      <li class="reorder-item" draggable="true"><span class="drag-handle">&#x2807;</span>The first-class bus arrives</li>
+    </ul>
+    <button class="check-btn" onclick="checkOrder('order2',['The first-class bus arrives','more punctually than the flight','and the fare is significantly lower.'],'fb2')">Check Order</button>
+    <div class="fb" id="fb2"></div>
+
+    <div class="gt-box">
+      <div class="gt-hdr">GT Originals — Teacher Notes</div>
+      <ul class="gt-tips">
+        <li>&#128188; Real corporate use: &quot;significantly lower&quot; and &quot;far more expensive&quot; appear in actual travel policy reports and budget justifications. Students can use these in work emails today.</li>
+        <li>&#9888;&#65039; IS + adjective / ACTION VERB + adverb: draw two columns on the board. "IS more comfortable" vs "RUNS more punctually." Drill with 5 quick sentences — students point to the correct column.</li>
+        <li>&#127807; Intensifier scale to draw: a little / slightly → significantly → much / far. Students place any comparison on this scale. Teaches precision, not just direction.</li>
+        <li>&#127775; Upsell: &quot;In your B1.1 program you use these structures in formal emails and reports. You are already starting that today.&quot;</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ §5 READING -->
+<div class="section">
+  <div class="sec-hdr">
+    <div class="sec-num">§5</div>
+    <div>
+      <div class="sec-label">Reading — <em>Andrea&apos;s Travel Request Email</em></div>
+      <div class="sec-sub">Color-coded grammar · 5 True/False comprehension · 8–10 min</div>
+    </div>
+    <div class="sec-dur">&#9201; 8–10 MIN</div>
+  </div>
+  <div class="sec-body">
+    <div class="reading-card">
+      <div class="av-row">
+        <img class="avatar" src="https://images.unsplash.com/photo-1573497019236-61f323342eb7?w=200&q=80" alt="Andrea Soto" loading="lazy">
+        <div>
+          <div class="av-name">Andrea Soto</div>
+          <div class="av-role">Regional Sales Coordinator · Celaya, Guanajuato</div>
+        </div>
+        <div class="av-meta">Travel Request Email<br>M5 · S3A</div>
+      </div>
+      <div class="kw-box">
+        &#128273; <strong style="color:var(--accent)">Comparatives + intensifiers (orange)</strong> · <strong style="color:var(--cyan)">Comparative adverbs (cyan)</strong> · <strong style="color:var(--green)">Superlatives (green)</strong>
+      </div>
+      <div class="reading-body">
+        <p><em>Subject: Travel request — Guadalajara supplier meeting, 14–15 November</em></p>
+        <p>Hi Daniel,</p>
+        <p>I need to travel to Guadalajara for the supplier review on November 14th. I have compared two options and I want to share my recommendation before submitting the request.</p>
+        <p><strong>Option A — Direct Flight ($2,800 MXN):</strong> The flight is <span class="comp-hi">much faster than</span> the bus — total travel time is about 3 hours versus 3.5. However, the fare is <span class="comp-hi">significantly higher than</span> Option B, and the reimbursement process is <span class="comp-hi">more complex than</span> for ground transport.</p>
+        <p><strong>Option B — First-Class Bus ($420 MXN):</strong> The bus is <span class="comp-hi">far more affordable than</span> the flight and arrives <span class="as-hi">almost as quickly as</span> Option A. It also runs <span class="comp-hi" style="color:var(--cyan)">more punctually than</span> the flight — there were no delays on the last three trips our team made. I can also work <span class="comp-hi" style="color:var(--cyan)">more comfortably</span> on the bus than on a short flight.</p>
+        <p>In my opinion, Option B is <span class="sup-hi">the most cost-effective choice</span> for this trip. It is not worth the hassle of flying for such a short route. The savings are <span class="comp-hi">significantly higher than</span> the time difference.</p>
+        <p>Please let me know if you approve. I can book today.</p>
+        <p><em>Thank you,<br>Andrea</em></p>
+      </div>
+    </div>
+
+    <p style="font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:11px">Comprehension — True or False?</p>
+    <div class="tf-set">
+      <div class="tf-row">
+        <div class="tf-stmt">1. Andrea recommends the direct flight for the Guadalajara trip.</div>
+        <div class="tf-btns">
+          <button class="tf-btn" onclick="checkTF(this,false,'tf1')">TRUE</button>
+          <button class="tf-btn" onclick="checkTF(this,true,'tf1')">FALSE</button>
+        </div>
+      </div>
+      <div class="tf-row">
+        <div class="tf-stmt">2. The bus fare is significantly lower than the flight fare.</div>
+        <div class="tf-btns">
+          <button class="tf-btn" onclick="checkTF(this,true,'tf2')">TRUE</button>
+          <button class="tf-btn" onclick="checkTF(this,false,'tf2')">FALSE</button>
+        </div>
+      </div>
+      <div class="tf-row">
+        <div class="tf-stmt">3. Andrea says she can work more comfortably on the plane than on the bus.</div>
+        <div class="tf-btns">
+          <button class="tf-btn" onclick="checkTF(this,false,'tf3')">TRUE</button>
+          <button class="tf-btn" onclick="checkTF(this,true,'tf3')">FALSE</button>
+        </div>
+      </div>
+      <div class="tf-row">
+        <div class="tf-stmt">4. The bus has been more punctual than the flight on recent team trips.</div>
+        <div class="tf-btns">
+          <button class="tf-btn" onclick="checkTF(this,true,'tf4')">TRUE</button>
+          <button class="tf-btn" onclick="checkTF(this,false,'tf4')">FALSE</button>
+        </div>
+      </div>
+      <div class="tf-row">
+        <div class="tf-stmt">5. Andrea uses the phrase "it is not worth the hassle" in her email.</div>
+        <div class="tf-btns">
+          <button class="tf-btn" onclick="checkTF(this,true,'tf5')">TRUE</button>
+          <button class="tf-btn" onclick="checkTF(this,false,'tf5')">FALSE</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="micro-speak">
+      <div class="ms-icon">&#128483;&#65039;</div>
+      <div>
+        <div class="ms-label">Micro-Speaking</div>
+        <div class="ms-text">From memory: summarize Andrea&apos;s recommendation in 2 sentences using an intensifier and a comparative adverb. Example: &quot;Andrea recommends the bus because it is far more affordable and it runs more punctually than the flight.&quot; 30 seconds — go!</div>
+      </div>
+    </div>
+
+    <div class="tn">
+      <div class="tn-lbl">&#9889; Teacher Note — Reading</div>
+      <div class="tn-text">First email-format reading in M5 — shows students how comparison structures appear in professional writing. Say: &quot;This is an email you could write to your manager right now. After today, you have all the language you need.&quot; Real-life connection: &quot;Does your company have a travel policy? Do you need approval before booking?&quot; For stronger groups: write a 3-sentence reply from Daniel approving or rejecting the request — using comparatives in the response.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ §6 LISTENING -->
+<div class="section">
+  <div class="sec-hdr">
+    <div class="sec-num">§6</div>
+    <div>
+      <div class="sec-label">Listening — <em>The Travel Policy Proposal</em></div>
+      <div class="sec-sub">ElevenLabs audio · Andrea&apos;s monologue · Voice: Sarah · Speed 0.82 · 4 comprehension questions · 8–10 min</div>
+    </div>
+    <div class="sec-dur">&#9201; 8–10 MIN</div>
+  </div>
+  <img class="img-banner" src="https://images.unsplash.com/photo-1543269664-76bc3997d9ea?w=900&q=80" alt="Office meeting" loading="lazy">
+  <div class="sec-body">
+
+    <div class="player-box">
+      <div class="player-top">
+        <button class="play-btn-aud" id="playBtn">&#9654;</button>
+        <div>
+          <div class="track-title">The Travel Policy Proposal — Vertex Logistics, Celaya</div>
+          <div class="track-sub">A2.2 · M5 · S3A · Voice: Sarah (American English) · Speed: 0.82 · ~60 sec</div>
+        </div>
+      </div>
+      <div class="waveform" id="wv"></div>
+    </div>
+
+    <button class="script-toggle" onclick="toggleScript()">&#9660; Show ElevenLabs Script</button>
+    <div class="script-box" id="scriptBox">Hi, I am Andrea Soto, Regional Sales Coordinator at Vertex Logistics. Today I want to talk about our company travel policy and why I think we should update it.
+
+Right now, our policy says that all employees must fly for any business trip longer than two hours. But I think the bus is actually a much better option for short regional routes, like Celaya to Guadalajara or Celaya to Leon.
+
+Here is why. First, the bus fare is significantly lower than the airfare. Sometimes six or seven times cheaper. Second, the bus arrives more punctually than the flight on these short routes. We checked the data: the average delay for regional flights is 45 minutes, while the bus is almost always on time. Third, I can work more comfortably on a first-class bus. There is more space than on a small regional aircraft, and the Wi-Fi is more reliable.
+
+I understand that flying is faster, but only slightly faster for these short distances. About 30 minutes difference when you count the airport time. The savings are far more significant than the time difference.
+
+My recommendation: for trips under 400 kilometers, the bus should be the preferred option. The company saves money, employees arrive less stressed, and the reimbursement process is much simpler. It is the most cost-effective travel policy for our region.</div>
+
+    <div class="tn">
+      <div class="tn-lbl">&#9889; Teacher Note — Listening</div>
+      <div class="tn-text">ElevenLabs: Voice = Sarah, Speed = 0.82, Stability = 0.65, Similarity = 0.80. Before playing: &quot;Listen for intensifiers — how many can you count?&quot; (Answer: much better, significantly lower, more punctually, more comfortably, more reliable, only slightly faster, far more significant, much simpler — 8 instances). After listening: &quot;Did Andrea use any colloquial phrases from §3?&quot; Key grammar moment: &quot;only slightly faster&quot; — the intensifier makes the comparison precise, not just directional.</div>
+    </div>
+
+    <div class="act-title" style="padding-top:16px">Comprehension Questions</div>
+    <div class="opt-group" style="margin-top:14px">
+      <div class="opt-q">1. What does Andrea want to change about the company travel policy?</div>
+      <div class="opts" id="lq1">
+        <button class="opt" onclick="checkOpt(this,'She wants buses to be preferred for short regional routes under 400 km','lq1')">She wants employees to fly more often</button>
+        <button class="opt" onclick="checkOpt(this,'She wants buses to be preferred for short regional routes under 400 km','lq1')">She wants buses to be preferred for short regional routes under 400 km</button>
+        <button class="opt" onclick="checkOpt(this,'She wants buses to be preferred for short regional routes under 400 km','lq1')">She wants to stop all business travel</button>
+      </div>
+    </div>
+    <div class="opt-group">
+      <div class="opt-q">2. How much faster is the flight than the bus, according to Andrea?</div>
+      <div class="opts" id="lq2">
+        <button class="opt" onclick="checkOpt(this,'Only slightly faster — about 30 minutes when you count airport time','lq2')">Much faster — at least 2 hours</button>
+        <button class="opt" onclick="checkOpt(this,'Only slightly faster — about 30 minutes when you count airport time','lq2')">Only slightly faster — about 30 minutes when you count airport time</button>
+        <button class="opt" onclick="checkOpt(this,'Only slightly faster — about 30 minutes when you count airport time','lq2')">Significantly faster — the bus always has delays</button>
+      </div>
+    </div>
+    <div class="opt-group">
+      <div class="opt-q">3. Why is the bus more comfortable, according to Andrea?</div>
+      <div class="opts" id="lq3">
+        <button class="opt" onclick="checkOpt(this,'More space and more reliable Wi-Fi than a small regional aircraft','lq3')">It has better food service</button>
+        <button class="opt" onclick="checkOpt(this,'More space and more reliable Wi-Fi than a small regional aircraft','lq3')">More space and more reliable Wi-Fi than a small regional aircraft</button>
+        <button class="opt" onclick="checkOpt(this,'More space and more reliable Wi-Fi than a small regional aircraft','lq3')">It is closer to the hotel</button>
+      </div>
+    </div>
+    <div class="opt-group">
+      <div class="opt-q">4. What does Andrea call "the most cost-effective travel policy"?</div>
+      <div class="opts" id="lq4">
+        <button class="opt" onclick="checkOpt(this,'Preferring the bus for trips under 400 kilometers','lq4')">Flying business class for all trips</button>
+        <button class="opt" onclick="checkOpt(this,'Preferring the bus for trips under 400 kilometers','lq4')">Preferring the bus for trips under 400 kilometers</button>
+        <button class="opt" onclick="checkOpt(this,'Preferring the bus for trips under 400 kilometers','lq4')">Only traveling when a client requests it</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ §SP SPEAKING PRACTICE -->
+<div class="section">
+  <div class="sec-hdr">
+    <div class="sec-num">§SP</div>
+    <div>
+      <div class="sec-label">Speaking Practice — <em>Your Travel Decisions</em></div>
+      <div class="sec-sub">6 guided questions · Pair &amp; group · Opinion Meter · 10–12 min</div>
+    </div>
+    <div class="sec-dur">&#9201; 10–12 MIN</div>
+  </div>
+  <img class="img-banner" src="https://images.unsplash.com/photo-1423666639041-f56000c27a9a?w=900&q=80" alt="Team travel discussion" loading="lazy">
+  <div class="sec-body">
+    <div class="speak-grid">
+      <div class="speak-card">
+        <div class="speak-num"><span class="speak-tag st-ts">T-S</span> Question 1 — Recall</div>
+        <div class="speak-q">What were Andrea&apos;s 3 main reasons for choosing the bus over the flight? Use an intensifier in each reason.</div>
+        <div class="speak-hint">Grammar hint: &quot;The bus is far more affordable... it runs more punctually... and the fare is significantly lower.&quot;</div>
+      </div>
+      <div class="speak-card">
+        <div class="speak-num"><span class="speak-tag st-ss">S-S</span> Question 2 — Apply</div>
+        <div class="speak-q">Think of a real work trip someone at your company makes regularly. Compare two ways to make that trip. Use at least 2 intensifiers and 1 comparative adverb.</div>
+        <div class="speak-hint">Grammar hint: &quot;The [option] is much [adj] than the [option], and it runs more [adverb] for our team.&quot;</div>
+      </div>
+      <div class="speak-card">
+        <div class="speak-num"><span class="speak-tag st-ss">S-S</span> Question 3 — Debate</div>
+        <div class="speak-q">Your partner prefers flying for all business trips. You prefer ground transport. Debate for 90 seconds. Use &quot;it saves a lot of time&quot; on one side and &quot;it is not worth the hassle&quot; on the other.</div>
+        <div class="speak-hint">Grammar hint: Concede first, then push back — &quot;Yes, flying is faster, but only slightly for short routes. The savings are far more significant.&quot;</div>
+      </div>
+      <div class="speak-card">
+        <div class="speak-num"><span class="speak-tag st-cl">Class</span> Question 4 — Discussion</div>
+        <div class="speak-q">Should companies always choose the cheapest travel option? Or does employee comfort matter too? Use comparatives to build your argument.</div>
+        <div class="speak-hint">Grammar hint: &quot;Comfort is more important than cost because employees arrive much more productively when they are well-rested.&quot;</div>
+      </div>
+      <div class="speak-card">
+        <div class="speak-num"><span class="speak-tag st-ts">T-S</span> Question 5 — Personal</div>
+        <div class="speak-q">When you travel for work or leisure, what is the most important factor — speed, price, or comfort? Explain with 2 comparative sentences and 1 colloquial phrase.</div>
+        <div class="speak-hint">Grammar hint: &quot;For me, comfort is far more important than speed. It depends on your priorities, but arriving well-rested is the most valuable outcome.&quot;</div>
+      </div>
+      <div class="speak-card">
+        <div class="speak-num"><span class="speak-tag st-cl">Class</span> Question 6 — Challenge</div>
+        <div class="speak-q">You are a travel coordinator. Design the ideal travel policy for routes under 400 km. Present your 3-rule policy to the class using superlatives and intensifiers.</div>
+        <div class="speak-hint">Grammar hint: &quot;Rule 1: The bus is the most cost-effective option for routes under [X] km because it is far more affordable.&quot;</div>
+      </div>
+    </div>
+
+    <div class="om-wrap" style="margin-top:20px">
+      <div class="om-stmt">"For business travel under 5 hours, the bus is always a better option than the plane."</div>
+      <div class="om-track"><div class="om-bar" id="meterBar" style="width:50%"></div></div>
+      <div class="om-labels"><span>Disagree</span><span>50/50</span><span>Agree</span></div>
+      <div class="om-btns">
+        <button class="om-btn om-dis" onclick="moveMeter(-10)">&#128078; Disagree</button>
+        <button class="om-btn om-agr" onclick="moveMeter(10)">&#128077; Agree</button>
+      </div>
+      <div class="om-pct" id="meterPct">50% Agree</div>
+    </div>
+
+    <div class="tn">
+      <div class="tn-lbl">&#9889; Teacher Note — Speaking</div>
+      <div class="tn-text">Question 3 is most generative: plant disagreement explicitly. &quot;I say flying is always better — who disagrees?&quot; The debate forces students to use intensifiers naturally to express degree (&quot;only slightly faster&quot; vs &quot;far more expensive&quot;). Question 6 (policy design) is the highest cognitive demand — use as leaderboard-earning activity. Score 1 point per comparative, 2 per superlative, 3 per colloquial phrase. Opinion Meter: &quot;55% agree. Find someone who voted differently and convince them to change their mind using today&apos;s language.&quot;</div>
+    </div>
+  </div>
+</div>
+
+<!-- 3 PHRASES -->
+<div class="phrases-wrap">
+  <div class="phrases-hdr">&#127919; This week, use these 3 phrases at work:</div>
+  <div class="phrases-sub">Travel and decision language from S3A — ready for emails, meetings and trip planning.</div>
+  <div class="phrases-grid">
+    <div class="phrase-card">
+      <div class="phrase-en">"It is far more [adj] than the other option."</div>
+      <div class="phrase-ctx">Use "far" to express a big, clear difference. Works for any comparison — cost, speed, comfort, quality. More professional than "it is much better" alone.</div>
+    </div>
+    <div class="phrase-card">
+      <div class="phrase-en">"It is not worth the hassle."</div>
+      <div class="phrase-ctx">Use when the complications of a cheaper option outweigh the savings. Essential in business travel discussions, project decisions and supplier evaluations.</div>
+    </div>
+    <div class="phrase-card">
+      <div class="phrase-en">"It depends on your priorities."</div>
+      <div class="phrase-ctx">Use when two options each have real advantages. Shows analytical thinking — you understand both sides before recommending one.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ §7 WRAP-UP -->
+<div class="section">
+  <div class="sec-hdr">
+    <div class="sec-num">§7</div>
+    <div>
+      <div class="sec-label">Wrap-Up — <em>S3A Complete</em></div>
+      <div class="sec-sub">Key takeaways · Checklist · My Win Today · Preview S3B · 5–8 min</div>
+    </div>
+    <div class="sec-dur">&#9201; 5–8 MIN</div>
+  </div>
+  <div class="sec-body">
+    <div class="wrapup-grid">
+      <div class="wu-key">
+        <div class="wu-key-title">&#9744; Intensifiers</div>
+        <div class="wu-key-text">much / far = big difference. slightly / a little = small. significantly = clear, measurable. These make your comparisons precise — not just directional.</div>
+      </div>
+      <div class="wu-key">
+        <div class="wu-key-title">&#9744; Comparative Adverbs</div>
+        <div class="wu-key-text">After action verbs use adverbs: arrives more punctually / works more comfortably. After IS use adjectives: is more comfortable. The verb type determines the form.</div>
+      </div>
+      <div class="wu-key">
+        <div class="wu-key-title">&#9744; Travel vocabulary</div>
+        <div class="wu-key-text">fare / layover / itinerary / accommodation / reimbursement / punctual / budget / direct / departure / route — 10 words for professional travel decisions.</div>
+      </div>
+    </div>
+
+    <p style="font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:10px">I Can Now...</p>
+    <div class="cl-wrap">
+      <div class="cl-item" onclick="toggleDone(this)"><span class="cl-check">&#9744;</span>Use intensifiers (much, far, slightly, significantly) to show the size of a difference</div>
+      <div class="cl-item" onclick="toggleDone(this)"><span class="cl-check">&#9744;</span>Use comparative adverbs correctly: "arrives more punctually," "works more comfortably"</div>
+      <div class="cl-item" onclick="toggleDone(this)"><span class="cl-check">&#9744;</span>Use key travel vocabulary: fare, layover, itinerary, accommodation, punctual, budget</div>
+      <div class="cl-item" onclick="toggleDone(this)"><span class="cl-check">&#9744;</span>Write or say a travel comparison using professional comparison language</div>
+      <div class="cl-item" onclick="toggleDone(this)"><span class="cl-check">&#9744;</span>Use colloquial phrases: "saves a lot of time," "not worth the hassle," "depends on your priorities"</div>
+    </div>
+
+    <div class="next-card">
+      <div class="next-label">&#9654; Coming Next — Session 3B</div>
+      <div class="next-title">The Travel Pitch — Production &amp; Fluency</div>
+      <div class="next-sub">In S3B you take today&apos;s travel language into timed debates and a live travel policy pitch. Same comparatives, higher stakes. Bring your intensifiers from today.</div>
+    </div>
+
+    <div class="win-area">
+      <div class="win-lbl">&#127942; My Win Today</div>
+      <textarea class="win-ta" id="winTA" placeholder="Write one comparison from today that you can use in a real work email or meeting this week..."></textarea>
+      <button class="win-btn" onclick="saveWin()">Save My Win</button>
+      <div class="win-ok" id="winOK">&#10003; Saved! See you in S3B.</div>
+    </div>
+  </div>
+</div>
+
+<footer class="ftr">
+  <div class="fbrand">Gabriel Turner · English Training</div>
+  <div class="finfo">A2.2 · Module 5 · Session 3A · GT_A2_2_M5_S3A_TEACHER_v1</div>
+  <div class="flvs">
+    <div class="flv">A1.1</div><div class="flv">A1.2</div><div class="flv">A2.1</div>
+    <div class="flv on">A2.2</div><div class="flv">B1.1</div><div class="flv">B1.2</div>
+  </div>
+</footer>
+
+<script>
+function speak(t){if(!window.speechSynthesis)return;speechSynthesis.cancel();var u=new SpeechSynthesisUtterance(t);u.lang="en-US";u.rate=0.82;u.pitch=1;speechSynthesis.speak(u);}
+function earnBadge(id){var el=document.getElementById(id);if(el&&!el.classList.contains("earned")){el.classList.add("earned");launchConfetti();}}
+function launchConfetti(){
+  var colors=["#F97316","#FB923C","#FFB800","#FF4D6D","#fff"];
+  for(var i=0;i<60;i++){(function(i){setTimeout(function(){
+    var d=document.createElement("div");var sz=6+Math.random()*8;
+    d.style.cssText="position:fixed;top:-10px;width:"+sz+"px;height:"+sz+"px;background:"+colors[Math.floor(Math.random()*colors.length)]+";left:"+Math.random()*100+"vw;border-radius:"+(Math.random()>.5?"50%":"2px")+";pointer-events:none;z-index:9999;animation:fall "+(1.2+Math.random()*.8)+"s linear forwards";
+    document.body.appendChild(d);setTimeout(function(){d.remove();},2000);
+  },i*30);})(i);}
+}
+var confettiCSS=document.createElement("style");
+confettiCSS.textContent="@keyframes fall{from{opacity:1;transform:translateY(0) rotate(0deg)}to{opacity:0;transform:translateY(100vh) rotate(720deg)}}";
+document.head.appendChild(confettiCSS);
+window.addEventListener("scroll",function(){
+  var pct=(window.scrollY/(document.body.scrollHeight-window.innerHeight))*100;
+  document.getElementById("progressFill").style.width=pct+"%";
+});
+(function(){
+  var arc=document.getElementById("arcQW"),txt=document.getElementById("txtQW");
+  if(!arc||!txt)return;
+  var total=20,circ=144.51,rem=total;
+  var iv=setInterval(function(){
+    rem--;txt.textContent=rem;
+    arc.style.strokeDashoffset=circ*(1-rem/total);
+    if(rem<=5)arc.style.stroke="#FF4D6D";
+    if(rem<=0){clearInterval(iv);arc.style.stroke="var(--success)";txt.textContent="✓";earnBadge("b1");}
+  },1000);
+})();
+var quizData=[
+  {q:"Which word means a flight without stops?",opts:["layover","direct","departure","route"],ans:"direct"},
+  {q:"What is a layover?",opts:["the departure time","a stop between two flights at a connecting airport","the travel budget","the hotel booking"],ans:"a stop between two flights at a connecting airport"},
+  {q:"What does fare mean?",opts:["the travel plan","a delay","the price paid for a journey by plane or bus","the hotel check-in"],ans:"the price paid for a journey by plane or bus"},
+  {q:"What is an itinerary?",opts:["a ticket price","a connecting flight","a detailed plan of a journey with dates and times","a reimbursement form"],ans:"a detailed plan of a journey with dates and times"},
+  {q:"What does punctual mean?",opts:["very expensive","arriving or leaving exactly on time","comfortable for working","the cheapest option"],ans:"arriving or leaving exactly on time"},
+  {q:"Which sentence uses far correctly?",opts:["The bus is far fast than the flight.","The bus is far more affordable than the flight.","The bus is far more affordably than the flight.","The bus is far the most cheaper."],ans:"The bus is far more affordable than the flight."},
+  {q:"What does reimbursement mean?",opts:["a travel delay","money paid back for work expenses","the hotel accommodation","the departure gate"],ans:"money paid back for work expenses"},
+  {q:"It is not worth the hassle means:",opts:["it is free","the complications outweigh the benefits","it is the best option","it saves a lot of time"],ans:"the complications outweigh the benefits"},
+  {q:"Fill in: The bus arrives _____ than the flight (punctual as adverb).",opts:["more punctual","punctualler","more punctually","most punctually"],ans:"more punctually"},
+  {q:"What does budget mean in a travel context?",opts:["the departure time","the amount of money available for the trip","a type of accommodation","the travel route"],ans:"the amount of money available for the trip"}
+];
+var qIdx=0,quizScore=0;
+function startQuiz(){
+  qIdx=0;quizScore=0;
+  document.getElementById("quizScore").textContent="0 / 10";
+  document.getElementById("quizProg").style.width="0%";
+  document.getElementById("quizFB").textContent="";
+  document.getElementById("quizRestart").style.display="none";
+  renderQ();
+}
+function renderQ(){
+  if(qIdx>=quizData.length){
+    document.getElementById("quizQ").textContent="Quiz complete! Score: "+quizScore+" / "+quizData.length;
+    document.getElementById("quizOpts").innerHTML="";
+    document.getElementById("quizRestart").style.display="inline-block";
+    if(quizScore>=8)earnBadge("b2");
+    return;
+  }
+  var d=quizData[qIdx];
+  document.getElementById("quizQ").textContent=(qIdx+1)+". "+d.q;
+  document.getElementById("quizProg").style.width=((qIdx/quizData.length)*100)+"%";
+  document.getElementById("quizFB").textContent="";
+  var c=document.getElementById("quizOpts");c.innerHTML="";
+  var shuffled=d.opts.slice().sort(function(){return Math.random()-.5;});
+  shuffled.forEach(function(o){
+    var b=document.createElement("button");b.className="quiz-opt";b.textContent=o;
+    b.onclick=function(){
+      c.querySelectorAll(".quiz-opt").forEach(function(x){x.disabled=true;});
+      if(o===d.ans){b.classList.add("qcorrect");quizScore++;document.getElementById("quizFB").textContent="✓ Correct!";}
+      else{b.classList.add("qwrong");c.querySelectorAll(".quiz-opt").forEach(function(x){if(x.textContent===d.ans)x.classList.add("qcorrect");});document.getElementById("quizFB").textContent="✗ Correct: "+d.ans;}
+      document.getElementById("quizScore").textContent=quizScore+" / "+quizData.length;
+      qIdx++;setTimeout(renderQ,1100);
+    };
+    c.appendChild(b);
+  });
+}
+startQuiz();
+var gsortData=[
+  {word:"layover",bucket:"flight"},{word:"departure",bucket:"flight"},
+  {word:"direct",bucket:"flight"},{word:"itinerary",bucket:"flight"},
+  {word:"route",bucket:"ground"},{word:"punctual",bucket:"ground"},
+  {word:"fare",bucket:"cost"},{word:"reimbursement",bucket:"cost"},
+  {word:"budget",bucket:"cost"},{word:"accommodation",bucket:"cost"}
+];
+var gsortSelected=null,gsortPlaced={};
+function initGSort(){
+  var shuffled=gsortData.slice().sort(function(){return Math.random()-.5;});
+  var container=document.getElementById("gsortItems");
+  container.innerHTML="";gsortPlaced={};gsortSelected=null;
+  document.getElementById("gsortScore").textContent="0";
+  document.getElementById("gsortResult").className="gsort-result";
+  ["flight","ground","cost"].forEach(function(b){document.getElementById("bi-"+b).innerHTML="";});
+  shuffled.forEach(function(item){
+    var el=document.createElement("div");el.className="gsort-item";el.textContent=item.word;el.dataset.word=item.word;
+    el.onclick=function(){
+      if(el.classList.contains("placed"))return;
+      document.querySelectorAll(".gsort-item").forEach(function(x){x.style.borderColor="";});
+      gsortSelected=el;el.style.borderColor="var(--accent)";
+    };
+    container.appendChild(el);
+  });
+}
+function placeInBucket(bkey){
+  if(!gsortSelected)return;
+  var word=gsortSelected.dataset.word;
+  if(gsortPlaced[word])return;
+  gsortPlaced[word]=bkey;
+  gsortSelected.style.borderColor="";gsortSelected.classList.add("placed");
+  var dropped=document.createElement("div");dropped.className="gsort-dropped";dropped.textContent=word;dropped.dataset.word=word;dropped.dataset.bucket=bkey;
+  document.getElementById("bi-"+bkey).appendChild(dropped);
+  gsortSelected=null;
+}
+function checkGSort(){
+  var correct=0;
+  document.querySelectorAll(".gsort-dropped").forEach(function(el){
+    var word=el.dataset.word;var bucket=el.dataset.bucket;
+    var expected=gsortData.find(function(x){return x.word===word;});
+    if(expected&&expected.bucket===bucket){el.classList.add("ok");correct++;}
+    else{el.classList.add("no");}
+  });
+  document.getElementById("gsortScore").textContent=correct;
+  var res=document.getElementById("gsortResult");
+  if(correct>=8){res.className="gsort-result show ok";res.textContent="✓ Excellent! "+correct+" / 10 correct.";earnBadge("b2");}
+  else{res.className="gsort-result show no";res.textContent="✗ "+correct+" / 10 correct. Review the highlighted items.";}
+}
+initGSort();
+function checkOpt(btn,correct,qid){
+  var c=document.getElementById(qid);
+  c.querySelectorAll(".opt").forEach(function(b){b.disabled=true;if(b.textContent.trim()===correct)b.classList.add("correct");});
+  if(btn.textContent.trim()!==correct)btn.classList.add("wrong");
+  earnBadge("b3");
+}
+function checkTF(btn,isCorrect,id){
+  var row=btn.closest(".tf-row");
+  row.querySelectorAll(".tf-btn").forEach(function(b){b.disabled=true;});
+  if(isCorrect){btn.style.cssText="background:rgba(0,229,160,.15);border-color:var(--success);color:var(--success)";}
+  else{
+    btn.style.cssText="background:rgba(255,77,109,.12);border-color:var(--danger);color:var(--danger)";
+    var sib=Array.from(row.querySelectorAll(".tf-btn")).find(function(b){return b!==btn;});
+    if(sib)sib.style.cssText="background:rgba(0,229,160,.12);border-color:var(--success);color:var(--success)";
+  }
+  earnBadge("b4");
+}
+var dragSrc=null;
+function initDrag(listId){
+  var list=document.getElementById(listId);if(!list)return;
+  list.querySelectorAll(".reorder-item").forEach(function(item){
+    item.addEventListener("dragstart",function(){dragSrc=this;this.classList.add("dragging");});
+    item.addEventListener("dragend",function(){this.classList.remove("dragging");list.querySelectorAll(".reorder-item").forEach(function(i){i.classList.remove("drag-over");});});
+    item.addEventListener("dragover",function(e){e.preventDefault();list.querySelectorAll(".reorder-item").forEach(function(i){i.classList.remove("drag-over");});if(this!==dragSrc)this.classList.add("drag-over");});
+    item.addEventListener("drop",function(e){e.preventDefault();if(this!==dragSrc){var all=[...list.querySelectorAll(".reorder-item")];if(all.indexOf(dragSrc)<all.indexOf(this))list.insertBefore(dragSrc,this.nextSibling);else list.insertBefore(dragSrc,this);}});
+  });
+}
+function checkOrder(listId,correct,fbId){
+  var list=document.getElementById(listId);
+  var current=[...list.querySelectorAll(".reorder-item")].map(function(i){return i.textContent.replace("⠇","").trim();});
+  var fb=document.getElementById(fbId);
+  if(JSON.stringify(current)===JSON.stringify(correct)){
+    fb.className="fb show ok";fb.textContent="✓ Correct! Well done!";
+    list.querySelectorAll(".reorder-item").forEach(function(i){i.style.borderColor="var(--success)";i.style.color="var(--success)";});
+    earnBadge("b3");
+  }else{
+    fb.className="fb show no";fb.textContent="✗ Correct order: "+correct.join(" — ");
+    list.querySelectorAll(".reorder-item").forEach(function(i){i.style.borderColor="var(--danger)";});
+  }
+}
+function toggleScript(){
+  var b=document.getElementById("scriptBox");b.classList.toggle("open");
+  document.querySelector(".script-toggle").textContent=b.classList.contains("open")?"▲ Hide Script":"▼ Show ElevenLabs Script";
+}
+var wv=document.getElementById("wv");
+for(var i=0;i<60;i++){var wb=document.createElement("div");wb.className="wbar";wb.style.height=(8+Math.sin(i*.6)*10+Math.random()*18)+"px";wb.style.opacity=.3+Math.random()*.4;wv.appendChild(wb);}
+document.getElementById("playBtn").addEventListener("click",function(){earnBadge("b4");});
+var meterVal=50;
+function moveMeter(delta){
+  meterVal=Math.max(5,Math.min(95,meterVal+delta));
+  document.getElementById("meterBar").style.width=meterVal+"%";
+  document.getElementById("meterPct").textContent=meterVal+"% Agree";
+}
+function toggleDone(el){
+  el.classList.toggle("done");
+  var check=el.querySelector(".cl-check");
+  check.textContent=el.classList.contains("done")?"✓":"☐";
+  var all=document.querySelectorAll(".cl-item");
+  var done=[...all].filter(function(x){return x.classList.contains("done");});
+  if(done.length===all.length)earnBadge("b5");
+}
+function saveWin(){
+  var ta=document.getElementById("winTA");
+  if(ta.value.trim().length>3){earnBadge("b5");ta.style.borderColor="var(--success)";document.getElementById("winOK").style.display="block";}
+}
+initDrag("order1");
+initDrag("order2");
+</script>
+</body>
+</html>

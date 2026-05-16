@@ -1,0 +1,1379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GT A2.2 · M5 · S2A — Comparing Candidates</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#080808;--surface:#111318;--surface2:#1a1f28;
+  --border:rgba(249,115,22,.18);--border-dim:rgba(255,255,255,0.07);
+  --accent:#F97316;--accent2:#FB923C;
+  --cyan:#00CFFF;--gold:#FFB800;--green:#00E676;
+  --danger:#FF4D6D;--success:#00E5A0;--warn:#FFB347;
+  --violet:#A78BFA;
+  --txt:#F0F4F8;--muted:#8A9BB0;--dim:rgba(226,226,226,.25);
+  --font-head:'Syne',sans-serif;--font-body:'DM Sans',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--txt);font-family:var(--font-body);font-size:14px;line-height:1.6;overflow-x:hidden}
+
+/* HEADER */
+.hdr{background:var(--surface);border-bottom:1px solid var(--border);padding:16px 48px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;position:sticky;top:0;z-index:100}
+.brand{display:flex;align-items:center;gap:10px}
+.dot{width:8px;height:8px;background:var(--accent);border-radius:50%}
+.bname{font-family:var(--font-head);font-weight:800;font-size:13px;letter-spacing:2.5px;text-transform:uppercase;color:#fff}
+.bsub{font-size:10px;color:var(--muted);letter-spacing:1px}
+.sess-tag{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.tag{display:inline-block;padding:3px 10px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase}
+.t-or{background:rgba(249,115,22,.15);color:var(--accent);border:1px solid rgba(249,115,22,.3)}
+.t-go{background:rgba(0,230,118,.1);color:var(--green);border:1px solid rgba(0,230,118,.25)}
+.t-cy{background:rgba(0,207,255,.1);color:var(--cyan);border:1px solid rgba(0,207,255,.25)}
+.t-gd{background:rgba(255,184,0,.1);color:var(--gold);border:1px solid rgba(255,184,0,.25)}
+
+/* BADGE STRIP */
+.badge-strip{display:flex;gap:6px;align-items:center}
+.badge-strip span{width:28px;height:28px;border-radius:50%;background:var(--surface2);border:1px solid var(--border-dim);display:flex;align-items:center;justify-content:center;font-size:13px;filter:grayscale(1);opacity:.4;transition:all .4s}
+.badge-strip span.earned{filter:none;opacity:1;border-color:var(--accent);background:rgba(249,115,22,.15);transform:scale(1.1)}
+
+/* PROGRESS BAR */
+.progress-bar{height:2px;background:var(--surface2);position:sticky;top:57px;z-index:99}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));width:0%;transition:width .3s}
+
+/* SECTIONS */
+.section{margin:0 0 3px 0;overflow:hidden}
+.sec-hdr{display:flex;align-items:center;gap:14px;padding:20px 48px;background:linear-gradient(135deg,rgba(249,115,22,.06),transparent);border-bottom:1px solid var(--border)}
+.sec-num{font-family:var(--font-head);font-size:10px;font-weight:800;color:var(--accent);letter-spacing:.15em;text-transform:uppercase;background:rgba(249,115,22,.1);border:1px solid rgba(249,115,22,.25);padding:3px 10px;border-radius:20px;white-space:nowrap}
+.sec-label{font-family:var(--font-head);font-size:22px;font-weight:800;color:#fff}
+.sec-label em{color:var(--accent);font-style:normal}
+.sec-sub{font-size:12px;color:var(--muted);margin-top:2px}
+.sec-dur{font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;color:var(--gold);border:1px solid rgba(255,184,0,.2);padding:2px 9px;margin-left:auto;white-space:nowrap}
+.sec-body{padding:28px 48px}
+
+/* HERO / BANNER IMAGES */
+.img-hero{width:100%;height:260px;object-fit:cover;display:block;filter:brightness(.52);border-bottom:1px solid var(--border)}
+.img-banner{width:100%;height:150px;object-fit:cover;display:block;filter:brightness(.5);border-radius:10px;margin-bottom:16px}
+
+/* WARM-UP GRID */
+.wu-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:16px}
+.wu-card{background:var(--surface);border:1px solid var(--border-dim);border-radius:10px;overflow:hidden;border-left:3px solid var(--accent)}
+.wu-card-img{width:100%;height:90px;object-fit:cover;display:block;filter:brightness(.5)}
+.wu-card-body{padding:13px 15px}
+.wu-card-q{font-size:13px;color:var(--txt);line-height:1.5}
+.wu-card-hint{font-size:11px;color:var(--muted);font-style:italic;margin-top:6px}
+
+/* QUICK WIN */
+.quick-win{background:rgba(249,115,22,.07);border:1px solid rgba(249,115,22,.25);border-radius:10px;padding:16px 20px;margin-top:16px;display:flex;align-items:flex-start;gap:14px}
+.qw-icon{font-size:22px;flex-shrink:0;margin-top:2px}
+.qw-label{font-family:var(--font-head);font-size:9px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:5px}
+.qw-text{font-size:13.5px;color:#fff;line-height:1.55}
+.qw-try{font-size:12px;color:var(--accent2);margin-top:6px;font-style:italic}
+
+/* TIMER SVG */
+.timer-wrap{display:flex;flex-direction:column;align-items:center;gap:6px}
+.timer-svg{transform:rotate(-90deg)}
+.timer-text{font-family:var(--font-head);font-size:16px;font-weight:800;fill:var(--accent)}
+.timer-btns{display:flex;gap:7px;margin-top:4px}
+.t-btn{background:var(--accent);border:none;color:#fff;padding:6px 14px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1px;cursor:pointer;border-radius:5px}
+.t-btn-o{background:none;border:1px solid var(--border-dim);color:var(--muted)}
+.t-btn-o:hover{border-color:var(--accent);color:var(--accent);background:none}
+
+/* TEACHER NOTE */
+.tn{background:var(--surface2);border:1px solid var(--border-dim);border-left:3px solid var(--gold);border-radius:8px;padding:13px 16px;margin-top:14px}
+.tn-lbl{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:6px}
+.tn-text{font-size:12px;color:rgba(255,184,0,.82);line-height:1.6}
+.tn-cy{border-left-color:var(--cyan)}
+.tn-cy .tn-lbl{color:var(--cyan)}
+.tn-cy .tn-text{color:rgba(0,207,255,.82)}
+.tn-pk{border-left-color:var(--danger)}
+.tn-pk .tn-lbl{color:var(--danger)}
+.tn-pk .tn-text{color:rgba(255,77,109,.82)}
+
+/* VOCAB CARDS */
+.vocab-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:16px}
+.vocab-card{background:var(--surface);border:1px solid var(--border-dim);border-radius:10px;overflow:hidden;cursor:pointer;transition:all .2s}
+.vocab-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.vocab-card-img{width:100%;height:72px;object-fit:cover;display:block;filter:brightness(.48)}
+.vocab-card-body{padding:11px 12px}
+.vc-word{font-family:var(--font-head);font-size:13px;font-weight:700;color:#fff;margin-bottom:2px}
+.vc-ipa{font-size:10px;color:var(--cyan);margin-bottom:5px;font-style:italic}
+.vc-def{font-size:11px;color:var(--muted);line-height:1.4;margin-bottom:6px}
+.vc-ex{font-size:11px;color:var(--accent2);font-style:italic;border-left:2px solid var(--accent);padding-left:7px;line-height:1.4}
+.vc-sp{font-size:10px;color:var(--dim);margin-top:6px}
+
+/* VOCAB QUIZ */
+.quiz-wrap{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-top:20px}
+.quiz-hdr{padding:14px 20px;background:rgba(249,115,22,.08);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.quiz-hdr-title{font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent)}
+.quiz-progress{height:4px;background:var(--surface2)}
+.quiz-progress-fill{height:100%;background:var(--accent);width:0%;transition:width .4s}
+.quiz-body{padding:22px 24px}
+.quiz-q{font-size:14.5px;color:#fff;font-weight:500;margin-bottom:16px;line-height:1.5}
+.quiz-opts{display:flex;flex-direction:column;gap:8px}
+.quiz-opt{background:var(--surface2);border:1px solid var(--border-dim);border-radius:8px;padding:11px 16px;font-size:13px;color:var(--txt);cursor:pointer;transition:all .2s;text-align:left}
+.quiz-opt:hover:not(:disabled){border-color:var(--accent);color:var(--accent)}
+.quiz-opt.qcorrect{background:rgba(0,229,160,.12);border-color:var(--success);color:var(--success)}
+.quiz-opt.qwrong{background:rgba(255,77,109,.12);border-color:var(--danger);color:var(--danger)}
+.quiz-opt:disabled{cursor:not-allowed}
+.quiz-score{font-family:var(--font-head);font-size:12px;font-weight:700;color:var(--muted)}
+.quiz-feedback{font-size:12px;color:var(--muted);margin-top:8px;min-height:18px}
+.quiz-restart{background:var(--accent);border:none;color:#fff;padding:9px 22px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;cursor:pointer;border-radius:6px;margin-top:14px;display:none}
+
+/* MICRO SPEAKING */
+.micro-speak{background:rgba(0,207,255,.05);border:1px solid rgba(0,207,255,.2);border-radius:8px;padding:13px 17px;margin-top:16px;display:flex;gap:12px;align-items:flex-start}
+.ms-icon{font-size:16px;flex-shrink:0;margin-top:2px}
+.ms-label{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--cyan);margin-bottom:4px}
+.ms-text{font-size:12.5px;color:var(--txt);line-height:1.55}
+
+/* COLLOQUIAL CARDS */
+.coll-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:16px}
+.coll-card{background:var(--surface);border:1px solid var(--border-dim);border-radius:10px;overflow:hidden;cursor:pointer;transition:all .2s}
+.coll-card:hover{border-color:var(--accent)}
+.coll-card-img{width:100%;height:88px;object-fit:cover;display:block;filter:brightness(.47)}
+.coll-body{padding:12px 14px}
+.coll-phrase{font-family:var(--font-head);font-size:13px;font-weight:700;color:#fff;margin-bottom:5px}
+.coll-ctx{font-size:11.5px;color:var(--muted);line-height:1.45}
+.coll-ex{font-size:11px;color:var(--accent2);font-style:italic;margin-top:6px;border-left:2px solid var(--accent);padding-left:7px}
+
+/* GRAMMAR — PROBLEM/TOOL */
+.prob-card{background:rgba(255,77,109,.06);border:1px solid rgba(255,77,109,.22);border-radius:10px;padding:18px 22px;margin-bottom:14px}
+.prob-lbl{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--danger);margin-bottom:8px}
+.prob-scenario{font-size:13.5px;color:#fff;line-height:1.7}
+.prob-thought{font-size:12px;color:rgba(255,120,120,.85);font-style:italic;margin-top:8px;border-left:2px solid var(--danger);padding-left:10px}
+.tool-card{background:rgba(249,115,22,.06);border:1px solid rgba(249,115,22,.25);border-radius:10px;padding:18px 22px;margin-bottom:18px}
+.tool-lbl{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:8px}
+.tool-text{font-size:13.5px;color:var(--txt);line-height:1.85}
+
+/* CANDIDATE COMPARISON CARD */
+.cand-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:18px 0}
+.cand-card{background:var(--surface);border:1px solid var(--border-dim);border-radius:12px;overflow:hidden}
+.cand-card-hdr{padding:14px 18px;border-bottom:1px solid var(--border-dim);display:flex;align-items:center;gap:12px}
+.cand-avatar{width:44px;height:44px;border-radius:50%;object-fit:cover;border:2px solid var(--accent);flex-shrink:0}
+.cand-name{font-family:var(--font-head);font-size:14px;font-weight:700;color:#fff;margin-bottom:2px}
+.cand-role{font-size:11px;color:var(--muted)}
+.cand-body{padding:14px 18px}
+.cand-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--border-dim);font-size:12.5px}
+.cand-row:last-child{border-bottom:none}
+.cand-key{color:var(--muted)}
+.cand-val{color:var(--txt);font-weight:500;text-align:right}
+.cand-val.good{color:var(--success)}
+.cand-val.warn{color:var(--warn)}
+
+/* GRAM TABLE */
+.gram-table{width:100%;border-collapse:collapse;margin:14px 0}
+.gram-table th{background:var(--surface2);padding:10px 14px;text-align:left;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim);border-bottom:2px solid var(--accent)}
+.gram-table td{padding:11px 14px;border-bottom:1px solid var(--border-dim);font-size:12.5px;vertical-align:top}
+.gram-table tr:hover td{background:rgba(249,115,22,.03)}
+.g-ex{color:var(--accent2);font-style:italic}
+.g-green{color:var(--green);font-family:var(--font-head);font-weight:700}
+.g-cy{color:var(--cyan);font-family:var(--font-head);font-weight:700}
+.g-or{color:var(--accent);font-family:var(--font-head);font-weight:700}
+.err-box{background:rgba(255,77,109,.05);border:1px solid rgba(255,77,109,.2);border-radius:8px;padding:13px 17px;margin:14px 0;font-size:12px;color:rgba(255,120,120,.9);line-height:1.8}
+.err-box strong{color:var(--danger)}
+
+/* ACTIVITIES */
+.act-title{font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:11px;padding-top:20px;border-top:1px solid var(--border-dim);margin-top:22px}
+.opt-group{margin-bottom:16px}
+.opt-q{font-size:13px;color:var(--txt);margin-bottom:9px;padding:11px 14px;background:var(--surface);border-left:3px solid var(--accent);border-radius:4px;line-height:1.5}
+.opts{display:flex;gap:8px;flex-wrap:wrap}
+.opt{background:var(--surface2);border:1px solid var(--border-dim);color:var(--txt);padding:8px 16px;font-family:var(--font-body);font-size:12.5px;cursor:pointer;transition:all .2s;border-radius:6px}
+.opt:hover:not(:disabled){border-color:var(--accent);color:var(--accent)}
+.opt.correct{background:rgba(0,229,160,.12);border-color:var(--success);color:var(--success)}
+.opt.wrong{background:rgba(255,77,109,.12);border-color:var(--danger);color:var(--danger)}
+.opt:disabled{cursor:not-allowed}
+.tf-set{display:flex;flex-direction:column;gap:9px;margin-bottom:14px}
+.tf-row{background:var(--surface);border:1px solid var(--border-dim);border-radius:8px;padding:12px 15px;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
+.tf-stmt{font-size:12.5px;color:var(--txt);flex:1;line-height:1.5;min-width:180px}
+.tf-btns{display:flex;gap:8px;flex-shrink:0}
+.tf-btn{background:var(--surface2);border:1px solid var(--border-dim);color:var(--txt);padding:7px 16px;font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:1px;cursor:pointer;transition:all .2s;border-radius:5px}
+.tf-btn:hover:not(:disabled){border-color:var(--accent)}
+.tf-btn:disabled{cursor:not-allowed}
+
+/* MATCHING PAIRS GAME */
+.pairs-wrap{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-top:20px}
+.pairs-hdr{padding:14px 20px;background:rgba(249,115,22,.08);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.pairs-hdr-title{font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent)}
+.pairs-score-lbl{font-family:var(--font-head);font-size:11px;font-weight:700;color:var(--muted)}
+.pairs-body{padding:20px 24px}
+.pairs-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.pair-card{background:var(--surface2);border:1px solid var(--border-dim);border-radius:8px;padding:12px 8px;text-align:center;cursor:pointer;transition:all .25s;font-size:12px;color:var(--txt);min-height:64px;display:flex;align-items:center;justify-content:center;line-height:1.4;user-select:none}
+.pair-card:hover:not(.matched):not(.flipped){border-color:var(--accent);color:var(--accent)}
+.pair-card.flipped{background:rgba(249,115,22,.12);border-color:var(--accent);color:#fff}
+.pair-card.matched{background:rgba(0,229,160,.1);border-color:var(--success);color:var(--success);cursor:default}
+.pair-card.wrong{background:rgba(255,77,109,.1);border-color:var(--danger);animation:shk .3s}
+@keyframes shk{0%,100%{transform:translateX(0)}33%{transform:translateX(-5px)}66%{transform:translateX(5px)}}
+.pairs-result{margin-top:14px;text-align:center;font-family:var(--font-head);font-size:12px;font-weight:700;color:var(--muted);min-height:20px}
+
+/* READING */
+.reading-card{background:var(--surface);border:1px solid var(--border-dim);border-radius:12px;overflow:hidden;margin-bottom:18px}
+.av-row{display:flex;align-items:center;gap:13px;padding:18px 20px;border-bottom:1px solid var(--border-dim);flex-wrap:wrap}
+.avatar{width:48px;height:48px;border-radius:50%;object-fit:cover;border:2px solid var(--accent);flex-shrink:0}
+.av-name{font-family:var(--font-head);font-size:13px;font-weight:700;color:#fff}
+.av-role{font-size:11px;color:var(--muted)}
+.av-meta{margin-left:auto;font-size:11px;color:var(--muted);text-align:right;line-height:1.6}
+.reading-body{padding:20px;font-size:13px;line-height:1.95;color:var(--txt)}
+.kw-box{margin:0 20px 16px;background:rgba(249,115,22,.06);border:1px solid rgba(249,115,22,.15);border-radius:7px;padding:11px 14px;font-size:11.5px;color:var(--accent2);line-height:1.6}
+.comp-hi{color:var(--accent);font-weight:700}
+.sup-hi{color:var(--cyan);font-weight:700}
+.as-hi{color:var(--green);font-weight:700}
+
+/* LISTENING */
+.player-box{background:var(--surface);border:1px solid var(--border-dim);border-radius:12px;padding:22px;margin-bottom:14px}
+.player-top{display:flex;align-items:center;gap:15px;margin-bottom:12px}
+.play-btn-aud{width:42px;height:42px;background:var(--accent);border:none;border-radius:50%;cursor:pointer;font-size:16px;color:#fff;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.track-title{font-family:var(--font-head);font-size:12.5px;font-weight:700;color:#fff;margin-bottom:3px}
+.track-sub{font-size:10.5px;color:var(--muted)}
+.waveform{display:flex;align-items:center;gap:2px;height:38px;overflow:hidden}
+.wbar{width:3px;background:var(--accent);border-radius:2px;flex-shrink:0;opacity:.35}
+.script-toggle{background:none;border:1px solid var(--border-dim);color:var(--muted);padding:8px 18px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;cursor:pointer;border-radius:6px;transition:all .2s;margin-bottom:12px}
+.script-toggle:hover{border-color:var(--accent);color:var(--accent)}
+.script-box{background:var(--surface2);border:1px solid var(--border-dim);border-radius:8px;padding:18px 22px;font-size:12.5px;color:var(--muted);line-height:1.9;display:none}
+.script-box.open{display:block}
+
+/* SPEAKING */
+.speak-grid{display:flex;flex-direction:column;gap:12px;margin-top:14px}
+.speak-card{background:var(--surface);border:1px solid var(--border-dim);border-radius:10px;padding:16px 20px}
+.speak-num{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:6px}
+.speak-q{font-size:14.5px;color:#fff;line-height:1.55;margin-bottom:6px}
+.speak-hint{font-size:11.5px;color:var(--muted);font-style:italic}
+.speak-tag{display:inline-block;padding:2px 9px;font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:1px;border-radius:4px;text-transform:uppercase;margin-right:7px}
+.st-ts{background:rgba(249,115,22,.12);color:var(--accent);border:1px solid rgba(249,115,22,.25)}
+.st-ss{background:rgba(0,229,160,.08);color:var(--success);border:1px solid rgba(0,229,160,.2)}
+.st-cl{background:rgba(0,207,255,.08);color:var(--cyan);border:1px solid rgba(0,207,255,.2)}
+
+/* OPINION METER */
+.om-wrap{background:var(--surface);border:1px solid var(--border-dim);border-radius:12px;padding:20px 24px;margin-top:16px}
+.om-stmt{font-size:14px;color:#fff;font-style:italic;margin-bottom:16px;padding:13px 18px;background:var(--surface2);border-left:3px solid var(--accent);border-radius:6px;line-height:1.6}
+.om-track{height:10px;background:var(--surface2);border-radius:10px;position:relative;overflow:hidden;margin-bottom:8px}
+.om-bar{height:100%;background:linear-gradient(90deg,var(--danger),var(--accent),var(--success));width:50%;transition:width .3s}
+.om-labels{display:flex;justify-content:space-between;font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--dim);margin-bottom:14px}
+.om-btns{display:flex;gap:10px;margin-bottom:8px}
+.om-btn{flex:1;padding:9px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1px;cursor:pointer;border-radius:7px;transition:all .2s;border:1px solid}
+.om-dis{background:rgba(255,77,109,.08);border-color:rgba(255,77,109,.3);color:var(--danger)}
+.om-dis:hover{background:rgba(255,77,109,.18)}
+.om-agr{background:rgba(0,229,160,.08);border-color:rgba(0,229,160,.3);color:var(--success)}
+.om-agr:hover{background:rgba(0,229,160,.18)}
+.om-pct{font-family:var(--font-head);font-size:14px;font-weight:800;color:var(--accent);text-align:center}
+
+/* PHRASES BLOCK */
+.phrases-wrap{padding:28px 48px;background:rgba(255,184,0,.03);border-top:1px solid rgba(255,184,0,.12);border-bottom:1px solid rgba(255,184,0,.12)}
+.phrases-hdr{font-family:var(--font-head);font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:6px}
+.phrases-sub{font-size:12px;color:var(--muted);margin-bottom:18px}
+.phrases-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.phrase-card{background:var(--surface);border:1px solid rgba(255,184,0,.2);border-radius:10px;padding:16px 18px;border-top:3px solid var(--gold)}
+.phrase-en{font-family:var(--font-head);font-size:13.5px;font-weight:700;color:#fff;margin-bottom:6px}
+.phrase-ctx{font-size:11.5px;color:var(--muted);line-height:1.5}
+
+/* GT BOX */
+.gt-box{background:rgba(255,184,0,.04);border:1px solid rgba(255,184,0,.18);border-radius:10px;padding:16px 20px;margin-top:18px}
+.gt-hdr{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold);margin-bottom:9px}
+.gt-hdr::before{content:'\2605 ';font-size:11px}
+.gt-tips{list-style:none;display:flex;flex-direction:column;gap:7px}
+.gt-tips li{font-size:12px;color:rgba(255,184,0,.82);padding-left:14px;position:relative;line-height:1.5}
+.gt-tips li::before{content:'\2192';position:absolute;left:0;color:var(--gold)}
+
+/* WRAP-UP */
+.wrapup-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px}
+.wu-key{background:var(--surface);border:1px solid var(--border-dim);border-radius:10px;padding:16px 18px;border-top:3px solid var(--accent)}
+.wu-key-title{font-family:var(--font-head);font-size:12px;font-weight:700;color:var(--accent);margin-bottom:6px}
+.wu-key-text{font-size:12px;color:var(--muted);line-height:1.55}
+.cl-wrap{display:flex;flex-direction:column;gap:8px;margin:16px 0}
+.cl-item{background:var(--surface);border:1px solid var(--border-dim);border-radius:8px;padding:12px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:all .2s;font-size:13px;color:var(--txt)}
+.cl-item.done{border-color:var(--success);color:var(--success);background:rgba(0,229,160,.06)}
+.cl-check{font-size:16px;flex-shrink:0}
+.next-card{background:var(--surface);border:1px solid rgba(0,207,255,.25);border-radius:10px;padding:18px 22px;border-left:3px solid var(--cyan);margin-top:14px}
+.next-label{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--cyan);margin-bottom:6px}
+.next-title{font-size:14px;font-weight:600;color:#fff;margin-bottom:4px}
+.next-sub{font-size:12px;color:var(--muted);line-height:1.55}
+.win-area{background:var(--surface);border:1px solid var(--border-dim);border-radius:10px;padding:18px 22px;margin-top:14px}
+.win-lbl{font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:8px}
+.win-ta{width:100%;background:var(--surface2);border:1px solid var(--border-dim);color:var(--txt);padding:12px 14px;font-family:var(--font-body);font-size:13px;border-radius:7px;resize:vertical;min-height:80px}
+.win-ta:focus{outline:none;border-color:var(--accent)}
+.win-btn{background:var(--accent);border:none;color:#fff;padding:9px 22px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;cursor:pointer;border-radius:6px;margin-top:10px}
+.win-ok{display:none;margin-top:8px;font-size:12px;color:var(--success)}
+
+/* FOOTER */
+.ftr{background:var(--surface);border-top:1px solid var(--border);padding:16px 48px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+.fbrand{font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim)}
+.finfo{font-size:11px;color:var(--dim)}
+.flvs{display:flex;gap:3px}
+.flv{padding:5px 10px;font-family:var(--font-head);font-size:10px;font-weight:700;background:var(--surface2);color:var(--dim)}
+.flv.on{background:var(--accent);color:#fff}
+
+@media(max-width:860px){
+  .hdr,.ftr,.phrases-wrap{padding:14px 18px}
+  .sec-body{padding:20px 18px}
+  .sec-hdr{padding:16px 18px}
+  .wu-grid,.vocab-grid{grid-template-columns:repeat(2,1fr)}
+  .coll-grid{grid-template-columns:1fr 1fr}
+  .phrases-grid,.wrapup-grid{grid-template-columns:1fr}
+  .cand-grid{grid-template-columns:1fr}
+  .pairs-grid{grid-template-columns:repeat(2,1fr)}
+  .opts{flex-direction:column}
+  .av-meta{margin-left:0;text-align:left}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="hdr">
+  <div class="brand">
+    <div class="dot"></div>
+    <div><div class="bname">Gabriel Turner</div><div class="bsub">English Training · Teacher Edition</div></div>
+  </div>
+  <div class="sess-tag">
+    <span class="tag t-or">A2.2</span>
+    <span class="tag t-gd">Module 5</span>
+    <span class="tag t-cy">Session 2A — Discovery &amp; Drill</span>
+    <span class="tag t-go">120 min</span>
+  </div>
+  <div class="badge-strip">
+    <span id="b1" title="Warm-Up">&#128084;</span>
+    <span id="b2" title="Vocabulary">&#128203;</span>
+    <span id="b3" title="Grammar">&#9878;&#65039;</span>
+    <span id="b4" title="Listening">&#127897;&#65039;</span>
+    <span id="b5" title="Win">&#127942;</span>
+  </div>
+</header>
+<div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+
+<!-- ═══════════════════════════ §1 WARM-UP -->
+<div class="section">
+  <div class="sec-hdr">
+    <div class="sec-num">§1</div>
+    <div>
+      <div class="sec-label">Warm-Up — <em>Who would you hire?</em></div>
+      <div class="sec-sub">Activate HR comparison thinking · Connect comparatives to people decisions · 5–8 min</div>
+    </div>
+    <div class="sec-dur">&#9201; 5–8 MIN</div>
+  </div>
+  <img class="img-hero" src="https://images.unsplash.com/photo-1521791136064-7986c2920216?w=900&q=80" alt="Job interview and hiring decision" loading="lazy">
+  <div class="sec-body">
+
+    <p style="font-size:13px;color:var(--muted);margin-bottom:14px">Remember from S1: <strong style="color:var(--accent)">cheaper → cheaper than</strong> · <strong style="color:var(--cyan)">reliable → more reliable than</strong> · <strong style="color:var(--green)">good → better than / the best</strong>. Today: same tools, new context — people and jobs.</p>
+
+    <div class="wu-grid">
+      <div class="wu-card">
+        <img class="wu-card-img" src="https://images.unsplash.com/photo-1560439514-4e9645039924?w=600&q=80" alt="CV review at desk" loading="lazy">
+        <div class="wu-card-body">
+          <div class="wu-card-q">&#128084; <strong>Have you ever been involved in a hiring decision?</strong> Did you compare candidates? What did you look at — experience, education, personality, salary expectations?</div>
+          <div class="wu-card-hint">&#128161; Say: "Tell your partner about one hiring situation you were part of — or one time you were the candidate. What made someone the best choice?" Collect Spanish words for qualities (experiencia, calificado, disponible) → write on board.</div>
+        </div>
+      </div>
+      <div class="wu-card">
+        <img class="wu-card-img" src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=600&q=80" alt="Team discussing candidates" loading="lazy">
+        <div class="wu-card-body">
+          <div class="wu-card-q">&#9878;&#65039; <strong>Quick ranking:</strong> When your company hires someone, what is the most important quality? Rank in order: experience / qualifications / personality / salary expectations / availability.</div>
+          <div class="wu-card-hint">&#128161; Let students debate the ranking — they will naturally use "more important than" and "the most important." Do NOT correct the grammar yet — collect examples and use them in §4 Grammar to show "you were already using this — here is the rule."</div>
+        </div>
+      </div>
+      <div class="wu-card">
+        <img class="wu-card-img" src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=600&q=80" alt="Comparing CVs on desk" loading="lazy">
+        <div class="wu-card-body">
+          <div class="wu-card-q">&#129302; <strong>Translation challenge:</strong> How do you say in English: "El candidato A tiene más experiencia que el B" and "La candidata B está más calificada para este puesto." Try before any notes!</div>
+          <div class="wu-card-hint">&#128161; Collect attempts. Note "more experience than" (noun comparison) vs "more experienced than" (adjective). This contrast surfaces in §4 Grammar — save it for then.</div>
+        </div>
+      </div>
+      <div class="wu-card">
+        <img class="wu-card-img" src="https://images.unsplash.com/photo-1573497019236-61f323342eb7?w=600&q=80" alt="Andrea Soto — hiring manager" loading="lazy">
+        <div class="wu-card-body">
+          <div class="wu-card-q">&#128105;&#8205;&#128188; <strong>Andrea&apos;s new challenge:</strong> After her supplier win in S1, Andrea&apos;s manager now asks her to help choose between two candidates for a new Logistics Coordinator role. She has two CVs and 24 hours. What would you look for first?</div>
+          <div class="wu-card-hint">&#128161; This sets up the narrative for the whole session. Andrea is the character — her situation drives the reading, listening and grammar. Ask: "What is more important for a logistics coordinator — experience or education?" Plant the debate.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="quick-win">
+      <div class="qw-icon">&#128084;</div>
+      <div>
+        <div class="qw-label">Quick Win — 20 seconds</div>
+        <div class="qw-text">Say this out loud: <strong>"Candidate A is more experienced than Candidate B, but Candidate B is better qualified for this role."</strong></div>
+        <div class="qw-try">You already know the structure. Today you get the vocabulary to make this sentence yours — in any real HR conversation.</div>
+      </div>
+      <div class="timer-wrap">
+        <svg class="timer-svg" width="54" height="54" viewBox="0 0 54 54">
+          <circle cx="27" cy="27" r="23" stroke="rgba(249,115,22,.2)" stroke-width="4" fill="none"/>
+          <circle id="arcQW" cx="27" cy="27" r="23" stroke="var(--accent)" stroke-width="4" fill="none" stroke-dasharray="144.51" stroke-dashoffset="0"/>
+          <text id="txtQW" x="27" y="32" text-anchor="middle" font-family="Syne,sans-serif" font-size="13" font-weight="800" fill="var(--accent)">20</text>
+        </svg>
+      </div>
+    </div>
+
+    <div class="tn">
+      <div class="tn-lbl">&#9889; Teacher Note — Warm-Up</div>
+      <div class="tn-text">S2A shifts context from products/suppliers (S1) to people/candidates — same grammar, new domain. This is deliberate: show students that "more reliable than" works for a machine AND a person. Layer 1 (A2.2 standard): let students discuss in pairs, collect Spanish → English on the board. Layer 2 (stronger): challenge them to say the translation challenge in under 10 seconds. Layer 3 (fastest): ask "what is the difference between having more experience and being more experienced?" — this is the noun vs adjective contrast that surfaces in §4.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ §2 VOCABULARY -->
+<div class="section">
+  <div class="sec-hdr">
+    <div class="sec-num">§2</div>
+    <div>
+      <div class="sec-label">Vocabulary — <em>HR &amp; Candidate Language</em></div>
+      <div class="sec-sub">10 key words for evaluating and comparing people at work · Click to hear · 10 min</div>
+    </div>
+    <div class="sec-dur">&#9201; 10 MIN</div>
+  </div>
+  <img class="img-banner" src="https://images.unsplash.com/photo-1506784983877-45594efa4cbe?w=900&q=80" alt="HR planning and scheduling" loading="lazy">
+  <div class="sec-body">
+
+    <div class="vocab-grid">
+      <div class="vocab-card" onclick="speak('qualified')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=600&q=80" alt="qualified professional" loading="lazy">
+        <div class="vocab-card-body">
+          <div class="vc-word">qualified</div>
+          <div class="vc-ipa">/ˈkwɒl.ɪ.faɪd/</div>
+          <div class="vc-def">having the right skills, training or education for a job</div>
+          <div class="vc-ex">She is the most qualified candidate for the coordinator role.</div>
+          <div class="vc-sp">calificado / con los requisitos</div>
+        </div>
+      </div>
+      <div class="vocab-card" onclick="speak('experienced')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1560439514-4e9645039924?w=600&q=80" alt="experienced worker" loading="lazy">
+        <div class="vocab-card-body">
+          <div class="vc-word">experienced</div>
+          <div class="vc-ipa">/ɪkˈspɪər.i.ənst/</div>
+          <div class="vc-def">having a lot of knowledge and skill from doing something for a long time</div>
+          <div class="vc-ex">Candidate A is more experienced than Candidate B in logistics.</div>
+          <div class="vc-sp">con experiencia / experimentado</div>
+        </div>
+      </div>
+      <div class="vocab-card" onclick="speak('available')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=600&q=80" alt="calendar availability" loading="lazy">
+        <div class="vocab-card-body">
+          <div class="vc-word">available</div>
+          <div class="vc-ipa">/əˈveɪ.lə.bəl/</div>
+          <div class="vc-def">free and ready to start; not committed to another position</div>
+          <div class="vc-ex">He is available immediately — she needs two weeks notice.</div>
+          <div class="vc-sp">disponible</div>
+        </div>
+      </div>
+      <div class="vocab-card" onclick="speak('proactive')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1543269664-76bc3997d9ea?w=600&q=80" alt="proactive team leader" loading="lazy">
+        <div class="vocab-card-body">
+          <div class="vc-word">proactive</div>
+          <div class="vc-ipa">/ˌprəʊˈæk.tɪv/</div>
+          <div class="vc-def">taking action before problems happen; not waiting to be told</div>
+          <div class="vc-ex">We need someone more proactive than our last coordinator.</div>
+          <div class="vc-sp">proactivo</div>
+        </div>
+      </div>
+      <div class="vocab-card" onclick="speak('salary')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1455390582262-044cdead277a?w=600&q=80" alt="salary negotiation" loading="lazy">
+        <div class="vocab-card-body">
+          <div class="vc-word">salary</div>
+          <div class="vc-ipa">/ˈsæl.ər.i/</div>
+          <div class="vc-def">the fixed amount of money paid to an employee each month or year</div>
+          <div class="vc-ex">His salary expectation is lower than hers by 15%.</div>
+          <div class="vc-sp">salario / sueldo</div>
+        </div>
+      </div>
+      <div class="vocab-card" onclick="speak('bilingual')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=600&q=80" alt="bilingual communication" loading="lazy">
+        <div class="vocab-card-body">
+          <div class="vc-word">bilingual</div>
+          <div class="vc-ipa">/ˌbaɪˈlɪŋ.ɡwəl/</div>
+          <div class="vc-def">able to speak two languages fluently</div>
+          <div class="vc-ex">Candidate B is bilingual — she speaks Spanish and English fluently.</div>
+          <div class="vc-sp">bilingüe</div>
+        </div>
+      </div>
+      <div class="vocab-card" onclick="speak('shortlist')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?w=600&q=80" alt="selection shortlist" loading="lazy">
+        <div class="vocab-card-body">
+          <div class="vc-word">shortlist</div>
+          <div class="vc-ipa">/ˈʃɔːt.lɪst/</div>
+          <div class="vc-def">a small list of the best candidates selected from a larger group</div>
+          <div class="vc-ex">Both candidates are on the shortlist for the final interview.</div>
+          <div class="vc-sp">lista corta / candidatos finalistas</div>
+        </div>
+      </div>
+      <div class="vocab-card" onclick="speak('reference')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=600&q=80" alt="professional reference letter" loading="lazy">
+        <div class="vocab-card-body">
+          <div class="vc-word">reference</div>
+          <div class="vc-ipa">/ˈref.ər.əns/</div>
+          <div class="vc-def">a person or letter that confirms a candidate's skills and character</div>
+          <div class="vc-ex">Her references are stronger than his — two former managers recommended her.</div>
+          <div class="vc-sp">referencia / carta de recomendación</div>
+        </div>
+      </div>
+      <div class="vocab-card" onclick="speak('strengths')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1475721027785-f74eccf877e2?w=600&q=80" alt="strengths presentation" loading="lazy">
+        <div class="vocab-card-body">
+          <div class="vc-word">strengths</div>
+          <div class="vc-ipa">/streŋkθs/</div>
+          <div class="vc-def">the best qualities or skills a person has; what they do well</div>
+          <div class="vc-ex">Her strengths are more relevant to this role than his.</div>
+          <div class="vc-sp">fortalezas / puntos fuertes</div>
+        </div>
+      </div>
+      <div class="vocab-card" onclick="speak('negotiate')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1551135049-8a33b5883817?w=600&q=80" alt="negotiating at table" loading="lazy">
+        <div class="vocab-card-body">
+          <div class="vc-word">negotiate</div>
+          <div class="vc-ipa">/nɪˈɡəʊ.ʃi.eɪt/</div>
+          <div class="vc-def">to discuss and agree on terms such as salary, benefits or conditions</div>
+          <div class="vc-ex">He was more willing to negotiate on salary than the other candidate.</div>
+          <div class="vc-sp">negociar</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tn">
+      <div class="tn-lbl">&#9889; Teacher Note — Vocabulary</div>
+      <div class="tn-text">Key pronunciation note: "strengths" /streŋkθs/ — the consonant cluster at the end is difficult for Spanish speakers (they will say "strengs" or "strengths-es"). Drill it 3x before moving on. Pair drill after cards: "Name a quality from the vocab list that describes YOU as a worker — then name one that describes a colleague." This makes the vocabulary personal and memorable. False friend: "available" ≠ "voluble" (Spanish for talkative). "Available" = disponible. Always clarify.</div>
+    </div>
+
+    <!-- VOCAB QUIZ -->
+    <div class="quiz-wrap" style="margin-top:22px">
+      <div class="quiz-hdr">
+        <div class="quiz-hdr-title">&#9889; Vocabulary Quiz — 10 Questions</div>
+        <div class="quiz-score" id="quizScore">0 / 10</div>
+      </div>
+      <div class="quiz-progress"><div class="quiz-progress-fill" id="quizProg"></div></div>
+      <div class="quiz-body">
+        <div class="quiz-q" id="quizQ">Loading...</div>
+        <div class="quiz-opts" id="quizOpts"></div>
+        <div class="quiz-feedback" id="quizFB"></div>
+        <button class="quiz-restart" id="quizRestart" onclick="startQuiz()">Try Again</button>
+      </div>
+    </div>
+
+    <!-- MATCHING PAIRS GAME -->
+    <div class="pairs-wrap" style="margin-top:20px">
+      <div class="pairs-hdr">
+        <div class="pairs-hdr-title">&#127922; Matching Pairs — HR Terms</div>
+        <div class="pairs-score-lbl">Matched: <span id="pairsScore">0</span> / 5</div>
+      </div>
+      <div class="pairs-body">
+        <p style="font-size:12px;color:var(--muted);margin-bottom:14px">Click a word, then click its matching definition. Find all 5 pairs. Cards shuffle on start — every game is different.</p>
+        <div class="pairs-grid" id="pairsGrid"></div>
+        <div class="pairs-result" id="pairsResult"></div>
+      </div>
+    </div>
+
+    <div class="tn tn-cy" style="margin-top:14px">
+      <div class="tn-lbl">&#9889; Teacher Note — Matching Pairs Game</div>
+      <div class="tn-text">Cards are randomly shuffled each time — run as a class race (first pair done calls "Done!") or as individual timed activity (phone stopwatch, 90 seconds). After the game: "Use 3 of these words in sentences about someone you work with." This locks the vocabulary to a real person and memory. For weaker groups: allow one look at vocab cards before the game starts.</div>
+    </div>
+
+    <div class="micro-speak">
+      <div class="ms-icon">&#128483;&#65039;</div>
+      <div>
+        <div class="ms-label">Micro-Speaking</div>
+        <div class="ms-text">Quick: Say 3 sentences using today&apos;s HR vocabulary to describe someone you work with — or describe yourself as a candidate. Example: "I am bilingual and I have more experience than most people on my team." 45 seconds — go!</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ §3 COLLOQUIAL -->
+<div class="section">
+  <div class="sec-hdr">
+    <div class="sec-num">§3</div>
+    <div>
+      <div class="sec-label">Colloquial — <em>Hiring &amp; People Language</em></div>
+      <div class="sec-sub">4 real phrases used in HR conversations and performance reviews · 5 min</div>
+    </div>
+    <div class="sec-dur">&#9201; 5 MIN</div>
+  </div>
+  <div class="sec-body">
+    <div class="coll-grid">
+      <div class="coll-card" onclick="speak('She ticks all the boxes.')">
+        <img class="coll-card-img" src="https://images.unsplash.com/photo-1560439514-4e9645039924?w=600&q=80" alt="CV checklist" loading="lazy">
+        <div class="coll-body">
+          <div class="coll-phrase">"She ticks all the boxes."</div>
+          <div class="coll-ctx">Use when a candidate meets every requirement on your list. Strong endorsement in a hiring context.</div>
+          <div class="coll-ex">"Candidate B ticks all the boxes — bilingual, experienced, and available next month."</div>
+        </div>
+      </div>
+      <div class="coll-card" onclick="speak('He is a strong fit for this role.')">
+        <img class="coll-card-img" src="https://images.unsplash.com/photo-1543269664-76bc3997d9ea?w=600&q=80" alt="perfect fit for team" loading="lazy">
+        <div class="coll-body">
+          <div class="coll-phrase">"He is a strong fit for this role."</div>
+          <div class="coll-ctx">Use when a candidate&apos;s profile matches the job well. More professional than "he is good for the job."</div>
+          <div class="coll-ex">"After reviewing both CVs, I think Candidate A is a stronger fit for this role."</div>
+        </div>
+      </div>
+      <div class="coll-card" onclick="speak('She stands out from the others.')">
+        <img class="coll-card-img" src="https://images.unsplash.com/photo-1475721027785-f74eccf877e2?w=600&q=80" alt="candidate who stands out" loading="lazy">
+        <div class="coll-body">
+          <div class="coll-phrase">"She stands out from the others."</div>
+          <div class="coll-ctx">Use when one candidate is clearly better or more impressive than all others. A superlative idea in a colloquial phrase.</div>
+          <div class="coll-ex">"Of all the candidates we interviewed, she stands out the most — her experience is unmatched."</div>
+        </div>
+      </div>
+      <div class="coll-card" onclick="speak('It is a tough call.')">
+        <img class="coll-card-img" src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=600&q=80" alt="difficult decision meeting" loading="lazy">
+        <div class="coll-body">
+          <div class="coll-phrase">"It is a tough call."</div>
+          <div class="coll-ctx">Use when two options are very similar and the decision is difficult. Opposite of "it&apos;s a no-brainer."</div>
+          <div class="coll-ex">"Both candidates are well qualified — it&apos;s a tough call. But I think Candidate B is slightly better."</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tn">
+      <div class="tn-lbl">&#9889; Teacher Note — Colloquial Drill</div>
+      <div class="tn-text">Connect to S1 vocabulary: "It&apos;s a no-brainer" (S1) = one option is obviously better. "It&apos;s a tough call" (S2) = both options are similar — create the contrast on the board. Drill "tick all the boxes" — students often say "check all the boxes" (American English version is acceptable too, but "tick" is the more common corporate British English form used in Bajío multinationals). Role-play: teacher reads a candidate profile, students use one colloquial phrase to react. 30 seconds each.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ §4 GRAMMAR -->
+<div class="section">
+  <div class="sec-hdr">
+    <div class="sec-num">§4</div>
+    <div>
+      <div class="sec-label">Grammar — <em>Comparatives with People: Adjectives vs Nouns</em></div>
+      <div class="sec-sub">Problem → Tool format · Comparing candidates · 2 activities · 12–15 min</div>
+    </div>
+    <div class="sec-dur">&#9201; 12–15 MIN</div>
+  </div>
+  <img class="img-banner" src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=900&q=80" alt="Two CVs being compared" loading="lazy">
+  <div class="sec-body">
+
+    <!-- CANDIDATE PROFILES — visual anchor -->
+    <div class="cand-grid">
+      <div class="cand-card">
+        <div class="cand-card-hdr">
+          <img class="cand-avatar" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&q=80" alt="Candidate A" loading="lazy">
+          <div>
+            <div class="cand-name">Candidate A — Roberto M.</div>
+            <div class="cand-role">Logistics Coordinator applicant</div>
+          </div>
+        </div>
+        <div class="cand-body">
+          <div class="cand-row"><span class="cand-key">Experience</span><span class="cand-val good">8 years in logistics</span></div>
+          <div class="cand-row"><span class="cand-key">Education</span><span class="cand-val">Technical degree</span></div>
+          <div class="cand-row"><span class="cand-key">Languages</span><span class="cand-val warn">Spanish only</span></div>
+          <div class="cand-row"><span class="cand-key">Availability</span><span class="cand-val good">Immediate</span></div>
+          <div class="cand-row"><span class="cand-key">Salary ask</span><span class="cand-val good">$18,000 MXN/mo</span></div>
+          <div class="cand-row"><span class="cand-key">References</span><span class="cand-val">2 references</span></div>
+        </div>
+      </div>
+      <div class="cand-card">
+        <div class="cand-card-hdr">
+          <img class="cand-avatar" src="https://images.unsplash.com/photo-1573497019236-61f323342eb7?w=200&q=80" alt="Candidate B" loading="lazy">
+          <div>
+            <div class="cand-name">Candidate B — Valeria S.</div>
+            <div class="cand-role">Logistics Coordinator applicant</div>
+          </div>
+        </div>
+        <div class="cand-body">
+          <div class="cand-row"><span class="cand-key">Experience</span><span class="cand-val warn">4 years in logistics</span></div>
+          <div class="cand-row"><span class="cand-key">Education</span><span class="cand-val good">University degree + MBA</span></div>
+          <div class="cand-row"><span class="cand-key">Languages</span><span class="cand-val good">Bilingual (EN/ES)</span></div>
+          <div class="cand-row"><span class="cand-key">Availability</span><span class="cand-val warn">2 weeks notice</span></div>
+          <div class="cand-row"><span class="cand-key">Salary ask</span><span class="cand-val warn">$24,000 MXN/mo</span></div>
+          <div class="cand-row"><span class="cand-key">References</span><span class="cand-val good">3 strong references</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROBLEM CARD -->
+    <div class="prob-card">
+      <div class="prob-lbl">&#128680; Real Work Situation</div>
+      <div class="prob-scenario">Andrea has to send a comparison report to her manager by 5pm. She wants to write: "Roberto tiene más experiencia, pero Valeria está más calificada." But she is not sure: do you say "more experience" or "more experienced"? And is it "more qualified" or "more qualification"?</div>
+      <div class="prob-thought">You think: "Is it: She is more qualified OR she has more qualifications? He has more experience OR he is more experienced?" — These are NOT the same in English.</div>
+    </div>
+
+    <!-- TOOL CARD -->
+    <div class="tool-card">
+      <div class="tool-lbl">&#128295; The Tool — Two Ways to Compare People</div>
+      <div class="tool-text">
+        <strong style="color:var(--green)">With adjectives</strong> → use <strong>more + adjective + than</strong> (describes the person):<br>
+        &nbsp;&nbsp;"Valeria is <em>more qualified</em> than Roberto for this position."<br>
+        &nbsp;&nbsp;"Roberto is <em>more experienced</em> than Valeria in logistics operations."<br><br>
+        <strong style="color:var(--cyan)">With nouns</strong> → use <strong>more + noun + than</strong> (describes what they have):<br>
+        &nbsp;&nbsp;"Roberto has <em>more experience</em> than Valeria — 8 years vs 4."<br>
+        &nbsp;&nbsp;"Valeria has <em>more qualifications</em> than Roberto — degree and MBA."<br><br>
+        <strong style="color:var(--warn)">Key rule:</strong> Adjective = describes the person (qualified, experienced). Noun = what they have (experience, qualification). Both use <strong>more … than</strong>.
+      </div>
+    </div>
+
+    <table class="gram-table">
+      <thead><tr><th>What you compare</th><th>Structure</th><th>Example — Roberto vs Valeria</th></tr></thead>
+      <tbody>
+        <tr><td><span class="g-green">Adjective</span></td><td>more + <strong>adj</strong> + than</td><td class="g-ex">Valeria is <strong>more qualified</strong> than Roberto. Roberto is <strong>more experienced</strong> than Valeria.</td></tr>
+        <tr><td><span class="g-cy">Noun</span></td><td>more + <strong>noun</strong> + than</td><td class="g-ex">Roberto has <strong>more experience</strong> than Valeria. Valeria has <strong>more qualifications</strong> than Roberto.</td></tr>
+        <tr><td><span class="g-green">Short adjective</span></td><td><strong>adj + -er</strong> + than</td><td class="g-ex">Roberto is <strong>cheaper</strong> than Valeria (salary). Valeria&apos;s English is <strong>stronger</strong> than Roberto&apos;s.</td></tr>
+        <tr><td><span class="g-or">Superlative — group</span></td><td>the most + adj / the + -est</td><td class="g-ex">Valeria is <strong>the most qualified</strong> candidate on our shortlist. Roberto is <strong>the cheapest</strong> option.</td></tr>
+        <tr><td><span class="g-cy">As … as (equality)</span></td><td>as + adj + as</td><td class="g-ex">Roberto&apos;s commitment is <strong>as strong as</strong> Valeria&apos;s — both want this role.</td></tr>
+      </tbody>
+    </table>
+
+    <div class="err-box">
+      &#9888;&#65039; <strong>Common Errors — Mexican learners:</strong><br>
+      &#10007; "She is <strong>more experience</strong> than him." → &#10003; She is <strong>more experienced</strong> (adjective) OR she has <strong>more experience</strong> (noun)<br>
+      &#10007; "He has <strong>more experienced</strong> than her." → &#10003; He has <strong>more experience</strong> (noun after "has") OR he is <strong>more experienced</strong> (adj after "is")<br>
+      &#10007; "She is <strong>the most qualify</strong> candidate." → &#10003; She is <strong>the most qualified</strong> (past participle used as adjective)<br>
+      &#10007; "He is <strong>more available</strong> as her." → &#10003; more available <strong>than</strong> her — never "as" after comparatives
+    </div>
+
+    <!-- ACTIVITY A — MC with candidate context -->
+    <div class="act-title">&#9889; ACTIVITY A — Choose the Correct Form</div>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:14px">Use the Roberto vs Valeria profiles above. Choose the correct comparative structure for each sentence.</p>
+
+    <div class="opt-group">
+      <div class="opt-q">1. Roberto _____ Valeria in years of logistics work. (more experience / more experienced)</div>
+      <div class="opts" id="q1">
+        <button class="opt" onclick="checkOpt(this,'has more experience than','q1')">has more experience than</button>
+        <button class="opt" onclick="checkOpt(this,'has more experience than','q1')">is more experienced as</button>
+        <button class="opt" onclick="checkOpt(this,'has more experience than','q1')">has more experienced than</button>
+      </div>
+    </div>
+    <div class="opt-group">
+      <div class="opt-q">2. Valeria _____ Roberto — she has a degree and an MBA. (more qualification / more qualified)</div>
+      <div class="opts" id="q2">
+        <button class="opt" onclick="checkOpt(this,'is more qualified than','q2')">has more qualified than</button>
+        <button class="opt" onclick="checkOpt(this,'is more qualified than','q2')">is more qualify than</button>
+        <button class="opt" onclick="checkOpt(this,'is more qualified than','q2')">is more qualified than</button>
+      </div>
+    </div>
+    <div class="opt-group">
+      <div class="opt-q">3. In terms of salary, Roberto is _____ Valeria — $18k vs $24k per month.</div>
+      <div class="opts" id="q3">
+        <button class="opt" onclick="checkOpt(this,'cheaper than','q3')">more cheap than</button>
+        <button class="opt" onclick="checkOpt(this,'cheaper than','q3')">cheaper than</button>
+        <button class="opt" onclick="checkOpt(this,'cheaper than','q3')">the cheapest as</button>
+      </div>
+    </div>
+    <div class="opt-group">
+      <div class="opt-q">4. Of all the candidates we interviewed, Valeria is _____.</div>
+      <div class="opts" id="q4">
+        <button class="opt" onclick="checkOpt(this,'the most qualified','q4')">the most qualify</button>
+        <button class="opt" onclick="checkOpt(this,'the most qualified','q4')">the more qualified</button>
+        <button class="opt" onclick="checkOpt(this,'the most qualified','q4')">the most qualified</button>
+      </div>
+    </div>
+    <div class="opt-group">
+      <div class="opt-q">5. Roberto&apos;s commitment to the role is _____ Valeria&apos;s — both really want this job.</div>
+      <div class="opts" id="q5">
+        <button class="opt" onclick="checkOpt(this,'as strong as','q5')">stronger than</button>
+        <button class="opt" onclick="checkOpt(this,'as strong as','q5')">as strong as</button>
+        <button class="opt" onclick="checkOpt(this,'as strong as','q5')">the strongest of</button>
+      </div>
+    </div>
+
+    <div class="micro-speak" style="margin-top:16px">
+      <div class="ms-icon">&#128483;&#65039;</div>
+      <div>
+        <div class="ms-label">Micro-Speaking</div>
+        <div class="ms-text">Tell your partner: based on the profiles above, who would YOU hire — Roberto or Valeria? Give 2 reasons using comparatives. "I would hire [name] because [he/she] is more [adj] than [name] and [he/she] has more [noun] than [name]." 60 seconds — go!</div>
+      </div>
+    </div>
+
+    <!-- ACTIVITY B — Reorder drag-drop -->
+    <div class="act-title">&#9889; ACTIVITY B — Unjumble the HR Sentence</div>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:14px">Drag and drop each fragment into the correct order to form a valid comparison sentence about a candidate.</p>
+
+    <p style="font-size:12.5px;color:var(--txt);margin-bottom:8px"><strong>Sentence 1:</strong> Reorder to form a correct comparison.</p>
+    <ul class="reorder-list" id="order1">
+      <li class="reorder-item" draggable="true"><span class="drag-handle">&#x2807;</span>on our shortlist.</li>
+      <li class="reorder-item" draggable="true"><span class="drag-handle">&#x2807;</span>Valeria is the most qualified</li>
+      <li class="reorder-item" draggable="true"><span class="drag-handle">&#x2807;</span>and the most bilingual candidate</li>
+    </ul>
+    <button class="check-btn" onclick="checkOrder('order1',['Valeria is the most qualified','and the most bilingual candidate','on our shortlist.'],'fb1')">Check Order</button>
+    <div class="fb" id="fb1"></div>
+
+    <p style="font-size:12.5px;color:var(--txt);margin-bottom:8px;margin-top:18px"><strong>Sentence 2:</strong> Reorder to form a correct comparison.</p>
+    <ul class="reorder-list" id="order2">
+      <li class="reorder-item" draggable="true"><span class="drag-handle">&#x2807;</span>but his salary expectation</li>
+      <li class="reorder-item" draggable="true"><span class="drag-handle">&#x2807;</span>Roberto has more experience than Valeria,</li>
+      <li class="reorder-item" draggable="true"><span class="drag-handle">&#x2807;</span>is lower than hers.</li>
+    </ul>
+    <button class="check-btn" onclick="checkOrder('order2',['Roberto has more experience than Valeria,','but his salary expectation','is lower than hers.'],'fb2')">Check Order</button>
+    <div class="fb" id="fb2"></div>
+
+    <div class="gt-box">
+      <div class="gt-hdr">GT Originals — Teacher Notes</div>
+      <ul class="gt-tips">
+        <li>&#128084; The adjective vs noun contrast is the highest-value grammar point in S2A. Spanish does not distinguish between "está calificado" (adjective) and "tiene calificaciones" (noun) the same way English does. Make this explicit: draw two columns on the board — IS (adjective) / HAS (noun) — and ask students to sort the vocabulary from §2 into each column.</li>
+        <li>&#9888;&#65039; Watch for: "He is more experience" (mixing noun with "is") and "She has more experienced" (mixing adjective with "has"). These are the two most common errors from Mexican learners in HR contexts.</li>
+        <li>&#128188; Cultural bridge: in Mexican corporate culture, "la actitud" (attitude/proactivity) is often valued as much as formal qualifications. Ask students: "At your company, is experience more important than attitude?" — this triggers the grammar in a culturally relevant way.</li>
+        <li>&#127775; Upsell: students who can write a candidate comparison report in English are already doing B1-level professional writing. Point this out — "what you are doing right now is exactly what a B1.1 student does." Creates aspiration and positions the next level.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ §5 READING -->
+<div class="section">
+  <div class="sec-hdr">
+    <div class="sec-num">§5</div>
+    <div>
+      <div class="sec-label">Reading — <em>Andrea&apos;s Hiring Report</em></div>
+      <div class="sec-sub">Color-coded grammar structures · Comprehension T/F · 8–10 min</div>
+    </div>
+    <div class="sec-dur">&#9201; 8–10 MIN</div>
+  </div>
+  <div class="sec-body">
+
+    <div class="reading-card">
+      <div class="av-row">
+        <img class="avatar" src="https://images.unsplash.com/photo-1573497019236-61f323342eb7?w=200&q=80" alt="Andrea Soto" loading="lazy">
+        <div>
+          <div class="av-name">Andrea Soto</div>
+          <div class="av-role">Regional Sales Coordinator · Celaya, Guanajuato</div>
+        </div>
+        <div class="av-meta">Internal Hiring Report<br>Module 5 · Session 2A</div>
+      </div>
+      <div class="kw-box">
+        &#128273; Grammar: <strong style="color:var(--accent)">Comparatives — adj &amp; noun (orange)</strong> · <strong style="color:var(--cyan)">Superlatives (cyan)</strong> · <strong style="color:var(--green)">As…as equality (green)</strong>
+      </div>
+      <div class="reading-body">
+        <p>After reviewing both CVs and conducting phone interviews, I am ready to make my recommendation for the Logistics Coordinator position.</p>
+        <p>Roberto Morales has <span class="comp-hi">more experience than</span> Valeria Sandoval in logistics — eight years compared to four. He is also <span class="comp-hi">more available than</span> her, since he can start immediately. His salary expectation is <span class="comp-hi">significantly lower than</span> hers, which is important for our current budget.</p>
+        <p>However, Valeria Sandoval is <span class="comp-hi">more qualified than</span> Roberto in terms of formal education — she has a university degree and an MBA. She is also bilingual, which makes her <span class="comp-hi">more suitable than</span> Roberto for our international accounts. Her references are <span class="comp-hi">stronger than</span> his — three former managers confirmed her performance. Her English is <span class="as-hi">almost as strong as</span> a native speaker&apos;s.</p>
+        <p>In my opinion, Valeria is <span class="sup-hi">the most qualified</span> and <span class="sup-hi">the most strategic</span> hire for the long term. Yes, she is <span class="comp-hi">more expensive than</span> Roberto, but her bilingual skills and qualifications make her <span class="comp-hi">the stronger fit</span> for where our company is going. She ticks all the boxes for the international growth we are planning.</p>
+        <p>My recommendation: <strong>hire Valeria Sandoval.</strong></p>
+      </div>
+    </div>
+
+    <p style="font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:11px">Comprehension — True or False?</p>
+    <div class="tf-set">
+      <div class="tf-row">
+        <div class="tf-stmt">1. Roberto has more experience than Valeria in logistics.</div>
+        <div class="tf-btns">
+          <button class="tf-btn" onclick="checkTF(this,true,'tf1')">TRUE</button>
+          <button class="tf-btn" onclick="checkTF(this,false,'tf1')">FALSE</button>
+        </div>
+      </div>
+      <div class="tf-row">
+        <div class="tf-stmt">2. Valeria is available to start immediately.</div>
+        <div class="tf-btns">
+          <button class="tf-btn" onclick="checkTF(this,false,'tf2')">TRUE</button>
+          <button class="tf-btn" onclick="checkTF(this,true,'tf2')">FALSE</button>
+        </div>
+      </div>
+      <div class="tf-row">
+        <div class="tf-stmt">3. Andrea recommends Valeria because she is bilingual and more qualified.</div>
+        <div class="tf-btns">
+          <button class="tf-btn" onclick="checkTF(this,true,'tf3')">TRUE</button>
+          <button class="tf-btn" onclick="checkTF(this,false,'tf3')">FALSE</button>
+        </div>
+      </div>
+      <div class="tf-row">
+        <div class="tf-stmt">4. Roberto&apos;s salary expectation is higher than Valeria&apos;s.</div>
+        <div class="tf-btns">
+          <button class="tf-btn" onclick="checkTF(this,false,'tf4')">TRUE</button>
+          <button class="tf-btn" onclick="checkTF(this,true,'tf4')">FALSE</button>
+        </div>
+      </div>
+      <div class="tf-row">
+        <div class="tf-stmt">5. Andrea uses the phrase "she ticks all the boxes" in her report.</div>
+        <div class="tf-btns">
+          <button class="tf-btn" onclick="checkTF(this,true,'tf5')">TRUE</button>
+          <button class="tf-btn" onclick="checkTF(this,false,'tf5')">FALSE</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="micro-speak" style="margin-top:14px">
+      <div class="ms-icon">&#128483;&#65039;</div>
+      <div>
+        <div class="ms-label">Micro-Speaking</div>
+        <div class="ms-text">From memory: summarize Andrea&apos;s recommendation in 2 sentences. Use one comparative and one colloquial phrase from §3. Example: "Andrea recommends Valeria because she is more qualified than Roberto. She says Valeria ticks all the boxes." 30 seconds — go!</div>
+      </div>
+    </div>
+
+    <div class="tn">
+      <div class="tn-lbl">&#9889; Teacher Note — Reading</div>
+      <div class="tn-text">Ask students to underline all comparison structures before checking answers — color-coding in the text makes this visual. Connection to real life: "Does your company write hiring reports or candidate summaries in English? After today, you can." This is a direct upsell moment for English in the workplace. For stronger groups: ask them to rewrite the final paragraph from Roberto&apos;s point of view — flipping the comparatives builds deeper grammar control.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ §6 LISTENING -->
+<div class="section">
+  <div class="sec-hdr">
+    <div class="sec-num">§6</div>
+    <div>
+      <div class="sec-label">Listening — <em>The Interview Call</em></div>
+      <div class="sec-sub">ElevenLabs audio · Andrea on phone · Speed 0.82 · 8–10 min</div>
+    </div>
+    <div class="sec-dur">&#9201; 8–10 MIN</div>
+  </div>
+  <img class="img-banner" src="https://images.unsplash.com/photo-1423666639041-f56000c27a9a?w=900&q=80" alt="Professional phone call" loading="lazy">
+  <div class="sec-body">
+
+    <div class="player-box">
+      <div class="player-top">
+        <button class="play-btn-aud" id="playBtn">&#9654;</button>
+        <div>
+          <div class="track-title">The Interview Call — Vertex Logistics, Celaya</div>
+          <div class="track-sub">A2.2 · M5 · S2A · Voice: Sarah (American English) · Speed: 0.82 · ~55 sec</div>
+        </div>
+      </div>
+      <div class="waveform" id="wv"></div>
+    </div>
+
+    <button class="script-toggle" onclick="toggleScript()">&#9660; Show ElevenLabs Script</button>
+    <div class="script-box" id="scriptBox">Hi, this is Andrea Soto calling from Vertex Logistics in Celaya. I am calling to follow up on the Logistics Coordinator position. I have reviewed both candidates, and I want to share my thoughts before the final decision.
+
+Candidate A, Roberto, is more experienced than Candidate B — he has eight years in logistics, which is two times more than Valeria. He is also available sooner and his salary expectation is lower than hers. Those are important advantages.
+
+However, Candidate B, Valeria, is more qualified in terms of education and bilingual skills. Her English is stronger than Roberto's, which is critical for our international accounts. She also has more references than him, and they are all very positive.
+
+After thinking about both profiles carefully, I believe Valeria is the stronger fit for our long-term goals. Yes, she is more expensive than Roberto, and she needs two weeks notice. But she ticks all the boxes for what we need. She stands out from all the candidates we have seen this month.
+
+My recommendation is Valeria. It is not an easy call, but I think it is the right one. I can send the full comparison report by tomorrow morning.
+    </div>
+
+    <div class="tn">
+      <div class="tn-lbl">&#9889; Teacher Note — Listening</div>
+      <div class="tn-text">ElevenLabs: Voice = Sarah, Speed = 0.82, Stability = 0.65, Similarity = 0.80. Before playing: "Count the comparatives — how many can you hear?" (Answer: more experienced, more than, lower than, more qualified, stronger than, more references, more expensive, stronger fit — 8 instances). After listening: "Did Andrea change her recommendation from the written report? What is the same?" — This builds listening-to-reading comparison as a skill. Note: script uses "it is not an easy call" — connect back to §3 colloquial phrase "it&apos;s a tough call."</div>
+    </div>
+
+    <!-- COMPREHENSION MC -->
+    <div class="act-title" style="padding-top:16px">Comprehension Questions</div>
+    <div class="opt-group" style="margin-top:14px">
+      <div class="opt-q">1. Why does Andrea mention Roberto&apos;s salary expectation?</div>
+      <div class="opts" id="lq1">
+        <button class="opt" onclick="checkOpt(this,'Because it is lower than Valeria's — an advantage for the company','lq1')">Because he asked for too much money</button>
+        <button class="opt" onclick="checkOpt(this,'Because it is lower than Valeria's — an advantage for the company','lq1')">Because it is lower than Valeria's — an advantage for the company</button>
+        <button class="opt" onclick="checkOpt(this,'Because it is lower than Valeria's — an advantage for the company','lq1')">Because he refused to negotiate</button>
+      </div>
+    </div>
+    <div class="opt-group">
+      <div class="opt-q">2. What is Valeria&apos;s most important advantage according to Andrea?</div>
+      <div class="opts" id="lq2">
+        <button class="opt" onclick="checkOpt(this,'Her bilingual skills and stronger English for international accounts','lq2')">Her lower salary expectation</button>
+        <button class="opt" onclick="checkOpt(this,'Her bilingual skills and stronger English for international accounts','lq2')">Her bilingual skills and stronger English for international accounts</button>
+        <button class="opt" onclick="checkOpt(this,'Her bilingual skills and stronger English for international accounts','lq2')">Her immediate availability</button>
+      </div>
+    </div>
+    <div class="opt-group">
+      <div class="opt-q">3. Which colloquial phrase from §3 does Andrea use in the listening?</div>
+      <div class="opts" id="lq3">
+        <button class="opt" onclick="checkOpt(this,'She ticks all the boxes','lq3')">The pros outweigh the cons</button>
+        <button class="opt" onclick="checkOpt(this,'She ticks all the boxes','lq3')">She ticks all the boxes</button>
+        <button class="opt" onclick="checkOpt(this,'She ticks all the boxes','lq3')">It is a no-brainer</button>
+      </div>
+    </div>
+    <div class="opt-group">
+      <div class="opt-q">4. What will Andrea send by tomorrow morning?</div>
+      <div class="opts" id="lq4">
+        <button class="opt" onclick="checkOpt(this,'The full comparison report','lq4')">The candidate contracts</button>
+        <button class="opt" onclick="checkOpt(this,'The full comparison report','lq4')">The full comparison report</button>
+        <button class="opt" onclick="checkOpt(this,'The full comparison report','lq4')">The interview schedule</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ §SP SPEAKING PRACTICE -->
+<div class="section">
+  <div class="sec-hdr">
+    <div class="sec-num">§SP</div>
+    <div>
+      <div class="sec-label">Speaking Practice — <em>Your Hiring Decision</em></div>
+      <div class="sec-sub">6 guided questions · Pair and group discussion · Opinion Meter · 10–12 min</div>
+    </div>
+    <div class="sec-dur">&#9201; 10–12 MIN</div>
+  </div>
+  <img class="img-banner" src="https://images.unsplash.com/photo-1543269664-76bc3997d9ea?w=900&q=80" alt="Team discussion and decision making" loading="lazy">
+  <div class="sec-body">
+
+    <div class="speak-grid">
+      <div class="speak-card">
+        <div class="speak-num"><span class="speak-tag st-ts">T-S</span> Question 1 — Recall</div>
+        <div class="speak-q">Based on the reading and listening, give 3 reasons why Andrea chose Valeria over Roberto. Use comparatives.</div>
+        <div class="speak-hint">Grammar hint: "She chose Valeria because Valeria is more [adj] than Roberto / has more [noun] than Roberto."</div>
+      </div>
+      <div class="speak-card">
+        <div class="speak-num"><span class="speak-tag st-ss">S-S</span> Question 2 — Disagree</div>
+        <div class="speak-q">Your partner thinks Roberto is the better hire. You disagree — you prefer Valeria. Debate for 90 seconds. Each person must use at least 2 comparatives and 1 superlative.</div>
+        <div class="speak-hint">Grammar hint: "Yes, but Valeria is the most qualified candidate. Her English is stronger than his."</div>
+      </div>
+      <div class="speak-card">
+        <div class="speak-num"><span class="speak-tag st-ss">S-S</span> Question 3 — Apply</div>
+        <div class="speak-q">Think of a real hiring decision at your company (or a role you know well). Compare two types of people who could do that job. Who is the better fit?</div>
+        <div class="speak-hint">Grammar hint: Use "more [adj] than" + "has more [noun] than" + one colloquial phrase from today.</div>
+      </div>
+      <div class="speak-card">
+        <div class="speak-num"><span class="speak-tag st-cl">Class</span> Question 4 — Discussion</div>
+        <div class="speak-q">In your industry, which is more important for a Logistics Coordinator: bilingual skills or years of experience? Defend your answer using comparatives. Then vote as a class.</div>
+        <div class="speak-hint">Grammar hint: "Bilingual skills are more valuable than experience because…" / "Experience is more important than language because…"</div>
+      </div>
+      <div class="speak-card">
+        <div class="speak-num"><span class="speak-tag st-ts">T-S</span> Question 5 — Personal</div>
+        <div class="speak-q">If YOU were the candidate — like Valeria or Roberto — what would be your strongest comparison point against a competitor for your job? What makes you the most [adj] person for your role?</div>
+        <div class="speak-hint">Grammar hint: "I am the most [adj] person in my team because…" / "I have more [noun] than most of my colleagues."</div>
+      </div>
+      <div class="speak-card">
+        <div class="speak-num"><span class="speak-tag st-cl">Class</span> Question 6 — Challenge</div>
+        <div class="speak-q">Class debate: "Experience is always more important than formal education in the workplace." Who agrees? Who disagrees? Each side presents one argument using a superlative and one comparative. 2 minutes.</div>
+        <div class="speak-hint">Grammar hint: "The most important quality in any worker is…" / "Education is more valuable than experience because…"</div>
+      </div>
+    </div>
+
+    <!-- OPINION METER -->
+    <div class="om-wrap" style="margin-top:20px">
+      <div class="om-stmt">"In the hiring process, personality is more important than qualifications."</div>
+      <div class="om-track"><div class="om-bar" id="meterBar" style="width:50%"></div></div>
+      <div class="om-labels"><span>Disagree</span><span>50/50</span><span>Agree</span></div>
+      <div class="om-btns">
+        <button class="om-btn om-dis" onclick="moveMeter(-10)">&#128078; Disagree</button>
+        <button class="om-btn om-agr" onclick="moveMeter(10)">&#128077; Agree</button>
+      </div>
+      <div class="om-pct" id="meterPct">50% Agree</div>
+    </div>
+
+    <div class="tn">
+      <div class="tn-lbl">&#9889; Teacher Note — Speaking</div>
+      <div class="tn-text">Questions 1–2: quick, factual recall to lock the text content. Questions 3–4: real-world application — students should be speaking about their actual company, not the characters. Question 5 is the most personal and highest-value: ask students to think of themselves as candidates. This prepares them for real job interviews in English, which is a direct motivation driver for A2.2 learners in manufacturing and logistics. Question 6 Opinion Meter: let the class see the live percentage — use it as a conversation starter ("Why is it at 65%? Who voted agree?"). Expected errors to collect silently and review after: "more importanter," "the most experienced than," "as experience as."</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ 3 PHRASES FOR THIS WEEK -->
+<div class="phrases-wrap">
+  <div class="phrases-hdr">&#127919; This week, use these 3 phrases at work:</div>
+  <div class="phrases-sub">Practical English from today — ready to use in meetings, emails or performance reviews.</div>
+  <div class="phrases-grid">
+    <div class="phrase-card">
+      <div class="phrase-en">"[Name] is more experienced than [Name] in [area]."</div>
+      <div class="phrase-ctx">Use when comparing two colleagues or candidates in a meeting. Replace [area] with: logistics / customer service / project management / operations.</div>
+    </div>
+    <div class="phrase-card">
+      <div class="phrase-en">"She ticks all the boxes."</div>
+      <div class="phrase-ctx">Use when recommending a candidate or colleague who meets every requirement. Sounds professional and confident — much stronger than "she is good for the job."</div>
+    </div>
+    <div class="phrase-card">
+      <div class="phrase-en">"It&apos;s a tough call, but I think [option] is the stronger choice."</div>
+      <div class="phrase-ctx">Use when two options are close and you need to make a decision anyway. Shows you considered both sides — the mark of a professional communicator.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ §7 WRAP-UP -->
+<div class="section">
+  <div class="sec-hdr">
+    <div class="sec-num">§7</div>
+    <div>
+      <div class="sec-label">Wrap-Up — <em>S2A Complete</em></div>
+      <div class="sec-sub">Key takeaways · Checklist · My Win Today · Next session preview · 5–8 min</div>
+    </div>
+    <div class="sec-dur">&#9201; 5–8 MIN</div>
+  </div>
+  <div class="sec-body">
+
+    <div class="wrapup-grid">
+      <div class="wu-key">
+        <div class="wu-key-title">&#9744; Adj vs Noun comparison</div>
+        <div class="wu-key-text">"She IS more qualified" (adjective after IS). "He HAS more experience" (noun after HAS). Different verbs, different structures — both use "more … than."</div>
+      </div>
+      <div class="wu-key">
+        <div class="wu-key-title">&#9744; Superlatives in HR context</div>
+        <div class="wu-key-text">"The most qualified candidate" / "The strongest fit" / "The best choice for long-term growth." Always use THE before a superlative.</div>
+      </div>
+      <div class="wu-key">
+        <div class="wu-key-title">&#9744; Colloquial HR phrases</div>
+        <div class="wu-key-text">"Ticks all the boxes" · "Strong fit for the role" · "Stands out from the others" · "Tough call." These phrases make you sound like a native HR professional.</div>
+      </div>
+    </div>
+
+    <p style="font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:10px">I Can Now...</p>
+    <div class="cl-wrap">
+      <div class="cl-item" onclick="toggleDone(this)"><span class="cl-check">&#9744;</span>Compare two candidates using adjectives: "more qualified than / more experienced than"</div>
+      <div class="cl-item" onclick="toggleDone(this)"><span class="cl-check">&#9744;</span>Compare using nouns: "has more experience than / has more qualifications than"</div>
+      <div class="cl-item" onclick="toggleDone(this)"><span class="cl-check">&#9744;</span>Use superlatives to identify the best option: "the most qualified / the strongest fit"</div>
+      <div class="cl-item" onclick="toggleDone(this)"><span class="cl-check">&#9744;</span>Use HR colloquial phrases: "ticks all the boxes", "tough call", "stands out from the others"</div>
+      <div class="cl-item" onclick="toggleDone(this)"><span class="cl-check">&#9744;</span>Write or say a short candidate comparison with a clear recommendation and reasons</div>
+    </div>
+
+    <div class="next-card">
+      <div class="next-label">&#9654; Coming Next — Session 2B</div>
+      <div class="next-title">The Hiring Pitch — Production &amp; Fluency</div>
+      <div class="next-sub">In S2B you take today&apos;s candidate comparison language into timed debates, role-plays and a live hiring pitch. You will also compare cities and travel options — same comparatives, new context. Bring your HR vocabulary from today.</div>
+    </div>
+
+    <div class="win-area">
+      <div class="win-lbl">&#127942; My Win Today</div>
+      <textarea class="win-ta" id="winTA" placeholder="Write one thing from today that you can use at work this week — in English..."></textarea>
+      <button class="win-btn" onclick="saveWin()">Save My Win</button>
+      <div class="win-ok" id="winOK">&#10003; Saved! See you in S2B.</div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="ftr">
+  <div class="fbrand">Gabriel Turner · English Training</div>
+  <div class="finfo">A2.2 · Module 5 · Session 2A · GT_A2_2_M5_S2A_TEACHER_v1</div>
+  <div class="flvs">
+    <div class="flv">A1.1</div>
+    <div class="flv">A1.2</div>
+    <div class="flv">A2.1</div>
+    <div class="flv on">A2.2</div>
+    <div class="flv">B1.1</div>
+    <div class="flv">B1.2</div>
+  </div>
+</footer>
+
+<script>
+// ── SPEAK ──────────────────────────────────────────────
+function speak(t){if(!window.speechSynthesis)return;speechSynthesis.cancel();var u=new SpeechSynthesisUtterance(t);u.lang='en-US';u.rate=0.82;u.pitch=1;speechSynthesis.speak(u);}
+
+// ── BADGES ─────────────────────────────────────────────
+function earnBadge(id){var el=document.getElementById(id);if(el&&!el.classList.contains('earned')){el.classList.add('earned');launchConfetti();}}
+function launchConfetti(){
+  var colors=['#F97316','#FB923C','#FFB800','#FF4D6D','#fff'];
+  for(var i=0;i<60;i++){
+    (function(i){setTimeout(function(){
+      var d=document.createElement('div');
+      var sz=6+Math.random()*8;
+      d.style.cssText='position:fixed;top:-10px;width:'+sz+'px;height:'+sz+'px;background:'+colors[Math.floor(Math.random()*colors.length)]+';left:'+Math.random()*100+'vw;border-radius:'+(Math.random()>.5?'50%':'2px')+';pointer-events:none;z-index:9999;animation:fall '+(1.2+Math.random()*.8)+'s linear forwards';
+      document.body.appendChild(d);
+      setTimeout(function(){d.remove();},2000);
+    },i*30);})(i);
+  }
+}
+var confettiCSS=document.createElement('style');
+confettiCSS.textContent='@keyframes fall{from{opacity:1;transform:translateY(0) rotate(0deg)}to{opacity:0;transform:translateY(100vh) rotate(720deg)}}';
+document.head.appendChild(confettiCSS);
+
+// ── PROGRESS BAR ───────────────────────────────────────
+window.addEventListener('scroll',function(){
+  var pct=(window.scrollY/(document.body.scrollHeight-window.innerHeight))*100;
+  document.getElementById('progressFill').style.width=pct+'%';
+});
+
+// ── QUICK WIN TIMER (auto-starts) ──────────────────────
+(function(){
+  var arc=document.getElementById('arcQW');
+  var txt=document.getElementById('txtQW');
+  if(!arc||!txt)return;
+  var total=20,circ=144.51,rem=total;
+  arc.style.strokeDashoffset=0;
+  var iv=setInterval(function(){
+    rem--;
+    txt.textContent=rem;
+    arc.style.strokeDashoffset=circ*(1-rem/total);
+    if(rem<=5)arc.style.stroke='#FF4D6D';
+    if(rem<=0){clearInterval(iv);arc.style.stroke='var(--success)';txt.textContent='\u2713';earnBadge('b1');}
+  },1000);
+})();
+
+// ── VOCAB QUIZ ─────────────────────────────────────────
+var quizData=[
+  {q:'Which word means "having the right skills or education for a job"?',opts:['available','qualified','bilingual','proactive'],ans:'qualified'},
+  {q:'What does "proactive" mean?',opts:['waiting for instructions','taking action before problems happen','working very fast','being bilingual'],ans:'taking action before problems happen'},
+  {q:'Fill in: "Roberto _____ more experience _____ Valeria."',opts:['is / than','has / than','is / as','has / as'],ans:'has / than'},
+  {q:'Fill in: "Valeria _____ more qualified _____ Roberto."',opts:['has / than','is / as','is / than','has / as'],ans:'is / than'},
+  {q:'What does "shortlist" mean in HR?',opts:['a list of rejected candidates','a small list of the best candidates','a list of salary expectations','a list of interview questions'],ans:'a small list of the best candidates'},
+  {q:'Which sentence is CORRECT?',opts:['She is more experience than him.','She has more experienced than him.','She is more experienced than him.','She is more experienced as him.'],ans:'She is more experienced than him.'},
+  {q:'What does "negotiate" mean?',opts:['to reject an offer','to write a report','to discuss and agree on terms','to shortlist a candidate'],ans:'to discuss and agree on terms'},
+  {q:'"She ticks all the boxes" means:',opts:['she is too expensive','she meets every requirement on the list','she needs more experience','she is not available'],ans:'she meets every requirement on the list'},
+  {q:'What does "bilingual" mean?',opts:['able to work two jobs','able to speak two languages fluently','having two degrees','working in two cities'],ans:'able to speak two languages fluently'},
+  {q:'"It is a tough call" means:',opts:['it is an obvious decision','the phone call was difficult','the decision is difficult because both options are similar','the candidate called too many times'],ans:'the decision is difficult because both options are similar'}
+];
+var qIdx=0,score=0;
+function startQuiz(){
+  qIdx=0;score=0;
+  document.getElementById('quizScore').textContent='0 / 10';
+  document.getElementById('quizProg').style.width='0%';
+  document.getElementById('quizFB').textContent='';
+  document.getElementById('quizRestart').style.display='none';
+  renderQ();
+}
+function renderQ(){
+  if(qIdx>=quizData.length){
+    document.getElementById('quizQ').textContent='Quiz complete! Score: '+score+' / '+quizData.length;
+    document.getElementById('quizOpts').innerHTML='';
+    document.getElementById('quizRestart').style.display='inline-block';
+    if(score>=8)earnBadge('b2');
+    return;
+  }
+  var d=quizData[qIdx];
+  document.getElementById('quizQ').textContent=(qIdx+1)+'. '+d.q;
+  document.getElementById('quizProg').style.width=((qIdx/quizData.length)*100)+'%';
+  document.getElementById('quizFB').textContent='';
+  var c=document.getElementById('quizOpts');c.innerHTML='';
+  var shuffled=d.opts.slice().sort(function(){return Math.random()-.5;});
+  shuffled.forEach(function(o){
+    var b=document.createElement('button');
+    b.className='quiz-opt';b.textContent=o;
+    b.onclick=function(){
+      c.querySelectorAll('.quiz-opt').forEach(function(x){x.disabled=true;});
+      if(o===d.ans){b.classList.add('qcorrect');score++;document.getElementById('quizFB').textContent='\u2713 Correct!';}
+      else{b.classList.add('qwrong');c.querySelectorAll('.quiz-opt').forEach(function(x){if(x.textContent===d.ans)x.classList.add('qcorrect');});document.getElementById('quizFB').textContent='\u2717 Correct: '+d.ans;}
+      document.getElementById('quizScore').textContent=score+' / '+quizData.length;
+      qIdx++;
+      setTimeout(renderQ,1100);
+    };
+    c.appendChild(b);
+  });
+}
+startQuiz();
+
+// ── MATCHING PAIRS GAME ────────────────────────────────
+var pairsData=[
+  {word:'qualified',def:'Has the right skills or education for the job'},
+  {word:'shortlist',def:'Small group of the best candidates selected'},
+  {word:'proactive',def:'Takes action before problems happen'},
+  {word:'negotiate',def:'Discusses and agrees on terms like salary'},
+  {word:'reference',def:'Person or letter confirming the skills of a candidate'}
+];
+var pairsSelected=null,pairsMatched=0;
+function initPairs(){
+  var all=[];
+  pairsData.forEach(function(p){
+    all.push({type:'word',text:p.word,pair:p.def});
+    all.push({type:'def',text:p.def,pair:p.word});
+  });
+  all.sort(function(){return Math.random()-.5;});
+  var grid=document.getElementById('pairsGrid');
+  grid.innerHTML='';
+  pairsSelected=null;pairsMatched=0;
+  document.getElementById('pairsScore').textContent='0';
+  document.getElementById('pairsResult').textContent='';
+  all.forEach(function(item){
+    var card=document.createElement('div');
+    card.className='pair-card';
+    card.textContent=item.text;
+    card.dataset.pair=item.pair;
+    card.dataset.text=item.text;
+    card.onclick=function(){selectPair(this);};
+    grid.appendChild(card);
+  });
+}
+function selectPair(card){
+  if(card.classList.contains('matched'))return;
+  if(pairsSelected===card){
+    card.classList.remove('flipped');
+    pairsSelected=null;
+    return;
+  }
+  card.classList.add('flipped');
+  if(!pairsSelected){pairsSelected=card;return;}
+  var first=pairsSelected,second=card;
+  pairsSelected=null;
+  if(first.dataset.pair===second.dataset.text&&second.dataset.pair===first.dataset.text){
+    first.classList.remove('flipped');second.classList.remove('flipped');
+    first.classList.add('matched');second.classList.add('matched');
+    pairsMatched++;
+    document.getElementById('pairsScore').textContent=pairsMatched;
+    if(pairsMatched>=pairsData.length){
+      document.getElementById('pairsResult').textContent='\u2713 All pairs matched! Excellent!';
+      document.getElementById('pairsResult').style.color='var(--success)';
+      earnBadge('b2');
+    }
+  }else{
+    first.classList.add('wrong');second.classList.add('wrong');
+    setTimeout(function(){
+      first.classList.remove('flipped','wrong');
+      second.classList.remove('flipped','wrong');
+    },700);
+  }
+}
+initPairs();
+
+// ── CHECK OPT ──────────────────────────────────────────
+function checkOpt(btn,correct,qid){
+  var c=document.getElementById(qid);
+  c.querySelectorAll('.opt').forEach(function(b){b.disabled=true;if(b.textContent.trim()===correct)b.classList.add('correct');});
+  if(btn.textContent.trim()!==correct)btn.classList.add('wrong');
+  earnBadge('b3');
+}
+
+// ── CHECK TF ───────────────────────────────────────────
+function checkTF(btn,isCorrect,id){
+  var row=btn.closest('.tf-row');
+  row.querySelectorAll('.tf-btn').forEach(function(b){b.disabled=true;});
+  if(isCorrect){
+    btn.style.cssText='background:rgba(0,229,160,.15);border-color:var(--success);color:var(--success)';
+  }else{
+    btn.style.cssText='background:rgba(255,77,109,.12);border-color:var(--danger);color:var(--danger)';
+    var sib=Array.from(row.querySelectorAll('.tf-btn')).find(function(b){return b!==btn;});
+    if(sib)sib.style.cssText='background:rgba(0,229,160,.12);border-color:var(--success);color:var(--success)';
+  }
+  earnBadge('b4');
+}
+
+// ── DRAG & DROP ────────────────────────────────────────
+var dragSrc=null;
+function initDrag(listId){
+  var list=document.getElementById(listId);if(!list)return;
+  list.querySelectorAll('.reorder-item').forEach(function(item){
+    item.addEventListener('dragstart',function(){dragSrc=this;this.classList.add('dragging');});
+    item.addEventListener('dragend',function(){this.classList.remove('dragging');list.querySelectorAll('.reorder-item').forEach(function(i){i.classList.remove('drag-over');});});
+    item.addEventListener('dragover',function(e){e.preventDefault();list.querySelectorAll('.reorder-item').forEach(function(i){i.classList.remove('drag-over');});if(this!==dragSrc)this.classList.add('drag-over');});
+    item.addEventListener('drop',function(e){e.preventDefault();if(this!==dragSrc){var all=[...list.querySelectorAll('.reorder-item')];if(all.indexOf(dragSrc)<all.indexOf(this))list.insertBefore(dragSrc,this.nextSibling);else list.insertBefore(dragSrc,this);}});
+  });
+}
+function checkOrder(listId,correct,fbId){
+  var list=document.getElementById(listId);
+  var current=[...list.querySelectorAll('.reorder-item')].map(function(i){return i.textContent.replace('\u2807','').trim();});
+  var fb=document.getElementById(fbId);
+  if(JSON.stringify(current)===JSON.stringify(correct)){
+    fb.className='fb show ok';fb.textContent='\u2713 Correct! Well done!';
+    list.querySelectorAll('.reorder-item').forEach(function(i){i.style.borderColor='var(--success)';i.style.color='var(--success)';});
+    earnBadge('b3');
+  }else{
+    fb.className='fb show no';fb.textContent='\u2717 Not quite. Correct order: '+correct.join(' — ');
+    list.querySelectorAll('.reorder-item').forEach(function(i){i.style.borderColor='var(--danger)';});
+  }
+}
+
+// ── SCRIPT TOGGLE ──────────────────────────────────────
+function toggleScript(){
+  var b=document.getElementById('scriptBox');b.classList.toggle('open');
+  document.querySelector('.script-toggle').textContent=b.classList.contains('open')?'\u25b2 Hide Script':'\u25bc Show ElevenLabs Script';
+}
+
+// ── WAVEFORM ───────────────────────────────────────────
+var wv=document.getElementById('wv');
+for(var i=0;i<60;i++){var wb=document.createElement('div');wb.className='wbar';wb.style.height=(8+Math.sin(i*.6)*10+Math.random()*18)+'px';wb.style.opacity=.3+Math.random()*.4;wv.appendChild(wb);}
+
+// ── LISTENING BADGE ────────────────────────────────────
+document.getElementById('playBtn').addEventListener('click',function(){earnBadge('b4');});
+
+// ── OPINION METER ──────────────────────────────────────
+var meterVal=50;
+function moveMeter(delta){
+  meterVal=Math.max(5,Math.min(95,meterVal+delta));
+  document.getElementById('meterBar').style.width=meterVal+'%';
+  document.getElementById('meterPct').textContent=meterVal+'% Agree';
+}
+
+// ── CHECKLIST ──────────────────────────────────────────
+function toggleDone(el){
+  el.classList.toggle('done');
+  var check=el.querySelector('.cl-check');
+  check.textContent=el.classList.contains('done')?'\u2713':'\u2610';
+  var all=document.querySelectorAll('.cl-item');
+  var done=[...all].filter(function(x){return x.classList.contains('done');});
+  if(done.length===all.length)earnBadge('b5');
+}
+
+// ── MY WIN ─────────────────────────────────────────────
+function saveWin(){
+  var ta=document.getElementById('winTA');
+  if(ta.value.trim().length>3){
+    earnBadge('b5');
+    ta.style.borderColor='var(--success)';
+    document.getElementById('winOK').style.display='block';
+  }
+}
+
+// ── STYLES FOR DRAG LISTS ──────────────────────────────
+(function(){
+  var s=document.createElement('style');
+  s.textContent='.reorder-list{display:flex;flex-direction:column;gap:7px;margin-bottom:10px;list-style:none;padding-left:0}.reorder-item{background:var(--surface);border:1px solid var(--border-dim);border-radius:8px;padding:10px 13px;cursor:grab;font-size:12.5px;color:var(--txt);display:flex;align-items:center;gap:9px;user-select:none;transition:border-color .2s}.reorder-item:active{cursor:grabbing}.reorder-item.dragging{opacity:.4}.reorder-item.drag-over{border-color:var(--accent);border-style:dashed}.drag-handle{color:var(--dim);font-size:13px;flex-shrink:0}.check-btn{background:var(--accent);border:none;color:#fff;padding:9px 22px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;cursor:pointer;border-radius:6px;margin-top:8px}.fb{display:none;padding:10px 14px;font-size:12.5px;margin-top:8px;line-height:1.5;border-radius:7px}.fb.show{display:block}.fb.ok{background:rgba(0,229,160,.1);border:1px solid rgba(0,229,160,.3);color:var(--success)}.fb.no{background:rgba(255,77,109,.08);border:1px solid rgba(255,77,109,.25);color:var(--danger)}';
+  document.head.appendChild(s);
+})();
+
+// ── INIT ───────────────────────────────────────────────
+initDrag('order1');
+initDrag('order2');
+</script>
+</body>
+</html>

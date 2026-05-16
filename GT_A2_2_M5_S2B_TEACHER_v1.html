@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GT A2.2 · M5 · S2B — Comparing Candidates</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#080808;--surface:#111318;--surface2:#1a1f28;
+  --border:rgba(249,115,22,.18);--border-dim:rgba(255,255,255,0.07);
+  --accent:#F97316;--accent2:#FB923C;
+  --cyan:#00CFFF;--gold:#FFB800;--green:#00E676;
+  --danger:#FF4D6D;--success:#00E5A0;--warn:#FFB347;
+  --violet:#A78BFA;
+  --txt:#F0F4F8;--muted:#8A9BB0;--dim:rgba(226,226,226,.25);
+  --font-head:'Syne',sans-serif;--font-body:'DM Sans',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--txt);font-family:var(--font-body);font-size:14px;line-height:1.6;overflow-x:hidden}
+
+/* HEADER */
+.hdr{background:var(--surface);border-bottom:1px solid var(--border);padding:16px 48px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;position:sticky;top:0;z-index:100}
+.brand{display:flex;align-items:center;gap:10px}
+.dot{width:8px;height:8px;background:var(--accent);border-radius:50%}
+.bname{font-family:var(--font-head);font-weight:800;font-size:13px;letter-spacing:2.5px;text-transform:uppercase;color:#fff}
+.bsub{font-size:10px;color:var(--muted);letter-spacing:1px}
+.sess-tag{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.tag{display:inline-block;padding:3px 10px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase}
+.t-or{background:rgba(249,115,22,.15);color:var(--accent);border:1px solid rgba(249,115,22,.3)}
+.t-go{background:rgba(0,230,118,.1);color:var(--green);border:1px solid rgba(0,230,118,.25)}
+.t-cy{background:rgba(0,207,255,.1);color:var(--cyan);border:1px solid rgba(0,207,255,.25)}
+.t-gd{background:rgba(255,184,0,.1);color:var(--gold);border:1px solid rgba(255,184,0,.25)}
+
+/* BADGE STRIP */
+.badge-strip{display:flex;gap:6px;align-items:center}
+.badge-strip span{width:28px;height:28px;border-radius:50%;background:var(--surface2);border:1px solid var(--border-dim);display:flex;align-items:center;justify-content:center;font-size:13px;filter:grayscale(1);opacity:.4;transition:all .4s}
+.badge-strip span.earned{filter:none;opacity:1;border-color:var(--accent);background:rgba(249,115,22,.15);transform:scale(1.1)}
+
+/* PROGRESS BAR */
+.progress-bar{height:2px;background:var(--surface2);position:sticky;top:57px;z-index:99}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));width:0%;transition:width .3s}
+
+/* SECTIONS */
+.section{margin:0 0 3px 0;overflow:hidden}
+.sec-hdr{display:flex;align-items:center;gap:14px;padding:20px 48px;background:linear-gradient(135deg,rgba(249,115,22,.06),transparent);border-bottom:1px solid var(--border)}
+.sec-num{font-family:var(--font-head);font-size:10px;font-weight:800;color:var(--accent);letter-spacing:.15em;text-transform:uppercase;background:rgba(249,115,22,.1);border:1px solid rgba(249,115,22,.25);padding:3px 10px;border-radius:20px;white-space:nowrap}
+.sec-label{font-family:var(--font-head);font-size:22px;font-weight:800;color:#fff}
+.sec-label em{color:var(--accent);font-style:normal}
+.sec-sub{font-size:12px;color:var(--muted);margin-top:2px}
+.sec-dur{font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;color:var(--gold);border:1px solid rgba(255,184,0,.2);padding:2px 9px;margin-left:auto;white-space:nowrap}
+.sec-body{padding:28px 48px}
+
+/* HERO / BANNER */
+.img-hero{width:100%;height:260px;object-fit:cover;display:block;filter:brightness(.52);border-bottom:1px solid var(--border)}
+.img-banner{width:100%;height:150px;object-fit:cover;display:block;filter:brightness(.5);border-radius:10px;margin-bottom:16px}
+
+/* HOT TAKE */
+.hot-take{background:rgba(249,115,22,.07);border:1px solid rgba(249,115,22,.3);border-radius:12px;padding:20px 24px;margin-top:14px}
+.ht-label{font-family:var(--font-head);font-size:9px;font-weight:800;letter-spacing:2.5px;text-transform:uppercase;color:var(--accent);margin-bottom:10px}
+.ht-statement{font-size:15px;color:#fff;font-weight:500;line-height:1.6;margin-bottom:16px;border-left:3px solid var(--accent);padding-left:14px}
+.ht-row{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.ht-hint{font-size:12px;color:var(--muted);font-style:italic;flex:1;min-width:160px}
+
+/* TIMER */
+.timer-wrap{display:flex;flex-direction:column;align-items:center;gap:6px}
+.timer-svg{transform:rotate(-90deg)}
+.timer-text{font-family:var(--font-head);font-size:16px;font-weight:800;fill:var(--accent)}
+.timer-lbl{font-size:10px;color:var(--muted);text-align:center;letter-spacing:1px}
+.timer-btns{display:flex;gap:7px;margin-top:4px}
+.t-btn{background:var(--accent);border:none;color:#fff;padding:6px 14px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1px;cursor:pointer;border-radius:5px}
+.t-btn-o{background:none;border:1px solid var(--border-dim);color:var(--muted)}
+.t-btn-o:hover{border-color:var(--accent);color:var(--accent);background:none}
+
+/* TEACHER NOTE */
+.tn{background:var(--surface2);border:1px solid var(--border-dim);border-left:3px solid var(--gold);border-radius:8px;padding:13px 16px;margin-top:14px}
+.tn-lbl{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:6px}
+.tn-text{font-size:12px;color:rgba(255,184,0,.82);line-height:1.6}
+.tn-cy{border-left-color:var(--cyan)}
+.tn-cy .tn-lbl{color:var(--cyan)}
+.tn-cy .tn-text{color:rgba(0,207,255,.82)}
+
+/* ROUND CARDS */
+.round-grid{display:flex;flex-direction:column;gap:12px;margin-top:14px}
+.round-card{background:var(--surface);border:1px solid var(--border-dim);border-radius:10px;overflow:hidden}
+.round-img{width:100%;height:110px;object-fit:cover;display:block;filter:brightness(.5)}
+.round-body{padding:14px 18px}
+.round-tag-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.rtag{display:inline-block;padding:2px 9px;font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:1px;border-radius:4px;text-transform:uppercase}
+.rt-ts{background:rgba(249,115,22,.12);color:var(--accent);border:1px solid rgba(249,115,22,.25)}
+.rt-ss{background:rgba(0,229,160,.08);color:var(--success);border:1px solid rgba(0,229,160,.2)}
+.rt-cl{background:rgba(0,207,255,.08);color:var(--cyan);border:1px solid rgba(0,207,255,.2)}
+.round-q{font-size:14px;color:#fff;line-height:1.55;margin-bottom:8px}
+.reveal-btn{background:none;border:1px solid var(--border-dim);color:var(--muted);padding:6px 14px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1px;cursor:pointer;border-radius:5px;transition:all .2s}
+.reveal-btn:hover{border-color:var(--accent);color:var(--accent)}
+.model-reveal{display:none;margin-top:10px;padding:12px 14px;background:rgba(249,115,22,.06);border-left:3px solid var(--accent);border-radius:5px;font-size:12.5px;color:var(--txt);line-height:1.7}
+.model-reveal.show{display:block}
+.model-reveal .m-comp{color:var(--accent);font-weight:700}
+.model-reveal .m-sup{color:var(--cyan);font-weight:700}
+.model-reveal .m-coll{color:var(--warn);font-weight:700}
+
+/* OPEN THE BOX GAME */
+.otb-wrap{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-top:20px}
+.otb-hdr{padding:14px 20px;background:rgba(249,115,22,.08);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.otb-hdr-title{font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent)}
+.otb-body{padding:24px}
+.otb-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:18px}
+.otb-box{background:var(--surface2);border:2px solid var(--border-dim);border-radius:10px;padding:20px 12px;text-align:center;cursor:pointer;transition:all .3s;position:relative;overflow:hidden}
+.otb-box:hover:not(.opened){border-color:var(--accent);background:rgba(249,115,22,.08);transform:translateY(-2px)}
+.otb-box.opened{border-color:var(--success);background:rgba(0,229,160,.07);cursor:default}
+.otb-num{font-family:var(--font-head);font-size:28px;font-weight:800;color:var(--accent);display:block;margin-bottom:6px;transition:all .3s}
+.otb-box.opened .otb-num{font-size:13px;color:var(--success);margin-bottom:4px}
+.otb-icon{font-size:22px;display:block}
+.otb-box.opened .otb-icon{display:none}
+.otb-prompt{display:none;font-size:12px;color:var(--txt);line-height:1.5;text-align:left}
+.otb-box.opened .otb-prompt{display:block}
+.otb-result{background:var(--surface2);border:1px solid var(--border-dim);border-radius:10px;padding:16px 20px;min-height:56px;font-size:13px;color:var(--muted);font-style:italic;text-align:center}
+
+/* ERROR CORRECTION */
+.ec-set{display:flex;flex-direction:column;gap:10px;margin-bottom:14px}
+.ec-row{background:var(--surface);border:1px solid var(--border-dim);border-radius:8px;padding:13px 16px}
+.ec-wrong{font-size:13px;color:rgba(255,77,109,.9);margin-bottom:8px;font-style:italic}
+.ec-wrong::before{content:"\2717  ";color:var(--danger);font-style:normal;font-weight:700}
+.ec-opts{display:flex;gap:8px;flex-wrap:wrap}
+.ec-opt{background:var(--surface2);border:1px solid var(--border-dim);color:var(--txt);padding:7px 14px;font-family:var(--font-body);font-size:12px;cursor:pointer;transition:all .2s;border-radius:6px}
+.ec-opt:hover:not(:disabled){border-color:var(--success);color:var(--success)}
+.ec-opt.correct{background:rgba(0,229,160,.12);border-color:var(--success);color:var(--success)}
+.ec-opt.wrong{background:rgba(255,77,109,.12);border-color:var(--danger);color:var(--danger)}
+.ec-opt:disabled{cursor:not-allowed}
+.ec-fb{font-size:11.5px;margin-top:8px;display:none;padding:6px 10px;border-radius:5px}
+.ec-fb.show.ok{display:block;background:rgba(0,229,160,.08);color:var(--success)}
+.ec-fb.show.no{display:block;background:rgba(255,77,109,.08);color:var(--danger)}
+
+/* SOLO CHALLENGE */
+.solo-box{background:rgba(249,115,22,.06);border:1px solid rgba(249,115,22,.25);border-radius:12px;padding:22px 26px;margin-top:16px}
+.solo-lbl{font-family:var(--font-head);font-size:9px;font-weight:800;letter-spacing:2.5px;text-transform:uppercase;color:var(--accent);margin-bottom:10px}
+.solo-task{font-size:14px;color:#fff;line-height:1.7;margin-bottom:16px}
+.solo-rubric{display:flex;flex-direction:column;gap:7px;margin-top:14px}
+.rubric-row{display:flex;align-items:center;gap:12px;font-size:12px}
+.rubric-check{width:18px;height:18px;border:2px solid var(--border-dim);border-radius:4px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0;transition:all .2s}
+.rubric-check.checked{background:var(--success);border-color:var(--success);color:#000}
+.rubric-label{color:var(--txt);flex:1}
+.rubric-pts{font-family:var(--font-head);font-size:10px;font-weight:700;color:var(--muted);white-space:nowrap}
+.rubric-total{font-family:var(--font-head);font-size:12px;font-weight:700;color:var(--accent);text-align:right;margin-top:10px}
+
+/* LEADERBOARD */
+.lb-wrap{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-top:20px}
+.lb-hdr{padding:14px 20px;background:rgba(255,184,0,.08);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.lb-title{font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold)}
+.lb-body{padding:16px 20px}
+.lb-input-row{display:grid;grid-template-columns:1fr 1fr auto;gap:10px;margin-bottom:14px;align-items:end}
+.lb-input{background:var(--surface2);border:1px solid var(--border-dim);color:var(--txt);padding:9px 12px;font-family:var(--font-body);font-size:13px;border-radius:7px;width:100%}
+.lb-input:focus{outline:none;border-color:var(--accent)}
+.lb-input-lbl{font-size:10px;color:var(--dim);font-family:var(--font-head);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px}
+.lb-add-btn{background:var(--accent);border:none;color:#fff;padding:10px 18px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1px;cursor:pointer;border-radius:7px;white-space:nowrap}
+.lb-list{list-style:none;display:flex;flex-direction:column;gap:6px}
+.lb-row{display:flex;align-items:center;gap:12px;padding:10px 14px;background:var(--surface2);border-radius:8px;border:1px solid var(--border-dim)}
+.lb-pos{font-family:var(--font-head);font-size:12px;font-weight:800;color:var(--accent);min-width:22px}
+.lb-name{flex:1;font-size:13px;color:var(--txt)}
+.lb-score{font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--gold)}
+.lb-empty{font-size:12px;color:var(--dim);text-align:center;padding:16px;font-style:italic}
+
+/* GT BOX */
+.gt-box{background:rgba(255,184,0,.04);border:1px solid rgba(255,184,0,.18);border-radius:10px;padding:16px 20px;margin-top:18px}
+.gt-hdr{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold);margin-bottom:9px}
+.gt-hdr::before{content:'\2605 ';font-size:11px}
+.gt-tips{list-style:none;display:flex;flex-direction:column;gap:7px}
+.gt-tips li{font-size:12px;color:rgba(255,184,0,.82);padding-left:14px;position:relative;line-height:1.5}
+.gt-tips li::before{content:'\2192';position:absolute;left:0;color:var(--gold)}
+
+/* PHRASES BLOCK */
+.phrases-wrap{padding:28px 48px;background:rgba(255,184,0,.03);border-top:1px solid rgba(255,184,0,.12);border-bottom:1px solid rgba(255,184,0,.12)}
+.phrases-hdr{font-family:var(--font-head);font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:6px}
+.phrases-sub{font-size:12px;color:var(--muted);margin-bottom:18px}
+.phrases-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.phrase-card{background:var(--surface);border:1px solid rgba(255,184,0,.2);border-radius:10px;padding:16px 18px;border-top:3px solid var(--gold)}
+.phrase-en{font-family:var(--font-head);font-size:13.5px;font-weight:700;color:#fff;margin-bottom:6px}
+.phrase-ctx{font-size:11.5px;color:var(--muted);line-height:1.5}
+
+/* WRAP-UP */
+.wrapup-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px}
+.wu-key{background:var(--surface);border:1px solid var(--border-dim);border-radius:10px;padding:16px 18px;border-top:3px solid var(--accent)}
+.wu-key-title{font-family:var(--font-head);font-size:12px;font-weight:700;color:var(--accent);margin-bottom:6px}
+.wu-key-text{font-size:12px;color:var(--muted);line-height:1.55}
+.cl-wrap{display:flex;flex-direction:column;gap:8px;margin:16px 0}
+.cl-item{background:var(--surface);border:1px solid var(--border-dim);border-radius:8px;padding:12px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:all .2s;font-size:13px;color:var(--txt)}
+.cl-item.done{border-color:var(--success);color:var(--success);background:rgba(0,229,160,.06)}
+.cl-check{font-size:16px;flex-shrink:0}
+.next-card{background:var(--surface);border:1px solid rgba(0,207,255,.25);border-radius:10px;padding:18px 22px;border-left:3px solid var(--cyan);margin-top:14px}
+.next-label{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--cyan);margin-bottom:6px}
+.next-title{font-size:14px;font-weight:600;color:#fff;margin-bottom:4px}
+.next-sub{font-size:12px;color:var(--muted);line-height:1.55}
+.win-area{background:var(--surface);border:1px solid var(--border-dim);border-radius:10px;padding:18px 22px;margin-top:14px}
+.win-lbl{font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:8px}
+.win-ta{width:100%;background:var(--surface2);border:1px solid var(--border-dim);color:var(--txt);padding:12px 14px;font-family:var(--font-body);font-size:13px;border-radius:7px;resize:vertical;min-height:80px}
+.win-ta:focus{outline:none;border-color:var(--accent)}
+.win-btn{background:var(--accent);border:none;color:#fff;padding:9px 22px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;cursor:pointer;border-radius:6px;margin-top:10px}
+.win-ok{display:none;margin-top:8px;font-size:12px;color:var(--success)}
+
+/* CERT */
+.cert-box{background:linear-gradient(135deg,rgba(249,115,22,.08),rgba(255,184,0,.05));border:1px solid rgba(255,184,0,.3);border-radius:14px;padding:28px 32px;margin-top:18px;text-align:center}
+.cert-title{font-family:var(--font-head);font-size:20px;font-weight:800;color:#fff;margin-bottom:6px}
+.cert-sub{font-size:13px;color:var(--muted);margin-bottom:16px}
+.cert-input{background:var(--surface2);border:1px solid var(--border-dim);color:var(--txt);padding:10px 16px;font-family:var(--font-head);font-size:14px;border-radius:7px;width:100%;max-width:300px;text-align:center;margin-bottom:12px}
+.cert-input:focus{outline:none;border-color:var(--gold)}
+.cert-btn{background:var(--gold);border:none;color:#000;padding:10px 28px;font-family:var(--font-head);font-size:11px;font-weight:800;letter-spacing:2px;cursor:pointer;border-radius:7px}
+.cert-result{display:none;margin-top:14px;padding:18px;background:rgba(255,184,0,.06);border:1px solid rgba(255,184,0,.25);border-radius:10px}
+.cert-name{font-family:var(--font-head);font-size:22px;font-weight:800;color:var(--gold);margin-bottom:4px}
+.cert-detail{font-size:12px;color:var(--muted)}
+
+/* FOOTER */
+.ftr{background:var(--surface);border-top:1px solid var(--border);padding:16px 48px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+.fbrand{font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim)}
+.finfo{font-size:11px;color:var(--dim)}
+.flvs{display:flex;gap:3px}
+.flv{padding:5px 10px;font-family:var(--font-head);font-size:10px;font-weight:700;background:var(--surface2);color:var(--dim)}
+.flv.on{background:var(--accent);color:#fff}
+
+@media(max-width:860px){
+  .hdr,.ftr,.phrases-wrap{padding:14px 18px}
+  .sec-body{padding:20px 18px}
+  .sec-hdr{padding:16px 18px}
+  .otb-grid{grid-template-columns:1fr 1fr}
+  .phrases-grid,.wrapup-grid{grid-template-columns:1fr}
+  .lb-input-row{grid-template-columns:1fr 1fr}
+  .ec-opts{flex-direction:column}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="hdr">
+  <div class="brand">
+    <div class="dot"></div>
+    <div><div class="bname">Gabriel Turner</div><div class="bsub">English Training · Teacher Edition</div></div>
+  </div>
+  <div class="sess-tag">
+    <span class="tag t-or">A2.2</span>
+    <span class="tag t-gd">Module 5</span>
+    <span class="tag t-cy">Session 2B — Production &amp; Fluency</span>
+    <span class="tag t-go">120 min</span>
+  </div>
+  <div class="badge-strip">
+    <span id="b1" title="Hot Take">&#128084;</span>
+    <span id="b2" title="Debate Round">&#128105;&#8205;&#9878;&#65039;</span>
+    <span id="b3" title="Speed Round">&#9889;</span>
+    <span id="b4" title="Solo Challenge">&#127775;</span>
+    <span id="b5" title="Win">&#127942;</span>
+  </div>
+</header>
+<div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+
+<!-- ═══════════════════════════════════════ §1 HOT TAKE -->
+<div class="section">
+  <div class="sec-hdr">
+    <div class="sec-num">§1</div>
+    <div>
+      <div class="sec-label">Hot Take — <em>Who Gets the Job?</em></div>
+      <div class="sec-sub">Activate S2A language under time pressure · comparatives + colloquial · 5–8 min</div>
+    </div>
+    <div class="sec-dur">&#9201; 5–8 MIN</div>
+  </div>
+  <img class="img-hero" src="https://images.unsplash.com/photo-1560439514-4e9645039924?w=900&q=80" alt="Job interview decision moment" loading="lazy">
+  <div class="sec-body">
+
+    <p style="font-size:13px;color:var(--muted);margin-bottom:14px">Remember from S2A: <strong style="color:var(--accent)">IS more qualified / HAS more experience</strong> · <strong style="color:var(--cyan)">the most qualified / the strongest fit</strong> · <strong style="color:var(--warn)">ticks all the boxes · tough call · stands out</strong>. Now use it all — fast.</p>
+
+    <div class="hot-take">
+      <div class="ht-label">&#128293; Hot Take — 60 Seconds</div>
+      <div class="ht-statement">"I think Valeria was the right hire for Andrea — and I can give you three reasons using today&apos;s language."</div>
+      <div class="ht-row">
+        <div class="ht-hint">Use at least 2 comparatives, 1 superlative, and 1 colloquial phrase from S2A. No notes. Convince the class in 60 seconds.</div>
+        <div class="timer-wrap">
+          <svg class="timer-svg" width="72" height="72" viewBox="0 0 72 72">
+            <circle cx="36" cy="36" r="30" stroke="rgba(249,115,22,.2)" stroke-width="5" fill="none"/>
+            <circle id="arcHT1" cx="36" cy="36" r="30" stroke="var(--accent)" stroke-width="5" fill="none" stroke-dasharray="188.50" stroke-dashoffset="0"/>
+            <text id="txtHT1" x="36" y="41" text-anchor="middle" font-family="Syne,sans-serif" font-size="16" font-weight="800" fill="var(--accent)">1:00</text>
+          </svg>
+          <div class="timer-lbl">HOT TAKE</div>
+          <div class="timer-btns">
+            <button class="t-btn" onclick="startTimer('arcHT1','txtHT1',60,'b1',188.50)">START</button>
+            <button class="t-btn t-btn-o" onclick="resetArc('arcHT1','txtHT1',60,188.50)">RESET</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hot-take" style="margin-top:12px">
+      <div class="ht-label">&#128293; Hot Take — Counter-Argument — 45 Seconds</div>
+      <div class="ht-statement">"Actually, Roberto was the better choice. Valeria is too expensive and not immediately available."</div>
+      <div class="ht-row">
+        <div class="ht-hint">Defend Roberto using comparatives. Challenge: use "although" or "even though" to concede one point while making your argument stronger. 45 seconds.</div>
+        <div class="timer-wrap">
+          <svg class="timer-svg" width="72" height="72" viewBox="0 0 72 72">
+            <circle cx="36" cy="36" r="30" stroke="rgba(249,115,22,.2)" stroke-width="5" fill="none"/>
+            <circle id="arcHT2" cx="36" cy="36" r="30" stroke="var(--accent)" stroke-width="5" fill="none" stroke-dasharray="188.50" stroke-dashoffset="0"/>
+            <text id="txtHT2" x="36" y="41" text-anchor="middle" font-family="Syne,sans-serif" font-size="16" font-weight="800" fill="var(--accent)">0:45</text>
+          </svg>
+          <div class="timer-lbl">HOT TAKE 2</div>
+          <div class="timer-btns">
+            <button class="t-btn" onclick="startTimer('arcHT2','txtHT2',45,'b1',188.50)">START</button>
+            <button class="t-btn t-btn-o" onclick="resetArc('arcHT2','txtHT2',45,188.50)">RESET</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tn">
+      <div class="tn-lbl">&#9889; Teacher Note — Hot Take</div>
+      <div class="tn-text">Say: "No notes — you know this from last session. This is the moment to use it." Round 1: T-S model first — use Valeria confidently. Round 2: assign Roberto&apos;s side to the class — create disagreement. The challenge word "although" previews B1.1 concession language; plant it as a bonus: "If you can use although or even though today, that is already intermediate English." This seeds aspiration for the next level without making A2.2 students feel behind.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════ §2 PITCH / DEBATE ROUND -->
+<div class="section">
+  <div class="sec-hdr">
+    <div class="sec-num">§2</div>
+    <div>
+      <div class="sec-label">Pitch / Debate — <em>The Hiring Panel</em></div>
+      <div class="sec-sub">Role-play · 3 rounds · New context: comparing cities for a transfer · Model answers · 10–12 min</div>
+    </div>
+    <div class="sec-dur">&#9201; 10–12 MIN</div>
+  </div>
+  <div class="sec-body">
+
+    <p style="font-size:13px;color:var(--muted);margin-bottom:16px">S2B expands the comparison context: same structures, new scenario. Andrea&apos;s manager now asks her to compare two <strong style="color:var(--accent)">cities</strong> for a new team transfer. Comparatives and superlatives work for people, products, AND places.</p>
+
+    <div class="round-grid">
+      <div class="round-card">
+        <img class="round-img" src="https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?w=600&q=80" alt="City comparison — Celaya vs Querétaro" loading="lazy">
+        <div class="round-body">
+          <div class="round-tag-row"><span class="rtag rt-ts">T-S</span><span style="font-size:11px;color:var(--muted)">Round 1 — Teacher Models</span></div>
+          <div class="round-q">Andrea must recommend a city for a new regional office: <strong>Celaya</strong> or <strong>Querétaro</strong>. Use what you know about both cities. Which is more convenient for logistics? Which has the best infrastructure? Which is more affordable for office space?</div>
+          <button class="reveal-btn" onclick="toggleReveal('rev1')">&#9660; Show Model Answer</button>
+          <div class="model-reveal" id="rev1">
+            "Celaya is <span class="m-comp">more affordable than</span> Querétaro for office space and housing. However, Querétaro is <span class="m-comp">better connected than</span> Celaya for international clients — it has a larger airport and <span class="m-comp">more direct flights than</span> any city in the Bajío. In terms of talent, Querétaro has <span class="m-sup">the most qualified</span> engineering workforce in the region. <span class="m-coll">It&apos;s a tough call</span>, but for a logistics operation with international accounts, Querétaro is <span class="m-comp">the stronger choice.</span>"
+          </div>
+        </div>
+      </div>
+
+      <div class="round-card">
+        <img class="round-img" src="https://images.unsplash.com/photo-1543269664-76bc3997d9ea?w=600&q=80" alt="Debate — team choosing city" loading="lazy">
+        <div class="round-body">
+          <div class="round-tag-row"><span class="rtag rt-ss">S-S</span><span style="font-size:11px;color:var(--muted)">Round 2 — Pair Debate</span></div>
+          <div class="round-q">Student A defends Celaya. Student B defends Querétaro. Each person must use at least 3 comparatives and 1 superlative in their argument. 90 seconds each — then switch sides. Who is more convincing?</div>
+          <button class="reveal-btn" onclick="toggleReveal('rev2')">&#9660; Show Useful Language</button>
+          <div class="model-reveal" id="rev2">
+            <strong style="color:var(--txt)">Celaya defender:</strong> "Celaya is <span class="m-comp">more centrally located than</span> Querétaro — it connects Guadalajara, Mexico City and Monterrey more easily. The cost of living is <span class="m-comp">significantly lower than</span> Querétaro, which means salaries can be <span class="m-comp">more competitive</span> for the same budget. And our existing team is already here — that makes us <span class="m-sup">the most efficient</span> option."<br><br>
+            <strong style="color:var(--txt)">Querétaro defender:</strong> "Querétaro has <span class="m-comp">more multinationals than</span> Celaya — 300+ compared to fewer than 100. The workforce is <span class="m-sup">the most bilingual</span> in the region, which is critical for our international accounts. And the airport is <span class="m-comp">much better than</span> Celaya&apos;s for client visits. <span class="m-coll">The pros definitely outweigh the cons.</span>"
+          </div>
+        </div>
+      </div>
+
+      <div class="round-card">
+        <img class="round-img" src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=600&q=80" alt="Class vote and discussion" loading="lazy">
+        <div class="round-body">
+          <div class="round-tag-row"><span class="rtag rt-cl">Class</span><span style="font-size:11px;color:var(--muted)">Round 3 — Class Vote + Justification</span></div>
+          <div class="round-q">Class vote: which city is better for a logistics regional office? Each student must justify their vote in one sentence using a superlative. "I vote for [city] because it is the most [adj] for our industry."</div>
+          <button class="reveal-btn" onclick="toggleReveal('rev3')">&#9660; Show Teacher Notes</button>
+          <div class="model-reveal" id="rev3">
+            <strong style="color:var(--txt)">How to run:</strong> After voting, create two groups (Celaya vs Querétaro). Each group has 2 minutes to build the strongest argument using ALL of today&apos;s language: comparatives, superlatives, and at least 2 colloquial phrases from the module. Then each group presents for 60 seconds. Class votes again after hearing arguments — did anyone change their mind? Award 3 leaderboard points to the group that caused the most mind-changes. This is advanced persuasion skill — celebrate it.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tn">
+      <div class="tn-lbl">&#9889; Teacher Note — City Comparison Extension</div>
+      <div class="tn-text">Expanding from candidates to cities is intentional: it shows students that their grammar toolkit is versatile. Say: "Same structure — different noun. You already know how to do this." If students have knowledge of their own city, encourage personal examples. The Celaya vs Querétaro debate is especially relevant for students in the Bajío corridor — they have real opinions. Use that energy. For stronger groups: add a third option (León) and ask "of all three, which is the most [adj]?" — this forces superlative use naturally.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════ §3 RELAY — OPEN THE BOX -->
+<div class="section">
+  <div class="sec-hdr">
+    <div class="sec-num">§3</div>
+    <div>
+      <div class="sec-label">Relay — <em>Open the Box</em></div>
+      <div class="sec-sub">6 boxes · 1 speaking prompt each · comparatives + HR vocab · 10 min</div>
+    </div>
+    <div class="sec-dur">&#9201; 10 MIN</div>
+  </div>
+  <div class="sec-body">
+
+    <div class="otb-wrap">
+      <div class="otb-hdr">
+        <div class="otb-hdr-title">&#128274; Open the Box — Comparison Prompts</div>
+        <span style="font-size:11px;color:var(--muted)">Click a box · get your prompt · speak for 45 seconds</span>
+      </div>
+      <div class="otb-body">
+        <div class="otb-grid">
+          <div class="otb-box" id="box1" onclick="openBox(1)">
+            <span class="otb-num">1</span>
+            <span class="otb-icon">&#128274;</span>
+            <div class="otb-prompt">Compare two colleagues you know — who is more experienced? Who is more proactive? Who would you choose for a leadership role and why?</div>
+          </div>
+          <div class="otb-box" id="box2" onclick="openBox(2)">
+            <span class="otb-num">2</span>
+            <span class="otb-icon">&#128274;</span>
+            <div class="otb-prompt">You are the hiring manager. You have two candidates: one is more qualified but less available. The other is available immediately but has less experience. Who do you hire? Give 2 reasons using comparatives.</div>
+          </div>
+          <div class="otb-box" id="box3" onclick="openBox(3)">
+            <span class="otb-num">3</span>
+            <span class="otb-icon">&#128274;</span>
+            <div class="otb-prompt">Compare your current job with your previous job (or with a friend&#39;s job). Which is more demanding? Which has better benefits? Which is more flexible? Use at least 3 comparatives.</div>
+          </div>
+          <div class="otb-box" id="box4" onclick="openBox(4)">
+            <span class="otb-num">4</span>
+            <span class="otb-icon">&#128274;</span>
+            <div class="otb-prompt">You work in HR. Describe the most qualified candidate you have ever interviewed or worked with. What made them stand out? Use superlatives and at least one colloquial phrase from this module.</div>
+          </div>
+          <div class="otb-box" id="box5" onclick="openBox(5)">
+            <span class="otb-num">5</span>
+            <span class="otb-icon">&#128274;</span>
+            <div class="otb-prompt">Compare your city with another city in Mexico for attracting international business. Which is more competitive? Which has the most qualified workforce? Which is the cheapest for operations? Make a recommendation.</div>
+          </div>
+          <div class="otb-box" id="box6" onclick="openBox(6)">
+            <span class="otb-num">6</span>
+            <span class="otb-icon">&#128274;</span>
+            <div class="otb-prompt">You are comparing yourself as a candidate to a competitor for a promotion. What makes you more qualified than them? What is your strongest quality? Use: "I am more [adj] than..." and "I am the most [adj] person in my team because..."</div>
+          </div>
+        </div>
+        <div class="otb-result" id="otbResult">Click any box to reveal a speaking prompt for your team.</div>
+      </div>
+    </div>
+
+    <div class="tn tn-cy">
+      <div class="tn-lbl">&#9889; Teacher Note — Open the Box</div>
+      <div class="tn-text">How to run: teams take turns clicking boxes. Each team has 45 seconds to discuss the prompt after it opens. Scoring: 1 point per comparative used, 2 points per superlative, 3 bonus points for a colloquial phrase. Teacher tracks on board — feeds into leaderboard in §5. Box 6 (self-comparison) is the most powerful for learner motivation: it forces students to use the grammar about themselves. Reserve it for the strongest student or most engaged pair. After Box 6: ask the class "Who can top that? Can you describe yourself as the most [adj] person for your role?" — creates positive competition.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════ §4 SPEED ROUND -->
+<div class="section">
+  <div class="sec-hdr">
+    <div class="sec-num">§4</div>
+    <div>
+      <div class="sec-label">Speed Round — <em>HR Error Correction</em></div>
+      <div class="sec-sub">Fix the mistake · Adj vs noun · IS/HAS · then produce your own · 10–12 min</div>
+    </div>
+    <div class="sec-dur">&#9201; 10–12 MIN</div>
+  </div>
+  <img class="img-banner" src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=900&q=80" alt="Reviewing documents for errors" loading="lazy">
+  <div class="sec-body">
+
+    <p style="font-size:13px;color:var(--txt);margin-bottom:16px">Each sentence has ONE error. Find it and click the correct version. These are the most common mistakes Mexican learners make when comparing candidates in English.</p>
+
+    <div class="ec-set">
+      <div class="ec-row">
+        <div class="ec-wrong">Candidate A is more experience than Candidate B in project management.</div>
+        <div class="ec-opts" id="ec1">
+          <button class="ec-opt" onclick="checkEC(this,'Candidate A has more experience than Candidate B in project management.','ec1','ecfb1')">Candidate A has more experience than Candidate B in project management.</button>
+          <button class="ec-opt" onclick="checkEC(this,'Candidate A has more experience than Candidate B in project management.','ec1','ecfb1')">Candidate A is more experienced as Candidate B in project management.</button>
+          <button class="ec-opt" onclick="checkEC(this,'Candidate A has more experience than Candidate B in project management.','ec1','ecfb1')">Candidate A is most experienced than Candidate B in project management.</button>
+        </div>
+        <div class="ec-fb" id="ecfb1"></div>
+      </div>
+
+      <div class="ec-row">
+        <div class="ec-wrong">Of all the candidates, Valeria is the more qualified for this position.</div>
+        <div class="ec-opts" id="ec2">
+          <button class="ec-opt" onclick="checkEC(this,'Of all the candidates, Valeria is the most qualified for this position.','ec2','ecfb2')">Of all the candidates, Valeria is more qualified than this position.</button>
+          <button class="ec-opt" onclick="checkEC(this,'Of all the candidates, Valeria is the most qualified for this position.','ec2','ecfb2')">Of all the candidates, Valeria is the most qualified for this position.</button>
+          <button class="ec-opt" onclick="checkEC(this,'Of all the candidates, Valeria is the most qualified for this position.','ec2','ecfb2')">Of all the candidates, Valeria is the most qualify for this position.</button>
+        </div>
+        <div class="ec-fb" id="ecfb2"></div>
+      </div>
+
+      <div class="ec-row">
+        <div class="ec-wrong">Roberto has more experienced in logistics — he worked there for eight years.</div>
+        <div class="ec-opts" id="ec3">
+          <button class="ec-opt" onclick="checkEC(this,'Roberto has more experience in logistics — he worked there for eight years.','ec3','ecfb3')">Roberto has more experience in logistics — he worked there for eight years.</button>
+          <button class="ec-opt" onclick="checkEC(this,'Roberto has more experience in logistics — he worked there for eight years.','ec3','ecfb3')">Roberto is more experienced in logistics — he worked there for eight years.</button>
+          <button class="ec-opt" onclick="checkEC(this,'Roberto has more experience in logistics — he worked there for eight years.','ec3','ecfb3')">Roberto is the most experience in logistics — he worked there for eight years.</button>
+        </div>
+        <div class="ec-fb" id="ecfb3"></div>
+      </div>
+
+      <div class="ec-row">
+        <div class="ec-wrong">She is as more bilingual as any candidate we have interviewed this year.</div>
+        <div class="ec-opts" id="ec4">
+          <button class="ec-opt" onclick="checkEC(this,'She is as bilingual as any candidate we have interviewed this year.','ec4','ecfb4')">She is as bilingual as any candidate we have interviewed this year.</button>
+          <button class="ec-opt" onclick="checkEC(this,'She is as bilingual as any candidate we have interviewed this year.','ec4','ecfb4')">She is more bilingual than any candidate we have interviewed this year.</button>
+          <button class="ec-opt" onclick="checkEC(this,'She is as bilingual as any candidate we have interviewed this year.','ec4','ecfb4')">She is the most bilingual as any candidate we have interviewed this year.</button>
+        </div>
+        <div class="ec-fb" id="ecfb4"></div>
+      </div>
+
+      <div class="ec-row">
+        <div class="ec-wrong">His salary expectation is more lower than hers — that is an advantage.</div>
+        <div class="ec-opts" id="ec5">
+          <button class="ec-opt" onclick="checkEC(this,'His salary expectation is lower than hers — that is an advantage.','ec5','ecfb5')">His salary expectation is lower than hers — that is an advantage.</button>
+          <button class="ec-opt" onclick="checkEC(this,'His salary expectation is lower than hers — that is an advantage.','ec5','ecfb5')">His salary expectation is the lowest than hers — that is an advantage.</button>
+          <button class="ec-opt" onclick="checkEC(this,'His salary expectation is lower than hers — that is an advantage.','ec5','ecfb5')">His salary expectation is more low than hers — that is an advantage.</button>
+        </div>
+        <div class="ec-fb" id="ecfb5"></div>
+      </div>
+    </div>
+
+    <div class="gt-box">
+      <div class="gt-hdr">GT Originals — Error Pattern Analysis</div>
+      <ul class="gt-tips">
+        <li>&#9888;&#65039; Error 1 (IS more experience): mixing noun with "is" — the most common A2 error in HR writing. Fix: IS + adjective / HAS + noun. Write the two columns on the board every session until it sticks.</li>
+        <li>&#9888;&#65039; Error 3 (HAS more experienced): the mirror error — mixing adjective with "has." Students who produce both errors in one session are confusing the IS/HAS rule completely — dedicate 5 extra minutes with the two-column drill.</li>
+        <li>&#9888;&#65039; Error 4 (as more bilingual as): students add "more" inside an as…as construction — the result of interference with comparatives. Rule: as…as uses the BASE adjective — never "more" or "-er" inside.</li>
+        <li>&#128313; Upsell: error correction is a B1.1 skill students are already doing — tell them that. "Noticing and fixing your own errors is what intermediate learners do. You are already there."</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════ §5 SOLO CHALLENGE + LEADERBOARD -->
+<div class="section">
+  <div class="sec-hdr">
+    <div class="sec-num">§5</div>
+    <div>
+      <div class="sec-label">Solo Challenge — <em>The Hiring Pitch</em></div>
+      <div class="sec-sub">3-minute live recommendation · rubric · leaderboard · 12–15 min</div>
+    </div>
+    <div class="sec-dur">&#9201; 12–15 MIN</div>
+  </div>
+  <img class="img-banner" src="https://images.unsplash.com/photo-1475721027785-f74eccf877e2?w=900&q=80" alt="Presenting hiring recommendation" loading="lazy">
+  <div class="sec-body">
+
+    <div class="solo-box">
+      <div class="solo-lbl">&#127919; Solo Challenge — The Hiring Pitch</div>
+      <div class="solo-task">
+        <strong>Scenario:</strong> You are a team leader or HR coordinator. Your company needs to hire one person for a role you know well. You have reviewed two candidates (real or invented). You have <strong>3 minutes</strong> to present your comparison and make a final recommendation to the hiring committee.<br><br>
+        <strong>Required language:</strong><br>
+        &#9654; At least <strong>3 comparatives with adjectives</strong> (more qualified than, more experienced than)<br>
+        &#9654; At least <strong>2 comparatives with nouns</strong> (has more experience than, has more references than)<br>
+        &#9654; At least <strong>2 superlatives</strong> (the most qualified, the strongest fit)<br>
+        &#9654; At least <strong>1 colloquial phrase</strong> from S2A or S2B<br>
+        &#9654; A clear <strong>final recommendation with justification</strong>
+      </div>
+      <div style="display:flex;justify-content:center;margin:16px 0">
+        <div class="timer-wrap">
+          <svg class="timer-svg" width="72" height="72" viewBox="0 0 72 72">
+            <circle cx="36" cy="36" r="30" stroke="rgba(249,115,22,.2)" stroke-width="5" fill="none"/>
+            <circle id="arcSolo" cx="36" cy="36" r="30" stroke="var(--accent)" stroke-width="5" fill="none" stroke-dasharray="188.50" stroke-dashoffset="0"/>
+            <text id="txtSolo" x="36" y="41" text-anchor="middle" font-family="Syne,sans-serif" font-size="14" font-weight="800" fill="var(--accent)">3:00</text>
+          </svg>
+          <div class="timer-lbl">PITCH TIMER</div>
+          <div class="timer-btns">
+            <button class="t-btn" onclick="startTimer('arcSolo','txtSolo',180,'b4',188.50)">START</button>
+            <button class="t-btn t-btn-o" onclick="resetArc('arcSolo','txtSolo',180,188.50)">RESET</button>
+          </div>
+        </div>
+      </div>
+
+      <p style="font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:10px">&#9745; Rubric — Click each criterion when the student meets it</p>
+      <div class="solo-rubric">
+        <div class="rubric-row"><div class="rubric-check" id="rb1" onclick="toggleRubric(this,'rb1')"></div><div class="rubric-label">Used 3+ comparatives with adjectives correctly (IS more adj than)</div><div class="rubric-pts">+3 pts</div></div>
+        <div class="rubric-row"><div class="rubric-check" id="rb2" onclick="toggleRubric(this,'rb2')"></div><div class="rubric-label">Used 2+ comparatives with nouns correctly (HAS more noun than)</div><div class="rubric-pts">+2 pts</div></div>
+        <div class="rubric-row"><div class="rubric-check" id="rb3" onclick="toggleRubric(this,'rb3')"></div><div class="rubric-label">Used 2+ superlatives correctly with THE</div><div class="rubric-pts">+2 pts</div></div>
+        <div class="rubric-row"><div class="rubric-check" id="rb4" onclick="toggleRubric(this,'rb4')"></div><div class="rubric-label">Used 1+ colloquial phrase naturally (ticks all the boxes, tough call, etc.)</div><div class="rubric-pts">+2 pts</div></div>
+        <div class="rubric-row"><div class="rubric-check" id="rb5" onclick="toggleRubric(this,'rb5')"></div><div class="rubric-label">Clear recommendation + reason, spoken fluently without notes</div><div class="rubric-pts">+1 pt</div></div>
+      </div>
+      <div class="rubric-total" id="rubricTotal">Total: 0 / 10 pts</div>
+    </div>
+
+    <!-- LEADERBOARD -->
+    <div class="lb-wrap">
+      <div class="lb-hdr">
+        <div class="lb-title">&#127942; Session 2 Leaderboard</div>
+        <span style="font-size:11px;color:var(--muted)">Auto-sorted · Cumulative from all rounds</span>
+      </div>
+      <div class="lb-body">
+        <div class="lb-input-row">
+          <div>
+            <div class="lb-input-lbl">Student Name</div>
+            <input class="lb-input" id="lbName" type="text" placeholder="e.g. Valeria S.">
+          </div>
+          <div>
+            <div class="lb-input-lbl">Total Score</div>
+            <input class="lb-input" id="lbPoints" type="number" placeholder="0" min="0" max="30">
+          </div>
+          <button class="lb-add-btn" onclick="addToLB()">ADD &#43;</button>
+        </div>
+        <ul class="lb-list" id="lbList">
+          <li class="lb-empty" id="lbEmpty">No scores yet — add students above</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════ 3 PHRASES FOR THIS WEEK -->
+<div class="phrases-wrap">
+  <div class="phrases-hdr">&#127919; This week, use these 3 phrases at work:</div>
+  <div class="phrases-sub">Session 2 language — ready for your next HR conversation, performance review or team meeting.</div>
+  <div class="phrases-grid">
+    <div class="phrase-card">
+      <div class="phrase-en">"[Name] is more qualified than [Name] for this role."</div>
+      <div class="phrase-ctx">The core HR comparison sentence. Use in any hiring, promotion or project assignment conversation. Add "because" and a reason to sound fully professional.</div>
+    </div>
+    <div class="phrase-card">
+      <div class="phrase-en">"She stands out from the others."</div>
+      <div class="phrase-ctx">Use when recommending someone who is clearly the best choice. More professional than "she is the best." Works in performance reviews, client recommendations, and team feedback.</div>
+    </div>
+    <div class="phrase-card">
+      <div class="phrase-en">"It&apos;s a tough call, but [name] is the stronger fit."</div>
+      <div class="phrase-ctx">Use when two options are close and you still need to decide. Shows analytical thinking — you considered both sides before choosing. Essential in any real hiring or business decision conversation.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════ §6 WRAP-UP / CERT -->
+<div class="section">
+  <div class="sec-hdr">
+    <div class="sec-num">§6</div>
+    <div>
+      <div class="sec-label">Wrap-Up — <em>M5 Session 2 Complete</em></div>
+      <div class="sec-sub">Key takeaways · Checklist · Session certificate · My Win Today · 5–8 min</div>
+    </div>
+    <div class="sec-dur">&#9201; 5–8 MIN</div>
+  </div>
+  <div class="sec-body">
+
+    <div class="wrapup-grid">
+      <div class="wu-key">
+        <div class="wu-key-title">&#9744; IS / HAS distinction</div>
+        <div class="wu-key-text">IS more qualified (adj). HAS more experience (noun). These are the two different ways to compare people — both use "more … than." Never mix them.</div>
+      </div>
+      <div class="wu-key">
+        <div class="wu-key-title">&#9744; Superlatives for people + places</div>
+        <div class="wu-key-text">The most qualified candidate. The strongest fit. The most bilingual city in the region. The same structure works for candidates, cities, products — any noun.</div>
+      </div>
+      <div class="wu-key">
+        <div class="wu-key-title">&#9744; HR colloquial toolkit</div>
+        <div class="wu-key-text">"Ticks all the boxes" · "Tough call" · "Stands out from the others" · "Strong fit for the role." These phrases mark you as a professional communicator in English.</div>
+      </div>
+    </div>
+
+    <p style="font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:10px">I Can Now...</p>
+    <div class="cl-wrap">
+      <div class="cl-item" onclick="toggleDone(this)"><span class="cl-check">&#9744;</span>Compare candidates using both adjective (IS more qualified) and noun (HAS more experience) forms</div>
+      <div class="cl-item" onclick="toggleDone(this)"><span class="cl-check">&#9744;</span>Use superlatives confidently: "the most qualified," "the strongest fit," always with THE</div>
+      <div class="cl-item" onclick="toggleDone(this)"><span class="cl-check">&#9744;</span>Apply comparison language to cities and places — same structure, different context</div>
+      <div class="cl-item" onclick="toggleDone(this)"><span class="cl-check">&#9744;</span>Use HR colloquial phrases naturally in a recommendation or performance review</div>
+      <div class="cl-item" onclick="toggleDone(this)"><span class="cl-check">&#9744;</span>Give a 3-minute hiring pitch with clear structure: comparison → superlative → recommendation</div>
+    </div>
+
+    <div class="cert-box">
+      <div class="cert-title">&#127942; Session Certificate</div>
+      <div class="cert-sub">Comparing Candidates &amp; Cities · A2.2 Module 5 Session 2</div>
+      <input class="cert-input" id="certName" type="text" placeholder="Your name...">
+      <br>
+      <button class="cert-btn" onclick="generateCert()">Generate Certificate</button>
+      <div class="cert-result" id="certResult">
+        <div class="cert-name" id="certNameOut"></div>
+        <div class="cert-detail">has successfully completed A2.2 Module 5 · Session 2 — Comparing Candidates &amp; Cities<br>Gabriel Turner · English Training · Celaya, Guanajuato</div>
+      </div>
+    </div>
+
+    <div class="next-card" style="margin-top:16px">
+      <div class="next-label">&#9654; Coming Next — Session 3A</div>
+      <div class="next-title">Comparing Travel Options &amp; Business Trips</div>
+      <div class="next-sub">In S3A you apply comparatives and superlatives to a new high-stakes context: choosing between business travel routes, flights and hotels. You will learn travel vocabulary and practice the language of professional recommendations under real time pressure.</div>
+    </div>
+
+    <div class="win-area">
+      <div class="win-lbl">&#127942; My Win Today</div>
+      <textarea class="win-ta" id="winTA" placeholder="Write one thing from Session 2 that you will use at work this week — in English..."></textarea>
+      <button class="win-btn" onclick="saveWin()">Save My Win</button>
+      <div class="win-ok" id="winOK">&#10003; Saved! Module 5 Session 2 complete. See you in S3A.</div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="ftr">
+  <div class="fbrand">Gabriel Turner · English Training</div>
+  <div class="finfo">A2.2 · Module 5 · Session 2B · GT_A2_2_M5_S2B_TEACHER_v1</div>
+  <div class="flvs">
+    <div class="flv">A1.1</div>
+    <div class="flv">A1.2</div>
+    <div class="flv">A2.1</div>
+    <div class="flv on">A2.2</div>
+    <div class="flv">B1.1</div>
+    <div class="flv">B1.2</div>
+  </div>
+</footer>
+
+<script>
+// ── SPEAK ──────────────────────────────────────────────
+function speak(t){if(!window.speechSynthesis)return;speechSynthesis.cancel();var u=new SpeechSynthesisUtterance(t);u.lang='en-US';u.rate=0.82;u.pitch=1;speechSynthesis.speak(u);}
+
+// ── BADGES ─────────────────────────────────────────────
+function earnBadge(id){var el=document.getElementById(id);if(el&&!el.classList.contains('earned')){el.classList.add('earned');launchConfetti();}}
+function launchConfetti(){
+  var colors=['#F97316','#FB923C','#FFB800','#FF4D6D','#fff'];
+  for(var i=0;i<60;i++){
+    (function(i){setTimeout(function(){
+      var d=document.createElement('div');
+      var sz=6+Math.random()*8;
+      d.style.cssText='position:fixed;top:-10px;width:'+sz+'px;height:'+sz+'px;background:'+colors[Math.floor(Math.random()*colors.length)]+';left:'+Math.random()*100+'vw;border-radius:'+(Math.random()>.5?'50%':'2px')+';pointer-events:none;z-index:9999;animation:fall '+(1.2+Math.random()*.8)+'s linear forwards';
+      document.body.appendChild(d);
+      setTimeout(function(){d.remove();},2000);
+    },i*30);})(i);
+  }
+}
+var confettiCSS=document.createElement('style');
+confettiCSS.textContent='@keyframes fall{from{opacity:1;transform:translateY(0) rotate(0deg)}to{opacity:0;transform:translateY(100vh) rotate(720deg)}}';
+document.head.appendChild(confettiCSS);
+
+// ── PROGRESS BAR ───────────────────────────────────────
+window.addEventListener('scroll',function(){
+  var pct=(window.scrollY/(document.body.scrollHeight-window.innerHeight))*100;
+  document.getElementById('progressFill').style.width=pct+'%';
+});
+
+// ── TIMERS ─────────────────────────────────────────────
+var timerIntervals={};
+function startTimer(arcId,textId,seconds,badgeKey,circumference){
+  if(timerIntervals[arcId])clearInterval(timerIntervals[arcId]);
+  var arc=document.getElementById(arcId),txt=document.getElementById(textId);
+  var rem=seconds;
+  function update(){
+    arc.style.strokeDashoffset=circumference*(1-rem/seconds);
+    var m=Math.floor(rem/60),s=rem%60;
+    txt.textContent=m+':'+(s<10?'0':'')+s;
+    if(rem<=5)arc.style.stroke='#FF4D6D';
+    if(rem<=0){clearInterval(timerIntervals[arcId]);arc.style.stroke='var(--success)';if(badgeKey)earnBadge(badgeKey);return;}
+    rem--;
+  }
+  update();
+  timerIntervals[arcId]=setInterval(update,1000);
+}
+function resetArc(arcId,textId,seconds,circumference){
+  if(timerIntervals[arcId]){clearInterval(timerIntervals[arcId]);delete timerIntervals[arcId];}
+  var arc=document.getElementById(arcId);
+  arc.style.strokeDashoffset='0';
+  arc.style.stroke='var(--accent)';
+  var m=Math.floor(seconds/60),s=seconds%60;
+  document.getElementById(textId).textContent=m+':'+(s<10?'0':'')+s;
+}
+
+// ── REVEAL ─────────────────────────────────────────────
+function toggleReveal(id){
+  var el=document.getElementById(id);
+  el.classList.toggle('show');
+  el.previousElementSibling.textContent=el.classList.contains('show')?'\u25b2 Hide':'\u25bc Show Model Answer';
+}
+
+// ── OPEN THE BOX ───────────────────────────────────────
+var otbOpened=[];
+function openBox(num){
+  var box=document.getElementById('box'+num);
+  if(box.classList.contains('opened'))return;
+  box.classList.add('opened');
+  otbOpened.push(num);
+  var prompt=box.querySelector('.otb-prompt').textContent;
+  var res=document.getElementById('otbResult');
+  res.innerHTML='<strong style="color:var(--accent)">Box '+num+':</strong> '+prompt;
+  if(otbOpened.length>=6){earnBadge('b2');}
+}
+
+// ── ERROR CORRECTION ───────────────────────────────────
+function checkEC(btn,correct,groupId,fbId){
+  var group=document.getElementById(groupId);
+  group.querySelectorAll('.ec-opt').forEach(function(b){b.disabled=true;});
+  var fb=document.getElementById(fbId);
+  if(btn.textContent.trim()===correct){
+    btn.classList.add('correct');
+    fb.className='ec-fb show ok';
+    fb.textContent='\u2713 Correct! Now say your own sentence using the same structure.';
+    earnBadge('b3');
+  }else{
+    btn.classList.add('wrong');
+    group.querySelectorAll('.ec-opt').forEach(function(b){if(b.textContent.trim()===correct)b.classList.add('correct');});
+    fb.className='ec-fb show no';
+    fb.textContent='\u2717 Not quite. Correct: '+correct;
+  }
+}
+
+// ── RUBRIC ─────────────────────────────────────────────
+var rubricPoints={rb1:3,rb2:2,rb3:2,rb4:2,rb5:1};
+var rubricChecked={rb1:false,rb2:false,rb3:false,rb4:false,rb5:false};
+function toggleRubric(el,id){
+  rubricChecked[id]=!rubricChecked[id];
+  el.classList.toggle('checked');
+  el.textContent=rubricChecked[id]?'\u2713':'';
+  var total=0;
+  Object.keys(rubricChecked).forEach(function(k){if(rubricChecked[k])total+=rubricPoints[k];});
+  document.getElementById('rubricTotal').textContent='Total: '+total+' / 10 pts';
+  if(total>=7)earnBadge('b4');
+}
+
+// ── LEADERBOARD ────────────────────────────────────────
+var lbData=[];
+function addToLB(){
+  var name=document.getElementById('lbName').value.trim();
+  var pts=parseInt(document.getElementById('lbPoints').value)||0;
+  if(!name)return;
+  lbData.push({name:name,pts:pts});
+  lbData.sort(function(a,b){return b.pts-a.pts;});
+  renderLB();
+  document.getElementById('lbName').value='';
+  document.getElementById('lbPoints').value='';
+  if(lbData.length>=3)earnBadge('b5');
+}
+function renderLB(){
+  var list=document.getElementById('lbList');
+  var empty=document.getElementById('lbEmpty');
+  if(lbData.length===0){empty.style.display='block';return;}
+  empty.style.display='none';
+  list.innerHTML='';
+  var medals=['🥇','🥈','🥉'];
+  lbData.forEach(function(entry,i){
+    var li=document.createElement('li');
+    li.className='lb-row';
+    var pos=i<3?medals[i]:(i+1)+'.';
+    li.innerHTML='<span class="lb-pos">'+pos+'</span><span class="lb-name">'+entry.name+'</span><span class="lb-score">'+entry.pts+' pts</span>';
+    list.appendChild(li);
+  });
+}
+
+// ── CERT ───────────────────────────────────────────────
+function generateCert(){
+  var name=document.getElementById('certName').value.trim();
+  if(!name)return;
+  document.getElementById('certNameOut').textContent=name;
+  document.getElementById('certResult').style.display='block';
+  earnBadge('b5');
+  launchConfetti();
+}
+
+// ── CHECKLIST ──────────────────────────────────────────
+function toggleDone(el){
+  el.classList.toggle('done');
+  var check=el.querySelector('.cl-check');
+  check.textContent=el.classList.contains('done')?'\u2713':'\u2610';
+  var all=document.querySelectorAll('.cl-item');
+  var done=[...all].filter(function(x){return x.classList.contains('done');});
+  if(done.length===all.length)earnBadge('b5');
+}
+
+// ── MY WIN ─────────────────────────────────────────────
+function saveWin(){
+  var ta=document.getElementById('winTA');
+  if(ta.value.trim().length>3){
+    earnBadge('b5');
+    ta.style.borderColor='var(--success)';
+    document.getElementById('winOK').style.display='block';
+  }
+}
+
+// ── INIT (no drag lists in B sessions — stubs for safety) ─────────────────
+var dragSrc=null;
+function initDrag(listId){
+  var list=document.getElementById(listId);if(!list)return;
+}
+initDrag('order1');
+initDrag('order2');
+</script>
+</body>
+</html>
