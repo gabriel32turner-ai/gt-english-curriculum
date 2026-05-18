@@ -1,0 +1,1096 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GT A2.2 · M5 · S4A — Comparing Job Offers</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#080808;--surface:#111318;--surface2:#1a1f28;
+  --border:rgba(249,115,22,.18);--border-dim:rgba(255,255,255,0.07);
+  --accent:#F97316;--accent2:#FB923C;
+  --cyan:#00CFFF;--gold:#FFB800;--green:#00E676;
+  --danger:#FF4D6D;--success:#00E5A0;--warn:#FFB347;
+  --txt:#F0F4F8;--muted:#8A9BB0;--dim:rgba(226,226,226,.25);
+  --font-head:'Syne',sans-serif;--font-body:'DM Sans',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--txt);font-family:var(--font-body);font-size:14px;line-height:1.6;overflow-x:hidden}
+.hdr{background:var(--surface);border-bottom:1px solid var(--border);padding:16px 48px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;position:sticky;top:0;z-index:100}
+.brand{display:flex;align-items:center;gap:10px}
+.dot{width:8px;height:8px;background:var(--accent);border-radius:50%}
+.bname{font-family:var(--font-head);font-weight:800;font-size:13px;letter-spacing:2.5px;text-transform:uppercase;color:#fff}
+.bsub{font-size:10px;color:var(--muted);letter-spacing:1px}
+.sess-tag{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.tag{display:inline-block;padding:3px 10px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase}
+.t-or{background:rgba(249,115,22,.15);color:var(--accent);border:1px solid rgba(249,115,22,.3)}
+.t-go{background:rgba(0,230,118,.1);color:var(--green);border:1px solid rgba(0,230,118,.25)}
+.t-cy{background:rgba(0,207,255,.1);color:var(--cyan);border:1px solid rgba(0,207,255,.25)}
+.t-gd{background:rgba(255,184,0,.1);color:var(--gold);border:1px solid rgba(255,184,0,.25)}
+.badge-strip{display:flex;gap:6px;align-items:center}
+.badge-strip span{width:28px;height:28px;border-radius:50%;background:var(--surface2);border:1px solid var(--border-dim);display:flex;align-items:center;justify-content:center;font-size:13px;filter:grayscale(1);opacity:.4;transition:all .4s}
+.badge-strip span.earned{filter:none;opacity:1;border-color:var(--accent);background:rgba(249,115,22,.15);transform:scale(1.1)}
+.progress-bar{height:2px;background:var(--surface2);position:sticky;top:57px;z-index:99}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));width:0%;transition:width .3s}
+.section{margin:0 0 3px 0;overflow:hidden}
+.sec-hdr{display:flex;align-items:center;gap:14px;padding:20px 48px;background:linear-gradient(135deg,rgba(249,115,22,.06),transparent);border-bottom:1px solid var(--border)}
+.sec-num{font-family:var(--font-head);font-size:10px;font-weight:800;color:var(--accent);letter-spacing:.15em;text-transform:uppercase;background:rgba(249,115,22,.1);border:1px solid rgba(249,115,22,.25);padding:3px 10px;border-radius:20px;white-space:nowrap}
+.sec-label{font-family:var(--font-head);font-size:22px;font-weight:800;color:#fff}
+.sec-label em{color:var(--accent);font-style:normal}
+.sec-sub{font-size:12px;color:var(--muted);margin-top:2px}
+.sec-dur{font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;color:var(--gold);border:1px solid rgba(255,184,0,.2);padding:2px 9px;margin-left:auto;white-space:nowrap}
+.sec-body{padding:28px 48px}
+.img-hero{width:100%;height:260px;object-fit:cover;display:block;filter:brightness(.52);border-bottom:1px solid var(--border)}
+.img-banner{width:100%;height:150px;object-fit:cover;display:block;filter:brightness(.5);border-radius:10px;margin-bottom:16px}
+.wu-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:16px}
+.wu-card{background:var(--surface);border:1px solid var(--border-dim);border-radius:10px;overflow:hidden;border-left:3px solid var(--accent)}
+.wu-card-img{width:100%;height:90px;object-fit:cover;display:block;filter:brightness(.5)}
+.wu-card-body{padding:13px 15px}
+.wu-card-q{font-size:13px;color:var(--txt);line-height:1.5}
+.wu-card-hint{font-size:11px;color:var(--muted);font-style:italic;margin-top:6px}
+.quick-win{background:rgba(249,115,22,.07);border:1px solid rgba(249,115,22,.25);border-radius:10px;padding:16px 20px;margin-top:16px;display:flex;align-items:flex-start;gap:14px}
+.qw-icon{font-size:22px;flex-shrink:0;margin-top:2px}
+.qw-label{font-family:var(--font-head);font-size:9px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:5px}
+.qw-text{font-size:13.5px;color:#fff;line-height:1.55}
+.qw-try{font-size:12px;color:var(--accent2);margin-top:6px;font-style:italic}
+.timer-wrap{display:flex;flex-direction:column;align-items:center;gap:6px}
+.timer-svg{transform:rotate(-90deg)}
+.tn{background:var(--surface2);border:1px solid var(--border-dim);border-left:3px solid var(--gold);border-radius:8px;padding:13px 16px;margin-top:14px}
+.tn-lbl{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:6px}
+.tn-text{font-size:12px;color:rgba(255,184,0,.82);line-height:1.6}
+.tn-cy{border-left-color:var(--cyan)}
+.tn-cy .tn-lbl{color:var(--cyan)}
+.tn-cy .tn-text{color:rgba(0,207,255,.82)}
+.vocab-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:16px}
+.vocab-card{background:var(--surface);border:1px solid var(--border-dim);border-radius:10px;overflow:hidden;cursor:pointer;transition:all .2s}
+.vocab-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.vocab-card-img{width:100%;height:72px;object-fit:cover;display:block;filter:brightness(.48)}
+.vocab-card-body{padding:11px 12px}
+.vc-word{font-family:var(--font-head);font-size:13px;font-weight:700;color:#fff;margin-bottom:2px}
+.vc-ipa{font-size:10px;color:var(--cyan);margin-bottom:5px;font-style:italic}
+.vc-def{font-size:11px;color:var(--muted);line-height:1.4;margin-bottom:6px}
+.vc-ex{font-size:11px;color:var(--accent2);font-style:italic;border-left:2px solid var(--accent);padding-left:7px;line-height:1.4}
+.vc-sp{font-size:10px;color:var(--dim);margin-top:6px}
+.micro-speak{background:rgba(0,207,255,.05);border:1px solid rgba(0,207,255,.2);border-radius:8px;padding:13px 17px;margin-top:16px;display:flex;gap:12px;align-items:flex-start}
+.ms-icon{font-size:16px;flex-shrink:0;margin-top:2px}
+.ms-label{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--cyan);margin-bottom:4px}
+.ms-text{font-size:12.5px;color:var(--txt);line-height:1.55}
+.coll-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:16px}
+.coll-card{background:var(--surface);border:1px solid var(--border-dim);border-radius:10px;overflow:hidden;cursor:pointer;transition:all .2s}
+.coll-card:hover{border-color:var(--accent)}
+.coll-card-img{width:100%;height:88px;object-fit:cover;display:block;filter:brightness(.47)}
+.coll-body{padding:12px 14px}
+.coll-phrase{font-family:var(--font-head);font-size:13px;font-weight:700;color:#fff;margin-bottom:5px}
+.coll-ctx{font-size:11.5px;color:var(--muted);line-height:1.45}
+.coll-ex{font-size:11px;color:var(--accent2);font-style:italic;margin-top:6px;border-left:2px solid var(--accent);padding-left:7px}
+.job-table-wrap{background:var(--surface);border:1px solid var(--border-dim);border-radius:12px;overflow:hidden;margin:18px 0}
+.job-table-hdr{padding:12px 18px;background:rgba(249,115,22,.08);border-bottom:1px solid var(--border-dim);font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent)}
+table.jt{width:100%;border-collapse:collapse}
+table.jt th{background:var(--surface2);padding:10px 14px;text-align:left;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--dim);border-bottom:2px solid var(--accent)}
+table.jt td{padding:11px 14px;border-bottom:1px solid var(--border-dim);font-size:12.5px;vertical-align:middle}
+table.jt tr:hover td{background:rgba(249,115,22,.03)}
+.tv-good{color:var(--success);font-weight:600}
+.tv-warn{color:var(--warn);font-weight:600}
+.tv-bad{color:var(--danger);font-weight:600}
+.prob-card{background:rgba(255,77,109,.06);border:1px solid rgba(255,77,109,.22);border-radius:10px;padding:18px 22px;margin-bottom:14px}
+.prob-lbl{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--danger);margin-bottom:8px}
+.prob-scenario{font-size:13.5px;color:#fff;line-height:1.7}
+.prob-thought{font-size:12px;color:rgba(255,120,120,.85);font-style:italic;margin-top:8px;border-left:2px solid var(--danger);padding-left:10px}
+.tool-card{background:rgba(249,115,22,.06);border:1px solid rgba(249,115,22,.25);border-radius:10px;padding:18px 22px;margin-bottom:18px}
+.tool-lbl{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:8px}
+.tool-text{font-size:13.5px;color:var(--txt);line-height:1.85}
+.gram-table{width:100%;border-collapse:collapse;margin:14px 0}
+.gram-table th{background:var(--surface2);padding:10px 14px;text-align:left;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim);border-bottom:2px solid var(--accent)}
+.gram-table td{padding:11px 14px;border-bottom:1px solid var(--border-dim);font-size:12.5px;vertical-align:top}
+.gram-table tr:hover td{background:rgba(249,115,22,.03)}
+.g-ex{color:var(--accent2);font-style:italic}
+.g-green{color:var(--green);font-family:var(--font-head);font-weight:700}
+.g-cy{color:var(--cyan);font-family:var(--font-head);font-weight:700}
+.err-box{background:rgba(255,77,109,.05);border:1px solid rgba(255,77,109,.2);border-radius:8px;padding:13px 17px;margin:14px 0;font-size:12px;color:rgba(255,120,120,.9);line-height:1.8}
+.err-box strong{color:var(--danger)}
+.act-title{font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:11px;padding-top:20px;border-top:1px solid var(--border-dim);margin-top:22px}
+.opt-group{margin-bottom:16px}
+.opt-q{font-size:13px;color:var(--txt);margin-bottom:9px;padding:11px 14px;background:var(--surface);border-left:3px solid var(--accent);border-radius:4px;line-height:1.5}
+.opts{display:flex;gap:8px;flex-wrap:wrap}
+.opt{background:var(--surface2);border:1px solid var(--border-dim);color:var(--txt);padding:8px 16px;font-family:var(--font-body);font-size:12.5px;cursor:pointer;transition:all .2s;border-radius:6px}
+.opt:hover:not(:disabled){border-color:var(--accent);color:var(--accent)}
+.opt.correct{background:rgba(0,229,160,.12);border-color:var(--success);color:var(--success)}
+.opt.wrong{background:rgba(255,77,109,.12);border-color:var(--danger);color:var(--danger)}
+.opt:disabled{cursor:not-allowed}
+.match-wrap{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin:18px 0}
+.match-hdr{padding:12px 18px;background:rgba(249,115,22,.08);border-bottom:1px solid var(--border);font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent)}
+.match-body{padding:20px}
+.match-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.match-col-lbl{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:10px}
+.match-items{display:flex;flex-direction:column;gap:8px}
+.match-item{background:var(--surface2);border:1px solid var(--border-dim);border-radius:7px;padding:10px 14px;font-size:12.5px;cursor:pointer;transition:all .2s;user-select:none}
+.match-item:hover{border-color:var(--accent);color:var(--accent)}
+.match-item.selected{border-color:var(--accent);background:rgba(249,115,22,.1);color:var(--accent)}
+.match-item.matched{border-color:var(--success);background:rgba(0,229,160,.08);color:var(--success);cursor:default}
+.match-item.wrong-match{border-color:var(--danger);background:rgba(255,77,109,.08);color:var(--danger)}
+.match-result{font-family:var(--font-head);font-size:11px;font-weight:700;color:var(--muted);margin-top:12px;text-align:center}
+.tf-set{display:flex;flex-direction:column;gap:9px;margin-bottom:14px}
+.tf-row{background:var(--surface);border:1px solid var(--border-dim);border-radius:8px;padding:12px 15px;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
+.tf-stmt{font-size:12.5px;color:var(--txt);flex:1;line-height:1.5;min-width:180px}
+.tf-btns{display:flex;gap:8px;flex-shrink:0}
+.tf-btn{background:var(--surface2);border:1px solid var(--border-dim);color:var(--txt);padding:7px 16px;font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:1px;cursor:pointer;transition:all .2s;border-radius:5px}
+.tf-btn:hover:not(:disabled){border-color:var(--accent)}
+.tf-btn:disabled{cursor:not-allowed}
+.reorder-list{display:flex;flex-direction:column;gap:7px;margin-bottom:10px;list-style:none;padding-left:0}
+.reorder-item{background:var(--surface);border:1px solid var(--border-dim);border-radius:8px;padding:10px 13px;cursor:grab;font-size:12.5px;color:var(--txt);display:flex;align-items:center;gap:9px;user-select:none;transition:border-color .2s}
+.reorder-item:active{cursor:grabbing}
+.reorder-item.dragging{opacity:.4}
+.reorder-item.drag-over{border-color:var(--accent);border-style:dashed}
+.drag-handle{color:var(--dim);font-size:13px;flex-shrink:0}
+.check-btn{background:var(--accent);border:none;color:#fff;padding:9px 22px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;cursor:pointer;border-radius:6px;margin-top:8px}
+.fb{display:none;padding:10px 14px;font-size:12.5px;margin-top:8px;line-height:1.5;border-radius:7px}
+.fb.show{display:block}
+.fb.ok{background:rgba(0,229,160,.1);border:1px solid rgba(0,229,160,.3);color:var(--success)}
+.fb.no{background:rgba(255,77,109,.08);border:1px solid rgba(255,77,109,.25);color:var(--danger)}
+.reading-card{background:var(--surface);border:1px solid var(--border-dim);border-radius:12px;overflow:hidden;margin-bottom:18px}
+.av-row{display:flex;align-items:center;gap:13px;padding:18px 20px;border-bottom:1px solid var(--border-dim);flex-wrap:wrap}
+.avatar{width:48px;height:48px;border-radius:50%;object-fit:cover;border:2px solid var(--accent);flex-shrink:0}
+.av-name{font-family:var(--font-head);font-size:13px;font-weight:700;color:#fff}
+.av-role{font-size:11px;color:var(--muted)}
+.av-meta{margin-left:auto;font-size:11px;color:var(--muted);text-align:right;line-height:1.6}
+.reading-body{padding:20px;font-size:13px;line-height:1.95;color:var(--txt)}
+.kw-box{margin:0 20px 16px;background:rgba(249,115,22,.06);border:1px solid rgba(249,115,22,.15);border-radius:7px;padding:11px 14px;font-size:11.5px;color:var(--accent2);line-height:1.6}
+.comp-hi{color:var(--accent);font-weight:700}
+.sup-hi{color:var(--cyan);font-weight:700}
+.as-hi{color:var(--green);font-weight:700}
+.player-box{background:var(--surface);border:1px solid var(--border-dim);border-radius:12px;padding:22px;margin-bottom:14px}
+.player-top{display:flex;align-items:center;gap:15px;margin-bottom:12px}
+.play-btn-aud{width:42px;height:42px;background:var(--accent);border:none;border-radius:50%;cursor:pointer;font-size:16px;color:#fff;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.track-title{font-family:var(--font-head);font-size:12.5px;font-weight:700;color:#fff;margin-bottom:3px}
+.track-sub{font-size:10.5px;color:var(--muted)}
+.waveform{display:flex;align-items:center;gap:2px;height:38px;overflow:hidden}
+.wbar{width:3px;background:var(--accent);border-radius:2px;flex-shrink:0;opacity:.35}
+.script-toggle{background:none;border:1px solid var(--border-dim);color:var(--muted);padding:8px 18px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;cursor:pointer;border-radius:6px;transition:all .2s;margin-bottom:12px}
+.script-toggle:hover{border-color:var(--accent);color:var(--accent)}
+.script-box{background:var(--surface2);border:1px solid var(--border-dim);border-radius:8px;padding:18px 22px;font-size:12.5px;color:var(--muted);line-height:1.9;display:none}
+.script-box.open{display:block}
+.speak-grid{display:flex;flex-direction:column;gap:12px;margin-top:14px}
+.speak-card{background:var(--surface);border:1px solid var(--border-dim);border-radius:10px;padding:16px 20px}
+.speak-num{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:6px}
+.speak-q{font-size:14.5px;color:#fff;line-height:1.55;margin-bottom:6px}
+.speak-hint{font-size:11.5px;color:var(--muted);font-style:italic}
+.speak-tag{display:inline-block;padding:2px 9px;font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:1px;border-radius:4px;text-transform:uppercase;margin-right:7px}
+.st-ts{background:rgba(249,115,22,.12);color:var(--accent);border:1px solid rgba(249,115,22,.25)}
+.st-ss{background:rgba(0,229,160,.08);color:var(--success);border:1px solid rgba(0,229,160,.2)}
+.st-cl{background:rgba(0,207,255,.08);color:var(--cyan);border:1px solid rgba(0,207,255,.2)}
+.gt-box{background:rgba(255,184,0,.04);border:1px solid rgba(255,184,0,.18);border-radius:10px;padding:16px 20px;margin-top:18px}
+.gt-hdr{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold);margin-bottom:9px}
+.gt-hdr::before{content:'\2605 ';font-size:11px}
+.gt-tips{list-style:none;display:flex;flex-direction:column;gap:7px}
+.gt-tips li{font-size:12px;color:rgba(255,184,0,.82);padding-left:14px;position:relative;line-height:1.5}
+.gt-tips li::before{content:'\2192';position:absolute;left:0;color:var(--gold)}
+.phrases-wrap{padding:28px 48px;background:rgba(255,184,0,.03);border-top:1px solid rgba(255,184,0,.12);border-bottom:1px solid rgba(255,184,0,.12)}
+.phrases-hdr{font-family:var(--font-head);font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:6px}
+.phrases-sub{font-size:12px;color:var(--muted);margin-bottom:18px}
+.phrases-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.phrase-card{background:var(--surface);border:1px solid rgba(255,184,0,.2);border-radius:10px;padding:16px 18px;border-top:3px solid var(--gold)}
+.phrase-en{font-family:var(--font-head);font-size:13.5px;font-weight:700;color:#fff;margin-bottom:6px}
+.phrase-ctx{font-size:11.5px;color:var(--muted);line-height:1.5}
+.wrapup-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px}
+.wu-key{background:var(--surface);border:1px solid var(--border-dim);border-radius:10px;padding:16px 18px;border-top:3px solid var(--accent)}
+.wu-key-title{font-family:var(--font-head);font-size:12px;font-weight:700;color:var(--accent);margin-bottom:6px}
+.wu-key-text{font-size:12px;color:var(--muted);line-height:1.55}
+.cl-wrap{display:flex;flex-direction:column;gap:8px;margin:16px 0}
+.cl-item{background:var(--surface);border:1px solid var(--border-dim);border-radius:8px;padding:12px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:all .2s;font-size:13px;color:var(--txt)}
+.cl-item.done{border-color:var(--success);color:var(--success);background:rgba(0,229,160,.06)}
+.cl-check{font-size:16px;flex-shrink:0}
+.next-card{background:var(--surface);border:1px solid rgba(0,207,255,.25);border-radius:10px;padding:18px 22px;border-left:3px solid var(--cyan);margin-top:14px}
+.next-label{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--cyan);margin-bottom:6px}
+.next-title{font-size:14px;font-weight:600;color:#fff;margin-bottom:4px}
+.next-sub{font-size:12px;color:var(--muted);line-height:1.55}
+.win-area{background:var(--surface);border:1px solid var(--border-dim);border-radius:10px;padding:18px 22px;margin-top:14px}
+.win-lbl{font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:8px}
+.win-ta{width:100%;background:var(--surface2);border:1px solid var(--border-dim);color:var(--txt);padding:12px 14px;font-family:var(--font-body);font-size:13px;border-radius:7px;resize:vertical;min-height:80px}
+.win-ta:focus{outline:none;border-color:var(--accent)}
+.win-btn{background:var(--accent);border:none;color:#fff;padding:9px 22px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;cursor:pointer;border-radius:6px;margin-top:10px}
+.win-ok{display:none;margin-top:8px;font-size:12px;color:var(--success)}
+.ftr{background:var(--surface);border-top:1px solid var(--border);padding:16px 48px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+.fbrand{font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim)}
+.finfo{font-size:11px;color:var(--dim)}
+.flvs{display:flex;gap:3px}
+.flv{padding:5px 10px;font-family:var(--font-head);font-size:10px;font-weight:700;background:var(--surface2);color:var(--dim)}
+.flv.on{background:var(--accent);color:#fff}
+@media(max-width:860px){
+  .hdr,.ftr,.phrases-wrap{padding:14px 18px}
+  .sec-body{padding:20px 18px}
+  .sec-hdr{padding:16px 18px}
+  .wu-grid,.vocab-grid{grid-template-columns:repeat(2,1fr)}
+  .coll-grid{grid-template-columns:1fr 1fr}
+  .phrases-grid,.wrapup-grid{grid-template-columns:1fr}
+  .match-grid{grid-template-columns:1fr}
+  .opts{flex-direction:column}
+  .av-meta{margin-left:0;text-align:left}
+}
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <div class="brand"><div class="dot"></div>
+    <div><div class="bname">Gabriel Turner</div><div class="bsub">English Training · Teacher Edition</div></div>
+  </div>
+  <div class="sess-tag">
+    <span class="tag t-or">A2.2</span><span class="tag t-gd">Module 5</span>
+    <span class="tag t-cy">Session 4A — Discovery &amp; Drill</span>
+    <span class="tag t-go">120 min</span>
+  </div>
+  <div class="badge-strip">
+    <span id="b1" title="Warm-Up">&#128188;</span>
+    <span id="b2" title="Vocabulary">&#127918;</span>
+    <span id="b3" title="Grammar">&#128204;</span>
+    <span id="b4" title="Listening">&#127897;&#65039;</span>
+    <span id="b5" title="Win">&#127942;</span>
+  </div>
+</header>
+<div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+
+<!-- §1 WARM-UP -->
+<div class="section">
+  <div class="sec-hdr">
+    <div class="sec-num">§1</div>
+    <div>
+      <div class="sec-label">Warm-Up — <em>Would you change your job?</em></div>
+      <div class="sec-sub">Activate work vocabulary · personal stakes · connect to real decisions · 5–8 min</div>
+    </div>
+    <div class="sec-dur">&#9201; 5–8 MIN</div>
+  </div>
+  <img class="img-hero" src="https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=900&q=80" alt="Choosing between two job offers" loading="lazy">
+  <div class="sec-body">
+    <p style="font-size:13px;color:var(--muted);margin-bottom:14px">The full comparatives toolkit: <strong style="color:var(--accent)">more + adj + than · much/far/slightly/significantly</strong> · <strong style="color:var(--cyan)">the most + adj · adverbs after action verbs</strong>. Today: highest-stakes domain — <strong style="color:#fff">your career</strong>.</p>
+    <div class="wu-grid">
+      <div class="wu-card">
+        <img class="wu-card-img" src="https://images.unsplash.com/photo-1551836022-d5d88e9218df?w=600&q=80" alt="Weighing a job offer" loading="lazy">
+        <div class="wu-card-body">
+          <div class="wu-card-q">&#128188; <strong>Would you change your job right now?</strong> What would need to be better: salary, location, growth, culture, flexibility? Which factor is the most important for you?</div>
+          <div class="wu-card-hint">&#128161; This is a personal disclosure question — let students answer freely. Collect real vocabulary on the board: sueldo, crecimiento, horario, ambiente. Translate and use in §2.</div>
+        </div>
+      </div>
+      <div class="wu-card">
+        <img class="wu-card-img" src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=600&q=80" alt="Two job options on paper" loading="lazy">
+        <div class="wu-card-body">
+          <div class="wu-card-q">&#128203; <strong>Two offers, one decision:</strong> Job A: $22,000 MXN, 5 min from home, no growth plan. Job B: $18,000 MXN, 45 min commute, excellent career development. Which would you choose and why?</div>
+          <div class="wu-card-hint">&#128161; No grammar correction yet. Let students argue with their real values. Collect their reasoning phrases — they will reappear in the reading and listening as professional language.</div>
+        </div>
+      </div>
+      <div class="wu-card">
+        <img class="wu-card-img" src="https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=600&q=80" alt="Work-life balance comparison" loading="lazy">
+        <div class="wu-card-body">
+          <div class="wu-card-q">&#9878;&#65039; <strong>Remote vs Office:</strong> Is working from home better than working in an office? Which is more productive? Which is more social? Which is best for your career long-term?</div>
+          <div class="wu-card-hint">&#128161; Strong debate topic — students have strong opinions. Use the Opinion Meter in §SP to revisit this. Preview: "We will come back to this question at the end of class with the grammar you learn today."</div>
+        </div>
+      </div>
+      <div class="wu-card">
+        <img class="wu-card-img" src="https://images.unsplash.com/photo-1573497019236-61f323342eb7?w=600&q=80" alt="Andrea Soto career decision" loading="lazy">
+        <div class="wu-card-body">
+          <div class="wu-card-q">&#128105;&#8205;&#128188; <strong>Andrea&apos;s situation:</strong> Andrea has two job offers — her current company (stable, familiar) vs a new multinational (higher salary, more responsibility, less job security). What should she do?</div>
+          <div class="wu-card-hint">&#128161; Plant the session scenario. Andrea is a career changer — this decision is the emotional anchor for S4. Revisit it in every section. Her choice at the end of S4B becomes the S5 exit task setup.</div>
+        </div>
+      </div>
+    </div>
+    <div class="quick-win">
+      <div class="qw-icon">&#128188;</div>
+      <div>
+        <div class="qw-label">Quick Win — 20 seconds</div>
+        <div class="qw-text">Say this out loud: <strong>"The new job is more challenging than my current one, but it offers significantly better career development and a much higher salary."</strong></div>
+        <div class="qw-try">3 comparatives + 2 intensifiers in one sentence. Today you build the vocabulary to say this about any career decision — your own included.</div>
+      </div>
+      <div class="timer-wrap">
+        <svg class="timer-svg" width="54" height="54" viewBox="0 0 54 54">
+          <circle cx="27" cy="27" r="23" stroke="rgba(249,115,22,.2)" stroke-width="4" fill="none"/>
+          <circle id="arcQW" cx="27" cy="27" r="23" stroke="var(--accent)" stroke-width="4" fill="none" stroke-dasharray="144.51" stroke-dashoffset="0"/>
+          <text id="txtQW" x="27" y="32" text-anchor="middle" font-family="Syne,sans-serif" font-size="13" font-weight="800" fill="var(--accent)">20</text>
+        </svg>
+      </div>
+    </div>
+    <div class="tn">
+      <div class="tn-lbl">&#9889; Teacher Note — Warm-Up</div>
+      <div class="tn-text">S4 is the highest-stakes session in M5: students are comparing their own career reality. Make it personal from the first minute. Say: "This is not a grammar exercise. This is a conversation that every professional in Mexico has at some point. Today you learn to have it in English." Card 1 and Card 2 often produce the most authentic language in the whole module — note student phrases and quote them back in §4 as examples. The Andrea scenario (Card 4) anchors reading, listening and grammar — return to it constantly. Layer 3 (strongest students): "Andrea has a third option — starting her own business. How does that change the comparison?"</div>
+    </div>
+  </div>
+</div>
+
+<!-- §2 VOCABULARY -->
+<div class="section">
+  <div class="sec-hdr">
+    <div class="sec-num">§2</div>
+    <div>
+      <div class="sec-label">Vocabulary — <em>Career &amp; Workplace Language</em></div>
+      <div class="sec-sub">10 key words for job comparison · IPA · click to hear · Matching Pairs game · 10 min</div>
+    </div>
+    <div class="sec-dur">&#9201; 10 MIN</div>
+  </div>
+  <img class="img-banner" src="https://images.unsplash.com/photo-1551836022-d5d88e9218df?w=900&q=80" alt="Career vocabulary" loading="lazy">
+  <div class="sec-body">
+    <div class="vocab-grid">
+      <div class="vocab-card" onclick="speak('salary')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=600&q=80" alt="salary" loading="lazy">
+        <div class="vocab-card-body">
+          <div class="vc-word">salary</div>
+          <div class="vc-ipa">/ˈsæl.ər.i/</div>
+          <div class="vc-def">fixed regular payment from employer, usually monthly</div>
+          <div class="vc-ex">The new offer has a significantly higher salary than my current position.</div>
+          <div class="vc-sp">sueldo / salario</div>
+        </div>
+      </div>
+      <div class="vocab-card" onclick="speak('benefits')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=600&q=80" alt="benefits package" loading="lazy">
+        <div class="vocab-card-body">
+          <div class="vc-word">benefits</div>
+          <div class="vc-ipa">/ˈben.ɪ.fɪts/</div>
+          <div class="vc-def">non-salary advantages: health insurance, bonuses, vacation days</div>
+          <div class="vc-ex">The benefits package at the new company is much better than the current one.</div>
+          <div class="vc-sp">prestaciones / beneficios</div>
+        </div>
+      </div>
+      <div class="vocab-card" onclick="speak('commute')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600&q=80" alt="commute" loading="lazy">
+        <div class="vocab-card-body">
+          <div class="vc-word">commute</div>
+          <div class="vc-ipa">/kəˈmjuːt/</div>
+          <div class="vc-def">the journey between home and work; also used as a verb</div>
+          <div class="vc-ex">My commute to the new office would be far longer than my current one.</div>
+          <div class="vc-sp">traslado / trayecto al trabajo</div>
+        </div>
+      </div>
+      <div class="vocab-card" onclick="speak('flexibility')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1506784983877-45594efa4cbe?w=600&q=80" alt="flexibility" loading="lazy">
+        <div class="vocab-card-body">
+          <div class="vc-word">flexibility</div>
+          <div class="vc-ipa">/ˌflek.sɪˈbɪl.ɪ.ti/</div>
+          <div class="vc-def">freedom to adjust hours, location, or schedule to personal needs</div>
+          <div class="vc-ex">The startup offers more flexibility than a traditional corporate role.</div>
+          <div class="vc-sp">flexibilidad</div>
+        </div>
+      </div>
+      <div class="vocab-card" onclick="speak('career growth')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1551135049-8a33b5883817?w=600&q=80" alt="career growth" loading="lazy">
+        <div class="vocab-card-body">
+          <div class="vc-word">career growth</div>
+          <div class="vc-ipa">/kəˈrɪə ɡrəʊθ/</div>
+          <div class="vc-def">opportunities to advance, learn, and take on more responsibility over time</div>
+          <div class="vc-ex">The multinational offers significantly better career growth than my current company.</div>
+          <div class="vc-sp">crecimiento profesional / desarrollo</div>
+        </div>
+      </div>
+      <div class="vocab-card" onclick="speak('work-life balance')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1543269664-76bc3997d9ea?w=600&q=80" alt="work-life balance" loading="lazy">
+        <div class="vocab-card-body">
+          <div class="vc-word">work-life balance</div>
+          <div class="vc-ipa">/ˈwɜːk laɪf ˈbæl.əns/</div>
+          <div class="vc-def">the balance between professional responsibilities and personal time</div>
+          <div class="vc-ex">This role has a much better work-life balance than my previous job.</div>
+          <div class="vc-sp">equilibrio trabajo-vida personal</div>
+        </div>
+      </div>
+      <div class="vocab-card" onclick="speak('job security')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1502152518851-c4dca0b45a14?w=600&q=80" alt="job security" loading="lazy">
+        <div class="vocab-card-body">
+          <div class="vc-word">job security</div>
+          <div class="vc-ipa">/ˈdʒɒb sɪˈkjʊər.ɪ.ti/</div>
+          <div class="vc-def">the likelihood of keeping your job; how stable and permanent your position is</div>
+          <div class="vc-ex">The established company offers far greater job security than the startup.</div>
+          <div class="vc-sp">estabilidad laboral / seguridad en el empleo</div>
+        </div>
+      </div>
+      <div class="vocab-card" onclick="speak('workplace culture')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=600&q=80" alt="workplace culture" loading="lazy">
+        <div class="vocab-card-body">
+          <div class="vc-word">workplace culture</div>
+          <div class="vc-ipa">/ˈwɜːk.pleɪs ˈkʌl.tʃər/</div>
+          <div class="vc-def">the shared values, norms, and atmosphere of an organization</div>
+          <div class="vc-ex">The startup has a more collaborative workplace culture than large corporations.</div>
+          <div class="vc-sp">cultura organizacional / ambiente laboral</div>
+        </div>
+      </div>
+      <div class="vocab-card" onclick="speak('responsibility')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=600&q=80" alt="responsibility" loading="lazy">
+        <div class="vocab-card-body">
+          <div class="vc-word">responsibility</div>
+          <div class="vc-ipa">/rɪˌspon.sɪˈbɪl.ɪ.ti/</div>
+          <div class="vc-def">duties and obligations that come with a role; accountability</div>
+          <div class="vc-ex">The senior position has significantly more responsibility than my current role.</div>
+          <div class="vc-sp">responsabilidad</div>
+        </div>
+      </div>
+      <div class="vocab-card" onclick="speak('promotion')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1551836022-d5d88e9218df?w=600&q=80" alt="promotion" loading="lazy">
+        <div class="vocab-card-body">
+          <div class="vc-word">promotion</div>
+          <div class="vc-ipa">/prəˈməʊ.ʃən/</div>
+          <div class="vc-def">an advancement to a higher position, usually with more pay and responsibility</div>
+          <div class="vc-ex">The new company offers a faster promotion track than my current employer.</div>
+          <div class="vc-sp">ascenso / promoción</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tn">
+      <div class="tn-lbl">&#9889; Teacher Note — Vocabulary</div>
+      <div class="tn-text">False friend: &quot;salary&quot; is not &quot;salario exacto&quot; in English usage — it always means monthly/annual fixed pay. &quot;Benefits&quot; is plural in English — always say &quot;benefits&quot; not &quot;benefit&quot; when referring to the package. Drill: &quot;My company offers good _____.&quot; (benefits). &quot;Work-life balance&quot; is a compound noun — teach it as a chunk. Pronunciation trap: &quot;flexibility&quot; — 5 syllables, stress on 3rd: flex-i-BIL-i-ty. Personal connection drill: teacher models — &quot;For me, the most important factor is flexibility. What about you?&quot; Each student answers in one sentence using vocabulary from the grid.</div>
+    </div>
+
+    <!-- MATCHING PAIRS GAME -->
+    <div class="match-wrap">
+      <div class="match-hdr">&#127918; Matching Pairs — Word to Definition</div>
+      <div class="match-body">
+        <p style="font-size:12px;color:var(--muted);margin-bottom:14px">Click a word on the left, then click its matching definition on the right. Matched pairs turn green.</p>
+        <div class="match-grid">
+          <div>
+            <div class="match-col-lbl">Words</div>
+            <div class="match-items" id="matchWords">
+              <div class="match-item" data-id="a" onclick="selectMatch(this,'word')">salary</div>
+              <div class="match-item" data-id="b" onclick="selectMatch(this,'word')">commute</div>
+              <div class="match-item" data-id="c" onclick="selectMatch(this,'word')">job security</div>
+              <div class="match-item" data-id="d" onclick="selectMatch(this,'word')">promotion</div>
+              <div class="match-item" data-id="e" onclick="selectMatch(this,'word')">workplace culture</div>
+              <div class="match-item" data-id="f" onclick="selectMatch(this,'word')">benefits</div>
+            </div>
+          </div>
+          <div>
+            <div class="match-col-lbl">Definitions</div>
+            <div class="match-items" id="matchDefs">
+              <div class="match-item" data-id="c" onclick="selectMatch(this,'def')">How stable and permanent your position is</div>
+              <div class="match-item" data-id="f" onclick="selectMatch(this,'def')">Non-salary advantages like insurance and bonuses</div>
+              <div class="match-item" data-id="a" onclick="selectMatch(this,'def')">Fixed regular monthly payment from your employer</div>
+              <div class="match-item" data-id="e" onclick="selectMatch(this,'def')">The shared values and atmosphere of an organization</div>
+              <div class="match-item" data-id="b" onclick="selectMatch(this,'def')">The journey between your home and your workplace</div>
+              <div class="match-item" data-id="d" onclick="selectMatch(this,'def')">An advancement to a higher position with more pay</div>
+            </div>
+          </div>
+        </div>
+        <div class="match-result" id="matchResult">Matched: 0 / 6</div>
+      </div>
+    </div>
+
+    <div class="micro-speak">
+      <div class="ms-icon">&#128483;&#65039;</div>
+      <div>
+        <div class="ms-label">Micro-Speaking</div>
+        <div class="ms-text">Quick: rank the 3 most important factors for your ideal job from today&apos;s vocabulary. Say: "For me, the most important factor is [word] because... The second most important is [word]..." 45 seconds — go!</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- §3 COLLOQUIAL -->
+<div class="section">
+  <div class="sec-hdr">
+    <div class="sec-num">§3</div>
+    <div>
+      <div class="sec-label">Colloquial — <em>Career Decision Language</em></div>
+      <div class="sec-sub">4 phrases for real job conversations · 5 min</div>
+    </div>
+    <div class="sec-dur">&#9201; 5 MIN</div>
+  </div>
+  <div class="sec-body">
+    <div class="coll-grid">
+      <div class="coll-card" onclick="speak('It is a step up.')">
+        <img class="coll-card-img" src="https://images.unsplash.com/photo-1551836022-d5d88e9218df?w=600&q=80" alt="career step up" loading="lazy">
+        <div class="coll-body">
+          <div class="coll-phrase">"It is a step up."</div>
+          <div class="coll-ctx">Use when a new job or role is clearly better or more senior than the current one. Implies career advancement — not just a change.</div>
+          <div class="coll-ex">"The multinational offer is definitely a step up — more responsibility and a significantly higher salary."</div>
+        </div>
+      </div>
+      <div class="coll-card" onclick="speak('The pros outweigh the cons.')">
+        <img class="coll-card-img" src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=600&q=80" alt="weighing pros and cons" loading="lazy">
+        <div class="coll-body">
+          <div class="coll-phrase">"The pros outweigh the cons."</div>
+          <div class="coll-ctx">Use after listing advantages and disadvantages. Signals your final decision: the advantages are more important than the disadvantages.</div>
+          <div class="coll-ex">"The commute is longer, but the pros outweigh the cons — the salary and growth are far better."</div>
+        </div>
+      </div>
+      <div class="coll-card" onclick="speak('It is a better fit for me.')">
+        <img class="coll-card-img" src="https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=600&q=80" alt="better fit job role" loading="lazy">
+        <div class="coll-body">
+          <div class="coll-phrase">"It is a better fit for me."</div>
+          <div class="coll-ctx">Use when a role matches your values, skills, or goals better than the other option — more personal than "better job." Shows self-awareness.</div>
+          <div class="coll-ex">"The startup culture is a much better fit for me than a large corporation with strict hierarchy."</div>
+        </div>
+      </div>
+      <div class="coll-card" onclick="speak('It is not just about the money.')">
+        <img class="coll-card-img" src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=600&q=80" alt="not just about money" loading="lazy">
+        <div class="coll-body">
+          <div class="coll-phrase">"It is not just about the money."</div>
+          <div class="coll-ctx">Use to signal that you value non-salary factors: growth, culture, balance, purpose. Shows professional maturity in any job interview or career conversation.</div>
+          <div class="coll-ex">"The lower salary is acceptable because it is not just about the money — the career development is significantly more valuable."</div>
+        </div>
+      </div>
+    </div>
+    <div class="tn">
+      <div class="tn-lbl">&#9889; Teacher Note — Colloquial</div>
+      <div class="tn-text">These 4 phrases complete the module colloquial arc: S1 = product decisions ("no-brainer", "pros outweigh the cons"), S2 = people decisions ("tough call", "ticks all the boxes"), S3 = travel decisions ("not worth the hassle"), S4 = career decisions. "It is not just about the money" is the most powerful of the session — it shows interview-level self-awareness. Drill: teacher gives a scenario ("You have two offers: one pays $5,000 more but has worse culture"), student must respond with one colloquial phrase + one comparative. 2 minutes, everyone participates once.</div>
+    </div>
+  </div>
+</div>
+
+<!-- §4 GRAMMAR -->
+<div class="section">
+  <div class="sec-hdr">
+    <div class="sec-num">§4</div>
+    <div>
+      <div class="sec-label">Grammar — <em>Full Comparatives Integration</em></div>
+      <div class="sec-sub">Problem → Tool format · all structures reviewed in career context · 2 activities · 12–15 min</div>
+    </div>
+    <div class="sec-dur">&#9201; 12–15 MIN</div>
+  </div>
+  <img class="img-banner" src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=900&q=80" alt="Job offer comparison" loading="lazy">
+  <div class="sec-body">
+
+    <div class="job-table-wrap">
+      <div class="job-table-hdr">&#128204; Andrea&apos;s Job Offers — Current vs Multinational</div>
+      <table class="jt">
+        <thead><tr><th>Factor</th><th>Current Company (Stable)</th><th>Multinational (Growth)</th></tr></thead>
+        <tbody>
+          <tr><td>Salary</td><td class="tv-warn">$22,000 MXN/month</td><td class="tv-good">$31,000 MXN/month</td></tr>
+          <tr><td>Career growth</td><td class="tv-bad">Limited — same role 3 years</td><td class="tv-good">Fast promotion track</td></tr>
+          <tr><td>Job security</td><td class="tv-good">Very stable</td><td class="tv-warn">Less guaranteed</td></tr>
+          <tr><td>Commute</td><td class="tv-good">5 min from home</td><td class="tv-bad">55 min each way</td></tr>
+          <tr><td>Work-life balance</td><td class="tv-good">Excellent — no overtime</td><td class="tv-warn">More demanding hours</td></tr>
+          <tr><td>Workplace culture</td><td class="tv-warn">Traditional, formal</td><td class="tv-good">Collaborative, modern</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="prob-card">
+      <div class="prob-lbl">&#128680; Real Work Situation</div>
+      <div class="prob-scenario">Andrea needs to explain her decision to a friend in English. She wants to say: "El trabajo nuevo paga mucho más y el crecimiento es significativamente mejor, pero la distancia es bastante más larga y no es tan seguro como mi trabajo actual." She knows the basic structures but needs to combine ALL of them: short comparatives, long comparatives, intensifiers, as...as, and superlatives in one connected explanation.</div>
+      <div class="prob-thought">You think: "I know each structure separately, but how do I combine them naturally? And which one do I use when — the -er form, more, the most, as...as, or an intensifier?"</div>
+    </div>
+
+    <div class="tool-card">
+      <div class="tool-lbl">&#128295; The Full Toolkit — Choosing the Right Structure</div>
+      <div class="tool-text">
+        <strong style="color:var(--green)">Short adj (≤2 syllables) → -er than:</strong> higher, better, shorter, closer, longer<br>
+        <strong style="color:var(--green)">Long adj (≥3 syllables) → more...than:</strong> more flexible, more collaborative, more demanding<br>
+        <strong style="color:var(--green)">Irregular → memorize:</strong> good → better → the best · bad → worse → the worst · far → further<br>
+        <strong style="color:var(--cyan)">Size of difference → intensifier:</strong> much / far (big) · slightly / a little (small) · significantly (clear)<br>
+        <strong style="color:var(--warn)">Equal comparison → as + adj + as:</strong> "The new job is not as secure as my current one."<br>
+        <strong style="color:var(--cyan)">Best of all options → superlative:</strong> "Of all the offers, this is the most attractive."
+      </div>
+    </div>
+
+    <table class="gram-table">
+      <thead><tr><th>Structure</th><th>When to use</th><th>Career Example</th></tr></thead>
+      <tbody>
+        <tr><td><span class="g-green">higher / closer / better</span></td><td>Short/irregular adj</td><td class="g-ex">The salary is <strong>higher than</strong> my current one. The commute is <strong>worse than</strong> before.</td></tr>
+        <tr><td><span class="g-green">more flexible / more collaborative</span></td><td>Long adj (≥3 syllables)</td><td class="g-ex">The culture is <strong>more collaborative than</strong> my current company.</td></tr>
+        <tr><td><span class="g-cy">much / far / significantly + comp</span></td><td>Big or measurable difference</td><td class="g-ex">The salary is <strong>significantly higher than</strong> my current one. Growth is <strong>far better</strong>.</td></tr>
+        <tr><td><span class="g-cy">slightly / a little + comp</span></td><td>Small difference</td><td class="g-ex">The hours are <strong>slightly longer than</strong> my current schedule.</td></tr>
+        <tr><td><span class="g-green">not as + adj + as</span></td><td>Equal/less than comparison</td><td class="g-ex">The new job is <strong>not as secure as</strong> my current position.</td></tr>
+        <tr><td><span class="g-cy">the most / the best / the worst</span></td><td>Best or worst of 3+</td><td class="g-ex">Of all the offers I have received, this is <strong>the most attractive</strong>.</td></tr>
+      </tbody>
+    </table>
+
+    <div class="err-box">
+      &#9888;&#65039; <strong>Common Errors — Job Comparison:</strong><br>
+      &#10007; "The salary is <strong>more higher</strong> than my current one." → &#10003; <strong>higher than</strong> (never "more" + "-er")<br>
+      &#10007; "This job is <strong>more better</strong> for my career." → &#10003; <strong>better</strong> (irregular — never "more better")<br>
+      &#10007; "It is the <strong>most best</strong> offer I have received." → &#10003; <strong>the best</strong> (never "most" + superlative)<br>
+      &#10007; "The culture is <strong>more good</strong> than my current company." → &#10003; <strong>better than</strong> (use irregular form)
+    </div>
+
+    <div class="act-title">&#9889; ACTIVITY A — Choose the Correct Comparative Structure</div>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:14px">Use the Andrea job table above. Choose the correct form — think about the adjective type and size of difference before answering.</p>
+
+    <div class="opt-group">
+      <div class="opt-q">1. The multinational salary ($31K) vs current ($22K) — "The new salary is _____ my current one."</div>
+      <div class="opts" id="q1">
+        <button class="opt" onclick="checkOpt(this,'significantly higher than','q1')">slightly higher than</button>
+        <button class="opt" onclick="checkOpt(this,'significantly higher than','q1')">significantly higher than</button>
+        <button class="opt" onclick="checkOpt(this,'significantly higher than','q1')">more high than</button>
+      </div>
+    </div>
+    <div class="opt-group">
+      <div class="opt-q">2. The multinational culture (collaborative, modern) vs current (traditional, formal) — "The new workplace culture is _____ my current company."</div>
+      <div class="opts" id="q2">
+        <button class="opt" onclick="checkOpt(this,'much more collaborative than','q2')">much more collaborative than</button>
+        <button class="opt" onclick="checkOpt(this,'much more collaborative than','q2')">collaborativer than</button>
+        <button class="opt" onclick="checkOpt(this,'much more collaborative than','q2')">more collaboratively than</button>
+      </div>
+    </div>
+    <div class="opt-group">
+      <div class="opt-q">3. New commute = 55 min. Current commute = 5 min. "My commute to the new job is _____ my current commute."</div>
+      <div class="opts" id="q3">
+        <button class="opt" onclick="checkOpt(this,'far longer than','q3')">slightly longer than</button>
+        <button class="opt" onclick="checkOpt(this,'far longer than','q3')">more long than</button>
+        <button class="opt" onclick="checkOpt(this,'far longer than','q3')">far longer than</button>
+      </div>
+    </div>
+    <div class="opt-group">
+      <div class="opt-q">4. "The new job is _____ my current position in terms of job security." (security = not as good)</div>
+      <div class="opts" id="q4">
+        <button class="opt" onclick="checkOpt(this,'not as secure as','q4')">less secure than</button>
+        <button class="opt" onclick="checkOpt(this,'not as secure as','q4')">not as secure as</button>
+        <button class="opt" onclick="checkOpt(this,'not as secure as','q4')">more insecure than</button>
+      </div>
+    </div>
+    <div class="opt-group">
+      <div class="opt-q">5. "Of all the job offers Andrea has received this year, the multinational is _____."</div>
+      <div class="opts" id="q5">
+        <button class="opt" onclick="checkOpt(this,'the most attractive','q5')">the most attractiver</button>
+        <button class="opt" onclick="checkOpt(this,'the most attractive','q5')">the most attractive</button>
+        <button class="opt" onclick="checkOpt(this,'the most attractive','q5')">more attractive</button>
+      </div>
+    </div>
+
+    <div class="micro-speak" style="margin-top:16px">
+      <div class="ms-icon">&#128483;&#65039;</div>
+      <div>
+        <div class="ms-label">Micro-Speaking</div>
+        <div class="ms-text">Tell your partner: compare your current job with a previous job or an ideal job using at least 3 different structures from the grammar table. Example: "My current job is slightly closer to home, but significantly less flexible than my previous role. The salary is better, but the culture is not as collaborative as I would like." 60 seconds — go!</div>
+      </div>
+    </div>
+
+    <div class="act-title">&#9889; ACTIVITY B — Unjumble the Career Comparison</div>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:14px">Drag and drop each fragment into the correct order to form a logical career comparison sentence.</p>
+
+    <p style="font-size:12.5px;color:var(--txt);margin-bottom:8px"><strong>Sentence 1:</strong></p>
+    <ul class="reorder-list" id="order1">
+      <li class="reorder-item" draggable="true"><span class="drag-handle">&#x2807;</span>but the career growth is significantly better</li>
+      <li class="reorder-item" draggable="true"><span class="drag-handle">&#x2807;</span>The new job is not as secure as my current one,</li>
+      <li class="reorder-item" draggable="true"><span class="drag-handle">&#x2807;</span>and the salary is far higher than what I earn now.</li>
+    </ul>
+    <button class="check-btn" onclick="checkOrder('order1',['The new job is not as secure as my current one,','but the career growth is significantly better','and the salary is far higher than what I earn now.'],'fb1')">Check Order</button>
+    <div class="fb" id="fb1"></div>
+
+    <p style="font-size:12.5px;color:var(--txt);margin-bottom:8px;margin-top:18px"><strong>Sentence 2:</strong></p>
+    <ul class="reorder-list" id="order2">
+      <li class="reorder-item" draggable="true"><span class="drag-handle">&#x2807;</span>the most attractive offer I have received this year.</li>
+      <li class="reorder-item" draggable="true"><span class="drag-handle">&#x2807;</span>because the benefits are much better and the culture is far more collaborative —</li>
+      <li class="reorder-item" draggable="true"><span class="drag-handle">&#x2807;</span>The pros outweigh the cons at the multinational</li>
+    </ul>
+    <button class="check-btn" onclick="checkOrder('order2',['The pros outweigh the cons at the multinational','because the benefits are much better and the culture is far more collaborative —','the most attractive offer I have received this year.'],'fb2')">Check Order</button>
+    <div class="fb" id="fb2"></div>
+
+    <div class="gt-box">
+      <div class="gt-hdr">GT Originals — Teacher Notes</div>
+      <ul class="gt-tips">
+        <li>&#128204; S4 = full integration: every structure from M5 (short comp, long comp, irregular, intensifiers, as...as, superlative) appears in one career-decision context. This is the most complete grammar session of the module.</li>
+        <li>&#9888;&#65039; Error triangle: "more better" (double comparative), "the most best" (double superlative), "more higher" (more + -er). Write all three on the board as "Hall of Errors" — students vote on which one they hear most often.</li>
+        <li>&#128313; Career relevance: tell students "This is the grammar you need for your next job interview in English. When they ask why you want to leave your current company, you will say: I am looking for a role with significantly better career growth and a more collaborative workplace culture."</li>
+        <li>&#127775; Upsell: "At B1.1 you compare companies using Present Perfect and passive voice: The company has been recognized as... The salary has been increased by... Your A2.2 comparatives become richer in B1."</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- §5 READING -->
+<div class="section">
+  <div class="sec-hdr">
+    <div class="sec-num">§5</div>
+    <div>
+      <div class="sec-label">Reading — <em>Andrea&apos;s Career Decision</em></div>
+      <div class="sec-sub">Color-coded grammar · 5 True/False · 8–10 min</div>
+    </div>
+    <div class="sec-dur">&#9201; 8–10 MIN</div>
+  </div>
+  <div class="sec-body">
+    <div class="reading-card">
+      <div class="av-row">
+        <img class="avatar" src="https://images.unsplash.com/photo-1573497019236-61f323342eb7?w=200&q=80" alt="Andrea Soto" loading="lazy">
+        <div>
+          <div class="av-name">Andrea Soto</div>
+          <div class="av-role">Career Changer · A2.2 Recurring Character</div>
+        </div>
+        <div class="av-meta">LinkedIn message to a mentor<br>M5 · S4A</div>
+      </div>
+      <div class="kw-box">
+        &#128273; <strong style="color:var(--accent)">Comparatives + intensifiers (orange)</strong> · <strong style="color:var(--cyan)">Superlatives (cyan)</strong> · <strong style="color:var(--green)">as...as (green)</strong>
+      </div>
+      <div class="reading-body">
+        <p><em>Hi Carlos, I need your advice. I have two job offers and I have to decide by Friday.</em></p>
+        <p>My current company is offering me a small raise — but the role is <span class="as-hi">not as challenging as</span> I need at this stage of my career. The salary would be <span class="comp-hi">slightly higher than</span> now, but the growth plan is still <span class="comp-hi">much weaker than</span> what I was promised two years ago.</p>
+        <p>The multinational offer is <span class="comp-hi">significantly more attractive</span> in almost every way. The salary is <span class="comp-hi">far higher than</span> my current one — almost 40% more. The culture is <span class="comp-hi">more collaborative and more international</span> than anything I have experienced before. And the career track is <span class="comp-hi">faster than</span> the traditional model.</p>
+        <p>The only disadvantage is the commute — it is <span class="comp-hi">much longer than</span> my current one, and the position is <span class="as-hi">not as secure as</span> a permanent contract. But honestly, I think the pros outweigh the cons. It is a step up, and it is not just about the money. Of all the opportunities I have had in the last five years, this is <span class="sup-hi">the most exciting</span> and <span class="sup-hi">the most aligned with my goals</span>.</p>
+        <p>What do you think? Should I take it?</p>
+        <p><em>Andrea</em></p>
+      </div>
+    </div>
+
+    <p style="font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:11px">Comprehension — True or False?</p>
+    <div class="tf-set">
+      <div class="tf-row">
+        <div class="tf-stmt">1. Andrea&apos;s current company is offering her a significant salary increase.</div>
+        <div class="tf-btns">
+          <button class="tf-btn" onclick="checkTF(this,false,'tf1')">TRUE</button>
+          <button class="tf-btn" onclick="checkTF(this,true,'tf1')">FALSE</button>
+        </div>
+      </div>
+      <div class="tf-row">
+        <div class="tf-stmt">2. The multinational salary is approximately 40% higher than her current salary.</div>
+        <div class="tf-btns">
+          <button class="tf-btn" onclick="checkTF(this,true,'tf2')">TRUE</button>
+          <button class="tf-btn" onclick="checkTF(this,false,'tf2')">FALSE</button>
+        </div>
+      </div>
+      <div class="tf-row">
+        <div class="tf-stmt">3. Andrea thinks the commute is the most important disadvantage of the new offer.</div>
+        <div class="tf-btns">
+          <button class="tf-btn" onclick="checkTF(this,false,'tf3')">TRUE</button>
+          <button class="tf-btn" onclick="checkTF(this,true,'tf3')">FALSE</button>
+        </div>
+      </div>
+      <div class="tf-row">
+        <div class="tf-stmt">4. Andrea uses the phrases "a step up" and "not just about the money" in her message.</div>
+        <div class="tf-btns">
+          <button class="tf-btn" onclick="checkTF(this,true,'tf4')">TRUE</button>
+          <button class="tf-btn" onclick="checkTF(this,false,'tf4')">FALSE</button>
+        </div>
+      </div>
+      <div class="tf-row">
+        <div class="tf-stmt">5. Andrea has already decided to accept the multinational offer.</div>
+        <div class="tf-btns">
+          <button class="tf-btn" onclick="checkTF(this,false,'tf5')">TRUE</button>
+          <button class="tf-btn" onclick="checkTF(this,true,'tf5')">FALSE</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="micro-speak">
+      <div class="ms-icon">&#128483;&#65039;</div>
+      <div>
+        <div class="ms-label">Micro-Speaking</div>
+        <div class="ms-text">From memory: summarize Andrea&apos;s comparison in 2 sentences using one intensifier and one superlative. Example: "Andrea thinks the multinational is far more attractive than her current offer because the salary is significantly higher and the culture is the most collaborative she has experienced." 30 seconds — go!</div>
+      </div>
+    </div>
+
+    <div class="tn">
+      <div class="tn-lbl">&#9889; Teacher Note — Reading</div>
+      <div class="tn-text">This is the richest reading text in M5 — it integrates all 6 structures in one authentic professional message. Say: "Count the comparatives. How many can you find?" (Answer: not as challenging as, slightly higher, much weaker, significantly more attractive, far higher, more collaborative, more international, faster, much longer, not as secure as, the most exciting, the most aligned). 12 comparison structures in one paragraph. For strong students: ask them to write a 3-sentence reply from Carlos using at least 3 different comparison structures.</div>
+    </div>
+  </div>
+</div>
+
+<!-- §6 LISTENING -->
+<div class="section">
+  <div class="sec-hdr">
+    <div class="sec-num">§6</div>
+    <div>
+      <div class="sec-label">Listening — <em>Andrea Asks Her Manager for Advice</em></div>
+      <div class="sec-sub">ElevenLabs · monologue · Voice: Sarah · Speed 0.82 · 4 MC questions · 8–10 min</div>
+    </div>
+    <div class="sec-dur">&#9201; 8–10 MIN</div>
+  </div>
+  <img class="img-banner" src="https://images.unsplash.com/photo-1543007630-9710e4a00a20?w=900&q=80" alt="Career meeting" loading="lazy">
+  <div class="sec-body">
+    <div class="player-box">
+      <div class="player-top">
+        <button class="play-btn-aud" id="playBtn">&#9654;</button>
+        <div>
+          <div class="track-title">Andrea Reflects on Her Decision — Celaya</div>
+          <div class="track-sub">A2.2 · M5 · S4A · Voice: Sarah (American English) · Speed: 0.82 · ~65 sec</div>
+        </div>
+      </div>
+      <div class="waveform" id="wv"></div>
+    </div>
+
+    <button class="script-toggle" onclick="toggleScript()">&#9660; Show ElevenLabs Script</button>
+    <div class="script-box" id="scriptBox">I have been thinking about this for two weeks now, and I think I finally know what I want to do.
+
+My current job is stable. It is close to home. The people are nice. But it is not as challenging as I need it to be anymore. I have been doing the same role for three years, and the growth opportunities are much more limited than what I was promised when I started.
+
+The multinational offer is different. The salary is significantly higher than what I earn now — almost 40% more. The team is more international and the culture is far more collaborative than anything I have worked in before. And the career development program is the best I have seen in this industry. They promote from within and they invest in their people.
+
+Yes, the commute is much longer. And the contract is not as permanent as my current one. But the pros outweigh the cons. I keep coming back to one thing: is it a step up? And the answer is yes. It is clearly the most exciting opportunity I have had in my career so far.
+
+I have decided. I am going to accept the multinational offer. It is not just about the money — it is about where I want to be in five years. And this is the right move.
+    </div>
+
+    <div class="tn">
+      <div class="tn-lbl">&#9889; Teacher Note — Listening</div>
+      <div class="tn-text">ElevenLabs: Voice = Sarah, Speed = 0.82, Stability = 0.65, Similarity = 0.80. Before playing: "Andrea finally makes her decision in this audio. Listen for which comparatives she uses most — and notice the moment she decides." After listening: "What word does she keep coming back to?" (‘step up’). This colloquial phrase is the emotional anchor of the whole decision. Count the comparatives in the script (answer: not as challenging as, much more limited, significantly higher, more international, far more collaborative, the best, much longer, not as permanent as, the most exciting) = 9 instances. Strong students: ask them to predict what Andrea will say before they hear the ending.</div>
+    </div>
+
+    <div class="act-title" style="padding-top:16px">Comprehension Questions</div>
+    <div class="opt-group" style="margin-top:14px">
+      <div class="opt-q">1. How long has Andrea been in the same role at her current company?</div>
+      <div class="opts" id="lq1">
+        <button class="opt" onclick="checkOpt(this,'Three years','lq1')">One year</button>
+        <button class="opt" onclick="checkOpt(this,'Three years','lq1')">Three years</button>
+        <button class="opt" onclick="checkOpt(this,'Three years','lq1')">Five years</button>
+      </div>
+    </div>
+    <div class="opt-group">
+      <div class="opt-q">2. What percentage higher is the multinational salary, according to Andrea?</div>
+      <div class="opts" id="lq2">
+        <button class="opt" onclick="checkOpt(this,'Almost 40% more','lq2')">About 20% more</button>
+        <button class="opt" onclick="checkOpt(this,'Almost 40% more','lq2')">Almost 40% more</button>
+        <button class="opt" onclick="checkOpt(this,'Almost 40% more','lq2')">Exactly 50% more</button>
+      </div>
+    </div>
+    <div class="opt-group">
+      <div class="opt-q">3. What does Andrea say is "the best she has seen in this industry"?</div>
+      <div class="opts" id="lq3">
+        <button class="opt" onclick="checkOpt(this,'The career development program','lq3')">The salary package</button>
+        <button class="opt" onclick="checkOpt(this,'The career development program','lq3')">The career development program</button>
+        <button class="opt" onclick="checkOpt(this,'The career development program','lq3')">The workplace culture</button>
+      </div>
+    </div>
+    <div class="opt-group">
+      <div class="opt-q">4. What is Andrea&apos;s final decision?</div>
+      <div class="opts" id="lq4">
+        <button class="opt" onclick="checkOpt(this,'She will accept the multinational offer','lq4')">She will stay at her current company</button>
+        <button class="opt" onclick="checkOpt(this,'She will accept the multinational offer','lq4')">She will accept the multinational offer</button>
+        <button class="opt" onclick="checkOpt(this,'She will accept the multinational offer','lq4')">She has not decided yet</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- §SP SPEAKING -->
+<div class="section">
+  <div class="sec-hdr">
+    <div class="sec-num">§SP</div>
+    <div>
+      <div class="sec-label">Speaking Practice — <em>Your Career, Your Choice</em></div>
+      <div class="sec-sub">6 guided questions · Pair &amp; group · personal stakes · 10–12 min</div>
+    </div>
+    <div class="sec-dur">&#9201; 10–12 MIN</div>
+  </div>
+  <div class="sec-body">
+    <div class="speak-grid">
+      <div class="speak-card">
+        <div class="speak-num"><span class="speak-tag st-ts">T-S</span> Question 1 — Recall</div>
+        <div class="speak-q">What were Andrea&apos;s 3 main reasons for choosing the multinational? Use a different comparison structure for each reason.</div>
+        <div class="speak-hint">Grammar hint: "The salary is significantly higher... the culture is far more collaborative... and it is the most exciting opportunity she has had."</div>
+      </div>
+      <div class="speak-card">
+        <div class="speak-num"><span class="speak-tag st-ss">S-S</span> Question 2 — Apply</div>
+        <div class="speak-q">Compare your current job with a previous job or an ideal job. Use at least 4 different comparison structures. Which is better overall and why?</div>
+        <div class="speak-hint">Grammar hint: Use: -er than, more...than, not as...as, significantly/far, the most. Try to use all 5 in your answer.</div>
+      </div>
+      <div class="speak-card">
+        <div class="speak-num"><span class="speak-tag st-ss">S-S</span> Question 3 — Debate</div>
+        <div class="speak-q">Student A says salary is the most important factor in a job. Student B says workplace culture is more important than money. Debate for 90 seconds using comparatives. Who makes the strongest argument?</div>
+        <div class="speak-hint">Grammar hint: "Salary is far more important than culture because... / Culture is significantly more valuable than a higher salary because..."</div>
+      </div>
+      <div class="speak-card">
+        <div class="speak-num"><span class="speak-tag st-cl">Class</span> Question 4 — Ranking</div>
+        <div class="speak-q">Class ranks today&apos;s 10 vocabulary words from most to least important for a job decision. Use superlatives to justify the top 3 and comparatives to justify the rankings.</div>
+        <div class="speak-hint">Grammar hint: "Career growth is the most important factor because... Salary is more important than benefits because..."</div>
+      </div>
+      <div class="speak-card">
+        <div class="speak-num"><span class="speak-tag st-ts">T-S</span> Question 5 — Interview</div>
+        <div class="speak-q">Teacher plays the interviewer. Student explains why they want to leave their current company. Must use at least 2 comparatives, 1 superlative, and 1 colloquial phrase from today. This is real job interview language.</div>
+        <div class="speak-hint">Grammar hint: "I am looking for a role with significantly better career growth and a more collaborative workplace culture. It is a step up from my current position."</div>
+      </div>
+      <div class="speak-card">
+        <div class="speak-num"><span class="speak-tag st-cl">Class</span> Question 6 — Challenge</div>
+        <div class="speak-q">Each student designs their ideal job using 5 superlatives. Then compare two students&apos; ideal jobs with the class using comparatives. "Luis&apos;s ideal job is more flexible than Ana&apos;s, but Ana&apos;s has a higher salary."</div>
+        <div class="speak-hint">Grammar hint: "My ideal job has the best work-life balance, the most flexible hours, the highest salary..." Then compare two descriptions.</div>
+      </div>
+    </div>
+
+    <div class="tn">
+      <div class="tn-lbl">&#9889; Teacher Note — Speaking</div>
+      <div class="tn-text">Question 5 (interview simulation) is the most transferable activity in M5 — reserve 5 minutes for it. Tell students: "You will use this exact language in a real interview. The question is: why do you want to leave your current job? Today you practice the answer." For strong students: add a follow-up question from the interviewer: "What are your biggest strengths compared to other candidates?" — forces superlatives under pressure. Question 6 (ideal job comparison) works especially well with 2-3 students who have shared it first — use their real answers as the content for the class comparison. This makes the grammar deeply personal.</div>
+    </div>
+  </div>
+</div>
+
+<!-- PHRASES -->
+<div class="phrases-wrap">
+  <div class="phrases-hdr">&#127919; This week, use these 3 phrases at work:</div>
+  <div class="phrases-sub">Career comparison language from S4A — ready for job interviews, performance reviews and professional conversations.</div>
+  <div class="phrases-grid">
+    <div class="phrase-card">
+      <div class="phrase-en">"I am looking for a role with significantly better career growth."</div>
+      <div class="phrase-ctx">The professional way to say "I want a better job." Use in interviews, networking conversations, and LinkedIn messages. Add your own adjective: more flexible, more collaborative, more international.</div>
+    </div>
+    <div class="phrase-card">
+      <div class="phrase-en">"The pros outweigh the cons."</div>
+      <div class="phrase-ctx">Use after listing advantages and disadvantages of any decision. Works for job offers, project proposals, supplier comparisons, and any professional recommendation. Shows structured analytical thinking.</div>
+    </div>
+    <div class="phrase-card">
+      <div class="phrase-en">"It is not just about the money."</div>
+      <div class="phrase-ctx">Use in interviews and salary negotiations to signal that you value growth, culture, and purpose — not only compensation. Marks you as a mature, thoughtful professional candidate.</div>
+    </div>
+  </div>
+</div>
+
+<!-- §7 WRAP-UP -->
+<div class="section">
+  <div class="sec-hdr">
+    <div class="sec-num">§7</div>
+    <div>
+      <div class="sec-label">Wrap-Up — <em>S4A Complete</em></div>
+      <div class="sec-sub">Key takeaways · Checklist · My Win Today · Preview S4B · 5–8 min</div>
+    </div>
+    <div class="sec-dur">&#9201; 5–8 MIN</div>
+  </div>
+  <div class="sec-body">
+    <div class="wrapup-grid">
+      <div class="wu-key">
+        <div class="wu-key-title">&#9744; Choosing the right structure</div>
+        <div class="wu-key-text">Short adj → -er than. Long adj → more...than. Irregular: good→better, bad→worse. Intensifier: much/far/significantly/slightly. Equal/less: not as...as. Best of all: the most.</div>
+      </div>
+      <div class="wu-key">
+        <div class="wu-key-title">&#9744; Double error rule</div>
+        <div class="wu-key-text">Never "more better," never "more higher," never "the most best." One form per comparison. If you use -er, no "more." If you use "the most," no "-est."</div>
+      </div>
+      <div class="wu-key">
+        <div class="wu-key-title">&#9744; Career vocabulary in context</div>
+        <div class="wu-key-text">salary · benefits · commute · flexibility · career growth · work-life balance · job security · workplace culture · responsibility · promotion — all usable in real job interviews.</div>
+      </div>
+    </div>
+
+    <p style="font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:10px">I Can Now...</p>
+    <div class="cl-wrap">
+      <div class="cl-item" onclick="toggleDone(this)"><span class="cl-check">&#9744;</span>Choose the correct comparative structure for any adjective (short, long, irregular)</div>
+      <div class="cl-item" onclick="toggleDone(this)"><span class="cl-check">&#9744;</span>Use intensifiers precisely: significantly higher, far more collaborative, slightly longer</div>
+      <div class="cl-item" onclick="toggleDone(this)"><span class="cl-check">&#9744;</span>Use as...as and not as...as to make equal or less-than comparisons</div>
+      <div class="cl-item" onclick="toggleDone(this)"><span class="cl-check">&#9744;</span>Use career vocabulary in a real job comparison conversation or interview</div>
+      <div class="cl-item" onclick="toggleDone(this)"><span class="cl-check">&#9744;</span>Use colloquial phrases: "the pros outweigh the cons," "it is a step up," "not just about the money"</div>
+    </div>
+
+    <div class="next-card">
+      <div class="next-label">&#9654; Coming Next — Session 4B</div>
+      <div class="next-title">The Career Pitch — Production &amp; Fluency</div>
+      <div class="next-sub">In S4B you use today&apos;s career language under time pressure — job interview simulations, salary negotiation role-plays, and a live career recommendation pitch. Andrea makes her final decision, and you make yours too.</div>
+    </div>
+
+    <div class="win-area">
+      <div class="win-lbl">&#127942; My Win Today</div>
+      <textarea class="win-ta" id="winTA" placeholder="Write one comparison sentence about your own job or career that you can use in a real conversation this week..."></textarea>
+      <button class="win-btn" onclick="saveWin()">Save My Win</button>
+      <div class="win-ok" id="winOK">&#10003; Saved! See you in S4B.</div>
+    </div>
+  </div>
+</div>
+
+<footer class="ftr">
+  <div class="fbrand">Gabriel Turner · English Training</div>
+  <div class="finfo">A2.2 · Module 5 · Session 4A · GT_A2_2_M5_S4A_TEACHER_v1</div>
+  <div class="flvs">
+    <div class="flv">A1.1</div><div class="flv">A1.2</div><div class="flv">A2.1</div>
+    <div class="flv on">A2.2</div><div class="flv">B1.1</div><div class="flv">B1.2</div>
+  </div>
+</footer>
+
+<script>
+function speak(t){if(!window.speechSynthesis)return;speechSynthesis.cancel();var u=new SpeechSynthesisUtterance(t);u.lang="en-US";u.rate=0.82;u.pitch=1;speechSynthesis.speak(u);}
+function earnBadge(id){var el=document.getElementById(id);if(el&&!el.classList.contains("earned")){el.classList.add("earned");launchConfetti();}}
+function launchConfetti(){
+  var colors=["#F97316","#FB923C","#FFB800","#FF4D6D","#fff"];
+  for(var i=0;i<60;i++){(function(i){setTimeout(function(){
+    var d=document.createElement("div");var sz=6+Math.random()*8;
+    d.style.cssText="position:fixed;top:-10px;width:"+sz+"px;height:"+sz+"px;background:"+colors[Math.floor(Math.random()*colors.length)]+";left:"+Math.random()*100+"vw;border-radius:"+(Math.random()>.5?"50%":"2px")+";pointer-events:none;z-index:9999;animation:fall "+(1.2+Math.random()*.8)+"s linear forwards";
+    document.body.appendChild(d);setTimeout(function(){d.remove();},2000);
+  },i*30);})(i);}
+}
+var confettiCSS=document.createElement("style");
+confettiCSS.textContent="@keyframes fall{from{opacity:1;transform:translateY(0) rotate(0deg)}to{opacity:0;transform:translateY(100vh) rotate(720deg)}}";
+document.head.appendChild(confettiCSS);
+window.addEventListener("scroll",function(){
+  var pct=(window.scrollY/(document.body.scrollHeight-window.innerHeight))*100;
+  document.getElementById("progressFill").style.width=pct+"%";
+});
+(function(){
+  var arc=document.getElementById("arcQW"),txt=document.getElementById("txtQW");
+  if(!arc||!txt)return;
+  var total=20,circ=144.51,rem=total;
+  var iv=setInterval(function(){
+    rem--;txt.textContent=rem;
+    arc.style.strokeDashoffset=circ*(1-rem/total);
+    if(rem<=5)arc.style.stroke="#FF4D6D";
+    if(rem<=0){clearInterval(iv);arc.style.stroke="var(--success)";txt.textContent="\u2713";earnBadge("b1");}
+  },1000);
+})();
+function checkOpt(btn,correct,qid){
+  var c=document.getElementById(qid);
+  c.querySelectorAll(".opt").forEach(function(b){b.disabled=true;if(b.textContent.trim()===correct)b.classList.add("correct");});
+  if(btn.textContent.trim()!==correct)btn.classList.add("wrong");
+  earnBadge("b3");
+}
+function checkTF(btn,isCorrect,id){
+  var row=btn.closest(".tf-row");
+  row.querySelectorAll(".tf-btn").forEach(function(b){b.disabled=true;});
+  if(isCorrect){btn.style.cssText="background:rgba(0,229,160,.15);border-color:var(--success);color:var(--success)";}
+  else{
+    btn.style.cssText="background:rgba(255,77,109,.12);border-color:var(--danger);color:var(--danger)";
+    var sib=Array.from(row.querySelectorAll(".tf-btn")).find(function(b){return b!==btn;});
+    if(sib)sib.style.cssText="background:rgba(0,229,160,.12);border-color:var(--success);color:var(--success)";
+  }
+  earnBadge("b4");
+}
+var matchSelected={word:null,def:null};
+var matchCount=0;
+function selectMatch(el,type){
+  if(el.classList.contains("matched"))return;
+  document.querySelectorAll(".match-item.selected").forEach(function(x){if(!matchSelected.word||x!==matchSelected.word)if(!matchSelected.def||x!==matchSelected.def)x.classList.remove("selected");});
+  el.classList.add("selected");
+  matchSelected[type]=el;
+  if(matchSelected.word&&matchSelected.def){
+    var wid=matchSelected.word.dataset.id;
+    var did=matchSelected.def.dataset.id;
+    if(wid===did){
+      matchSelected.word.classList.remove("selected");matchSelected.word.classList.add("matched");
+      matchSelected.def.classList.remove("selected");matchSelected.def.classList.add("matched");
+      matchSelected.word.onclick=null;matchSelected.def.onclick=null;
+      matchCount++;
+      document.getElementById("matchResult").textContent="Matched: "+matchCount+" / 6";
+      if(matchCount>=6){earnBadge("b2");}
+    }else{
+      matchSelected.word.classList.add("wrong-match");matchSelected.def.classList.add("wrong-match");
+      setTimeout(function(){
+        if(matchSelected.word)matchSelected.word.classList.remove("selected","wrong-match");
+        if(matchSelected.def)matchSelected.def.classList.remove("selected","wrong-match");
+      },700);
+    }
+    matchSelected={word:null,def:null};
+  }
+}
+var dragSrc=null;
+function initDrag(listId){
+  var list=document.getElementById(listId);if(!list)return;
+  list.querySelectorAll(".reorder-item").forEach(function(item){
+    item.addEventListener("dragstart",function(){dragSrc=this;this.classList.add("dragging");});
+    item.addEventListener("dragend",function(){this.classList.remove("dragging");list.querySelectorAll(".reorder-item").forEach(function(i){i.classList.remove("drag-over");});});
+    item.addEventListener("dragover",function(e){e.preventDefault();list.querySelectorAll(".reorder-item").forEach(function(i){i.classList.remove("drag-over");});if(this!==dragSrc)this.classList.add("drag-over");});
+    item.addEventListener("drop",function(e){e.preventDefault();if(this!==dragSrc){var all=[...list.querySelectorAll(".reorder-item")];if(all.indexOf(dragSrc)<all.indexOf(this))list.insertBefore(dragSrc,this.nextSibling);else list.insertBefore(dragSrc,this);}});
+  });
+}
+function checkOrder(listId,correct,fbId){
+  var list=document.getElementById(listId);
+  var current=[...list.querySelectorAll(".reorder-item")].map(function(i){return i.textContent.replace("\u2807","").trim();});
+  var fb=document.getElementById(fbId);
+  if(JSON.stringify(current)===JSON.stringify(correct)){
+    fb.className="fb show ok";fb.textContent="\u2713 Correct! Well done!";
+    list.querySelectorAll(".reorder-item").forEach(function(i){i.style.borderColor="var(--success)";i.style.color="var(--success)";});
+    earnBadge("b3");
+  }else{
+    fb.className="fb show no";fb.textContent="\u2717 Correct order: "+correct.join(" \u2014 ");
+    list.querySelectorAll(".reorder-item").forEach(function(i){i.style.borderColor="var(--danger)";});
+  }
+}
+function toggleScript(){
+  var b=document.getElementById("scriptBox");b.classList.toggle("open");
+  document.querySelector(".script-toggle").textContent=b.classList.contains("open")?"\u25b2 Hide Script":"\u25bc Show ElevenLabs Script";
+}
+var wv=document.getElementById("wv");
+for(var i=0;i<60;i++){var wb=document.createElement("div");wb.className="wbar";wb.style.height=(8+Math.sin(i*.6)*10+Math.random()*18)+"px";wb.style.opacity=.3+Math.random()*.4;wv.appendChild(wb);}
+document.getElementById("playBtn").addEventListener("click",function(){earnBadge("b4");});
+function toggleDone(el){
+  el.classList.toggle("done");
+  var check=el.querySelector(".cl-check");
+  check.textContent=el.classList.contains("done")?"\u2713":"\u2610";
+  var all=document.querySelectorAll(".cl-item");
+  var done=[...all].filter(function(x){return x.classList.contains("done");});
+  if(done.length===all.length)earnBadge("b5");
+}
+function saveWin(){
+  var ta=document.getElementById("winTA");
+  if(ta.value.trim().length>3){earnBadge("b5");ta.style.borderColor="var(--success)";document.getElementById("winOK").style.display="block";}
+}
+initDrag("order1");
+initDrag("order2");
+</script>
+</body>
+</html>
