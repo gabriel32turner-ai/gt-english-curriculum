@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GT A2.2 · M6 · S4A — Full A2.2 Integration</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#080808;--surface:#111318;--surface2:#1a1f28;
+  --border:rgba(249,115,22,.18);--border-dim:rgba(255,255,255,0.07);
+  --accent:#F97316;--accent2:#FB923C;
+  --cyan:#00CFFF;--gold:#FFB800;--green:#00E676;
+  --danger:#FF4D6D;--success:#00E5A0;--warn:#FFB347;--violet:#A78BFA;
+  --txt:#F0F4F8;--muted:#8A9BB0;--dim:rgba(226,226,226,.25);
+  --font-head:'Syne',sans-serif;--font-body:'DM Sans',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--txt);font-family:var(--font-body);font-size:14px;line-height:1.6;overflow-x:hidden}
+.hdr{background:var(--surface);border-bottom:1px solid var(--border);padding:16px 48px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;position:sticky;top:0;z-index:100}
+.brand{display:flex;align-items:center;gap:10px}
+.dot{width:8px;height:8px;background:var(--accent);border-radius:50%}
+.bname{font-family:var(--font-head);font-weight:800;font-size:13px;letter-spacing:2.5px;text-transform:uppercase;color:#fff}
+.bsub{font-size:10px;color:var(--muted);letter-spacing:1px}
+.sess-tag{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.tag{display:inline-block;padding:3px 10px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase}
+.t-or{background:rgba(249,115,22,.15);color:var(--accent);border:1px solid rgba(249,115,22,.3)}
+.t-go{background:rgba(0,230,118,.1);color:var(--green);border:1px solid rgba(0,230,118,.25)}
+.t-cy{background:rgba(0,207,255,.1);color:var(--cyan);border:1px solid rgba(0,207,255,.25)}
+.t-gd{background:rgba(255,184,0,.1);color:var(--gold);border:1px solid rgba(255,184,0,.25)}
+.badge-strip{display:flex;gap:6px;align-items:center}
+.badge-strip span{width:28px;height:28px;border-radius:50%;background:var(--surface2);border:1px solid var(--border-dim);display:flex;align-items:center;justify-content:center;font-size:13px;filter:grayscale(1);opacity:.4;transition:all .4s}
+.badge-strip span.earned{filter:none;opacity:1;border-color:var(--accent);background:rgba(249,115,22,.15);transform:scale(1.1)}
+.progress-bar{height:2px;background:var(--surface2);position:sticky;top:57px;z-index:99}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));width:0%;transition:width .3s}
+.section{margin:0 0 3px 0;overflow:hidden}
+.sec-hdr{display:flex;align-items:center;gap:14px;padding:20px 48px;background:linear-gradient(135deg,rgba(249,115,22,.06),transparent);border-bottom:1px solid var(--border)}
+.sec-num{font-family:var(--font-head);font-size:10px;font-weight:800;color:var(--accent);letter-spacing:.15em;text-transform:uppercase;background:rgba(249,115,22,.1);border:1px solid rgba(249,115,22,.25);padding:3px 10px;border-radius:20px;white-space:nowrap}
+.sec-label{font-family:var(--font-head);font-size:22px;font-weight:800;color:#fff}
+.sec-label em{color:var(--accent);font-style:normal}
+.sec-sub{font-size:12px;color:var(--muted);margin-top:2px}
+.sec-dur{font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;color:var(--gold);border:1px solid rgba(255,184,0,.2);padding:2px 9px;margin-left:auto;white-space:nowrap}
+.sec-body{padding:28px 48px}
+.img-hero{width:100%;height:260px;object-fit:cover;display:block;filter:brightness(.5);border-bottom:1px solid var(--border)}
+.img-banner{width:100%;height:150px;object-fit:cover;display:block;filter:brightness(.48);border-radius:10px;margin-bottom:16px}
+.wu-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:16px}
+.wu-card{background:var(--surface);border:1px solid var(--border-dim);border-radius:10px;overflow:hidden;border-left:3px solid var(--accent)}
+.wu-card-img{width:100%;height:90px;object-fit:cover;display:block;filter:brightness(.48)}
+.wu-card-body{padding:13px 15px}
+.wu-card-q{font-size:13px;color:var(--txt);line-height:1.5}
+.wu-card-hint{font-size:11px;color:var(--muted);font-style:italic;margin-top:6px}
+.quick-win{background:rgba(249,115,22,.07);border:1px solid rgba(249,115,22,.25);border-radius:10px;padding:16px 20px;margin-top:16px;display:flex;align-items:flex-start;gap:14px}
+.qw-icon{font-size:22px;flex-shrink:0;margin-top:2px}
+.qw-label{font-family:var(--font-head);font-size:9px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:5px}
+.qw-text{font-size:13.5px;color:#fff;line-height:1.55}
+.qw-try{font-size:12px;color:var(--accent2);margin-top:6px;font-style:italic}
+.timer-wrap{display:flex;flex-direction:column;align-items:center;gap:8px}
+.timer-svg{transform:rotate(-90deg)}
+.tn{background:var(--surface2);border:1px solid var(--border-dim);border-left:3px solid var(--gold);border-radius:8px;padding:13px 16px;margin-top:14px}
+.tn-lbl{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:6px}
+.tn-text{font-size:12px;color:rgba(255,184,0,.82);line-height:1.6}
+.tn-cy{border-left-color:var(--cyan)}.tn-cy .tn-lbl{color:var(--cyan)}.tn-cy .tn-text{color:rgba(0,207,255,.82)}
+.tn-pk{border-left-color:#FF4D6D}.tn-pk .tn-lbl{color:#FF4D6D}.tn-pk .tn-text{color:rgba(255,77,109,.82)}
+.vocab-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:16px}
+.vocab-card{background:var(--surface);border:1px solid var(--border-dim);border-radius:10px;overflow:hidden;cursor:pointer;transition:all .2s}
+.vocab-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.vocab-card-img{width:100%;height:72px;object-fit:cover;display:block;filter:brightness(.45)}
+.vocab-card-body{padding:11px 12px}
+.vc-word{font-family:var(--font-head);font-size:13px;font-weight:700;color:#fff;margin-bottom:2px}
+.vc-ipa{font-size:10px;color:var(--cyan);margin-bottom:5px;font-style:italic}
+.vc-def{font-size:11px;color:var(--muted);line-height:1.4;margin-bottom:6px}
+.vc-ex{font-size:11px;color:var(--accent2);font-style:italic;border-left:2px solid var(--accent);padding-left:7px;line-height:1.4}
+.vc-sp{font-size:10px;color:var(--dim);margin-top:6px}
+.micro-speak{background:rgba(0,207,255,.06);border:1px solid rgba(0,207,255,.2);border-radius:8px;padding:12px 16px;margin-top:16px;display:flex;align-items:flex-start;gap:12px}
+.ms-icon{font-size:18px;flex-shrink:0}
+.ms-text{font-size:12.5px;color:var(--cyan);line-height:1.55}
+.quiz-wrap{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-top:20px}
+.quiz-hdr{padding:14px 20px;background:rgba(249,115,22,.08);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.quiz-hdr-title{font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent)}
+.quiz-progress{height:4px;background:var(--surface2);border-radius:0}
+.quiz-progress-fill{height:100%;background:var(--accent);width:0%;transition:width .4s;border-radius:0}
+.quiz-body{padding:22px 24px}
+.quiz-q{font-size:14.5px;color:#fff;font-weight:500;margin-bottom:16px;line-height:1.5}
+.quiz-opts{display:flex;flex-direction:column;gap:8px}
+.vq-opt{background:var(--surface2);border:1px solid var(--border-dim);color:var(--txt);padding:10px 16px;text-align:left;cursor:pointer;font-size:13px;border-radius:7px;transition:all .2s;font-family:var(--font-body)}
+.vq-opt:hover:not(:disabled){border-color:var(--accent);background:rgba(249,115,22,.08)}
+.vq-opt.correct{background:rgba(0,229,160,.12);border-color:var(--success);color:var(--success)}
+.vq-opt.wrong{background:rgba(255,77,109,.12);border-color:var(--danger);color:var(--danger)}
+.quiz-score{font-family:var(--font-head);font-size:15px;font-weight:800;color:var(--accent);text-align:center;padding:14px;display:none}
+.quiz-restart{display:none;margin:0 auto 16px;background:rgba(249,115,22,.1);border:1px solid rgba(249,115,22,.3);color:var(--accent);padding:8px 22px;cursor:pointer;font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:1px;border-radius:6px}
+.coll-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:16px}
+.coll-card{background:var(--surface);border:1px solid var(--border-dim);border-radius:10px;overflow:hidden;cursor:pointer;transition:border-color .2s}
+.coll-card:hover{border-color:var(--warn)}
+.coll-card-img{width:100%;height:80px;object-fit:cover;display:block;filter:brightness(.45)}
+.coll-body{padding:13px 15px}
+.coll-phrase{font-family:var(--font-head);font-size:14px;font-weight:800;color:var(--warn);margin-bottom:6px}
+.coll-ctx{font-size:11.5px;color:var(--muted);margin-bottom:6px;line-height:1.45}
+.coll-ex{font-size:12px;color:var(--txt);font-style:italic;border-left:2px solid var(--warn);padding-left:8px;line-height:1.4}
+.prob-card{background:rgba(255,77,109,.06);border:1px solid rgba(255,77,109,.22);border-radius:10px;padding:16px 20px;margin-bottom:16px}
+.prob-lbl{font-family:var(--font-head);font-size:9px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--danger);margin-bottom:8px}
+.prob-scenario{font-size:13.5px;color:#fff;line-height:1.6;margin-bottom:8px}
+.prob-thought{font-size:12.5px;color:var(--muted);font-style:italic;line-height:1.5}
+.tool-card{background:rgba(0,229,160,.05);border:1px solid rgba(0,229,160,.2);border-radius:10px;padding:16px 20px;margin-bottom:16px}
+.tool-lbl{font-family:var(--font-head);font-size:9px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--success);margin-bottom:8px}
+.tool-text{font-size:13px;color:var(--txt);line-height:1.7}
+.gram-table{width:100%;border-collapse:collapse;margin:16px 0;font-size:12.5px}
+.gram-table th{background:rgba(249,115,22,.1);color:var(--accent);font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:9px 12px;text-align:left;border-bottom:2px solid var(--border)}
+.gram-table td{padding:9px 12px;border-bottom:1px solid var(--border-dim);vertical-align:top;line-height:1.5}
+.gram-table tbody tr:hover{background:rgba(249,115,22,.04)}
+.g-or{color:var(--accent);font-weight:600}.g-cy{color:var(--cyan);font-weight:600}
+.g-gr{color:var(--success);font-weight:600}.g-vl{color:var(--violet);font-weight:600}.g-ex{color:var(--muted);font-style:italic}
+.err-box{background:rgba(255,77,109,.06);border:1px solid rgba(255,77,109,.2);border-radius:8px;padding:13px 16px;margin:14px 0;font-size:12px;color:var(--txt);line-height:1.7}
+.act-title{font-family:var(--font-head);font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--accent);padding:16px 0 6px;border-top:1px solid var(--border);margin-top:16px}
+.opt-group{margin-bottom:16px}
+.opt-q{font-size:13px;color:var(--txt);margin-bottom:8px;line-height:1.5}
+.opts{display:flex;gap:8px;flex-wrap:wrap}
+.opt{background:var(--surface2);border:1px solid var(--border-dim);color:var(--txt);padding:7px 14px;cursor:pointer;font-size:12.5px;border-radius:7px;transition:all .2s;font-family:var(--font-body)}
+.opt:hover:not(:disabled){border-color:var(--accent);background:rgba(249,115,22,.08)}
+.opt.correct{background:rgba(0,229,160,.12);border-color:var(--success);color:var(--success)}
+.opt.wrong{background:rgba(255,77,109,.12);border-color:var(--danger);color:var(--danger)}
+.reorder-list{list-style:none;display:flex;flex-direction:column;gap:6px;margin:12px 0}
+.reorder-item{background:var(--surface2);border:1px solid var(--border-dim);border-radius:7px;padding:9px 14px;cursor:grab;font-size:13px;color:var(--txt);display:flex;align-items:center;gap:10px;transition:border-color .2s;user-select:none}
+.reorder-item.dragging{opacity:.5;border-color:var(--accent)}
+.reorder-item.drag-over{border-color:var(--cyan);background:rgba(0,207,255,.06)}
+.drag-handle{color:var(--dim);font-size:16px;flex-shrink:0}
+.check-order-btn{background:rgba(249,115,22,.1);border:1px solid rgba(249,115,22,.3);color:var(--accent);padding:8px 18px;cursor:pointer;font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:1px;border-radius:7px;margin-top:8px;transition:all .2s}
+.check-order-btn:hover{background:rgba(249,115,22,.2)}
+.fb{background:var(--surface2);border-radius:7px;padding:9px 14px;font-size:12.5px;margin-top:8px;display:none}
+.fb.show{display:block}
+.fb.ok{background:rgba(0,229,160,.1);border:1px solid rgba(0,229,160,.25);color:var(--success)}
+.fb.no{background:rgba(255,77,109,.1);border:1px solid rgba(255,77,109,.25);color:var(--danger)}
+/* MATCHING PAIRS MEMORY GAME */
+.mp-wrap{background:var(--surface);border:1px solid var(--border-dim);border-radius:12px;overflow:hidden;margin-top:20px}
+.mp-hdr{background:rgba(249,115,22,.08);border-bottom:1px solid var(--border);padding:12px 20px;display:flex;align-items:center;justify-content:space-between}
+.mp-hdr-title{font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent)}
+.mp-stats{font-size:11px;color:var(--muted);display:flex;gap:16px}
+.mp-stat{font-family:var(--font-head);font-size:11px;color:var(--accent);font-weight:700}
+.mp-body{padding:20px}
+.mp-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.mp-card{height:80px;cursor:pointer;position:relative;border-radius:8px}
+.mp-card-inner{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform .4s}
+.mp-card.flipped .mp-card-inner,.mp-card.matched .mp-card-inner{transform:rotateY(180deg)}
+.mp-front,.mp-back{position:absolute;width:100%;height:100%;backface-visibility:hidden;border-radius:8px;display:flex;align-items:center;justify-content:center;padding:8px;text-align:center}
+.mp-front{background:var(--surface2);border:1px solid var(--border-dim)}
+.mp-front-icon{font-size:24px}
+.mp-back{background:rgba(249,115,22,.1);border:1px solid rgba(249,115,22,.3);transform:rotateY(180deg);font-size:11.5px;color:var(--txt);line-height:1.35;font-family:var(--font-body)}
+.mp-card.matched .mp-front{background:rgba(0,229,160,.08);border-color:var(--success)}
+.mp-card.matched .mp-back{background:rgba(0,229,160,.12);border-color:var(--success);color:var(--success)}
+.mp-result{font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--success);text-align:center;padding:12px;display:none}
+.mp-result.show{display:block}
+.mp-restart-btn{background:rgba(249,115,22,.1);border:1px solid rgba(249,115,22,.3);color:var(--accent);padding:8px 18px;cursor:pointer;font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:1px;border-radius:7px;display:block;margin:8px auto 0}
+@keyframes mp-shake{0%,100%{transform:rotateY(180deg) translateX(0)}33%{transform:rotateY(180deg) translateX(-4px)}66%{transform:rotateY(180deg) translateX(4px)}}
+.mp-card.wrong-flash .mp-card-inner{animation:mp-shake .4s ease}
+/* LISTENING */
+.listen-wrap{background:var(--surface);border:1px solid var(--border-dim);border-radius:12px;overflow:hidden;margin-top:16px}
+.listen-img{width:100%;height:130px;object-fit:cover;display:block;filter:brightness(.4)}
+.listen-inner{padding:16px 20px;display:flex;align-items:center;gap:16px}
+.play-btn-aud{width:42px;height:42px;border-radius:50%;background:rgba(249,115,22,.85);border:none;color:#fff;font-size:16px;cursor:pointer;flex-shrink:0;transition:background .2s}
+.play-btn-aud:hover{background:var(--accent)}
+.track-title{font-family:var(--font-head);font-size:13px;font-weight:700;color:#fff}
+.track-sub{font-size:10.5px;color:var(--muted);margin-top:3px}
+.waveform{display:flex;align-items:center;gap:2px;height:32px;padding:0 20px 14px}
+.wbar{width:3px;background:var(--accent);border-radius:2px;opacity:.3}
+.script-toggle{background:rgba(249,115,22,.08);border:1px solid rgba(249,115,22,.2);color:var(--accent);padding:7px 16px;cursor:pointer;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1px;width:100%;transition:background .2s}
+.script-toggle:hover{background:rgba(249,115,22,.15)}
+.script-box{max-height:0;overflow:hidden;transition:max-height .4s;background:var(--surface2);font-size:13px;color:var(--muted);line-height:1.7;white-space:pre-wrap}
+.script-box.open{max-height:600px;padding:16px 20px}
+.tf-row{display:grid;grid-template-columns:1fr auto;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border-dim)}
+.tf-stmt{font-size:13px;color:var(--txt);line-height:1.5}
+.tf-btns{display:flex;gap:6px}
+.tf-btn{background:var(--surface2);border:1px solid var(--border-dim);color:var(--txt);padding:5px 12px;cursor:pointer;font-size:11.5px;border-radius:6px;font-family:var(--font-head);font-weight:700;letter-spacing:.5px;transition:all .2s;white-space:nowrap}
+.tf-btn:hover:not(:disabled){border-color:var(--accent)}
+.speak-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
+.speak-card{background:var(--surface);border:1px solid var(--border-dim);border-radius:10px;padding:15px 16px}
+.speak-num{font-family:var(--font-head);font-size:9.5px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--dim);margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.speak-tag{padding:2px 8px;font-size:9px;font-weight:800;letter-spacing:1px;border-radius:4px}
+.st-ts{background:rgba(249,115,22,.15);color:var(--accent)}
+.st-ss{background:rgba(0,207,255,.12);color:var(--cyan)}
+.st-cl{background:rgba(0,229,160,.1);color:var(--success)}
+.speak-q{font-size:14.5px;color:#fff;line-height:1.55;margin-bottom:8px}
+.speak-hint{font-size:11px;color:var(--muted);font-style:italic;border-left:2px solid var(--border-dim);padding-left:8px;line-height:1.4}
+.om-wrap{background:var(--surface);border:1px solid var(--border-dim);border-radius:12px;padding:20px 24px;margin-top:20px}
+.om-stmt{font-size:14px;color:#fff;font-style:italic;margin-bottom:16px;padding:13px 18px;background:var(--surface2);border-left:3px solid var(--accent);border-radius:6px;line-height:1.6}
+.om-track{height:10px;background:var(--surface2);border-radius:10px;overflow:hidden;margin-bottom:8px}
+.om-bar{height:100%;background:linear-gradient(90deg,var(--danger),var(--accent),var(--success));width:50%;transition:width .3s}
+.om-labels{display:flex;justify-content:space-between;font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--dim);margin-bottom:14px}
+.om-btns{display:flex;gap:10px;margin-bottom:8px}
+.om-btn{flex:1;padding:9px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1px;cursor:pointer;border-radius:7px;transition:all .2s;border:1px solid}
+.om-dis{background:rgba(255,77,109,.08);border-color:rgba(255,77,109,.3);color:var(--danger)}
+.om-dis:hover{background:rgba(255,77,109,.18)}
+.om-agr{background:rgba(0,229,160,.08);border-color:rgba(0,229,160,.3);color:var(--success)}
+.om-agr:hover{background:rgba(0,229,160,.18)}
+.om-pct{font-family:var(--font-head);font-size:14px;font-weight:800;color:var(--accent);text-align:center}
+.phrases-wrap{background:rgba(255,184,0,.04);border-top:2px solid rgba(255,184,0,.2);border-bottom:2px solid rgba(255,184,0,.2);padding:28px 48px;margin:3px 0}
+.phrases-hdr{font-family:var(--font-head);font-size:18px;font-weight:800;color:var(--gold);margin-bottom:6px}
+.phrases-sub{font-size:12px;color:var(--muted);margin-bottom:20px}
+.phrases-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.phrase-card{background:var(--surface);border:1px solid rgba(255,184,0,.2);border-radius:10px;padding:16px 18px;border-top:3px solid var(--gold)}
+.phrase-en{font-family:var(--font-head);font-size:14px;font-weight:800;color:#fff;margin-bottom:8px;line-height:1.4}
+.phrase-ctx{font-size:12px;color:var(--muted);line-height:1.5}
+.wrapup-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:16px 0}
+.wrapup-card{background:var(--surface);border:1px solid var(--border-dim);border-radius:10px;padding:16px;border-top:3px solid var(--accent)}
+.wrapup-card h4{font-family:var(--font-head);font-size:11px;font-weight:800;color:var(--accent);letter-spacing:1px;margin-bottom:8px}
+.wrapup-card p{font-size:12.5px;color:var(--muted);line-height:1.55}
+.cl-list{list-style:none;display:flex;flex-direction:column;gap:6px;margin-top:16px}
+.cl-item{background:var(--surface);border:1px solid var(--border-dim);border-radius:7px;padding:9px 14px;cursor:pointer;font-size:13px;color:var(--txt);display:flex;align-items:center;gap:10px;transition:all .2s}
+.cl-item:hover{border-color:var(--success)}
+.cl-item.done{background:rgba(0,229,160,.06);border-color:rgba(0,229,160,.25);color:var(--success)}
+.cl-check{font-size:14px;flex-shrink:0;color:var(--dim)}
+.cl-item.done .cl-check{color:var(--success)}
+.win-wrap{background:var(--surface);border:1px solid var(--border-dim);border-radius:10px;padding:20px;margin-top:16px}
+.win-label{font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:10px}
+.win-ta{width:100%;background:var(--surface2);border:1px solid var(--border-dim);border-radius:7px;color:var(--txt);padding:12px;font-size:13px;font-family:var(--font-body);resize:vertical;min-height:72px;line-height:1.5;transition:border-color .3s}
+.win-ta:focus{outline:none;border-color:var(--accent)}
+.win-btn{background:rgba(249,115,22,.1);border:1px solid rgba(249,115,22,.3);color:var(--accent);padding:8px 20px;cursor:pointer;font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:1px;border-radius:7px;margin-top:10px;transition:all .2s}
+.win-btn:hover{background:rgba(249,115,22,.22)}
+.win-ok{display:none;color:var(--success);font-size:12.5px;margin-top:8px;font-style:italic}
+.next-prev{background:rgba(0,207,255,.05);border:1px solid rgba(0,207,255,.2);border-radius:10px;padding:16px 18px;margin-top:16px}
+.next-lbl{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--cyan);margin-bottom:6px}
+.next-text{font-size:13px;color:var(--txt);line-height:1.6}
+#confMsg{display:none;text-align:center;font-family:var(--font-head);font-size:14px;font-weight:800;color:var(--gold);padding:14px;letter-spacing:2px;text-transform:uppercase}
+.ftr{background:var(--surface);border-top:1px solid var(--border);padding:16px 48px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+.fbrand{font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim)}
+.finfo{font-size:11px;color:var(--dim)}
+.flvs{display:flex;gap:3px}
+.flv{padding:5px 10px;font-family:var(--font-head);font-size:10px;font-weight:700;background:var(--surface2);color:var(--dim)}
+.flv.on{background:var(--accent);color:#fff}
+body.sm .tn{display:none}
+@media(max-width:860px){
+  .hdr,.ftr,.phrases-wrap{padding:14px 18px}
+  .sec-body{padding:20px 18px}
+  .sec-hdr{padding:16px 18px}
+  .wu-grid,.vocab-grid{grid-template-columns:repeat(2,1fr)}
+  .coll-grid,.phrases-grid,.wrapup-grid{grid-template-columns:1fr}
+  .speak-grid{grid-template-columns:1fr}
+  .mp-grid{grid-template-columns:repeat(3,1fr)}
+  .opts{flex-direction:column}
+}
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <div class="brand"><div class="dot"></div><div><div class="bname">Gabriel Turner</div><div class="bsub">English Training · Teacher Edition</div></div></div>
+  <div class="sess-tag">
+    <span class="tag t-or">A2.2</span><span class="tag t-gd">Module 6</span>
+    <span class="tag t-cy">Session 4A — Discovery &amp; Drill</span>
+    <span class="tag t-go">120 min</span>
+  </div>
+  <div class="badge-strip">
+    <span id="b1">&#128202;</span><span id="b2">&#129693;</span><span id="b3">&#127959;&#65039;</span><span id="b4">&#127911;</span><span id="b5">&#127942;</span>
+    <button onclick="document.body.classList.toggle('sm');this.textContent=document.body.classList.contains('sm')?'Teacher Mode':'Student Mode'" style="margin-left:8px;background:rgba(249,115,22,.1);border:1px solid rgba(249,115,22,.3);color:var(--accent);padding:4px 10px;cursor:pointer;font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:1px;border-radius:5px">Student Mode</button>
+  </div>
+</header>
+<div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+<div id="confMsg">&#127881; All 5 badges earned! A2.2 almost complete! &#127881;</div>
+
+<div class="section">
+  <div class="sec-hdr">
+    <div class="sec-num">&#167;1</div>
+    <div><div class="sec-label">Warm-Up — <em>The best, the worst, the most useful</em></div><div class="sec-sub">Activate full A2.2 integration · Superlatives + career narrative · 5–8 min</div></div>
+    <div class="sec-dur">&#9201; 5–8 MIN</div>
+  </div>
+  <img class="img-hero" src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=900&q=80" alt="Professionals comparing and presenting final recommendations" loading="lazy">
+  <div class="sec-body">
+    <div class="wu-grid">
+      <div class="wu-card">
+        <img class="wu-card-img" src="https://images.unsplash.com/photo-1543269664-76bc3997d9ea?w=600&q=80" alt="S1-S3 review" loading="lazy">
+        <div class="wu-card-body">
+          <div class="wu-card-q">&#128336; <strong>M6 Arc Review:</strong> S1A gave you the integration framework. S2A added the future. S3A gave you advice structures. S4A is the final integration: comparatives + superlatives + full A2.2 structures in one professional pitch. Quick test: say your job role using <em>the most [adj]</em> to describe it. Go!</div>
+          <div class="wu-card-hint">&#128161; Example: &quot;I have the most complex logistics portfolio in the Bajío region.&quot; If students can&apos;t produce a superlative spontaneously, that is the S4A gap. Note who uses &quot;the most&quot; vs &quot;-est&quot; correctly. That distinction is the S4A grammar focus.</div>
+        </div>
+      </div>
+      <div class="wu-card">
+        <img class="wu-card-img" src="https://images.unsplash.com/photo-1551135049-8a33b5883817?w=600&q=80" alt="Best worst comparison" loading="lazy">
+        <div class="wu-card-body">
+          <div class="wu-card-q">&#127942; <strong>Superlative challenge:</strong> Two sentences about YOUR work — one superlative positive, one superlative negative. Example: &quot;The best part of my job is [X].&quot; and &quot;The most difficult challenge is [Y].&quot; Thirty seconds. Pairs. Go!</div>
+          <div class="wu-card-hint">&#128161; Listen for: &quot;the most best&quot; (never correct) / &quot;the most difficult&quot; (correct) / &quot;the difficultest&quot; (never correct). These are the three error patterns S4A Grammar addresses. Write what you hear on the board — it becomes the error box in &sect;4.</div>
+        </div>
+      </div>
+      <div class="wu-card">
+        <img class="wu-card-img" src="https://images.unsplash.com/photo-1606765962248-7ff407b51667?w=600&q=80" alt="Andrea final decision" loading="lazy">
+        <div class="wu-card-body">
+          <div class="wu-card-q">&#128101; <strong>Andrea&apos;s final update:</strong> Andrea chose Option B from S3A. Now, after 3 months, she is preparing a presentation comparing her old role at Vertex with her new role at Company B. She needs to use superlatives to describe both roles. What might she say?</div>
+          <div class="wu-card-hint">&#128161; This is the M6 narrative payoff. Andrea&apos;s journey (S1: introduce herself, S2: describe her trajectory, S3: get advice, S4: present results) is the complete A2.2 integration story. Let students predict what Andrea will say using superlatives before the listening.</div>
+        </div>
+      </div>
+      <div class="wu-card">
+        <img class="wu-card-img" src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=600&q=80" alt="Comparing companies and opportunities" loading="lazy">
+        <div class="wu-card-body">
+          <div class="wu-card-q">&#128300; <strong>Translation challenge:</strong> Say in English: (1) &quot;Es la mejor decisión que he tomado en mi carrera.&quot; (2) &quot;Es el trabajo más desafiante pero el más enriquecedor.&quot; (3) &quot;El sueldo anterior era más alto, pero éste tiene el mayor potencial de crecimiento.&quot; Try before notes!</div>
+          <div class="wu-card-hint">&#128161; Collect attempts. Expected: &quot;It&apos;s the best decision I have ever made.&quot; / &quot;It&apos;s the most challenging but the most rewarding.&quot; / &quot;The previous salary was higher, but this one has the greatest growth potential.&quot; Save errors for &sect;4 Grammar error box.</div>
+        </div>
+      </div>
+    </div>
+    <div class="quick-win">
+      <div class="qw-icon">&#127942;</div>
+      <div>
+        <div class="qw-label">Quick Win — 20 seconds</div>
+        <div class="qw-text">Say this right now: <strong>&quot;This is the most important session of A2.2 because we bring together everything — the best structures, the most useful phrases, and the clearest comparisons you have learned.&quot;</strong></div>
+        <div class="qw-try">You just used three superlatives in one sentence. S4A teaches you to do that about your career, your company, and your work decisions. Let&apos;s start.</div>
+      </div>
+      <div class="timer-wrap">
+        <svg class="timer-svg" width="54" height="54" viewBox="0 0 54 54">
+          <circle cx="27" cy="27" r="23" stroke="rgba(249,115,22,.2)" stroke-width="4" fill="none"/>
+          <circle id="arcQW" cx="27" cy="27" r="23" stroke="var(--accent)" stroke-width="4" fill="none" stroke-dasharray="144.51" stroke-dashoffset="0"/>
+          <text id="txtQW" x="27" y="32" text-anchor="middle" font-family="Syne,sans-serif" font-size="13" font-weight="800" fill="var(--accent)" transform="rotate(90 27 27)">20</text>
+        </svg>
+        <button onclick="startTimer('arcQW','txtQW',20,'b1',144.51)" style="background:rgba(249,115,22,.1);border:1px solid rgba(249,115,22,.3);color:var(--accent);padding:4px 10px;cursor:pointer;font-family:var(--font-head);font-size:9px;font-weight:700;border-radius:5px;margin-top:4px">START</button>
+      </div>
+    </div>
+    <div class="tn"><div class="tn-lbl">&#9889; Teacher Note — Warm-Up</div><div class="tn-text">S4A is the final Discovery &amp; Drill session of M6 and of A2.2. The warm-up should feel like a culmination, not just an activation. Use it to remind students how far they have come: &quot;In S1A you couldn&apos;t combine two structures. Today you will use five.&quot; Andrea&apos;s final update (Card 3) is the emotional anchor: her story began in S1A (introducing herself at a trade fair) and ends in S4A (comparing her old role with her new one using the full A2.2 toolkit). This narrative arc makes grammar meaningful. The Translation Challenge (Card 4) is the diagnostic: &quot;the greatest growth potential&quot; is the hardest item — students who say &quot;the most great&quot; have the M5 irregular superlative gap. That is the exact target of &sect;4 Activity A Q3.</div></div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="sec-hdr">
+    <div class="sec-num">&#167;2</div>
+    <div><div class="sec-label">Vocabulary — <em>Comparison, Evaluation &amp; Professional Judgment</em></div><div class="sec-sub">10 key words for comparing options and presenting conclusions · IPA · 10 min</div></div>
+    <div class="sec-dur">&#9201; 10 MIN</div>
+  </div>
+  <img class="img-banner" src="https://images.unsplash.com/photo-1543007630-9710e4a00a20?w=900&q=80" alt="Evaluating and comparing professional options" loading="lazy">
+  <div class="sec-body">
+    <div class="vocab-grid">
+      <div class="vocab-card" onclick="speak('outcome')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=600&q=80" alt="outcome result" loading="lazy">
+        <div class="vocab-card-body"><div class="vc-word">outcome</div><div class="vc-ipa">/ˈaʊt.kʌm/</div><div class="vc-def">the final result or consequence of a decision or action</div><div class="vc-ex">The best outcome for the team was Option B — we reduced travel costs by 40%.</div><div class="vc-sp">resultado / consecuencia</div></div>
+      </div>
+      <div class="vocab-card" onclick="speak('criteria')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=600&q=80" alt="evaluation criteria" loading="lazy">
+        <div class="vocab-card-body"><div class="vc-word">criteria</div><div class="vc-ipa">/kraɪˈtɪə.ri.ə/</div><div class="vc-def">the standards or factors used to make a decision or evaluation (plural of criterion)</div><div class="vc-ex">The most important criteria for choosing a supplier are reliability, price, and delivery time.</div><div class="vc-sp">criterios (plural de criterio)</div></div>
+      </div>
+      <div class="vocab-card" onclick="speak('benchmark')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=600&q=80" alt="benchmark standard" loading="lazy">
+        <div class="vocab-card-body"><div class="vc-word">benchmark</div><div class="vc-ipa">/ˈbentʃ.mɑːrk/</div><div class="vc-def">a standard or reference point used to measure or compare performance</div><div class="vc-ex">Our delivery time is the fastest in the region — we set the benchmark for the whole industry.</div><div class="vc-sp">referencia / estándar comparativo</div></div>
+      </div>
+      <div class="vocab-card" onclick="speak('tradeoff')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1506784983877-45594efa4cbe?w=600&q=80" alt="tradeoff balance" loading="lazy">
+        <div class="vocab-card-body"><div class="vc-word">trade-off</div><div class="vc-ipa">/ˈtreɪd.ɔf/</div><div class="vc-def">a balance between two desirable but incompatible things; gaining one means losing some of the other</div><div class="vc-ex">The trade-off is clear: Option A offers the highest salary but the worst work-life balance.</div><div class="vc-sp">concesión mutua / intercambio</div></div>
+      </div>
+      <div class="vocab-card" onclick="speak('insight')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1455390582262-044cdead277a?w=600&q=80" alt="insight understanding" loading="lazy">
+        <div class="vocab-card-body"><div class="vc-word">insight</div><div class="vc-ipa">/ˈɪn.saɪt/</div><div class="vc-def">a deep understanding of a situation, especially one that is not obvious at first</div><div class="vc-ex">The most valuable insight from the trade fair was that clients want faster responses, not lower prices.</div><div class="vc-sp">perspicacia / conclusión clave</div></div>
+      </div>
+      <div class="vocab-card" onclick="speak('justify')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1560439514-4e9645039924?w=600&q=80" alt="justify a decision" loading="lazy">
+        <div class="vocab-card-body"><div class="vc-word">justify</div><div class="vc-ipa">/ˈdʒʌs.tɪ.faɪ/</div><div class="vc-def">to give reasons that explain why a decision or action is correct or necessary</div><div class="vc-ex">You should always justify your recommendation — &quot;it is better&quot; is not enough without a reason.</div><div class="vc-sp">justificar</div></div>
+      </div>
+      <div class="vocab-card" onclick="speak('impact')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?w=600&q=80" alt="business impact" loading="lazy">
+        <div class="vocab-card-body"><div class="vc-word">impact</div><div class="vc-ipa">/ˈɪm.pækt/</div><div class="vc-def">the strong effect or influence that something has on a situation or person</div><div class="vc-ex">The most significant impact of the new system was a 25% reduction in processing time.</div><div class="vc-sp">impacto</div></div>
+      </div>
+      <div class="vocab-card" onclick="speak('advantage')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=600&q=80" alt="advantage benefit" loading="lazy">
+        <div class="vocab-card-body"><div class="vc-word">advantage</div><div class="vc-ipa">/ədˈvɑːn.tɪdʒ/</div><div class="vc-def">a condition or feature that puts you in a better position than others</div><div class="vc-ex">The biggest advantage of our proposal is the price — we are 15% cheaper than the nearest competitor.</div><div class="vc-sp">ventaja</div></div>
+      </div>
+      <div class="vocab-card" onclick="speak('viable')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=600&q=80" alt="viable option" loading="lazy">
+        <div class="vocab-card-body"><div class="vc-word">viable</div><div class="vc-ipa">/ˈvaɪ.ə.bəl/</div><div class="vc-def">capable of working successfully; practical and feasible</div><div class="vc-ex">Option C is the most viable solution given our current budget and timeline.</div><div class="vc-sp">viable / factible</div></div>
+      </div>
+      <div class="vocab-card" onclick="speak('conclusion')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1475721027785-f74eccf877e2?w=600&q=80" alt="professional conclusion" loading="lazy">
+        <div class="vocab-card-body"><div class="vc-word">conclusion</div><div class="vc-ipa">/kənˈkluː.ʒən/</div><div class="vc-def">the final decision or judgment reached after considering all the evidence</div><div class="vc-ex">My conclusion is that Option B is the best choice because it has the most long-term potential.</div><div class="vc-sp">conclusión</div></div>
+      </div>
+    </div>
+    <div class="micro-speak"><div class="ms-icon">&#128483;&#65039;</div><div class="ms-text"><strong>Micro-Speaking:</strong> Choose 3 words. Use each one with a superlative about YOUR work or company. Example: &quot;The most important outcome of our Q2 project was the client retention. The biggest advantage we have is our local team. The most viable option for expansion is Querétaro.&quot; Say them out loud.</div></div>
+    <div class="quiz-wrap">
+      <div class="quiz-hdr"><div class="quiz-hdr-title">&#9889; Vocabulary Quiz — 10 Questions</div><span style="font-size:10.5px;color:var(--muted)">8+ correct = Badge &#129693;</span></div>
+      <div class="quiz-progress"><div class="quiz-progress-fill" id="vqBar"></div></div>
+      <div class="quiz-body"><div class="quiz-q" id="vqQ">Loading...</div><div class="quiz-opts" id="vqOpts"></div><div class="quiz-score" id="vqScore"></div><button class="quiz-restart" id="vqRestart" onclick="startQuiz()">Try Again</button></div>
+    </div>
+    <div class="tn"><div class="tn-lbl">&#9889; Teacher Note — Vocabulary</div><div class="tn-text">Prioritize: outcome, criteria, trade-off — these three are the vocabulary backbone of any professional comparison or recommendation presentation. &quot;Criteria&quot; is already plural (criterion → criteria) — &quot;criterias&quot; does not exist. &quot;Trade-off&quot; is hyphenated and often written as one word in British English. &quot;Viable&quot; is a register upgrade from &quot;possible&quot; or &quot;good&quot; — worth drilling as an immediate professional vocabulary improvement. Pronunciation focus: &quot;insight&quot; /ˈɪn.saɪt/ — stress on IN, not &quot;in-SIGHT.&quot; &quot;Criteria&quot; /kraɪˈtɪə.ri.ə/ — 4 syllables, stress on 2nd. After the quiz: &quot;Which word did you NOT know before today and will use at work this week?&quot;</div></div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="sec-hdr">
+    <div class="sec-num">&#167;3</div>
+    <div><div class="sec-label">Colloquial — <em>Presenting Conclusions Like a Pro</em></div><div class="sec-sub">4 phrases for closing a professional comparison or recommendation · 5 min</div></div>
+    <div class="sec-dur">&#9201; 5 MIN</div>
+  </div>
+  <img class="img-banner" src="https://images.unsplash.com/photo-1560439514-4e9645039924?w=900&q=80" alt="Professional presenting a conclusion" loading="lazy">
+  <div class="sec-body">
+    <div class="coll-grid">
+      <div class="coll-card" onclick="speak(&quot;All things considered...&quot;)">
+        <img class="coll-card-img" src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=600&q=80" alt="all things considered" loading="lazy">
+        <div class="coll-body"><div class="coll-phrase">&quot;All things considered&hellip;&quot;</div><div class="coll-ctx">The classic opener for a professional conclusion. Signals that you have evaluated all factors before making your recommendation. Sounds balanced, thoughtful, and authoritative. Use it before your superlative conclusion.</div><div class="coll-ex">&quot;All things considered, Option B is the most viable choice for our team. The trade-off is worth it.&quot;</div></div>
+      </div>
+      <div class="coll-card" onclick="speak(&quot;The bottom line is...&quot;)">
+        <img class="coll-card-img" src="https://images.unsplash.com/photo-1551135049-8a33b5883817?w=600&q=80" alt="the bottom line" loading="lazy">
+        <div class="coll-body"><div class="coll-phrase">&quot;The bottom line is&hellip;&quot;</div><div class="coll-ctx">Gets straight to the most important point after a longer comparison. Signals &quot;everything else is detail — this is what matters most.&quot; Extremely common in business presentations and meetings.</div><div class="coll-ex">&quot;The bottom line is: Option A is more expensive and less flexible. We should go with B.&quot;</div></div>
+      </div>
+      <div class="coll-card" onclick="speak(&quot;When you weigh it all up...&quot;)">
+        <img class="coll-card-img" src="https://images.unsplash.com/photo-1543007630-9710e4a00a20?w=600&q=80" alt="weighing it all up" loading="lazy">
+        <div class="coll-body"><div class="coll-phrase">&quot;When you weigh it all up&hellip;&quot;</div><div class="coll-ctx">A sophisticated version of &quot;in conclusion.&quot; Connects to the comparison process itself — implies you have carefully balanced pros and cons. Pairs naturally with comparatives and superlatives.</div><div class="coll-ex">&quot;When you weigh it all up, Option B gives us the best outcome at the most competitive cost.&quot;</div></div>
+      </div>
+      <div class="coll-card" onclick="speak(&quot;It's a no-brainer.&quot;)">
+        <img class="coll-card-img" src="https://images.unsplash.com/photo-1543269664-76bc3997d9ea?w=600&q=80" alt="no-brainer obvious" loading="lazy">
+        <div class="coll-body"><div class="coll-phrase">&quot;It&apos;s a no-brainer.&quot;</div><div class="coll-ctx">Use when the comparison is so clear that the decision seems obvious. Works best after you have already presented the evidence. Casual but very impactful — shows confidence. Already seen in M5 — here it integrates with superlatives.</div><div class="coll-ex">&quot;Option B is the most efficient AND the most affordable. Honestly, it&apos;s a no-brainer.&quot;</div></div>
+      </div>
+    </div>
+    <div class="tn"><div class="tn-lbl">&#9889; Teacher Note — Colloquial</div><div class="tn-text">Say: &quot;Click each phrase to hear it — repeat with me.&quot; Then run the mini-challenge: each student uses ONE phrase to close their superlative sentence from the warm-up. &quot;All things considered, this is the best decision.&quot; Drill the specific word stress: &quot;all THINGS con-SI-dered&quot; / &quot;the BOT-tom line IS&quot; / &quot;when you WEIGH it all UP.&quot; The stress pattern is what makes these sound natural vs robotic. Cultural note: &quot;No-brainer&quot; returned from M5 S1B — point this out as deliberate. Students who recognize it from M5 are demonstrating cross-session vocabulary consolidation. &quot;All things considered&quot; is a complete sentence opener — always followed by a comma, then the conclusion. It cannot end a sentence.</div></div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="sec-hdr">
+    <div class="sec-num">&#167;4</div>
+    <div><div class="sec-label">Grammar — <em>Superlatives + Full A2.2 Integration</em></div><div class="sec-sub">Problem → Tool · Superlatives review + integration with all M6 structures · 12–15 min</div></div>
+    <div class="sec-dur">&#9201; 12–15 MIN</div>
+  </div>
+  <img class="img-banner" src="https://images.unsplash.com/photo-1560439514-4e9645039924?w=900&q=80" alt="Final professional presentation and comparison" loading="lazy">
+  <div class="sec-body">
+    <div class="prob-card">
+      <div class="prob-lbl">&#128680; Real Work Situation</div>
+      <div class="prob-scenario">Your manager asks you to present a comparison of three suppliers to the whole team. You can describe each one with adjectives and comparatives. But when you try to name &quot;the best one overall,&quot; you freeze. In Spanish you say &quot;es el más eficiente de los tres.&quot; In English you try &quot;it is the most efficient of the three&quot; — but then you add &quot;and the most better option&quot; and lose confidence. You know comparatives well. Superlatives feel unpredictable.</div>
+      <div class="prob-thought">The problem: superlatives and comparatives look similar but follow different rules. And when you try to combine them with should, might, used to, or going to in one sentence, the result sounds like a grammar exercise — not a professional presentation.</div>
+    </div>
+    <div class="tool-card">
+      <div class="tool-lbl">&#128295; The Tool — Superlatives + A2.2 Integration Formula</div>
+      <div class="tool-text">
+        Superlatives describe the extreme point of a comparison (among 3 or more options):<br><br>
+        <strong style="color:var(--success)">Short adjectives:</strong> the + adj + <strong>-est</strong> → fast → <em>the fastest</em> / cheap → <em>the cheapest</em><br>
+        <strong style="color:var(--cyan)">Long adjectives:</strong> <strong>the most</strong> + adj → reliable → <em>the most reliable</em> / efficient → <em>the most efficient</em><br>
+        <strong style="color:var(--violet)">Irregular:</strong> good → <em>the best</em> / bad → <em>the worst</em> / far → <em>the farthest</em><br><br>
+        <strong style="color:var(--gold)">Now integrate with A2.2 structures:</strong><br>
+        &quot;This is <em>the most reliable</em> supplier we <strong>used to</strong> work with — but it&apos;s no longer <em>the cheapest</em>.&quot; (M1 + M5)<br>
+        &quot;You <strong>should</strong> choose the supplier with <em>the best</em> delivery record because it <strong>might</strong> save you time.&quot; (M3 + M4 + M5)<br>
+        &quot;We <strong>are going to</strong> work with <em>the most competitive</em> option in the market.&quot; (M4 + M5)
+      </div>
+    </div>
+    <table class="gram-table">
+      <thead><tr><th>Adjective type</th><th>Comparative</th><th>Superlative</th><th>Business example</th></tr></thead>
+      <tbody>
+        <tr><td><span class="g-gr">Short (1 syllable)</span></td><td class="g-ex">cheaper / faster / big<strong>ger</strong></td><td class="g-ex">the cheap<strong>est</strong> / the fastest / the biggest</td><td style="font-size:11.5px;color:var(--txt)">This is the cheapest option and also the fastest to implement.</td></tr>
+        <tr><td><span class="g-gr">Ends in -y</span></td><td class="g-ex">heavier / busier / easier</td><td class="g-ex">the heaviest / the busiest / the easiest</td><td style="font-size:11.5px;color:var(--txt)">The busiest quarter is Q4 — we should prepare the most reliable team for it.</td></tr>
+        <tr><td><span class="g-cy">Long (2+ syllables)</span></td><td class="g-ex">more reliable / more efficient</td><td class="g-ex">the most reliable / the most efficient</td><td style="font-size:11.5px;color:var(--txt)">This is the most efficient system we have ever used. The outcome has been the best.</td></tr>
+        <tr><td><span class="g-vl">Irregular</span></td><td class="g-ex">better / worse / farther</td><td class="g-ex">the best / the worst / the farthest</td><td style="font-size:11.5px;color:var(--txt)">This is the best decision I have made and the worst I could delay any longer.</td></tr>
+      </tbody>
+    </table>
+    <div class="err-box">
+      &#9888;&#65039; <strong>Common Errors — superlatives in professional English:</strong><br>
+      &#10007; &quot;It is the most best option.&quot; → &#10003; <strong>It is the best option</strong> — NEVER &quot;most&quot; + irregular superlative<br>
+      &#10007; &quot;This is the most fast delivery.&quot; → &#10003; <strong>the fastest delivery</strong> — short adjectives use -est, not &quot;most&quot;<br>
+      &#10007; &quot;She is the more experienced candidate of the three.&quot; → &#10003; <strong>the most experienced</strong> — use superlative when comparing 3+ options<br>
+      &#10007; &quot;This has been our greater challenge.&quot; → &#10003; <strong>our greatest challenge</strong> — superlative, not comparative
+    </div>
+
+    <div class="act-title">&#9889; ACTIVITY A — Comparative or superlative?</div>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:14px">Choose the correct form. Read the context clue: are there 2 options (comparative) or 3+ (superlative)?</p>
+    <div class="opt-group">
+      <div class="opt-q">1. &quot;We evaluated five suppliers. In the end, Lumina Express was _____ for our needs.&quot; [5 suppliers = superlative]</div>
+      <div class="opts" id="q1">
+        <button class="opt" onclick="checkOpt(this,'the most suitable','q1')">more suitable</button>
+        <button class="opt" onclick="checkOpt(this,'the most suitable','q1')">the most suitable</button>
+        <button class="opt" onclick="checkOpt(this,'the most suitable','q1')">the most suitablest</button>
+      </div>
+    </div>
+    <div class="opt-group">
+      <div class="opt-q">2. &quot;Between Option A and Option B, Option B is _____ for long-term growth.&quot; [2 options = comparative]</div>
+      <div class="opts" id="q2">
+        <button class="opt" onclick="checkOpt(this,'better','q2')">the best</button>
+        <button class="opt" onclick="checkOpt(this,'better','q2')">better</button>
+        <button class="opt" onclick="checkOpt(this,'better','q2')">the most good</button>
+      </div>
+    </div>
+    <div class="opt-group">
+      <div class="opt-q">3. &quot;This has been _____ project in my career. I learned more than in any other role.&quot; [superlative + irregular]</div>
+      <div class="opts" id="q3">
+        <button class="opt" onclick="checkOpt(this,'the most rewarding','q3')">the most rewardingst</button>
+        <button class="opt" onclick="checkOpt(this,'the most rewarding','q3')">the most rewarding</button>
+        <button class="opt" onclick="checkOpt(this,'the most rewarding','q3')">the rewardingest</button>
+      </div>
+    </div>
+    <div class="opt-group">
+      <div class="opt-q">4. &quot;All things considered, this is _____ trade-off we have faced this year.&quot; [superlative + irregular]</div>
+      <div class="opts" id="q4">
+        <button class="opt" onclick="checkOpt(this,'the most difficult','q4')">the difficultest</button>
+        <button class="opt" onclick="checkOpt(this,'the most difficult','q4')">the most difficult</button>
+        <button class="opt" onclick="checkOpt(this,'the most difficult','q4')">the most difficultly</button>
+      </div>
+    </div>
+    <div class="opt-group">
+      <div class="opt-q">5. &quot;You should choose the supplier with _____ response rate — it might make the biggest impact on client satisfaction.&quot; [superlative + integrated M3+M4]</div>
+      <div class="opts" id="q5">
+        <button class="opt" onclick="checkOpt(this,'the fastest','q5')">the most fast</button>
+        <button class="opt" onclick="checkOpt(this,'the fastest','q5')">the fastest</button>
+        <button class="opt" onclick="checkOpt(this,'the fastest','q5')">the most faster</button>
+      </div>
+    </div>
+    <div class="micro-speak" style="margin-top:10px"><div class="ms-icon">&#128483;&#65039;</div><div class="ms-text"><strong>Micro-Speaking:</strong> Say one integrated sentence using a superlative + one other A2.2 structure. Example: &quot;The most important decision I am going to make this year is choosing the right supplier — I should weigh up all the criteria before I decide.&quot; Use YOUR real work context.</div></div>
+
+    <div class="act-title">&#9889; ACTIVITY B — Reorder the integrated conclusion</div>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:14px">Drag the parts into the correct order to form a complete professional conclusion using superlatives + A2.2 structures.</p>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:6px"><strong style="color:var(--txt)">Sentence 1:</strong> (superlative + used to + now + conclusion)</p>
+    <ul class="reorder-list" id="order1">
+      <li class="reorder-item" draggable="true"><span class="drag-handle">&#8942;</span>but now it is the most efficient system we have.</li>
+      <li class="reorder-item" draggable="true"><span class="drag-handle">&#8942;</span>All things considered, this is the best decision we could have made.</li>
+      <li class="reorder-item" draggable="true"><span class="drag-handle">&#8942;</span>We used to have the slowest processing time in the region,</li>
+    </ul>
+    <button class="check-order-btn" onclick="checkOrder('order1',['We used to have the slowest processing time in the region,','but now it is the most efficient system we have.','All things considered, this is the best decision we could have made.'],'fb1')">Check Order</button>
+    <div class="fb" id="fb1"></div>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:6px;margin-top:16px"><strong style="color:var(--txt)">Sentence 2:</strong> (should + superlative + might + conclusion)</p>
+    <ul class="reorder-list" id="order2">
+      <li class="reorder-item" draggable="true"><span class="drag-handle">&#8942;</span>When you weigh it all up, it is the most viable option we have.</li>
+      <li class="reorder-item" draggable="true"><span class="drag-handle">&#8942;</span>because it might also reduce the most significant costs.</li>
+      <li class="reorder-item" draggable="true"><span class="drag-handle">&#8942;</span>You should choose the supplier with the best track record</li>
+    </ul>
+    <button class="check-order-btn" onclick="checkOrder('order2',['You should choose the supplier with the best track record','because it might also reduce the most significant costs.','When you weigh it all up, it is the most viable option we have.'],'fb2')">Check Order</button>
+    <div class="fb" id="fb2"></div>
+    <div class="tn"><div class="tn-lbl">&#9889; Teacher Note — Grammar</div><div class="tn-text">S4A grammar is fundamentally a consolidation and elevation session. Students have seen superlatives in M5 — S4A integrates them with the four other A2.2 structures learned in M6. The key pedagogical move is making students FEEL the difference between comparative (2 options: A vs B) and superlative (3+ options: which is the best overall?). Activity A context clues are designed to make this explicit: Q1 says &quot;five suppliers&quot; (superlative); Q2 says &quot;between Option A and B&quot; (comparative). Activity B Sentence 1 establishes the full A2.2 integration pattern: M1 (used to) + M5 (superlative) + conclusion phrase. Sentence 2 adds M3 (should) + M4 (might) + M5 (superlative). After checking, ask: &quot;How many A2.2 structures appeared in Sentence 2?&quot; (3: should, might, superlative). Students who can count them are ready for S5 exit task.</div></div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="sec-hdr">
+    <div class="sec-num">&#167;5</div>
+    <div><div class="sec-label">Mini-Game — <em>Matching Pairs: Superlative Memory</em></div><div class="sec-sub">Flip 2 cards · Match situation to superlative conclusion · 8 min</div></div>
+    <div class="sec-dur">&#9201; 8 MIN</div>
+  </div>
+  <img class="img-banner" src="https://images.unsplash.com/photo-1588776814546-ec7e1f27e8c1?w=900&q=80" alt="Memory matching game" loading="lazy">
+  <div class="sec-body">
+    <div class="mp-wrap">
+      <div class="mp-hdr">
+        <div class="mp-hdr-title">&#129693; Matching Pairs — Work Situation + Superlative Conclusion</div>
+        <div class="mp-stats">Matches: <span class="mp-stat" id="mpMatches">0</span>/6 &nbsp; Moves: <span class="mp-stat" id="mpMoves">0</span></div>
+      </div>
+      <div class="mp-body">
+        <p style="font-size:12.5px;color:var(--muted);margin-bottom:14px">Click two cards. Match each work situation with the correct superlative conclusion. Find all 6 pairs to earn the badge!</p>
+        <div class="mp-grid" id="mpGrid"></div>
+        <div class="mp-result" id="mpResult"></div>
+        <button class="mp-restart-btn" onclick="initMP()">Restart &#8635;</button>
+      </div>
+    </div>
+    <div class="tn tn-cy"><div class="tn-lbl">&#9889; Teacher Note — Matching Pairs</div><div class="tn-text">Run individually on mobile (silent 3-min session) OR projected as a class game (teacher clicks, class discusses before each flip). The 6 pairs cover superlatives across all business contexts from M6: career decisions, supplier comparison, team performance, product launch, client satisfaction, cost analysis. Key pedagogical value: each pair forces students to PRODUCE the superlative in their head before clicking the second card — the anticipation is the grammar drill. Scoring for leaderboard in S4B: fewest moves to complete = winner. Run 2 rounds — first round individual discovery, second round competitive speed run.</div></div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="sec-hdr">
+    <div class="sec-num">&#167;6</div>
+    <div><div class="sec-label">Listening — <em>Andrea&apos;s Final Presentation</em></div><div class="sec-sub">ElevenLabs audio · Full A2.2 integration · Superlatives + all M6 structures · 10–12 min</div></div>
+    <div class="sec-dur">&#9201; 10–12 MIN</div>
+  </div>
+  <img class="img-banner" src="https://images.unsplash.com/photo-1475721027785-f74eccf877e2?w=900&q=80" alt="Andrea presenting final results" loading="lazy">
+  <div class="sec-body">
+    <div class="listen-wrap">
+      <img class="listen-img" src="https://images.unsplash.com/photo-1560439514-4e9645039924?w=900&q=80" alt="Andrea Soto presenting her 3-month results" loading="lazy">
+      <div class="listen-inner">
+        <button class="play-btn-aud" id="playBtn">&#9654;</button>
+        <div><div class="track-title">Andrea&apos;s 3-Month Review — Company B, León</div><div class="track-sub">A2.2 · M6 · S4A · Voice: Sarah (American English) · Speed: 0.82 · ~60 sec</div></div>
+      </div>
+      <div class="waveform" id="wv"></div>
+    </div>
+    <button class="script-toggle" onclick="toggleScript()">&#9660; Show ElevenLabs Script</button>
+    <div class="script-box" id="scriptBox">Good morning. My name is Andrea Soto and I am the new Regional Sales Coordinator at Company B in León.
+
+I used to work at Vertex Logistics in Celaya. Back in the day, I managed a smaller territory and had the highest travel commitment of anyone on the team — almost sixty percent. Now I am responsible for the largest sales portfolio in the Bajío region, and I work from one office. It is the best trade-off I have ever made.
+
+When I compared both offers three months ago, my mentor suggested I should choose the role with the most long-term potential. He was right. Company B has given me the most rewarding professional experience of my career so far.
+
+Going forward, we are going to expand to three more cities. I might also take on a director position if the results continue. The bottom line is: I made the most important decision of my career, and all things considered, it was a no-brainer.
+
+If you are facing a similar choice right now, my advice would be to look beyond the salary. The most viable option is not always the most obvious one. Thank you.
+    </div>
+    <div class="tn"><div class="tn-lbl">&#9889; Teacher Note — Listening</div><div class="tn-text">ElevenLabs: Voice = Sarah, Speed = 0.82, Stability = 0.65, Similarity = 0.80. This script is the M6 capstone listening — Andrea uses EVERY major A2.2 structure from M1–M5 and all four M6 colloquial phrases. Before playing: &quot;Count: (1) how many A2.2 modules you hear, (2) how many superlatives, (3) how many colloquial phrases.&quot; (Answers — Modules: M1 used to, M3 should/my advice, M4 going to/might, M5 comparatives+superlatives; Superlatives: highest, largest, best, most long-term, most rewarding, most important, most viable, most obvious; Colloquial: back in the day, the bottom line, all things considered, no-brainer). After: &quot;Andrea uses 8 superlatives in one presentation. That is the S4A target. Can you do the same in S4B?&quot; This sets up the B session exit task naturally.</div></div>
+    <div class="act-title" style="padding-top:16px">Comprehension — True or False?</div>
+    <div class="tf-row" style="border-top:1px solid var(--border-dim)">
+      <div class="tf-stmt">1. Andrea used to have the lowest travel commitment at her previous company.</div>
+      <div class="tf-btns"><button class="tf-btn" onclick="checkTF(this,false,'tf1')">TRUE</button><button class="tf-btn" onclick="checkTF(this,true,'tf1')">FALSE</button></div>
+    </div>
+    <div class="tf-row">
+      <div class="tf-stmt">2. Andrea now manages the largest sales portfolio in the Bajío region.</div>
+      <div class="tf-btns"><button class="tf-btn" onclick="checkTF(this,true,'tf2')">TRUE</button><button class="tf-btn" onclick="checkTF(this,false,'tf2')">FALSE</button></div>
+    </div>
+    <div class="tf-row">
+      <div class="tf-stmt">3. Andrea says the director position is confirmed for the next quarter.</div>
+      <div class="tf-btns"><button class="tf-btn" onclick="checkTF(this,false,'tf3')">TRUE</button><button class="tf-btn" onclick="checkTF(this,true,'tf3')">FALSE</button></div>
+    </div>
+    <div class="tf-row">
+      <div class="tf-stmt">4. Andrea uses &quot;the bottom line&quot; and &quot;all things considered&quot; in the same presentation.</div>
+      <div class="tf-btns"><button class="tf-btn" onclick="checkTF(this,true,'tf4')">TRUE</button><button class="tf-btn" onclick="checkTF(this,false,'tf4')">FALSE</button></div>
+    </div>
+    <div class="tf-row" style="border-bottom:none">
+      <div class="tf-stmt">5. Andrea&apos;s final advice is that salary is the most important factor when choosing a job.</div>
+      <div class="tf-btns"><button class="tf-btn" onclick="checkTF(this,false,'tf5')">TRUE</button><button class="tf-btn" onclick="checkTF(this,true,'tf5')">FALSE</button></div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="sec-hdr">
+    <div class="sec-num">&#167;SP</div>
+    <div><div class="sec-label">Speaking Practice — <em>Your Professional Comparison Pitch</em></div><div class="sec-sub">Full A2.2 integration · Superlatives + all structures · 10–12 min</div></div>
+    <div class="sec-dur">&#9201; 10–12 MIN</div>
+  </div>
+  <img class="img-banner" src="https://images.unsplash.com/photo-1543269664-76bc3997d9ea?w=900&q=80" alt="Professional comparison pitch speaking" loading="lazy">
+  <div class="sec-body">
+    <div class="speak-grid">
+      <div class="speak-card">
+        <div class="speak-num"><span class="speak-tag st-ts">T-S</span> Question 1 — Recall</div>
+        <div class="speak-q">How many superlatives did Andrea use in the listening? Which ones can you remember? Which module do they come from?</div>
+        <div class="speak-hint">Grammar hint: highest, largest, best, most long-term, most rewarding, most important, most viable, most obvious. M5 comparatives+superlatives throughout.</div>
+      </div>
+      <div class="speak-card">
+        <div class="speak-num"><span class="speak-tag st-ss">S-S</span> Question 2 — Apply</div>
+        <div class="speak-q">Describe YOUR current job using at least 3 superlatives. One positive, one challenge, one comparison with a past role or situation. Example: &quot;I have the most demanding schedule but also the most rewarding team. We used to be the slowest in the region — now we are the fastest.&quot;</div>
+        <div class="speak-hint">Grammar hint: &quot;the most [adj]&quot; for long adjectives, &quot;the [adj]-est&quot; for short. No &quot;the most best&quot; or &quot;the most fast.&quot; Use used to for the contrast.</div>
+      </div>
+      <div class="speak-card">
+        <div class="speak-num"><span class="speak-tag st-ss">S-S</span> Question 3 — Integrate</div>
+        <div class="speak-q">Your partner presents a work problem. You give a structured recommendation using the full A2.2 toolkit: used to + should + superlative + might. Example: &quot;You used to have the best supplier. You should find the most reliable one now because the current option might not be viable.&quot;</div>
+        <div class="speak-hint">Grammar hint: target is 4 different A2.2 structures in 2–3 connected sentences with connectors (but, because, so).</div>
+      </div>
+      <div class="speak-card">
+        <div class="speak-num"><span class="speak-tag st-cl">Class</span> Question 4 — Debate</div>
+        <div class="speak-q">Which is more important in a professional decision: the best salary, the most growth potential, or the most flexible schedule? Each student makes a case using superlatives + at least one other A2.2 structure. Then class votes.</div>
+        <div class="speak-hint">Grammar hint: &quot;The most important factor is [X] because it gives you the [superlative] outcome. You should choose [X] over [Y] because&hellip;&quot;</div>
+      </div>
+      <div class="speak-card">
+        <div class="speak-num"><span class="speak-tag st-ts">T-S</span> Question 5 — Challenge</div>
+        <div class="speak-q">Use ALL FOUR colloquial phrases from &sect;3 in one 90-second professional conclusion speech. &quot;All things considered...&quot; + &quot;The bottom line is...&quot; + &quot;When you weigh it all up...&quot; + &quot;It&apos;s a no-brainer.&quot; Include at least 3 superlatives. Timer below.</div>
+        <div class="speak-hint">Goal: a natural, connected professional conclusion. Not 4 disconnected sentences — a real speech. This is S4B prep.</div>
+      </div>
+      <div class="speak-card">
+        <div class="speak-num"><span class="speak-tag st-cl">Class</span> Question 6 — Production</div>
+        <div class="speak-q">Two-minute &quot;Comparison Pitch&quot;: compare two real options from YOUR work (two suppliers, two projects, two processes, two candidates). Use: used to + superlatives + should + might + at least one colloquial phrase. End with a clear recommendation. Timer below.</div>
+        <div class="speak-hint">This is the S4A capstone task and the preview of the S4B debate. Students who can do this fluently in 2 minutes are ready for the M6 exit project in S5.</div>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:16px;margin-top:20px;background:var(--surface);border:1px solid var(--border-dim);border-radius:10px;padding:16px 20px">
+      <div class="timer-wrap">
+        <svg class="timer-svg" width="90" height="90" viewBox="0 0 90 90">
+          <circle cx="45" cy="45" r="38" stroke="rgba(249,115,22,.2)" stroke-width="6" fill="none"/>
+          <circle id="arcSP" cx="45" cy="45" r="38" stroke="var(--accent)" stroke-width="6" fill="none" stroke-dasharray="238.76" stroke-dashoffset="0"/>
+          <text id="txtSP" x="45" y="44" text-anchor="middle" font-family="Syne,sans-serif" font-size="18" font-weight="800" fill="var(--accent)" transform="rotate(90 45 45)">2:00</text>
+          <text x="45" y="58" text-anchor="middle" font-family="Syne,sans-serif" font-size="9" fill="rgba(249,115,22,.7)" transform="rotate(90 45 45)">PITCH</text>
+        </svg>
+      </div>
+      <div>
+        <div style="font-family:var(--font-head);font-size:12px;font-weight:700;color:var(--accent);letter-spacing:1px;margin-bottom:8px">2-MINUTE COMPARISON PITCH</div>
+        <button onclick="startTimer('arcSP','txtSP',120,'b3',238.76)" style="background:rgba(249,115,22,.1);border:1px solid rgba(249,115,22,.3);color:var(--accent);padding:7px 18px;cursor:pointer;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1px;border-radius:7px;margin-right:8px">START</button>
+        <button onclick="resetArc('arcSP','txtSP',120,238.76)" style="background:var(--surface2);border:1px solid var(--border-dim);color:var(--muted);padding:7px 14px;cursor:pointer;font-family:var(--font-head);font-size:10px;font-weight:700;border-radius:7px">RESET</button>
+      </div>
+    </div>
+    <div class="om-wrap">
+      <div class="om-stmt">&quot;In a professional presentation, using superlatives makes your conclusion sound stronger and more convincing than using only comparatives.&quot;</div>
+      <div class="om-track"><div class="om-bar" id="meterBar" style="width:50%"></div></div>
+      <div class="om-labels"><span>Disagree</span><span>50/50</span><span>Agree</span></div>
+      <div class="om-btns">
+        <button class="om-btn om-dis" onclick="moveMeter(-10)">&#128078; Disagree</button>
+        <button class="om-btn om-agr" onclick="moveMeter(10)">&#128077; Agree</button>
+      </div>
+      <div class="om-pct" id="meterPct">50% Agree</div>
+    </div>
+    <div class="tn"><div class="tn-lbl">&#9889; Teacher Note — Speaking</div><div class="tn-text">S4A Speaking is the integration summit of the whole M6 arc. Q3 is the key integration task: 4 different A2.2 structures in 2–3 connected sentences. Students who hesitate or revert to isolated structures need more time on this question — it is the strongest predictor of S5 exit task performance. Q6 (Comparison Pitch) is the direct S4B and S5 preview: the ability to structure a 2-minute professional comparison with superlatives, advice, future plans, and colloquial phrases is exactly the A2.2 exit task competency. Scoring rubric for the Comparison Pitch: 1pt per A2.2 structure used, 2pts per superlative with correct form, 3pts for a colloquial phrase used naturally, 5pts for a complete recommendation with all three elements (superlative + because + so). 20+ points = exit project ready. Opinion Meter: the statement is strategically contentious — superlatives can sound overconfident without evidence. Students who disagree are right too — this generates the best discussion. &quot;When is it better to use a comparative than a superlative in a recommendation?&quot;</div></div>
+  </div>
+</div>
+
+<div class="phrases-wrap">
+  <div class="phrases-hdr">&#127919; This week, use these 3 phrases at work:</div>
+  <div class="phrases-sub">Professional English you can use in any meeting, email, or presentation starting tomorrow.</div>
+  <div class="phrases-grid">
+    <div class="phrase-card">
+      <div class="phrase-en">&quot;All things considered, [option] is the most [adj] choice because [reason].&quot;</div>
+      <div class="phrase-ctx">Your complete professional conclusion in one sentence. Use it to close any comparison or recommendation at work: supplier selection, candidate evaluation, project decision. The &quot;all things considered&quot; opener signals that you have been thorough, not impulsive.</div>
+    </div>
+    <div class="phrase-card">
+      <div class="phrase-en">&quot;The bottom line is: [superlative conclusion].&quot;</div>
+      <div class="phrase-ctx">Use after a longer comparison to land your main point. Very powerful in meetings when you want to cut through details and give a clear recommendation. Example: &quot;The bottom line is: Option B is the most viable long-term and we should move forward.&quot;</div>
+    </div>
+    <div class="phrase-card">
+      <div class="phrase-en">&quot;When you weigh it all up, [option] has the most [adj] outcome.&quot;</div>
+      <div class="phrase-ctx">Combines the comparison process (&quot;weigh it up&quot; from S3A vocabulary) with a superlative conclusion. Use in written reports, emails, or verbal presentations when you want to sound structured and analytical.</div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="sec-hdr">
+    <div class="sec-num">&#167;7</div>
+    <div><div class="sec-label">Wrap-Up — <em>Session 4A complete · A2.2 Integration achieved</em></div><div class="sec-sub">Key takeaways · Checklist · S5 Exit Lesson preview · 5–8 min</div></div>
+    <div class="sec-dur">&#9201; 5–8 MIN</div>
+  </div>
+  <img class="img-banner" src="https://images.unsplash.com/photo-1549737328-8a136087072e?w=900&q=80" alt="Achievement and completion" loading="lazy">
+  <div class="sec-body">
+    <div class="wrapup-grid">
+      <div class="wrapup-card"><h4>&#127942; Superlatives Mastered</h4><p>Short adjectives: the [adj]-est. Long adjectives: the most [adj]. Irregular: the best / the worst. NEVER &quot;the most best&quot; or &quot;the most fast.&quot; Compare 3+ options with superlatives, 2 options with comparatives.</p></div>
+      <div class="wrapup-card"><h4>&#128202; Full A2.2 Integration</h4><p>You can now combine: used to (M1) + should/could (M3) + might/going to (M4) + superlatives (M5) in one connected professional sentence. This is the A2.2 target level. S5 confirms it.</p></div>
+      <div class="wrapup-card"><h4>&#127959;&#65039; 4 Conclusion Phrases</h4><p>&quot;All things considered,&quot; &quot;The bottom line is,&quot; &quot;When you weigh it all up,&quot; and &quot;It&apos;s a no-brainer.&quot; These make any professional comparison sound complete and authoritative in English.</p></div>
+    </div>
+    <p style="font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin:20px 0 10px">&#9989; I CAN NOW...</p>
+    <ul class="cl-list">
+      <li class="cl-item" onclick="toggleDone(this)"><span class="cl-check">&#9744;</span>Form superlatives correctly for short adjectives (-est), long adjectives (the most), and irregular forms (the best / the worst).</li>
+      <li class="cl-item" onclick="toggleDone(this)"><span class="cl-check">&#9744;</span>Choose between comparative (2 options) and superlative (3+ options) based on context clues.</li>
+      <li class="cl-item" onclick="toggleDone(this)"><span class="cl-check">&#9744;</span>Integrate superlatives with used to, should, might, and going to in one connected professional sentence.</li>
+      <li class="cl-item" onclick="toggleDone(this)"><span class="cl-check">&#9744;</span>Use 4 conclusion phrases: &quot;all things considered,&quot; &quot;the bottom line is,&quot; &quot;when you weigh it all up,&quot; and &quot;it&apos;s a no-brainer.&quot;</li>
+      <li class="cl-item" onclick="toggleDone(this)"><span class="cl-check">&#9744;</span>Deliver a 2-minute structured comparison pitch using all A2.2 structures and a clear superlative conclusion.</li>
+    </ul>
+    <div class="next-prev">
+      <div class="next-lbl">&#9654; Next — S4B (Production &amp; Fluency) → then S5: A2.2 Exit Lesson</div>
+      <div class="next-text">S4B is the final production session before the Exit Lesson. You will deliver a full &quot;Comparison Pitch&quot; to the class, debate the most important A2.2 structure you learned, and score on Andrea&apos;s complete A2.2 journey. Then S5 is your Exit Lesson: the full A2.2 integration task, your module certificate, and your personal linguistic portfolio. Come prepared with a real work comparison topic for S4B.</div>
+    </div>
+    <div class="win-wrap">
+      <div class="win-label">&#127942; My Win Today</div>
+      <textarea class="win-ta" id="winTA" placeholder="Complete in English: &quot;All things considered, the most important thing I learned in A2.2 M6 is... because it will help me... when I...&quot;"></textarea>
+      <button class="win-btn" onclick="saveWin()">Save My Win &#127942;</button>
+      <div class="win-ok" id="winOK">&#10003; Saved! S4A complete. See you in S4B.</div>
+    </div>
+    <div class="tn tn-pk"><div class="tn-lbl">&#9889; Teacher Note — A2.2 Closing &amp; Upsell</div><div class="tn-text">S4A is the last Discovery &amp; Drill session of A2.2. The My Win prompt uses &quot;all things considered&quot; deliberately — students who write a grammatically correct three-part sentence (superlative + because + when) have demonstrated A2.2 integration competency. Collect and use 3–5 of these in S4B as warm-up discussion starters. Upsell: &quot;In A2.2 you learned to compare two things. In B1.1 you add the first conditional: &apos;If you choose the most reliable supplier, you will reduce the most significant costs.&apos; One structure upgrades your recommendation from a description to a logical consequence analysis. B1.1 opens with exactly this. Your A2.2 integration is the foundation.&quot; This makes the B1.1 upsell feel earned and logical, not like a sales pitch.</div></div>
+  </div>
+</div>
+
+<footer class="ftr">
+  <div class="fbrand">Gabriel Turner · English Training</div>
+  <div class="finfo">GT_A2_2_M6_S4A_TEACHER_v1.html · Celaya, Guanajuato</div>
+  <div class="flvs">
+    <div class="flv">A1.1</div><div class="flv">A1.2</div><div class="flv">A2.1</div>
+    <div class="flv on">A2.2</div><div class="flv">B1.1</div><div class="flv">B1.2</div>
+  </div>
+</footer>
+
+<script>
+function speak(t){if(!window.speechSynthesis)return;speechSynthesis.cancel();var u=new SpeechSynthesisUtterance(t);u.lang="en-US";u.rate=0.82;u.pitch=1;speechSynthesis.speak(u);}
+
+var badgeEarned={b1:false,b2:false,b3:false,b4:false,b5:false};
+function earnBadge(id){if(badgeEarned[id])return;badgeEarned[id]=true;var el=document.getElementById(id);if(el)el.classList.add("earned");if(Object.values(badgeEarned).every(Boolean)){launchConfetti();var cm=document.getElementById("confMsg");if(cm)cm.style.display="block";}}
+function launchConfetti(){var colors=["#F97316","#FB923C","#FFB800","#00E676","#00CFFF","#ffffff"];for(var i=0;i<90;i++){var d=document.createElement("div");d.style.cssText="position:fixed;top:-10px;pointer-events:none;z-index:9999;border-radius:2px;";d.style.left=Math.random()*100+"vw";d.style.width=(6+Math.random()*6)+"px";d.style.height=(6+Math.random()*6)+"px";d.style.background=colors[Math.floor(Math.random()*colors.length)];d.style.animation="confFall "+(1.5+Math.random()*2)+"s linear forwards";document.body.appendChild(d);setTimeout(function(){if(d.parentNode)d.parentNode.removeChild(d);},4000);}}
+(function(){var s=document.createElement("style");s.textContent="@keyframes confFall{0%{transform:translateY(-10px) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}";document.head.appendChild(s);})();
+
+var timerIntervals={};
+function startTimer(arcId,textId,seconds,badgeKey,circumference){if(timerIntervals[arcId])clearInterval(timerIntervals[arcId]);var arc=document.getElementById(arcId),txt=document.getElementById(textId),rem=seconds;function update(){arc.style.strokeDashoffset=circumference*(1-rem/seconds);var m=Math.floor(rem/60),s=rem%60;txt.textContent=m+":"+(s<10?"0":"")+s;if(rem<=5)arc.style.stroke="#FF4D6D";if(rem<=0){clearInterval(timerIntervals[arcId]);arc.style.stroke="var(--success)";if(badgeKey)earnBadge(badgeKey);return;}rem--;}update();timerIntervals[arcId]=setInterval(update,1000);}
+function resetArc(arcId,textId,seconds,circumference){if(timerIntervals[arcId]){clearInterval(timerIntervals[arcId]);delete timerIntervals[arcId];}var arc=document.getElementById(arcId);arc.style.strokeDashoffset="0";arc.style.stroke="var(--accent)";var m=Math.floor(seconds/60),s=seconds%60;document.getElementById(textId).textContent=m+":"+(s<10?"0":"")+s;}
+
+var vqData=[
+  {q:"What does 'outcome' mean in a professional context?",opts:["A type of salary increase","The final result or consequence of a decision","A networking event","A comparison of two options"],ans:"The final result or consequence of a decision"},
+  {q:"'Criteria' is the plural of 'criterion.' Which sentence is correct?",opts:["The most important criteria are reliability and price.","The most important criterias are important.","The most important criterion are reliability.","The criterias are very important."],ans:"The most important criteria are reliability and price."},
+  {q:"What is a 'trade-off'?",opts:["A business promotion","A balance between two desirable but incompatible things","A professional certification","A contract negotiation"],ans:"A balance between two desirable but incompatible things"},
+  {q:"'Benchmark' in business English means:",opts:["A type of desk","A standard used to measure or compare performance","A marketing strategy","A travel allowance"],ans:"A standard used to measure or compare performance"},
+  {q:"Which sentence uses 'insight' correctly?",opts:["The most valuable insight was that clients want faster responses.","My insight is on the third floor.","I insight my team every day.","The insight was cancelled."],ans:"The most valuable insight was that clients want faster responses."},
+  {q:"'Justify' in professional English means:",opts:["To travel to a meeting","To give reasons that explain why a decision is correct","To negotiate a salary","To compare two suppliers"],ans:"To give reasons that explain why a decision is correct"},
+  {q:"Which sentence uses 'viable' correctly?",opts:["Option C is the most viable solution given our budget.","My viable is very competitive.","I viable to work every morning.","The viable was cancelled."],ans:"Option C is the most viable solution given our budget."},
+  {q:"What is an 'advantage'?",opts:["A type of salary","A condition that puts you in a better position than others","A company policy","A meeting schedule"],ans:"A condition that puts you in a better position than others"},
+  {q:"'Impact' in business English means:",opts:["A type of contract","The strong effect that something has on a situation","A career plan","A comparison tool"],ans:"The strong effect that something has on a situation"},
+  {q:"Which sentence uses 'conclusion' correctly?",opts:["My conclusion is that Option B is the best choice.","I conclusion my manager every day.","The conclusion is on the second floor.","She conclusions the office on Tuesday."],ans:"My conclusion is that Option B is the best choice."}
+];
+var vqIdx=0,vqScore=0,vqShuffled=[];
+function shuffle(arr){return arr.slice().sort(function(){return Math.random()-.5;});}
+function startQuiz(){vqShuffled=shuffle(vqData);vqIdx=0;vqScore=0;document.getElementById("vqScore").style.display="none";document.getElementById("vqRestart").style.display="none";document.getElementById("vqBar").style.width="0%";showVQ();}
+function showVQ(){if(vqIdx>=vqShuffled.length){document.getElementById("vqQ").textContent="";document.getElementById("vqOpts").innerHTML="";var sc=document.getElementById("vqScore");sc.textContent="Score: "+vqScore+" / "+vqShuffled.length+(vqScore>=8?" ★ Badge earned!":"  Keep practicing!");sc.style.display="block";document.getElementById("vqRestart").style.display="block";if(vqScore>=8)earnBadge("b2");return;}var item=vqShuffled[vqIdx];document.getElementById("vqQ").textContent=item.q;document.getElementById("vqBar").style.width=((vqIdx/vqShuffled.length)*100)+"%";var opts=shuffle(item.opts),html="";opts.forEach(function(o){var oE=o.replace(/'/g,"\'"),aE=item.ans.replace(/'/g,"\'");html+="<button class=\"vq-opt\" onclick=\"answerVQ(this,'"+oE+"','"+aE+"')\">"+o+"</button>";});document.getElementById("vqOpts").innerHTML=html;}
+function answerVQ(btn,answer,correct){document.querySelectorAll(".vq-opt").forEach(function(b){b.disabled=true;if(b.textContent.trim()===correct)b.classList.add("correct");});if(btn.textContent.trim()!==correct)btn.classList.add("wrong");vqIdx++;setTimeout(showVQ,900);}
+
+function checkOpt(btn,correct,qid){var c=document.getElementById(qid);c.querySelectorAll(".opt").forEach(function(b){b.disabled=true;if(b.textContent.trim()===correct)b.classList.add("correct");});if(btn.textContent.trim()!==correct)btn.classList.add("wrong");earnBadge("b3");}
+function checkTF(btn,isCorrect,id){var row=btn.closest(".tf-row");row.querySelectorAll(".tf-btn").forEach(function(b){b.disabled=true;});if(isCorrect){btn.style.cssText="background:rgba(0,229,160,.15);border-color:var(--success);color:var(--success)";}else{btn.style.cssText="background:rgba(255,77,109,.12);border-color:var(--danger);color:var(--danger)";var sib=Array.from(row.querySelectorAll(".tf-btn")).find(function(b){return b!==btn;});if(sib)sib.style.cssText="background:rgba(0,229,160,.12);border-color:var(--success);color:var(--success)";}earnBadge("b4");}
+
+/* MATCHING PAIRS GAME */
+var mpCards=[
+  {id:"c1",pairId:"A",text:"Team evaluated 5 suppliers. Lumina is fastest AND most reliable."},
+  {id:"c2",pairId:"A",text:"The most reliable of five suppliers, with the fastest delivery time."},
+  {id:"c3",pairId:"B",text:"Comparing two salary offers: which is better for long-term growth?"},
+  {id:"c4",pairId:"B",text:"Option B is better than A for long-term career development."},
+  {id:"c5",pairId:"C",text:"Factory reaches highest production rate in 5 years of operation."},
+  {id:"c6",pairId:"C",text:"Best outcome ever achieved — a no-brainer success for the team."},
+  {id:"c7",pairId:"D",text:"Choosing the most aligned business partner after 3 meetings."},
+  {id:"c8",pairId:"D",text:"All things considered, this partner has the most growth potential."},
+  {id:"c9",pairId:"E",text:"Q3 results show the fastest growth in company history."},
+  {id:"c10",pairId:"E",text:"The bottom line: Q3 was our most successful quarter ever."},
+  {id:"c11",pairId:"F",text:"Used to have worst response time — now have the best system."},
+  {id:"c12",pairId:"F",text:"When you weigh it all up, the new system is the most valuable."}
+];
+var mpFirst=null,mpMatched=0,mpMoves=0,mpLocked=false;
+function initMP(){
+  mpFirst=null;mpMatched=0;mpMoves=0;mpLocked=false;
+  document.getElementById("mpMatches").textContent="0";
+  document.getElementById("mpMoves").textContent="0";
+  document.getElementById("mpResult").className="mp-result";
+  var shuffled=mpCards.slice().sort(function(){return Math.random()-.5;});
+  var grid=document.getElementById("mpGrid");
+  grid.innerHTML="";
+  shuffled.forEach(function(card){
+    var el=document.createElement("div");
+    el.className="mp-card";
+    el.dataset.id=card.id;
+    el.dataset.pair=card.pairId;
+    el.innerHTML="<div class=\"mp-card-inner\"><div class=\"mp-front\"><div class=\"mp-front-icon\">&#10067;</div></div><div class=\"mp-back\">"+card.text+"</div></div>";
+    el.addEventListener("click",function(){onMPClick(el);});
+    grid.appendChild(el);
+  });
+}
+function onMPClick(el){
+  if(mpLocked||el.classList.contains("flipped")||el.classList.contains("matched"))return;
+  el.classList.add("flipped");
+  if(!mpFirst){mpFirst=el;return;}
+  mpMoves++;
+  document.getElementById("mpMoves").textContent=mpMoves;
+  var second=el;
+  if(mpFirst.dataset.pair===second.dataset.pair&&mpFirst.dataset.id!==second.dataset.id){
+    mpFirst.classList.add("matched");second.classList.add("matched");
+    mpMatched++;
+    document.getElementById("mpMatches").textContent=mpMatched;
+    mpFirst=null;
+    if(mpMatched===6){var res=document.getElementById("mpResult");res.className="mp-result show";res.textContent="✓ All 6 pairs matched in "+mpMoves+" moves! Badge earned!";earnBadge("b2");}
+  }else{
+    mpLocked=true;
+    var a=mpFirst,b=second;
+    a.classList.add("wrong-flash");b.classList.add("wrong-flash");
+    setTimeout(function(){a.classList.remove("flipped","wrong-flash");b.classList.remove("flipped","wrong-flash");mpLocked=false;},1000);
+    mpFirst=null;
+  }
+}
+
+var dragSrc=null;
+function initDrag(listId){var list=document.getElementById(listId);if(!list)return;list.querySelectorAll(".reorder-item").forEach(function(item){item.addEventListener("dragstart",function(){dragSrc=this;this.classList.add("dragging");});item.addEventListener("dragend",function(){this.classList.remove("dragging");list.querySelectorAll(".reorder-item").forEach(function(i){i.classList.remove("drag-over");});});item.addEventListener("dragover",function(e){e.preventDefault();list.querySelectorAll(".reorder-item").forEach(function(i){i.classList.remove("drag-over");});if(this!==dragSrc)this.classList.add("drag-over");});item.addEventListener("drop",function(e){e.preventDefault();if(this!==dragSrc){var all=Array.from(list.querySelectorAll(".reorder-item"));if(all.indexOf(dragSrc)<all.indexOf(this))list.insertBefore(dragSrc,this.nextSibling);else list.insertBefore(dragSrc,this);}});});}
+function checkOrder(listId,correct,fbId){var list=document.getElementById(listId);var current=Array.from(list.querySelectorAll(".reorder-item")).map(function(i){return i.textContent.replace("⠇","").trim();});var fb=document.getElementById(fbId);if(JSON.stringify(current)===JSON.stringify(correct)){fb.className="fb show ok";fb.textContent="✓ Correct! Well done!";list.querySelectorAll(".reorder-item").forEach(function(i){i.style.borderColor="var(--success)";i.style.color="var(--success)";});earnBadge("b3");}else{fb.className="fb show no";fb.textContent="✗ Not quite. Correct: "+correct.join(" — ");list.querySelectorAll(".reorder-item").forEach(function(i){i.style.borderColor="var(--danger)";});}}
+
+function toggleScript(){var b=document.getElementById("scriptBox");b.classList.toggle("open");document.querySelector(".script-toggle").textContent=b.classList.contains("open")?"▲ Hide Script":"▼ Show ElevenLabs Script";}
+
+var wv=document.getElementById("wv");for(var i=0;i<60;i++){var wb=document.createElement("div");wb.className="wbar";wb.style.height=(8+Math.sin(i*.6)*10+Math.random()*18)+"px";wb.style.opacity=.3+Math.random()*.4;wv.appendChild(wb);}
+document.getElementById("playBtn").addEventListener("click",function(){earnBadge("b4");});
+
+var meterVal=50;
+function moveMeter(delta){meterVal=Math.max(5,Math.min(95,meterVal+delta));document.getElementById("meterBar").style.width=meterVal+"%";document.getElementById("meterPct").textContent=meterVal+"% Agree";}
+function toggleDone(el){el.classList.toggle("done");var check=el.querySelector(".cl-check");check.textContent=el.classList.contains("done")?"✓":"☐";var all=document.querySelectorAll(".cl-item");if(Array.from(all).every(function(x){return x.classList.contains("done");}))earnBadge("b5");}
+function saveWin(){var ta=document.getElementById("winTA");if(ta.value.trim().length>3){earnBadge("b5");ta.style.borderColor="var(--success)";document.getElementById("winOK").style.display="block";}}
+window.addEventListener("scroll",function(){var h=document.documentElement;var bar=document.getElementById("progressFill");if(bar)bar.style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight)*100)+"%";});
+
+startQuiz();
+initMP();
+initDrag("order1");
+initDrag("order2");
+</script>
+</body>
+</html>

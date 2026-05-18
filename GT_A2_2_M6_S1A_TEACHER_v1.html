@@ -1,0 +1,1302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GT A2.2 · M6 · S1A — Full A2.2 Integration</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#080808;--surface:#111318;--surface2:#1a1f28;
+  --border:rgba(249,115,22,.18);--border-dim:rgba(255,255,255,0.07);
+  --accent:#F97316;--accent2:#FB923C;
+  --cyan:#00CFFF;--gold:#FFB800;--green:#00E676;
+  --danger:#FF4D6D;--success:#00E5A0;--warn:#FFB347;
+  --violet:#A78BFA;
+  --txt:#F0F4F8;--muted:#8A9BB0;--dim:rgba(226,226,226,.25);
+  --font-head:'Syne',sans-serif;--font-body:'DM Sans',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--txt);font-family:var(--font-body);font-size:14px;line-height:1.6;overflow-x:hidden}
+
+/* HEADER */
+.hdr{background:var(--surface);border-bottom:1px solid var(--border);padding:16px 48px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;position:sticky;top:0;z-index:100}
+.brand{display:flex;align-items:center;gap:10px}
+.dot{width:8px;height:8px;background:var(--accent);border-radius:50%}
+.bname{font-family:var(--font-head);font-weight:800;font-size:13px;letter-spacing:2.5px;text-transform:uppercase;color:#fff}
+.bsub{font-size:10px;color:var(--muted);letter-spacing:1px}
+.sess-tag{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.tag{display:inline-block;padding:3px 10px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase}
+.t-or{background:rgba(249,115,22,.15);color:var(--accent);border:1px solid rgba(249,115,22,.3)}
+.t-go{background:rgba(0,230,118,.1);color:var(--green);border:1px solid rgba(0,230,118,.25)}
+.t-cy{background:rgba(0,207,255,.1);color:var(--cyan);border:1px solid rgba(0,207,255,.25)}
+.t-gd{background:rgba(255,184,0,.1);color:var(--gold);border:1px solid rgba(255,184,0,.25)}
+
+/* BADGE STRIP */
+.badge-strip{display:flex;gap:6px;align-items:center}
+.badge-strip span{width:28px;height:28px;border-radius:50%;background:var(--surface2);border:1px solid var(--border-dim);display:flex;align-items:center;justify-content:center;font-size:13px;filter:grayscale(1);opacity:.4;transition:all .4s}
+.badge-strip span.earned{filter:none;opacity:1;border-color:var(--accent);background:rgba(249,115,22,.15);transform:scale(1.1)}
+
+/* PROGRESS BAR */
+.progress-bar{height:2px;background:var(--surface2);position:sticky;top:57px;z-index:99}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));width:0%;transition:width .3s}
+
+/* SECTIONS */
+.section{margin:0 0 3px 0;overflow:hidden}
+.sec-hdr{display:flex;align-items:center;gap:14px;padding:20px 48px;background:linear-gradient(135deg,rgba(249,115,22,.06),transparent);border-bottom:1px solid var(--border)}
+.sec-num{font-family:var(--font-head);font-size:10px;font-weight:800;color:var(--accent);letter-spacing:.15em;text-transform:uppercase;background:rgba(249,115,22,.1);border:1px solid rgba(249,115,22,.25);padding:3px 10px;border-radius:20px;white-space:nowrap}
+.sec-label{font-family:var(--font-head);font-size:22px;font-weight:800;color:#fff}
+.sec-label em{color:var(--accent);font-style:normal}
+.sec-sub{font-size:12px;color:var(--muted);margin-top:2px}
+.sec-dur{font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;color:var(--gold);border:1px solid rgba(255,184,0,.2);padding:2px 9px;margin-left:auto;white-space:nowrap}
+.sec-body{padding:28px 48px}
+
+/* HERO & BANNER IMAGES */
+.img-hero{width:100%;height:260px;object-fit:cover;display:block;filter:brightness(.5);border-bottom:1px solid var(--border)}
+.img-banner{width:100%;height:150px;object-fit:cover;display:block;filter:brightness(.48);border-radius:10px;margin-bottom:16px}
+
+/* WARM-UP GRID */
+.wu-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:16px}
+.wu-card{background:var(--surface);border:1px solid var(--border-dim);border-radius:10px;overflow:hidden;border-left:3px solid var(--accent)}
+.wu-card-img{width:100%;height:90px;object-fit:cover;display:block;filter:brightness(.48)}
+.wu-card-body{padding:13px 15px}
+.wu-card-q{font-size:13px;color:var(--txt);line-height:1.5}
+.wu-card-hint{font-size:11px;color:var(--muted);font-style:italic;margin-top:6px}
+
+/* QUICK WIN */
+.quick-win{background:rgba(249,115,22,.07);border:1px solid rgba(249,115,22,.25);border-radius:10px;padding:16px 20px;margin-top:16px;display:flex;align-items:flex-start;gap:14px}
+.qw-icon{font-size:22px;flex-shrink:0;margin-top:2px}
+.qw-label{font-family:var(--font-head);font-size:9px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:5px}
+.qw-text{font-size:13.5px;color:#fff;line-height:1.55}
+.qw-try{font-size:12px;color:var(--accent2);margin-top:6px;font-style:italic}
+
+/* VIDEO PLACEHOLDER */
+.video-ph{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:20px}
+.video-ph-overlay{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:28px;background:rgba(0,0,0,.55)}
+.play-icon{width:56px;height:56px;background:rgba(249,115,22,.85);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;cursor:pointer;transition:background .2s}
+.play-icon:hover{background:var(--accent)}
+.video-ph-label{font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent)}
+.video-ph-sub{font-size:11px;color:var(--muted);text-align:center}
+
+/* TIMER SVG */
+.timer-wrap{display:flex;flex-direction:column;align-items:center;gap:8px}
+.timer-svg{transform:rotate(-90deg)}
+
+/* TEACHER NOTE */
+.tn{background:var(--surface2);border:1px solid var(--border-dim);border-left:3px solid var(--gold);border-radius:8px;padding:13px 16px;margin-top:14px}
+.tn-lbl{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:6px}
+.tn-text{font-size:12px;color:rgba(255,184,0,.82);line-height:1.6}
+.tn-cy{border-left-color:var(--cyan)}
+.tn-cy .tn-lbl{color:var(--cyan)}
+.tn-cy .tn-text{color:rgba(0,207,255,.82)}
+.tn-pk{border-left-color:#FF4D6D}
+.tn-pk .tn-lbl{color:#FF4D6D}
+.tn-pk .tn-text{color:rgba(255,77,109,.82)}
+
+/* VOCAB CARDS */
+.vocab-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:16px}
+.vocab-card{background:var(--surface);border:1px solid var(--border-dim);border-radius:10px;overflow:hidden;cursor:pointer;transition:all .2s}
+.vocab-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.vocab-card-img{width:100%;height:72px;object-fit:cover;display:block;filter:brightness(.45)}
+.vocab-card-body{padding:11px 12px}
+.vc-word{font-family:var(--font-head);font-size:13px;font-weight:700;color:#fff;margin-bottom:2px}
+.vc-ipa{font-size:10px;color:var(--cyan);margin-bottom:5px;font-style:italic}
+.vc-def{font-size:11px;color:var(--muted);line-height:1.4;margin-bottom:6px}
+.vc-ex{font-size:11px;color:var(--accent2);font-style:italic;border-left:2px solid var(--accent);padding-left:7px;line-height:1.4}
+.vc-sp{font-size:10px;color:var(--dim);margin-top:6px}
+
+/* MICRO-SPEAKING */
+.micro-speak{background:rgba(0,207,255,.06);border:1px solid rgba(0,207,255,.2);border-radius:8px;padding:12px 16px;margin-top:16px;display:flex;align-items:flex-start;gap:12px}
+.ms-icon{font-size:18px;flex-shrink:0}
+.ms-text{font-size:12.5px;color:var(--cyan);line-height:1.55}
+
+/* VOCAB QUIZ */
+.quiz-wrap{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-top:20px}
+.quiz-hdr{padding:14px 20px;background:rgba(249,115,22,.08);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.quiz-hdr-title{font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent)}
+.quiz-progress{height:4px;background:var(--surface2);border-radius:0}
+.quiz-progress-fill{height:100%;background:var(--accent);width:0%;transition:width .4s;border-radius:0}
+.quiz-body{padding:22px 24px}
+.quiz-q{font-size:14.5px;color:#fff;font-weight:500;margin-bottom:16px;line-height:1.5}
+.quiz-opts{display:flex;flex-direction:column;gap:8px}
+.vq-opt{background:var(--surface2);border:1px solid var(--border-dim);color:var(--txt);padding:10px 16px;text-align:left;cursor:pointer;font-size:13px;border-radius:7px;transition:all .2s;font-family:var(--font-body)}
+.vq-opt:hover:not(:disabled){border-color:var(--accent);background:rgba(249,115,22,.08)}
+.vq-opt.correct{background:rgba(0,229,160,.12);border-color:var(--success);color:var(--success)}
+.vq-opt.wrong{background:rgba(255,77,109,.12);border-color:var(--danger);color:var(--danger)}
+.quiz-score{font-family:var(--font-head);font-size:15px;font-weight:800;color:var(--accent);text-align:center;padding:14px;display:none}
+.quiz-restart{display:none;margin:0 auto 16px;background:rgba(249,115,22,.1);border:1px solid rgba(249,115,22,.3);color:var(--accent);padding:8px 22px;cursor:pointer;font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:1px;border-radius:6px}
+
+/* COLLOQUIAL */
+.coll-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:16px}
+.coll-card{background:var(--surface);border:1px solid var(--border-dim);border-radius:10px;overflow:hidden;cursor:pointer;transition:border-color .2s}
+.coll-card:hover{border-color:var(--warn)}
+.coll-card-img{width:100%;height:80px;object-fit:cover;display:block;filter:brightness(.45)}
+.coll-body{padding:13px 15px}
+.coll-phrase{font-family:var(--font-head);font-size:14px;font-weight:800;color:var(--warn);margin-bottom:6px}
+.coll-ctx{font-size:11.5px;color:var(--muted);margin-bottom:6px;line-height:1.45}
+.coll-ex{font-size:12px;color:var(--txt);font-style:italic;border-left:2px solid var(--warn);padding-left:8px;line-height:1.4}
+
+/* GRAMMAR */
+.prob-card{background:rgba(255,77,109,.06);border:1px solid rgba(255,77,109,.22);border-radius:10px;padding:16px 20px;margin-bottom:16px}
+.prob-lbl{font-family:var(--font-head);font-size:9px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--danger);margin-bottom:8px}
+.prob-scenario{font-size:13.5px;color:#fff;line-height:1.6;margin-bottom:8px}
+.prob-thought{font-size:12.5px;color:var(--muted);font-style:italic;line-height:1.5}
+.tool-card{background:rgba(0,229,160,.05);border:1px solid rgba(0,229,160,.2);border-radius:10px;padding:16px 20px;margin-bottom:16px}
+.tool-lbl{font-family:var(--font-head);font-size:9px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--success);margin-bottom:8px}
+.tool-text{font-size:13px;color:var(--txt);line-height:1.7}
+
+.gram-table{width:100%;border-collapse:collapse;margin:16px 0;font-size:12.5px}
+.gram-table th{background:rgba(249,115,22,.1);color:var(--accent);font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:9px 12px;text-align:left;border-bottom:2px solid var(--border)}
+.gram-table td{padding:9px 12px;border-bottom:1px solid var(--border-dim);vertical-align:top;line-height:1.5}
+.gram-table tbody tr:hover{background:rgba(249,115,22,.04)}
+.g-or{color:var(--accent);font-weight:600}
+.g-cy{color:var(--cyan);font-weight:600}
+.g-gr{color:var(--success);font-weight:600}
+.g-vl{color:var(--violet);font-weight:600}
+.g-ex{color:var(--muted);font-style:italic}
+
+.err-box{background:rgba(255,77,109,.06);border:1px solid rgba(255,77,109,.2);border-radius:8px;padding:13px 16px;margin:14px 0;font-size:12px;color:var(--txt);line-height:1.7}
+.act-title{font-family:var(--font-head);font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--accent);padding:16px 0 6px;border-top:1px solid var(--border);margin-top:16px}
+.opt-group{margin-bottom:16px}
+.opt-q{font-size:13px;color:var(--txt);margin-bottom:8px;line-height:1.5}
+.opts{display:flex;gap:8px;flex-wrap:wrap}
+.opt{background:var(--surface2);border:1px solid var(--border-dim);color:var(--txt);padding:7px 14px;cursor:pointer;font-size:12.5px;border-radius:7px;transition:all .2s;font-family:var(--font-body)}
+.opt:hover:not(:disabled){border-color:var(--accent);background:rgba(249,115,22,.08)}
+.opt.correct{background:rgba(0,229,160,.12);border-color:var(--success);color:var(--success)}
+.opt.wrong{background:rgba(255,77,109,.12);border-color:var(--danger);color:var(--danger)}
+
+/* DRAG & DROP */
+.reorder-list{list-style:none;display:flex;flex-direction:column;gap:6px;margin:12px 0}
+.reorder-item{background:var(--surface2);border:1px solid var(--border-dim);border-radius:7px;padding:9px 14px;cursor:grab;font-size:13px;color:var(--txt);display:flex;align-items:center;gap:10px;transition:border-color .2s;user-select:none}
+.reorder-item:active{cursor:grabbing}
+.reorder-item.dragging{opacity:.5;border-color:var(--accent)}
+.reorder-item.drag-over{border-color:var(--cyan);background:rgba(0,207,255,.06)}
+.drag-handle{color:var(--dim);font-size:16px;flex-shrink:0}
+.check-order-btn{background:rgba(249,115,22,.1);border:1px solid rgba(249,115,22,.3);color:var(--accent);padding:8px 18px;cursor:pointer;font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:1px;border-radius:7px;margin-top:8px;transition:all .2s}
+.check-order-btn:hover{background:rgba(249,115,22,.2)}
+.fb{background:var(--surface2);border-radius:7px;padding:9px 14px;font-size:12.5px;margin-top:8px;display:none}
+.fb.show{display:block}
+.fb.ok{background:rgba(0,229,160,.1);border:1px solid rgba(0,229,160,.25);color:var(--success)}
+.fb.no{background:rgba(255,77,109,.1);border:1px solid rgba(255,77,109,.25);color:var(--danger)}
+
+/* LISTENING */
+.listen-wrap{background:var(--surface);border:1px solid var(--border-dim);border-radius:12px;overflow:hidden;margin-top:16px}
+.listen-img{width:100%;height:130px;object-fit:cover;display:block;filter:brightness(.4)}
+.listen-inner{padding:16px 20px;display:flex;align-items:center;gap:16px}
+.play-btn-aud{width:42px;height:42px;border-radius:50%;background:rgba(249,115,22,.85);border:none;color:#fff;font-size:16px;cursor:pointer;flex-shrink:0;transition:background .2s}
+.play-btn-aud:hover{background:var(--accent)}
+.track-title{font-family:var(--font-head);font-size:13px;font-weight:700;color:#fff}
+.track-sub{font-size:10.5px;color:var(--muted);margin-top:3px}
+.waveform{display:flex;align-items:center;gap:2px;height:32px;margin-top:12px;padding:0 20px 14px}
+.wbar{width:3px;background:var(--accent);border-radius:2px;opacity:.3}
+.script-toggle{background:rgba(249,115,22,.08);border:1px solid rgba(249,115,22,.2);color:var(--accent);padding:7px 16px;cursor:pointer;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1px;border-radius:0 0 0 0;width:100%;transition:background .2s}
+.script-toggle:hover{background:rgba(249,115,22,.15)}
+.script-box{max-height:0;overflow:hidden;transition:max-height .4s;background:var(--surface2);font-size:13px;color:var(--muted);line-height:1.7;white-space:pre-wrap}
+.script-box.open{max-height:600px;padding:16px 20px}
+
+/* TRUE/FALSE */
+.tf-row{display:grid;grid-template-columns:1fr auto;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border-dim)}
+.tf-stmt{font-size:13px;color:var(--txt);line-height:1.5}
+.tf-btns{display:flex;gap:6px}
+.tf-btn{background:var(--surface2);border:1px solid var(--border-dim);color:var(--txt);padding:5px 12px;cursor:pointer;font-size:11.5px;border-radius:6px;font-family:var(--font-head);font-weight:700;letter-spacing:.5px;transition:all .2s;white-space:nowrap}
+.tf-btn:hover:not(:disabled){border-color:var(--accent)}
+
+/* SPEAKING SECTION */
+.speak-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
+.speak-card{background:var(--surface);border:1px solid var(--border-dim);border-radius:10px;padding:15px 16px}
+.speak-num{font-family:var(--font-head);font-size:9.5px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--dim);margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.speak-tag{padding:2px 8px;font-size:9px;font-weight:800;letter-spacing:1px;border-radius:4px}
+.st-ts{background:rgba(249,115,22,.15);color:var(--accent)}
+.st-ss{background:rgba(0,207,255,.12);color:var(--cyan)}
+.st-cl{background:rgba(0,229,160,.1);color:var(--success)}
+.speak-q{font-size:14.5px;color:#fff;line-height:1.55;margin-bottom:8px}
+.speak-hint{font-size:11px;color:var(--muted);font-style:italic;border-left:2px solid var(--border-dim);padding-left:8px;line-height:1.4}
+
+/* OPINION METER */
+.om-wrap{background:var(--surface);border:1px solid var(--border-dim);border-radius:12px;padding:20px 24px;margin-top:20px}
+.om-stmt{font-size:14px;color:#fff;font-style:italic;margin-bottom:16px;padding:13px 18px;background:var(--surface2);border-left:3px solid var(--accent);border-radius:6px;line-height:1.6}
+.om-track{height:10px;background:var(--surface2);border-radius:10px;overflow:hidden;margin-bottom:8px}
+.om-bar{height:100%;background:linear-gradient(90deg,var(--danger),var(--accent),var(--success));width:50%;transition:width .3s}
+.om-labels{display:flex;justify-content:space-between;font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--dim);margin-bottom:14px}
+.om-btns{display:flex;gap:10px;margin-bottom:8px}
+.om-btn{flex:1;padding:9px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1px;cursor:pointer;border-radius:7px;transition:all .2s;border:1px solid}
+.om-dis{background:rgba(255,77,109,.08);border-color:rgba(255,77,109,.3);color:var(--danger)}
+.om-dis:hover{background:rgba(255,77,109,.18)}
+.om-agr{background:rgba(0,229,160,.08);border-color:rgba(0,229,160,.3);color:var(--success)}
+.om-agr:hover{background:rgba(0,229,160,.18)}
+.om-pct{font-family:var(--font-head);font-size:14px;font-weight:800;color:var(--accent);text-align:center}
+
+/* MATCH-UP MINI-GAME */
+.match-wrap{background:var(--surface);border:1px solid var(--border-dim);border-radius:12px;overflow:hidden;margin-top:20px}
+.match-hdr{background:rgba(249,115,22,.08);border-bottom:1px solid var(--border);padding:12px 20px;display:flex;align-items:center;justify-content:space-between}
+.match-hdr-title{font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent)}
+.match-score-wrap{font-family:var(--font-head);font-size:11px;color:var(--muted)}
+.match-score-val{color:var(--accent);font-weight:800}
+.match-body{padding:18px 20px}
+.match-cols{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.match-col-lbl{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:8px}
+.match-items{display:flex;flex-direction:column;gap:6px}
+.match-item{background:var(--surface2);border:1px solid var(--border-dim);border-radius:7px;padding:9px 14px;cursor:pointer;font-size:12.5px;color:var(--txt);transition:all .2s;line-height:1.4}
+.match-item:hover:not(.matched):not(.wrong-match){border-color:var(--accent);background:rgba(249,115,22,.08)}
+.match-item.selected{border-color:var(--accent);background:rgba(249,115,22,.12);color:var(--accent)}
+.match-item.matched{border-color:var(--success);background:rgba(0,229,160,.08);color:var(--success);cursor:default}
+.match-item.wrong-match{border-color:var(--danger);background:rgba(255,77,109,.1);animation:shake .3s ease}
+.match-result{font-size:13px;color:var(--success);font-family:var(--font-head);padding-top:10px;display:none}
+.match-result.show{display:block}
+@keyframes shake{0%,100%{transform:translateX(0)}33%{transform:translateX(-5px)}66%{transform:translateX(5px)}}
+
+/* 3 PHRASES FOR THIS WEEK */
+.phrases-wrap{background:rgba(255,184,0,.04);border-top:2px solid rgba(255,184,0,.2);border-bottom:2px solid rgba(255,184,0,.2);padding:28px 48px;margin:3px 0}
+.phrases-hdr{font-family:var(--font-head);font-size:18px;font-weight:800;color:var(--gold);margin-bottom:6px}
+.phrases-sub{font-size:12px;color:var(--muted);margin-bottom:20px}
+.phrases-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.phrase-card{background:var(--surface);border:1px solid rgba(255,184,0,.2);border-radius:10px;padding:16px 18px;border-top:3px solid var(--gold)}
+.phrase-en{font-family:var(--font-head);font-size:14px;font-weight:800;color:#fff;margin-bottom:8px;line-height:1.4}
+.phrase-ctx{font-size:12px;color:var(--muted);line-height:1.5}
+
+/* WRAP-UP */
+.wrapup-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:16px 0}
+.wrapup-card{background:var(--surface);border:1px solid var(--border-dim);border-radius:10px;padding:16px;border-top:3px solid var(--accent)}
+.wrapup-card h4{font-family:var(--font-head);font-size:11px;font-weight:800;color:var(--accent);letter-spacing:1px;margin-bottom:8px}
+.wrapup-card p{font-size:12.5px;color:var(--muted);line-height:1.55}
+.cl-list{list-style:none;display:flex;flex-direction:column;gap:6px;margin-top:16px}
+.cl-item{background:var(--surface);border:1px solid var(--border-dim);border-radius:7px;padding:9px 14px;cursor:pointer;font-size:13px;color:var(--txt);display:flex;align-items:center;gap:10px;transition:all .2s}
+.cl-item:hover{border-color:var(--success)}
+.cl-item.done{background:rgba(0,229,160,.06);border-color:rgba(0,229,160,.25);color:var(--success)}
+.cl-check{font-size:14px;flex-shrink:0;color:var(--dim)}
+.cl-item.done .cl-check{color:var(--success)}
+.win-wrap{background:var(--surface);border:1px solid var(--border-dim);border-radius:10px;padding:20px;margin-top:16px}
+.win-label{font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:10px}
+.win-ta{width:100%;background:var(--surface2);border:1px solid var(--border-dim);border-radius:7px;color:var(--txt);padding:12px;font-size:13px;font-family:var(--font-body);resize:vertical;min-height:72px;line-height:1.5;transition:border-color .3s}
+.win-ta:focus{outline:none;border-color:var(--accent)}
+.win-btn{background:rgba(249,115,22,.1);border:1px solid rgba(249,115,22,.3);color:var(--accent);padding:8px 20px;cursor:pointer;font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:1px;border-radius:7px;margin-top:10px;transition:all .2s}
+.win-btn:hover{background:rgba(249,115,22,.22)}
+.win-ok{display:none;color:var(--success);font-size:12.5px;margin-top:8px;font-style:italic}
+.next-prev{background:rgba(0,207,255,.05);border:1px solid rgba(0,207,255,.2);border-radius:10px;padding:16px 18px;margin-top:16px}
+.next-lbl{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--cyan);margin-bottom:6px}
+.next-text{font-size:13px;color:var(--txt);line-height:1.6}
+
+/* CONFETTI MSG */
+#confMsg{display:none;text-align:center;font-family:var(--font-head);font-size:14px;font-weight:800;color:var(--gold);padding:14px;letter-spacing:2px;text-transform:uppercase}
+
+/* FOOTER */
+.ftr{background:var(--surface);border-top:1px solid var(--border);padding:16px 48px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+.fbrand{font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim)}
+.finfo{font-size:11px;color:var(--dim)}
+.flvs{display:flex;gap:3px}
+.flv{padding:5px 10px;font-family:var(--font-head);font-size:10px;font-weight:700;background:var(--surface2);color:var(--dim)}
+.flv.on{background:var(--accent);color:#fff}
+
+/* STUDENT MODE */
+body.sm .tn{display:none}
+
+@media(max-width:860px){
+  .hdr,.ftr,.phrases-wrap{padding:14px 18px}
+  .sec-body{padding:20px 18px}
+  .sec-hdr{padding:16px 18px}
+  .wu-grid,.vocab-grid{grid-template-columns:repeat(2,1fr)}
+  .coll-grid{grid-template-columns:1fr 1fr}
+  .phrases-grid,.wrapup-grid{grid-template-columns:1fr}
+  .match-cols{grid-template-columns:1fr}
+  .opts{flex-direction:column}
+  .speak-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="hdr">
+  <div class="brand">
+    <div class="dot"></div>
+    <div><div class="bname">Gabriel Turner</div><div class="bsub">English Training · Teacher Edition</div></div>
+  </div>
+  <div class="sess-tag">
+    <span class="tag t-or">A2.2</span>
+    <span class="tag t-gd">Module 6</span>
+    <span class="tag t-cy">Session 1A — Discovery &amp; Drill</span>
+    <span class="tag t-go">120 min</span>
+  </div>
+  <div class="badge-strip">
+    <span id="b1" title="Warm-Up">🌐</span>
+    <span id="b2" title="Vocabulary">🤝</span>
+    <span id="b3" title="Grammar">🔁</span>
+    <span id="b4" title="Listening">🎧</span>
+    <span id="b5" title="Win">🏆</span>
+    <button onclick="document.body.classList.toggle('sm');this.textContent=document.body.classList.contains('sm')?'Teacher Mode':'Student Mode'" style="margin-left:8px;background:rgba(249,115,22,.1);border:1px solid rgba(249,115,22,.3);color:var(--accent);padding:4px 10px;cursor:pointer;font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:1px;border-radius:5px">Student Mode</button>
+  </div>
+</header>
+<div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+<div id="confMsg">&#127881; All badges earned! Outstanding session! &#127881;</div>
+
+<!-- ═══════════════════════════════════ §1 WARM-UP -->
+<div class="section">
+  <div class="sec-hdr">
+    <div class="sec-num">§1</div>
+    <div>
+      <div class="sec-label">Warm-Up — <em>Who are you at work?</em></div>
+      <div class="sec-sub">Activate ALL A2.2 grammar through personal professional identity · Module 6 launch · 5–8 min</div>
+    </div>
+    <div class="sec-dur">⏱ 5–8 MIN</div>
+  </div>
+  <img class="img-hero" src="https://images.unsplash.com/photo-1521791136064-7986c2920216?w=900&q=80" alt="Professionals at a networking event" loading="lazy">
+  <div class="sec-body">
+
+    <!-- VIDEO PLACEHOLDER — S1 only -->
+    <!-- VIDEO: Replace with intro video URL -->
+    <div class="video-ph">
+      <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=900&q=80" alt="Module 6 intro video placeholder" style="width:100%;height:180px;object-fit:cover;display:block;filter:brightness(.28)">
+      <div class="video-ph-overlay" style="margin-top:-180px;height:180px">
+        <div class="play-icon">&#9654;</div>
+        <div class="video-ph-label">Module 6 — Full A2.2 Integration</div>
+        <div class="video-ph-sub">Replace the src above with your recorded or ElevenLabs video URL</div>
+      </div>
+    </div>
+
+    <div class="wu-grid">
+      <div class="wu-card">
+        <img class="wu-card-img" src="https://images.unsplash.com/photo-1543269664-76bc3997d9ea?w=600&q=80" alt="Team introductions in a meeting" loading="lazy">
+        <div class="wu-card-body">
+          <div class="wu-card-q">🎯 <strong>The Big Question:</strong> Imagine you are at a networking event right now. You meet someone new. What do you say about yourself in English? Try 2–3 sentences — no notes!</div>
+          <div class="wu-card-hint">💡 Collect their attempts. Don't correct yet. This is your baseline. By the end of Module 6 they can do a 3-minute professional introduction using all A2.2 structures. Use this moment as a before/after anchor.</div>
+        </div>
+      </div>
+      <div class="wu-card">
+        <img class="wu-card-img" src="https://images.unsplash.com/photo-1560439514-4e9645039924?w=600&q=80" alt="Colleagues discussing their career history" loading="lazy">
+        <div class="wu-card-body">
+          <div class="wu-card-q">🕐 <strong>Career Timeline:</strong> Andrea Soto just finished A2.2 modules 1–5. She used to work in customer service (M1), she knows the rules (M2), gives good advice (M3), makes plans (M4), and compares options (M5). What about you? One sentence about your own career journey.</div>
+          <div class="wu-card-hint">💡 Say: "This is the moment where everything you learned in A2.2 comes together. Modules 1–5 gave you the tools. Module 6 teaches you how to use them all at once — in a real conversation."</div>
+        </div>
+      </div>
+      <div class="wu-card">
+        <img class="wu-card-img" src="https://images.unsplash.com/photo-1475721027785-f74eccf877e2?w=600&q=80" alt="Conference networking session" loading="lazy">
+        <div class="wu-card-body">
+          <div class="wu-card-q">🔁 <strong>Quick Grammar Activation:</strong> Say these in English — one sentence each: (1) Something you <em>used to</em> do at work, (2) One thing you <em>have to</em> do this week, (3) Something that <em>might</em> happen in your job soon.</div>
+          <div class="wu-card-hint">💡 Write the three module codes on the board as students answer: M1 (used to), M2 (have to), M4 (might). Then add M3 (should) and M5 (more...than). Visual proof they already have all the tools.</div>
+        </div>
+      </div>
+      <div class="wu-card">
+        <img class="wu-card-img" src="https://images.unsplash.com/photo-1606765962248-7ff407b51667?w=600&q=80" alt="Andrea Soto presenting at a trade fair" loading="lazy">
+        <div class="wu-card-body">
+          <div class="wu-card-q">🌍 <strong>Andrea&apos;s next step:</strong> Andrea is attending a trade fair in Guadalajara next month to meet potential clients. She needs to introduce herself, talk about her career, compare her company to competitors, and leave a great impression. What advice would YOU give her?</div>
+          <div class="wu-card-hint">💡 This narrative frame runs through all of M6. Students will help Andrea prepare for the networking event session by session. It creates investment and continuity. Write "Andrea&apos;s Networking Plan" on the board as a running project.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="quick-win">
+      <div class="qw-icon">🌐</div>
+      <div>
+        <div class="qw-label">Quick Win — 20 seconds</div>
+        <div class="qw-text">Say this out loud right now: <strong>"Hi, I&apos;m [your name]. I work at [company] in [city]. I used to work in [old area], but now I [current role]."</strong></div>
+        <div class="qw-try">That&apos;s a professional introduction using two A2.2 structures. Module 6 gives you 5 more. Let&apos;s start.</div>
+      </div>
+      <div class="timer-wrap">
+        <svg class="timer-svg" width="54" height="54" viewBox="0 0 54 54">
+          <circle cx="27" cy="27" r="23" stroke="rgba(249,115,22,.2)" stroke-width="4" fill="none"/>
+          <circle id="arcQW" cx="27" cy="27" r="23" stroke="var(--accent)" stroke-width="4" fill="none" stroke-dasharray="144.51" stroke-dashoffset="0"/>
+          <text id="txtQW" x="27" y="32" text-anchor="middle" font-family="Syne,sans-serif" font-size="13" font-weight="800" fill="var(--accent)" transform="rotate(90 27 27)">20</text>
+        </svg>
+        <button onclick="startTimer('arcQW','txtQW',20,'b1',144.51)" style="background:rgba(249,115,22,.1);border:1px solid rgba(249,115,22,.3);color:var(--accent);padding:4px 10px;cursor:pointer;font-family:var(--font-head);font-size:9px;font-weight:700;border-radius:5px;margin-top:4px">START</button>
+      </div>
+    </div>
+
+    <div class="tn">
+      <div class="tn-lbl">⚡ Teacher Note — Module 6 Launch Strategy</div>
+      <div class="tn-text">This warm-up is your diagnostic AND your motivational hook simultaneously. The Big Question (Card 1) gives you a real-time reading of where each student is. The Grammar Activation (Card 3) reminds them that they already HAVE the tools from M1–M5 — the problem is integration, not new material. The secret of M6: there is no new grammar. Everything is review. The skill being developed is COMBINING structures naturally in one utterance. Say this explicitly: "In English, a good conversation uses multiple grammar tools at the same time. That is what we practice in Module 6." Error to watch: students trying to use each structure in isolation rather than combining them. Layer 3 challenge: ask the strongest student to combine all three activations into one short paragraph (used to + have to + might).</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════ §2 VOCABULARY -->
+<div class="section">
+  <div class="sec-hdr">
+    <div class="sec-num">§2</div>
+    <div>
+      <div class="sec-label">Vocabulary — <em>Networking &amp; Professional Identity</em></div>
+      <div class="sec-sub">10 key words for introducing yourself and making connections · Click to hear · IPA · 10 min</div>
+    </div>
+    <div class="sec-dur">⏱ 10 MIN</div>
+  </div>
+  <img class="img-banner" src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=900&q=80" alt="Professional networking and planning" loading="lazy">
+  <div class="sec-body">
+
+    <div class="vocab-grid">
+      <div class="vocab-card" onclick="speak('networking')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=600&q=80" alt="networking event" loading="lazy">
+        <div class="vocab-card-body">
+          <div class="vc-word">networking</div>
+          <div class="vc-ipa">/ˈnet.wɜː.kɪŋ/</div>
+          <div class="vc-def">the activity of meeting and talking to people in your industry to build professional connections</div>
+          <div class="vc-ex">I&apos;m attending a networking event in Guadalajara next month to meet potential clients.</div>
+          <div class="vc-sp">hacer contactos / networking</div>
+        </div>
+      </div>
+      <div class="vocab-card" onclick="speak('introduction')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1560439514-4e9645039924?w=600&q=80" alt="professional introduction" loading="lazy">
+        <div class="vocab-card-body">
+          <div class="vc-word">introduction</div>
+          <div class="vc-ipa">/ˌɪn.trəˈdʌk.ʃən/</div>
+          <div class="vc-def">the act of presenting yourself or someone else for the first time</div>
+          <div class="vc-ex">Andrea prepared a strong introduction before the trade fair — name, role, and company in 30 seconds.</div>
+          <div class="vc-sp">presentación</div>
+        </div>
+      </div>
+      <div class="vocab-card" onclick="speak('background')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=600&q=80" alt="professional background" loading="lazy">
+        <div class="vocab-card-body">
+          <div class="vc-word">background</div>
+          <div class="vc-ipa">/ˈbæk.ɡraʊnd/</div>
+          <div class="vc-def">your education, experience, and professional history</div>
+          <div class="vc-ex">I have a background in logistics — I used to manage a team of 15 in Querétaro.</div>
+          <div class="vc-sp">trayectoria / antecedentes profesionales</div>
+        </div>
+      </div>
+      <div class="vocab-card" onclick="speak('connection')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=600&q=80" alt="making connections" loading="lazy">
+        <div class="vocab-card-body">
+          <div class="vc-word">connection</div>
+          <div class="vc-ipa">/kəˈnek.ʃən/</div>
+          <div class="vc-def">a professional contact or relationship you build with someone</div>
+          <div class="vc-ex">She made some great connections at the fair — one of them might become a new client.</div>
+          <div class="vc-sp">contacto / conexión</div>
+        </div>
+      </div>
+      <div class="vocab-card" onclick="speak('opportunity')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=600&q=80" alt="career opportunity" loading="lazy">
+        <div class="vocab-card-body">
+          <div class="vc-word">opportunity</div>
+          <div class="vc-ipa">/ˌɒp.əˈtjuː.nɪ.ti/</div>
+          <div class="vc-def">a situation that makes it possible to do something you want to do</div>
+          <div class="vc-ex">This trade fair is a great opportunity to meet suppliers and compare their proposals.</div>
+          <div class="vc-sp">oportunidad</div>
+        </div>
+      </div>
+      <div class="vocab-card" onclick="speak('impression')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1543007630-9710e4a00a20?w=600&q=80" alt="first impression" loading="lazy">
+        <div class="vocab-card-body">
+          <div class="vc-word">impression</div>
+          <div class="vc-ipa">/ɪmˈpreʃ.ən/</div>
+          <div class="vc-def">the effect that a person has on others; how they seem to others</div>
+          <div class="vc-ex">You should prepare carefully — you only get one chance to make a good first impression.</div>
+          <div class="vc-sp">impresión</div>
+        </div>
+      </div>
+      <div class="vocab-card" onclick="speak('currently')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=600&q=80" alt="current job and responsibilities" loading="lazy">
+        <div class="vocab-card-body">
+          <div class="vc-word">currently</div>
+          <div class="vc-ipa">/ˈkʌr.ənt.li/</div>
+          <div class="vc-def">at the present time; right now — contrasts with the past</div>
+          <div class="vc-ex">I used to work in HR. Currently, I manage procurement for the whole Bajío region.</div>
+          <div class="vc-sp">actualmente</div>
+        </div>
+      </div>
+      <div class="vocab-card" onclick="speak('responsible for')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1485217988980-11786ced9454?w=600&q=80" alt="team responsibilities" loading="lazy">
+        <div class="vocab-card-body">
+          <div class="vc-word">responsible for</div>
+          <div class="vc-ipa">/rɪˈspɒn.sɪ.bəl fɔː/</div>
+          <div class="vc-def">having a duty to manage or take care of something at work</div>
+          <div class="vc-ex">I&apos;m currently responsible for quality control across three production lines in Celaya.</div>
+          <div class="vc-sp">responsable de</div>
+        </div>
+      </div>
+      <div class="vocab-card" onclick="speak('reach out')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=600&q=80" alt="reaching out by email" loading="lazy">
+        <div class="vocab-card-body">
+          <div class="vc-word">reach out</div>
+          <div class="vc-ipa">/riːtʃ aʊt/</div>
+          <div class="vc-def">to contact someone, usually to start a conversation or ask for something</div>
+          <div class="vc-ex">I&apos;ll reach out next week to follow up on what we discussed at the event.</div>
+          <div class="vc-sp">contactar / comunicarse</div>
+        </div>
+      </div>
+      <div class="vocab-card" onclick="speak('stay in touch')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1506784983877-45594efa4cbe?w=600&q=80" alt="keeping in contact" loading="lazy">
+        <div class="vocab-card-body">
+          <div class="vc-word">stay in touch</div>
+          <div class="vc-ipa">/steɪ ɪn tʌtʃ/</div>
+          <div class="vc-def">to maintain contact with someone over time; not lose connection</div>
+          <div class="vc-ex">It was great meeting you — let&apos;s stay in touch. I&apos;m on LinkedIn.</div>
+          <div class="vc-sp">mantenerse en contacto</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="micro-speak">
+      <div class="ms-icon">&#128483;</div>
+      <div class="ms-text"><strong>Micro-Speaking:</strong> Choose 3 words from this list. Use each one in a sentence about YOUR job right now. Say them out loud — don&apos;t write them first. Example: "I&apos;m currently responsible for [your area] at [your company]."</div>
+    </div>
+
+    <!-- VOCAB QUIZ -->
+    <div class="quiz-wrap">
+      <div class="quiz-hdr">
+        <div class="quiz-hdr-title">&#9889; Vocabulary Quiz — 10 Questions</div>
+        <span style="font-size:10.5px;color:var(--muted)">8+ correct = Badge &#127885;</span>
+      </div>
+      <div class="quiz-progress"><div class="quiz-progress-fill" id="vqBar"></div></div>
+      <div class="quiz-body">
+        <div class="quiz-q" id="vqQ">Loading...</div>
+        <div class="quiz-opts" id="vqOpts"></div>
+        <div class="quiz-score" id="vqScore"></div>
+        <button class="quiz-restart" id="vqRestart" onclick="startQuiz()">Try Again</button>
+      </div>
+    </div>
+
+    <div class="tn">
+      <div class="tn-lbl">⚡ Teacher Note — Vocabulary</div>
+      <div class="tn-text">These 10 words are the building blocks of professional networking conversation. Prioritize: "background," "currently," and "responsible for" — these three unlock the full professional introduction in §5 Grammar. "Reach out" and "stay in touch" are the close-of-conversation phrases (from M6 GT Originals). Pronunciation focus: "opportunity" /ˌɒp.əˈtjuː.nɪ.ti/ — 5 syllables, stress on the 3rd. Common error: Mexican learners say "oprr-TU-ni-dad" (Spanish stress pattern) — shift to /ɒp.ə-TJUː/ syllable. After the quiz, ask: "Which 3 words can you use TODAY at your company?" That question converts vocabulary into commitment.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════ §3 COLLOQUIAL -->
+<div class="section">
+  <div class="sec-hdr">
+    <div class="sec-num">§3</div>
+    <div>
+      <div class="sec-label">Colloquial — <em>Networking Closers</em></div>
+      <div class="sec-sub">4 real phrases to end a professional conversation gracefully · 5 min</div>
+    </div>
+    <div class="sec-dur">⏱ 5 MIN</div>
+  </div>
+  <img class="img-banner" src="https://images.unsplash.com/photo-1543269664-76bc3997d9ea?w=900&q=80" alt="Professionals closing a conversation" loading="lazy">
+  <div class="sec-body">
+    <div class="coll-grid">
+      <div class="coll-card" onclick="speak(&quot;That's a great opportunity.&quot;)">
+        <img class="coll-card-img" src="https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=600&q=80" alt="business opportunity" loading="lazy">
+        <div class="coll-body">
+          <div class="coll-phrase">"That&apos;s a great opportunity."</div>
+          <div class="coll-ctx">Use when someone tells you about a project, position, or deal that sounds promising. Shows enthusiasm without commitment. Very common in trade fairs and business meetings.</div>
+          <div class="coll-ex">"We&apos;re expanding to three new cities next year." — "That&apos;s a great opportunity. You should talk to our distribution team."</div>
+        </div>
+      </div>
+      <div class="coll-card" onclick="speak(&quot;Let's stay in touch.&quot;)">
+        <img class="coll-card-img" src="https://images.unsplash.com/photo-1423666639041-f56000c27a9a?w=600&q=80" alt="exchanging contact details" loading="lazy">
+        <div class="coll-body">
+          <div class="coll-phrase">"Let&apos;s stay in touch."</div>
+          <div class="coll-ctx">The standard professional goodbye after a networking conversation. Always follow with a concrete action — "I&apos;ll send you a LinkedIn request" or "I&apos;ll reach out next week."</div>
+          <div class="coll-ex">"It was great meeting you, Carlos. Let&apos;s stay in touch — I&apos;ll find you on LinkedIn."</div>
+        </div>
+      </div>
+      <div class="coll-card" onclick="speak(&quot;It was great meeting you.&quot;)">
+        <img class="coll-card-img" src="https://images.unsplash.com/photo-1549737328-8a136087072e?w=600&q=80" alt="handshake at end of meeting" loading="lazy">
+        <div class="coll-body">
+          <div class="coll-phrase">"It was great meeting you."</div>
+          <div class="coll-ctx">The classic closer for any first meeting. Warm, professional, and universally understood. Use this EVERY TIME you end a conversation with someone new at a business event.</div>
+          <div class="coll-ex">"I have to go — my next meeting starts in 5 minutes. It was great meeting you, Andrea."</div>
+        </div>
+      </div>
+      <div class="coll-card" onclick="speak(&quot;I'll reach out next week.&quot;)">
+        <img class="coll-card-img" src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=600&q=80" alt="following up by email" loading="lazy">
+        <div class="coll-body">
+          <div class="coll-phrase">"I&apos;ll reach out next week."</div>
+          <div class="coll-ctx">Commit to a specific follow-up action — this transforms a casual encounter into a real business connection. Always more effective than "I&apos;ll be in touch" (vague).</div>
+          <div class="coll-ex">"I&apos;ll reach out next week with our proposal. Is email or WhatsApp better for you?"</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tn">
+      <div class="tn-lbl">⚡ Teacher Note — Networking Closer Drill</div>
+      <div class="tn-text">Say: "Click each phrase to hear it — repeat it with me." Then run a 90-second roleplay: students pair up, one is leaving a networking event, the other tries to end the conversation using ALL FOUR phrases in sequence. Anticipated error: "Is a great opportunity" → "THAT'S a great opportunity" — the demonstrative is not optional here; it is part of the fixed chunk. Cultural note: Mexican professionals often extend goodbyes ("bueno, ya me voy, fue un gusto...") — in English, the closer is faster and more final. The phrase lands, then you leave. Teach this register difference explicitly: "In English, the closer is the last thing — not the beginning of five more minutes." "It was great meeting you" is past tense (not "it IS great") — this trips up A2.2 students. Drill the contraction: "It was" /ɪt wəz/.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════ §4 GRAMMAR -->
+<div class="section">
+  <div class="sec-hdr">
+    <div class="sec-num">§4</div>
+    <div>
+      <div class="sec-label">Grammar — <em>Combining A2.2 Structures</em></div>
+      <div class="sec-sub">Problem → Tool · Integrating used to / must / should / might / comparatives · 12–15 min</div>
+    </div>
+    <div class="sec-dur">⏱ 12–15 MIN</div>
+  </div>
+  <img class="img-banner" src="https://images.unsplash.com/photo-1455390582262-044cdead277a?w=900&q=80" alt="Professional planning and grammar review" loading="lazy">
+  <div class="sec-body">
+
+    <div class="prob-card">
+      <div class="prob-lbl">&#128680; Real Work Situation</div>
+      <div class="prob-scenario">You are at a trade fair in Guadalajara. Someone asks you three questions in 60 seconds: "Where do you work? What did you do before? What are your plans for next year? Which product do you recommend?" You want to answer naturally — using everything you know. But in Spanish you switch tools automatically. In English, you freeze after the first sentence.</div>
+      <div class="prob-thought">The problem: you know EACH structure separately. You used to + modal + comparative + future plan — but combining them in one conversation feels impossible. Today you learn how to connect them.</div>
+    </div>
+
+    <div class="tool-card">
+      <div class="tool-lbl">&#128295; The Tool — Integration: One answer, multiple structures</div>
+      <div class="tool-text">
+        The secret is <strong style="color:var(--accent)">sentence connectors</strong> — small words that link your A2.2 tools into natural speech:<br><br>
+        <strong style="color:var(--success)">PAST HABIT (M1):</strong> "I <em>used to</em> work in sales..." <strong style="color:var(--cyan)">+ CONTRAST:</strong> "...but now I&apos;m responsible for operations."<br>
+        <strong style="color:var(--warn)">OBLIGATION (M2):</strong> "We <em>have to</em> submit the report by Friday," <strong style="color:var(--cyan)">+ ADVICE (M3):</strong> "so you <em>should</em> prepare the data today."<br>
+        <strong style="color:var(--violet)">POSSIBILITY (M4):</strong> "The client <em>might</em> ask about pricing," <strong style="color:var(--cyan)">+ COMPARISON (M5):</strong> "so we need to show them our option is <em>more competitive than</em> the others."<br><br>
+        <strong style="color:var(--gold)">KEY CONNECTORS:</strong> but / so / and / because / however / which means that
+      </div>
+    </div>
+
+    <!-- INTEGRATION TABLE -->
+    <table class="gram-table">
+      <thead><tr><th>Module</th><th>Structure</th><th>Example in networking context</th><th>Key connector</th></tr></thead>
+      <tbody>
+        <tr><td><span class="g-or">M1 — Used to</span></td><td>used to + verb</td><td class="g-ex">I used to work in customer service, but now I manage a team of 12.</td><td style="color:var(--cyan);font-size:11.5px">but / now</td></tr>
+        <tr><td><span class="g-gr">M2 — Must/Have to</span></td><td>must/have to + verb</td><td class="g-ex">We have to confirm the order by next Friday — it&apos;s a hard deadline.</td><td style="color:var(--cyan);font-size:11.5px">so / which means</td></tr>
+        <tr><td><span class="g-vl">M3 — Should/Could</span></td><td>should/could + verb</td><td class="g-ex">You should prepare a short introduction — they might ask about your experience.</td><td style="color:var(--cyan);font-size:11.5px">and / because</td></tr>
+        <tr><td><span class="g-cy">M4 — May/Might</span></td><td>may/might + verb</td><td class="g-ex">The meeting might be in Guadalajara — I&apos;m waiting for confirmation.</td><td style="color:var(--cyan);font-size:11.5px">however / but</td></tr>
+        <tr><td><span class="g-or">M5 — Comparatives</span></td><td>more/adj-er + than</td><td class="g-ex">Our service is more reliable than the current supplier, and it&apos;s just as affordable.</td><td style="color:var(--cyan);font-size:11.5px">and / but</td></tr>
+      </tbody>
+    </table>
+
+    <div class="err-box">
+      &#9888;&#65039; <strong>Integration Errors — what students do at A2.2:</strong><br>
+      &#10007; Using structures in isolation: "I used to work in sales. I should prepare. The option is cheaper." — No connectors, no flow.<br>
+      &#10003; Connected: "I <strong>used to</strong> work in sales, <strong>but now</strong> I manage procurement. You <strong>should</strong> check the proposal, <strong>because</strong> our option is <strong>more competitive</strong>."<br>
+      &#10007; "I might to attend" → &#10003; <strong>I might attend</strong> — no "to" after modal verbs (all modals: no infinitive "to")<br>
+      &#10007; "I&apos;m used to work" → &#10003; <strong>I used to work</strong> — "I&apos;m used to" is a different structure (B1+). Raise awareness now.
+    </div>
+
+    <div class="act-title">&#9889; ACTIVITY A — Choose the correct structure</div>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:14px">Andrea is preparing for the trade fair. Choose the correct A2.2 structure to complete each sentence.</p>
+
+    <div class="opt-group">
+      <div class="opt-q">1. Andrea _____ work in customer service, but now she manages the regional sales team. (M1)</div>
+      <div class="opts" id="q1">
+        <button class="opt" onclick="checkOpt(this,'used to','q1')">used to</button>
+        <button class="opt" onclick="checkOpt(this,'used to','q1')">was used to</button>
+        <button class="opt" onclick="checkOpt(this,'used to','q1')">is used to</button>
+      </div>
+    </div>
+    <div class="opt-group">
+      <div class="opt-q">2. She _____ confirm her hotel reservation today — the event is next week. (M2 — external obligation)</div>
+      <div class="opts" id="q2">
+        <button class="opt" onclick="checkOpt(this,'has to','q2')">should</button>
+        <button class="opt" onclick="checkOpt(this,'has to','q2')">has to</button>
+        <button class="opt" onclick="checkOpt(this,'has to','q2')">might</button>
+      </div>
+    </div>
+    <div class="opt-group">
+      <div class="opt-q">3. You _____ prepare a one-minute introduction before the fair — it makes a much better impression. (M3 — advice)</div>
+      <div class="opts" id="q3">
+        <button class="opt" onclick="checkOpt(this,'should','q3')">must</button>
+        <button class="opt" onclick="checkOpt(this,'should','q3')">should</button>
+        <button class="opt" onclick="checkOpt(this,'should','q3')">have to</button>
+      </div>
+    </div>
+    <div class="opt-group">
+      <div class="opt-q">4. The new client _____ ask about delivery times — we should prepare that data. (M4 — possibility)</div>
+      <div class="opts" id="q4">
+        <button class="opt" onclick="checkOpt(this,'might','q4')">will</button>
+        <button class="opt" onclick="checkOpt(this,'might','q4')">must</button>
+        <button class="opt" onclick="checkOpt(this,'might','q4')">might</button>
+      </div>
+    </div>
+    <div class="opt-group">
+      <div class="opt-q">5. Our new logistics service is _____ the previous provider — and the price is similar. (M5 — comparative)</div>
+      <div class="opts" id="q5">
+        <button class="opt" onclick="checkOpt(this,'more reliable than','q5')">more reliably than</button>
+        <button class="opt" onclick="checkOpt(this,'more reliable than','q5')">more reliable than</button>
+        <button class="opt" onclick="checkOpt(this,'more reliable than','q5')">reliableier than</button>
+      </div>
+    </div>
+
+    <div class="micro-speak" style="margin-top:10px">
+      <div class="ms-icon">&#128483;</div>
+      <div class="ms-text"><strong>Micro-Speaking:</strong> Tell your partner one sentence that combines TWO A2.2 structures using a connector. Example: "I used to travel a lot for work, <em>but now</em> I have to manage everything by video call."</div>
+    </div>
+
+    <div class="act-title">&#9889; ACTIVITY B — Reorder the sentence</div>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:14px">Drag the parts into the correct order to form integrated A2.2 sentences.</p>
+
+    <p style="font-size:12px;color:var(--muted);margin-bottom:6px"><strong style="color:var(--txt)">Sentence 1:</strong> (used to + but now + comparative)</p>
+    <ul class="reorder-list" id="order1">
+      <li class="reorder-item" draggable="true"><span class="drag-handle">&#8942;</span>but now our team is more productive</li>
+      <li class="reorder-item" draggable="true"><span class="drag-handle">&#8942;</span>We used to work with paper reports,</li>
+      <li class="reorder-item" draggable="true"><span class="drag-handle">&#8942;</span>because the new system is much faster.</li>
+    </ul>
+    <button class="check-order-btn" onclick="checkOrder('order1',['We used to work with paper reports,','but now our team is more productive','because the new system is much faster.'],'fb1')">Check Order</button>
+    <div class="fb" id="fb1"></div>
+
+    <p style="font-size:12px;color:var(--muted);margin-bottom:6px;margin-top:16px"><strong style="color:var(--txt)">Sentence 2:</strong> (might + so + should)</p>
+    <ul class="reorder-list" id="order2">
+      <li class="reorder-item" draggable="true"><span class="drag-handle">&#8942;</span>so you should prepare a clear presentation.</li>
+      <li class="reorder-item" draggable="true"><span class="drag-handle">&#8942;</span>The director might attend the meeting,</li>
+      <li class="reorder-item" draggable="true"><span class="drag-handle">&#8942;</span>You must not arrive late —</li>
+    </ul>
+    <button class="check-order-btn" onclick="checkOrder('order2',['You must not arrive late —','The director might attend the meeting,','so you should prepare a clear presentation.'],'fb2')">Check Order</button>
+    <div class="fb" id="fb2"></div>
+
+    <div class="tn">
+      <div class="tn-lbl">⚡ Teacher Note — Grammar: Integration Focus</div>
+      <div class="tn-text">This is the conceptual heart of M6. The grammar table is a visual reminder, not new information. Students have seen all five rows before — the challenge is the connector column. In Activity A, the key differentiations: Q2 (has to vs should) — "hard deadline" signals external obligation, not advice. Q3 (should vs must) — advice context, not strong rule. Q4 (might vs will) — the word "depends" signals uncertainty = might. In Activity B, the reorder establishes the PATTERN of complex sentence building: anchor structure + connector + result/comparison. After Activity B, ask: "How many structures did that second sentence have?" (3: must not + might + should) — this is the goal of M6: 3 structures per turn. Layer 2: ask students to rewrite Sentence 2 with their own content from work.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════ §5 MATCH-UP MINI-GAME -->
+<div class="section">
+  <div class="sec-hdr">
+    <div class="sec-num">§5</div>
+    <div>
+      <div class="sec-label">Mini-Game — <em>Match the Structure</em></div>
+      <div class="sec-sub">Match each A2.2 situation to the correct grammar structure · 8 min</div>
+    </div>
+    <div class="sec-dur">⏱ 8 MIN</div>
+  </div>
+  <img class="img-banner" src="https://images.unsplash.com/photo-1588776814546-ec7e1f27e8c1?w=900&q=80" alt="Matching activity game" loading="lazy">
+  <div class="sec-body">
+    <div class="match-wrap">
+      <div class="match-hdr">
+        <div class="match-hdr-title">&#9889; Match Up — Situation to Structure</div>
+        <div class="match-score-wrap">Matched: <span class="match-score-val" id="matchScore">0</span> / 5</div>
+      </div>
+      <div class="match-body">
+        <p style="font-size:12.5px;color:var(--muted);margin-bottom:16px">Click a SITUATION on the left, then click the matching GRAMMAR STRUCTURE on the right. First match is selected — second confirms the pair.</p>
+        <div class="match-cols">
+          <div>
+            <div class="match-col-lbl">&#128218; Situation</div>
+            <div class="match-items">
+              <div class="match-item" id="mw1" onclick="selectMatch(this,'mw1','md2')">You want to talk about how your job was different 5 years ago.</div>
+              <div class="match-item" id="mw2" onclick="selectMatch(this,'mw2','md4')">Your manager says: the report is compulsory — no exceptions.</div>
+              <div class="match-item" id="mw3" onclick="selectMatch(this,'mw3','md1')">You want to suggest a solution to a colleague who has too much work.</div>
+              <div class="match-item" id="mw4" onclick="selectMatch(this,'mw4','md5')">You are not sure if the meeting will happen — it depends on the client.</div>
+              <div class="match-item" id="mw5" onclick="selectMatch(this,'mw5','md3')">You want to explain that Supplier A is a better choice than Supplier B.</div>
+            </div>
+          </div>
+          <div>
+            <div class="match-col-lbl">&#128295; Grammar Structure</div>
+            <div class="match-items">
+              <div class="match-item" id="md1" onclick="selectMatch(this,'md1','mw3')">You should / You could</div>
+              <div class="match-item" id="md2" onclick="selectMatch(this,'md2','mw1')">I used to...</div>
+              <div class="match-item" id="md3" onclick="selectMatch(this,'md3','mw5')">...is more [adj] than...</div>
+              <div class="match-item" id="md4" onclick="selectMatch(this,'md4','mw2')">You have to / You must</div>
+              <div class="match-item" id="md5" onclick="selectMatch(this,'md5','mw4')">It might / It may...</div>
+            </div>
+          </div>
+        </div>
+        <div class="match-result" id="matchResult"></div>
+      </div>
+    </div>
+
+    <div class="tn tn-cy" style="margin-top:16px">
+      <div class="tn-lbl">&#9889; Teacher Note — Match-Up Mini-Game</div>
+      <div class="tn-text">Run this in pairs if projected on screen. If individual (mobile), give 3 minutes then compare answers. After all pairs matched, ask: "Can you say the SENTENCE for each pair?" — this transforms a recognition task into a production task. Focus on Situation 3 (should vs must): the key A2.2 distinction — advice is not compulsory obligation. If students confuse mw2 (has to) with md1 (should), stop and run the contrast drill: "I MUST submit = it&apos;s a rule. I SHOULD prepare = it&apos;s my advice." This is the most common error in M6 integration.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════ §6 LISTENING -->
+<div class="section">
+  <div class="sec-hdr">
+    <div class="sec-num">§6</div>
+    <div>
+      <div class="sec-label">Listening — <em>Andrea&apos;s Networking Introduction</em></div>
+      <div class="sec-sub">ElevenLabs audio · All A2.2 structures integrated · 10–12 min</div>
+    </div>
+    <div class="sec-dur">⏱ 10–12 MIN</div>
+  </div>
+  <img class="img-banner" src="https://images.unsplash.com/photo-1475721027785-f74eccf877e2?w=900&q=80" alt="Professional at a conference speaking" loading="lazy">
+  <div class="sec-body">
+
+    <div class="listen-wrap">
+      <img class="listen-img" src="https://images.unsplash.com/photo-1560439514-4e9645039924?w=900&q=80" alt="Andrea Soto at a trade fair in Guadalajara" loading="lazy">
+      <div class="listen-inner">
+        <button class="play-btn-aud" id="playBtn">&#9654;</button>
+        <div>
+          <div class="track-title">Andrea at the Bajío Trade Fair — Guadalajara Expo</div>
+          <div class="track-sub">A2.2 · M6 · S1A · Voice: Sarah (American English) · Speed: 0.82 · ~55 sec</div>
+        </div>
+      </div>
+      <div class="waveform" id="wv"></div>
+    </div>
+    <button class="script-toggle" onclick="toggleScript()">&#9660; Show ElevenLabs Script</button>
+    <div class="script-box" id="scriptBox">Hi! My name is Andrea Soto. I work as Regional Sales Coordinator at Vertex Logistics in Celaya, Guanajuato. It's great to meet you.
+
+I used to work in customer service — I spent four years answering calls and managing complaints. But now I'm responsible for sales across the whole Bajío region. The change was difficult at first, but it was definitely worth it.
+
+At Vertex, we have to deliver results every quarter. It's a competitive industry, and my manager says we must always look for better options. So I'm here today because this trade fair might open some great opportunities for us. We may even find a new supplier that's more efficient than our current one.
+
+If you're looking for logistics support in central Mexico, you should talk to us. Our delivery times are faster than the industry average, and our prices are more competitive than most providers.
+
+It was great meeting you. Let's stay in touch — I'll reach out next week.
+    </div>
+
+    <div class="tn">
+      <div class="tn-lbl">⚡ Teacher Note — Listening Script</div>
+      <div class="tn-text">ElevenLabs generation: Voice = Sarah (American English), Speed = 0.82, Stability = 0.65, Similarity = 0.80. Before playing: "Count the A2.2 structures — how many can you identify?" (Answer: used to, responsible for, have to, must, might, may, more efficient than, should, faster than, more competitive than, stay in touch, reach out = 12 instances across all 5 modules + networking vocabulary). This is the payoff moment — students hear everything they learned in A2.2 used naturally in one conversation. After listening: ask "Which module do you hear the most?" (M3 + M4 tend to dominate networking speech). Then ask: "How does Andrea close the conversation?" (Let&apos;s stay in touch / I&apos;ll reach out) — connects to §3 Colloquial.</div>
+    </div>
+
+    <!-- COMPREHENSION QUESTIONS — TRUE/FALSE -->
+    <div class="act-title" style="padding-top:16px">True or False?</div>
+    <div class="tf-row" style="border-top:1px solid var(--border-dim)">
+      <div class="tf-stmt">1. Andrea used to work in operations before her current role.</div>
+      <div class="tf-btns">
+        <button class="tf-btn" onclick="checkTF(this,false,'tf1')">TRUE</button>
+        <button class="tf-btn" onclick="checkTF(this,true,'tf1')">FALSE</button>
+      </div>
+    </div>
+    <div class="tf-row">
+      <div class="tf-stmt">2. Andrea says the trade fair might open new business opportunities for Vertex.</div>
+      <div class="tf-btns">
+        <button class="tf-btn" onclick="checkTF(this,true,'tf2')">TRUE</button>
+        <button class="tf-btn" onclick="checkTF(this,false,'tf2')">FALSE</button>
+      </div>
+    </div>
+    <div class="tf-row">
+      <div class="tf-stmt">3. Andrea claims Vertex&apos;s prices are cheaper than ALL other companies in Mexico.</div>
+      <div class="tf-btns">
+        <button class="tf-btn" onclick="checkTF(this,false,'tf3')">TRUE</button>
+        <button class="tf-btn" onclick="checkTF(this,true,'tf3')">FALSE</button>
+      </div>
+    </div>
+    <div class="tf-row">
+      <div class="tf-stmt">4. Andrea closes the conversation with "Let&apos;s stay in touch."</div>
+      <div class="tf-btns">
+        <button class="tf-btn" onclick="checkTF(this,true,'tf4')">TRUE</button>
+        <button class="tf-btn" onclick="checkTF(this,false,'tf4')">FALSE</button>
+      </div>
+    </div>
+    <div class="tf-row" style="border-bottom:none">
+      <div class="tf-stmt">5. Andrea says she might reach out next month to follow up.</div>
+      <div class="tf-btns">
+        <button class="tf-btn" onclick="checkTF(this,false,'tf5')">TRUE</button>
+        <button class="tf-btn" onclick="checkTF(this,true,'tf5')">FALSE</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════ §SP SPEAKING PRACTICE -->
+<div class="section">
+  <div class="sec-hdr">
+    <div class="sec-num">§SP</div>
+    <div>
+      <div class="sec-label">Speaking Practice — <em>Your Professional Introduction</em></div>
+      <div class="sec-sub">Guided questions · Pair and group discussion · All A2.2 structures · 10–12 min</div>
+    </div>
+    <div class="sec-dur">⏱ 10–12 MIN</div>
+  </div>
+  <img class="img-banner" src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=900&q=80" alt="Team speaking practice session" loading="lazy">
+  <div class="sec-body">
+    <div class="speak-grid">
+      <div class="speak-card">
+        <div class="speak-num"><span class="speak-tag st-ts">T-S</span> Question 1 — Recall</div>
+        <div class="speak-q">What structures did Andrea use in the listening? Name at least 3 and say which module they come from.</div>
+        <div class="speak-hint">Grammar hint: "She used [M1 structure] when she said '...' — that comes from used to in Module 1."</div>
+      </div>
+      <div class="speak-card">
+        <div class="speak-num"><span class="speak-tag st-ss">S-S</span> Question 2 — Apply</div>
+        <div class="speak-q">Tell your partner about your professional background in 3 sentences. Use: <em>used to</em> for the past + <em>currently / responsible for</em> for now. Say it, don&apos;t write it!</div>
+        <div class="speak-hint">Grammar hint: "I used to [role] at [company], but now I&apos;m responsible for [area]."</div>
+      </div>
+      <div class="speak-card">
+        <div class="speak-num"><span class="speak-tag st-ss">S-S</span> Question 3 — Integrate</div>
+        <div class="speak-q">Your company might attend a trade fair next year. Tell your partner: (1) one thing you have to prepare, (2) one thing you should bring, (3) one thing that might happen there.</div>
+        <div class="speak-hint">Grammar hint: Combine — "We have to... and we should also... because the clients might ask about..."</div>
+      </div>
+      <div class="speak-card">
+        <div class="speak-num"><span class="speak-tag st-cl">Class</span> Question 4 — Discussion</div>
+        <div class="speak-q">At a networking event, is it better to talk to many people briefly, or have one deep conversation? Use comparatives to argue your position: "It&apos;s more [adj] to..." "A longer conversation is better than..."</div>
+        <div class="speak-hint">Grammar hint: Use "more valuable / more effective / more natural / better / worse" with than.</div>
+      </div>
+      <div class="speak-card">
+        <div class="speak-num"><span class="speak-tag st-ts">T-S</span> Question 5 — Challenge</div>
+        <div class="speak-q">Use ALL FOUR closing phrases from §3 in one 60-second goodbye conversation with your partner. End the "networking meeting" naturally, then switch roles.</div>
+        <div class="speak-hint">Grammar hint: "That&apos;s a great opportunity." → "Let&apos;s stay in touch." → "It was great meeting you." → "I&apos;ll reach out next week."</div>
+      </div>
+      <div class="speak-card">
+        <div class="speak-num"><span class="speak-tag st-cl">Class</span> Question 6 — Production</div>
+        <div class="speak-q">Stand up. You have 90 seconds to introduce yourself as if you are at the Bajío Trade Fair right now. Use: used to, responsible for, one modal, one comparative. Go!</div>
+        <div class="speak-hint">Goal: 4–6 sentences combining structures naturally. Teacher times with the SVG timer below. Class votes: who gave the most natural introduction?</div>
+      </div>
+    </div>
+
+    <!-- TIMER FOR Q6 -->
+    <div style="display:flex;align-items:center;gap:16px;margin-top:20px;background:var(--surface);border:1px solid var(--border-dim);border-radius:10px;padding:16px 20px">
+      <div class="timer-wrap">
+        <svg class="timer-svg" width="90" height="90" viewBox="0 0 90 90">
+          <circle cx="45" cy="45" r="38" stroke="rgba(249,115,22,.2)" stroke-width="6" fill="none"/>
+          <circle id="arcSP" cx="45" cy="45" r="38" stroke="var(--accent)" stroke-width="6" fill="none" stroke-dasharray="238.76" stroke-dashoffset="0"/>
+          <text id="txtSP" x="45" y="44" text-anchor="middle" font-family="Syne,sans-serif" font-size="18" font-weight="800" fill="var(--accent)" transform="rotate(90 45 45)">1:30</text>
+          <text x="45" y="58" text-anchor="middle" font-family="Syne,sans-serif" font-size="9" fill="rgba(249,115,22,.7)" transform="rotate(90 45 45)">INTRO</text>
+        </svg>
+      </div>
+      <div>
+        <div style="font-family:var(--font-head);font-size:12px;font-weight:700;color:var(--accent);letter-spacing:1px;margin-bottom:8px">90-SECOND PROFESSIONAL INTRODUCTION</div>
+        <button onclick="startTimer('arcSP','txtSP',90,'b3',238.76)" style="background:rgba(249,115,22,.1);border:1px solid rgba(249,115,22,.3);color:var(--accent);padding:7px 18px;cursor:pointer;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1px;border-radius:7px;margin-right:8px">START</button>
+        <button onclick="resetArc('arcSP','txtSP',90,238.76)" style="background:var(--surface2);border:1px solid var(--border-dim);color:var(--muted);padding:7px 14px;cursor:pointer;font-family:var(--font-head);font-size:10px;font-weight:700;border-radius:7px">RESET</button>
+      </div>
+    </div>
+
+    <!-- OPINION METER -->
+    <div class="om-wrap">
+      <div class="om-stmt">"In business English, HOW you say something is more important than WHAT you say — your professional introduction is your biggest asset."</div>
+      <div class="om-track"><div class="om-bar" id="meterBar" style="width:50%"></div></div>
+      <div class="om-labels"><span>Disagree</span><span>50/50</span><span>Agree</span></div>
+      <div class="om-btns">
+        <button class="om-btn om-dis" onclick="moveMeter(-10)">&#128078; Disagree</button>
+        <button class="om-btn om-agr" onclick="moveMeter(10)">&#128077; Agree</button>
+      </div>
+      <div class="om-pct" id="meterPct">50% Agree</div>
+    </div>
+
+    <div class="tn">
+      <div class="tn-lbl">⚡ Teacher Note — Speaking Section</div>
+      <div class="tn-text">Questions 1–2: factual recall and personal production — low-pressure start. Question 3: integration challenge — the goal is 3 structures in one answer. Listen for connector use ("and / so / because") — this is the mark of an integrated response vs three disconnected sentences. Question 6 (the 90-second intro) is the standout activity: after each student finishes, ask the class "Which A2.2 structures did you hear?" — peer identification builds listening AND grammar awareness simultaneously. Correction protocol: never interrupt the 90-second intro. Write errors silently. Review after the class votes. Opinion Meter statement: this one generates strong reactions — use it to spark a debate about substance vs form in professional English. Both positions are defensible; the goal is generating production, not winning the argument.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════ 3 PHRASES FOR THIS WEEK -->
+<div class="phrases-wrap">
+  <div class="phrases-hdr">&#127919; This week, use these 3 phrases at work:</div>
+  <div class="phrases-sub">Practical English you can use starting tomorrow — no preparation needed.</div>
+  <div class="phrases-grid">
+    <div class="phrase-card">
+      <div class="phrase-en">"I used to [old role], but now I&apos;m responsible for [current area]."</div>
+      <div class="phrase-ctx">Your professional introduction in one sentence. Use it the next time someone new asks about your job — at a meeting, by email, or at any event. Combines M1 + M6 vocabulary naturally.</div>
+    </div>
+    <div class="phrase-card">
+      <div class="phrase-en">"That&apos;s a great opportunity — let&apos;s stay in touch."</div>
+      <div class="phrase-ctx">Two networking closers in one sentence. Use it to end any positive professional conversation this week. Works in English and sounds native — even if the rest of the conversation wasn&apos;t perfect.</div>
+    </div>
+    <div class="phrase-card">
+      <div class="phrase-en">"You should [advice] — it might [positive result]."</div>
+      <div class="phrase-ctx">Combine M3 (should) + M4 (might) for professional advice. Example: "You should prepare the summary before Friday — it might make a better impression on the client." Useful for emails and meetings.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════ §7 WRAP-UP -->
+<div class="section">
+  <div class="sec-hdr">
+    <div class="sec-num">§7</div>
+    <div>
+      <div class="sec-label">Wrap-Up — <em>What you learned today</em></div>
+      <div class="sec-sub">3 key points · I can now checklist · Next session preview · 5–8 min</div>
+    </div>
+    <div class="sec-dur">⏱ 5–8 MIN</div>
+  </div>
+  <img class="img-banner" src="https://images.unsplash.com/photo-1549737328-8a136087072e?w=900&q=80" alt="Successful conclusion of a professional meeting" loading="lazy">
+  <div class="sec-body">
+
+    <div class="wrapup-grid">
+      <div class="wrapup-card">
+        <h4>&#128293; Structure Integration</h4>
+        <p>A professional conversation in English uses multiple A2.2 structures in one answer — not one at a time. Connectors (but, so, because, and) are the bridge between them.</p>
+      </div>
+      <div class="wrapup-card">
+        <h4>&#128483; Networking Vocabulary</h4>
+        <p>Key words for Module 6: networking, introduction, background, connection, opportunity, impression, currently, responsible for, reach out, stay in touch.</p>
+      </div>
+      <div class="wrapup-card">
+        <h4>&#127942; The Professional Closer</h4>
+        <p>End every business conversation with: "It was great meeting you. Let&apos;s stay in touch. I&apos;ll reach out next week." These three phrases are immediately usable — in English, at your next event.</p>
+      </div>
+    </div>
+
+    <p style="font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin:20px 0 10px">&#9989; I CAN NOW...</p>
+    <ul class="cl-list">
+      <li class="cl-item" onclick="toggleDone(this)"><span class="cl-check">&#9744;</span>Introduce myself professionally using used to + currently + responsible for in one connected sentence.</li>
+      <li class="cl-item" onclick="toggleDone(this)"><span class="cl-check">&#9744;</span>Combine at least two A2.2 structures in one sentence using connectors (but / so / because).</li>
+      <li class="cl-item" onclick="toggleDone(this)"><span class="cl-check">&#9744;</span>Use 4 professional closing phrases to end a networking conversation in English.</li>
+      <li class="cl-item" onclick="toggleDone(this)"><span class="cl-check">&#9744;</span>Identify all 5 A2.2 grammar structures (M1–M5) when I hear them in a natural conversation.</li>
+      <li class="cl-item" onclick="toggleDone(this)"><span class="cl-check">&#9744;</span>Give a 90-second professional introduction using at least 3 different A2.2 structures.</li>
+    </ul>
+
+    <div class="next-prev">
+      <div class="next-lbl">&#9654; Next Session — S1B: Production &amp; Fluency</div>
+      <div class="next-text">In Session 1B you will build a complete 3-minute networking pitch using all A2.2 structures. You will debate: "Which professional skill is more important — technical knowledge or communication?" And Andrea will present her trade fair results. Bring a business card or your LinkedIn profile — we will use real information for the production task.</div>
+    </div>
+
+    <div class="win-wrap">
+      <div class="win-label">&#127942; My Win Today</div>
+      <textarea class="win-ta" id="winTA" placeholder="Write one thing you can do in English today that you couldn&apos;t do before this session..."></textarea>
+      <button class="win-btn" onclick="saveWin()">Save My Win &#127942;</button>
+      <div class="win-ok" id="winOK">&#10003; Saved! Badge earned. Well done.</div>
+    </div>
+
+    <div class="tn tn-pk">
+      <div class="tn-lbl">&#9889; Teacher Note — Upsell Moment</div>
+      <div class="tn-text">End of Session 1A is the optimal moment to mention B1.1 preview. Say: "Everything you did today — combining structures, making professional introductions — this is exactly what B1.1 continues. In B1.1 you add: present perfect ('I have worked here for 5 years'), first conditional ('If we confirm this week, we will get the discount'), and passive voice ('The report was submitted yesterday'). Your English at the end of A2.2 is already impressive — B1.1 makes it international.' This plants the seed for level renewal and builds a sense of progression. Best moment to say it: right after the 90-second introduction in §SP — when students feel proud of their production.</div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="ftr">
+  <div class="fbrand">Gabriel Turner · English Training</div>
+  <div class="finfo">GT_A2_2_M6_S1A_TEACHER_v1.html · Celaya, Guanajuato</div>
+  <div class="flvs">
+    <div class="flv">A1.1</div><div class="flv">A1.2</div><div class="flv">A2.1</div>
+    <div class="flv on">A2.2</div><div class="flv">B1.1</div><div class="flv">B1.2</div>
+  </div>
+</footer>
+
+<script>
+// ── SPEAK ──────────────────────────────────────────────
+function speak(t){
+  if(!window.speechSynthesis)return;
+  speechSynthesis.cancel();
+  var u=new SpeechSynthesisUtterance(t);
+  u.lang="en-US";u.rate=0.82;u.pitch=1;
+  speechSynthesis.speak(u);
+}
+
+// ── BADGES ─────────────────────────────────────────────
+var badgeEarned={b1:false,b2:false,b3:false,b4:false,b5:false};
+function earnBadge(id){
+  if(badgeEarned[id])return;
+  badgeEarned[id]=true;
+  var el=document.getElementById(id);
+  if(el)el.classList.add("earned");
+  if(Object.values(badgeEarned).every(Boolean)){
+    launchConfetti();
+    var cm=document.getElementById("confMsg");
+    if(cm)cm.style.display="block";
+  }
+}
+
+// ── CONFETTI ───────────────────────────────────────────
+function launchConfetti(){
+  var colors=["#F97316","#FB923C","#FFB800","#00E676","#00CFFF","#ffffff"];
+  for(var i=0;i<90;i++){
+    var d=document.createElement("div");
+    d.style.cssText="position:fixed;top:-10px;pointer-events:none;z-index:9999;border-radius:2px;";
+    d.style.left=Math.random()*100+"vw";
+    d.style.width=(6+Math.random()*6)+"px";
+    d.style.height=(6+Math.random()*6)+"px";
+    d.style.background=colors[Math.floor(Math.random()*colors.length)];
+    d.style.animation="confFall "+(1.5+Math.random()*2)+"s linear forwards";
+    document.body.appendChild(d);
+    setTimeout(function(){if(d.parentNode)d.parentNode.removeChild(d);},4000);
+  }
+}
+(function(){
+  var s=document.createElement("style");
+  s.textContent="@keyframes confFall{0%{transform:translateY(-10px) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}";
+  document.head.appendChild(s);
+})();
+
+// ── TIMER ──────────────────────────────────────────────
+var timerIntervals={};
+function startTimer(arcId,textId,seconds,badgeKey,circumference){
+  if(timerIntervals[arcId])clearInterval(timerIntervals[arcId]);
+  var arc=document.getElementById(arcId);
+  var txt=document.getElementById(textId);
+  var rem=seconds;
+  function update(){
+    arc.style.strokeDashoffset=circumference*(1-rem/seconds);
+    var m=Math.floor(rem/60),s=rem%60;
+    txt.textContent=m+":"+(s<10?"0":"")+s;
+    if(rem<=5)arc.style.stroke="#FF4D6D";
+    if(rem<=0){clearInterval(timerIntervals[arcId]);arc.style.stroke="var(--success)";if(badgeKey)earnBadge(badgeKey);return;}
+    rem--;
+  }
+  update();
+  timerIntervals[arcId]=setInterval(update,1000);
+}
+function resetArc(arcId,textId,seconds,circumference){
+  if(timerIntervals[arcId]){clearInterval(timerIntervals[arcId]);delete timerIntervals[arcId];}
+  var arc=document.getElementById(arcId);
+  arc.style.strokeDashoffset="0";
+  arc.style.stroke="var(--accent)";
+  var m=Math.floor(seconds/60),s=seconds%60;
+  document.getElementById(textId).textContent=m+":"+(s<10?"0":"")+s;
+}
+
+// ── VOCAB QUIZ ─────────────────────────────────────────
+var vqData=[
+  {q:"What does 'networking' mean in a business context?",opts:["Using the internet at work","Meeting people to build professional connections","Working from home","Checking your email"],ans:"Meeting people to build professional connections"},
+  {q:"Which sentence uses 'background' correctly?",opts:["I have a background in logistics — I used to manage a team.","My background is very colorful.","The background of the meeting was long.","I work in the background department."],ans:"I have a background in logistics — I used to manage a team."},
+  {q:"'Currently' is used to talk about:",opts:["The past","The future","The present","Possibility"],ans:"The present"},
+  {q:"Complete: 'I am _____ responsible _____ quality control.'",opts:["currently / for","actually / of","now / from","actually / for"],ans:"currently / for"},
+  {q:"Which phrase means 'to make contact with someone'?",opts:["Reach out","Stay in touch","Look forward","Keep up"],ans:"Reach out"},
+  {q:"'Stay in touch' means:",opts:["Call someone immediately","Maintain contact over time","Touch something gently","Stay at the office"],ans:"Maintain contact over time"},
+  {q:"What is a 'connection' in professional English?",opts:["An internet cable","A professional contact or relationship","A meeting room","A company policy"],ans:"A professional contact or relationship"},
+  {q:"Which sentence uses 'impression' correctly?",opts:["You only get one chance to make a good first impression.","The impression was very loud.","I need to impression the report.","My impression works in sales."],ans:"You only get one chance to make a good first impression."},
+  {q:"'Introduction' in a professional context means:",opts:["A type of email","The act of presenting yourself for the first time","The beginning of a book","A company rule"],ans:"The act of presenting yourself for the first time"},
+  {q:"Which sentence uses 'opportunity' correctly?",opts:["The opportunity is very heavy.","This trade fair is a great opportunity to meet new clients.","I opportunity my manager every day.","The opportunity was cancelled."],ans:"This trade fair is a great opportunity to meet new clients."}
+];
+var vqIdx=0,vqScore=0,vqShuffled=[];
+function shuffle(arr){return arr.slice().sort(function(){return Math.random()-.5;});}
+function startQuiz(){
+  vqShuffled=shuffle(vqData);vqIdx=0;vqScore=0;
+  document.getElementById("vqScore").style.display="none";
+  document.getElementById("vqRestart").style.display="none";
+  document.getElementById("vqBar").style.width="0%";
+  showVQ();
+}
+function showVQ(){
+  if(vqIdx>=vqShuffled.length){
+    document.getElementById("vqQ").textContent="";
+    document.getElementById("vqOpts").innerHTML="";
+    var sc=document.getElementById("vqScore");
+    sc.textContent="Score: "+vqScore+" / "+vqShuffled.length+(vqScore>=8?" &#127894;&#65039; Badge earned!":"  Keep practicing!");
+    sc.style.display="block";
+    document.getElementById("vqRestart").style.display="block";
+    if(vqScore>=8)earnBadge("b2");
+    return;
+  }
+  var item=vqShuffled[vqIdx];
+  document.getElementById("vqQ").textContent=item.q;
+  document.getElementById("vqBar").style.width=((vqIdx/vqShuffled.length)*100)+"%";
+  var opts=shuffle(item.opts);
+  var html="";
+  opts.forEach(function(o){
+    var oEsc=o.replace(/\\/g,"\\\\").replace(/"/g,"&quot;").replace(/'/g,"\'");
+    var ansEsc=item.ans.replace(/\\/g,"\\\\").replace(/"/g,"&quot;").replace(/'/g,"\'");
+    html+="<button class=\"vq-opt\" onclick=\"answerVQ(this,'"+oEsc+"','"+ansEsc+"')\">"+o+"</button>";
+  });
+  document.getElementById("vqOpts").innerHTML=html;
+}
+function answerVQ(btn,answer,correct){
+  document.querySelectorAll(".vq-opt").forEach(function(b){b.disabled=true;if(b.textContent.trim()===correct)b.classList.add("correct");});
+  if(btn.textContent.trim()!==correct)btn.classList.add("wrong");
+  vqIdx++;
+  setTimeout(showVQ,900);
+}
+
+// ── CHECK OPT ──────────────────────────────────────────
+function checkOpt(btn,correct,qid){
+  var c=document.getElementById(qid);
+  c.querySelectorAll(".opt").forEach(function(b){b.disabled=true;if(b.textContent.trim()===correct)b.classList.add("correct");});
+  if(btn.textContent.trim()!==correct)btn.classList.add("wrong");
+  earnBadge("b3");
+}
+
+// ── CHECK TF ───────────────────────────────────────────
+function checkTF(btn,isCorrect,id){
+  var row=btn.closest(".tf-row");
+  row.querySelectorAll(".tf-btn").forEach(function(b){b.disabled=true;});
+  if(isCorrect){
+    btn.style.cssText="background:rgba(0,229,160,.15);border-color:var(--success);color:var(--success)";
+  }else{
+    btn.style.cssText="background:rgba(255,77,109,.12);border-color:var(--danger);color:var(--danger)";
+    var sib=Array.from(row.querySelectorAll(".tf-btn")).find(function(b){return b!==btn;});
+    if(sib)sib.style.cssText="background:rgba(0,229,160,.12);border-color:var(--success);color:var(--success)";
+  }
+  earnBadge("b4");
+}
+
+// ── MATCH-UP MINI-GAME ─────────────────────────────────
+var matchSelected=null;
+var matchPairs={"mw1":"md2","mw2":"md4","mw3":"md1","mw4":"md5","mw5":"md3"};
+var matchDone=0;
+var matchTotalPairs=5;
+function selectMatch(el,elId,partnerId){
+  if(el.classList.contains("matched"))return;
+  if(!matchSelected){
+    el.classList.add("selected");
+    matchSelected=el;
+    return;
+  }
+  var first=matchSelected;
+  var second=el;
+  matchSelected=null;
+  first.classList.remove("selected");
+  var valid=false;
+  if(matchPairs[first.id]===second.id||matchPairs[second.id]===first.id){valid=true;}
+  if(valid){
+    first.classList.add("matched");second.classList.add("matched");
+    matchDone++;
+    document.getElementById("matchScore").textContent=matchDone;
+    if(matchDone>=matchTotalPairs){
+      var res=document.getElementById("matchResult");
+      res.textContent="✓ All 5 pairs matched! Badge earned!";
+      res.style.color="var(--success)";
+      res.classList.add("show");
+      earnBadge("b2");
+    }
+  }else{
+    first.classList.add("wrong-match");second.classList.add("wrong-match");
+    setTimeout(function(){first.classList.remove("wrong-match");second.classList.remove("wrong-match");},600);
+  }
+}
+
+// ── DRAG & DROP ────────────────────────────────────────
+var dragSrc=null;
+function initDrag(listId){
+  var list=document.getElementById(listId);if(!list)return;
+  list.querySelectorAll(".reorder-item").forEach(function(item){
+    item.addEventListener("dragstart",function(){dragSrc=this;this.classList.add("dragging");});
+    item.addEventListener("dragend",function(){this.classList.remove("dragging");list.querySelectorAll(".reorder-item").forEach(function(i){i.classList.remove("drag-over");});});
+    item.addEventListener("dragover",function(e){e.preventDefault();list.querySelectorAll(".reorder-item").forEach(function(i){i.classList.remove("drag-over");});if(this!==dragSrc)this.classList.add("drag-over");});
+    item.addEventListener("drop",function(e){e.preventDefault();if(this!==dragSrc){var all=Array.from(list.querySelectorAll(".reorder-item"));if(all.indexOf(dragSrc)<all.indexOf(this))list.insertBefore(dragSrc,this.nextSibling);else list.insertBefore(dragSrc,this);}});
+  });
+}
+function checkOrder(listId,correct,fbId){
+  var list=document.getElementById(listId);
+  var current=Array.from(list.querySelectorAll(".reorder-item")).map(function(i){return i.textContent.replace("⠇","").trim();});
+  var fb=document.getElementById(fbId);
+  if(JSON.stringify(current)===JSON.stringify(correct)){
+    fb.className="fb show ok";fb.textContent="✓ Correct! Well done!";
+    list.querySelectorAll(".reorder-item").forEach(function(i){i.style.borderColor="var(--success)";i.style.color="var(--success)";});
+    earnBadge("b3");
+  }else{
+    fb.className="fb show no";fb.textContent="✗ Not quite. Correct order: "+correct.join(" — ");
+    list.querySelectorAll(".reorder-item").forEach(function(i){i.style.borderColor="var(--danger)";});
+  }
+}
+
+// ── SCRIPT TOGGLE ──────────────────────────────────────
+function toggleScript(){
+  var b=document.getElementById("scriptBox");
+  b.classList.toggle("open");
+  document.querySelector(".script-toggle").textContent=b.classList.contains("open")?"▲ Hide Script":"▼ Show ElevenLabs Script";
+}
+
+// ── WAVEFORM ───────────────────────────────────────────
+var wv=document.getElementById("wv");
+for(var i=0;i<60;i++){
+  var wb=document.createElement("div");
+  wb.className="wbar";
+  wb.style.height=(8+Math.sin(i*.6)*10+Math.random()*18)+"px";
+  wb.style.opacity=.3+Math.random()*.4;
+  wv.appendChild(wb);
+}
+
+// ── LISTENING BADGE ────────────────────────────────────
+document.getElementById("playBtn").addEventListener("click",function(){earnBadge("b4");});
+
+// ── OPINION METER ──────────────────────────────────────
+var meterVal=50;
+function moveMeter(delta){
+  meterVal=Math.max(5,Math.min(95,meterVal+delta));
+  document.getElementById("meterBar").style.width=meterVal+"%";
+  document.getElementById("meterPct").textContent=meterVal+"% Agree";
+}
+
+// ── CHECKLIST ──────────────────────────────────────────
+function toggleDone(el){
+  el.classList.toggle("done");
+  var check=el.querySelector(".cl-check");
+  check.textContent=el.classList.contains("done")?"✓":"☐";
+  var all=document.querySelectorAll(".cl-item");
+  var done=Array.from(all).filter(function(x){return x.classList.contains("done");});
+  if(done.length===all.length)earnBadge("b5");
+}
+
+// ── MY WIN ─────────────────────────────────────────────
+function saveWin(){
+  var ta=document.getElementById("winTA");
+  if(ta.value.trim().length>3){
+    earnBadge("b5");
+    ta.style.borderColor="var(--success)";
+    document.getElementById("winOK").style.display="block";
+  }
+}
+
+// ── PROGRESS BAR ───────────────────────────────────────
+window.addEventListener("scroll",function(){
+  var h=document.documentElement;
+  var bar=document.getElementById("progressFill");
+  if(bar)bar.style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight)*100)+"%";
+});
+
+// ── INIT ───────────────────────────────────────────────
+startQuiz();
+initDrag("order1");
+initDrag("order2");
+</script>
+</body>
+</html>

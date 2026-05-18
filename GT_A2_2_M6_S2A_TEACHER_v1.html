@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GT A2.2 · M6 · S2A — Full A2.2 Integration</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#080808;--surface:#111318;--surface2:#1a1f28;
+  --border:rgba(249,115,22,.18);--border-dim:rgba(255,255,255,0.07);
+  --accent:#F97316;--accent2:#FB923C;
+  --cyan:#00CFFF;--gold:#FFB800;--green:#00E676;
+  --danger:#FF4D6D;--success:#00E5A0;--warn:#FFB347;--violet:#A78BFA;
+  --txt:#F0F4F8;--muted:#8A9BB0;--dim:rgba(226,226,226,.25);
+  --font-head:'Syne',sans-serif;--font-body:'DM Sans',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--txt);font-family:var(--font-body);font-size:14px;line-height:1.6;overflow-x:hidden}
+.hdr{background:var(--surface);border-bottom:1px solid var(--border);padding:16px 48px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;position:sticky;top:0;z-index:100}
+.brand{display:flex;align-items:center;gap:10px}
+.dot{width:8px;height:8px;background:var(--accent);border-radius:50%}
+.bname{font-family:var(--font-head);font-weight:800;font-size:13px;letter-spacing:2.5px;text-transform:uppercase;color:#fff}
+.bsub{font-size:10px;color:var(--muted);letter-spacing:1px}
+.sess-tag{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.tag{display:inline-block;padding:3px 10px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase}
+.t-or{background:rgba(249,115,22,.15);color:var(--accent);border:1px solid rgba(249,115,22,.3)}
+.t-go{background:rgba(0,230,118,.1);color:var(--green);border:1px solid rgba(0,230,118,.25)}
+.t-cy{background:rgba(0,207,255,.1);color:var(--cyan);border:1px solid rgba(0,207,255,.25)}
+.t-gd{background:rgba(255,184,0,.1);color:var(--gold);border:1px solid rgba(255,184,0,.25)}
+.badge-strip{display:flex;gap:6px;align-items:center}
+.badge-strip span{width:28px;height:28px;border-radius:50%;background:var(--surface2);border:1px solid var(--border-dim);display:flex;align-items:center;justify-content:center;font-size:13px;filter:grayscale(1);opacity:.4;transition:all .4s}
+.badge-strip span.earned{filter:none;opacity:1;border-color:var(--accent);background:rgba(249,115,22,.15);transform:scale(1.1)}
+.progress-bar{height:2px;background:var(--surface2);position:sticky;top:57px;z-index:99}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));width:0%;transition:width .3s}
+.section{margin:0 0 3px 0;overflow:hidden}
+.sec-hdr{display:flex;align-items:center;gap:14px;padding:20px 48px;background:linear-gradient(135deg,rgba(249,115,22,.06),transparent);border-bottom:1px solid var(--border)}
+.sec-num{font-family:var(--font-head);font-size:10px;font-weight:800;color:var(--accent);letter-spacing:.15em;text-transform:uppercase;background:rgba(249,115,22,.1);border:1px solid rgba(249,115,22,.25);padding:3px 10px;border-radius:20px;white-space:nowrap}
+.sec-label{font-family:var(--font-head);font-size:22px;font-weight:800;color:#fff}
+.sec-label em{color:var(--accent);font-style:normal}
+.sec-sub{font-size:12px;color:var(--muted);margin-top:2px}
+.sec-dur{font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;color:var(--gold);border:1px solid rgba(255,184,0,.2);padding:2px 9px;margin-left:auto;white-space:nowrap}
+.sec-body{padding:28px 48px}
+.img-hero{width:100%;height:260px;object-fit:cover;display:block;filter:brightness(.5);border-bottom:1px solid var(--border)}
+.img-banner{width:100%;height:150px;object-fit:cover;display:block;filter:brightness(.48);border-radius:10px;margin-bottom:16px}
+.wu-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:16px}
+.wu-card{background:var(--surface);border:1px solid var(--border-dim);border-radius:10px;overflow:hidden;border-left:3px solid var(--accent)}
+.wu-card-img{width:100%;height:90px;object-fit:cover;display:block;filter:brightness(.48)}
+.wu-card-body{padding:13px 15px}
+.wu-card-q{font-size:13px;color:var(--txt);line-height:1.5}
+.wu-card-hint{font-size:11px;color:var(--muted);font-style:italic;margin-top:6px}
+.quick-win{background:rgba(249,115,22,.07);border:1px solid rgba(249,115,22,.25);border-radius:10px;padding:16px 20px;margin-top:16px;display:flex;align-items:flex-start;gap:14px}
+.qw-icon{font-size:22px;flex-shrink:0;margin-top:2px}
+.qw-label{font-family:var(--font-head);font-size:9px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:5px}
+.qw-text{font-size:13.5px;color:#fff;line-height:1.55}
+.qw-try{font-size:12px;color:var(--accent2);margin-top:6px;font-style:italic}
+.timer-wrap{display:flex;flex-direction:column;align-items:center;gap:8px}
+.timer-svg{transform:rotate(-90deg)}
+.tn{background:var(--surface2);border:1px solid var(--border-dim);border-left:3px solid var(--gold);border-radius:8px;padding:13px 16px;margin-top:14px}
+.tn-lbl{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:6px}
+.tn-text{font-size:12px;color:rgba(255,184,0,.82);line-height:1.6}
+.tn-cy{border-left-color:var(--cyan)}.tn-cy .tn-lbl{color:var(--cyan)}.tn-cy .tn-text{color:rgba(0,207,255,.82)}
+.tn-pk{border-left-color:#FF4D6D}.tn-pk .tn-lbl{color:#FF4D6D}.tn-pk .tn-text{color:rgba(255,77,109,.82)}
+.vocab-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:16px}
+.vocab-card{background:var(--surface);border:1px solid var(--border-dim);border-radius:10px;overflow:hidden;cursor:pointer;transition:all .2s}
+.vocab-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.vocab-card-img{width:100%;height:72px;object-fit:cover;display:block;filter:brightness(.45)}
+.vocab-card-body{padding:11px 12px}
+.vc-word{font-family:var(--font-head);font-size:13px;font-weight:700;color:#fff;margin-bottom:2px}
+.vc-ipa{font-size:10px;color:var(--cyan);margin-bottom:5px;font-style:italic}
+.vc-def{font-size:11px;color:var(--muted);line-height:1.4;margin-bottom:6px}
+.vc-ex{font-size:11px;color:var(--accent2);font-style:italic;border-left:2px solid var(--accent);padding-left:7px;line-height:1.4}
+.vc-sp{font-size:10px;color:var(--dim);margin-top:6px}
+.micro-speak{background:rgba(0,207,255,.06);border:1px solid rgba(0,207,255,.2);border-radius:8px;padding:12px 16px;margin-top:16px;display:flex;align-items:flex-start;gap:12px}
+.ms-icon{font-size:18px;flex-shrink:0}
+.ms-text{font-size:12.5px;color:var(--cyan);line-height:1.55}
+.quiz-wrap{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-top:20px}
+.quiz-hdr{padding:14px 20px;background:rgba(249,115,22,.08);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.quiz-hdr-title{font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent)}
+.quiz-progress{height:4px;background:var(--surface2);border-radius:0}
+.quiz-progress-fill{height:100%;background:var(--accent);width:0%;transition:width .4s;border-radius:0}
+.quiz-body{padding:22px 24px}
+.quiz-q{font-size:14.5px;color:#fff;font-weight:500;margin-bottom:16px;line-height:1.5}
+.quiz-opts{display:flex;flex-direction:column;gap:8px}
+.vq-opt{background:var(--surface2);border:1px solid var(--border-dim);color:var(--txt);padding:10px 16px;text-align:left;cursor:pointer;font-size:13px;border-radius:7px;transition:all .2s;font-family:var(--font-body)}
+.vq-opt:hover:not(:disabled){border-color:var(--accent);background:rgba(249,115,22,.08)}
+.vq-opt.correct{background:rgba(0,229,160,.12);border-color:var(--success);color:var(--success)}
+.vq-opt.wrong{background:rgba(255,77,109,.12);border-color:var(--danger);color:var(--danger)}
+.quiz-score{font-family:var(--font-head);font-size:15px;font-weight:800;color:var(--accent);text-align:center;padding:14px;display:none}
+.quiz-restart{display:none;margin:0 auto 16px;background:rgba(249,115,22,.1);border:1px solid rgba(249,115,22,.3);color:var(--accent);padding:8px 22px;cursor:pointer;font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:1px;border-radius:6px}
+.coll-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:16px}
+.coll-card{background:var(--surface);border:1px solid var(--border-dim);border-radius:10px;overflow:hidden;cursor:pointer;transition:border-color .2s}
+.coll-card:hover{border-color:var(--warn)}
+.coll-card-img{width:100%;height:80px;object-fit:cover;display:block;filter:brightness(.45)}
+.coll-body{padding:13px 15px}
+.coll-phrase{font-family:var(--font-head);font-size:14px;font-weight:800;color:var(--warn);margin-bottom:6px}
+.coll-ctx{font-size:11.5px;color:var(--muted);margin-bottom:6px;line-height:1.45}
+.coll-ex{font-size:12px;color:var(--txt);font-style:italic;border-left:2px solid var(--warn);padding-left:8px;line-height:1.4}
+.prob-card{background:rgba(255,77,109,.06);border:1px solid rgba(255,77,109,.22);border-radius:10px;padding:16px 20px;margin-bottom:16px}
+.prob-lbl{font-family:var(--font-head);font-size:9px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--danger);margin-bottom:8px}
+.prob-scenario{font-size:13.5px;color:#fff;line-height:1.6;margin-bottom:8px}
+.prob-thought{font-size:12.5px;color:var(--muted);font-style:italic;line-height:1.5}
+.tool-card{background:rgba(0,229,160,.05);border:1px solid rgba(0,229,160,.2);border-radius:10px;padding:16px 20px;margin-bottom:16px}
+.tool-lbl{font-family:var(--font-head);font-size:9px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--success);margin-bottom:8px}
+.tool-text{font-size:13px;color:var(--txt);line-height:1.7}
+.gram-table{width:100%;border-collapse:collapse;margin:16px 0;font-size:12.5px}
+.gram-table th{background:rgba(249,115,22,.1);color:var(--accent);font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:9px 12px;text-align:left;border-bottom:2px solid var(--border)}
+.gram-table td{padding:9px 12px;border-bottom:1px solid var(--border-dim);vertical-align:top;line-height:1.5}
+.gram-table tbody tr:hover{background:rgba(249,115,22,.04)}
+.g-or{color:var(--accent);font-weight:600}.g-cy{color:var(--cyan);font-weight:600}
+.g-gr{color:var(--success);font-weight:600}.g-vl{color:var(--violet);font-weight:600}.g-ex{color:var(--muted);font-style:italic}
+.err-box{background:rgba(255,77,109,.06);border:1px solid rgba(255,77,109,.2);border-radius:8px;padding:13px 16px;margin:14px 0;font-size:12px;color:var(--txt);line-height:1.7}
+.act-title{font-family:var(--font-head);font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--accent);padding:16px 0 6px;border-top:1px solid var(--border);margin-top:16px}
+.opt-group{margin-bottom:16px}
+.opt-q{font-size:13px;color:var(--txt);margin-bottom:8px;line-height:1.5}
+.opts{display:flex;gap:8px;flex-wrap:wrap}
+.opt{background:var(--surface2);border:1px solid var(--border-dim);color:var(--txt);padding:7px 14px;cursor:pointer;font-size:12.5px;border-radius:7px;transition:all .2s;font-family:var(--font-body)}
+.opt:hover:not(:disabled){border-color:var(--accent);background:rgba(249,115,22,.08)}
+.opt.correct{background:rgba(0,229,160,.12);border-color:var(--success);color:var(--success)}
+.opt.wrong{background:rgba(255,77,109,.12);border-color:var(--danger);color:var(--danger)}
+.reorder-list{list-style:none;display:flex;flex-direction:column;gap:6px;margin:12px 0}
+.reorder-item{background:var(--surface2);border:1px solid var(--border-dim);border-radius:7px;padding:9px 14px;cursor:grab;font-size:13px;color:var(--txt);display:flex;align-items:center;gap:10px;transition:border-color .2s;user-select:none}
+.reorder-item.dragging{opacity:.5;border-color:var(--accent)}
+.reorder-item.drag-over{border-color:var(--cyan);background:rgba(0,207,255,.06)}
+.drag-handle{color:var(--dim);font-size:16px;flex-shrink:0}
+.check-order-btn{background:rgba(249,115,22,.1);border:1px solid rgba(249,115,22,.3);color:var(--accent);padding:8px 18px;cursor:pointer;font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:1px;border-radius:7px;margin-top:8px;transition:all .2s}
+.check-order-btn:hover{background:rgba(249,115,22,.2)}
+.fb{background:var(--surface2);border-radius:7px;padding:9px 14px;font-size:12.5px;margin-top:8px;display:none}
+.fb.show{display:block}
+.fb.ok{background:rgba(0,229,160,.1);border:1px solid rgba(0,229,160,.25);color:var(--success)}
+.fb.no{background:rgba(255,77,109,.1);border:1px solid rgba(255,77,109,.25);color:var(--danger)}
+.gsort-wrap{background:var(--surface);border:1px solid var(--border-dim);border-radius:12px;overflow:hidden;margin-top:20px}
+.gsort-hdr{background:rgba(249,115,22,.08);border-bottom:1px solid var(--border);padding:12px 20px;display:flex;align-items:center;justify-content:space-between}
+.gsort-hdr-title{font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent)}
+.gsort-body{padding:18px 20px}
+.gsort-items{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px;background:rgba(0,0,0,.2);border-radius:8px;padding:12px;border:1px dashed var(--border-dim);min-height:50px}
+.gsort-item{background:var(--surface2);border:1px solid var(--border-dim);color:var(--txt);padding:7px 14px;cursor:pointer;font-size:12.5px;border-radius:6px;transition:all .2s}
+.gsort-item:hover{border-color:var(--accent)}
+.gsort-item.selected{border-color:var(--accent);background:rgba(249,115,22,.12);color:var(--accent)}
+.gsort-item.used{opacity:.35;cursor:default;pointer-events:none}
+.gsort-buckets{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.gsort-bucket{background:var(--surface2);border:2px dashed var(--border-dim);border-radius:10px;padding:14px;min-height:90px;cursor:pointer;transition:border-color .2s}
+.gsort-bucket:hover{border-color:var(--accent)}
+.gsort-bucket-lbl{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px}
+.m1-lbl{color:var(--accent)}.m3-lbl{color:var(--violet)}.m4-lbl{color:var(--cyan)}
+.gsort-bucket-items{display:flex;flex-direction:column;gap:5px;min-height:40px}
+.gsort-placed{font-size:11px;padding:4px 8px;border-radius:5px;line-height:1.4}
+.gsort-placed.m1{background:rgba(249,115,22,.1);color:var(--accent2)}
+.gsort-placed.m3{background:rgba(167,139,250,.1);color:var(--violet)}
+.gsort-placed.m4{background:rgba(0,207,255,.1);color:var(--cyan)}
+.gsort-check-btn{background:rgba(249,115,22,.1);border:1px solid rgba(249,115,22,.3);color:var(--accent);padding:8px 18px;cursor:pointer;font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:1px;border-radius:7px;margin-top:12px;transition:all .2s}
+.gsort-check-btn:hover{background:rgba(249,115,22,.2)}
+.gsort-result{margin-top:10px;font-size:12.5px;display:none}
+.gsort-result.show{display:block}
+.listen-wrap{background:var(--surface);border:1px solid var(--border-dim);border-radius:12px;overflow:hidden;margin-top:16px}
+.listen-img{width:100%;height:130px;object-fit:cover;display:block;filter:brightness(.4)}
+.listen-inner{padding:16px 20px;display:flex;align-items:center;gap:16px}
+.play-btn-aud{width:42px;height:42px;border-radius:50%;background:rgba(249,115,22,.85);border:none;color:#fff;font-size:16px;cursor:pointer;flex-shrink:0;transition:background .2s}
+.play-btn-aud:hover{background:var(--accent)}
+.track-title{font-family:var(--font-head);font-size:13px;font-weight:700;color:#fff}
+.track-sub{font-size:10.5px;color:var(--muted);margin-top:3px}
+.waveform{display:flex;align-items:center;gap:2px;height:32px;padding:0 20px 14px}
+.wbar{width:3px;background:var(--accent);border-radius:2px;opacity:.3}
+.script-toggle{background:rgba(249,115,22,.08);border:1px solid rgba(249,115,22,.2);color:var(--accent);padding:7px 16px;cursor:pointer;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1px;width:100%;transition:background .2s}
+.script-toggle:hover{background:rgba(249,115,22,.15)}
+.script-box{max-height:0;overflow:hidden;transition:max-height .4s;background:var(--surface2);font-size:13px;color:var(--muted);line-height:1.7;white-space:pre-wrap}
+.script-box.open{max-height:600px;padding:16px 20px}
+.tf-row{display:grid;grid-template-columns:1fr auto;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border-dim)}
+.tf-stmt{font-size:13px;color:var(--txt);line-height:1.5}
+.tf-btns{display:flex;gap:6px}
+.tf-btn{background:var(--surface2);border:1px solid var(--border-dim);color:var(--txt);padding:5px 12px;cursor:pointer;font-size:11.5px;border-radius:6px;font-family:var(--font-head);font-weight:700;letter-spacing:.5px;transition:all .2s;white-space:nowrap}
+.tf-btn:hover:not(:disabled){border-color:var(--accent)}
+.speak-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
+.speak-card{background:var(--surface);border:1px solid var(--border-dim);border-radius:10px;padding:15px 16px}
+.speak-num{font-family:var(--font-head);font-size:9.5px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--dim);margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.speak-tag{padding:2px 8px;font-size:9px;font-weight:800;letter-spacing:1px;border-radius:4px}
+.st-ts{background:rgba(249,115,22,.15);color:var(--accent)}
+.st-ss{background:rgba(0,207,255,.12);color:var(--cyan)}
+.st-cl{background:rgba(0,229,160,.1);color:var(--success)}
+.speak-q{font-size:14.5px;color:#fff;line-height:1.55;margin-bottom:8px}
+.speak-hint{font-size:11px;color:var(--muted);font-style:italic;border-left:2px solid var(--border-dim);padding-left:8px;line-height:1.4}
+.om-wrap{background:var(--surface);border:1px solid var(--border-dim);border-radius:12px;padding:20px 24px;margin-top:20px}
+.om-stmt{font-size:14px;color:#fff;font-style:italic;margin-bottom:16px;padding:13px 18px;background:var(--surface2);border-left:3px solid var(--accent);border-radius:6px;line-height:1.6}
+.om-track{height:10px;background:var(--surface2);border-radius:10px;overflow:hidden;margin-bottom:8px}
+.om-bar{height:100%;background:linear-gradient(90deg,var(--danger),var(--accent),var(--success));width:50%;transition:width .3s}
+.om-labels{display:flex;justify-content:space-between;font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--dim);margin-bottom:14px}
+.om-btns{display:flex;gap:10px;margin-bottom:8px}
+.om-btn{flex:1;padding:9px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1px;cursor:pointer;border-radius:7px;transition:all .2s;border:1px solid}
+.om-dis{background:rgba(255,77,109,.08);border-color:rgba(255,77,109,.3);color:var(--danger)}
+.om-dis:hover{background:rgba(255,77,109,.18)}
+.om-agr{background:rgba(0,229,160,.08);border-color:rgba(0,229,160,.3);color:var(--success)}
+.om-agr:hover{background:rgba(0,229,160,.18)}
+.om-pct{font-family:var(--font-head);font-size:14px;font-weight:800;color:var(--accent);text-align:center}
+.phrases-wrap{background:rgba(255,184,0,.04);border-top:2px solid rgba(255,184,0,.2);border-bottom:2px solid rgba(255,184,0,.2);padding:28px 48px;margin:3px 0}
+.phrases-hdr{font-family:var(--font-head);font-size:18px;font-weight:800;color:var(--gold);margin-bottom:6px}
+.phrases-sub{font-size:12px;color:var(--muted);margin-bottom:20px}
+.phrases-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.phrase-card{background:var(--surface);border:1px solid rgba(255,184,0,.2);border-radius:10px;padding:16px 18px;border-top:3px solid var(--gold)}
+.phrase-en{font-family:var(--font-head);font-size:14px;font-weight:800;color:#fff;margin-bottom:8px;line-height:1.4}
+.phrase-ctx{font-size:12px;color:var(--muted);line-height:1.5}
+.wrapup-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:16px 0}
+.wrapup-card{background:var(--surface);border:1px solid var(--border-dim);border-radius:10px;padding:16px;border-top:3px solid var(--accent)}
+.wrapup-card h4{font-family:var(--font-head);font-size:11px;font-weight:800;color:var(--accent);letter-spacing:1px;margin-bottom:8px}
+.wrapup-card p{font-size:12.5px;color:var(--muted);line-height:1.55}
+.cl-list{list-style:none;display:flex;flex-direction:column;gap:6px;margin-top:16px}
+.cl-item{background:var(--surface);border:1px solid var(--border-dim);border-radius:7px;padding:9px 14px;cursor:pointer;font-size:13px;color:var(--txt);display:flex;align-items:center;gap:10px;transition:all .2s}
+.cl-item:hover{border-color:var(--success)}
+.cl-item.done{background:rgba(0,229,160,.06);border-color:rgba(0,229,160,.25);color:var(--success)}
+.cl-check{font-size:14px;flex-shrink:0;color:var(--dim)}
+.cl-item.done .cl-check{color:var(--success)}
+.win-wrap{background:var(--surface);border:1px solid var(--border-dim);border-radius:10px;padding:20px;margin-top:16px}
+.win-label{font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:10px}
+.win-ta{width:100%;background:var(--surface2);border:1px solid var(--border-dim);border-radius:7px;color:var(--txt);padding:12px;font-size:13px;font-family:var(--font-body);resize:vertical;min-height:72px;line-height:1.5;transition:border-color .3s}
+.win-ta:focus{outline:none;border-color:var(--accent)}
+.win-btn{background:rgba(249,115,22,.1);border:1px solid rgba(249,115,22,.3);color:var(--accent);padding:8px 20px;cursor:pointer;font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:1px;border-radius:7px;margin-top:10px;transition:all .2s}
+.win-btn:hover{background:rgba(249,115,22,.22)}
+.win-ok{display:none;color:var(--success);font-size:12.5px;margin-top:8px;font-style:italic}
+.next-prev{background:rgba(0,207,255,.05);border:1px solid rgba(0,207,255,.2);border-radius:10px;padding:16px 18px;margin-top:16px}
+.next-lbl{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--cyan);margin-bottom:6px}
+.next-text{font-size:13px;color:var(--txt);line-height:1.6}
+#confMsg{display:none;text-align:center;font-family:var(--font-head);font-size:14px;font-weight:800;color:var(--gold);padding:14px;letter-spacing:2px;text-transform:uppercase}
+.ftr{background:var(--surface);border-top:1px solid var(--border);padding:16px 48px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+.fbrand{font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim)}
+.finfo{font-size:11px;color:var(--dim)}
+.flvs{display:flex;gap:3px}
+.flv{padding:5px 10px;font-family:var(--font-head);font-size:10px;font-weight:700;background:var(--surface2);color:var(--dim)}
+.flv.on{background:var(--accent);color:#fff}
+body.sm .tn{display:none}
+@media(max-width:860px){
+  .hdr,.ftr,.phrases-wrap{padding:14px 18px}
+  .sec-body{padding:20px 18px}
+  .sec-hdr{padding:16px 18px}
+  .wu-grid,.vocab-grid{grid-template-columns:repeat(2,1fr)}
+  .coll-grid,.phrases-grid,.wrapup-grid,.gsort-buckets{grid-template-columns:1fr}
+  .speak-grid{grid-template-columns:1fr}
+  .opts{flex-direction:column}
+}
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <div class="brand"><div class="dot"></div><div><div class="bname">Gabriel Turner</div><div class="bsub">English Training · Teacher Edition</div></div></div>
+  <div class="sess-tag">
+    <span class="tag t-or">A2.2</span><span class="tag t-gd">Module 6</span>
+    <span class="tag t-cy">Session 2A — Discovery &amp; Drill</span>
+    <span class="tag t-go">120 min</span>
+  </div>
+  <div class="badge-strip">
+    <span id="b1">&#128100;</span><span id="b2">&#127775;</span><span id="b3">&#9203;</span><span id="b4">&#127911;</span><span id="b5">&#127942;</span>
+    <button onclick="document.body.classList.toggle('sm');this.textContent=document.body.classList.contains('sm')?'Teacher Mode':'Student Mode'" style="margin-left:8px;background:rgba(249,115,22,.1);border:1px solid rgba(249,115,22,.3);color:var(--accent);padding:4px 10px;cursor:pointer;font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:1px;border-radius:5px">Student Mode</button>
+  </div>
+</header>
+<div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+<div id="confMsg">&#127881; All 5 badges earned! Outstanding work! &#127881;</div>
+
+<div class="section">
+  <div class="sec-hdr">
+    <div class="sec-num">&#167;1</div>
+    <div><div class="sec-label">Warm-Up — <em>Your career story in 30 seconds</em></div><div class="sec-sub">Activate career narrative · Connect S1A structures to real professional identity · 5–8 min</div></div>
+    <div class="sec-dur">&#9201; 5–8 MIN</div>
+  </div>
+  <img class="img-hero" src="https://images.unsplash.com/photo-1560439514-4e9645039924?w=900&q=80" alt="Professional presenting career background" loading="lazy">
+  <div class="sec-body">
+    <div class="wu-grid">
+      <div class="wu-card">
+        <img class="wu-card-img" src="https://images.unsplash.com/photo-1543269664-76bc3997d9ea?w=600&q=80" alt="S1A recall" loading="lazy">
+        <div class="wu-card-body">
+          <div class="wu-card-q">&#128336; <strong>S1A Recall:</strong> Quick test — say one sentence using <em>used to</em> + a connector + your current job. Go! No thinking.</div>
+          <div class="wu-card-hint">&#128161; Note who uses a connector naturally vs two isolated sentences. That gap is what S2A develops.</div>
+        </div>
+      </div>
+      <div class="wu-card">
+        <img class="wu-card-img" src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=600&q=80" alt="Career arc" loading="lazy">
+        <div class="wu-card-body">
+          <div class="wu-card-q">&#128218; <strong>Career arc:</strong> 3 parts in English: <strong>the past</strong> (used to), <strong>the present</strong> (responsible for), <strong>the future</strong> (going to / might). Which part is hardest for you?</div>
+          <div class="wu-card-hint">&#128161; Majority will say &quot;the future.&quot; Use that: &quot;Today we add the future dimension to your career narrative.&quot; Creates need.</div>
+        </div>
+      </div>
+      <div class="wu-card">
+        <img class="wu-card-img" src="https://images.unsplash.com/photo-1606765962248-7ff407b51667?w=600&q=80" alt="Andrea at trade fair" loading="lazy">
+        <div class="wu-card-body">
+          <div class="wu-card-q">&#128101; <strong>Andrea&apos;s challenge:</strong> A client asked her: &quot;What are your plans for the next 6 months?&quot; She froze. She could describe past and present, but not the future. What could she have said?</div>
+          <div class="wu-card-hint">&#128161; Let students brainstorm in Spanish, then translate. Expected: &quot;Vamos a expandir / Quizas abra / Puede que cambie.&quot; Write English on board — they become grammar vocabulary.</div>
+        </div>
+      </div>
+      <div class="wu-card">
+        <img class="wu-card-img" src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=600&q=80" alt="Translation challenge" loading="lazy">
+        <div class="wu-card-body">
+          <div class="wu-card-q">&#127775; <strong>Translation challenge:</strong> Say in English: (1) &quot;Probablemente cambie de area.&quot; (2) &quot;Vamos a contratar tres personas.&quot; (3) &quot;Quizas me asciendan.&quot; Try before notes!</div>
+          <div class="wu-card-hint">&#128161; Collect attempts. Save wrong versions for the grammar error box. Expected errors: &quot;I will probably change&quot; (overconfident) / &quot;I might probably change&quot; (double marker — both wrong).</div>
+        </div>
+      </div>
+    </div>
+    <div class="quick-win">
+      <div class="qw-icon">&#128483;&#65039;</div>
+      <div>
+        <div class="qw-label">Quick Win — 20 seconds</div>
+        <div class="qw-text">Say this right now: <strong>&quot;I used to work in [area], but now I am responsible for [role]. Next year, I might [future possibility].&quot;</strong></div>
+        <div class="qw-try">That is your complete career arc — past, present, and future — in one breath. Today we make that third part fluent.</div>
+      </div>
+      <div class="timer-wrap">
+        <svg class="timer-svg" width="54" height="54" viewBox="0 0 54 54">
+          <circle cx="27" cy="27" r="23" stroke="rgba(249,115,22,.2)" stroke-width="4" fill="none"/>
+          <circle id="arcQW" cx="27" cy="27" r="23" stroke="var(--accent)" stroke-width="4" fill="none" stroke-dasharray="144.51" stroke-dashoffset="0"/>
+          <text id="txtQW" x="27" y="32" text-anchor="middle" font-family="Syne,sans-serif" font-size="13" font-weight="800" fill="var(--accent)" transform="rotate(90 27 27)">20</text>
+        </svg>
+        <button onclick="startTimer('arcQW','txtQW',20,'b1',144.51)" style="background:rgba(249,115,22,.1);border:1px solid rgba(249,115,22,.3);color:var(--accent);padding:4px 10px;cursor:pointer;font-family:var(--font-head);font-size:9px;font-weight:700;border-radius:5px;margin-top:4px">START</button>
+      </div>
+    </div>
+    <div class="tn"><div class="tn-lbl">&#9889; Teacher Note — Warm-Up</div><div class="tn-text">S2A builds on S1A by adding the FUTURE dimension. The warm-up does three things: (1) retrieves S1A content, (2) creates a felt need for future language, (3) gives live error material for grammar. Card 4 is the diagnostic — write attempts on the board untouched. In Grammar &sect;4 you will reference them. Key expected error: &quot;I will probably change&quot; (overconfident) OR &quot;I might probably change&quot; (double uncertainty marker). Both need addressing. Layer 3 challenge: ask the strongest student to say a career sentence using ALL THREE time frames before the grammar section begins.</div></div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="sec-hdr">
+    <div class="sec-num">&#167;2</div>
+    <div><div class="sec-label">Vocabulary — <em>Career Trajectory &amp; Professional Plans</em></div><div class="sec-sub">10 key words · IPA · Click to hear · 10 min</div></div>
+    <div class="sec-dur">&#9201; 10 MIN</div>
+  </div>
+  <img class="img-banner" src="https://images.unsplash.com/photo-1485217988980-11786ced9454?w=900&q=80" alt="Career planning" loading="lazy">
+  <div class="sec-body">
+    <div class="vocab-grid">
+      <div class="vocab-card" onclick="speak('trajectory')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1549737328-8a136087072e?w=600&q=80" alt="trajectory" loading="lazy">
+        <div class="vocab-card-body"><div class="vc-word">trajectory</div><div class="vc-ipa">/tr&#601;&#712;d&#658;ek.t&#601;r.i/</div><div class="vc-def">the path or direction of your career over time</div><div class="vc-ex">My trajectory started in quality control, moved into operations, and now I manage the whole Bajío region.</div><div class="vc-sp">trayectoria</div></div>
+      </div>
+      <div class="vocab-card" onclick="speak('promotion')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=600&q=80" alt="promotion" loading="lazy">
+        <div class="vocab-card-body"><div class="vc-word">promotion</div><div class="vc-ipa">/pr&#601;&#712;m&#601;&#650;.&#643;&#601;n/</div><div class="vc-def">advancement to a higher position at work</div><div class="vc-ex">I might get a promotion next quarter if we hit our sales targets.</div><div class="vc-sp">ascenso</div></div>
+      </div>
+      <div class="vocab-card" onclick="speak('expand')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1543007630-9710e4a00a20?w=600&q=80" alt="expand" loading="lazy">
+        <div class="vocab-card-body"><div class="vc-word">expand</div><div class="vc-ipa">/&#618;k&#712;sp&#230;nd/</div><div class="vc-def">to grow larger or extend into new areas</div><div class="vc-ex">We are going to expand to León and Querétaro next year. It is already confirmed.</div><div class="vc-sp">expandirse / crecer</div></div>
+      </div>
+      <div class="vocab-card" onclick="speak('challenge')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=600&q=80" alt="challenge" loading="lazy">
+        <div class="vocab-card-body"><div class="vc-word">challenge</div><div class="vc-ipa">/&#712;t&#643;&#230;l.&#618;nd&#658;/</div><div class="vc-def">a difficult situation that tests your skills</div><div class="vc-ex">The biggest challenge in my role is managing a team across three different cities.</div><div class="vc-sp">reto / desafío</div></div>
+      </div>
+      <div class="vocab-card" onclick="speak('transition')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=600&q=80" alt="transition" loading="lazy">
+        <div class="vocab-card-body"><div class="vc-word">transition</div><div class="vc-ipa">/tr&#230;n&#712;z&#618;&#643;.&#601;n/</div><div class="vc-def">the process of changing from one role or phase to another</div><div class="vc-ex">The transition from individual contributor to team leader was the hardest part of my career.</div><div class="vc-sp">transición</div></div>
+      </div>
+      <div class="vocab-card" onclick="speak('goal')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1506784983877-45594efa4cbe?w=600&q=80" alt="goal" loading="lazy">
+        <div class="vocab-card-body"><div class="vc-word">goal</div><div class="vc-ipa">/&#609;&#601;&#650;l/</div><div class="vc-def">a specific result you are working towards professionally</div><div class="vc-ex">My goal for this year is to reduce delivery times by 20% and get certified in project management.</div><div class="vc-sp">meta / objetivo</div></div>
+      </div>
+      <div class="vocab-card" onclick="speak('sector')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?w=600&q=80" alt="sector" loading="lazy">
+        <div class="vocab-card-body"><div class="vc-word">sector</div><div class="vc-ipa">/&#712;sek.t&#601;r/</div><div class="vc-def">a distinct part of the economy or industry</div><div class="vc-ex">I used to work in the retail sector, but now I am in manufacturing. It is much more dynamic.</div><div class="vc-sp">sector / ramo</div></div>
+      </div>
+      <div class="vocab-card" onclick="speak('specialize')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=600&q=80" alt="specialize" loading="lazy">
+        <div class="vocab-card-body"><div class="vc-word">specialize</div><div class="vc-ipa">/&#712;spe&#643;.&#601;.la&#618;z/</div><div class="vc-def">to focus your work or training on one particular area</div><div class="vc-ex">I am going to specialize in supply chain management. I start a course in September.</div><div class="vc-sp">especializarse</div></div>
+      </div>
+      <div class="vocab-card" onclick="speak('achieve')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=600&q=80" alt="achieve" loading="lazy">
+        <div class="vocab-card-body"><div class="vc-word">achieve</div><div class="vc-ipa">/&#601;&#712;t&#643;i&#720;v/</div><div class="vc-def">to successfully reach a goal through effort</div><div class="vc-ex">In my previous role I achieved a 30% cost reduction in six months.</div><div class="vc-sp">lograr / alcanzar</div></div>
+      </div>
+      <div class="vocab-card" onclick="speak('develop')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1455390582262-044cdead277a?w=600&q=80" alt="develop" loading="lazy">
+        <div class="vocab-card-body"><div class="vc-word">develop</div><div class="vc-ipa">/d&#618;&#712;vel.&#601;p/</div><div class="vc-def">to grow a skill or area over time through effort</div><div class="vc-ex">I should develop my English more consistently. I could use it in every client call I have.</div><div class="vc-sp">desarrollar</div></div>
+      </div>
+    </div>
+    <div class="micro-speak"><div class="ms-icon">&#128483;&#65039;</div><div class="ms-text"><strong>Micro-Speaking:</strong> Choose 3 words. Use each one about YOUR real career: past, present, future. Say them out loud. Example: &quot;My trajectory started in sales. My biggest challenge now is time management. My goal is to specialize in logistics.&quot;</div></div>
+    <div class="quiz-wrap">
+      <div class="quiz-hdr"><div class="quiz-hdr-title">&#9889; Vocabulary Quiz — 10 Questions</div><span style="font-size:10.5px;color:var(--muted)">8+ correct = Badge &#127751;</span></div>
+      <div class="quiz-progress"><div class="quiz-progress-fill" id="vqBar"></div></div>
+      <div class="quiz-body"><div class="quiz-q" id="vqQ">Loading...</div><div class="quiz-opts" id="vqOpts"></div><div class="quiz-score" id="vqScore"></div><button class="quiz-restart" id="vqRestart" onclick="startQuiz()">Try Again</button></div>
+    </div>
+    <div class="tn"><div class="tn-lbl">&#9889; Teacher Note — Vocabulary</div><div class="tn-text">Prioritize: trajectory, promotion, transition — these three unlock the career story narrative that runs through M6 sessions 2–4. Pronunciation focus: trajectory /tr&#601;&#712;d&#658;ek.t&#601;r.i/ — 4 syllables, stress on 2nd. Mexican learners say TRA-yec-TO-ria (Spanish stress) — shift to /tr&#601;-DJEK-t&#601;r-i/. achieve /&#601;&#712;t&#643;i&#720;v/ — two syllables, not three. After the quiz: &quot;Which word describes YOUR work this week?&quot; drives personalization and makes vocabulary stick.</div></div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="sec-hdr">
+    <div class="sec-num">&#167;3</div>
+    <div><div class="sec-label">Colloquial — <em>Career Talk Phrases</em></div><div class="sec-sub">4 natural expressions for talking about your professional path · 5 min</div></div>
+    <div class="sec-dur">&#9201; 5 MIN</div>
+  </div>
+  <img class="img-banner" src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=900&q=80" alt="Career talk" loading="lazy">
+  <div class="sec-body">
+    <div class="coll-grid">
+      <div class="coll-card" onclick="speak(&quot;I'm moving up.&quot;)">
+        <img class="coll-card-img" src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=600&q=80" alt="moving up" loading="lazy">
+        <div class="coll-body"><div class="coll-phrase">&quot;I&apos;m moving up.&quot;</div><div class="coll-ctx">Informal way to say you are advancing in your career. Sounds confident and natural at all professional levels.</div><div class="coll-ex">&quot;How is work? — Really well. I&apos;m moving up — I might get the regional manager role next quarter.&quot;</div></div>
+      </div>
+      <div class="coll-card" onclick="speak(&quot;Back in the day...&quot;)">
+        <img class="coll-card-img" src="https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=600&q=80" alt="back in the day" loading="lazy">
+        <div class="coll-body"><div class="coll-phrase">&quot;Back in the day&hellip;&quot;</div><div class="coll-ctx">Casual opener for the past — equivalent to &quot;antes&quot; or &quot;en aquel entonces.&quot; Natural partner for <em>used to</em>.</div><div class="coll-ex">&quot;Back in the day, I used to work 60-hour weeks. Now I am much better at managing my time.&quot;</div></div>
+      </div>
+      <div class="coll-card" onclick="speak(&quot;I'm looking forward to it.&quot;)">
+        <img class="coll-card-img" src="https://images.unsplash.com/photo-1506784983877-45594efa4cbe?w=600&q=80" alt="looking forward" loading="lazy">
+        <div class="coll-body"><div class="coll-phrase">&quot;I&apos;m looking forward to it.&quot;</div><div class="coll-ctx">Express enthusiasm about a future event. Warmer than &quot;I am excited.&quot; Use after confirming a plan.</div><div class="coll-ex">&quot;We are going to launch the new product line in Q2. Honestly, I am really looking forward to it.&quot;</div></div>
+      </div>
+      <div class="coll-card" onclick="speak(&quot;It's a stepping stone.&quot;)">
+        <img class="coll-card-img" src="https://images.unsplash.com/photo-1543007630-9710e4a00a20?w=600&q=80" alt="stepping stone" loading="lazy">
+        <div class="coll-body"><div class="coll-phrase">&quot;It&apos;s a stepping stone.&quot;</div><div class="coll-ctx">Describes a current role as part of a bigger plan. Shows strategic thinking. Very well-received in interviews and networking.</div><div class="coll-ex">&quot;This coordinator role is not my end goal. For me, it&apos;s a stepping stone toward a director position in 3–5 years.&quot;</div></div>
+      </div>
+    </div>
+    <div class="tn"><div class="tn-lbl">&#9889; Teacher Note — Colloquial</div><div class="tn-text">Say: &quot;Click each phrase to hear it — repeat with me.&quot; Then: &quot;Use ALL FOUR in one 60-second career monologue.&quot; Model: &quot;Back in the day, I used to work in purchasing. Now I am moving up — responsible for three departments. This role is a stepping stone to something bigger, and I am really looking forward to it.&quot; Key error: &quot;I am looking forward&quot; is always progressive — never simple present in casual speech. &quot;Back in the day&quot; is invariable — no plural. Cultural note: &quot;stepping stone&quot; lets Mexican professionals express ambition without sounding arrogant — teach this as a register tool.</div></div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="sec-hdr">
+    <div class="sec-num">&#167;4</div>
+    <div><div class="sec-label">Grammar — <em>Future in the Career Narrative</em></div><div class="sec-sub">Problem → Tool · Going to / Will / Might · Certainty scale · 12–15 min</div></div>
+    <div class="sec-dur">&#9201; 12–15 MIN</div>
+  </div>
+  <img class="img-banner" src="https://images.unsplash.com/photo-1551135049-8a33b5883817?w=900&q=80" alt="Planning future career steps" loading="lazy">
+  <div class="sec-body">
+    <div class="prob-card">
+      <div class="prob-lbl">&#128680; Real Work Situation</div>
+      <div class="prob-scenario">You are at a networking event. Someone asks: &quot;What are your plans for next year?&quot; You want to say: (1) your company is DEFINITELY opening a new office in León — the board approved it last month, and (2) you MIGHT get promoted, but it depends on results. You know &quot;might&quot; from M4, but you forget which future form shows certainty vs possibility. So you say &quot;I will open a new office&quot; for everything — even when you mean &quot;maybe.&quot;</div>
+      <div class="prob-thought">The problem: &quot;will,&quot; &quot;going to,&quot; and &quot;might&quot; all talk about the future — but they signal very different levels of certainty. Using the wrong one sends the wrong professional signal.</div>
+    </div>
+    <div class="tool-card">
+      <div class="tool-lbl">&#128295; The Tool — Three Futures, Three Certainty Levels</div>
+      <div class="tool-text">
+        Think of a <strong style="color:var(--accent)">certainty scale</strong>:<br><br>
+        <strong style="color:var(--success)">100% certain + planned:</strong> <em>be going to</em> &rarr; &quot;We <strong>are going to</strong> open a new office. The board approved it.&quot;<br>
+        <strong style="color:var(--warn)">Spontaneous / certain this moment:</strong> <em>will</em> &rarr; &quot;I&apos;<strong>ll</strong> send you the brochure right now.&quot;<br>
+        <strong style="color:var(--cyan)">30–60% — possible, not sure:</strong> <em>might / may</em> &rarr; &quot;I <strong>might</strong> get promoted next quarter — it depends on results.&quot;<br><br>
+        In a career narrative: <strong style="color:var(--accent)">going to</strong> = your plan. <strong style="color:var(--cyan)">Might</strong> = your possibility. <strong style="color:var(--success)">Will</strong> = spontaneous commitment. Never interchangeable in professional English.
+      </div>
+    </div>
+    <table class="gram-table">
+      <thead><tr><th>Structure</th><th>Certainty</th><th>When to use</th><th>Career example</th></tr></thead>
+      <tbody>
+        <tr><td><span class="g-or">be going to + verb</span></td><td style="color:var(--success);font-weight:700">~100%</td><td>Confirmed plans — decision already made</td><td class="g-ex">We are going to expand to three cities. / I am going to specialize in supply chain.</td></tr>
+        <tr><td><span class="g-vl">will + verb</span></td><td style="color:var(--warn);font-weight:700">~100%</td><td>Spontaneous decisions, promises, offers made in the moment</td><td class="g-ex">I will send you my LinkedIn profile. / I will reach out next week.</td></tr>
+        <tr><td><span class="g-cy">might / may + verb</span></td><td style="color:var(--cyan);font-weight:700">30–60%</td><td>Possibilities you are not sure about; depends on other factors</td><td class="g-ex">I might get promoted if we hit the targets. / The company may open a new branch.</td></tr>
+        <tr><td><span class="g-or">Present continuous</span></td><td style="color:var(--success);font-weight:700">~100%</td><td>Fixed, confirmed future arrangements (calendar events)</td><td class="g-ex">I am meeting the director on Thursday. / We are flying to Monterrey on Friday.</td></tr>
+      </tbody>
+    </table>
+    <div class="err-box">
+      &#9888;&#65039; <strong>Common Errors — future in career narratives:</strong><br>
+      &#10007; &quot;I will probably change area next year.&quot; &rarr; &#10003; <strong>I might change area</strong> — &quot;probably&quot; + &quot;will&quot; is redundant; use might for uncertainty<br>
+      &#10007; &quot;I might probably get promoted.&quot; &rarr; &#10003; <strong>I might get promoted</strong> — never stack two uncertainty markers<br>
+      &#10007; &quot;We going to expand.&quot; &rarr; &#10003; <strong>We are going to expand</strong> — &quot;be&quot; is obligatory; never drop it<br>
+      &#10007; &quot;I am going to specialize, maybe.&quot; &rarr; &#10003; <strong>I might specialize</strong> — going to = confirmed plan, not possibility
+    </div>
+
+    <div class="act-title">&#9889; ACTIVITY A — Which future form fits?</div>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:14px">Read the context clue in brackets. Choose the correct future form.</p>
+    <div class="opt-group">
+      <div class="opt-q">1. &quot;_____ send you the product catalogue right now. Do you have your email handy?&quot; [spontaneous decision, made in this moment]</div>
+      <div class="opts" id="q1">
+        <button class="opt" onclick="checkOpt(this,&quot;I'll&quot;,'q1')">I&apos;ll</button>
+        <button class="opt" onclick="checkOpt(this,&quot;I'll&quot;,'q1')">I&apos;m going to</button>
+        <button class="opt" onclick="checkOpt(this,&quot;I'll&quot;,'q1')">I might</button>
+      </div>
+    </div>
+    <div class="opt-group">
+      <div class="opt-q">2. &quot;We _____ open a distribution center in Salamanca next year. The board approved it last month.&quot; [confirmed plan]</div>
+      <div class="opts" id="q2">
+        <button class="opt" onclick="checkOpt(this,'are going to','q2')">will</button>
+        <button class="opt" onclick="checkOpt(this,'are going to','q2')">are going to</button>
+        <button class="opt" onclick="checkOpt(this,'are going to','q2')">might</button>
+      </div>
+    </div>
+    <div class="opt-group">
+      <div class="opt-q">3. &quot;I _____ get the regional manager position — but it depends on this quarter&apos;s review.&quot; [uncertain possibility]</div>
+      <div class="opts" id="q3">
+        <button class="opt" onclick="checkOpt(this,'might','q3')">am going to</button>
+        <button class="opt" onclick="checkOpt(this,'might','q3')">will</button>
+        <button class="opt" onclick="checkOpt(this,'might','q3')">might</button>
+      </div>
+    </div>
+    <div class="opt-group">
+      <div class="opt-q">4. &quot;The director _____ attend the conference in Guadalajara. Her assistant confirmed it this morning.&quot; [confirmed arrangement]</div>
+      <div class="opts" id="q4">
+        <button class="opt" onclick="checkOpt(this,'is attending','q4')">will attend</button>
+        <button class="opt" onclick="checkOpt(this,'is attending','q4')">is attending</button>
+        <button class="opt" onclick="checkOpt(this,'is attending','q4')">might attend</button>
+      </div>
+    </div>
+    <div class="opt-group">
+      <div class="opt-q">5. &quot;I _____ specialize in digital supply chain management. I start my certification in September.&quot; [personal plan, already decided]</div>
+      <div class="opts" id="q5">
+        <button class="opt" onclick="checkOpt(this,'am going to','q5')">will</button>
+        <button class="opt" onclick="checkOpt(this,'am going to','q5')">am going to</button>
+        <button class="opt" onclick="checkOpt(this,'am going to','q5')">might</button>
+      </div>
+    </div>
+    <div class="micro-speak" style="margin-top:10px"><div class="ms-icon">&#128483;&#65039;</div><div class="ms-text"><strong>Micro-Speaking:</strong> Tell your partner TWO things about your professional future: one confirmed plan (<em>going to</em>) and one possibility (<em>might</em>). Use your real career. Example: &quot;I am going to finish my MBA in December. I might apply for a senior position next year.&quot;</div></div>
+
+    <div class="act-title">&#9889; ACTIVITY B — Reorder the career story</div>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:14px">Drag the parts into the correct order to form a natural professional introduction using all three time frames.</p>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:6px"><strong style="color:var(--txt)">Sentence 1:</strong> (past &rarr; present &rarr; future possibility)</p>
+    <ul class="reorder-list" id="order1">
+      <li class="reorder-item" draggable="true"><span class="drag-handle">&#8942;</span>and I might take on a director role in the next two years.</li>
+      <li class="reorder-item" draggable="true"><span class="drag-handle">&#8942;</span>I used to work in procurement,</li>
+      <li class="reorder-item" draggable="true"><span class="drag-handle">&#8942;</span>but now I manage operations for the whole region,</li>
+    </ul>
+    <button class="check-order-btn" onclick="checkOrder('order1',['I used to work in procurement,','but now I manage operations for the whole region,','and I might take on a director role in the next two years.'],'fb1')">Check Order</button>
+    <div class="fb" id="fb1"></div>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:6px;margin-top:16px"><strong style="color:var(--txt)">Sentence 2:</strong> (confirmed plan + possibility + advice)</p>
+    <ul class="reorder-list" id="order2">
+      <li class="reorder-item" draggable="true"><span class="drag-handle">&#8942;</span>so you should register early — the seats fill up fast.</li>
+      <li class="reorder-item" draggable="true"><span class="drag-handle">&#8942;</span>The company is going to offer leadership training next month,</li>
+      <li class="reorder-item" draggable="true"><span class="drag-handle">&#8942;</span>and I might recommend a few people from my team,</li>
+    </ul>
+    <button class="check-order-btn" onclick="checkOrder('order2',['The company is going to offer leadership training next month,','and I might recommend a few people from my team,','so you should register early — the seats fill up fast.'],'fb2')">Check Order</button>
+    <div class="fb" id="fb2"></div>
+    <div class="tn"><div class="tn-lbl">&#9889; Teacher Note — Grammar</div><div class="tn-text">Draw the certainty scale on the board: 100% (going to) / 100% spontaneous (will) / 30–60% (might). The visual prevents the most common confusion. Activity A context clues: Q1 &quot;right now&quot; &rarr; will; Q2 &quot;approved last month&quot; &rarr; going to; Q3 &quot;it depends&quot; &rarr; might; Q4 &quot;confirmed this morning&quot; &rarr; present continuous. Teach explicitly: &quot;Read the context before choosing the verb — the clue is always in the situation, not the grammar table.&quot; After Activity B: &quot;Can you replace the content in Sentence 2 with something from YOUR company?&quot; forces immediate transfer to real context.</div></div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="sec-hdr">
+    <div class="sec-num">&#167;5</div>
+    <div><div class="sec-label">Mini-Game — <em>Group Sort: Which module?</em></div><div class="sec-sub">Sort each sentence into its A2.2 module · Career context · 8 min</div></div>
+    <div class="sec-dur">&#9201; 8 MIN</div>
+  </div>
+  <img class="img-banner" src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=900&q=80" alt="Team sorting activity" loading="lazy">
+  <div class="sec-body">
+    <div class="gsort-wrap">
+      <div class="gsort-hdr"><div class="gsort-hdr-title">&#128218; Group Sort — Past / Advice / Future</div><span style="font-size:11px;color:var(--muted)">Click a sentence &rarr; then click a bucket to place it</span></div>
+      <div class="gsort-body">
+        <p style="font-size:12.5px;color:var(--muted);margin-bottom:12px">Each sentence belongs to one A2.2 module. Click a sentence to select it, then click the correct bucket. Score: <span id="gsortScore" style="color:var(--accent);font-weight:700">0</span> / 9</p>
+        <div class="gsort-items" id="gsortItems">
+          <div class="gsort-item" id="gs1" onclick="gsortSelect('gs1','m1')">I used to report to the operations manager directly.</div>
+          <div class="gsort-item" id="gs2" onclick="gsortSelect('gs2','m3')">You should update your LinkedIn before the interview.</div>
+          <div class="gsort-item" id="gs3" onclick="gsortSelect('gs3','m4')">The client might cancel the order — it depends on the quote.</div>
+          <div class="gsort-item" id="gs4" onclick="gsortSelect('gs4','m1')">Back in the day, I didn&apos;t use to manage a team at all.</div>
+          <div class="gsort-item" id="gs5" onclick="gsortSelect('gs5','m4')">We are going to hire three new engineers next quarter.</div>
+          <div class="gsort-item" id="gs6" onclick="gsortSelect('gs6','m3')">I could apply for the senior position — it&apos;s worth trying.</div>
+          <div class="gsort-item" id="gs7" onclick="gsortSelect('gs7','m1')">She used to specialize in finance before moving to HR.</div>
+          <div class="gsort-item" id="gs8" onclick="gsortSelect('gs8','m4')">I might get promoted if I achieve my Q3 targets.</div>
+          <div class="gsort-item" id="gs9" onclick="gsortSelect('gs9','m3')">You shouldn&apos;t promise results you can&apos;t deliver yet.</div>
+        </div>
+        <div class="gsort-buckets">
+          <div class="gsort-bucket" onclick="gsortDrop('m1')"><div class="gsort-bucket-lbl m1-lbl">&#128336; M1 — Used to (Past habits)</div><div class="gsort-bucket-items" id="bucket-m1"></div></div>
+          <div class="gsort-bucket" onclick="gsortDrop('m3')"><div class="gsort-bucket-lbl m3-lbl">&#128203; M3 — Should/Could (Advice)</div><div class="gsort-bucket-items" id="bucket-m3"></div></div>
+          <div class="gsort-bucket" onclick="gsortDrop('m4')"><div class="gsort-bucket-lbl m4-lbl">&#128336; M4 — Might/Going to (Future)</div><div class="gsort-bucket-items" id="bucket-m4"></div></div>
+        </div>
+        <button class="gsort-check-btn" onclick="gsortCheck()">Check All &#10003;</button>
+        <div class="gsort-result" id="gsortResult"></div>
+      </div>
+    </div>
+    <div class="tn tn-cy"><div class="tn-lbl">&#9889; Teacher Note — Group Sort</div><div class="tn-text">Run in pairs — 3 minutes silent sorting, then compare and discuss. After revealing answers, ask: &quot;For any sentence you got wrong, WHY did you choose that bucket?&quot; Key focus: gs5 (&quot;going to hire&quot;) — students may place this in M1 or M2. Clarify: going to is ALWAYS future certainty, not past habit or obligation. gs6 (&quot;could apply&quot;) — students may confuse with M4 (might). Clarify: &quot;could&quot; for suggestion = M3 advice. &quot;Might&quot; for possibility = M4. Same word family, different function. This is the A2.2 capstone distinction.</div></div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="sec-hdr">
+    <div class="sec-num">&#167;6</div>
+    <div><div class="sec-label">Listening — <em>Andrea&apos;s Career Story</em></div><div class="sec-sub">ElevenLabs audio · Past, present, future integrated · 10–12 min</div></div>
+    <div class="sec-dur">&#9201; 10–12 MIN</div>
+  </div>
+  <img class="img-banner" src="https://images.unsplash.com/photo-1475721027785-f74eccf877e2?w=900&q=80" alt="Professional presenting career story" loading="lazy">
+  <div class="sec-body">
+    <div class="listen-wrap">
+      <img class="listen-img" src="https://images.unsplash.com/photo-1543269664-76bc3997d9ea?w=900&q=80" alt="Andrea sharing career trajectory" loading="lazy">
+      <div class="listen-inner">
+        <button class="play-btn-aud" id="playBtn">&#9654;</button>
+        <div><div class="track-title">Andrea&apos;s Career Story — Vertex Logistics, Celaya</div><div class="track-sub">A2.2 · M6 · S2A · Voice: Sarah (American English) · Speed: 0.82 · ~55 sec</div></div>
+      </div>
+      <div class="waveform" id="wv"></div>
+    </div>
+    <button class="script-toggle" onclick="toggleScript()">&#9660; Show ElevenLabs Script</button>
+    <div class="script-box" id="scriptBox">Hi, I'm Andrea Soto. Let me tell you a little about my career trajectory.
+
+Back in the day, I used to work in customer service for a small company in Irapuato. It was a good job, but I didn't use to have much responsibility. I decided to transition into logistics, and honestly, it was the best professional decision I have ever made.
+
+Now I am responsible for regional sales at Vertex Logistics in Celaya. My team covers the whole Bajío region — Guanajuato, Querétaro, and Jalisco. It is a bigger challenge than I expected, but I am looking forward to every part of it.
+
+As for the future, the company is going to expand to three new cities next year — that is already confirmed. I might also take on a director role if the expansion goes well. And personally, I am going to specialize in supply chain management. I start a certification program in September. Back in the day, I never thought this was possible. But these days, I can see a clear path ahead. This role is definitely a stepping stone.
+    </div>
+    <div class="tn"><div class="tn-lbl">&#9889; Teacher Note — Listening</div><div class="tn-text">ElevenLabs: Voice = Sarah, Speed = 0.82, Stability = 0.65, Similarity = 0.80. Before playing: &quot;Listen for THREE time frames — past, present, future. Count how many of each you hear.&quot; (Past: used to work, didn&apos;t use to have, decided; Present: responsible for, covers, looking forward to; Future: going to expand, might take on, going to specialize — 12+ instances across all modules). After: &quot;Which module do you hear the most?&quot; (M4 dominates the closing). Both colloquial phrases from &sect;3 appear naturally: &quot;back in the day&quot; and &quot;stepping stone&quot; — point this out to show how collocations embed into real speech.</div></div>
+    <div class="act-title" style="padding-top:16px">Comprehension — True or False?</div>
+    <div class="tf-row" style="border-top:1px solid var(--border-dim)">
+      <div class="tf-stmt">1. Andrea used to work in logistics before joining Vertex.</div>
+      <div class="tf-btns"><button class="tf-btn" onclick="checkTF(this,false,'tf1')">TRUE</button><button class="tf-btn" onclick="checkTF(this,true,'tf1')">FALSE</button></div>
+    </div>
+    <div class="tf-row">
+      <div class="tf-stmt">2. Andrea is currently responsible for sales across Guanajuato, Querétaro, and Jalisco.</div>
+      <div class="tf-btns"><button class="tf-btn" onclick="checkTF(this,true,'tf2')">TRUE</button><button class="tf-btn" onclick="checkTF(this,false,'tf2')">FALSE</button></div>
+    </div>
+    <div class="tf-row">
+      <div class="tf-stmt">3. The company&apos;s expansion to new cities is still uncertain — not yet confirmed.</div>
+      <div class="tf-btns"><button class="tf-btn" onclick="checkTF(this,false,'tf3')">TRUE</button><button class="tf-btn" onclick="checkTF(this,true,'tf3')">FALSE</button></div>
+    </div>
+    <div class="tf-row">
+      <div class="tf-stmt">4. Andrea&apos;s certification in supply chain management starts in September.</div>
+      <div class="tf-btns"><button class="tf-btn" onclick="checkTF(this,true,'tf4')">TRUE</button><button class="tf-btn" onclick="checkTF(this,false,'tf4')">FALSE</button></div>
+    </div>
+    <div class="tf-row" style="border-bottom:none">
+      <div class="tf-stmt">5. Andrea considers her current position as her final career destination.</div>
+      <div class="tf-btns"><button class="tf-btn" onclick="checkTF(this,false,'tf5')">TRUE</button><button class="tf-btn" onclick="checkTF(this,true,'tf5')">FALSE</button></div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="sec-hdr">
+    <div class="sec-num">&#167;SP</div>
+    <div><div class="sec-label">Speaking Practice — <em>Your Career in Three Time Frames</em></div><div class="sec-sub">Guided production · Pair and class · 10–12 min</div></div>
+    <div class="sec-dur">&#9201; 10–12 MIN</div>
+  </div>
+  <img class="img-banner" src="https://images.unsplash.com/photo-1560439514-4e9645039924?w=900&q=80" alt="Speaking practice" loading="lazy">
+  <div class="sec-body">
+    <div class="speak-grid">
+      <div class="speak-card">
+        <div class="speak-num"><span class="speak-tag st-ts">T-S</span> Question 1 — Recall</div>
+        <div class="speak-q">What did Andrea use to talk about her past, present, and future? Name at least one structure for each time frame.</div>
+        <div class="speak-hint">Grammar hint: Past = used to. Present = responsible for / currently. Future = going to / might. Point to the table in &sect;4 if needed.</div>
+      </div>
+      <div class="speak-card">
+        <div class="speak-num"><span class="speak-tag st-ss">S-S</span> Question 2 — Apply</div>
+        <div class="speak-q">Tell your partner YOUR OWN career story using all three time frames. Use <em>used to</em> for the past, <em>responsible for</em> for now, and either <em>going to</em> or <em>might</em> for the future. Minimum 4 sentences.</div>
+        <div class="speak-hint">Grammar hint: &quot;I used to [past role]. Now I am responsible for [area]. I am going to [confirmed plan] and I might [possibility].&quot;</div>
+      </div>
+      <div class="speak-card">
+        <div class="speak-num"><span class="speak-tag st-ss">S-S</span> Question 3 — Integrate</div>
+        <div class="speak-q">Your partner describes a future plan at their company. You give advice using <em>should</em> and <em>could</em>. Then switch. Example: &quot;We are going to expand to León.&quot; &rarr; &quot;You should prepare a market study. You could also visit the area first.&quot;</div>
+        <div class="speak-hint">Grammar hint: Combine M3 (advice) with M4 (future plan) — the natural combination in professional conversation.</div>
+      </div>
+      <div class="speak-card">
+        <div class="speak-num"><span class="speak-tag st-cl">Class</span> Question 4 — Discussion</div>
+        <div class="speak-q">Class debate: Is it better to have ONE clear career plan (going to) or stay flexible (might)? Use both structures to defend your position. &quot;I think you should have a clear plan because...&quot; vs &quot;I think you should stay flexible because...&quot;</div>
+        <div class="speak-hint">Grammar hint: &quot;If you have a plan, you should... however, you might also miss...&quot; — use M3 + M4 + comparatives from M5.</div>
+      </div>
+      <div class="speak-card">
+        <div class="speak-num"><span class="speak-tag st-ts">T-S</span> Question 5 — Challenge</div>
+        <div class="speak-q">Use all 4 colloquial phrases from &sect;3 in one 60-second monologue about your real career. &quot;Back in the day...&quot; + &quot;I am moving up...&quot; + &quot;It is a stepping stone...&quot; + &quot;I am looking forward to it.&quot; Go!</div>
+        <div class="speak-hint">Goal: connect the four phrases naturally. They should bridge the A2.2 grammar structures seamlessly.</div>
+      </div>
+      <div class="speak-card">
+        <div class="speak-num"><span class="speak-tag st-cl">Class</span> Question 6 — Production</div>
+        <div class="speak-q">Two-minute professional introduction to the class: past (<em>used to</em>) + present (<em>responsible for</em>) + future (<em>going to</em> + <em>might</em>). Include at least one colloquial phrase. Teacher uses the timer below.</div>
+        <div class="speak-hint">This is the cumulative M6 task — the full career arc in English. Class votes: who gave the most compelling career story?</div>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:16px;margin-top:20px;background:var(--surface);border:1px solid var(--border-dim);border-radius:10px;padding:16px 20px">
+      <div class="timer-wrap">
+        <svg class="timer-svg" width="90" height="90" viewBox="0 0 90 90">
+          <circle cx="45" cy="45" r="38" stroke="rgba(249,115,22,.2)" stroke-width="6" fill="none"/>
+          <circle id="arcSP" cx="45" cy="45" r="38" stroke="var(--accent)" stroke-width="6" fill="none" stroke-dasharray="238.76" stroke-dashoffset="0"/>
+          <text id="txtSP" x="45" y="44" text-anchor="middle" font-family="Syne,sans-serif" font-size="18" font-weight="800" fill="var(--accent)" transform="rotate(90 45 45)">2:00</text>
+          <text x="45" y="58" text-anchor="middle" font-family="Syne,sans-serif" font-size="9" fill="rgba(249,115,22,.7)" transform="rotate(90 45 45)">CAREER</text>
+        </svg>
+      </div>
+      <div>
+        <div style="font-family:var(--font-head);font-size:12px;font-weight:700;color:var(--accent);letter-spacing:1px;margin-bottom:8px">2-MINUTE CAREER INTRODUCTION</div>
+        <button onclick="startTimer('arcSP','txtSP',120,'b3',238.76)" style="background:rgba(249,115,22,.1);border:1px solid rgba(249,115,22,.3);color:var(--accent);padding:7px 18px;cursor:pointer;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1px;border-radius:7px;margin-right:8px">START</button>
+        <button onclick="resetArc('arcSP','txtSP',120,238.76)" style="background:var(--surface2);border:1px solid var(--border-dim);color:var(--muted);padding:7px 14px;cursor:pointer;font-family:var(--font-head);font-size:10px;font-weight:700;border-radius:7px">RESET</button>
+      </div>
+    </div>
+    <div class="om-wrap">
+      <div class="om-stmt">&quot;In a professional career, it is better to plan everything carefully than to stay flexible and open to unexpected opportunities.&quot;</div>
+      <div class="om-track"><div class="om-bar" id="meterBar" style="width:50%"></div></div>
+      <div class="om-labels"><span>Disagree</span><span>50/50</span><span>Agree</span></div>
+      <div class="om-btns">
+        <button class="om-btn om-dis" onclick="moveMeter(-10)">&#128078; Disagree</button>
+        <button class="om-btn om-agr" onclick="moveMeter(10)">&#128077; Agree</button>
+      </div>
+      <div class="om-pct" id="meterPct">50% Agree</div>
+    </div>
+    <div class="tn"><div class="tn-lbl">&#9889; Teacher Note — Speaking</div><div class="tn-text">Q2 is the core production task — monitor for time frame mixing. Students who jump from past to future without a clear present are the ones who need most support. The &quot;responsible for&quot; phrase anchors the present. Q3 is the critical integration moment: M3 (should/could) + M4 (going to/might) in a natural turn. Listen for the connector &quot;so you should&quot; — more natural than &quot;I think should.&quot; Q6 is the cumulative assessment — the 2-minute introduction should use at least 5 different A2.2 structures. Opinion Meter: planning vs flexibility debate maps directly onto going to vs might — grammar embedded in a real opinion.</div></div>
+  </div>
+</div>
+
+<div class="phrases-wrap">
+  <div class="phrases-hdr">&#127919; This week, use these 3 phrases at work:</div>
+  <div class="phrases-sub">Practical English you can use starting tomorrow — no preparation needed.</div>
+  <div class="phrases-grid">
+    <div class="phrase-card">
+      <div class="phrase-en">&quot;We are going to [confirmed plan]. It&apos;s already decided.&quot;</div>
+      <div class="phrase-ctx">Use in any meeting or email to announce a confirmed future action. Replaces &quot;we will&quot; when the decision has already been made. Sounds more professional and certain in any business context.</div>
+    </div>
+    <div class="phrase-card">
+      <div class="phrase-en">&quot;Back in the day, I used to [old habit]. Now I [current situation].&quot;</div>
+      <div class="phrase-ctx">Your career arc in one sentence. Use it the next time someone asks about your experience. Connects naturally to any professional introduction at a meeting, event, or interview.</div>
+    </div>
+    <div class="phrase-card">
+      <div class="phrase-en">&quot;I might [possibility] — it depends on [condition].&quot;</div>
+      <div class="phrase-ctx">Use when you are not 100% sure about a future plan. More professional than &quot;I don&apos;t know.&quot; Useful in planning meetings, project updates, and performance reviews when outcomes are uncertain.</div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="sec-hdr">
+    <div class="sec-num">&#167;7</div>
+    <div><div class="sec-label">Wrap-Up — <em>Session 2A complete</em></div><div class="sec-sub">Key takeaways · Checklist · Next session preview · 5–8 min</div></div>
+    <div class="sec-dur">&#9201; 5–8 MIN</div>
+  </div>
+  <img class="img-banner" src="https://images.unsplash.com/photo-1549737328-8a136087072e?w=900&q=80" alt="Successful professional conclusion" loading="lazy">
+  <div class="sec-body">
+    <div class="wrapup-grid">
+      <div class="wrapup-card"><h4>&#9203; The Three-Time-Frame Arc</h4><p>A complete professional introduction has three parts: past (used to), present (responsible for / currently), and future (going to / might). Today you built all three in one connected story.</p></div>
+      <div class="wrapup-card"><h4>&#128300; Certainty Scale</h4><p>Going to = confirmed plan (~100%). Will = spontaneous decision. Might/May = possibility (30–60%). Using the right one sends the right professional signal. Never use them interchangeably.</p></div>
+      <div class="wrapup-card"><h4>&#127775; Career Collocations</h4><p>Four new phrases for immediate use: &quot;Back in the day,&quot; &quot;I am moving up,&quot; &quot;It&apos;s a stepping stone,&quot; and &quot;I am looking forward to it.&quot; These make your English sound natural and confident.</p></div>
+    </div>
+    <p style="font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin:20px 0 10px">&#9989; I CAN NOW...</p>
+    <ul class="cl-list">
+      <li class="cl-item" onclick="toggleDone(this)"><span class="cl-check">&#9744;</span>Tell my professional career story using past (used to), present (responsible for), and future (going to / might) in connected sentences.</li>
+      <li class="cl-item" onclick="toggleDone(this)"><span class="cl-check">&#9744;</span>Choose the correct future form based on certainty level: going to for confirmed plans, might for possibilities, will for spontaneous decisions.</li>
+      <li class="cl-item" onclick="toggleDone(this)"><span class="cl-check">&#9744;</span>Use 4 natural career phrases: &quot;back in the day,&quot; &quot;I am moving up,&quot; &quot;it is a stepping stone,&quot; &quot;I am looking forward to it.&quot;</li>
+      <li class="cl-item" onclick="toggleDone(this)"><span class="cl-check">&#9744;</span>Sort A2.2 sentences by grammar module (used to / should-could / going to-might) without looking at the table.</li>
+      <li class="cl-item" onclick="toggleDone(this)"><span class="cl-check">&#9744;</span>Give a 2-minute career introduction combining at least 4 A2.2 structures naturally.</li>
+    </ul>
+    <div class="next-prev">
+      <div class="next-lbl">&#9654; Next Session — S2B: Production &amp; Fluency</div>
+      <div class="next-text">In Session 2B you will deliver a 3-minute career pitch to a panel of classmates acting as &quot;investors.&quot; You will debate: &quot;Is ambition more important than experience?&quot; using comparatives and career vocabulary. Andrea presents her trade fair results with a complete career story. Prepare: know your career trajectory in English before you arrive.</div>
+    </div>
+    <div class="win-wrap">
+      <div class="win-label">&#127942; My Win Today</div>
+      <textarea class="win-ta" id="winTA" placeholder="Complete this in English: &quot;Today I learned that in my career, I used to... but now I... and I am going to...&quot;"></textarea>
+      <button class="win-btn" onclick="saveWin()">Save My Win &#127942;</button>
+      <div class="win-ok" id="winOK">&#10003; Saved! Great work. See you in S2B.</div>
+    </div>
+    <div class="tn tn-pk"><div class="tn-lbl">&#9889; Teacher Note — Retention &amp; Upsell</div><div class="tn-text">The My Win prompt is a three-part sentence — used to + now + going to. This forces students to internalize the full career arc in their own words before leaving. Collect these (photo or screenshot) and read a few aloud in S2B as warm-up. It creates continuity and shows students that their personal content is valuable, not just grammar exercises. Upsell: &quot;The 2-minute career introduction you did today? In B1.1, you add present perfect: &apos;I have been in logistics for 8 years.&apos; That single structure transforms your introduction from A2.2 to B1 level. One module away.&quot;</div></div>
+  </div>
+</div>
+
+<footer class="ftr">
+  <div class="fbrand">Gabriel Turner · English Training</div>
+  <div class="finfo">GT_A2_2_M6_S2A_TEACHER_v1.html · Celaya, Guanajuato</div>
+  <div class="flvs">
+    <div class="flv">A1.1</div><div class="flv">A1.2</div><div class="flv">A2.1</div>
+    <div class="flv on">A2.2</div><div class="flv">B1.1</div><div class="flv">B1.2</div>
+  </div>
+</footer>
+
+<script>
+function speak(t){if(!window.speechSynthesis)return;speechSynthesis.cancel();var u=new SpeechSynthesisUtterance(t);u.lang="en-US";u.rate=0.82;u.pitch=1;speechSynthesis.speak(u);}
+
+var badgeEarned={b1:false,b2:false,b3:false,b4:false,b5:false};
+function earnBadge(id){
+  if(badgeEarned[id])return;badgeEarned[id]=true;
+  var el=document.getElementById(id);if(el)el.classList.add("earned");
+  if(Object.values(badgeEarned).every(Boolean)){launchConfetti();var cm=document.getElementById("confMsg");if(cm)cm.style.display="block";}
+}
+function launchConfetti(){
+  var colors=["#F97316","#FB923C","#FFB800","#00E676","#00CFFF","#ffffff"];
+  for(var i=0;i<90;i++){var d=document.createElement("div");d.style.cssText="position:fixed;top:-10px;pointer-events:none;z-index:9999;border-radius:2px;";d.style.left=Math.random()*100+"vw";d.style.width=(6+Math.random()*6)+"px";d.style.height=(6+Math.random()*6)+"px";d.style.background=colors[Math.floor(Math.random()*colors.length)];d.style.animation="confFall "+(1.5+Math.random()*2)+"s linear forwards";document.body.appendChild(d);setTimeout(function(){if(d.parentNode)d.parentNode.removeChild(d);},4000);}
+}
+(function(){var s=document.createElement("style");s.textContent="@keyframes confFall{0%{transform:translateY(-10px) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}";document.head.appendChild(s);})();
+
+var timerIntervals={};
+function startTimer(arcId,textId,seconds,badgeKey,circumference){
+  if(timerIntervals[arcId])clearInterval(timerIntervals[arcId]);
+  var arc=document.getElementById(arcId),txt=document.getElementById(textId),rem=seconds;
+  function update(){arc.style.strokeDashoffset=circumference*(1-rem/seconds);var m=Math.floor(rem/60),s=rem%60;txt.textContent=m+":"+(s<10?"0":"")+s;if(rem<=5)arc.style.stroke="#FF4D6D";if(rem<=0){clearInterval(timerIntervals[arcId]);arc.style.stroke="var(--success)";if(badgeKey)earnBadge(badgeKey);return;}rem--;}
+  update();timerIntervals[arcId]=setInterval(update,1000);
+}
+function resetArc(arcId,textId,seconds,circumference){
+  if(timerIntervals[arcId]){clearInterval(timerIntervals[arcId]);delete timerIntervals[arcId];}
+  var arc=document.getElementById(arcId);arc.style.strokeDashoffset="0";arc.style.stroke="var(--accent)";
+  var m=Math.floor(seconds/60),s=seconds%60;document.getElementById(textId).textContent=m+":"+(s<10?"0":"")+s;
+}
+
+var vqData=[
+  {q:"What does 'trajectory' mean in a career context?",opts:["A type of contract","The path and direction of your career over time","A promotion strategy","A networking event"],ans:"The path and direction of your career over time"},
+  {q:"Which sentence uses 'promotion' correctly?",opts:["I received a promotion to a more senior position last year.","My promotion is very colorful.","I promotion my team every week.","The promotion was cancelled."],ans:"I received a promotion to a more senior position last year."},
+  {q:"'Transition' in a career means:",opts:["A type of presentation","Moving from one role or phase to another","A salary increase","A team meeting"],ans:"Moving from one role or phase to another"},
+  {q:"Complete: 'I am going to _____ in supply chain management starting in September.'",opts:["specialize","specializing","specialized","specializes"],ans:"specialize"},
+  {q:"Which sentence uses 'achieve' correctly?",opts:["I achieve my manager every day.","She achieved a 30% cost reduction in six months.","The achieve was very long.","They will achieve the meeting tomorrow."],ans:"She achieved a 30% cost reduction in six months."},
+  {q:"'Goal' in a professional context means:",opts:["A sports score","A specific result you are working towards professionally","A type of report","A company location"],ans:"A specific result you are working towards professionally"},
+  {q:"'Expand' in a business context means:",opts:["To reduce costs","To grow larger or extend into new areas","To review a report","To cancel a meeting"],ans:"To grow larger or extend into new areas"},
+  {q:"Which sentence uses 'challenge' correctly?",opts:["My challenge is on the third floor.","The biggest challenge is managing a team across three cities.","I challenge my lunch every day.","The challenge was cancelled."],ans:"The biggest challenge is managing a team across three cities."},
+  {q:"'Sector' in business English means:",opts:["A type of office chair","A distinct part of the economy or industry","A financial report","A team meeting"],ans:"A distinct part of the economy or industry"},
+  {q:"Which sentence uses 'develop' correctly?",opts:["I should develop my presentation skills to get the promotion.","I develop to work every morning.","My develop is very competitive.","She develops the office on Tuesday."],ans:"I should develop my presentation skills to get the promotion."}
+];
+var vqIdx=0,vqScore=0,vqShuffled=[];
+function shuffle(arr){return arr.slice().sort(function(){return Math.random()-.5;});}
+function startQuiz(){vqShuffled=shuffle(vqData);vqIdx=0;vqScore=0;document.getElementById("vqScore").style.display="none";document.getElementById("vqRestart").style.display="none";document.getElementById("vqBar").style.width="0%";showVQ();}
+function showVQ(){
+  if(vqIdx>=vqShuffled.length){document.getElementById("vqQ").textContent="";document.getElementById("vqOpts").innerHTML="";var sc=document.getElementById("vqScore");sc.textContent="Score: "+vqScore+" / "+vqShuffled.length+(vqScore>=8?" ★ Badge earned!":"  Keep practicing!");sc.style.display="block";document.getElementById("vqRestart").style.display="block";if(vqScore>=8)earnBadge("b2");return;}
+  var item=vqShuffled[vqIdx];document.getElementById("vqQ").textContent=item.q;document.getElementById("vqBar").style.width=((vqIdx/vqShuffled.length)*100)+"%";
+  var opts=shuffle(item.opts),html="";
+  opts.forEach(function(o){var oE=o.replace(/'/g,"\'"),aE=item.ans.replace(/'/g,"\'");html+="<button class=\"vq-opt\" onclick=\"answerVQ(this,'"+oE+"','"+aE+"')\">"+o+"</button>";});
+  document.getElementById("vqOpts").innerHTML=html;
+}
+function answerVQ(btn,answer,correct){document.querySelectorAll(".vq-opt").forEach(function(b){b.disabled=true;if(b.textContent.trim()===correct)b.classList.add("correct");});if(btn.textContent.trim()!==correct)btn.classList.add("wrong");vqIdx++;setTimeout(showVQ,900);}
+
+function checkOpt(btn,correct,qid){var c=document.getElementById(qid);c.querySelectorAll(".opt").forEach(function(b){b.disabled=true;if(b.textContent.trim()===correct)b.classList.add("correct");});if(btn.textContent.trim()!==correct)btn.classList.add("wrong");earnBadge("b3");}
+
+function checkTF(btn,isCorrect,id){var row=btn.closest(".tf-row");row.querySelectorAll(".tf-btn").forEach(function(b){b.disabled=true;});if(isCorrect){btn.style.cssText="background:rgba(0,229,160,.15);border-color:var(--success);color:var(--success)";}else{btn.style.cssText="background:rgba(255,77,109,.12);border-color:var(--danger);color:var(--danger)";var sib=Array.from(row.querySelectorAll(".tf-btn")).find(function(b){return b!==btn;});if(sib)sib.style.cssText="background:rgba(0,229,160,.12);border-color:var(--success);color:var(--success)";}earnBadge("b4");}
+
+var gsortCorrect={gs1:"m1",gs2:"m3",gs3:"m4",gs4:"m1",gs5:"m4",gs6:"m3",gs7:"m1",gs8:"m4",gs9:"m3"};
+var gsortPlaced={},gsortSelected=null;
+function gsortSelect(id,bucket){
+  var el=document.getElementById(id);
+  if(el.classList.contains("used"))return;
+  if(gsortSelected===id){el.classList.remove("selected");gsortSelected=null;return;}
+  if(gsortSelected)document.getElementById(gsortSelected).classList.remove("selected");
+  el.classList.add("selected");gsortSelected=id;
+}
+function gsortDrop(targetBucket){
+  if(!gsortSelected)return;
+  var el=document.getElementById(gsortSelected);
+  var text=el.textContent.trim();
+  var bucketEl=document.getElementById("bucket-"+targetBucket);
+  var span=document.createElement("span");span.className="gsort-placed "+targetBucket;
+  span.textContent=text.length>45?text.substring(0,45)+"...":text;
+  bucketEl.appendChild(span);
+  el.classList.remove("selected");el.classList.add("used");
+  gsortPlaced[gsortSelected]=targetBucket;gsortSelected=null;
+}
+function gsortCheck(){
+  var correct=0,total=Object.keys(gsortCorrect).length;
+  Object.keys(gsortPlaced).forEach(function(id){if(gsortPlaced[id]===gsortCorrect[id])correct++;});
+  document.getElementById("gsortScore").textContent=correct;
+  var res=document.getElementById("gsortResult");
+  if(correct===total){res.className="gsort-result show";res.style.color="var(--success)";res.textContent="✓ Perfect! All "+total+" sentences sorted correctly. Badge earned!";earnBadge("b2");}
+  else{res.className="gsort-result show";res.style.color="var(--danger)";res.textContent="✗ "+correct+" / "+total+" correct. Check the module table in §4 and try again.";}
+}
+
+var dragSrc=null;
+function initDrag(listId){
+  var list=document.getElementById(listId);if(!list)return;
+  list.querySelectorAll(".reorder-item").forEach(function(item){
+    item.addEventListener("dragstart",function(){dragSrc=this;this.classList.add("dragging");});
+    item.addEventListener("dragend",function(){this.classList.remove("dragging");list.querySelectorAll(".reorder-item").forEach(function(i){i.classList.remove("drag-over");});});
+    item.addEventListener("dragover",function(e){e.preventDefault();list.querySelectorAll(".reorder-item").forEach(function(i){i.classList.remove("drag-over");});if(this!==dragSrc)this.classList.add("drag-over");});
+    item.addEventListener("drop",function(e){e.preventDefault();if(this!==dragSrc){var all=Array.from(list.querySelectorAll(".reorder-item"));if(all.indexOf(dragSrc)<all.indexOf(this))list.insertBefore(dragSrc,this.nextSibling);else list.insertBefore(dragSrc,this);}});
+  });
+}
+function checkOrder(listId,correct,fbId){
+  var list=document.getElementById(listId);
+  var current=Array.from(list.querySelectorAll(".reorder-item")).map(function(i){return i.textContent.replace("⠇","").trim();});
+  var fb=document.getElementById(fbId);
+  if(JSON.stringify(current)===JSON.stringify(correct)){fb.className="fb show ok";fb.textContent="✓ Correct! Well done!";list.querySelectorAll(".reorder-item").forEach(function(i){i.style.borderColor="var(--success)";i.style.color="var(--success)";});earnBadge("b3");}
+  else{fb.className="fb show no";fb.textContent="✗ Not quite. Correct: "+correct.join(" — ");list.querySelectorAll(".reorder-item").forEach(function(i){i.style.borderColor="var(--danger)";});}
+}
+
+function toggleScript(){var b=document.getElementById("scriptBox");b.classList.toggle("open");document.querySelector(".script-toggle").textContent=b.classList.contains("open")?"▲ Hide Script":"▼ Show ElevenLabs Script";}
+
+var wv=document.getElementById("wv");
+for(var i=0;i<60;i++){var wb=document.createElement("div");wb.className="wbar";wb.style.height=(8+Math.sin(i*.6)*10+Math.random()*18)+"px";wb.style.opacity=.3+Math.random()*.4;wv.appendChild(wb);}
+document.getElementById("playBtn").addEventListener("click",function(){earnBadge("b4");});
+
+var meterVal=50;
+function moveMeter(delta){meterVal=Math.max(5,Math.min(95,meterVal+delta));document.getElementById("meterBar").style.width=meterVal+"%";document.getElementById("meterPct").textContent=meterVal+"% Agree";}
+
+function toggleDone(el){el.classList.toggle("done");var check=el.querySelector(".cl-check");check.textContent=el.classList.contains("done")?"✓":"☐";var all=document.querySelectorAll(".cl-item");if(Array.from(all).every(function(x){return x.classList.contains("done");}))earnBadge("b5");}
+
+function saveWin(){var ta=document.getElementById("winTA");if(ta.value.trim().length>3){earnBadge("b5");ta.style.borderColor="var(--success)";document.getElementById("winOK").style.display="block";}}
+
+window.addEventListener("scroll",function(){var h=document.documentElement;var bar=document.getElementById("progressFill");if(bar)bar.style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight)*100)+"%";});
+
+startQuiz();
+initDrag("order1");
+initDrag("order2");
+</script>
+</body>
+</html>

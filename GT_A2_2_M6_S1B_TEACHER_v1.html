@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GT A2.2 · M6 · S1B — Full A2.2 Integration</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#080808;--surface:#111318;--surface2:#1a1f28;
+  --border:rgba(249,115,22,.18);--border-dim:rgba(255,255,255,0.07);
+  --accent:#F97316;--accent2:#FB923C;
+  --cyan:#00CFFF;--gold:#FFB800;--green:#00E676;
+  --danger:#FF4D6D;--success:#00E5A0;--warn:#FFB347;--violet:#A78BFA;
+  --txt:#F0F4F8;--muted:#8A9BB0;--dim:rgba(226,226,226,.25);
+  --font-head:'Syne',sans-serif;--font-body:'DM Sans',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--txt);font-family:var(--font-body);font-size:14px;line-height:1.6;overflow-x:hidden}
+.hdr{background:var(--surface);border-bottom:1px solid var(--border);padding:16px 48px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;position:sticky;top:0;z-index:100}
+.brand{display:flex;align-items:center;gap:10px}
+.dot{width:8px;height:8px;background:var(--accent);border-radius:50%}
+.bname{font-family:var(--font-head);font-weight:800;font-size:13px;letter-spacing:2.5px;text-transform:uppercase;color:#fff}
+.bsub{font-size:10px;color:var(--muted);letter-spacing:1px}
+.sess-tag{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.tag{display:inline-block;padding:3px 10px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase}
+.t-or{background:rgba(249,115,22,.15);color:var(--accent);border:1px solid rgba(249,115,22,.3)}
+.t-go{background:rgba(0,230,118,.1);color:var(--green);border:1px solid rgba(0,230,118,.25)}
+.t-cy{background:rgba(0,207,255,.1);color:var(--cyan);border:1px solid rgba(0,207,255,.25)}
+.t-gd{background:rgba(255,184,0,.1);color:var(--gold);border:1px solid rgba(255,184,0,.25)}
+.badge-strip{display:flex;gap:6px;align-items:center}
+.badge-strip span{width:28px;height:28px;border-radius:50%;background:var(--surface2);border:1px solid var(--border-dim);display:flex;align-items:center;justify-content:center;font-size:13px;filter:grayscale(1);opacity:.4;transition:all .4s}
+.badge-strip span.earned{filter:none;opacity:1;border-color:var(--accent);background:rgba(249,115,22,.15);transform:scale(1.1)}
+.progress-bar{height:2px;background:var(--surface2);position:sticky;top:57px;z-index:99}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));width:0%;transition:width .3s}
+.section{margin:0 0 3px 0;overflow:hidden}
+.sec-hdr{display:flex;align-items:center;gap:14px;padding:20px 48px;background:linear-gradient(135deg,rgba(249,115,22,.06),transparent);border-bottom:1px solid var(--border)}
+.sec-num{font-family:var(--font-head);font-size:10px;font-weight:800;color:var(--accent);letter-spacing:.15em;text-transform:uppercase;background:rgba(249,115,22,.1);border:1px solid rgba(249,115,22,.25);padding:3px 10px;border-radius:20px;white-space:nowrap}
+.sec-label{font-family:var(--font-head);font-size:22px;font-weight:800;color:#fff}
+.sec-label em{color:var(--accent);font-style:normal}
+.sec-sub{font-size:12px;color:var(--muted);margin-top:2px}
+.sec-dur{font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;color:var(--gold);border:1px solid rgba(255,184,0,.2);padding:2px 9px;margin-left:auto;white-space:nowrap}
+.sec-body{padding:28px 48px}
+.img-hero{width:100%;height:220px;object-fit:cover;display:block;filter:brightness(.5);border-bottom:1px solid var(--border)}
+.img-banner{width:100%;height:130px;object-fit:cover;display:block;filter:brightness(.48);border-radius:10px;margin-bottom:16px}
+.tn{background:var(--surface2);border:1px solid var(--border-dim);border-left:3px solid var(--gold);border-radius:8px;padding:13px 16px;margin-top:14px}
+.tn-lbl{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:6px}
+.tn-text{font-size:12px;color:rgba(255,184,0,.82);line-height:1.6}
+.tn-cy{border-left-color:var(--cyan)}.tn-cy .tn-lbl{color:var(--cyan)}.tn-cy .tn-text{color:rgba(0,207,255,.82)}
+.tn-pk{border-left-color:#FF4D6D}.tn-pk .tn-lbl{color:#FF4D6D}.tn-pk .tn-text{color:rgba(255,77,109,.82)}
+/* HOT TAKE */
+.hot-take{background:rgba(249,115,22,.07);border:1px solid rgba(249,115,22,.3);border-radius:12px;padding:20px 24px;margin-top:14px}
+.ht-lbl{font-family:var(--font-head);font-size:9px;font-weight:800;letter-spacing:2.5px;text-transform:uppercase;color:var(--accent);margin-bottom:10px}
+.ht-stmt{font-size:15px;color:#fff;font-weight:500;line-height:1.6;margin-bottom:16px;border-left:3px solid var(--accent);padding-left:14px}
+.ht-row{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.ht-hint{font-size:12px;color:var(--muted);font-style:italic;flex:1;min-width:160px}
+.timer-wrap{display:flex;flex-direction:column;align-items:center;gap:6px}
+.timer-svg{transform:rotate(-90deg)}
+.timer-btns{display:flex;gap:7px;margin-top:4px}
+.t-btn{background:var(--accent);border:none;color:#fff;padding:6px 14px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1px;cursor:pointer;border-radius:5px;transition:background .2s}
+.t-btn:hover{background:var(--accent2)}
+.t-btn-o{background:none;border:1px solid var(--border-dim);color:var(--muted)}
+.t-btn-o:hover{border-color:var(--accent);color:var(--accent);background:none}
+/* PITCH / DEBATE ROUNDS */
+.round-grid{display:flex;flex-direction:column;gap:12px;margin-top:14px}
+.round-card{background:var(--surface);border:1px solid var(--border-dim);border-radius:10px;overflow:hidden}
+.round-img{width:100%;height:110px;object-fit:cover;display:block;filter:brightness(.5)}
+.round-body{padding:14px 18px}
+.round-tag-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.rtag{display:inline-block;padding:2px 9px;font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:1px;border-radius:4px;text-transform:uppercase}
+.rt-ts{background:rgba(249,115,22,.12);color:var(--accent);border:1px solid rgba(249,115,22,.25)}
+.rt-ss{background:rgba(0,229,160,.08);color:var(--success);border:1px solid rgba(0,229,160,.2)}
+.rt-cl{background:rgba(0,207,255,.08);color:var(--cyan);border:1px solid rgba(0,207,255,.2)}
+.round-q{font-size:14px;color:#fff;line-height:1.55;margin-bottom:8px}
+.reveal-btn{background:none;border:1px solid var(--border-dim);color:var(--muted);padding:6px 14px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1px;cursor:pointer;border-radius:5px;transition:all .2s}
+.reveal-btn:hover{border-color:var(--accent);color:var(--accent)}
+.model-reveal{display:none;margin-top:10px;padding:12px 14px;background:rgba(249,115,22,.06);border-left:3px solid var(--accent);border-radius:5px;font-size:12.5px;color:var(--txt);line-height:1.7}
+.model-reveal.show{display:block}
+.m-str{color:var(--accent);font-weight:700}
+.m-comp{color:var(--cyan);font-weight:700}
+.m-coll{color:var(--warn);font-weight:700}
+/* SPIN THE WHEEL */
+.wheel-wrap{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-top:20px}
+.wheel-hdr{padding:14px 20px;background:rgba(249,115,22,.08);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.wheel-hdr-title{font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent)}
+.wheel-body{padding:24px;display:flex;flex-direction:column;align-items:center;gap:20px}
+.wheel-canvas-wrap{position:relative;width:260px;height:260px}
+.wheel-canvas-wrap canvas{border-radius:50%;box-shadow:0 0 0 4px rgba(249,115,22,.25)}
+.wheel-pointer{position:absolute;top:-14px;left:50%;transform:translateX(-50%);font-size:26px;line-height:1;filter:drop-shadow(0 2px 4px rgba(0,0,0,.5))}
+.wheel-spin-btn{background:var(--accent);border:none;color:#fff;padding:11px 32px;font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:2px;cursor:pointer;border-radius:7px;transition:background .2s}
+.wheel-spin-btn:hover:not(:disabled){background:var(--accent2)}
+.wheel-spin-btn:disabled{opacity:.5;cursor:not-allowed}
+.wheel-result{background:var(--surface2);border:1px solid var(--border-dim);border-radius:10px;padding:16px 20px;width:100%;min-height:64px;display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--txt);text-align:center;line-height:1.55}
+.wheel-result strong{color:var(--accent)}
+/* SPEED ROUND */
+.speed-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:16px}
+.speed-card{background:var(--surface);border:1px solid var(--border-dim);border-radius:10px;padding:14px 16px}
+.sc-num{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:6px}
+.sc-prompt{font-size:13px;color:#fff;line-height:1.5}
+.sc-hint{font-size:11px;color:var(--muted);font-style:italic;margin-top:5px}
+/* SOLO CHALLENGE */
+.solo-box{background:rgba(249,115,22,.06);border:1px solid rgba(249,115,22,.25);border-radius:12px;padding:22px 26px;margin-top:16px}
+.solo-lbl{font-family:var(--font-head);font-size:9px;font-weight:800;letter-spacing:2.5px;text-transform:uppercase;color:var(--accent);margin-bottom:10px}
+.solo-task{font-size:14px;color:#fff;line-height:1.7;margin-bottom:16px}
+.solo-rubric{display:flex;flex-direction:column;gap:7px;margin-top:14px}
+.rubric-row{display:flex;align-items:center;gap:12px;font-size:12px}
+.rubric-check{width:18px;height:18px;border:2px solid var(--border-dim);border-radius:4px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0;transition:all .2s}
+.rubric-check.checked{background:var(--success);border-color:var(--success);color:#000}
+.rubric-label{color:var(--txt);flex:1}
+.rubric-pts{font-family:var(--font-head);font-size:10px;font-weight:700;color:var(--muted);white-space:nowrap}
+.rubric-total{font-family:var(--font-head);font-size:12px;font-weight:700;color:var(--accent);text-align:right;margin-top:10px}
+/* LEADERBOARD */
+.lb-wrap{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-top:20px}
+.lb-hdr{padding:14px 20px;background:rgba(255,184,0,.08);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.lb-title{font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold)}
+.lb-body{padding:16px 20px}
+.lb-input-row{display:grid;grid-template-columns:1fr 1fr auto;gap:10px;margin-bottom:14px;align-items:end}
+.lb-input{background:var(--surface2);border:1px solid var(--border-dim);color:var(--txt);padding:9px 12px;font-family:var(--font-body);font-size:13px;border-radius:7px;width:100%}
+.lb-input:focus{outline:none;border-color:var(--accent)}
+.lb-input-lbl{font-size:10px;color:var(--dim);font-family:var(--font-head);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px}
+.lb-add-btn{background:var(--accent);border:none;color:#fff;padding:10px 18px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1px;cursor:pointer;border-radius:7px;white-space:nowrap}
+.lb-list{list-style:none;display:flex;flex-direction:column;gap:6px}
+.lb-row{display:flex;align-items:center;gap:12px;padding:10px 14px;background:var(--surface2);border-radius:8px;border:1px solid var(--border-dim)}
+.lb-pos{font-family:var(--font-head);font-size:12px;font-weight:800;color:var(--accent);min-width:22px}
+.lb-name{flex:1;font-size:13px;color:var(--txt)}
+.lb-score{font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--gold)}
+.lb-empty{font-size:12px;color:var(--dim);text-align:center;padding:16px;font-style:italic}
+/* CERT */
+.cert-box{background:rgba(255,184,0,.04);border:1px solid rgba(255,184,0,.2);border-radius:12px;padding:22px 26px;margin-top:20px;text-align:center}
+.cert-title{font-family:var(--font-head);font-size:18px;font-weight:800;color:var(--gold);margin-bottom:4px}
+.cert-sub{font-size:12px;color:var(--muted);margin-bottom:16px}
+.cert-input{background:var(--surface2);border:1px solid var(--border-dim);color:var(--txt);padding:10px 16px;font-family:var(--font-body);font-size:14px;border-radius:7px;width:280px;text-align:center}
+.cert-input:focus{outline:none;border-color:var(--gold)}
+.cert-btn{background:var(--gold);border:none;color:#000;padding:10px 28px;font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:1.5px;cursor:pointer;border-radius:7px;margin-top:10px;display:block;margin:10px auto 0}
+.cert-result{display:none;margin-top:16px;padding:18px;border:2px solid var(--gold);border-radius:10px;background:rgba(255,184,0,.06)}
+.cert-name{font-family:var(--font-head);font-size:22px;font-weight:800;color:var(--gold);margin-bottom:6px}
+.cert-detail{font-size:12.5px;color:var(--muted);line-height:1.7}
+/* CHECKLIST */
+.cl-wrap{display:flex;flex-direction:column;gap:8px;margin:16px 0}
+.cl-item{background:var(--surface);border:1px solid var(--border-dim);border-radius:8px;padding:12px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:all .2s;font-size:13px;color:var(--txt)}
+.cl-item.done{border-color:var(--success);color:var(--success);background:rgba(0,229,160,.06)}
+.cl-check{font-size:14px;flex-shrink:0;color:var(--dim)}
+.cl-item.done .cl-check{color:var(--success)}
+/* WRAP-UP */
+.wrapup-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px}
+.wu-key{background:var(--surface);border:1px solid var(--border-dim);border-radius:10px;padding:16px 18px;border-top:3px solid var(--accent)}
+.wu-key-title{font-family:var(--font-head);font-size:12px;font-weight:700;color:var(--accent);margin-bottom:6px}
+.wu-key-text{font-size:12px;color:var(--muted);line-height:1.55}
+.phrases-wrap{padding:28px 48px;background:rgba(255,184,0,.03);border-top:1px solid rgba(255,184,0,.12);border-bottom:1px solid rgba(255,184,0,.12)}
+.phrases-hdr{font-family:var(--font-head);font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:6px}
+.phrases-sub{font-size:12px;color:var(--muted);margin-bottom:18px}
+.phrases-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.phrase-card{background:var(--surface);border:1px solid rgba(255,184,0,.2);border-radius:10px;padding:16px 18px;border-top:3px solid var(--gold)}
+.phrase-en{font-family:var(--font-head);font-size:13.5px;font-weight:700;color:#fff;margin-bottom:6px}
+.phrase-ctx{font-size:11.5px;color:var(--muted);line-height:1.5}
+.win-area{background:var(--surface);border:1px solid var(--border-dim);border-radius:10px;padding:20px;margin-top:16px}
+.win-lbl{font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:10px}
+.win-ta{width:100%;background:var(--surface2);border:1px solid var(--border-dim);border-radius:7px;color:var(--txt);padding:12px;font-size:13px;font-family:var(--font-body);resize:vertical;min-height:72px;line-height:1.5;transition:border-color .3s}
+.win-ta:focus{outline:none;border-color:var(--accent)}
+.win-btn{background:rgba(249,115,22,.1);border:1px solid rgba(249,115,22,.3);color:var(--accent);padding:8px 20px;cursor:pointer;font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:1px;border-radius:7px;margin-top:10px;transition:all .2s}
+.win-btn:hover{background:rgba(249,115,22,.22)}
+.win-ok{display:none;color:var(--success);font-size:12.5px;margin-top:8px;font-style:italic}
+.next-card{background:rgba(0,207,255,.05);border:1px solid rgba(0,207,255,.2);border-radius:10px;padding:16px 18px;margin-top:16px}
+.next-label{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--cyan);margin-bottom:4px}
+.next-title{font-size:14px;font-weight:600;color:#fff;margin-bottom:4px}
+.next-sub{font-size:12px;color:var(--muted);line-height:1.6}
+#confMsg{display:none;text-align:center;font-family:var(--font-head);font-size:14px;font-weight:800;color:var(--gold);padding:14px;letter-spacing:2px;text-transform:uppercase}
+.ftr{background:var(--surface);border-top:1px solid var(--border);padding:16px 48px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+.fbrand{font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim)}
+.finfo{font-size:11px;color:var(--dim)}
+.flvs{display:flex;gap:3px}
+.flv{padding:5px 10px;font-family:var(--font-head);font-size:10px;font-weight:700;background:var(--surface2);color:var(--dim)}
+.flv.on{background:var(--accent);color:#fff}
+body.sm .tn{display:none}
+@media(max-width:860px){
+  .hdr,.ftr,.phrases-wrap{padding:14px 18px}
+  .sec-body{padding:20px 18px}
+  .sec-hdr{padding:16px 18px}
+  .wrapup-grid,.phrases-grid,.speed-grid{grid-template-columns:1fr}
+  .lb-input-row{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <div class="brand"><div class="dot"></div><div><div class="bname">Gabriel Turner</div><div class="bsub">English Training · Teacher Edition</div></div></div>
+  <div class="sess-tag">
+    <span class="tag t-or">A2.2</span><span class="tag t-gd">Module 6</span>
+    <span class="tag t-cy">Session 1B — Production &amp; Fluency</span>
+    <span class="tag t-go">120 min</span>
+  </div>
+  <div class="badge-strip">
+    <span id="b1">&#128293;</span><span id="b2">&#127919;</span><span id="b3">&#128483;&#65039;</span><span id="b4">&#9889;</span><span id="b5">&#127942;</span>
+    <button onclick="document.body.classList.toggle('sm');this.textContent=document.body.classList.contains('sm')?'Teacher Mode':'Student Mode'" style="margin-left:8px;background:rgba(249,115,22,.1);border:1px solid rgba(249,115,22,.3);color:var(--accent);padding:4px 10px;cursor:pointer;font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:1px;border-radius:5px">Student Mode</button>
+  </div>
+</header>
+<div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+<div id="confMsg">&#127881; All 5 badges earned! Outstanding fluency! &#127881;</div>
+
+<div class="section">
+  <div class="sec-hdr">
+    <div class="sec-num">&#167;1</div>
+    <div><div class="sec-label">Hot Take — <em>Timed opinion opener</em></div><div class="sec-sub">Remember from S1A · Activate integration structures under pressure · 8 min</div></div>
+    <div class="sec-dur">&#9201; 8 MIN</div>
+  </div>
+  <img class="img-hero" src="https://images.unsplash.com/photo-1560439514-4e9645039924?w=900&q=80" alt="Professionals debating at a networking event" loading="lazy">
+  <div class="sec-body">
+    <div class="tn tn-cy"><div class="tn-lbl">&#9889; Remember from S1A</div><div class="tn-text">S1B builds on S1A content: integration of all A2.2 structures (used to / have to / should / might / comparatives), networking vocabulary (background, connection, opportunity, impression, reach out, stay in touch), and the four networking closers (&quot;That&apos;s a great opportunity&quot; / &quot;Let&apos;s stay in touch&quot; / &quot;It was great meeting you&quot; / &quot;I&apos;ll reach out next week&quot;). Students should NOT need their notes from S1A — the Hot Take deliberately activates what they retained spontaneously. If they blank, that is data — note which structure or phrase is missing and target it in &sect;4 Speed Round.</div></div>
+
+    <div class="hot-take">
+      <div class="ht-lbl">&#128293; Hot Take — 60 seconds each</div>
+      <div class="ht-stmt">&quot;The most important thing you can do at a professional networking event is NOT what you say — it&apos;s how you CLOSE the conversation.&quot;</div>
+      <div class="ht-row">
+        <div class="ht-hint">Agree or disagree in 60 seconds. Use at least 2 A2.2 structures and 1 networking phrase from S1A. No notes. Pure fluency.</div>
+        <div class="timer-wrap">
+          <svg class="timer-svg" width="80" height="80" viewBox="0 0 80 80">
+            <circle cx="40" cy="40" r="33" stroke="rgba(249,115,22,.2)" stroke-width="5" fill="none"/>
+            <circle id="arcHT" cx="40" cy="40" r="33" stroke="var(--accent)" stroke-width="5" fill="none" stroke-dasharray="207.35" stroke-dashoffset="0"/>
+            <text id="txtHT" x="40" y="46" text-anchor="middle" font-family="Syne,sans-serif" font-size="18" font-weight="800" fill="var(--accent)" transform="rotate(90 40 40)">1:00</text>
+          </svg>
+          <div class="timer-btns">
+            <button class="t-btn" onclick="startTimer('arcHT','txtHT',60,'b1',207.35)">START</button>
+            <button class="t-btn t-btn-o" onclick="resetArc('arcHT','txtHT',60,207.35)">RESET</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hot-take" style="margin-top:12px">
+      <div class="ht-lbl">&#128293; Hot Take Round 2 — 60 seconds</div>
+      <div class="ht-stmt">&quot;In Mexico&apos;s Bajío region, speaking English at a trade fair is more valuable than having 5 extra years of experience in your field.&quot;</div>
+      <div class="ht-row">
+        <div class="ht-hint">Agree or disagree using a comparative + should/could + one colloquial phrase from S1A. The best argument wins a point for their team.</div>
+        <div class="timer-wrap">
+          <svg class="timer-svg" width="80" height="80" viewBox="0 0 80 80">
+            <circle cx="40" cy="40" r="33" stroke="rgba(249,115,22,.2)" stroke-width="5" fill="none"/>
+            <circle id="arcHT2" cx="40" cy="40" r="33" stroke="var(--accent)" stroke-width="5" fill="none" stroke-dasharray="207.35" stroke-dashoffset="0"/>
+            <text id="txtHT2" x="40" y="46" text-anchor="middle" font-family="Syne,sans-serif" font-size="18" font-weight="800" fill="var(--accent)" transform="rotate(90 40 40)">1:00</text>
+          </svg>
+          <div class="timer-btns">
+            <button class="t-btn" onclick="startTimer('arcHT2','txtHT2',60,'b1',207.35)">START</button>
+            <button class="t-btn t-btn-o" onclick="resetArc('arcHT2','txtHT2',60,207.35)">RESET</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tn"><div class="tn-lbl">&#9889; Teacher Note — Hot Take</div><div class="tn-text">The Hot Take is the fluency thermometer for S1B. You are NOT teaching here — you are measuring. Two things to listen for: (1) do students combine structures spontaneously (e.g., &quot;I should focus on my closing because it might be more important than my opening&quot;) or do they use isolated grammar? (2) do the S1A networking phrases appear naturally or do they need prompting? Students who use &quot;Let&apos;s stay in touch&quot; or &quot;It was great meeting you&quot; unprompted in their argument have internalized S1A. Those who don&apos;t get targeted in &sect;4 Speed Round. Round 2 is intentionally provocative for Bajío professionals — the comparison of English vs experience generates strong opinions and rich language. Collect the best 2–3 arguments for the leaderboard in &sect;6.</div></div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="sec-hdr">
+    <div class="sec-num">&#167;2</div>
+    <div><div class="sec-label">Pitch &amp; Debate — <em>The Networking Pitch</em></div><div class="sec-sub">3 rounds · T-S · S-S · Class · Model answers · 20 min</div></div>
+    <div class="sec-dur">&#9201; 20 MIN</div>
+  </div>
+  <div class="sec-body">
+    <div class="round-grid">
+      <div class="round-card">
+        <img class="round-img" src="https://images.unsplash.com/photo-1543269664-76bc3997d9ea?w=900&q=80" alt="Professional introduction at an event" loading="lazy">
+        <div class="round-body">
+          <div class="round-tag-row"><span class="rtag rt-ts">T-S</span><span style="font-size:11px;color:var(--muted)">Round 1 — 30-Second Pitch</span></div>
+          <div class="round-q">You are at the Bajío Trade Fair right now. You have 30 seconds to introduce yourself to a potential new client. Include: your name + company + one thing you <em>used to</em> do + what you <em>currently do</em>. Go — no preparation. Teacher scores on: structures used + naturalness.</div>
+          <button class="reveal-btn" onclick="toggleReveal('rev1')">&#9660; Show Model Introduction</button>
+          <div class="model-reveal" id="rev1">
+            <strong style="color:var(--txt)">Model (Andrea Soto, Vertex Logistics):</strong><br>
+            &quot;Hi, I&apos;m Andrea Soto. I work as Regional Sales Coordinator at Vertex Logistics in Celaya. <span class="m-str">I used to manage</span> a small territory in Irapuato, but now <span class="m-str">I&apos;m responsible for</span> the whole Bajío region — Guanajuato, Querétaro, and Jalisco. <span class="m-coll">It&apos;s a great opportunity</span> to be here today.&quot;<br><br>
+            <strong style="color:var(--dim)">Structures used:</strong> M1 (used to) + M6 vocab (responsible for, opportunity) + S1A colloquial. Goal: 3 structures in 30 seconds.
+          </div>
+        </div>
+      </div>
+      <div class="round-card">
+        <img class="round-img" src="https://images.unsplash.com/photo-1521791136064-7986c2920216?w=900&q=80" alt="Pair debate at networking event" loading="lazy">
+        <div class="round-body">
+          <div class="round-tag-row"><span class="rtag rt-ss">S-S</span><span style="font-size:11px;color:var(--muted)">Round 2 — Networking Conversation (2 min)</span></div>
+          <div class="round-q">Student A: you are a procurement manager from Monterrey looking for new suppliers. Student B: you are a sales coordinator from Celaya pitching your company. Have a real 2-minute networking conversation using: <em>used to</em> (background), <em>might</em> (future possibility), <em>should/could</em> (recommendations to each other), one comparative, and ALL FOUR S1A closers. Then switch roles.</div>
+          <button class="reveal-btn" onclick="toggleReveal('rev2')">&#9660; Show Language Target</button>
+          <div class="model-reveal" id="rev2">
+            <strong style="color:var(--txt)">Language target for each student:</strong><br>
+            <span class="m-str">Used to:</span> &quot;I used to work with a different supplier, but&hellip;&quot;<br>
+            <span class="m-str">Might:</span> &quot;We might be interested in a trial order — it depends on the timeline.&quot;<br>
+            <span class="m-str">Should:</span> &quot;You should talk to our logistics team — they can give you a better quote.&quot;<br>
+            <span class="m-comp">Comparative:</span> &quot;Our delivery time is faster than most providers in the region.&quot;<br>
+            <span class="m-coll">Closers:</span> &quot;That&apos;s a great opportunity.&quot; / &quot;Let&apos;s stay in touch.&quot; / &quot;It was great meeting you.&quot; / &quot;I&apos;ll reach out next week.&quot;<br><br>
+            <strong style="color:var(--dim)">Correction protocol:</strong> Do NOT interrupt. Write errors silently. Review after the round ends.
+          </div>
+        </div>
+      </div>
+      <div class="round-card">
+        <img class="round-img" src="https://images.unsplash.com/photo-1475721027785-f74eccf877e2?w=900&q=80" alt="Class debate about networking" loading="lazy">
+        <div class="round-body">
+          <div class="round-tag-row"><span class="rtag rt-cl">Class</span><span style="font-size:11px;color:var(--muted)">Round 3 — Class Debate</span></div>
+          <div class="round-q">Class debate: <em>&quot;At a networking event, it is more effective to talk to many people briefly than to have one long, deep conversation.&quot;</em> Each student makes one argument using a comparative + at least one A2.2 structure. Teacher tracks: which team uses the most integrated language (comparatives + modals + past/future).</div>
+          <button class="reveal-btn" onclick="toggleReveal('rev3')">&#9660; Show Teacher Scoring Guide</button>
+          <div class="model-reveal" id="rev3">
+            <strong style="color:var(--txt)">Scoring for leaderboard:</strong><br>
+            1pt: any comparative or superlative used correctly<br>
+            2pts: comparative + because/so (full justification)<br>
+            3pts: comparative + A2.2 modal (should / might / going to / used to)<br>
+            4pts: ALL of the above + one S1A colloquial phrase<br><br>
+            <strong style="color:var(--dim)">Best argument to listen for:</strong> &quot;You should have one deep conversation because it might lead to a more lasting connection than ten brief ones — and that&apos;s a no-brainer.&quot; (3pts + colloquial = 4pts)
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="tn"><div class="tn-lbl">&#9889; Teacher Note — Pitch &amp; Debate</div><div class="tn-text">Round 1 is the S1B equivalent of the S1A Quick Win — it establishes the production baseline at the START of the B session, not the end. Students who struggled with the 20-second quick win in S1A should be able to do 30 seconds now. Note who has improved. Round 2 is the core S1B task: the full networking conversation with 5 structure targets. 2 minutes per pair. Use the timer in &sect;3. The switching of roles is essential — both the procurement and sales perspective use different A2.2 structures naturally (procurement: should we / might we / used to work with; sales: you could try / it might be / this option is more). Round 3 generates leaderboard points that feed directly into &sect;6. Write student names and points on the board as they speak — the visible scoreboard creates energy and motivates even the quietest students to participate.</div></div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="sec-hdr">
+    <div class="sec-num">&#167;3</div>
+    <div><div class="sec-label">Relay — <em>Spin the Wheel: Networking Prompts</em></div><div class="sec-sub">Spin · Get a networking scenario · Respond using S1A + S1B structures · 10 min</div></div>
+    <div class="sec-dur">&#9201; 10 MIN</div>
+  </div>
+  <div class="sec-body">
+    <div class="wheel-wrap">
+      <div class="wheel-hdr">
+        <div class="wheel-hdr-title">&#127922; Spin the Wheel — Networking Scenarios</div>
+        <span style="font-size:11px;color:var(--muted)">Spin → get a scenario → respond in 60 seconds using A2.2 structures → earn team points</span>
+      </div>
+      <div class="wheel-body">
+        <div class="wheel-canvas-wrap">
+          <div class="wheel-pointer">&#9660;</div>
+          <canvas id="wheelCanvas" width="260" height="260"></canvas>
+        </div>
+        <button class="wheel-spin-btn" id="wheelBtn" onclick="spinWheel()">SPIN THE WHEEL</button>
+        <div class="wheel-result" id="wheelResult">Spin the wheel to get your networking scenario!</div>
+      </div>
+    </div>
+    <div class="tn"><div class="tn-lbl">&#9889; Teacher Note — Relay Spin</div><div class="tn-text">Scoring: 1pt per A2.2 structure used correctly, 2pts for a comparative, 3pts for a S1A networking phrase used naturally, BONUS 2pts if they close with all four networking closers in sequence. Run as teams — spin once per team, 60 seconds to respond. Teacher keeps score on the board. Wheel segments are 8 real-world networking scenarios from the Bajío business context. Students who used to struggle with spontaneous production in S1A should now be noticeably faster — this is the fluency gain you are measuring. If a team gets stuck, give a 10-second hint: &quot;Think about S1A vocabulary — background, responsibility, connection&hellip;&quot;</div></div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="sec-hdr">
+    <div class="sec-num">&#167;4</div>
+    <div><div class="sec-label">Speed Round — <em>Structure Recall Under Pressure</em></div><div class="sec-sub">6 prompts · 15 seconds each · No hesitation · 10 min</div></div>
+    <div class="sec-dur">&#9201; 10 MIN</div>
+  </div>
+  <img class="img-banner" src="https://images.unsplash.com/photo-1551135049-8a33b5883817?w=900&q=80" alt="Speed round fast-paced activity" loading="lazy">
+  <div class="sec-body">
+    <p style="font-size:13px;color:var(--txt);margin-bottom:16px">15 seconds per prompt. No notes. Pure production. Teacher reads the prompt — student responds immediately. 1pt per structure used correctly, 2pts if they include a comparative or modal. Speed matters.</p>
+    <div class="speed-grid">
+      <div class="speed-card">
+        <div class="sc-num">Prompt 01</div>
+        <div class="sc-prompt">Introduce yourself to a new contact using <em>used to</em> and <em>currently</em>.</div>
+        <div class="sc-hint">Target: M1 + M6 vocab in 2 connected sentences.</div>
+      </div>
+      <div class="speed-card">
+        <div class="sc-num">Prompt 02</div>
+        <div class="sc-prompt">The new client asks about your company&apos;s future plans. Use <em>going to</em> for a confirmed plan + <em>might</em> for a possibility.</div>
+        <div class="sc-hint">Target: M4 distinction — 100% certain vs 50% possible.</div>
+      </div>
+      <div class="speed-card">
+        <div class="sc-num">Prompt 03</div>
+        <div class="sc-prompt">Give this client ONE piece of advice about working with your company. Use <em>should</em> + a comparative.</div>
+        <div class="sc-hint">Target: M3 advice + M5 comparative in one sentence.</div>
+      </div>
+      <div class="speed-card">
+        <div class="sc-num">Prompt 04</div>
+        <div class="sc-prompt">Compare your company to a competitor using TWO comparatives. End with <em>&quot;It&apos;s a no-brainer.&quot;</em></div>
+        <div class="sc-hint">Target: M5 double comparative + S1A colloquial closer.</div>
+      </div>
+      <div class="speed-card">
+        <div class="sc-num">Prompt 05</div>
+        <div class="sc-prompt">The conversation is ending. Close it using ALL FOUR S1A networking closers in natural sequence.</div>
+        <div class="sc-hint">Target: That&apos;s a great opportunity → Let&apos;s stay in touch → It was great meeting you → I&apos;ll reach out next week.</div>
+      </div>
+      <div class="speed-card">
+        <div class="sc-num">Prompt 06</div>
+        <div class="sc-prompt">Final challenge: combine ALL FIVE structures in ONE sentence. Past + present + modal + comparative + future.</div>
+        <div class="sc-hint">Example: &quot;I used to work in sales, but now I might move into operations, which should make our team more efficient than before.&quot;</div>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:16px;margin-top:20px;background:var(--surface);border:1px solid var(--border-dim);border-radius:10px;padding:16px 20px">
+      <div class="timer-wrap">
+        <svg class="timer-svg" width="70" height="70" viewBox="0 0 70 70">
+          <circle cx="35" cy="35" r="28" stroke="rgba(249,115,22,.2)" stroke-width="5" fill="none"/>
+          <circle id="arcSP" cx="35" cy="35" r="28" stroke="var(--accent)" stroke-width="5" fill="none" stroke-dasharray="175.93" stroke-dashoffset="0"/>
+          <text id="txtSP" x="35" y="40" text-anchor="middle" font-family="Syne,sans-serif" font-size="15" font-weight="800" fill="var(--accent)" transform="rotate(90 35 35)">0:15</text>
+        </svg>
+      </div>
+      <div>
+        <div style="font-family:var(--font-head);font-size:12px;font-weight:700;color:var(--accent);letter-spacing:1px;margin-bottom:8px">15-SECOND RESPONSE TIMER</div>
+        <button onclick="startTimer('arcSP','txtSP',15,'b4',175.93)" style="background:rgba(249,115,22,.1);border:1px solid rgba(249,115,22,.3);color:var(--accent);padding:7px 18px;cursor:pointer;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1px;border-radius:7px;margin-right:8px">START</button>
+        <button onclick="resetArc('arcSP','txtSP',15,175.93)" style="background:var(--surface2);border:1px solid var(--border-dim);color:var(--muted);padding:7px 14px;cursor:pointer;font-family:var(--font-head);font-size:10px;font-weight:700;border-radius:7px">RESET</button>
+      </div>
+    </div>
+    <div class="tn"><div class="tn-lbl">&#9889; Teacher Note — Speed Round</div><div class="tn-text">The Speed Round is the fluency stress test. The 15-second timer creates productive pressure that reveals processing automaticity — students who truly internalized S1A structures respond in under 5 seconds. Those who are still translating mentally use most of the 15 seconds. Prompt 06 (5 structures in one sentence) is intentionally very challenging — it is the A2.2 ceiling task. Any student who produces it naturally in under 15 seconds is demonstrating B1-approaching competency. That is your strongest upsell moment: &quot;What you just did in 10 seconds? That is the base unit of B1.1 English. One module away.&quot; Points: each prompt worth up to 4pts (1pt per structure + 2pts for comparative/modal combo). Add to leaderboard after each prompt.</div></div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="sec-hdr">
+    <div class="sec-num">&#167;5</div>
+    <div><div class="sec-label">Solo Challenge — <em>3-Minute Networking Pitch</em></div><div class="sec-sub">Full A2.2 integration · Individual performance · Rubric assessment · 20 min</div></div>
+    <div class="sec-dur">&#9201; 20 MIN</div>
+  </div>
+  <img class="img-banner" src="https://images.unsplash.com/photo-1560439514-4e9645039924?w=900&q=80" alt="Solo professional pitch" loading="lazy">
+  <div class="sec-body">
+    <div class="solo-box">
+      <div class="solo-lbl">&#127919; Solo Challenge — The Bajío Trade Fair Pitch</div>
+      <div class="solo-task">You have 3 minutes. You are at a trade fair in Guadalajara and you have just met a potential new business contact. Deliver your complete professional introduction and networking conversation covering all five elements:<br><br>
+      <strong style="color:var(--accent)">1.</strong> Introduce yourself with past (<em>used to</em>) + present (<em>responsible for / currently</em>)<br>
+      <strong style="color:var(--accent)">2.</strong> Describe a confirmed future plan (<em>going to</em>) + one possibility (<em>might</em>)<br>
+      <strong style="color:var(--accent)">3.</strong> Give your contact one piece of advice using <em>should</em> + a comparative<br>
+      <strong style="color:var(--accent)">4.</strong> Compare your company to a competitor using at least 2 comparatives<br>
+      <strong style="color:var(--accent)">5.</strong> Close the conversation using all 4 S1A networking phrases naturally<br><br>
+      Your partner plays the contact. The class watches and scores using the rubric below.</div>
+      <div class="solo-rubric">
+        <div class="rubric-row"><div class="rubric-check" id="rb1" onclick="toggleRubric(this,'rb1')"></div><div class="rubric-label">Past + present introduction: <em>used to</em> + <em>responsible for / currently</em></div><div class="rubric-pts">3 pts</div></div>
+        <div class="rubric-row"><div class="rubric-check" id="rb2" onclick="toggleRubric(this,'rb2')"></div><div class="rubric-label">Future forms: <em>going to</em> (confirmed) + <em>might</em> (possible)</div><div class="rubric-pts">2 pts</div></div>
+        <div class="rubric-row"><div class="rubric-check" id="rb3" onclick="toggleRubric(this,'rb3')"></div><div class="rubric-label">Advice with comparative: <em>should/could</em> + more/[adj]-er + than</div><div class="rubric-pts">2 pts</div></div>
+        <div class="rubric-row"><div class="rubric-check" id="rb4" onclick="toggleRubric(this,'rb4')"></div><div class="rubric-label">Two comparatives used correctly (short or long adjective rules)</div><div class="rubric-pts">2 pts</div></div>
+        <div class="rubric-row"><div class="rubric-check" id="rb5" onclick="toggleRubric(this,'rb5')"></div><div class="rubric-label">All 4 closers in natural sequence — sounds fluent, not memorized</div><div class="rubric-pts">3 pts</div></div>
+        <div class="rubric-row"><div class="rubric-check" id="rb6" onclick="toggleRubric(this,'rb6')"></div><div class="rubric-label">Bonus: at least one sentence combining 3+ A2.2 structures with a connector</div><div class="rubric-pts">3 pts</div></div>
+      </div>
+      <div class="rubric-total" id="rubricTotal">Total: 0 / 15 pts</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:16px;margin-top:20px;background:var(--surface);border:1px solid var(--border-dim);border-radius:10px;padding:16px 20px">
+      <div class="timer-wrap">
+        <svg class="timer-svg" width="90" height="90" viewBox="0 0 90 90">
+          <circle cx="45" cy="45" r="38" stroke="rgba(249,115,22,.2)" stroke-width="6" fill="none"/>
+          <circle id="arcSolo" cx="45" cy="45" r="38" stroke="var(--accent)" stroke-width="6" fill="none" stroke-dasharray="238.76" stroke-dashoffset="0"/>
+          <text id="txtSolo" x="45" y="44" text-anchor="middle" font-family="Syne,sans-serif" font-size="18" font-weight="800" fill="var(--accent)" transform="rotate(90 45 45)">3:00</text>
+          <text x="45" y="58" text-anchor="middle" font-family="Syne,sans-serif" font-size="9" fill="rgba(249,115,22,.7)" transform="rotate(90 45 45)">PITCH</text>
+        </svg>
+      </div>
+      <div>
+        <div style="font-family:var(--font-head);font-size:12px;font-weight:700;color:var(--accent);letter-spacing:1px;margin-bottom:8px">3-MINUTE NETWORKING PITCH TIMER</div>
+        <button onclick="startTimer('arcSolo','txtSolo',180,'b3',238.76)" style="background:rgba(249,115,22,.1);border:1px solid rgba(249,115,22,.3);color:var(--accent);padding:7px 18px;cursor:pointer;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1px;border-radius:7px;margin-right:8px">START</button>
+        <button onclick="resetArc('arcSolo','txtSolo',180,238.76)" style="background:var(--surface2);border:1px solid var(--border-dim);color:var(--muted);padding:7px 14px;cursor:pointer;font-family:var(--font-head);font-size:10px;font-weight:700;border-radius:7px">RESET</button>
+      </div>
+    </div>
+    <div class="tn"><div class="tn-lbl">&#9889; Teacher Note — Solo Challenge</div><div class="tn-text">This is the M6 S1 summative task. The rubric is deliberately scored by the CLASS (peer assessment) not by the teacher alone. Peer scoring has three benefits: (1) it keeps the whole class engaged during individual pitches, (2) it reinforces the grammar structures in the listeners (they have to identify them to score), (3) it creates accountability for the speaker. Run protocol: speaker pitches, class listens with rubric open on their screen, teacher reveals class scores after each pitch. Collect all rubric scores for the leaderboard in &sect;6. Any student who scores 12+/15 is performing at the top of A2.2. Score of 9–11: solid A2.2 — ready for S5. Score below 9: identify the specific rubric items that failed and address in the wrap-up My Win. The bonus point (rb6: three structures in one sentence with connector) is the B1 preview: &quot;What you just did? That is B1.1 integration. One module from now, that is your baseline.&quot;</div></div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="sec-hdr">
+    <div class="sec-num">&#167;6</div>
+    <div><div class="sec-label">Assessment — <em>Leaderboard &amp; Session Certificate</em></div><div class="sec-sub">Consolidate scores · Individual recognition · Session 1 complete · 8 min</div></div>
+    <div class="sec-dur">&#9201; 8 MIN</div>
+  </div>
+  <div class="sec-body">
+    <div class="lb-wrap">
+      <div class="lb-hdr"><div class="lb-title">&#127942; Session 1 Leaderboard — M6 A2.2 Integration</div></div>
+      <div class="lb-body">
+        <div class="lb-input-row">
+          <div><div class="lb-input-lbl">Student Name</div><input class="lb-input" id="lbName" placeholder="Enter name..."></div>
+          <div><div class="lb-input-lbl">Total Points</div><input class="lb-input" id="lbPoints" type="number" placeholder="0" min="0"></div>
+          <button class="lb-add-btn" onclick="addToLB()">Add &#43;</button>
+        </div>
+        <ul class="lb-list" id="lbList"></ul>
+        <div class="lb-empty" id="lbEmpty">No scores yet — add students after each section.</div>
+      </div>
+    </div>
+
+    <div class="cert-box">
+      <div class="cert-title">&#127942; Session Certificate</div>
+      <div class="cert-sub">A2.2 Integration · Module 6 · Session 1 — Production &amp; Fluency</div>
+      <input class="cert-input" id="certName" type="text" placeholder="Your name...">
+      <button class="cert-btn" onclick="generateCert()">Generate Certificate</button>
+      <div class="cert-result" id="certResult">
+        <div class="cert-name" id="certNameOut"></div>
+        <div class="cert-detail">has successfully completed A2.2 · Module 6 · Session 1<br>Full A2.2 Integration: networking pitch, career narrative, and professional closers<br>Gabriel Turner · English Training · Celaya, Guanajuato</div>
+      </div>
+    </div>
+
+    <div class="tn"><div class="tn-lbl">&#9889; Teacher Note — Leaderboard &amp; Certificate</div><div class="tn-text">Points to add from each section: Hot Take (§1) = up to 4pts each. Round 3 Debate (§2) = up to 4pts each. Relay Spin (§3) = up to 6pts per team spin. Speed Round (§4) = up to 4pts per prompt (6 prompts = 24pts max). Solo Challenge (§5) = up to 15pts. Maximum possible total = 53 pts. Realistic strong performance = 30–40pts. Announce the leaderboard top 3 before certificates. The certificate moment is emotionally significant — this is the first Production session of M6. Students who felt insecure in S1A warm-up now have a certificate acknowledging they delivered a 3-minute networking pitch in English. That is a tangible milestone. Take 30 seconds to acknowledge it explicitly.</div></div>
+  </div>
+</div>
+
+<div class="phrases-wrap">
+  <div class="phrases-hdr">&#127919; This week, use these 3 phrases at work:</div>
+  <div class="phrases-sub">From today&apos;s session — production-ready English for your next professional event or meeting.</div>
+  <div class="phrases-grid">
+    <div class="phrase-card">
+      <div class="phrase-en">&quot;I used to [past role], but now I&apos;m responsible for [current area].&quot;</div>
+      <div class="phrase-ctx">Your 30-second professional introduction. You practiced this 3 times today under pressure. Use it the next time someone asks about your work — at any event, meeting, or informal conversation. Sounds natural, complete, and confident.</div>
+    </div>
+    <div class="phrase-card">
+      <div class="phrase-en">&quot;That&apos;s a great opportunity. Let&apos;s stay in touch.&quot;</div>
+      <div class="phrase-ctx">Two networking closers in one natural sequence. Use them together to end any positive professional conversation this week. Follows up with: &quot;I&apos;ll reach out next week&quot; — now you have the complete professional goodbye in English.</div>
+    </div>
+    <div class="phrase-card">
+      <div class="phrase-en">&quot;We are going to [confirmed plan] and we might also [possibility].&quot;</div>
+      <div class="phrase-ctx">The professional future update: confident plan + strategic possibility. Use in meetings, emails, or networking when someone asks &quot;what are your plans?&quot; Combines M4 structures in one sentence that sounds decisive but honest about uncertainty.</div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="sec-hdr">
+    <div class="sec-num">&#167;7</div>
+    <div><div class="sec-label">Wrap-Up — <em>M6 Session 1 Complete</em></div><div class="sec-sub">Key takeaways · Checklist · Session 2 preview · 5–8 min</div></div>
+    <div class="sec-dur">&#9201; 5–8 MIN</div>
+  </div>
+  <div class="sec-body">
+    <div class="wrapup-grid">
+      <div class="wu-key"><div class="wu-key-title">&#128483;&#65039; Integration Under Pressure</div><div class="wu-key-text">You used 5 A2.2 structures in spontaneous conversation today — not in a grammar exercise. That is the S1B achievement. Speed Round proved you can produce them in under 15 seconds.</div></div>
+      <div class="wu-key"><div class="wu-key-title">&#127919; The 4 Closers</div><div class="wu-key-text">You practiced the 4 S1A networking closers in every section today. They should feel automatic now: opportunity → stay in touch → great meeting you → reach out next week. That is a complete professional goodbye.</div></div>
+      <div class="wu-key"><div class="wu-key-title">&#127942; Pitch Delivered</div><div class="wu-key-text">You delivered a 3-minute networking pitch in English today — with structure, comparatives, modals, and a professional close. This is A2.2 fluency. In S5 you do the same for the exit project rubric.</div></div>
+    </div>
+    <p style="font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:10px">I Can Now&hellip;</p>
+    <div class="cl-wrap">
+      <div class="cl-item" onclick="toggleDone(this)"><span class="cl-check">&#9744;</span>Deliver a 30-second professional introduction using <em>used to</em> + <em>responsible for</em> without notes.</div>
+      <div class="cl-item" onclick="toggleDone(this)"><span class="cl-check">&#9744;</span>Hold a 2-minute networking conversation combining 5 A2.2 structures naturally.</div>
+      <div class="cl-item" onclick="toggleDone(this)"><span class="cl-check">&#9744;</span>Respond to a networking prompt in under 15 seconds with an integrated A2.2 sentence.</div>
+      <div class="cl-item" onclick="toggleDone(this)"><span class="cl-check">&#9744;</span>Close a professional conversation using all 4 S1A phrases in natural, confident sequence.</div>
+      <div class="cl-item" onclick="toggleDone(this)"><span class="cl-check">&#9744;</span>Score 9+ out of 15 on the Solo Challenge rubric — demonstrating A2.2 production competency.</div>
+    </div>
+    <div class="next-card" style="margin-top:16px">
+      <div class="next-label">&#9654; Coming Next — Session 2A</div>
+      <div class="next-title">Career Trajectory &amp; Professional Plans</div>
+      <div class="next-sub">In S2A you add the FUTURE dimension to your career narrative: going to vs might vs will. Andrea prepares for her first 6-month review at Company B. You will learn 10 new career vocabulary words and practice the full 3-time-frame career introduction: past + present + future.</div>
+    </div>
+    <div class="win-area" style="margin-top:16px">
+      <div class="win-lbl">&#127942; My Win Today</div>
+      <textarea class="win-ta" id="winTA" placeholder="What is ONE thing from today&apos;s session that you will use at your next professional event or meeting? Write it in English."></textarea>
+      <button class="win-btn" onclick="saveWin()">Save My Win</button>
+      <div class="win-ok" id="winOK">&#10003; Saved! See you in Session 2A.</div>
+    </div>
+    <div class="tn tn-pk"><div class="tn-lbl">&#9889; Teacher Note — Upsell Moment</div><div class="tn-text">S1B ends with the student having delivered a complete networking pitch in English — that is a meaningful milestone. Use this moment: &quot;In S1A you had 20 seconds to say one sentence. Today you had 3 minutes and you filled them with 5 A2.2 structures. That is the difference between a student and a speaker. B1.1 starts where you are right now — it gives you present perfect (&apos;I have worked here for 5 years&apos;), first conditional (&apos;If we work together, we will grow faster&apos;), and passive voice (&apos;The proposal was approved yesterday&apos;). Those are the three structures that take your pitch from A2.2 to international business English. One module away.&quot; Best moment to say this: immediately after the certificate, when the student feels the pride of completion.</div></div>
+  </div>
+</div>
+
+<footer class="ftr">
+  <div class="fbrand">Gabriel Turner · English Training</div>
+  <div class="finfo">GT_A2_2_M6_S1B_TEACHER_v1.html · Celaya, Guanajuato</div>
+  <div class="flvs">
+    <div class="flv">A1.1</div><div class="flv">A1.2</div><div class="flv">A2.1</div>
+    <div class="flv on">A2.2</div><div class="flv">B1.1</div><div class="flv">B1.2</div>
+  </div>
+</footer>
+
+<script>
+function speak(t){if(!window.speechSynthesis)return;speechSynthesis.cancel();var u=new SpeechSynthesisUtterance(t);u.lang="en-US";u.rate=0.82;u.pitch=1;speechSynthesis.speak(u);}
+var badgeEarned={b1:false,b2:false,b3:false,b4:false,b5:false};
+function earnBadge(id){if(badgeEarned[id])return;badgeEarned[id]=true;var el=document.getElementById(id);if(el)el.classList.add("earned");if(Object.values(badgeEarned).every(Boolean)){launchConfetti();var cm=document.getElementById("confMsg");if(cm)cm.style.display="block";}}
+function launchConfetti(){var colors=["#F97316","#FB923C","#FFB800","#00E676","#00CFFF","#ffffff"];for(var i=0;i<90;i++){var d=document.createElement("div");d.style.cssText="position:fixed;top:-10px;pointer-events:none;z-index:9999;border-radius:2px;";d.style.left=Math.random()*100+"vw";d.style.width=(6+Math.random()*6)+"px";d.style.height=(6+Math.random()*6)+"px";d.style.background=colors[Math.floor(Math.random()*colors.length)];d.style.animation="confFall "+(1.5+Math.random()*2)+"s linear forwards";document.body.appendChild(d);setTimeout(function(){if(d.parentNode)d.parentNode.removeChild(d);},4000);}}
+(function(){var s=document.createElement("style");s.textContent="@keyframes confFall{0%{transform:translateY(-10px) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}";document.head.appendChild(s);})();
+var timerIntervals={};
+function startTimer(arcId,textId,seconds,badgeKey,circumference){if(timerIntervals[arcId])clearInterval(timerIntervals[arcId]);var arc=document.getElementById(arcId),txt=document.getElementById(textId),rem=seconds;function update(){arc.style.strokeDashoffset=circumference*(1-rem/seconds);var m=Math.floor(rem/60),s=rem%60;txt.textContent=m+":"+(s<10?"0":"")+s;if(rem<=5)arc.style.stroke="#FF4D6D";if(rem<=0){clearInterval(timerIntervals[arcId]);arc.style.stroke="var(--success)";if(badgeKey)earnBadge(badgeKey);return;}rem--;}update();timerIntervals[arcId]=setInterval(update,1000);}
+function resetArc(arcId,textId,seconds,circumference){if(timerIntervals[arcId]){clearInterval(timerIntervals[arcId]);delete timerIntervals[arcId];}var arc=document.getElementById(arcId);arc.style.strokeDashoffset="0";arc.style.stroke="var(--accent)";var m=Math.floor(seconds/60),s=seconds%60;document.getElementById(textId).textContent=m+":"+(s<10?"0":"")+s;}
+function toggleReveal(id){var el=document.getElementById(id);el.classList.toggle("show");el.previousElementSibling.textContent=el.classList.contains("show")?"\u25b2 Hide":"\u25bc Show Model Answer";}
+var rubricPoints={rb1:3,rb2:2,rb3:2,rb4:2,rb5:3,rb6:3};
+var rubricChecked={rb1:false,rb2:false,rb3:false,rb4:false,rb5:false,rb6:false};
+function toggleRubric(el,id){rubricChecked[id]=!rubricChecked[id];el.classList.toggle("checked");el.textContent=rubricChecked[id]?"\u2713":"";var total=0;Object.keys(rubricChecked).forEach(function(k){if(rubricChecked[k])total+=rubricPoints[k];});document.getElementById("rubricTotal").textContent="Total: "+total+" / 15 pts";if(total>=10)earnBadge("b3");}
+var lbData=[];
+function addToLB(){var name=document.getElementById("lbName").value.trim();var pts=parseInt(document.getElementById("lbPoints").value)||0;if(!name)return;lbData.push({name:name,pts:pts});lbData.sort(function(a,b){return b.pts-a.pts;});renderLB();document.getElementById("lbName").value="";document.getElementById("lbPoints").value="";if(lbData.length>=3)earnBadge("b5");}
+function renderLB(){var list=document.getElementById("lbList");var empty=document.getElementById("lbEmpty");if(lbData.length===0){if(empty)empty.style.display="block";return;}if(empty)empty.style.display="none";list.innerHTML="";var medals=["\ud83e\udd47","\ud83e\udd48","\ud83e\udd49"];lbData.forEach(function(entry,i){var li=document.createElement("li");li.className="lb-row";var pos=i<3?medals[i]:(i+1)+".";li.innerHTML='<span class="lb-pos">'+pos+'</span><span class="lb-name">'+entry.name+'</span><span class="lb-score">'+entry.pts+' pts</span>';list.appendChild(li);});}
+function generateCert(){var name=document.getElementById("certName").value.trim();if(!name)return;document.getElementById("certNameOut").textContent=name;document.getElementById("certResult").style.display="block";earnBadge("b5");launchConfetti();}
+var wheelSegments=[
+  {label:"Trade Fair",color:"#F97316",prompt:"You just met a new supplier at a trade fair in Guadalajara. Introduce yourself using used to + currently. Ask about their services using might and should."},
+  {label:"LinkedIn Call",color:"#FB923C",prompt:"A LinkedIn contact calls unexpectedly. Describe your plans using going to (confirmed) + might (possible). End with the 4 S1A closers."},
+  {label:"Client Meeting",color:"#FFB800",prompt:"A new client asks why choose your company. Use 2 comparatives + should + one S1A colloquial phrase. Be convincing."},
+  {label:"Job Interview",color:"#00CFFF",prompt:"The interviewer asks about your career journey. Use used to (past) + responsible for (present) + going to (future plan)."},
+  {label:"Team Intro",color:"#00E676",prompt:"Introduce yourself to a new team. Use used to + currently + one thing you might do differently in this role."},
+  {label:"Conference",color:"#A78BFA",prompt:"You meet a CEO at a conference. 45 seconds. Make the strongest introduction using 4 A2.2 structures."},
+  {label:"Follow-Up",color:"#FF4D6D",prompt:"Following up with last week contact. Reference your previous conversation, share a change, and arrange next steps."},
+  {label:"Cold Pitch",color:"#FFB347",prompt:"Calling a potential new client who does not know you. Introduce yourself, explain why using should + comparative, close professionally."}
+];
+var wheelAngle=0,spinning=false;
+function drawWheel(){var canvas=document.getElementById("wheelCanvas");if(!canvas)return;var ctx=canvas.getContext("2d");var cx=130,cy=130,r=122;var sliceAngle=(2*Math.PI)/wheelSegments.length;ctx.clearRect(0,0,260,260);wheelSegments.forEach(function(seg,i){var start=wheelAngle+i*sliceAngle;var end=start+sliceAngle;ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,r,start,end);ctx.closePath();ctx.fillStyle=seg.color;ctx.fill();ctx.strokeStyle="rgba(0,0,0,.3)";ctx.lineWidth=1.5;ctx.stroke();ctx.save();ctx.translate(cx,cy);ctx.rotate(start+sliceAngle/2);ctx.textAlign="right";ctx.fillStyle="#fff";ctx.font="bold 11px Syne,sans-serif";ctx.shadowColor="rgba(0,0,0,.5)";ctx.shadowBlur=3;ctx.fillText(seg.label,r-10,4);ctx.restore();});ctx.beginPath();ctx.arc(cx,cy,16,0,2*Math.PI);ctx.fillStyle="#111318";ctx.fill();ctx.strokeStyle="rgba(249,115,22,.5)";ctx.lineWidth=2;ctx.stroke();}
+drawWheel();
+function spinWheel(){if(spinning)return;spinning=true;var btn=document.getElementById("wheelBtn");btn.disabled=true;var extraSpins=(5+Math.floor(Math.random()*5))*2*Math.PI;var targetAngle=wheelAngle+extraSpins+Math.random()*2*Math.PI;var duration=3000,start=null,startAngle=wheelAngle;function animate(ts){if(!start)start=ts;var elapsed=ts-start;var progress=Math.min(elapsed/duration,1);var ease=1-Math.pow(1-progress,3);wheelAngle=startAngle+(targetAngle-startAngle)*ease;drawWheel();if(progress<1){requestAnimationFrame(animate);}else{spinning=false;btn.disabled=false;var sliceAngle=(2*Math.PI)/wheelSegments.length;var normalizedAngle=((-wheelAngle%(2*Math.PI))+(2*Math.PI))%(2*Math.PI);var hitIdx=Math.floor(normalizedAngle/sliceAngle)%wheelSegments.length;var hit=wheelSegments[hitIdx];var res=document.getElementById("wheelResult");res.innerHTML="<strong>"+hit.label+"</strong><br>"+hit.prompt;earnBadge("b2");}}requestAnimationFrame(animate);}
+function toggleDone(el){el.classList.toggle("done");var check=el.querySelector(".cl-check");check.textContent=el.classList.contains("done")?"\u2713":"\u2610";var all=document.querySelectorAll(".cl-item");if(Array.from(all).every(function(x){return x.classList.contains("done");}))earnBadge("b5");}
+function saveWin(){var ta=document.getElementById("winTA");if(ta.value.trim().length>3){earnBadge("b5");ta.style.borderColor="var(--success)";document.getElementById("winOK").style.display="block";}}
+window.addEventListener("scroll",function(){var h=document.documentElement;var bar=document.getElementById("progressFill");if(bar)bar.style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight)*100)+"%";});
+var dragSrc=null;
+function initDrag(listId){var list=document.getElementById(listId);if(!list)return;}
+initDrag("order1");
+initDrag("order2");
+</script>
+</body>
+</html>

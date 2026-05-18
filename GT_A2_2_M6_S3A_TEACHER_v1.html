@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GT A2.2 · M6 · S3A — Full A2.2 Integration</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#080808;--surface:#111318;--surface2:#1a1f28;
+  --border:rgba(249,115,22,.18);--border-dim:rgba(255,255,255,0.07);
+  --accent:#F97316;--accent2:#FB923C;
+  --cyan:#00CFFF;--gold:#FFB800;--green:#00E676;
+  --danger:#FF4D6D;--success:#00E5A0;--warn:#FFB347;--violet:#A78BFA;
+  --txt:#F0F4F8;--muted:#8A9BB0;--dim:rgba(226,226,226,.25);
+  --font-head:'Syne',sans-serif;--font-body:'DM Sans',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--txt);font-family:var(--font-body);font-size:14px;line-height:1.6;overflow-x:hidden}
+.hdr{background:var(--surface);border-bottom:1px solid var(--border);padding:16px 48px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;position:sticky;top:0;z-index:100}
+.brand{display:flex;align-items:center;gap:10px}
+.dot{width:8px;height:8px;background:var(--accent);border-radius:50%}
+.bname{font-family:var(--font-head);font-weight:800;font-size:13px;letter-spacing:2.5px;text-transform:uppercase;color:#fff}
+.bsub{font-size:10px;color:var(--muted);letter-spacing:1px}
+.sess-tag{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.tag{display:inline-block;padding:3px 10px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase}
+.t-or{background:rgba(249,115,22,.15);color:var(--accent);border:1px solid rgba(249,115,22,.3)}
+.t-go{background:rgba(0,230,118,.1);color:var(--green);border:1px solid rgba(0,230,118,.25)}
+.t-cy{background:rgba(0,207,255,.1);color:var(--cyan);border:1px solid rgba(0,207,255,.25)}
+.t-gd{background:rgba(255,184,0,.1);color:var(--gold);border:1px solid rgba(255,184,0,.25)}
+.badge-strip{display:flex;gap:6px;align-items:center}
+.badge-strip span{width:28px;height:28px;border-radius:50%;background:var(--surface2);border:1px solid var(--border-dim);display:flex;align-items:center;justify-content:center;font-size:13px;filter:grayscale(1);opacity:.4;transition:all .4s}
+.badge-strip span.earned{filter:none;opacity:1;border-color:var(--accent);background:rgba(249,115,22,.15);transform:scale(1.1)}
+.progress-bar{height:2px;background:var(--surface2);position:sticky;top:57px;z-index:99}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));width:0%;transition:width .3s}
+.section{margin:0 0 3px 0;overflow:hidden}
+.sec-hdr{display:flex;align-items:center;gap:14px;padding:20px 48px;background:linear-gradient(135deg,rgba(249,115,22,.06),transparent);border-bottom:1px solid var(--border)}
+.sec-num{font-family:var(--font-head);font-size:10px;font-weight:800;color:var(--accent);letter-spacing:.15em;text-transform:uppercase;background:rgba(249,115,22,.1);border:1px solid rgba(249,115,22,.25);padding:3px 10px;border-radius:20px;white-space:nowrap}
+.sec-label{font-family:var(--font-head);font-size:22px;font-weight:800;color:#fff}
+.sec-label em{color:var(--accent);font-style:normal}
+.sec-sub{font-size:12px;color:var(--muted);margin-top:2px}
+.sec-dur{font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1.5px;color:var(--gold);border:1px solid rgba(255,184,0,.2);padding:2px 9px;margin-left:auto;white-space:nowrap}
+.sec-body{padding:28px 48px}
+.img-hero{width:100%;height:260px;object-fit:cover;display:block;filter:brightness(.5);border-bottom:1px solid var(--border)}
+.img-banner{width:100%;height:150px;object-fit:cover;display:block;filter:brightness(.48);border-radius:10px;margin-bottom:16px}
+.wu-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:16px}
+.wu-card{background:var(--surface);border:1px solid var(--border-dim);border-radius:10px;overflow:hidden;border-left:3px solid var(--accent)}
+.wu-card-img{width:100%;height:90px;object-fit:cover;display:block;filter:brightness(.48)}
+.wu-card-body{padding:13px 15px}
+.wu-card-q{font-size:13px;color:var(--txt);line-height:1.5}
+.wu-card-hint{font-size:11px;color:var(--muted);font-style:italic;margin-top:6px}
+.quick-win{background:rgba(249,115,22,.07);border:1px solid rgba(249,115,22,.25);border-radius:10px;padding:16px 20px;margin-top:16px;display:flex;align-items:flex-start;gap:14px}
+.qw-icon{font-size:22px;flex-shrink:0;margin-top:2px}
+.qw-label{font-family:var(--font-head);font-size:9px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:5px}
+.qw-text{font-size:13.5px;color:#fff;line-height:1.55}
+.qw-try{font-size:12px;color:var(--accent2);margin-top:6px;font-style:italic}
+.timer-wrap{display:flex;flex-direction:column;align-items:center;gap:8px}
+.timer-svg{transform:rotate(-90deg)}
+.tn{background:var(--surface2);border:1px solid var(--border-dim);border-left:3px solid var(--gold);border-radius:8px;padding:13px 16px;margin-top:14px}
+.tn-lbl{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:6px}
+.tn-text{font-size:12px;color:rgba(255,184,0,.82);line-height:1.6}
+.tn-cy{border-left-color:var(--cyan)}.tn-cy .tn-lbl{color:var(--cyan)}.tn-cy .tn-text{color:rgba(0,207,255,.82)}
+.tn-pk{border-left-color:#FF4D6D}.tn-pk .tn-lbl{color:#FF4D6D}.tn-pk .tn-text{color:rgba(255,77,109,.82)}
+.vocab-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:16px}
+.vocab-card{background:var(--surface);border:1px solid var(--border-dim);border-radius:10px;overflow:hidden;cursor:pointer;transition:all .2s}
+.vocab-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.vocab-card-img{width:100%;height:72px;object-fit:cover;display:block;filter:brightness(.45)}
+.vocab-card-body{padding:11px 12px}
+.vc-word{font-family:var(--font-head);font-size:13px;font-weight:700;color:#fff;margin-bottom:2px}
+.vc-ipa{font-size:10px;color:var(--cyan);margin-bottom:5px;font-style:italic}
+.vc-def{font-size:11px;color:var(--muted);line-height:1.4;margin-bottom:6px}
+.vc-ex{font-size:11px;color:var(--accent2);font-style:italic;border-left:2px solid var(--accent);padding-left:7px;line-height:1.4}
+.vc-sp{font-size:10px;color:var(--dim);margin-top:6px}
+.micro-speak{background:rgba(0,207,255,.06);border:1px solid rgba(0,207,255,.2);border-radius:8px;padding:12px 16px;margin-top:16px;display:flex;align-items:flex-start;gap:12px}
+.ms-icon{font-size:18px;flex-shrink:0}
+.ms-text{font-size:12.5px;color:var(--cyan);line-height:1.55}
+.quiz-wrap{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-top:20px}
+.quiz-hdr{padding:14px 20px;background:rgba(249,115,22,.08);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.quiz-hdr-title{font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent)}
+.quiz-progress{height:4px;background:var(--surface2);border-radius:0}
+.quiz-progress-fill{height:100%;background:var(--accent);width:0%;transition:width .4s;border-radius:0}
+.quiz-body{padding:22px 24px}
+.quiz-q{font-size:14.5px;color:#fff;font-weight:500;margin-bottom:16px;line-height:1.5}
+.quiz-opts{display:flex;flex-direction:column;gap:8px}
+.vq-opt{background:var(--surface2);border:1px solid var(--border-dim);color:var(--txt);padding:10px 16px;text-align:left;cursor:pointer;font-size:13px;border-radius:7px;transition:all .2s;font-family:var(--font-body)}
+.vq-opt:hover:not(:disabled){border-color:var(--accent);background:rgba(249,115,22,.08)}
+.vq-opt.correct{background:rgba(0,229,160,.12);border-color:var(--success);color:var(--success)}
+.vq-opt.wrong{background:rgba(255,77,109,.12);border-color:var(--danger);color:var(--danger)}
+.quiz-score{font-family:var(--font-head);font-size:15px;font-weight:800;color:var(--accent);text-align:center;padding:14px;display:none}
+.quiz-restart{display:none;margin:0 auto 16px;background:rgba(249,115,22,.1);border:1px solid rgba(249,115,22,.3);color:var(--accent);padding:8px 22px;cursor:pointer;font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:1px;border-radius:6px}
+.coll-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:16px}
+.coll-card{background:var(--surface);border:1px solid var(--border-dim);border-radius:10px;overflow:hidden;cursor:pointer;transition:border-color .2s}
+.coll-card:hover{border-color:var(--warn)}
+.coll-card-img{width:100%;height:80px;object-fit:cover;display:block;filter:brightness(.45)}
+.coll-body{padding:13px 15px}
+.coll-phrase{font-family:var(--font-head);font-size:14px;font-weight:800;color:var(--warn);margin-bottom:6px}
+.coll-ctx{font-size:11.5px;color:var(--muted);margin-bottom:6px;line-height:1.45}
+.coll-ex{font-size:12px;color:var(--txt);font-style:italic;border-left:2px solid var(--warn);padding-left:8px;line-height:1.4}
+.prob-card{background:rgba(255,77,109,.06);border:1px solid rgba(255,77,109,.22);border-radius:10px;padding:16px 20px;margin-bottom:16px}
+.prob-lbl{font-family:var(--font-head);font-size:9px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--danger);margin-bottom:8px}
+.prob-scenario{font-size:13.5px;color:#fff;line-height:1.6;margin-bottom:8px}
+.prob-thought{font-size:12.5px;color:var(--muted);font-style:italic;line-height:1.5}
+.tool-card{background:rgba(0,229,160,.05);border:1px solid rgba(0,229,160,.2);border-radius:10px;padding:16px 20px;margin-bottom:16px}
+.tool-lbl{font-family:var(--font-head);font-size:9px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--success);margin-bottom:8px}
+.tool-text{font-size:13px;color:var(--txt);line-height:1.7}
+.gram-table{width:100%;border-collapse:collapse;margin:16px 0;font-size:12.5px}
+.gram-table th{background:rgba(249,115,22,.1);color:var(--accent);font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:9px 12px;text-align:left;border-bottom:2px solid var(--border)}
+.gram-table td{padding:9px 12px;border-bottom:1px solid var(--border-dim);vertical-align:top;line-height:1.5}
+.gram-table tbody tr:hover{background:rgba(249,115,22,.04)}
+.g-or{color:var(--accent);font-weight:600}.g-cy{color:var(--cyan);font-weight:600}
+.g-gr{color:var(--success);font-weight:600}.g-vl{color:var(--violet);font-weight:600}.g-ex{color:var(--muted);font-style:italic}
+.err-box{background:rgba(255,77,109,.06);border:1px solid rgba(255,77,109,.2);border-radius:8px;padding:13px 16px;margin:14px 0;font-size:12px;color:var(--txt);line-height:1.7}
+.act-title{font-family:var(--font-head);font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--accent);padding:16px 0 6px;border-top:1px solid var(--border);margin-top:16px}
+.opt-group{margin-bottom:16px}
+.opt-q{font-size:13px;color:var(--txt);margin-bottom:8px;line-height:1.5}
+.opts{display:flex;gap:8px;flex-wrap:wrap}
+.opt{background:var(--surface2);border:1px solid var(--border-dim);color:var(--txt);padding:7px 14px;cursor:pointer;font-size:12.5px;border-radius:7px;transition:all .2s;font-family:var(--font-body)}
+.opt:hover:not(:disabled){border-color:var(--accent);background:rgba(249,115,22,.08)}
+.opt.correct{background:rgba(0,229,160,.12);border-color:var(--success);color:var(--success)}
+.opt.wrong{background:rgba(255,77,109,.12);border-color:var(--danger);color:var(--danger)}
+.reorder-list{list-style:none;display:flex;flex-direction:column;gap:6px;margin:12px 0}
+.reorder-item{background:var(--surface2);border:1px solid var(--border-dim);border-radius:7px;padding:9px 14px;cursor:grab;font-size:13px;color:var(--txt);display:flex;align-items:center;gap:10px;transition:border-color .2s;user-select:none}
+.reorder-item.dragging{opacity:.5;border-color:var(--accent)}
+.reorder-item.drag-over{border-color:var(--cyan);background:rgba(0,207,255,.06)}
+.drag-handle{color:var(--dim);font-size:16px;flex-shrink:0}
+.check-order-btn{background:rgba(249,115,22,.1);border:1px solid rgba(249,115,22,.3);color:var(--accent);padding:8px 18px;cursor:pointer;font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:1px;border-radius:7px;margin-top:8px;transition:all .2s}
+.check-order-btn:hover{background:rgba(249,115,22,.2)}
+.fb{background:var(--surface2);border-radius:7px;padding:9px 14px;font-size:12.5px;margin-top:8px;display:none}
+.fb.show{display:block}
+.fb.ok{background:rgba(0,229,160,.1);border:1px solid rgba(0,229,160,.25);color:var(--success)}
+.fb.no{background:rgba(255,77,109,.1);border:1px solid rgba(255,77,109,.25);color:var(--danger)}
+/* FLASH CARDS MINI-GAME */
+.fc-wrap{background:var(--surface);border:1px solid var(--border-dim);border-radius:12px;overflow:hidden;margin-top:20px}
+.fc-hdr{background:rgba(249,115,22,.08);border-bottom:1px solid var(--border);padding:12px 20px;display:flex;align-items:center;justify-content:space-between}
+.fc-hdr-title{font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent)}
+.fc-body{padding:24px;display:flex;flex-direction:column;align-items:center;gap:16px}
+.fc-counter{font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:2px;color:var(--muted)}
+.fc-card{width:100%;max-width:520px;height:180px;perspective:1000px;cursor:pointer}
+.fc-inner{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform .5s}
+.fc-card.flipped .fc-inner{transform:rotateY(180deg)}
+.fc-front,.fc-back{position:absolute;width:100%;height:100%;backface-visibility:hidden;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;text-align:center}
+.fc-front{background:var(--surface2);border:2px solid var(--border-dim)}
+.fc-back{background:rgba(249,115,22,.08);border:2px solid rgba(249,115,22,.3);transform:rotateY(180deg)}
+.fc-front-word{font-family:var(--font-head);font-size:22px;font-weight:800;color:#fff;margin-bottom:8px}
+.fc-front-hint{font-size:12px;color:var(--muted);font-style:italic}
+.fc-back-phrase{font-family:var(--font-head);font-size:14px;font-weight:700;color:var(--accent);margin-bottom:8px;line-height:1.4}
+.fc-back-example{font-size:12px;color:var(--txt);line-height:1.5;font-style:italic}
+.fc-nav{display:flex;gap:12px;align-items:center}
+.fc-btn{background:rgba(249,115,22,.1);border:1px solid rgba(249,115,22,.3);color:var(--accent);padding:8px 20px;cursor:pointer;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1px;border-radius:7px;transition:all .2s}
+.fc-btn:hover{background:rgba(249,115,22,.2)}
+.fc-btn:disabled{opacity:.35;cursor:not-allowed}
+/* LISTENING */
+.listen-wrap{background:var(--surface);border:1px solid var(--border-dim);border-radius:12px;overflow:hidden;margin-top:16px}
+.listen-img{width:100%;height:130px;object-fit:cover;display:block;filter:brightness(.4)}
+.listen-inner{padding:16px 20px;display:flex;align-items:center;gap:16px}
+.play-btn-aud{width:42px;height:42px;border-radius:50%;background:rgba(249,115,22,.85);border:none;color:#fff;font-size:16px;cursor:pointer;flex-shrink:0;transition:background .2s}
+.play-btn-aud:hover{background:var(--accent)}
+.track-title{font-family:var(--font-head);font-size:13px;font-weight:700;color:#fff}
+.track-sub{font-size:10.5px;color:var(--muted);margin-top:3px}
+.waveform{display:flex;align-items:center;gap:2px;height:32px;padding:0 20px 14px}
+.wbar{width:3px;background:var(--accent);border-radius:2px;opacity:.3}
+.script-toggle{background:rgba(249,115,22,.08);border:1px solid rgba(249,115,22,.2);color:var(--accent);padding:7px 16px;cursor:pointer;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1px;width:100%;transition:background .2s}
+.script-toggle:hover{background:rgba(249,115,22,.15)}
+.script-box{max-height:0;overflow:hidden;transition:max-height .4s;background:var(--surface2);font-size:13px;color:var(--muted);line-height:1.7;white-space:pre-wrap}
+.script-box.open{max-height:600px;padding:16px 20px}
+.tf-row{display:grid;grid-template-columns:1fr auto;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border-dim)}
+.tf-stmt{font-size:13px;color:var(--txt);line-height:1.5}
+.tf-btns{display:flex;gap:6px}
+.tf-btn{background:var(--surface2);border:1px solid var(--border-dim);color:var(--txt);padding:5px 12px;cursor:pointer;font-size:11.5px;border-radius:6px;font-family:var(--font-head);font-weight:700;letter-spacing:.5px;transition:all .2s;white-space:nowrap}
+.tf-btn:hover:not(:disabled){border-color:var(--accent)}
+/* SPEAKING */
+.speak-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
+.speak-card{background:var(--surface);border:1px solid var(--border-dim);border-radius:10px;padding:15px 16px}
+.speak-num{font-family:var(--font-head);font-size:9.5px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--dim);margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.speak-tag{padding:2px 8px;font-size:9px;font-weight:800;letter-spacing:1px;border-radius:4px}
+.st-ts{background:rgba(249,115,22,.15);color:var(--accent)}
+.st-ss{background:rgba(0,207,255,.12);color:var(--cyan)}
+.st-cl{background:rgba(0,229,160,.1);color:var(--success)}
+.speak-q{font-size:14.5px;color:#fff;line-height:1.55;margin-bottom:8px}
+.speak-hint{font-size:11px;color:var(--muted);font-style:italic;border-left:2px solid var(--border-dim);padding-left:8px;line-height:1.4}
+.om-wrap{background:var(--surface);border:1px solid var(--border-dim);border-radius:12px;padding:20px 24px;margin-top:20px}
+.om-stmt{font-size:14px;color:#fff;font-style:italic;margin-bottom:16px;padding:13px 18px;background:var(--surface2);border-left:3px solid var(--accent);border-radius:6px;line-height:1.6}
+.om-track{height:10px;background:var(--surface2);border-radius:10px;overflow:hidden;margin-bottom:8px}
+.om-bar{height:100%;background:linear-gradient(90deg,var(--danger),var(--accent),var(--success));width:50%;transition:width .3s}
+.om-labels{display:flex;justify-content:space-between;font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--dim);margin-bottom:14px}
+.om-btns{display:flex;gap:10px;margin-bottom:8px}
+.om-btn{flex:1;padding:9px;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1px;cursor:pointer;border-radius:7px;transition:all .2s;border:1px solid}
+.om-dis{background:rgba(255,77,109,.08);border-color:rgba(255,77,109,.3);color:var(--danger)}
+.om-dis:hover{background:rgba(255,77,109,.18)}
+.om-agr{background:rgba(0,229,160,.08);border-color:rgba(0,229,160,.3);color:var(--success)}
+.om-agr:hover{background:rgba(0,229,160,.18)}
+.om-pct{font-family:var(--font-head);font-size:14px;font-weight:800;color:var(--accent);text-align:center}
+.phrases-wrap{background:rgba(255,184,0,.04);border-top:2px solid rgba(255,184,0,.2);border-bottom:2px solid rgba(255,184,0,.2);padding:28px 48px;margin:3px 0}
+.phrases-hdr{font-family:var(--font-head);font-size:18px;font-weight:800;color:var(--gold);margin-bottom:6px}
+.phrases-sub{font-size:12px;color:var(--muted);margin-bottom:20px}
+.phrases-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.phrase-card{background:var(--surface);border:1px solid rgba(255,184,0,.2);border-radius:10px;padding:16px 18px;border-top:3px solid var(--gold)}
+.phrase-en{font-family:var(--font-head);font-size:14px;font-weight:800;color:#fff;margin-bottom:8px;line-height:1.4}
+.phrase-ctx{font-size:12px;color:var(--muted);line-height:1.5}
+.wrapup-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:16px 0}
+.wrapup-card{background:var(--surface);border:1px solid var(--border-dim);border-radius:10px;padding:16px;border-top:3px solid var(--accent)}
+.wrapup-card h4{font-family:var(--font-head);font-size:11px;font-weight:800;color:var(--accent);letter-spacing:1px;margin-bottom:8px}
+.wrapup-card p{font-size:12.5px;color:var(--muted);line-height:1.55}
+.cl-list{list-style:none;display:flex;flex-direction:column;gap:6px;margin-top:16px}
+.cl-item{background:var(--surface);border:1px solid var(--border-dim);border-radius:7px;padding:9px 14px;cursor:pointer;font-size:13px;color:var(--txt);display:flex;align-items:center;gap:10px;transition:all .2s}
+.cl-item:hover{border-color:var(--success)}
+.cl-item.done{background:rgba(0,229,160,.06);border-color:rgba(0,229,160,.25);color:var(--success)}
+.cl-check{font-size:14px;flex-shrink:0;color:var(--dim)}
+.cl-item.done .cl-check{color:var(--success)}
+.win-wrap{background:var(--surface);border:1px solid var(--border-dim);border-radius:10px;padding:20px;margin-top:16px}
+.win-label{font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:10px}
+.win-ta{width:100%;background:var(--surface2);border:1px solid var(--border-dim);border-radius:7px;color:var(--txt);padding:12px;font-size:13px;font-family:var(--font-body);resize:vertical;min-height:72px;line-height:1.5;transition:border-color .3s}
+.win-ta:focus{outline:none;border-color:var(--accent)}
+.win-btn{background:rgba(249,115,22,.1);border:1px solid rgba(249,115,22,.3);color:var(--accent);padding:8px 20px;cursor:pointer;font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:1px;border-radius:7px;margin-top:10px;transition:all .2s}
+.win-btn:hover{background:rgba(249,115,22,.22)}
+.win-ok{display:none;color:var(--success);font-size:12.5px;margin-top:8px;font-style:italic}
+.next-prev{background:rgba(0,207,255,.05);border:1px solid rgba(0,207,255,.2);border-radius:10px;padding:16px 18px;margin-top:16px}
+.next-lbl{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--cyan);margin-bottom:6px}
+.next-text{font-size:13px;color:var(--txt);line-height:1.6}
+#confMsg{display:none;text-align:center;font-family:var(--font-head);font-size:14px;font-weight:800;color:var(--gold);padding:14px;letter-spacing:2px;text-transform:uppercase}
+.ftr{background:var(--surface);border-top:1px solid var(--border);padding:16px 48px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+.fbrand{font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim)}
+.finfo{font-size:11px;color:var(--dim)}
+.flvs{display:flex;gap:3px}
+.flv{padding:5px 10px;font-family:var(--font-head);font-size:10px;font-weight:700;background:var(--surface2);color:var(--dim)}
+.flv.on{background:var(--accent);color:#fff}
+body.sm .tn{display:none}
+@media(max-width:860px){
+  .hdr,.ftr,.phrases-wrap{padding:14px 18px}
+  .sec-body{padding:20px 18px}
+  .sec-hdr{padding:16px 18px}
+  .wu-grid,.vocab-grid{grid-template-columns:repeat(2,1fr)}
+  .coll-grid,.phrases-grid,.wrapup-grid{grid-template-columns:1fr}
+  .speak-grid{grid-template-columns:1fr}
+  .opts{flex-direction:column}
+}
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <div class="brand"><div class="dot"></div><div><div class="bname">Gabriel Turner</div><div class="bsub">English Training · Teacher Edition</div></div></div>
+  <div class="sess-tag">
+    <span class="tag t-or">A2.2</span><span class="tag t-gd">Module 6</span>
+    <span class="tag t-cy">Session 3A — Discovery &amp; Drill</span>
+    <span class="tag t-go">120 min</span>
+  </div>
+  <div class="badge-strip">
+    <span id="b1">&#128172;</span><span id="b2">&#129504;</span><span id="b3">&#9997;&#65039;</span><span id="b4">&#127911;</span><span id="b5">&#127942;</span>
+    <button onclick="document.body.classList.toggle('sm');this.textContent=document.body.classList.contains('sm')?'Teacher Mode':'Student Mode'" style="margin-left:8px;background:rgba(249,115,22,.1);border:1px solid rgba(249,115,22,.3);color:var(--accent);padding:4px 10px;cursor:pointer;font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:1px;border-radius:5px">Student Mode</button>
+  </div>
+</header>
+<div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+<div id="confMsg">&#127881; All 5 badges earned! Excellent advice! &#127881;</div>
+
+<div class="section">
+  <div class="sec-hdr">
+    <div class="sec-num">&#167;1</div>
+    <div><div class="sec-label">Warm-Up — <em>What would YOU do?</em></div><div class="sec-sub">Activate advice language · Connect real work problems to M3 structures · 5–8 min</div></div>
+    <div class="sec-dur">&#9201; 5–8 MIN</div>
+  </div>
+  <img class="img-hero" src="https://images.unsplash.com/photo-1475721027785-f74eccf877e2?w=900&q=80" alt="Colleagues discussing professional advice at a meeting" loading="lazy">
+  <div class="sec-body">
+    <div class="wu-grid">
+      <div class="wu-card">
+        <img class="wu-card-img" src="https://images.unsplash.com/photo-1543269664-76bc3997d9ea?w=600&q=80" alt="S1A and S2A recall" loading="lazy">
+        <div class="wu-card-body">
+          <div class="wu-card-q">&#128336; <strong>S1A &amp; S2A Recall:</strong> Quick fire. One sentence using: (1) <em>used to</em> about your past, (2) <em>going to</em> about a confirmed plan, (3) <em>should</em> as advice for a colleague. Three structures, three sentences. Go!</div>
+          <div class="wu-card-hint">&#128161; This activates the full M6 arc so far. Note who produces should naturally vs who pauses on it. That hesitation signals a learner who confuses advice (should) with obligation (must/have to). S3A fixes that gap.</div>
+        </div>
+      </div>
+      <div class="wu-card">
+        <img class="wu-card-img" src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=600&q=80" alt="Work problem scenario" loading="lazy">
+        <div class="wu-card-body">
+          <div class="wu-card-q">&#128221; <strong>Work problem:</strong> A colleague tells you: &quot;I have a job interview next week but I don&apos;t know what to wear, I forgot to research the company, and I&apos;m very nervous.&quot; What do you tell them? Say 3 pieces of advice in English — don&apos;t check your notes.</div>
+          <div class="wu-card-hint">&#128161; Collect their advice. Expected: &quot;You should wear [formal clothes].&quot; &quot;You should research the company.&quot; &quot;You could practice with a friend.&quot; Write these on the board — they become the grammar content of &sect;4.</div>
+        </div>
+      </div>
+      <div class="wu-card">
+        <img class="wu-card-img" src="https://images.unsplash.com/photo-1606765962248-7ff407b51667?w=600&q=80" alt="Andrea needs advice" loading="lazy">
+        <div class="wu-card-body">
+          <div class="wu-card-q">&#128101; <strong>Andrea&apos;s dilemma:</strong> After the trade fair, Andrea received two job offers. Option A: same company, higher salary, more travel. Option B: new company, lower salary, closer to home, better growth. She asks YOU for advice. What do you tell her?</div>
+          <div class="wu-card-hint">&#128161; This seeds the grammar section and the Flash Cards game. Let students debate freely in English or Spanish. Write the comparison language that emerges: &quot;Option A is better because...&quot; / &quot;You should choose B because...&quot; Both M3 (should) and M5 (comparatives) activated simultaneously.</div>
+        </div>
+      </div>
+      <div class="wu-card">
+        <img class="wu-card-img" src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=600&q=80" alt="Advice vs obligation distinction" loading="lazy">
+        <div class="wu-card-body">
+          <div class="wu-card-q">&#9888;&#65039; <strong>Advice or rule?</strong> Which is stronger in English? &quot;You should arrive on time.&quot; vs &quot;You must arrive on time.&quot; vs &quot;You have to arrive on time.&quot; What is the difference? Discuss with your partner.</div>
+          <div class="wu-card-hint">&#128161; This is the diagnostic question for S3A. Expected answer: must = internal strong rule, have to = external obligation, should = advice/recommendation (not compulsory). If students say all three are the same, that is the error S3A Grammar directly addresses.</div>
+        </div>
+      </div>
+    </div>
+    <div class="quick-win">
+      <div class="qw-icon">&#128172;</div>
+      <div>
+        <div class="qw-label">Quick Win — 20 seconds</div>
+        <div class="qw-text">Say this right now: <strong>&quot;You should prepare carefully because first impressions are more important than you think. You could also ask a colleague for feedback — it might help a lot.&quot;</strong></div>
+        <div class="qw-try">That is M3 advice + M5 comparative + M4 possibility — three A2.2 structures in two sentences. Today we master giving advice this fluently in any professional context.</div>
+      </div>
+      <div class="timer-wrap">
+        <svg class="timer-svg" width="54" height="54" viewBox="0 0 54 54">
+          <circle cx="27" cy="27" r="23" stroke="rgba(249,115,22,.2)" stroke-width="4" fill="none"/>
+          <circle id="arcQW" cx="27" cy="27" r="23" stroke="var(--accent)" stroke-width="4" fill="none" stroke-dasharray="144.51" stroke-dashoffset="0"/>
+          <text id="txtQW" x="27" y="32" text-anchor="middle" font-family="Syne,sans-serif" font-size="13" font-weight="800" fill="var(--accent)" transform="rotate(90 27 27)">20</text>
+        </svg>
+        <button onclick="startTimer('arcQW','txtQW',20,'b1',144.51)" style="background:rgba(249,115,22,.1);border:1px solid rgba(249,115,22,.3);color:var(--accent);padding:4px 10px;cursor:pointer;font-family:var(--font-head);font-size:9px;font-weight:700;border-radius:5px;margin-top:4px">START</button>
+      </div>
+    </div>
+    <div class="tn"><div class="tn-lbl">&#9889; Teacher Note — Warm-Up Strategy</div><div class="tn-text">S3A focuses on giving advice and making recommendations professionally — the M3 skill integrated into M6 networking context. Card 4 (Advice or rule?) is the key diagnostic: if students say should / must / have to all mean the same thing, you have identified the M2–M3 confusion that S3A directly addresses. Use that confusion to motivate the grammar section. The Andrea dilemma (Card 3) runs all session: students will return to it in the Flash Cards game, the speaking section, and the listening. Do not resolve it in the warm-up — let it stay open as the session&apos;s narrative engine. Layer 3: ask the strongest student to give advice to Andrea using should, could, AND a comparative in one sentence before any notes appear.</div></div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="sec-hdr">
+    <div class="sec-num">&#167;2</div>
+    <div><div class="sec-label">Vocabulary — <em>Advice, Recommendations &amp; Professional Decisions</em></div><div class="sec-sub">10 key words for giving and receiving professional advice · IPA · Click to hear · 10 min</div></div>
+    <div class="sec-dur">&#9201; 10 MIN</div>
+  </div>
+  <img class="img-banner" src="https://images.unsplash.com/photo-1455390582262-044cdead277a?w=900&q=80" alt="Professional advice and decision vocabulary" loading="lazy">
+  <div class="sec-body">
+    <div class="vocab-grid">
+      <div class="vocab-card" onclick="speak('recommend')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1543269664-76bc3997d9ea?w=600&q=80" alt="recommend" loading="lazy">
+        <div class="vocab-card-body"><div class="vc-word">recommend</div><div class="vc-ipa">/ˌrek.əˈmend/</div><div class="vc-def">to suggest something as the best option for someone</div><div class="vc-ex">I recommend Option B — it is more flexible and closer to home. The growth potential is better too.</div><div class="vc-sp">recomendar</div></div>
+      </div>
+      <div class="vocab-card" onclick="speak('consider')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1506784983877-45594efa4cbe?w=600&q=80" alt="consider" loading="lazy">
+        <div class="vocab-card-body"><div class="vc-word">consider</div><div class="vc-ipa">/kənˈsɪd.ər/</div><div class="vc-def">to think carefully about all aspects of something before deciding</div><div class="vc-ex">You should consider all the factors before you accept the offer — salary is not the only thing that matters.</div><div class="vc-sp">considerar / tomar en cuenta</div></div>
+      </div>
+      <div class="vocab-card" onclick="speak('opportunity')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=600&q=80" alt="opportunity" loading="lazy">
+        <div class="vocab-card-body"><div class="vc-word">opportunity</div><div class="vc-ipa">/ˌɒp.əˈtjuː.nɪ.ti/</div><div class="vc-def">a situation that offers a chance to do something positive or valuable</div><div class="vc-ex">This new position is a great opportunity for growth — you could become a director in three years.</div><div class="vc-sp">oportunidad</div></div>
+      </div>
+      <div class="vocab-card" onclick="speak('priority')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=600&q=80" alt="priority" loading="lazy">
+        <div class="vocab-card-body"><div class="vc-word">priority</div><div class="vc-ipa">/praɪˈɒr.ɪ.ti/</div><div class="vc-def">the thing that is most important and should be handled first</div><div class="vc-ex">Your priority right now should be work-life balance — a lower salary might be worth it.</div><div class="vc-sp">prioridad</div></div>
+      </div>
+      <div class="vocab-card" onclick="speak('weigh up')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=600&q=80" alt="weigh up" loading="lazy">
+        <div class="vocab-card-body"><div class="vc-word">weigh up</div><div class="vc-ipa">/weɪ ʌp/</div><div class="vc-def">to compare the advantages and disadvantages carefully before deciding</div><div class="vc-ex">You need to weigh up both options before you decide — don&apos;t rush this decision.</div><div class="vc-sp">sopesar / evaluar pros y contras</div></div>
+      </div>
+      <div class="vocab-card" onclick="speak('negotiate')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1521791136064-7986c2920216?w=600&q=80" alt="negotiate" loading="lazy">
+        <div class="vocab-card-body"><div class="vc-word">negotiate</div><div class="vc-ipa">/nɪˈɡəʊ.ʃi.eɪt/</div><div class="vc-def">to discuss terms with the goal of reaching an agreement that works for both sides</div><div class="vc-ex">You should negotiate the salary before you accept — you could ask for 10% more and see what they say.</div><div class="vc-sp">negociar</div></div>
+      </div>
+      <div class="vocab-card" onclick="speak('drawback')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=600&q=80" alt="drawback" loading="lazy">
+        <div class="vocab-card-body"><div class="vc-word">drawback</div><div class="vc-ipa">/ˈdrɔː.bæk/</div><div class="vc-def">a disadvantage or negative aspect of something</div><div class="vc-ex">The main drawback of Option A is the travel. If you have a family, that could be a big problem.</div><div class="vc-sp">desventaja / inconveniente</div></div>
+      </div>
+      <div class="vocab-card" onclick="speak('perspective')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1560439514-4e9645039924?w=600&q=80" alt="perspective" loading="lazy">
+        <div class="vocab-card-body"><div class="vc-word">perspective</div><div class="vc-ipa">/pəˈspek.tɪv/</div><div class="vc-def">a particular way of thinking about or understanding something</div><div class="vc-ex">From a long-term perspective, Option B is more attractive — the growth opportunities are much better.</div><div class="vc-sp">perspectiva / punto de vista</div></div>
+      </div>
+      <div class="vocab-card" onclick="speak('commitment')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1543007630-9710e4a00a20?w=600&q=80" alt="commitment" loading="lazy">
+        <div class="vocab-card-body"><div class="vc-word">commitment</div><div class="vc-ipa">/kəˈmɪt.mənt/</div><div class="vc-def">a serious promise or obligation to do something consistently</div><div class="vc-ex">Before you accept, you should understand the time commitment. Option A requires 60% travel.</div><div class="vc-sp">compromiso</div></div>
+      </div>
+      <div class="vocab-card" onclick="speak('align')">
+        <img class="vocab-card-img" src="https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=600&q=80" alt="align" loading="lazy">
+        <div class="vocab-card-body"><div class="vc-word">align</div><div class="vc-ipa">/əˈlaɪn/</div><div class="vc-def">to match or be in agreement with your goals, values, or direction</div><div class="vc-ex">You should choose the option that aligns better with your long-term goals — not just the one that pays more.</div><div class="vc-sp">alinearse / estar alineado con</div></div>
+      </div>
+    </div>
+    <div class="micro-speak"><div class="ms-icon">&#128483;&#65039;</div><div class="ms-text"><strong>Micro-Speaking:</strong> Choose 3 words. Use each one to give Andrea a piece of advice about her job offers. Example: &quot;You should consider the drawback of Option A — 60% travel is a big commitment if you have a family.&quot; Say it out loud.</div></div>
+    <div class="quiz-wrap">
+      <div class="quiz-hdr"><div class="quiz-hdr-title">&#9889; Vocabulary Quiz — 10 Questions</div><span style="font-size:10.5px;color:var(--muted)">8+ correct = Badge &#129504;</span></div>
+      <div class="quiz-progress"><div class="quiz-progress-fill" id="vqBar"></div></div>
+      <div class="quiz-body"><div class="quiz-q" id="vqQ">Loading...</div><div class="quiz-opts" id="vqOpts"></div><div class="quiz-score" id="vqScore"></div><button class="quiz-restart" id="vqRestart" onclick="startQuiz()">Try Again</button></div>
+    </div>
+    <div class="tn"><div class="tn-lbl">&#9889; Teacher Note — Vocabulary</div><div class="tn-text">Prioritize: recommend, weigh up, drawback — these three are the most immediately usable in the advice contexts of S3A. &quot;Weigh up&quot; is a phrasal verb: always two words, never &quot;weight up.&quot; &quot;Drawback&quot; is more professional than &quot;disadvantage&quot; or &quot;problem&quot; — worth drilling as a register upgrade. Pronunciation focus: negotiate /nɪˈɡəʊ.ʃi.eɪt/ — 5 syllables, stress on 2nd. Mexican learners say &quot;ne-GO-ciar&quot; (Spanish cognate) — the English shifts to /nɪ-GOH-shɪ-eyt/. After the quiz: &quot;Which of these words did you use at work this week?&quot; — drives immediate connection to professional reality.</div></div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="sec-hdr">
+    <div class="sec-num">&#167;3</div>
+    <div><div class="sec-label">Colloquial — <em>Advice Phrases That Sound Natural</em></div><div class="sec-sub">4 expressions for giving advice like a native speaker · 5 min</div></div>
+    <div class="sec-dur">&#9201; 5 MIN</div>
+  </div>
+  <img class="img-banner" src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=900&q=80" alt="Professional giving advice" loading="lazy">
+  <div class="sec-body">
+    <div class="coll-grid">
+      <div class="coll-card" onclick="speak(&quot;If I were you, I'd...&quot;)">
+        <img class="coll-card-img" src="https://images.unsplash.com/photo-1543269664-76bc3997d9ea?w=600&q=80" alt="if I were you" loading="lazy">
+        <div class="coll-body"><div class="coll-phrase">&quot;If I were you, I&apos;d [advice].&quot;</div><div class="coll-ctx">The most natural and empathetic way to give advice in English. Puts you in the other person&apos;s shoes. More personal and warmer than &quot;you should.&quot; Very common in professional and personal conversations.</div><div class="coll-ex">&quot;If I were you, I&apos;d negotiate the salary before I accepted. You have more power than you think.&quot;</div></div>
+      </div>
+      <div class="coll-card" onclick="speak(&quot;Have you thought about...?&quot;)">
+        <img class="coll-card-img" src="https://images.unsplash.com/photo-1506784983877-45594efa4cbe?w=600&q=80" alt="have you thought about" loading="lazy">
+        <div class="coll-body"><div class="coll-phrase">&quot;Have you thought about [option]?&quot;</div><div class="coll-ctx">A softer, non-directive way to suggest an idea. Invites the person to consider something new without imposing. Very useful when you are not sure your advice will be welcome.</div><div class="coll-ex">&quot;Have you thought about asking for a trial period? Some companies accept that before a full commitment.&quot;</div></div>
+      </div>
+      <div class="coll-card" onclick="speak(&quot;It's worth trying.&quot;)">
+        <img class="coll-card-img" src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=600&q=80" alt="worth trying" loading="lazy">
+        <div class="coll-body"><div class="coll-phrase">&quot;It&apos;s worth trying.&quot;</div><div class="coll-ctx">Encourages someone to take a small risk or make an attempt. Suggests the potential benefit is greater than the risk. Pairs naturally with <em>could</em>: &quot;You could negotiate — it&apos;s worth trying.&quot;</div><div class="coll-ex">&quot;You could ask for a higher salary. Honestly, it&apos;s worth trying — the worst they can say is no.&quot;</div></div>
+      </div>
+      <div class="coll-card" onclick="speak(&quot;My advice would be to...&quot;)">
+        <img class="coll-card-img" src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600&q=80" alt="my advice would be" loading="lazy">
+        <div class="coll-body"><div class="coll-phrase">&quot;My advice would be to [verb].&quot;</div><div class="coll-ctx">More formal and structured. Use in presentations, professional emails, or when speaking to a client or senior contact. Sounds authoritative and thoughtful.</div><div class="coll-ex">&quot;My advice would be to take Option B. The growth potential is more important than the salary at this stage of your career.&quot;</div></div>
+      </div>
+    </div>
+    <div class="tn"><div class="tn-lbl">&#9889; Teacher Note — Colloquial Drill</div><div class="tn-text">Say: &quot;Click each phrase to hear it — repeat with me.&quot; Then run the scenario drill: Andrea has two job offers. Each student uses ONE of the four phrases to give her advice. You cannot use the same phrase as the previous student. This forces variety and production. Anticipated errors: &quot;If I was you&quot; → &quot;If I WERE you&quot; — the subjunctive form &quot;were&quot; is obligatory for all persons in this fixed expression. Teach this as a FIXED CHUNK: memorize &quot;If I were you, I&apos;d&quot; as one unit — don&apos;t try to explain the subjunctive at A2.2. &quot;Have you thought about&quot; is followed by -ing or a noun, not infinitive: &quot;Have you thought about NEGOTIATING?&quot; not &quot;to negotiate.&quot; &quot;It&apos;s worth trying&quot; always -ing after &quot;worth.&quot; Cultural note: Mexican business culture tends toward direct advice. &quot;Have you thought about&quot; and &quot;If I were you&quot; teach a more indirect, face-saving register that is standard in international English workplaces.</div></div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="sec-hdr">
+    <div class="sec-num">&#167;4</div>
+    <div><div class="sec-label">Grammar — <em>Should, Could &amp; Comparative Advice</em></div><div class="sec-sub">Problem → Tool · M3 integrated with M5 comparatives · 12–15 min</div></div>
+    <div class="sec-dur">&#9201; 12–15 MIN</div>
+  </div>
+  <img class="img-banner" src="https://images.unsplash.com/photo-1551135049-8a33b5883817?w=900&q=80" alt="Weighing up professional options" loading="lazy">
+  <div class="sec-body">
+    <div class="prob-card">
+      <div class="prob-lbl">&#128680; Real Work Situation</div>
+      <div class="prob-scenario">Andrea shows you both job offers. Option A: same company, +20% salary, 60% travel. Option B: new company, -10% salary, no travel, director track in 2 years. She asks: &quot;What do you think I should do?&quot; You want to give her a structured recommendation — using comparatives to justify it, and should/could to deliver it professionally. But in Spanish you say &quot;Yo que tú, agarraría la B porque es mejor.&quot; In English you freeze after &quot;I think you should...&quot; and can&apos;t explain why.</div>
+      <div class="prob-thought">The problem: giving advice in English requires more than should. A professional recommendation needs: the advice (should/could) + the comparison (more/better/less) + the reason (because/so). Without all three, your advice sounds incomplete.</div>
+    </div>
+    <div class="tool-card">
+      <div class="tool-lbl">&#128295; The Tool — The Professional Advice Formula</div>
+      <div class="tool-text">
+        A complete professional recommendation in English has three parts:<br><br>
+        <strong style="color:var(--accent)">1. The advice:</strong> &quot;You <strong>should</strong> choose Option B.&quot; / &quot;You <strong>could</strong> also negotiate the salary first.&quot;<br>
+        <strong style="color:var(--success)">2. The comparison:</strong> &quot;&hellip;because Option B is <strong>more flexible than</strong> A&quot; / &quot;&hellip;the growth potential is <strong>better than</strong> any option you have now.&quot;<br>
+        <strong style="color:var(--cyan)">3. The reason:</strong> &quot;&hellip;<strong>so</strong> you won&apos;t have to travel&quot; / &quot;&hellip;<strong>because</strong> your long-term goals align better with B.&quot;<br><br>
+        Full formula: <strong style="color:var(--gold)">should/could + comparative + because/so</strong><br>
+        Example: &quot;You <span style="color:var(--accent)">should</span> choose Option B because it is <span style="color:var(--success)">more aligned with</span> your goals, <span style="color:var(--cyan)">so</span> you won&apos;t have to sacrifice your personal life.&quot;
+      </div>
+    </div>
+    <table class="gram-table">
+      <thead><tr><th>Advice Structure</th><th>Strength</th><th>Professional use</th><th>Example (Andrea&apos;s decision)</th></tr></thead>
+      <tbody>
+        <tr><td><span class="g-or">should + verb</span></td><td style="color:var(--warn);font-weight:700">Strong recommendation</td><td>Direct professional advice; you are fairly confident this is the right choice</td><td class="g-ex">You should accept Option B. The growth trajectory is much better.</td></tr>
+        <tr><td><span class="g-vl">could + verb</span></td><td style="color:var(--cyan);font-weight:700">Softer suggestion</td><td>Offer an alternative or option without imposing; invite consideration</td><td class="g-ex">You could also ask Option A to reduce the travel requirement before deciding.</td></tr>
+        <tr><td><span class="g-gr">should + comparative</span></td><td style="color:var(--accent);font-weight:700">Justified advice</td><td>Combine advice with comparison — the professional standard for recommendations</td><td class="g-ex">You should choose B because it is more flexible and better aligned with your goals.</td></tr>
+        <tr><td><span class="g-cy">shouldn&apos;t + verb</span></td><td style="color:var(--danger);font-weight:700">Strong negative advice</td><td>Warn against a bad decision; more direct than &quot;I don&apos;t think you should&quot;</td><td class="g-ex">You shouldn&apos;t decide based on salary alone. The other factors are more important long-term.</td></tr>
+      </tbody>
+    </table>
+    <div class="err-box">
+      &#9888;&#65039; <strong>Common Errors — advice in professional English:</strong><br>
+      &#10007; &quot;I recommend you to accept Option B.&quot; &rarr; &#10003; <strong>I recommend accepting</strong> / <strong>You should accept</strong> — &quot;recommend + to + infinitive&quot; is wrong; use should or recommend + -ing<br>
+      &#10007; &quot;You should to negotiate.&quot; &rarr; &#10003; <strong>You should negotiate</strong> — never &quot;to&quot; after should (bare infinitive rule applies to ALL modals)<br>
+      &#10007; &quot;If I was you, I&apos;d choose B.&quot; &rarr; &#10003; <strong>If I were you</strong> — fixed chunk; &quot;were&quot; for all persons in this expression<br>
+      &#10007; &quot;Option B is more better than A.&quot; &rarr; &#10003; <strong>Option B is better than A</strong> — never &quot;more&quot; + irregular comparative
+    </div>
+
+    <div class="act-title">&#9889; ACTIVITY A — Complete the professional advice</div>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:14px">Choose the correct word or phrase to complete each advice sentence. Think about the strength of the advice and the grammar rule.</p>
+    <div class="opt-group">
+      <div class="opt-q">1. &quot;You _____ accept the first offer without negotiating. Always ask for more — the worst they say is no.&quot; [strong negative advice]</div>
+      <div class="opts" id="q1">
+        <button class="opt" onclick="checkOpt(this,&quot;shouldn't&quot;,'q1')">couldn&apos;t</button>
+        <button class="opt" onclick="checkOpt(this,&quot;shouldn't&quot;,'q1')">shouldn&apos;t</button>
+        <button class="opt" onclick="checkOpt(this,&quot;shouldn't&quot;,'q1')">mustn&apos;t</button>
+      </div>
+    </div>
+    <div class="opt-group">
+      <div class="opt-q">2. &quot;You _____ also ask about the bonus structure. It might be more important than the base salary.&quot; [soft alternative suggestion]</div>
+      <div class="opts" id="q2">
+        <button class="opt" onclick="checkOpt(this,'could','q2')">must</button>
+        <button class="opt" onclick="checkOpt(this,'could','q2')">could</button>
+        <button class="opt" onclick="checkOpt(this,'could','q2')">should</button>
+      </div>
+    </div>
+    <div class="opt-group">
+      <div class="opt-q">3. &quot;I recommend _____ the salary before you sign. You have nothing to lose.&quot; [recommend + correct form]</div>
+      <div class="opts" id="q3">
+        <button class="opt" onclick="checkOpt(this,'negotiating','q3')">to negotiate</button>
+        <button class="opt" onclick="checkOpt(this,'negotiating','q3')">negotiate</button>
+        <button class="opt" onclick="checkOpt(this,'negotiating','q3')">negotiating</button>
+      </div>
+    </div>
+    <div class="opt-group">
+      <div class="opt-q">4. &quot;You should choose Option B because it is _____ than A for your long-term goals.&quot; [comparative + than]</div>
+      <div class="opts" id="q4">
+        <button class="opt" onclick="checkOpt(this,'more aligned','q4')">most aligned</button>
+        <button class="opt" onclick="checkOpt(this,'more aligned','q4')">more aligned</button>
+        <button class="opt" onclick="checkOpt(this,'more aligned','q4')">more aligning</button>
+      </div>
+    </div>
+    <div class="opt-group">
+      <div class="opt-q">5. &quot;If I _____ you, I&apos;d take the job with the better growth potential — salary can always be negotiated later.&quot; [fixed chunk]</div>
+      <div class="opts" id="q5">
+        <button class="opt" onclick="checkOpt(this,'were','q5')">was</button>
+        <button class="opt" onclick="checkOpt(this,'were','q5')">were</button>
+        <button class="opt" onclick="checkOpt(this,'were','q5')">am</button>
+      </div>
+    </div>
+    <div class="micro-speak" style="margin-top:10px"><div class="ms-icon">&#128483;&#65039;</div><div class="ms-text"><strong>Micro-Speaking:</strong> Give your partner one complete professional recommendation using the formula: <em>should/could + comparative + because/so</em>. Use Andrea&apos;s dilemma OR a real decision at your own company. Example: &quot;You should choose the supplier with the faster delivery because it is more reliable than the current one, so we won&apos;t have production delays.&quot;</div></div>
+
+    <div class="act-title">&#9889; ACTIVITY B — Reorder the recommendation</div>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:14px">Drag the parts into the correct order to form a complete, structured professional recommendation.</p>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:6px"><strong style="color:var(--txt)">Sentence 1:</strong> (should + comparative + so)</p>
+    <ul class="reorder-list" id="order1">
+      <li class="reorder-item" draggable="true"><span class="drag-handle">&#8942;</span>so you won&apos;t have to travel every week.</li>
+      <li class="reorder-item" draggable="true"><span class="drag-handle">&#8942;</span>You should accept Option B</li>
+      <li class="reorder-item" draggable="true"><span class="drag-handle">&#8942;</span>because it is more flexible than Option A,</li>
+    </ul>
+    <button class="check-order-btn" onclick="checkOrder('order1',['You should accept Option B','because it is more flexible than Option A,','so you won’t have to travel every week.'],'fb1')">Check Order</button>
+    <div class="fb" id="fb1"></div>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:6px;margin-top:16px"><strong style="color:var(--txt)">Sentence 2:</strong> (shouldn&apos;t + reason + could alternative)</p>
+    <ul class="reorder-list" id="order2">
+      <li class="reorder-item" draggable="true"><span class="drag-handle">&#8942;</span>You could ask them to reduce the travel requirement first.</li>
+      <li class="reorder-item" draggable="true"><span class="drag-handle">&#8942;</span>You shouldn&apos;t decide based on salary alone</li>
+      <li class="reorder-item" draggable="true"><span class="drag-handle">&#8942;</span>because the other factors are more important long-term.</li>
+    </ul>
+    <button class="check-order-btn" onclick="checkOrder('order2',['You shouldn’t decide based on salary alone','because the other factors are more important long-term.','You could ask them to reduce the travel requirement first.'],'fb2')">Check Order</button>
+    <div class="fb" id="fb2"></div>
+    <div class="tn"><div class="tn-lbl">&#9889; Teacher Note — Grammar</div><div class="tn-text">The Professional Advice Formula (should/could + comparative + because/so) is the conceptual anchor of S3A. Write it on the board and keep it visible the whole session. Activity A key differentiations: Q1 (shouldn&apos;t vs mustn&apos;t) — shouldn&apos;t = advice not to do something; mustn&apos;t = strong rule/prohibition. Context &quot;the worst they say is no&quot; is advice, not a rule. Q2 (could vs must) — &quot;also&quot; is the soft suggestion marker; must would be too strong here. Q3 (recommend + -ing) — this is the most common grammar error at A2.2 in professional writing; drill the pattern as a fixed unit. Activity B: after checking, ask &quot;Can you replace the content with a real situation from your company?&quot; This transfer moment is the highest-value 60 seconds of the session.</div></div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="sec-hdr">
+    <div class="sec-num">&#167;5</div>
+    <div><div class="sec-label">Mini-Game — <em>Flash Cards: Advice Scenarios</em></div><div class="sec-sub">Tap to flip · Real work situations · Advice formula practice · 8 min</div></div>
+    <div class="sec-dur">&#9201; 8 MIN</div>
+  </div>
+  <img class="img-banner" src="https://images.unsplash.com/photo-1588776814546-ec7e1f27e8c1?w=900&q=80" alt="Flash cards game activity" loading="lazy">
+  <div class="sec-body">
+    <div class="fc-wrap">
+      <div class="fc-hdr">
+        <div class="fc-hdr-title">&#129504; Flash Cards — Work Scenario → Model Advice</div>
+        <span style="font-size:11px;color:var(--muted)">Click card to flip · Read situation → flip for model advice · Badge on completion</span>
+      </div>
+      <div class="fc-body">
+        <div class="fc-counter" id="fcCounter">Card 1 of 8</div>
+        <div class="fc-card" id="fcCard" onclick="flipCard()">
+          <div class="fc-inner" id="fcInner">
+            <div class="fc-front">
+              <div class="fc-front-word" id="fcFrontWord">Loading...</div>
+              <div class="fc-front-hint" id="fcFrontHint">Click to see model advice</div>
+            </div>
+            <div class="fc-back">
+              <div class="fc-back-phrase" id="fcBackPhrase"></div>
+              <div class="fc-back-example" id="fcBackExample"></div>
+            </div>
+          </div>
+        </div>
+        <div class="fc-nav">
+          <button class="fc-btn" id="fcPrev" onclick="prevCard()" disabled>&#9664; Prev</button>
+          <button class="fc-btn" id="fcNext" onclick="nextCard()">Next &#9654;</button>
+        </div>
+      </div>
+    </div>
+    <div class="tn tn-cy"><div class="tn-lbl">&#9889; Teacher Note — Flash Cards</div><div class="tn-text">Run this in three ways simultaneously: (1) individual on mobile — each student goes at their own pace, (2) projected on screen — teacher flips, class gives advice out loud before revealing, (3) competitive — pairs race to give the best advice for each card before flipping. Scoring: 1pt per advice that uses should/could, 2pts if they add a comparative, 3pts if they use the full formula (should/could + comparative + because/so). The 8 cards cover the full range of A2.2 business contexts from M1–M5: career, rules, future plans, comparisons. This is where all M6 structures converge in real advice-giving scenarios.</div></div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="sec-hdr">
+    <div class="sec-num">&#167;6</div>
+    <div><div class="sec-label">Listening — <em>Andrea&apos;s Mentor Session</em></div><div class="sec-sub">ElevenLabs audio · All advice structures integrated · 10–12 min</div></div>
+    <div class="sec-dur">&#9201; 10–12 MIN</div>
+  </div>
+  <img class="img-banner" src="https://images.unsplash.com/photo-1475721027785-f74eccf877e2?w=900&q=80" alt="Mentor giving advice to a professional" loading="lazy">
+  <div class="sec-body">
+    <div class="listen-wrap">
+      <img class="listen-img" src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=900&q=80" alt="Carlos Mendez advising Andrea Soto" loading="lazy">
+      <div class="listen-inner">
+        <button class="play-btn-aud" id="playBtn">&#9654;</button>
+        <div><div class="track-title">Carlos Advises Andrea — Vertex Logistics, Celaya</div><div class="track-sub">A2.2 · M6 · S3A · Voice: Sarah (American English) · Speed: 0.82 · ~58 sec</div></div>
+      </div>
+      <div class="waveform" id="wv"></div>
+    </div>
+    <button class="script-toggle" onclick="toggleScript()">&#9660; Show ElevenLabs Script</button>
+    <div class="script-box" id="scriptBox">Hi Andrea. I heard you have two job offers. I'm glad you asked me — I've been in this industry for twenty years, so maybe I can help you think it through.
+
+My advice would be to choose Option B. I know the salary is lower, but in my experience, growth potential is more important than money at this stage of your career. Option B is more aligned with your long-term goals, and it gives you a clearer path to a director role.
+
+That said, you shouldn't just accept it without negotiating. You could ask for a slightly higher starting salary — it's worth trying. They might say yes, and if they don't, you still have a great option on the table.
+
+If I were you, I'd also consider the travel commitment of Option A more carefully. Sixty percent travel is a significant drawback if you have a family or personal commitments. It might sound exciting now, but after a year, it becomes exhausting.
+
+Have you thought about talking to someone who works at Company B? They could give you a better perspective from the inside. That's the most useful thing you could do before you decide.
+    </div>
+    <div class="tn"><div class="tn-lbl">&#9889; Teacher Note — Listening</div><div class="tn-text">ElevenLabs: Voice = Sarah, Speed = 0.82, Stability = 0.65, Similarity = 0.80. Before playing: &quot;Count the advice structures. How many different ways does Carlos give advice?&quot; (Answer: my advice would be / shouldn&apos;t / could / it&apos;s worth trying / if I were you / have you thought about / could give — 6 different advice patterns). After: &quot;Which advice do you agree with most? Which would you give yourself?&quot; — opens the speaking section organically. Key observation: Carlos uses BOTH should/could and comparatives together. Point this out explicitly: &quot;Option B is more aligned with your long-term goals&quot; — this is the formula from &sect;4 in natural speech. Note also: Carlos introduces Carlos Mendez (B1.2 character) as a mentor figure — this plants the B1 preview.</div></div>
+    <div class="act-title" style="padding-top:16px">Comprehension — True or False?</div>
+    <div class="tf-row" style="border-top:1px solid var(--border-dim)">
+      <div class="tf-stmt">1. Carlos recommends Option A because it offers a higher salary.</div>
+      <div class="tf-btns"><button class="tf-btn" onclick="checkTF(this,false,'tf1')">TRUE</button><button class="tf-btn" onclick="checkTF(this,true,'tf1')">FALSE</button></div>
+    </div>
+    <div class="tf-row">
+      <div class="tf-stmt">2. Carlos says Andrea should negotiate the salary even with Option B.</div>
+      <div class="tf-btns"><button class="tf-btn" onclick="checkTF(this,true,'tf2')">TRUE</button><button class="tf-btn" onclick="checkTF(this,false,'tf2')">FALSE</button></div>
+    </div>
+    <div class="tf-row">
+      <div class="tf-stmt">3. Carlos thinks the travel commitment in Option A is an advantage.</div>
+      <div class="tf-btns"><button class="tf-btn" onclick="checkTF(this,false,'tf3')">TRUE</button><button class="tf-btn" onclick="checkTF(this,true,'tf3')">FALSE</button></div>
+    </div>
+    <div class="tf-row">
+      <div class="tf-stmt">4. Carlos suggests Andrea should talk to someone who already works at Company B.</div>
+      <div class="tf-btns"><button class="tf-btn" onclick="checkTF(this,true,'tf4')">TRUE</button><button class="tf-btn" onclick="checkTF(this,false,'tf4')">FALSE</button></div>
+    </div>
+    <div class="tf-row" style="border-bottom:none">
+      <div class="tf-stmt">5. Carlos uses &quot;If I were you&quot; and &quot;Have you thought about&quot; in the same conversation.</div>
+      <div class="tf-btns"><button class="tf-btn" onclick="checkTF(this,true,'tf5')">TRUE</button><button class="tf-btn" onclick="checkTF(this,false,'tf5')">FALSE</button></div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="sec-hdr">
+    <div class="sec-num">&#167;SP</div>
+    <div><div class="sec-label">Speaking Practice — <em>Advice in Professional Contexts</em></div><div class="sec-sub">Guided production · Advice formula · Pair and class · 10–12 min</div></div>
+    <div class="sec-dur">&#9201; 10–12 MIN</div>
+  </div>
+  <img class="img-banner" src="https://images.unsplash.com/photo-1560439514-4e9645039924?w=900&q=80" alt="Speaking practice professional advice" loading="lazy">
+  <div class="sec-body">
+    <div class="speak-grid">
+      <div class="speak-card">
+        <div class="speak-num"><span class="speak-tag st-ts">T-S</span> Question 1 — Recall</div>
+        <div class="speak-q">How many different advice structures did Carlos use in the listening? Name at least 4 and say which felt most natural to you.</div>
+        <div class="speak-hint">Grammar hint: my advice would be / shouldn&apos;t / could / it&apos;s worth trying / if I were you / have you thought about — point to &sect;3 if needed.</div>
+      </div>
+      <div class="speak-card">
+        <div class="speak-num"><span class="speak-tag st-ss">S-S</span> Question 2 — Apply</div>
+        <div class="speak-q">Your partner is Andrea. Give her your recommendation about the two job offers using the full formula: <em>should/could + comparative + because/so</em>. Minimum 3 sentences. Justify your advice!</div>
+        <div class="speak-hint">Grammar hint: &quot;You should choose [option] because it is more [adj] than [other]. You could also [alternative], so [result].&quot;</div>
+      </div>
+      <div class="speak-card">
+        <div class="speak-num"><span class="speak-tag st-ss">S-S</span> Question 3 — Real Context</div>
+        <div class="speak-q">Think of a real work decision or challenge at YOUR company right now. Tell your partner the situation in 2 sentences. Your partner gives you 3 pieces of advice using should, could, and &quot;if I were you.&quot; Then switch.</div>
+        <div class="speak-hint">Grammar hint: Advice giver: use at least 2 of the 4 colloquial phrases from &sect;3. Avoid repeating the same structure twice.</div>
+      </div>
+      <div class="speak-card">
+        <div class="speak-num"><span class="speak-tag st-cl">Class</span> Question 4 — Debate</div>
+        <div class="speak-q">Class vote on Andrea&apos;s decision: Option A or Option B? Each student gives one sentence of advice with a comparative to justify their vote. &quot;Andrea should choose [X] because it is more [adj] than [Y].&quot; Class counts: how many votes per option?</div>
+        <div class="speak-hint">Grammar hint: Use comparatives from M5: more aligned / better / more flexible / more promising. Also: shouldn&apos;t accept / could negotiate / worth trying.</div>
+      </div>
+      <div class="speak-card">
+        <div class="speak-num"><span class="speak-tag st-ts">T-S</span> Question 5 — Challenge</div>
+        <div class="speak-q">Your manager asks for your professional recommendation on a company decision. Prepare a 60-second structured recommendation using: should + comparative + because + one colloquial phrase. Use a REAL work situation from your company. Timer below.</div>
+        <div class="speak-hint">Goal: one complete professional recommendation with all three elements of the formula. Class votes: most persuasive recommendation wins.</div>
+      </div>
+      <div class="speak-card">
+        <div class="speak-num"><span class="speak-tag st-cl">Class</span> Question 6 — Production</div>
+        <div class="speak-q">Role-play: You are a mentor. A junior colleague asks for career advice. Give them a 90-second structured recommendation covering: (1) what they should prioritize, (2) what they shouldn&apos;t do, (3) a soft alternative using could. Include at least one comparative. Timer below.</div>
+        <div class="speak-hint">This is the M6 cumulative task: advice + comparison + reason + colloquial language, all in one natural mentor conversation.</div>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:16px;margin-top:20px;background:var(--surface);border:1px solid var(--border-dim);border-radius:10px;padding:16px 20px">
+      <div class="timer-wrap">
+        <svg class="timer-svg" width="90" height="90" viewBox="0 0 90 90">
+          <circle cx="45" cy="45" r="38" stroke="rgba(249,115,22,.2)" stroke-width="6" fill="none"/>
+          <circle id="arcSP" cx="45" cy="45" r="38" stroke="var(--accent)" stroke-width="6" fill="none" stroke-dasharray="238.76" stroke-dashoffset="0"/>
+          <text id="txtSP" x="45" y="44" text-anchor="middle" font-family="Syne,sans-serif" font-size="18" font-weight="800" fill="var(--accent)" transform="rotate(90 45 45)">1:30</text>
+          <text x="45" y="58" text-anchor="middle" font-family="Syne,sans-serif" font-size="9" fill="rgba(249,115,22,.7)" transform="rotate(90 45 45)">ADVICE</text>
+        </svg>
+      </div>
+      <div>
+        <div style="font-family:var(--font-head);font-size:12px;font-weight:700;color:var(--accent);letter-spacing:1px;margin-bottom:8px">90-SECOND MENTOR RECOMMENDATION</div>
+        <button onclick="startTimer('arcSP','txtSP',90,'b3',238.76)" style="background:rgba(249,115,22,.1);border:1px solid rgba(249,115,22,.3);color:var(--accent);padding:7px 18px;cursor:pointer;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:1px;border-radius:7px;margin-right:8px">START</button>
+        <button onclick="resetArc('arcSP','txtSP',90,238.76)" style="background:var(--surface2);border:1px solid var(--border-dim);color:var(--muted);padding:7px 14px;cursor:pointer;font-family:var(--font-head);font-size:10px;font-weight:700;border-radius:7px">RESET</button>
+      </div>
+    </div>
+    <div class="om-wrap">
+      <div class="om-stmt">&quot;In professional English, giving advice with a reason (&apos;you should X because Y&apos;) is always more effective than giving advice without one (&apos;you should X&apos;).&quot;</div>
+      <div class="om-track"><div class="om-bar" id="meterBar" style="width:50%"></div></div>
+      <div class="om-labels"><span>Disagree</span><span>50/50</span><span>Agree</span></div>
+      <div class="om-btns">
+        <button class="om-btn om-dis" onclick="moveMeter(-10)">&#128078; Disagree</button>
+        <button class="om-btn om-agr" onclick="moveMeter(10)">&#128077; Agree</button>
+      </div>
+      <div class="om-pct" id="meterPct">50% Agree</div>
+    </div>
+    <div class="tn"><div class="tn-lbl">&#9889; Teacher Note — Speaking</div><div class="tn-text">Q2 is the diagnostic production task: listen for whether students use the full formula (advice + comparative + reason) or stop after the advice alone. The most common gap is the missing reason (&quot;because/so&quot;). Students who produce &quot;you should choose B because it is more flexible so you won&apos;t have to travel&quot; are at the target level. Q3 is the highest-value activity: real context from their own company. This is the moment where A2.2 grammar connects to their actual professional lives. Resist the urge to correct during Q3 — collect errors and review after Q4. Q5/Q6 are performance tasks: the mentor role-play is essentially a mini exit task for M6 S3. Scoring: 1pt per advice structure used, 2pts for comparative + reason combination, 3pts for a colloquial phrase. Opinion Meter: the statement is strategically true — almost all students will agree. Use the 10% who disagree to generate discussion: &quot;Give an example of advice without a reason that is MORE effective. When?&quot; (Answer: emergency situations, very close relationships). This deepens their register awareness.</div></div>
+  </div>
+</div>
+
+<div class="phrases-wrap">
+  <div class="phrases-hdr">&#127919; This week, use these 3 phrases at work:</div>
+  <div class="phrases-sub">Professional advice you can give starting tomorrow — any meeting, any email, any conversation.</div>
+  <div class="phrases-grid">
+    <div class="phrase-card">
+      <div class="phrase-en">&quot;You should [advice] because it is more [adj] than [alternative].&quot;</div>
+      <div class="phrase-ctx">The complete professional recommendation formula. Use it the next time a colleague asks your opinion on a decision. Combines M3 (should) + M5 (comparative) in one natural sentence. Immediately elevates your English from opinion to professional recommendation.</div>
+    </div>
+    <div class="phrase-card">
+      <div class="phrase-en">&quot;If I were you, I&apos;d [advice] — it&apos;s worth trying.&quot;</div>
+      <div class="phrase-ctx">Combine two colloquial phrases in one sentence. Use when a colleague is hesitant to take action. &quot;If I were you&quot; shows empathy; &quot;it&apos;s worth trying&quot; reduces the perceived risk. Works in emails too: &quot;If I were you, I&apos;d send a follow-up — it&apos;s worth trying.&quot;</div>
+    </div>
+    <div class="phrase-card">
+      <div class="phrase-en">&quot;Have you thought about [option]? It might be more [adj] than you think.&quot;</div>
+      <div class="phrase-ctx">Soft suggestion + comparative + possibility (might). Three A2.2 structures in one natural question. Use when you want to propose an alternative without imposing. The softest, most professional way to give unsolicited advice to a senior contact.</div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="sec-hdr">
+    <div class="sec-num">&#167;7</div>
+    <div><div class="sec-label">Wrap-Up — <em>Session 3A complete</em></div><div class="sec-sub">Key takeaways · Checklist · Next session preview · 5–8 min</div></div>
+    <div class="sec-dur">&#9201; 5–8 MIN</div>
+  </div>
+  <img class="img-banner" src="https://images.unsplash.com/photo-1549737328-8a136087072e?w=900&q=80" alt="Successful professional advice session" loading="lazy">
+  <div class="sec-body">
+    <div class="wrapup-grid">
+      <div class="wrapup-card"><h4>&#128172; The Advice Formula</h4><p>A professional recommendation needs three parts: the advice (should/could), the comparison (more/better than), and the reason (because/so). Without all three, advice sounds incomplete in professional English.</p></div>
+      <div class="wrapup-card"><h4>&#9997;&#65039; Should vs Could</h4><p>Should = strong recommendation. Could = softer alternative. Shouldn&apos;t = strong negative advice. Never say &quot;to&quot; after any of them. Recommend + -ing (not &quot;to&quot;). These distinctions mark the difference between A2.2 and B1 English.</p></div>
+      <div class="wrapup-card"><h4>&#129504; 4 Advice Phrases</h4><p>&quot;If I were you, I&apos;d...&quot; / &quot;Have you thought about...?&quot; / &quot;It&apos;s worth trying.&quot; / &quot;My advice would be to...&quot; These four expressions make your advice sound natural, empathetic, and professional in any context.</p></div>
+    </div>
+    <p style="font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin:20px 0 10px">&#9989; I CAN NOW...</p>
+    <ul class="cl-list">
+      <li class="cl-item" onclick="toggleDone(this)"><span class="cl-check">&#9744;</span>Give a complete professional recommendation using the formula: should/could + comparative + because/so.</li>
+      <li class="cl-item" onclick="toggleDone(this)"><span class="cl-check">&#9744;</span>Distinguish between should (advice), could (soft suggestion), and shouldn&apos;t (negative advice) in professional contexts.</li>
+      <li class="cl-item" onclick="toggleDone(this)"><span class="cl-check">&#9744;</span>Use recommend + -ing correctly and avoid the error &quot;recommend to [verb].&quot;</li>
+      <li class="cl-item" onclick="toggleDone(this)"><span class="cl-check">&#9744;</span>Use 4 natural advice phrases: &quot;If I were you,&quot; &quot;Have you thought about,&quot; &quot;It&apos;s worth trying,&quot; &quot;My advice would be.&quot;</li>
+      <li class="cl-item" onclick="toggleDone(this)"><span class="cl-check">&#9744;</span>Give a 90-second mentor recommendation combining advice + comparison + reason in one natural conversation.</li>
+    </ul>
+    <div class="next-prev">
+      <div class="next-lbl">&#9654; Next Session — S3B: Production &amp; Fluency</div>
+      <div class="next-text">In Session 3B you will run a full &quot;Advice Panel&quot; — each student presents a real work problem and the class gives structured recommendations. You will also debate: &quot;Is giving advice more difficult than receiving it?&quot; Andrea makes her final decision and announces it — was it the right one? Come prepared with a real professional dilemma from your own work.</div>
+    </div>
+    <div class="win-wrap">
+      <div class="win-label">&#127942; My Win Today</div>
+      <textarea class="win-ta" id="winTA" placeholder="Complete this in English: &quot;Today I learned that when I give advice at work, I should... because it is more... than just saying...&quot;"></textarea>
+      <button class="win-btn" onclick="saveWin()">Save My Win &#127942;</button>
+      <div class="win-ok" id="winOK">&#10003; Saved! See you in S3B.</div>
+    </div>
+    <div class="tn tn-pk"><div class="tn-lbl">&#9889; Teacher Note — Upsell</div><div class="tn-text">S3A closes the M3–M5 integration arc. The My Win prompt is structured as the advice formula itself: should + comparative + because. Students who write this correctly in their own words have internalized the structure. Collect screenshots and use the best ones as openers in S3B. Upsell: &quot;The advice you gave today was A2.2 level — solid and professional. In B1.1 you add the first conditional: &apos;If you negotiate, you will get a better offer.&apos; One structure transforms your advice from a recommendation into a consequence analysis. That is the B1.1 capstone.&quot; This plants the seed for level renewal AND previews the first conditional as desirable, not intimidating.</div></div>
+  </div>
+</div>
+
+<footer class="ftr">
+  <div class="fbrand">Gabriel Turner · English Training</div>
+  <div class="finfo">GT_A2_2_M6_S3A_TEACHER_v1.html · Celaya, Guanajuato</div>
+  <div class="flvs">
+    <div class="flv">A1.1</div><div class="flv">A1.2</div><div class="flv">A2.1</div>
+    <div class="flv on">A2.2</div><div class="flv">B1.1</div><div class="flv">B1.2</div>
+  </div>
+</footer>
+
+<script>
+function speak(t){if(!window.speechSynthesis)return;speechSynthesis.cancel();var u=new SpeechSynthesisUtterance(t);u.lang="en-US";u.rate=0.82;u.pitch=1;speechSynthesis.speak(u);}
+
+var badgeEarned={b1:false,b2:false,b3:false,b4:false,b5:false};
+function earnBadge(id){if(badgeEarned[id])return;badgeEarned[id]=true;var el=document.getElementById(id);if(el)el.classList.add("earned");if(Object.values(badgeEarned).every(Boolean)){launchConfetti();var cm=document.getElementById("confMsg");if(cm)cm.style.display="block";}}
+function launchConfetti(){var colors=["#F97316","#FB923C","#FFB800","#00E676","#00CFFF","#ffffff"];for(var i=0;i<90;i++){var d=document.createElement("div");d.style.cssText="position:fixed;top:-10px;pointer-events:none;z-index:9999;border-radius:2px;";d.style.left=Math.random()*100+"vw";d.style.width=(6+Math.random()*6)+"px";d.style.height=(6+Math.random()*6)+"px";d.style.background=colors[Math.floor(Math.random()*colors.length)];d.style.animation="confFall "+(1.5+Math.random()*2)+"s linear forwards";document.body.appendChild(d);setTimeout(function(){if(d.parentNode)d.parentNode.removeChild(d);},4000);}}
+(function(){var s=document.createElement("style");s.textContent="@keyframes confFall{0%{transform:translateY(-10px) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}";document.head.appendChild(s);})();
+
+var timerIntervals={};
+function startTimer(arcId,textId,seconds,badgeKey,circumference){if(timerIntervals[arcId])clearInterval(timerIntervals[arcId]);var arc=document.getElementById(arcId),txt=document.getElementById(textId),rem=seconds;function update(){arc.style.strokeDashoffset=circumference*(1-rem/seconds);var m=Math.floor(rem/60),s=rem%60;txt.textContent=m+":"+(s<10?"0":"")+s;if(rem<=5)arc.style.stroke="#FF4D6D";if(rem<=0){clearInterval(timerIntervals[arcId]);arc.style.stroke="var(--success)";if(badgeKey)earnBadge(badgeKey);return;}rem--;}update();timerIntervals[arcId]=setInterval(update,1000);}
+function resetArc(arcId,textId,seconds,circumference){if(timerIntervals[arcId]){clearInterval(timerIntervals[arcId]);delete timerIntervals[arcId];}var arc=document.getElementById(arcId);arc.style.strokeDashoffset="0";arc.style.stroke="var(--accent)";var m=Math.floor(seconds/60),s=seconds%60;document.getElementById(textId).textContent=m+":"+(s<10?"0":"")+s;}
+
+var vqData=[
+  {q:"What does 'recommend' mean in professional English?",opts:["To require someone to do something","To suggest something as the best option for someone","To compare two options","To refuse a request"],ans:"To suggest something as the best option for someone"},
+  {q:"Which sentence uses 'consider' correctly?",opts:["You should consider all factors before deciding.","I consider to work tomorrow.","My consider is very important.","She considers the meeting yesterday."],ans:"You should consider all factors before deciding."},
+  {q:"What is a 'drawback'?",opts:["A type of promotion","A disadvantage or negative aspect of something","A career opportunity","A professional skill"],ans:"A disadvantage or negative aspect of something"},
+  {q:"Complete: 'I recommend _____ the salary before you sign.'",opts:["to negotiate","negotiate","negotiating","negotiated"],ans:"negotiating"},
+  {q:"Which sentence uses 'priority' correctly?",opts:["My priority right now should be work-life balance.","I priority my manager every day.","The priority was cancelled.","She priorities the office on Friday."],ans:"My priority right now should be work-life balance."},
+  {q:"'Weigh up' means:",opts:["To measure something on a scale","To compare advantages and disadvantages carefully","To increase a salary","To cancel a meeting"],ans:"To compare advantages and disadvantages carefully"},
+  {q:"Which sentence uses 'negotiate' correctly?",opts:["You should negotiate the salary before you accept.","I negotiate to work every morning.","My negotiate is very competitive.","She negotiates the office on Tuesday."],ans:"You should negotiate the salary before you accept."},
+  {q:"'Perspective' in business English means:",opts:["A type of office window","A particular way of thinking about something","A financial report","A team structure"],ans:"A particular way of thinking about something"},
+  {q:"What is a 'commitment'?",opts:["A type of salary","A serious promise or obligation to do something","A networking event","A comparison of two options"],ans:"A serious promise or obligation to do something"},
+  {q:"Which sentence uses 'align' correctly?",opts:["You should choose the option that aligns better with your long-term goals.","I align to work every morning.","My align is very important.","She aligns the office on Monday."],ans:"You should choose the option that aligns better with your long-term goals."}
+];
+var vqIdx=0,vqScore=0,vqShuffled=[];
+function shuffle(arr){return arr.slice().sort(function(){return Math.random()-.5;});}
+function startQuiz(){vqShuffled=shuffle(vqData);vqIdx=0;vqScore=0;document.getElementById("vqScore").style.display="none";document.getElementById("vqRestart").style.display="none";document.getElementById("vqBar").style.width="0%";showVQ();}
+function showVQ(){if(vqIdx>=vqShuffled.length){document.getElementById("vqQ").textContent="";document.getElementById("vqOpts").innerHTML="";var sc=document.getElementById("vqScore");sc.textContent="Score: "+vqScore+" / "+vqShuffled.length+(vqScore>=8?" ★ Badge earned!":"  Keep practicing!");sc.style.display="block";document.getElementById("vqRestart").style.display="block";if(vqScore>=8)earnBadge("b2");return;}var item=vqShuffled[vqIdx];document.getElementById("vqQ").textContent=item.q;document.getElementById("vqBar").style.width=((vqIdx/vqShuffled.length)*100)+"%";var opts=shuffle(item.opts),html="";opts.forEach(function(o){var oE=o.replace(/'/g,"\'"),aE=item.ans.replace(/'/g,"\'");html+="<button class=\"vq-opt\" onclick=\"answerVQ(this,'"+oE+"','"+aE+"')\">"+o+"</button>";});document.getElementById("vqOpts").innerHTML=html;}
+function answerVQ(btn,answer,correct){document.querySelectorAll(".vq-opt").forEach(function(b){b.disabled=true;if(b.textContent.trim()===correct)b.classList.add("correct");});if(btn.textContent.trim()!==correct)btn.classList.add("wrong");vqIdx++;setTimeout(showVQ,900);}
+
+function checkOpt(btn,correct,qid){var c=document.getElementById(qid);c.querySelectorAll(".opt").forEach(function(b){b.disabled=true;if(b.textContent.trim()===correct)b.classList.add("correct");});if(btn.textContent.trim()!==correct)btn.classList.add("wrong");earnBadge("b3");}
+
+function checkTF(btn,isCorrect,id){var row=btn.closest(".tf-row");row.querySelectorAll(".tf-btn").forEach(function(b){b.disabled=true;});if(isCorrect){btn.style.cssText="background:rgba(0,229,160,.15);border-color:var(--success);color:var(--success)";}else{btn.style.cssText="background:rgba(255,77,109,.12);border-color:var(--danger);color:var(--danger)";var sib=Array.from(row.querySelectorAll(".tf-btn")).find(function(b){return b!==btn;});if(sib)sib.style.cssText="background:rgba(0,229,160,.12);border-color:var(--success);color:var(--success)";}earnBadge("b4");}
+
+var fcData=[
+  {front:"A colleague says: 'I have too much work and I keep missing deadlines.'",back:"You should speak to your manager about the workload because it is more sustainable to ask for help than to burn out.",example:"You could also create a priority list — it’s worth trying."},
+  {front:"A colleague says: 'I want to ask for a promotion but I’m nervous.'",back:"If I were you, I’d prepare specific examples of your achievements. The evidence is more convincing than just asking.",example:"You could also ask for a trial period in the new role first."},
+  {front:"Your company is choosing between two suppliers: one cheaper, one more reliable.",back:"My advice would be to choose the more reliable supplier because consistency is more important than price in the long run.",example:"You shouldn’t decide based on price alone — the hidden costs of delays are much higher."},
+  {front:"A new employee asks: 'How can I make a good impression in my first month?'",back:"You should listen more than you speak in your first weeks because learning the culture is more valuable than showing what you know.",example:"Have you thought about scheduling one-to-one meetings with each team member?"},
+  {front:"A colleague wants to send a difficult email to a client who is angry.",back:"If I were you, I’d call instead of emailing. A phone call is more personal than a written message and defuses tension faster.",example:"You could draft the email first and ask your manager to review it — it’s worth the extra time."},
+  {front:"Your team is debating whether to work from home or come to the office.",back:"My advice would be to offer a hybrid model because it is more flexible than a fixed policy and better aligned with what employees want.",example:"You shouldn’t make this decision without asking your team first."},
+  {front:"A colleague says: 'I’m thinking of changing careers but I’m scared.'",back:"Have you thought about talking to someone already in that field? Their perspective is more useful than any article you can read online.",example:"You could also take a short course to test your interest before making the full commitment."},
+  {front:"Your manager asks: 'How should we handle the angry client from last week?'",back:"You should contact them directly and offer a solution because a proactive response is more effective than waiting for them to escalate.",example:"If I were you, I’d also ask what they expected — it’s worth understanding their perspective."}
+];
+var fcIdx=0,fcFlipped=false;
+function renderCard(){var card=document.getElementById("fcCard");card.classList.remove("flipped");fcFlipped=false;document.getElementById("fcFrontWord").textContent=fcData[fcIdx].front;document.getElementById("fcBackPhrase").textContent=fcData[fcIdx].back;document.getElementById("fcBackExample").textContent=fcData[fcIdx].example;document.getElementById("fcCounter").textContent="Card "+(fcIdx+1)+" of "+fcData.length;document.getElementById("fcPrev").disabled=(fcIdx===0);document.getElementById("fcNext").disabled=(fcIdx===fcData.length-1);if(fcIdx===fcData.length-1)earnBadge("b2");}
+function flipCard(){document.getElementById("fcCard").classList.toggle("flipped");fcFlipped=!fcFlipped;}
+function nextCard(){if(fcIdx<fcData.length-1){fcIdx++;renderCard();}}
+function prevCard(){if(fcIdx>0){fcIdx--;renderCard();}}
+
+var dragSrc=null;
+function initDrag(listId){var list=document.getElementById(listId);if(!list)return;list.querySelectorAll(".reorder-item").forEach(function(item){item.addEventListener("dragstart",function(){dragSrc=this;this.classList.add("dragging");});item.addEventListener("dragend",function(){this.classList.remove("dragging");list.querySelectorAll(".reorder-item").forEach(function(i){i.classList.remove("drag-over");});});item.addEventListener("dragover",function(e){e.preventDefault();list.querySelectorAll(".reorder-item").forEach(function(i){i.classList.remove("drag-over");});if(this!==dragSrc)this.classList.add("drag-over");});item.addEventListener("drop",function(e){e.preventDefault();if(this!==dragSrc){var all=Array.from(list.querySelectorAll(".reorder-item"));if(all.indexOf(dragSrc)<all.indexOf(this))list.insertBefore(dragSrc,this.nextSibling);else list.insertBefore(dragSrc,this);}});});}
+function checkOrder(listId,correct,fbId){var list=document.getElementById(listId);var current=Array.from(list.querySelectorAll(".reorder-item")).map(function(i){return i.textContent.replace("⠇","").trim();});var fb=document.getElementById(fbId);if(JSON.stringify(current)===JSON.stringify(correct)){fb.className="fb show ok";fb.textContent="✓ Correct! Well done!";list.querySelectorAll(".reorder-item").forEach(function(i){i.style.borderColor="var(--success)";i.style.color="var(--success)";});earnBadge("b3");}else{fb.className="fb show no";fb.textContent="✗ Not quite. Correct: "+correct.join(" — ");list.querySelectorAll(".reorder-item").forEach(function(i){i.style.borderColor="var(--danger)";});}}
+
+function toggleScript(){var b=document.getElementById("scriptBox");b.classList.toggle("open");document.querySelector(".script-toggle").textContent=b.classList.contains("open")?"▲ Hide Script":"▼ Show ElevenLabs Script";}
+
+var wv=document.getElementById("wv");for(var i=0;i<60;i++){var wb=document.createElement("div");wb.className="wbar";wb.style.height=(8+Math.sin(i*.6)*10+Math.random()*18)+"px";wb.style.opacity=.3+Math.random()*.4;wv.appendChild(wb);}
+document.getElementById("playBtn").addEventListener("click",function(){earnBadge("b4");});
+
+var meterVal=50;
+function moveMeter(delta){meterVal=Math.max(5,Math.min(95,meterVal+delta));document.getElementById("meterBar").style.width=meterVal+"%";document.getElementById("meterPct").textContent=meterVal+"% Agree";}
+
+function toggleDone(el){el.classList.toggle("done");var check=el.querySelector(".cl-check");check.textContent=el.classList.contains("done")?"✓":"☐";var all=document.querySelectorAll(".cl-item");if(Array.from(all).every(function(x){return x.classList.contains("done");}))earnBadge("b5");}
+function saveWin(){var ta=document.getElementById("winTA");if(ta.value.trim().length>3){earnBadge("b5");ta.style.borderColor="var(--success)";document.getElementById("winOK").style.display="block";}}
+window.addEventListener("scroll",function(){var h=document.documentElement;var bar=document.getElementById("progressFill");if(bar)bar.style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight)*100)+"%";});
+
+startQuiz();
+renderCard();
+initDrag("order1");
+initDrag("order2");
+</script>
+</body>
+</html>
