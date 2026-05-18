@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GT &middot; B1.2 &middot; M5 &middot; S5 &mdash; Pitch Your Favourite Movie or Series</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ac:#34D399;--ac2:#6EE7B7;--ac3:rgba(52,211,153,.12);
+  --bg:#080808;--s1:#0f1117;--s2:#161b24;--s3:#1c2130;
+  --border:rgba(52,211,153,.14);--border2:rgba(52,211,153,.28);
+  --txt:#F0F4F8;--mu:#6B7A8D;--mu2:#8A9BB0;
+  --danger:#FF4D6D;--ok:#00E5A0;--warn:#FFB347;
+  --cyan:#00CFFF;--gold:#FFB800;--pink:#FF1F5C;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif;font-weight:400;line-height:1.6;min-height:100vh}
+#pb{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--ac),var(--cyan));width:0%;z-index:999;transition:width .2s}
+header{background:var(--s1);border-bottom:1px solid var(--border);padding:18px 48px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;position:sticky;top:0;z-index:100}
+.brand{font-family:'Syne',sans-serif;font-weight:800;font-size:17px;letter-spacing:-.3px}
+.brand .dot{color:var(--gold)}
+.hdr-right{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.sess-pill{background:var(--ac3);border:1px solid var(--border2);color:var(--ac);font-size:11px;font-weight:600;padding:4px 10px;border-radius:20px;letter-spacing:.6px;text-transform:uppercase}
+.badge-row span{font-size:20px;opacity:.2;filter:grayscale(1);transition:all .4s;cursor:default}
+.badge-row span.earned{opacity:1;filter:none;animation:bpop .5s cubic-bezier(.34,1.56,.64,1)}
+@keyframes bpop{0%{transform:scale(.5)}60%{transform:scale(1.3)}100%{transform:scale(1)}}
+.mode-btn{background:transparent;border:1px solid var(--border2);color:var(--ac);font-size:11px;font-weight:600;padding:5px 12px;border-radius:6px;cursor:pointer;letter-spacing:.5px;transition:all .2s}
+.mode-btn:hover{background:var(--ac3)}
+.sm .to{display:none!important}
+main{max-width:1080px;margin:0 auto;padding:48px 48px 80px}
+h2{font-family:'Syne',sans-serif;font-weight:800;font-size:26px;letter-spacing:-.4px;margin-bottom:24px}
+h3{font-family:'Syne',sans-serif;font-weight:700;font-size:17px;margin-bottom:12px}
+.sec{margin-bottom:64px}
+.sec-label{display:inline-flex;align-items:center;gap:8px;background:var(--ac3);border:1px solid var(--border);color:var(--ac);font-size:11px;font-weight:700;padding:5px 14px;border-radius:20px;letter-spacing:.8px;text-transform:uppercase;margin-bottom:20px}
+img{border-radius:10px;width:100%;object-fit:cover;display:block}
+/* Module banner */
+.mod-banner{background:linear-gradient(135deg,rgba(52,211,153,.1),rgba(0,207,255,.06));border:1px solid var(--border2);border-radius:16px;padding:32px 36px;margin-bottom:40px;display:grid;grid-template-columns:1fr auto;gap:24px;align-items:center}
+.mod-title{font-family:'Syne',sans-serif;font-weight:800;font-size:28px;color:var(--ac2);letter-spacing:-.5px;margin-bottom:8px}
+.mod-sub{font-size:14px;color:var(--mu2);line-height:1.6}
+.mod-stats{display:flex;flex-direction:column;gap:8px;align-items:flex-end}
+.mod-stat{background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:8px 16px;text-align:center}
+.mod-stat-num{font-family:'Syne',sans-serif;font-weight:700;font-size:20px;color:var(--ac)}
+.mod-stat-lbl{font-size:10px;color:var(--mu);letter-spacing:.5px}
+.topic-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:28px}
+.topic-card{background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:14px 16px;text-align:center}
+.topic-num{font-size:10px;font-weight:700;color:var(--mu);letter-spacing:.6px;margin-bottom:4px}
+.topic-name{font-size:13px;font-weight:600;color:var(--ac2)}
+/* Vocab review */
+.vr-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.vr-card{background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:12px 14px;cursor:pointer;transition:all .2s}
+.vr-card:hover{border-color:var(--ac)}
+.vr-card.revealed{border-color:var(--border2);background:var(--s3)}
+.vr-word{font-family:'Syne',sans-serif;font-weight:700;font-size:14px;color:var(--ac);margin-bottom:3px}
+.vr-ses{font-size:10px;color:var(--mu);letter-spacing:.5px;margin-bottom:6px}
+.vr-def{font-size:11.5px;color:var(--mu2);line-height:1.4;display:none}
+.vr-card.revealed .vr-def{display:block}
+/* Grammar consolidation */
+.gr-full{width:100%;border-collapse:collapse;font-size:13px}
+.gr-full th{background:rgba(52,211,153,.12);color:var(--ac);font-weight:700;padding:10px 14px;text-align:left;border:1px solid var(--border)}
+.gr-full td{padding:10px 14px;border:1px solid var(--border);line-height:1.5;vertical-align:top}
+.gr-full tr:nth-child(even) td{background:rgba(255,255,255,.02)}
+.hl-ac{color:var(--ac);font-weight:600}
+.hl-cy{color:var(--cyan);font-weight:600}
+.hl-pk{color:var(--pink);font-weight:600}
+.hl-go{color:var(--gold);font-weight:600}
+/* Activities */
+.act-box{background:var(--s2);border:1px solid var(--border);border-radius:12px;padding:24px;margin-bottom:16px}
+.act-label{font-size:11px;font-weight:700;color:var(--gold);letter-spacing:.8px;margin-bottom:14px}
+.mc-q{font-size:14.5px;margin-bottom:12px;line-height:1.55}
+.mc-opts{display:flex;flex-direction:column;gap:8px;margin-bottom:14px}
+.mc-opt{background:var(--s3);border:1px solid var(--border);border-radius:8px;padding:10px 14px;cursor:pointer;font-size:13.5px;transition:all .2s}
+.mc-opt:hover{border-color:var(--ac);background:var(--ac3)}
+.mc-opt.correct{background:rgba(0,229,160,.1);border-color:var(--ok);color:var(--ok)}
+.mc-opt.wrong{background:rgba(255,77,109,.1);border-color:var(--danger);color:var(--danger)}
+.fb{font-size:12.5px;min-height:18px;margin-top:6px;font-weight:600}
+.fb.ok{color:var(--ok)}
+.fb.err{color:var(--danger)}
+/* Drag */
+.drag-list{list-style:none;display:flex;flex-direction:column;gap:8px}
+.drag-item{background:var(--s3);border:1px solid var(--border);border-radius:8px;padding:10px 14px;cursor:grab;font-size:13.5px;user-select:none;transition:border-color .2s}
+.drag-item:active{cursor:grabbing}
+.drag-item.over{border-color:var(--ac);background:var(--ac3)}
+.check-btn{background:var(--ac);color:#000;font-weight:700;font-size:13px;padding:9px 22px;border:none;border-radius:8px;cursor:pointer;margin-top:12px;transition:opacity .2s}
+.check-btn:hover{opacity:.85}
+/* Reading */
+.reading-box{background:var(--s2);border:1px solid var(--border);border-radius:12px;padding:28px;margin-bottom:20px;font-size:14px;line-height:1.8}
+/* Listening */
+.audio-player{background:var(--s2);border:1px solid var(--border);border-radius:12px;padding:20px 24px;display:flex;align-items:center;gap:16px;margin-bottom:20px}
+.ap-btn{width:44px;height:44px;border-radius:50%;background:var(--ac);border:none;color:#000;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ap-body{flex:1}
+.ap-title{font-size:12px;font-weight:600;color:var(--mu2);margin-bottom:6px}
+.ap-track{height:4px;background:rgba(255,255,255,.1);border-radius:2px;cursor:pointer;margin-bottom:6px}
+.ap-fill{height:100%;background:var(--ac);border-radius:2px;width:0%}
+.ap-times{display:flex;justify-content:space-between;font-size:11px;color:var(--mu)}
+.ap-wave{display:flex;align-items:center;gap:2px;height:20px;margin-left:8px}
+.ap-wave span{display:block;width:3px;background:var(--ac);border-radius:2px;animation:wave 1.2s ease-in-out infinite;opacity:.5}
+.ap-wave span:nth-child(2){animation-delay:.1s;height:10px}
+.ap-wave span:nth-child(3){animation-delay:.2s;height:16px}
+.ap-wave span:nth-child(4){animation-delay:.3s;height:8px}
+.ap-wave span:nth-child(5){animation-delay:.4s;height:14px}
+@keyframes wave{0%,100%{transform:scaleY(.4)}50%{transform:scaleY(1)}}
+.ap-wave.paused span{animation-play-state:paused}
+.script-toggle{background:none;border:1px solid var(--border);color:var(--mu2);font-size:12px;padding:6px 14px;border-radius:6px;cursor:pointer;margin-bottom:12px}
+.script-box{background:var(--s2);border-left:3px solid var(--ac);border-radius:0 10px 10px 0;padding:16px 20px;font-size:13px;line-height:1.7;color:var(--mu2);display:none}
+.script-box.open{display:block}
+/* Speaking marathon */
+.marathon-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.mar-card{background:var(--s2);border:1px solid var(--border);border-radius:12px;padding:18px 20px}
+.mar-tag{font-size:10px;font-weight:700;letter-spacing:.8px;margin-bottom:6px}
+.mar-q{font-size:14px;color:var(--txt);line-height:1.5;margin-bottom:5px}
+.mar-hint{font-size:11.5px;color:var(--mu);font-style:italic}
+.mar-s1{color:var(--ac)}
+.mar-s2{color:var(--cyan)}
+.mar-s3{color:var(--warn)}
+.mar-s4{color:var(--pink)}
+/* Timers */
+.timer-wrap{display:inline-flex;flex-direction:column;align-items:center;gap:8px}
+.timer-label{font-size:11px;font-weight:600;color:var(--mu);letter-spacing:.5px}
+.timer-num{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;fill:var(--txt)}
+/* Capstone Pitch */
+.capstone-box{background:linear-gradient(135deg,rgba(52,211,153,.12),rgba(0,207,255,.07));border:2px solid var(--border2);border-radius:16px;padding:32px;margin-bottom:20px}
+.capstone-title{font-family:'Syne',sans-serif;font-weight:800;font-size:22px;color:var(--ac2);margin-bottom:10px}
+.capstone-brief{font-size:15px;color:var(--txt);line-height:1.65;margin-bottom:18px}
+.rubric-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px}
+.rubric-card{background:var(--s3);border:1px solid var(--border);border-radius:8px;padding:12px 14px}
+.rubric-label{font-size:10px;font-weight:700;color:var(--ac);letter-spacing:.6px;margin-bottom:5px}
+.rubric-desc{font-size:12px;color:var(--mu2);line-height:1.4}
+.pitch-prep{background:rgba(255,184,0,.06);border:1px solid rgba(255,184,0,.2);border-radius:10px;padding:16px 20px;margin-bottom:16px}
+.pitch-prep-label{font-size:11px;font-weight:700;color:var(--gold);letter-spacing:.6px;margin-bottom:8px}
+.pitch-steps{list-style:none;display:flex;flex-direction:column;gap:6px}
+.pitch-steps li{font-size:13.5px;color:var(--txt);padding-left:20px;position:relative}
+.pitch-steps li::before{content:"→";position:absolute;left:0;color:var(--ac)}
+/* Module cert */
+.mod-cert{background:linear-gradient(135deg,rgba(52,211,153,.1),rgba(0,207,255,.07));border:2px solid var(--border2);border-radius:16px;padding:36px;text-align:center;margin-bottom:20px}
+.mod-cert-title{font-family:'Syne',sans-serif;font-weight:800;font-size:24px;color:var(--ac2);margin-bottom:10px}
+.cert-btn{background:linear-gradient(135deg,var(--ac),var(--cyan));color:#000;font-weight:700;font-size:14px;padding:12px 32px;border:none;border-radius:10px;cursor:pointer;transition:opacity .2s}
+.cert-btn:hover{opacity:.85}
+/* Checklist */
+.check-list{list-style:none;display:flex;flex-direction:column;gap:10px}
+.check-list li{display:flex;align-items:center;gap:10px;font-size:14px}
+.check-list input[type=checkbox]{width:18px;height:18px;accent-color:var(--ac);cursor:pointer;flex-shrink:0}
+.exit-box{background:var(--s2);border:1px solid var(--border);border-radius:12px;padding:24px;margin-bottom:16px}
+.exit-title{font-size:13px;font-weight:700;color:var(--ac);letter-spacing:.5px;margin-bottom:14px}
+.win-box textarea{width:100%;background:var(--s3);border:1px solid var(--border);color:var(--txt);border-radius:8px;padding:12px 14px;font-size:13.5px;font-family:'DM Sans',sans-serif;resize:vertical;min-height:80px;margin-top:8px}
+.save-btn{background:var(--s2);border:1px solid var(--border2);color:var(--ac);font-size:12px;padding:7px 16px;border-radius:6px;cursor:pointer;margin-top:8px}
+.tn{background:var(--s2);border-left:3px solid var(--cyan);border-radius:0 10px 10px 0;margin-top:14px;overflow:hidden}
+.tn-btn{width:100%;background:none;border:none;color:var(--cyan);font-size:12px;font-weight:600;padding:10px 16px;text-align:left;cursor:pointer;letter-spacing:.4px}
+.tn-body{padding:0 16px 14px;font-size:12.5px;color:var(--mu2);line-height:1.6;display:none}
+.tn-body.open{display:block}
+.tn.gold{border-left-color:var(--gold)}
+.tn.gold .tn-btn{color:var(--gold)}
+.micro{background:rgba(52,211,153,.06);border:1px solid var(--border);border-radius:10px;padding:14px 18px;margin-top:14px;font-size:13.5px;color:var(--ac2)}
+#confetti-container{position:fixed;inset:0;pointer-events:none;z-index:9999;overflow:hidden}
+footer{background:var(--s1);border-top:1px solid var(--border);padding:18px 48px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-top:40px}
+.footer-brand{font-family:'Syne',sans-serif;font-weight:700;font-size:14px;color:var(--mu)}
+.footer-sess{display:flex;gap:6px}
+.footer-sess span{font-size:11px;font-weight:700;padding:4px 10px;border-radius:6px;background:var(--s2);color:var(--mu);border:1px solid var(--border)}
+.footer-sess span.active{background:var(--ac3);color:var(--ac);border-color:var(--border2)}
+.footer-levels{display:flex;gap:6px;flex-wrap:wrap}
+.footer-levels span{font-size:10px;font-weight:600;padding:3px 8px;border-radius:4px;color:var(--mu);opacity:.4}
+.footer-levels span.active{opacity:1;color:var(--ac);background:var(--ac3)}
+@media(max-width:860px){
+  header,footer{padding:14px 20px}
+  main{padding:28px 20px 60px}
+  .mod-banner,.topic-grid,.vr-grid,.marathon-grid,.rubric-grid{grid-template-columns:1fr 1fr}
+  .topic-grid,.rubric-grid{grid-template-columns:1fr 1fr}
+  .mod-stats{align-items:flex-start}
+  footer{flex-direction:column;align-items:flex-start}
+}
+</style>
+</head>
+<body>
+<div id="pb"></div>
+<div id="confetti-container"></div>
+<header>
+  <div class="brand">Gabriel Turner <span class="dot">&middot;</span> English Training</div>
+  <div class="hdr-right">
+    <span class="sess-pill">B1.2 &nbsp;&middot;&nbsp; M5 &nbsp;&middot;&nbsp; S5 &nbsp;&middot;&nbsp; Module Review</span>
+    <div class="badge-row">
+      <span id="b1">&#127860;</span><span id="b2">&#128218;</span><span id="b3">&#9878;&#65039;</span><span id="b4">&#127911;</span><span id="b5">&#127942;</span>
+    </div>
+    <button class="mode-btn" onclick="toggleMode()">STUDENT MODE</button>
+  </div>
+</header>
+<main>
+
+<!-- MODULE BANNER -->
+<div class="mod-banner">
+  <div>
+    <div class="mod-title">Module 5 &mdash; Media, Fame &amp; Influence</div>
+    <div class="mod-sub">You&rsquo;ve explored 4 topics at the intersection of media, psychology, and society:<br>
+    Influencers &bull; Reality TV &bull; Fake News &bull; Celebrity Culture<br>
+    Grammar focus: <strong style="color:var(--ac)">Modal Deduction</strong> &mdash; must / can&rsquo;t / might (present + past)</div>
+  </div>
+  <div class="mod-stats">
+    <div class="mod-stat"><div class="mod-stat-num">4</div><div class="mod-stat-lbl">TOPICS</div></div>
+    <div class="mod-stat"><div class="mod-stat-num">40+</div><div class="mod-stat-lbl">VOCABULARY</div></div>
+    <div class="mod-stat"><div class="mod-stat-num">5</div><div class="mod-stat-lbl">PHRASES</div></div>
+  </div>
+</div>
+
+<div class="topic-grid">
+  <div class="topic-card"><div class="topic-num">SESSION 1</div><div class="topic-name">Should Influencers Be Regulated?</div></div>
+  <div class="topic-card"><div class="topic-num">SESSION 2</div><div class="topic-name">Reality TV</div></div>
+  <div class="topic-card"><div class="topic-num">SESSION 3</div><div class="topic-name">Fake News</div></div>
+  <div class="topic-card"><div class="topic-num">SESSION 4</div><div class="topic-name">Celebrity Culture</div></div>
+</div>
+
+<!-- §1 VOCABULARY REVIEW -->
+<section class="sec" id="sec-vr">
+  <div class="sec-label">&#167;1 &nbsp; Vocabulary Review &nbsp;&middot;&nbsp; 12 min</div>
+  <h2>40 Words &mdash; Click to Reveal</h2>
+  <p style="font-size:13.5px;color:var(--mu2);margin-bottom:18px">Try to define each word before clicking. Use the session colour to track which topics feel stronger or weaker.</p>
+
+  <p style="font-size:12px;font-weight:700;color:var(--ac);letter-spacing:.6px;margin-bottom:10px">SESSION 1 &mdash; INFLUENCERS</p>
+  <div class="vr-grid" style="margin-bottom:20px">
+    <div class="vr-card" onclick="revealVR(this)"><div class="vr-word">influencer</div><div class="vr-ses">S1</div><div class="vr-def">Someone who shapes their audience&rsquo;s opinions, habits, and purchases through online platforms</div></div>
+    <div class="vr-card" onclick="revealVR(this)"><div class="vr-word">regulation</div><div class="vr-ses">S1</div><div class="vr-def">An official rule that controls how something operates &mdash; influencer regulation is still inconsistent globally</div></div>
+    <div class="vr-card" onclick="revealVR(this)"><div class="vr-word">transparency</div><div class="vr-ses">S1</div><div class="vr-def">Openness about what you&rsquo;re doing and who&rsquo;s paying &mdash; essential for audience trust</div></div>
+    <div class="vr-card" onclick="revealVR(this)"><div class="vr-word">sponsorship</div><div class="vr-ses">S1</div><div class="vr-def">A paid agreement where a brand pays a creator to promote their product</div></div>
+    <div class="vr-card" onclick="revealVR(this)"><div class="vr-word">reach</div><div class="vr-ses">S1</div><div class="vr-def">The total number of people exposed to a piece of content or message</div></div>
+    <div class="vr-card" onclick="revealVR(this)"><div class="vr-word">to disclose</div><div class="vr-ses">S1</div><div class="vr-def">To officially reveal a paid partnership &mdash; required by law in many countries</div></div>
+    <div class="vr-card" onclick="revealVR(this)"><div class="vr-word">to exploit</div><div class="vr-ses">S1</div><div class="vr-def">To take unfair advantage of someone&rsquo;s trust for personal gain</div></div>
+    <div class="vr-card" onclick="revealVR(this)"><div class="vr-word">audience</div><div class="vr-ses">S1</div><div class="vr-def">The group of people who regularly follow and engage with a creator&rsquo;s content</div></div>
+  </div>
+
+  <p style="font-size:12px;font-weight:700;color:var(--cyan);letter-spacing:.6px;margin-bottom:10px">SESSION 2 &mdash; REALITY TV</p>
+  <div class="vr-grid" style="margin-bottom:20px">
+    <div class="vr-card" onclick="revealVR(this)"><div class="vr-word">drama</div><div class="vr-ses">S2</div><div class="vr-def">Conflict or excitement &mdash; often deliberately manufactured for entertainment</div></div>
+    <div class="vr-card" onclick="revealVR(this)"><div class="vr-word">contestant</div><div class="vr-ses">S2</div><div class="vr-def">A person who takes part in a competition, especially on TV</div></div>
+    <div class="vr-card" onclick="revealVR(this)"><div class="vr-word">manipulation</div><div class="vr-ses">S2</div><div class="vr-def">Controlling someone in a clever or unfair way to get the result you want</div></div>
+    <div class="vr-card" onclick="revealVR(this)"><div class="vr-word">ratings</div><div class="vr-ses">S2</div><div class="vr-def">A measure of how many people watch a TV show; higher ratings = more valuable</div></div>
+    <div class="vr-card" onclick="revealVR(this)"><div class="vr-word">vulnerability</div><div class="vr-ses">S2</div><div class="vr-def">The quality of being open to emotional harm &mdash; often exploited for entertainment</div></div>
+    <div class="vr-card" onclick="revealVR(this)"><div class="vr-word">producer</div><div class="vr-ses">S2</div><div class="vr-def">The person or team responsible for creating and controlling how a show is made</div></div>
+    <div class="vr-card" onclick="revealVR(this)"><div class="vr-word">to binge-watch</div><div class="vr-ses">S2</div><div class="vr-def">To watch many episodes in one sitting, often without intending to</div></div>
+    <div class="vr-card" onclick="revealVR(this)"><div class="vr-word">to expose</div><div class="vr-ses">S2</div><div class="vr-def">To reveal something hidden or private &mdash; often causing embarrassment</div></div>
+  </div>
+
+  <p style="font-size:12px;font-weight:700;color:var(--warn);letter-spacing:.6px;margin-bottom:10px">SESSION 3 &mdash; FAKE NEWS</p>
+  <div class="vr-grid" style="margin-bottom:20px">
+    <div class="vr-card" onclick="revealVR(this)"><div class="vr-word">misinformation</div><div class="vr-ses">S3</div><div class="vr-def">False or inaccurate information, spread regardless of intent to deceive</div></div>
+    <div class="vr-card" onclick="revealVR(this)"><div class="vr-word">credibility</div><div class="vr-ses">S3</div><div class="vr-def">The quality of being trusted and believed as a source of information</div></div>
+    <div class="vr-card" onclick="revealVR(this)"><div class="vr-word">echo chamber</div><div class="vr-ses">S3</div><div class="vr-def">An environment where you only encounter opinions that confirm your existing beliefs</div></div>
+    <div class="vr-card" onclick="revealVR(this)"><div class="vr-word">algorithm</div><div class="vr-ses">S3</div><div class="vr-def">Rules a system follows to decide what content to show based on your behaviour</div></div>
+    <div class="vr-card" onclick="revealVR(this)"><div class="vr-word">propaganda</div><div class="vr-ses">S3</div><div class="vr-def">Information used to promote a particular political or ideological agenda</div></div>
+    <div class="vr-card" onclick="revealVR(this)"><div class="vr-word">bias</div><div class="vr-ses">S3</div><div class="vr-def">An inclination that unfairly influences how information is presented or received</div></div>
+    <div class="vr-card" onclick="revealVR(this)"><div class="vr-word">to fact-check</div><div class="vr-ses">S3</div><div class="vr-def">To verify whether a claim is accurate by checking reliable independent sources</div></div>
+    <div class="vr-card" onclick="revealVR(this)"><div class="vr-word">to verify</div><div class="vr-ses">S3</div><div class="vr-def">To confirm that something is accurate, true, or real through independent checking</div></div>
+  </div>
+
+  <p style="font-size:12px;font-weight:700;color:var(--pink);letter-spacing:.6px;margin-bottom:10px">SESSION 4 &mdash; CELEBRITY CULTURE</p>
+  <div class="vr-grid" style="margin-bottom:20px">
+    <div class="vr-card" onclick="revealVR(this)"><div class="vr-word">persona</div><div class="vr-ses">S4</div><div class="vr-def">The character someone presents publicly &mdash; which may differ from their private self</div></div>
+    <div class="vr-card" onclick="revealVR(this)"><div class="vr-word">scandal</div><div class="vr-ses">S4</div><div class="vr-def">An event that causes public outrage and damages the reputation of those involved</div></div>
+    <div class="vr-card" onclick="revealVR(this)"><div class="vr-word">obsession</div><div class="vr-ses">S4</div><div class="vr-def">An unhealthy preoccupation with a person or idea that dominates your thinking</div></div>
+    <div class="vr-card" onclick="revealVR(this)"><div class="vr-word">image</div><div class="vr-ses">S4</div><div class="vr-def">The public impression that someone deliberately creates and manages</div></div>
+    <div class="vr-card" onclick="revealVR(this)"><div class="vr-word">to endorse</div><div class="vr-ses">S4</div><div class="vr-def">To publicly support a product or brand, typically in exchange for payment</div></div>
+    <div class="vr-card" onclick="revealVR(this)"><div class="vr-word">to idolize</div><div class="vr-ses">S4</div><div class="vr-def">To admire someone excessively, placing them on a level of unrealistic perfection</div></div>
+    <div class="vr-card" onclick="revealVR(this)"><div class="vr-word">paparazzi</div><div class="vr-ses">S4</div><div class="vr-def">Photographers who follow and photograph celebrities, often aggressively</div></div>
+    <div class="vr-card" onclick="revealVR(this)"><div class="vr-word">brand</div><div class="vr-ses">S4</div><div class="vr-def">The identity, values, and reputation associated with a person or company</div></div>
+  </div>
+
+  <p style="font-size:12px;font-weight:700;color:var(--ac2);letter-spacing:.6px;margin-bottom:10px">SESSION 5 &mdash; STORYTELLING (NEW)</p>
+  <div class="vr-grid" style="margin-bottom:20px">
+    <div class="vr-card" onclick="revealVR(this)"><div class="vr-word">plot</div><div class="vr-ses">S5</div><div class="vr-def">The sequence of events in a story; what happens and why</div></div>
+    <div class="vr-card" onclick="revealVR(this)"><div class="vr-word">character</div><div class="vr-ses">S5</div><div class="vr-def">A person in a story; their traits, motivations, and arc are what make them compelling</div></div>
+    <div class="vr-card" onclick="revealVR(this)"><div class="vr-word">twist</div><div class="vr-ses">S5</div><div class="vr-def">An unexpected development that changes the direction of the story</div></div>
+    <div class="vr-card" onclick="revealVR(this)"><div class="vr-word">theme</div><div class="vr-ses">S5</div><div class="vr-def">The central idea or message that a story explores beyond its surface plot</div></div>
+    <div class="vr-card" onclick="revealVR(this)"><div class="vr-word">genre</div><div class="vr-ses">S5</div><div class="vr-def">The category or type of a story &mdash; e.g. thriller, drama, comedy, science fiction</div></div>
+    <div class="vr-card" onclick="revealVR(this)"><div class="vr-word">narrative</div><div class="vr-ses">S5</div><div class="vr-def">The way a story is told &mdash; its structure, voice, and perspective</div></div>
+    <div class="vr-card" onclick="revealVR(this)"><div class="vr-word">to pitch</div><div class="vr-ses">S5</div><div class="vr-def">To present an idea quickly and persuasively, trying to convince someone to invest or engage</div></div>
+    <div class="vr-card" onclick="revealVR(this)"><div class="vr-word">to engage</div><div class="vr-ses">S5</div><div class="vr-def">To capture and hold someone&rsquo;s attention, interest, and emotional investment</div></div>
+  </div>
+
+  <div class="tn to">
+    <button class="tn-btn" onclick="toggleTN(this)">&#9889; Teacher Note &mdash; &#167;1 Vocabulary Review</button>
+    <div class="tn-body">Run this at pace: 8 minutes maximum. Ask learners to self-mark: how many did they get right without looking? Session colour coding helps them identify gaps. S5 vocabulary (Storytelling) is introduced here for the first time &mdash; learners will need it immediately for the Capstone Pitch. Present those 8 words first before doing the full self-test.</div>
+  </div>
+</section>
+
+<!-- §2 GRAMMAR CONSOLIDATION -->
+<section class="sec" id="sec-gr">
+  <div class="sec-label">&#167;2 &nbsp; Grammar Consolidation &nbsp;&middot;&nbsp; 12 min</div>
+  <h2>Modal Deduction &mdash; Complete System</h2>
+
+  <div style="background:var(--ac3);border:1px solid var(--border2);border-radius:12px;padding:22px 26px;margin-bottom:20px">
+    <div style="font-size:11px;font-weight:700;color:var(--ac);letter-spacing:.8px;margin-bottom:12px">THE COMPLETE PICTURE &mdash; ALL 5 FORMS</div>
+    <table class="gr-full">
+      <tr><th>Time</th><th>Certainty</th><th>Structure</th><th>M5 Example</th></tr>
+      <tr><td>Present</td><td><span class="hl-ac">Almost certain ✓</span></td><td><span class="hl-ac">must be / must verb</span></td><td>She <span class="hl-ac">must be</span> sponsored &mdash; nobody recommends the same product 10 times for free.</td></tr>
+      <tr><td>Present</td><td><span class="hl-pk">Almost certain ✗</span></td><td><span class="hl-pk">can&rsquo;t be / can&rsquo;t verb</span></td><td>That story <span class="hl-pk">can&rsquo;t be</span> true &mdash; the source is completely anonymous.</td></tr>
+      <tr><td>Present</td><td><span class="hl-cy">Possible / uncertain</span></td><td><span class="hl-cy">might be / could be</span></td><td>The algorithm <span class="hl-cy">might be</span> showing you only content that confirms your views.</td></tr>
+      <tr><td>Past</td><td><span class="hl-ac">Almost certain ✓</span></td><td><span class="hl-ac">must have + past participle</span></td><td>Someone <span class="hl-ac">must have leaked</span> the photos &mdash; they were private.</td></tr>
+      <tr><td>Past</td><td><span class="hl-pk">Almost certain ✗</span></td><td><span class="hl-pk">can&rsquo;t have + past participle</span></td><td>She <span class="hl-pk">can&rsquo;t have known</span> about the rule &mdash; the disclosure law only passed last year.</td></tr>
+    </table>
+    <div style="margin-top:12px;font-size:12px;color:var(--danger);font-weight:600">&#9888; NEVER: &ldquo;must to be&rdquo; / &ldquo;can&rsquo;t to have&rdquo; &mdash; no &ldquo;to&rdquo; after modal verbs.</div>
+  </div>
+
+  <!-- Mixed MC across all 4 topics -->
+  <div class="act-box">
+    <div class="act-label">ACTIVITY A &mdash; MIXED TOPICS &mdash; All 5 forms in context</div>
+
+    <div class="mc-q">1. (Influencers) This creator posts 20 times a day. She _____ have a full team managing all the content &mdash; one person can&rsquo;t do this alone.</div>
+    <div class="mc-opts" id="q1opts">
+      <div class="mc-opt" onclick="checkOpt(this,'must','q1')">A. must</div>
+      <div class="mc-opt" onclick="checkOpt(this,'might','q1')">B. might</div>
+      <div class="mc-opt" onclick="checkOpt(this,'can't','q1')">C. can&rsquo;t</div>
+    </div>
+    <div class="fb" id="q1fb"></div>
+
+    <div class="mc-q" style="margin-top:18px">2. (Reality TV) The two contestants were friends all season, then one voted to eliminate the other. Their friendship _____ have been genuine all along.</div>
+    <div class="mc-opts" id="q2opts">
+      <div class="mc-opt" onclick="checkOpt(this,'can't','q2')">A. can&rsquo;t</div>
+      <div class="mc-opt" onclick="checkOpt(this,'must','q2')">B. must</div>
+      <div class="mc-opt" onclick="checkOpt(this,'might','q2')">C. might</div>
+    </div>
+    <div class="fb" id="q2fb"></div>
+
+    <div class="mc-q" style="margin-top:18px">3. (Fake News) I&rsquo;m not completely sure, but this statistic _____ be from a biased source &mdash; I don&rsquo;t see any independent verification.</div>
+    <div class="mc-opts" id="q3opts">
+      <div class="mc-opt" onclick="checkOpt(this,'might','q3')">A. might</div>
+      <div class="mc-opt" onclick="checkOpt(this,'must','q3')">B. must</div>
+      <div class="mc-opt" onclick="checkOpt(this,'can't','q3')">C. can&rsquo;t</div>
+    </div>
+    <div class="fb" id="q3fb"></div>
+
+    <div class="mc-q" style="margin-top:18px">4. (Celebrity) She built that level of global brand recognition over 15 years. It _____ have required extraordinary discipline and strategy.</div>
+    <div class="mc-opts" id="q4opts">
+      <div class="mc-opt" onclick="checkOpt(this,'must','q4')">A. must</div>
+      <div class="mc-opt" onclick="checkOpt(this,'can't','q4')">B. can&rsquo;t</div>
+      <div class="mc-opt" onclick="checkOpt(this,'might','q4')">C. might</div>
+    </div>
+    <div class="fb" id="q4fb"></div>
+  </div>
+
+  <!-- Unjumble cross-module -->
+  <div class="act-box">
+    <div class="act-label">ACTIVITY B &mdash; UNJUMBLE &mdash; Two sentences, two different modal forms</div>
+    <p style="font-size:13px;color:var(--mu2);margin-bottom:16px">Drag to reorder. Each uses a different part of the modal deduction system.</p>
+
+    <p style="font-size:13px;color:var(--mu);margin-bottom:8px"><strong>Sentence 1 (present deduction):</strong></p>
+    <ul class="drag-list" id="order1">
+      <li class="drag-item" draggable="true">of their audience</li>
+      <li class="drag-item" draggable="true">must be</li>
+      <li class="drag-item" draggable="true">deliberately exploiting the trust</li>
+      <li class="drag-item" draggable="true">these platforms</li>
+    </ul>
+    <button class="check-btn" onclick="checkOrder('order1',['these platforms','must be','deliberately exploiting the trust','of their audience'],'fb-ord1')">Check</button>
+    <div class="fb" id="fb-ord1"></div>
+
+    <p style="font-size:13px;color:var(--mu);margin-bottom:8px;margin-top:20px"><strong>Sentence 2 (past deduction):</strong></p>
+    <ul class="drag-list" id="order2">
+      <li class="drag-item" draggable="true">before signing the contract</li>
+      <li class="drag-item" draggable="true">the celebrity</li>
+      <li class="drag-item" draggable="true">can't have known</li>
+      <li class="drag-item" draggable="true">about the brand&rsquo;s scandal</li>
+    </ul>
+    <button class="check-btn" onclick="checkOrder('order2',['the celebrity','can't have known','about the brand's scandal','before signing the contract'],'fb-ord2')">Check</button>
+    <div class="fb" id="fb-ord2"></div>
+  </div>
+
+  <div class="micro">&#128172; <strong>Quick:</strong> Create your own sentence about any M5 topic using <em>must have</em> OR <em>can&rsquo;t have</em>. Say it out loud. Then your partner challenges: &ldquo;Why are you so sure?&rdquo;</div>
+  <div class="tn to">
+    <button class="tn-btn" onclick="toggleTN(this)">&#9889; Teacher Note &mdash; &#167;2 Grammar</button>
+    <div class="tn-body">Activity A spans all 4 module topics deliberately. The pattern shift (must → can&rsquo;t → might → must have) is the full system in one exercise. Activity B Sentence 2 with &ldquo;can&rsquo;t have known&rdquo; is the construction learners find most difficult &mdash; two auxiliaries plus a past participle. If errors persist here, write the formula: SUBJECT + can&rsquo;t have + V3. The micro challenge (&ldquo;Why are you so sure?&rdquo;) forces learners to metalinguistically justify their modal choice &mdash; the highest order of grammar awareness at B1.2.</div>
+  </div>
+</section>
+
+<!-- §3 INTEGRATED READING -->
+<section class="sec" id="sec-rd">
+  <div class="sec-label">&#167;3 &nbsp; Integrated Reading &nbsp;&middot;&nbsp; 10 min</div>
+  <h2>Carlos Mendez &mdash; Module Closing Reflection</h2>
+  <div class="reading-box">
+    <img src="https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=600&auto=format&fit=crop&q=80" alt="Cinema seats" style="height:200px;margin-bottom:20px">
+    <p>Four sessions ago, I asked you a question that made some people uncomfortable: <em>if algorithms decide what news you see, can you ever really trust your own opinion?</em></p>
+    <p style="margin-top:12px">Over the past weeks, we&rsquo;ve looked at four ways that media shapes what we think, feel, and buy. <span class="hl-ac">Influencers must be among the most powerful persuasion tools ever invented</span> &mdash; because they feel like friends, not advertisements. Reality TV <span class="hl-cy">might be</span> the most sophisticated behavioural experiment ever conducted at scale, with millions of willing participants who pay for the experience themselves.</p>
+    <p style="margin-top:12px">Fake news <span class="hl-pk">can&rsquo;t be</span> solved by fact-checking alone, because the problem isn&rsquo;t information &mdash; it&rsquo;s emotion. And celebrity culture <span class="hl-ac">must have been</span> with us since the first humans told stories around a fire &mdash; the technology changes, but the human need for narrative and admiration does not.</p>
+    <p style="margin-top:12px">So what do you do with all of this? You learn to watch with better eyes. You ask: <em>whose interest does this serve? What am I being sold? What am I comparing myself to?</em> And then &mdash; and this is the part most people skip &mdash; you tell your own story. Not theirs.</p>
+    <p style="margin-top:12px">That is what today&rsquo;s session is about. <strong>Your pitch. Your narrative. Your words.</strong></p>
+  </div>
+
+  <div class="act-box">
+    <div class="act-label">COMPREHENSION &mdash; True or False</div>
+    <div class="mc-q">1. Carlos says that fact-checking is sufficient to solve the fake news problem.</div>
+    <div class="mc-opts" id="rq1opts">
+      <div class="mc-opt" onclick="checkOpt(this,'False','rq1')">A. True</div>
+      <div class="mc-opt" onclick="checkOpt(this,'False','rq1')">B. False</div>
+    </div>
+    <div class="fb" id="rq1fb"></div>
+    <div class="mc-q" style="margin-top:16px">2. Carlos suggests that the human need for narrative and admiration is a recent phenomenon driven by technology.</div>
+    <div class="mc-opts" id="rq2opts">
+      <div class="mc-opt" onclick="checkOpt(this,'False','rq2')">A. True</div>
+      <div class="mc-opt" onclick="checkOpt(this,'False','rq2')">B. False</div>
+    </div>
+    <div class="fb" id="rq2fb"></div>
+    <div class="mc-q" style="margin-top:16px">3. The text uses all three modal deduction forms (must / can&rsquo;t / might) at least once.</div>
+    <div class="mc-opts" id="rq3opts">
+      <div class="mc-opt" onclick="checkOpt(this,'True','rq3')">A. True</div>
+      <div class="mc-opt" onclick="checkOpt(this,'True','rq3')">B. False</div>
+    </div>
+    <div class="fb" id="rq3fb"></div>
+  </div>
+  <div class="tn to">
+    <button class="tn-btn" onclick="toggleTN(this)">&#9889; Teacher Note &mdash; &#167;3 Reading</button>
+    <div class="tn-body">Q3 is a grammar awareness check embedded in a comprehension question &mdash; learners must scan the text for must / can&rsquo;t / might and find all three (highlighted in colour). After comprehension, read Carlos&rsquo;s final paragraph aloud: &ldquo;Your pitch. Your narrative. Your words.&rdquo; Let it land. Then transition directly to §SP with energy: &ldquo;That&rsquo;s exactly what you&rsquo;re about to do.&rdquo;</div>
+  </div>
+</section>
+
+<!-- §4 LISTENING -->
+<section class="sec" id="sec-li">
+  <div class="sec-label">&#167;4 &nbsp; Listening &nbsp;&middot;&nbsp; 6 min</div>
+  <h2>Carlos Mendez &mdash; Why Stories Matter</h2>
+  <div class="audio-player">
+    <button class="ap-btn" id="apBtn" onclick="toggleAudio()">&#9654;</button>
+    <div class="ap-body">
+      <div class="ap-title">Carlos Mendez &mdash; Module 5 Closing &mdash; B1.2 &mdash; ElevenLabs speed 0.85</div>
+      <div class="ap-track" id="apTrack" onclick="seekAudio(event)">
+        <div class="ap-fill" id="apFill"></div>
+      </div>
+      <div class="ap-times"><span id="apCur">0:00</span><span id="apDur">1:40</span></div>
+    </div>
+    <div class="ap-wave paused" id="apWave">
+      <span style="height:6px"></span><span></span><span></span><span></span><span></span>
+    </div>
+  </div>
+  <button class="script-toggle to" onclick="toggleScript(this)">&#128196; Show Script (Teacher)</button>
+  <div class="script-box to" id="scriptBox">
+    <p><strong>Carlos Mendez &mdash; Module 5 Closing:</strong></p>
+    <p style="margin-top:8px">I want to tell you something about stories. Every session of this module, you were exposed to someone else&rsquo;s story &mdash; an influencer&rsquo;s curated life, a reality show&rsquo;s manufactured drama, a journalist&rsquo;s headline, a celebrity&rsquo;s carefully constructed persona. All of it, stories. All of it, designed to make you feel something and then act on that feeling.</p>
+    <p style="margin-top:10px"><span class="hl-ac">The most powerful thing you can do in response is learn to tell your own.</span> In English. With confidence. Without notes.</p>
+    <p style="margin-top:10px">That&rsquo;s what a pitch is. A pitch is not a presentation. It&rsquo;s not a report. It&rsquo;s a story that makes someone want to listen, and then want to know more. <span class="hl-cy">The best pitches I&rsquo;ve seen &mdash; for products, for ideas, for films &mdash; all had the same thing:</span> a clear character, a problem, and a reason to care.</p>
+    <p style="margin-top:10px"><span class="hl-go">When you pitch your film or series today, you&rsquo;re not describing a plot. You&rsquo;re making someone want to watch it.</span> That&rsquo;s a different skill. And it&rsquo;s one of the most valuable things you can do in English in any professional context.</p>
+    <p style="margin-top:10px">Two minutes. No notes. Your story. Go.</p>
+    <p style="margin-top:10px;font-size:11px;color:var(--mu)">&#127897; ElevenLabs: Carlos Mendez &mdash; speed 0.85 &mdash; approx. 170 words</p>
+  </div>
+  <div class="tn to" style="margin-top:12px">
+    <button class="tn-btn" onclick="toggleTN(this)">&#9889; Teacher Note &mdash; &#167;4 Listening</button>
+    <div class="tn-body">This is a motivational listening &mdash; no comprehension questions. Just listen, let it land, then go directly to §SP. Carlos&rsquo;s final line &mdash; &ldquo;Two minutes. No notes. Your story. Go.&rdquo; &mdash; is the session&rsquo;s launch signal. Play it. Let the room be quiet for 3 seconds. Then: &ldquo;Before we do the Capstone, let&rsquo;s warm up with the Speaking Marathon.&rdquo;</div>
+  </div>
+</section>
+
+<!-- §SP SPEAKING MARATHON -->
+<section class="sec" id="sec-spp">
+  <div class="sec-label">&#167;SP &nbsp; Speaking Marathon &nbsp;&middot;&nbsp; 12 min</div>
+  <h2>One Question Per Topic &mdash; Full Circuit</h2>
+  <p style="font-size:13.5px;color:var(--mu2);margin-bottom:18px">60 seconds per question. Use vocabulary from that session + modal deduction. Go around the group.</p>
+  <div class="marathon-grid">
+    <div class="mar-card">
+      <div class="mar-tag mar-s1">&#9679; SESSION 1 &mdash; INFLUENCERS</div>
+      <div class="mar-q">If you were asked to create content for a brand, what must you disclose to your audience? And what might you refuse to promote, even for a large fee?</div>
+      <div class="mar-hint">Use: regulation, transparency, sponsorship, disclose</div>
+    </div>
+    <div class="mar-card">
+      <div class="mar-tag mar-s2">&#9679; SESSION 2 &mdash; REALITY TV</div>
+      <div class="mar-q">Describe a reality TV show format &mdash; real or invented &mdash; that you think would get enormous ratings in Mexico. What must the drama come from?</div>
+      <div class="mar-hint">Use: drama, ratings, manipulation, contestant, vulnerability</div>
+    </div>
+    <div class="mar-card">
+      <div class="mar-tag mar-s3">&#9679; SESSION 3 &mdash; FAKE NEWS</div>
+      <div class="mar-q">A colleague sends you a WhatsApp message claiming a major supplier has gone bankrupt. Before you share it, what must you check? What can&rsquo;t you assume?</div>
+      <div class="mar-hint">Use: source, credibility, verify, fact-check, echo chamber</div>
+    </div>
+    <div class="mar-card">
+      <div class="mar-tag mar-s4">&#9679; SESSION 4 &mdash; CELEBRITY CULTURE</div>
+      <div class="mar-q">Apply Carlos&rsquo;s three questions to a celebrity you&rsquo;ve seen in the media this week: Whose interest does this serve? What are you being sold? What&rsquo;s the comparison trap?</div>
+      <div class="mar-hint">Use: persona, image, brand, endorse + all three questions</div>
+    </div>
+    <div class="mar-card" style="grid-column:1/-1;background:linear-gradient(135deg,var(--ac3),rgba(0,207,255,.05))">
+      <div class="mar-tag mar-s1">&#11088; SYNTHESIS QUESTION</div>
+      <div class="mar-q" style="font-size:15px">Looking at all four topics: influencers, reality TV, fake news, and celebrity culture &mdash; what must they all have in common? What does this tell you about how media works and what we must do to consume it better?</div>
+      <div class="mar-hint">Use modal deduction across all four topics. Aim for 90 seconds. This is your module closing argument.</div>
+    </div>
+  </div>
+  <div style="display:flex;gap:24px;align-items:center;flex-wrap:wrap;margin-top:20px">
+    <div class="timer-wrap">
+      <div class="timer-label">60s TIMER</div>
+      <svg width="96" height="96" viewBox="0 0 96 96">
+        <circle cx="48" cy="48" r="38" fill="none" stroke="rgba(52,211,153,.15)" stroke-width="6"/>
+        <circle id="tArc1" cx="48" cy="48" r="38" fill="none" stroke="var(--ac)" stroke-width="6"
+          stroke-dasharray="238.76" stroke-dashoffset="0" stroke-linecap="round" transform="rotate(-90 48 48)"/>
+        <text id="tNum1" x="48" y="54" text-anchor="middle" class="timer-num">60</text>
+      </svg>
+      <button class="check-btn" style="font-size:12px;padding:7px 16px" onclick="startTimer(1,60)">Start 60s</button>
+    </div>
+    <div class="timer-wrap">
+      <div class="timer-label">90s TIMER</div>
+      <svg width="96" height="96" viewBox="0 0 96 96">
+        <circle cx="48" cy="48" r="38" fill="none" stroke="rgba(52,211,153,.15)" stroke-width="6"/>
+        <circle id="tArc2" cx="48" cy="48" r="38" fill="none" stroke="var(--gold)" stroke-width="6"
+          stroke-dasharray="238.76" stroke-dashoffset="0" stroke-linecap="round" transform="rotate(-90 48 48)"/>
+        <text id="tNum2" x="48" y="54" text-anchor="middle" class="timer-num">90</text>
+      </svg>
+      <button class="check-btn" style="font-size:12px;padding:7px 16px;background:var(--gold)" onclick="startTimer(2,90)">Start 90s</button>
+    </div>
+    <div style="flex:1;min-width:200px;font-size:13px;color:var(--mu2);line-height:1.6">60s timer for questions 1&ndash;4. Gold 90s timer for the Synthesis Question.</div>
+  </div>
+  <div class="tn to">
+    <button class="tn-btn" onclick="toggleTN(this)">&#9889; Teacher Note &mdash; §SP Marathon</button>
+    <div class="tn-body">The Synthesis Question is the linguistic and conceptual peak of M5. Expect learners to identify: emotional engagement, algorithm amplification, the illusion of authenticity, and comparison traps. These are not just English skills &mdash; they are professional media literacy skills that B1.2 learners now have the vocabulary to name. Celebrate the quality of thinking, not just the grammar.</div>
+  </div>
+</section>
+
+<!-- §5 CAPSTONE PITCH -->
+<section class="sec" id="sec-prod">
+  <div class="sec-label">&#167;5 &nbsp; Capstone &mdash; The Pitch &nbsp;&middot;&nbsp; 20 min</div>
+  <h2>Your 2-Minute Pitch &mdash; No Notes</h2>
+
+  <div class="capstone-box">
+    <div class="capstone-title">&#127916; Pitch Your Favourite Movie or Series</div>
+    <div class="capstone-brief">You have 2 minutes. No script. No notes. Sell your chosen film or series to the room &mdash; make them want to watch it tonight.<br><br>This is the GT Original S5 Capstone for Module 5. It should be one of the most memorable sessions of the level.</div>
+
+    <div class="pitch-prep">
+      <div class="pitch-prep-label">&#127919; YOUR PITCH STRUCTURE (30 seconds to plan):</div>
+      <ul class="pitch-steps">
+        <li><strong>Hook:</strong> One sentence that grabs attention. Start with the twist, the theme, or an unusual detail &mdash; not the plot.</li>
+        <li><strong>Setup:</strong> Genre + setting + central character. Keep it fast: 20 seconds maximum.</li>
+        <li><strong>Conflict:</strong> What is the problem or tension that drives the story? This is what makes it compelling.</li>
+        <li><strong>Theme:</strong> What is it really about, beneath the surface? (Use modal deduction: &ldquo;It might seem like X, but it must be about Y.&rdquo;)</li>
+        <li><strong>Closer:</strong> Why must someone watch this? What can&rsquo;t they miss? End with a reason to care &mdash; not a summary.</li>
+      </ul>
+    </div>
+
+    <div class="rubric-grid">
+      <div class="rubric-card">
+        <div class="rubric-label">FLUENCY</div>
+        <div class="rubric-desc">Speaks for 2 full minutes with natural pace. No excessive pausing or repetition.</div>
+      </div>
+      <div class="rubric-card">
+        <div class="rubric-label">VOCABULARY</div>
+        <div class="rubric-desc">Uses S5 storytelling words accurately: plot, character, twist, theme, narrative, genre.</div>
+      </div>
+      <div class="rubric-card">
+        <div class="rubric-label">ENGAGEMENT</div>
+        <div class="rubric-desc">The pitch makes the listener genuinely want to watch. They&rsquo;d remember this film tomorrow.</div>
+      </div>
+      <div class="rubric-card">
+        <div class="rubric-label">MODAL DEDUCTION</div>
+        <div class="rubric-desc">Uses must / can&rsquo;t / might naturally to analyse or describe the film&rsquo;s content or appeal.</div>
+      </div>
+      <div class="rubric-card">
+        <div class="rubric-label">COHERENCE</div>
+        <div class="rubric-desc">The pitch has a clear structure &mdash; hook, setup, conflict, theme, closer.</div>
+      </div>
+      <div class="rubric-card">
+        <div class="rubric-label">NATURALNESS</div>
+        <div class="rubric-desc">Sounds like genuine recommendation, not a book report. Emotional investment is visible.</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex;gap:24px;align-items:flex-start;flex-wrap:wrap;margin-bottom:16px">
+    <div style="flex-shrink:0">
+      <div class="timer-wrap">
+        <div class="timer-label">2-MINUTE PITCH TIMER</div>
+        <svg width="110" height="110" viewBox="0 0 96 96">
+          <circle cx="48" cy="48" r="38" fill="none" stroke="rgba(52,211,153,.15)" stroke-width="6"/>
+          <circle id="tArc3" cx="48" cy="48" r="38" fill="none" stroke="var(--gold)" stroke-width="6"
+            stroke-dasharray="238.76" stroke-dashoffset="0" stroke-linecap="round" transform="rotate(-90 48 48)"/>
+          <text id="tNum3" x="48" y="54" text-anchor="middle" class="timer-num">120</text>
+        </svg>
+        <button class="check-btn" style="font-size:12px;padding:7px 16px;background:var(--gold)" onclick="startTimer(3,120)">Start 2 min</button>
+      </div>
+    </div>
+    <div style="flex:1;min-width:240px">
+      <div style="background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:18px 20px">
+        <div style="font-size:11px;font-weight:700;color:var(--gold);letter-spacing:.6px;margin-bottom:10px">PEER LISTENER CHECKLIST</div>
+        <div style="display:flex;flex-direction:column;gap:8px;font-size:13px;color:var(--mu2)">
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input type="checkbox" style="accent-color:var(--ac)"> Did they use a hook that grabbed my attention?</label>
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input type="checkbox" style="accent-color:var(--ac)"> Did they use at least 3 S5 vocabulary words?</label>
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input type="checkbox" style="accent-color:var(--ac)"> Did they use must / can&rsquo;t / might naturally?</label>
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input type="checkbox" style="accent-color:var(--ac)"> Do I actually want to watch this film or series?</label>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="tn to">
+    <button class="tn-btn" onclick="toggleTN(this)">&#9889; Teacher Note &mdash; Capstone Pitch</button>
+    <div class="tn-body">GT Original: announce the topic at the end of S4A, not here. Learners who prepare will perform better. This is intentional &mdash; preparation in L2 is a skill. During pitches: do NOT interrupt or correct. Listen fully. After each pitch: 30 seconds of peer feedback using the listener checklist. Then teacher closes with 1-2 language observations from what they actually heard &mdash; not pre-planned, from real listening. This is the GT difference. Record if possible &mdash; learners are always surprised at how good they sound. That surprise is the moment of belief.</div>
+  </div>
+  <div class="tn gold to">
+    <button class="tn-btn" onclick="toggleTN(this)">&#9733; Upsell Moment &mdash; Module Complete</button>
+    <div class="tn-body">&#x1F4B0; After the last pitch: &ldquo;You just pitched in English &mdash; without notes, for 2 minutes, to a real audience. That&rsquo;s not intermediate English. That&rsquo;s professional English. Module 6 is &lsquo;Your Future, Your English.&rsquo; The final capstone is a 3-minute unscripted talk: where do you see yourself in 5 years? By then, you&rsquo;ll be ready for it. And you should be. You&rsquo;ve come a long way.&rdquo;</div>
+  </div>
+</section>
+
+<!-- §6 MODULE WRAP-UP -->
+<section class="sec" id="sec-wu2">
+  <div class="sec-label">&#167;6 &nbsp; Module Complete &nbsp;&middot;&nbsp; 5 min</div>
+  <h2>Module 5 &mdash; Done</h2>
+
+  <div class="mod-cert">
+    <div style="font-size:40px;margin-bottom:12px">&#127916;</div>
+    <div class="mod-cert-title">Module 5 Complete &mdash; Media, Fame &amp; Influence</div>
+    <div style="font-size:14px;color:var(--mu2);margin-bottom:20px;line-height:1.6">You analysed influencers, reality TV, fake news, and celebrity culture in English.<br>You used modal deduction to reason, argue, and pitch like an analytical professional.<br>You told your own story &mdash; without notes.</div>
+    <button class="cert-btn" id="modCertBtn" onclick="generateModuleCert()">&#127941; Generate Module Certificate</button>
+  </div>
+
+  <div class="exit-box">
+    <div class="exit-title">&#9989; I can now&hellip;</div>
+    <ul class="check-list" id="canList">
+      <li><input type="checkbox" id="c1" onchange="chkAll()"> Use all 5 modal deduction forms fluently: must be, can&rsquo;t be, might be, must have, can&rsquo;t have</li>
+      <li><input type="checkbox" id="c2" onchange="chkAll()"> Discuss media, influence, and celebrity culture analytically in English</li>
+      <li><input type="checkbox" id="c3" onchange="chkAll()"> Pitch a film or series in 2 minutes without notes</li>
+      <li><input type="checkbox" id="c4" onchange="chkAll()"> Use all 5 M5 colloquial phrases: &ldquo;That&rsquo;s so extra,&rdquo; &ldquo;clout-chasing,&rdquo; &ldquo;it went viral,&rdquo; &ldquo;shade was thrown,&rdquo; &ldquo;no cap&rdquo;</li>
+      <li><input type="checkbox" id="c5" onchange="chkAll()"> Ask Carlos&rsquo;s 3 media questions: whose interest? what am I being sold? what am I comparing to?</li>
+    </ul>
+  </div>
+
+  <div class="exit-box win-box">
+    <div class="exit-title">&#127942; My Module Win</div>
+    <p style="font-size:13px;color:var(--mu2);margin-bottom:4px">Write the one thing from Module 5 that you will actually use at work or in life this week:</p>
+    <textarea id="winTxt" placeholder="e.g. I will ask 'whose interest does this serve?' every time I see a viral story or a sponsored post..."></textarea>
+    <br><button class="save-btn" onclick="saveWin()">&#128190; Save</button>
+  </div>
+
+  <div style="background:var(--s2);border:1px solid var(--border);border-radius:12px;padding:22px 26px;margin-top:20px" class="to">
+    <div style="font-size:11px;font-weight:700;color:var(--mu);letter-spacing:.8px;margin-bottom:8px">NEXT MODULE</div>
+    <div style="font-family:'Syne',sans-serif;font-size:18px;font-weight:700;color:var(--ac2)">Module 6 &mdash; Your Future, Your English</div>
+    <div style="font-size:13px;color:var(--mu2);margin-top:6px">University &bull; What is success &bull; Handling failure &bull; Remote vs office &bull; 5-year vision (Capstone)</div>
+    <div style="font-size:13px;color:var(--mu2);margin-top:4px">Grammar: Linking words &mdash; although / despite / as a result / whereas &bull; Character: Carlos Mendez continues</div>
+  </div>
+</section>
+
+</main>
+<footer>
+  <div class="footer-brand">Gabriel Turner &middot; English Training</div>
+  <div class="footer-sess"><span>S1</span><span>S2</span><span>S3</span><span>S4</span><span class="active">S5</span></div>
+  <div class="footer-levels"><span>A1.1</span><span>A1.2</span><span>A2.1</span><span>A2.2</span><span>B1.1</span><span class="active">B1.2</span><span>B2.1</span><span>B2.2</span></div>
+</footer>
+
+<script>
+window.addEventListener("scroll",function(){var d=document.documentElement;document.getElementById("pb").style.width=(d.scrollTop/(d.scrollHeight-d.clientHeight))*100+"%";});
+var studentMode=false;
+function toggleMode(){studentMode=!studentMode;document.body.classList.toggle("sm",studentMode);document.querySelector(".mode-btn").textContent=studentMode?"TEACHER MODE":"STUDENT MODE";}
+function toggleTN(btn){btn.nextElementSibling.classList.toggle("open");}
+var badges={b1:false,b2:false,b3:false,b4:false,b5:false};
+function earnBadge(id){if(badges[id])return;badges[id]=true;var el=document.getElementById(id);if(el)el.classList.add("earned");if(Object.values(badges).every(function(v){return v;}))launchConfetti();}
+function launchConfetti(){var colors=["#34D399","#6EE7B7","#00CFFF","#FFB800","#ffffff"];for(var i=0;i<120;i++){var d=document.createElement("div");d.style.cssText="position:fixed;width:9px;height:9px;border-radius:50%;pointer-events:none;z-index:9999;";d.style.background=colors[Math.floor(Math.random()*colors.length)];d.style.left=Math.random()*100+"vw";d.style.top="-10px";document.getElementById("confetti-container").appendChild(d);var dur=2000+Math.random()*2500;var delay=Math.random()*2000;setTimeout(function(el){el.style.transition="top "+dur+"ms ease-in,left "+dur+"ms ease-in-out,opacity 500ms "+dur+"ms";el.style.top=(75+Math.random()*25)+"vh";el.style.left=(parseFloat(el.style.left)+Math.random()*50-25)+"vw";setTimeout(function(e){e.style.opacity="0";setTimeout(function(e2){if(e2.parentNode)e2.parentNode.removeChild(e2);},600,e);},dur,el);},delay,d);}}
+var vrCount=0;
+function revealVR(card){if(!card.classList.contains("revealed")){card.classList.add("revealed");vrCount++;if(vrCount>=10)earnBadge("b1");}}
+var answered={};
+function checkOpt(el,correct,qid){if(answered[qid])return;answered[qid]=true;var opts=el.parentElement.querySelectorAll(".mc-opt");opts.forEach(function(o){if(o===el&&(o.textContent.trim()===correct||o.textContent.trim().toLowerCase().indexOf(correct.toLowerCase())>=0))o.classList.add("correct");if(o===el&&!o.classList.contains("correct"))o.classList.add("wrong");});var fb=document.getElementById(qid+"fb");if(fb){var ok=el.classList.contains("correct");if(ok){fb.textContent="Correct!";fb.className="fb ok";earnBadge("b2");}else{fb.textContent="Not quite — think about certainty level and time.";fb.className="fb err";}}}
+function initDrag(listId){var list=document.getElementById(listId);if(!list)return;var dragged=null;list.addEventListener("dragstart",function(e){dragged=e.target;e.target.style.opacity=".5";});list.addEventListener("dragend",function(e){e.target.style.opacity="1";list.querySelectorAll(".drag-item").forEach(function(i){i.classList.remove("over");});});list.addEventListener("dragover",function(e){e.preventDefault();var t=e.target.closest(".drag-item");if(t&&t!==dragged){list.querySelectorAll(".drag-item").forEach(function(i){i.classList.remove("over");});t.classList.add("over");}});list.addEventListener("drop",function(e){e.preventDefault();var t=e.target.closest(".drag-item");if(t&&t!==dragged){var items=Array.from(list.querySelectorAll(".drag-item"));var di=items.indexOf(dragged);var ti=items.indexOf(t);if(di<ti)list.insertBefore(dragged,t.nextSibling);else list.insertBefore(dragged,t);}});}
+function checkOrder(listId,correct,fbId){var items=document.getElementById(listId).querySelectorAll(".drag-item");var current=Array.from(items).map(function(i){return i.textContent.trim();});var fb=document.getElementById(fbId);var ok=correct.every(function(v,i){return v===current[i];});if(ok){fb.textContent="Perfect!";fb.className="fb ok";earnBadge("b3");}else{fb.textContent="Not quite — the subject must come first, then the modal.";fb.className="fb err";}}
+var timerIntervals={};
+function startTimer(n,secs){if(timerIntervals[n])clearInterval(timerIntervals[n]);var arc=document.getElementById("tArc"+n);var num=document.getElementById("tNum"+n);var total=secs;var circ=238.76;var remaining=total;arc.style.stroke=n===2||n===3?"var(--gold)":"var(--ac)";timerIntervals[n]=setInterval(function(){remaining--;arc.style.strokeDashoffset=circ*(1-remaining/total);num.textContent=remaining;if(remaining<=10)arc.style.stroke="var(--danger)";if(remaining<=0){clearInterval(timerIntervals[n]);num.textContent="0";earnBadge("b4");}},1000);}
+var apPlaying=false,apProgress=0,apTimer=null;
+function toggleAudio(){apPlaying=!apPlaying;document.getElementById("apBtn").innerHTML=apPlaying?"&#9646;&#9646;":"&#9654;";document.getElementById("apWave").classList.toggle("paused",!apPlaying);if(apPlaying){apTimer=setInterval(function(){apProgress=Math.min(apProgress+100/100,100);document.getElementById("apFill").style.width=apProgress+"%";var cur=Math.floor(apProgress*100/100);document.getElementById("apCur").textContent="1:"+(cur<10?"0":"")+cur;if(apProgress>=100){clearInterval(apTimer);apPlaying=false;document.getElementById("apBtn").innerHTML="&#9654;";document.getElementById("apWave").classList.add("paused");earnBadge("b3");}},1000);}else{clearInterval(apTimer);}}
+function seekAudio(e){var rect=document.getElementById("apTrack").getBoundingClientRect();apProgress=((e.clientX-rect.left)/rect.width)*100;document.getElementById("apFill").style.width=apProgress+"%";}
+function toggleScript(btn){var box=document.getElementById("scriptBox");box.classList.toggle("open");btn.textContent=box.classList.contains("open")?"&#128196; Hide Script":"&#128196; Show Script (Teacher)";}
+function chkAll(){var items=document.getElementById("canList").querySelectorAll("input[type=checkbox]");var all=Array.from(items).every(function(i){return i.checked;});if(all){earnBadge("b5");launchConfetti();}}
+function generateModuleCert(){launchConfetti();var w=window.open("","_blank","width=660,height=480");w.document.write("<html><body style='font-family:sans-serif;text-align:center;padding:50px;background:#080808;color:#F0F4F8'>");w.document.write("<div style='font-size:48px;margin-bottom:16px'>&#127916;</div>");w.document.write("<h1 style='color:#34D399;font-size:26px;margin-bottom:8px'>Module 5 Complete</h1>");w.document.write("<p style='font-size:18px;color:#6EE7B7;margin-bottom:12px'>Media, Fame &amp; Influence</p>");w.document.write("<p style='font-size:14px;color:#6B7A8D;margin-bottom:6px'>GT English Training &mdash; B1.2</p>");w.document.write("<p style='font-size:13px;color:#6B7A8D'>Influencers &bull; Reality TV &bull; Fake News &bull; Celebrity Culture</p>");w.document.write("<p style='font-size:13px;color:#6B7A8D;margin-top:4px'>Grammar: Modal Deduction &mdash; must / can't / might (present + past)</p>");w.document.write("<p style='font-size:13px;color:#6B7A8D;margin-top:4px'>Capstone: 2-minute unscripted film pitch</p>");w.document.write("<p style='font-size:12px;color:#6B7A8D;margin-top:20px'>Gabriel Turner &middot; English Training &mdash; Celaya, Guanajuato</p>");w.document.write("</body></html>");}
+function saveWin(){var txt=document.getElementById("winTxt").value.trim();if(txt){earnBadge("b5");alert("Module win saved!");}}
+function speak(w){if("speechSynthesis" in window){var u=new SpeechSynthesisUtterance(w);u.lang="en-US";u.rate=0.9;window.speechSynthesis.speak(u);}}
+initDrag("order1");
+initDrag("order2");
+</script>
+</body>
+</html>

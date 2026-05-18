@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GT &middot; B1.2 &middot; M6 &middot; S4A &mdash; Remote Work vs Office</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ac:#34D399;--ac2:#6EE7B7;--ac3:rgba(52,211,153,.12);
+  --bg:#080808;--s1:#0f1117;--s2:#161b24;--s3:#1c2130;
+  --border:rgba(52,211,153,.14);--border2:rgba(52,211,153,.28);
+  --txt:#F0F4F8;--mu:#6B7A8D;--mu2:#8A9BB0;
+  --danger:#FF4D6D;--ok:#00E5A0;--warn:#FFB347;
+  --cyan:#00CFFF;--gold:#FFB800;--pink:#FF1F5C;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif;font-weight:400;line-height:1.6;min-height:100vh}
+#pb{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--ac),var(--cyan));width:0%;z-index:999;transition:width .2s}
+header{background:var(--s1);border-bottom:1px solid var(--border);padding:18px 48px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;position:sticky;top:0;z-index:100}
+.brand{font-family:'Syne',sans-serif;font-weight:800;font-size:17px;letter-spacing:-.3px}
+.brand .dot{color:var(--gold)}
+.hdr-right{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.sess-pill{background:var(--ac3);border:1px solid var(--border2);color:var(--ac);font-size:11px;font-weight:600;padding:4px 10px;border-radius:20px;letter-spacing:.6px;text-transform:uppercase}
+.badge-row span{font-size:20px;opacity:.2;filter:grayscale(1);transition:all .4s;cursor:default}
+.badge-row span.earned{opacity:1;filter:none;animation:bpop .5s cubic-bezier(.34,1.56,.64,1)}
+@keyframes bpop{0%{transform:scale(.5)}60%{transform:scale(1.3)}100%{transform:scale(1)}}
+.mode-btn{background:transparent;border:1px solid var(--border2);color:var(--ac);font-size:11px;font-weight:600;padding:5px 12px;border-radius:6px;cursor:pointer;letter-spacing:.5px;transition:all .2s}
+.mode-btn:hover{background:var(--ac3)}
+.sm .to{display:none!important}
+main{max-width:1080px;margin:0 auto;padding:48px 48px 80px}
+h2{font-family:'Syne',sans-serif;font-weight:800;font-size:26px;letter-spacing:-.4px;margin-bottom:24px}
+h3{font-family:'Syne',sans-serif;font-weight:700;font-size:17px;margin-bottom:12px}
+.sec{margin-bottom:64px}
+.sec-label{display:inline-flex;align-items:center;gap:8px;background:var(--ac3);border:1px solid var(--border);color:var(--ac);font-size:11px;font-weight:700;padding:5px 14px;border-radius:20px;letter-spacing:.8px;text-transform:uppercase;margin-bottom:20px}
+.card{background:var(--s1);border:1px solid var(--border);border-radius:14px;padding:28px;margin-bottom:16px}
+img{border-radius:10px;width:100%;object-fit:cover;display:block}
+.wu-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.wu-card{background:var(--s1);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.wu-body{padding:18px}
+.wu-num{font-size:11px;font-weight:700;color:var(--ac);letter-spacing:.8px;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.wu-q{font-size:15px;line-height:1.55}
+.tag-pill{background:var(--ac3);color:var(--ac);font-size:10px;padding:2px 7px;border-radius:10px}
+.quick-win{background:linear-gradient(135deg,rgba(52,211,153,.1),rgba(0,207,255,.07));border:1px solid var(--border2);border-radius:12px;padding:22px 26px;margin-top:20px}
+.quick-win-label{font-size:11px;font-weight:700;color:var(--ac);letter-spacing:.8px;margin-bottom:8px}
+.tn{background:var(--s2);border-left:3px solid var(--cyan);border-radius:0 10px 10px 0;margin-top:14px;overflow:hidden}
+.tn-btn{width:100%;background:none;border:none;color:var(--cyan);font-size:12px;font-weight:600;padding:10px 16px;text-align:left;cursor:pointer;letter-spacing:.4px}
+.tn-body{padding:0 16px 14px;font-size:12.5px;color:var(--mu2);line-height:1.6;display:none}
+.tn-body.open{display:block}
+.tn.gold{border-left-color:var(--gold)}
+.tn.gold .tn-btn{color:var(--gold)}
+.tn.pink{border-left-color:var(--pink)}
+.tn.pink .tn-btn{color:var(--pink)}
+/* Spin the wheel */
+.wheel-area{display:flex;align-items:center;gap:32px;flex-wrap:wrap}
+.wheel-svg-wrap{flex-shrink:0;position:relative;width:220px;height:220px}
+.wheel-card{flex:1;min-width:240px;background:linear-gradient(135deg,var(--ac3),rgba(0,207,255,.06));border:2px solid var(--border2);border-radius:16px;padding:28px;text-align:center;min-height:140px;display:flex;flex-direction:column;justify-content:center;gap:10px}
+.wheel-word{font-family:'Syne',sans-serif;font-weight:800;font-size:22px;color:var(--ac)}
+.wheel-prompt{font-size:14px;color:var(--mu2);line-height:1.55}
+/* Voc */
+.voc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.voc-card{background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:16px 18px;display:flex;align-items:flex-start;gap:12px}
+.voc-img{width:56px;height:56px;border-radius:8px;object-fit:cover;flex-shrink:0}
+.voc-word{font-family:'Syne',sans-serif;font-weight:700;font-size:15px;color:var(--cyan);margin-bottom:2px}
+.voc-ipa{font-size:11px;color:var(--mu);margin-bottom:4px;font-style:italic}
+.voc-def{font-size:12px;color:var(--mu2);line-height:1.45;margin-bottom:6px}
+.voc-ex{font-size:11.5px;color:var(--txt);opacity:.75;font-style:italic;line-height:1.4}
+.speak-btn{background:rgba(0,207,255,.1);border:1px solid rgba(0,207,255,.25);color:var(--cyan);font-size:11px;padding:3px 8px;border-radius:6px;cursor:pointer;margin-top:6px;display:inline-block}
+/* Grammar */
+.situation-box{background:linear-gradient(135deg,rgba(255,77,109,.08),rgba(255,77,109,.03));border:1px solid rgba(255,77,109,.25);border-radius:12px;padding:22px 26px;margin-bottom:20px}
+.sit-label{font-size:11px;font-weight:700;color:var(--danger);letter-spacing:.8px;margin-bottom:8px}
+.sit-text{font-size:15px;line-height:1.6;font-style:italic}
+.grammar-reveal{background:rgba(52,211,153,.06);border:1px solid var(--border2);border-radius:12px;padding:22px 26px;margin-bottom:20px}
+.gr-label{font-size:11px;font-weight:700;color:var(--ac);letter-spacing:.8px;margin-bottom:10px}
+.gr-table{width:100%;border-collapse:collapse;font-size:13px;margin-top:12px}
+.gr-table th{background:rgba(52,211,153,.12);color:var(--ac);font-weight:700;padding:10px 14px;text-align:left;border:1px solid var(--border)}
+.gr-table td{padding:10px 14px;border:1px solid var(--border);line-height:1.5}
+.gr-table tr:nth-child(even) td{background:rgba(255,255,255,.02)}
+.hl-ac{color:var(--ac);font-weight:600}
+.hl-cy{color:var(--cyan);font-weight:600}
+.hl-go{color:var(--gold);font-weight:600}
+.hl-pk{color:var(--pink);font-weight:600}
+.act-box{background:var(--s2);border:1px solid var(--border);border-radius:12px;padding:24px;margin-bottom:16px}
+.act-label{font-size:11px;font-weight:700;color:var(--gold);letter-spacing:.8px;margin-bottom:14px}
+.mc-q{font-size:14.5px;margin-bottom:12px;line-height:1.55}
+.mc-opts{display:flex;flex-direction:column;gap:8px;margin-bottom:14px}
+.mc-opt{background:var(--s3);border:1px solid var(--border);border-radius:8px;padding:10px 14px;cursor:pointer;font-size:13.5px;transition:all .2s}
+.mc-opt:hover{border-color:var(--ac);background:var(--ac3)}
+.mc-opt.correct{background:rgba(0,229,160,.1);border-color:var(--ok);color:var(--ok)}
+.mc-opt.wrong{background:rgba(255,77,109,.1);border-color:var(--danger);color:var(--danger)}
+.fb{font-size:12.5px;min-height:18px;margin-top:6px;font-weight:600}
+.fb.ok{color:var(--ok)}
+.fb.err{color:var(--danger)}
+.drag-list{list-style:none;display:flex;flex-direction:column;gap:8px}
+.drag-item{background:var(--s3);border:1px solid var(--border);border-radius:8px;padding:10px 14px;cursor:grab;font-size:13.5px;user-select:none;transition:border-color .2s}
+.drag-item:active{cursor:grabbing}
+.drag-item.over{border-color:var(--ac);background:var(--ac3)}
+.check-btn{background:var(--ac);color:#000;font-weight:700;font-size:13px;padding:9px 22px;border:none;border-radius:8px;cursor:pointer;margin-top:12px;transition:opacity .2s}
+.check-btn:hover{opacity:.85}
+.audio-player{background:var(--s2);border:1px solid var(--border);border-radius:12px;padding:20px 24px;display:flex;align-items:center;gap:16px;margin-bottom:20px}
+.ap-btn{width:44px;height:44px;border-radius:50%;background:var(--ac);border:none;color:#000;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ap-body{flex:1}
+.ap-title{font-size:12px;font-weight:600;color:var(--mu2);margin-bottom:6px}
+.ap-track{height:4px;background:rgba(255,255,255,.1);border-radius:2px;cursor:pointer;margin-bottom:6px}
+.ap-fill{height:100%;background:var(--ac);border-radius:2px;width:0%}
+.ap-times{display:flex;justify-content:space-between;font-size:11px;color:var(--mu)}
+.ap-wave{display:flex;align-items:center;gap:2px;height:20px;margin-left:8px}
+.ap-wave span{display:block;width:3px;background:var(--ac);border-radius:2px;animation:wave 1.2s ease-in-out infinite;opacity:.5}
+.ap-wave span:nth-child(2){animation-delay:.1s;height:10px}
+.ap-wave span:nth-child(3){animation-delay:.2s;height:16px}
+.ap-wave span:nth-child(4){animation-delay:.3s;height:8px}
+.ap-wave span:nth-child(5){animation-delay:.4s;height:14px}
+@keyframes wave{0%,100%{transform:scaleY(.4)}50%{transform:scaleY(1)}}
+.ap-wave.paused span{animation-play-state:paused}
+.script-toggle{background:none;border:1px solid var(--border);color:var(--mu2);font-size:12px;padding:6px 14px;border-radius:6px;cursor:pointer;margin-bottom:12px}
+.script-box{background:var(--s2);border-left:3px solid var(--ac);border-radius:0 10px 10px 0;padding:16px 20px;font-size:13px;line-height:1.7;color:var(--mu2);display:none}
+.script-box.open{display:block}
+.sp-grid{display:flex;flex-direction:column;gap:12px}
+.sp-card{background:var(--s2);border:1px solid var(--border);border-radius:12px;padding:20px 22px}
+.sp-tag{font-size:10px;font-weight:700;color:var(--ac);letter-spacing:.8px;margin-bottom:6px}
+.sp-q{font-size:14.5px;color:var(--txt);margin-bottom:6px;line-height:1.55}
+.sp-hint{font-size:12px;color:var(--mu);font-style:italic}
+.phrases-sec{background:linear-gradient(135deg,rgba(255,184,0,.08),rgba(52,211,153,.05));border:1px solid rgba(255,184,0,.2);border-radius:14px;padding:28px;margin-bottom:40px}
+.phrases-header{font-size:13px;font-weight:700;color:var(--gold);letter-spacing:.5px;margin-bottom:18px}
+.phrase-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.phrase-card{background:rgba(255,184,0,.05);border:1px solid rgba(255,184,0,.15);border-radius:10px;padding:16px 18px}
+.ph-en{font-family:'Syne',sans-serif;font-weight:700;font-size:15px;color:var(--gold);margin-bottom:4px}
+.ph-use{font-size:12px;color:var(--mu2);line-height:1.45}
+.om-box{background:var(--s2);border:1px solid var(--border);border-radius:12px;padding:22px 24px;margin-bottom:20px}
+.om-stmt{font-size:14px;font-style:italic;color:var(--txt);margin-bottom:12px;line-height:1.55}
+.om-labels{display:flex;justify-content:space-between;font-size:11px;color:var(--mu);margin-bottom:8px}
+.om-track{height:8px;background:rgba(255,255,255,.08);border-radius:4px;cursor:pointer;margin-bottom:10px}
+.om-fill{height:100%;background:linear-gradient(90deg,var(--danger),var(--ac));border-radius:4px;width:50%;transition:width .3s}
+.om-btns{display:flex;gap:8px;flex-wrap:wrap}
+.om-btn{background:var(--s3);border:1px solid var(--border);color:var(--txt);font-size:12px;padding:6px 14px;border-radius:6px;cursor:pointer;transition:all .2s}
+.om-btn:hover{border-color:var(--ac);color:var(--ac)}
+.timer-wrap{display:inline-flex;flex-direction:column;align-items:center;gap:8px}
+.timer-label{font-size:11px;font-weight:600;color:var(--mu);letter-spacing:.5px}
+.timer-num{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;fill:var(--txt)}
+.check-list{list-style:none;display:flex;flex-direction:column;gap:10px}
+.check-list li{display:flex;align-items:center;gap:10px;font-size:14px}
+.check-list input[type=checkbox]{width:18px;height:18px;accent-color:var(--ac);cursor:pointer;flex-shrink:0}
+.exit-box{background:var(--s2);border:1px solid var(--border);border-radius:12px;padding:24px;margin-bottom:16px}
+.exit-title{font-size:13px;font-weight:700;color:var(--ac);letter-spacing:.5px;margin-bottom:14px}
+.cert-btn{background:linear-gradient(135deg,var(--ac),var(--cyan));color:#000;font-weight:700;font-size:13px;padding:10px 26px;border:none;border-radius:8px;cursor:pointer;margin-top:14px;transition:opacity .2s}
+.win-box textarea{width:100%;background:var(--s3);border:1px solid var(--border);color:var(--txt);border-radius:8px;padding:12px 14px;font-size:13.5px;font-family:'DM Sans',sans-serif;resize:vertical;min-height:80px;margin-top:8px}
+.save-btn{background:var(--s2);border:1px solid var(--border2);color:var(--ac);font-size:12px;padding:7px 16px;border-radius:6px;cursor:pointer;margin-top:8px}
+.micro{background:rgba(52,211,153,.06);border:1px solid var(--border);border-radius:10px;padding:14px 18px;margin-top:14px;font-size:13.5px;color:var(--ac2)}
+.next-card{background:var(--s2);border:1px solid var(--border);border-radius:12px;padding:22px 26px;margin-top:20px}
+.next-label{font-size:11px;font-weight:700;color:var(--mu);letter-spacing:.8px;margin-bottom:8px}
+.next-title{font-size:16px;font-weight:700;font-family:'Syne',sans-serif;color:var(--ac2)}
+#confetti-container{position:fixed;inset:0;pointer-events:none;z-index:9999;overflow:hidden}
+footer{background:var(--s1);border-top:1px solid var(--border);padding:18px 48px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-top:40px}
+.footer-brand{font-family:'Syne',sans-serif;font-weight:700;font-size:14px;color:var(--mu)}
+.footer-sess{display:flex;gap:6px}
+.footer-sess span{font-size:11px;font-weight:700;padding:4px 10px;border-radius:6px;background:var(--s2);color:var(--mu);border:1px solid var(--border)}
+.footer-sess span.active{background:var(--ac3);color:var(--ac);border-color:var(--border2)}
+.footer-levels{display:flex;gap:6px;flex-wrap:wrap}
+.footer-levels span{font-size:10px;font-weight:600;padding:3px 8px;border-radius:4px;color:var(--mu);opacity:.4}
+.footer-levels span.active{opacity:1;color:var(--ac);background:var(--ac3)}
+@media(max-width:860px){
+  header,footer{padding:14px 20px}
+  main{padding:28px 20px 60px}
+  .wu-grid,.voc-grid,.phrase-cards,.wheel-area{flex-direction:column}
+  .wheel-svg-wrap{width:180px;height:180px}
+  footer{flex-direction:column;align-items:flex-start}
+}
+</style>
+</head>
+<body>
+<div id="pb"></div>
+<div id="confetti-container"></div>
+<header>
+  <div class="brand">Gabriel Turner <span class="dot">&middot;</span> English Training</div>
+  <div class="hdr-right">
+    <span class="sess-pill">B1.2 &nbsp;&middot;&nbsp; M6 &nbsp;&middot;&nbsp; S4A &nbsp;&middot;&nbsp; Discovery &amp; Drill</span>
+    <div class="badge-row">
+      <span id="b1">&#127860;</span><span id="b2">&#128218;</span><span id="b3">&#9878;&#65039;</span><span id="b4">&#127911;</span><span id="b5">&#127942;</span>
+    </div>
+    <button class="mode-btn" onclick="toggleMode()">STUDENT MODE</button>
+  </div>
+</header>
+<main>
+
+<!-- §1 WARM-UP -->
+<section class="sec" id="sec-wu">
+  <div class="sec-label">&#167;1 &nbsp; Warm-Up &nbsp;&middot;&nbsp; 5&ndash;8 min</div>
+  <h2>Remote Work vs Office &mdash; What&rsquo;s Genuinely Better for You?</h2>
+  <div class="wu-grid">
+    <div class="wu-card">
+      <img src="https://images.unsplash.com/photo-1521898284481-a5ec348cb555?w=600&auto=format&fit=crop&q=80" alt="Home office setup">
+      <div class="wu-body">
+        <div class="wu-num">Q1 &nbsp;<span class="tag-pill">GT Original</span></div>
+        <div class="wu-q">First: what does your company think about remote work? Then: what do YOU think? Are those two answers the same &mdash; or is there a gap? That gap is what this session is about.</div>
+      </div>
+    </div>
+    <div class="wu-card">
+      <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=600&auto=format&fit=crop&q=80" alt="Open plan office collaboration">
+      <div class="wu-body">
+        <div class="wu-num">Q2 &nbsp;<span class="tag-pill">Honest</span></div>
+        <div class="wu-q">Where do you actually do your best work? Not where you&rsquo;re expected to work &mdash; where do you personally produce the most, think the clearest, and feel most motivated?</div>
+      </div>
+    </div>
+    <div class="wu-card">
+      <img src="https://images.unsplash.com/photo-1558655146-d09347e92766?w=600&auto=format&fit=crop&q=80" alt="Hybrid flexible work">
+      <div class="wu-body">
+        <div class="wu-num">Q3 &nbsp;<span class="tag-pill">Opinion</span></div>
+        <div class="wu-q">Although remote work has many advantages, what do you genuinely miss when you&rsquo;re not in the office? Be specific &mdash; not &ldquo;collaboration&rdquo; in the abstract, but something concrete you lose.</div>
+      </div>
+    </div>
+    <div class="wu-card">
+      <img src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=600&auto=format&fit=crop&q=80" alt="Video call remote meeting">
+      <div class="wu-body">
+        <div class="wu-num">Q4 &nbsp;<span class="tag-pill">Debate</span></div>
+        <div class="wu-q">Post-pandemic, many Mexican companies moved back to full office. Despite the evidence that hybrid models increase productivity, why do you think so many managers still prefer everyone in the building?</div>
+      </div>
+    </div>
+  </div>
+  <div class="quick-win">
+    <div class="quick-win-label">&#9889; QUICK WIN &mdash; 30 SECONDS</div>
+    <div style="font-size:14px;line-height:1.6">Complete this sentence out loud: <strong>&ldquo;Whereas my company prefers [X], I personally thrive when [Y]. As a result, I&hellip;&rdquo;</strong> &mdash; Two linking words, one honest truth about your work life.</div>
+  </div>
+  <div class="tn to">
+    <button class="tn-btn" onclick="toggleTN(this)">&#9889; Teacher Note &mdash; &#167;1 Warm-Up</button>
+    <div class="tn-body">GT Original for S4A: the gap between company preference and personal preference is the session&rsquo;s engine. Most corporate learners in the Baj&iacute;o region work in manufacturing or logistics environments where full remote is impossible or uncommon &mdash; so this topic has a specific local flavour. Q4 (why managers prefer office) produces the most honest discussion of power, trust, and control that M6 generates. Let it run if energy is high &mdash; the vocabulary (boundary, flexibility, isolation, culture) appears naturally in these answers.</div>
+  </div>
+  <div class="tn pink to">
+    <button class="tn-btn" onclick="toggleTN(this)">&#128293; Engagement Note</button>
+    <div class="tn-body">S4A is the most immediately relevant session to learners&rsquo; current working lives. Unlike university or failure, which require memory and reflection, remote work vs office is happening now. Use that immediacy: &ldquo;This isn&rsquo;t a hypothetical debate &mdash; this is your life, today. How are you navigating it?&rdquo;</div>
+  </div>
+</section>
+
+<!-- §2 SPEAKING TOPIC -->
+<section class="sec" id="sec-sp">
+  <div class="sec-label">&#167;2 &nbsp; Speaking Topic &nbsp;&middot;&nbsp; 5 min</div>
+  <h2>The Big Question</h2>
+  <div class="card">
+    <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=600&auto=format&fit=crop&q=80" alt="Remote work cafe laptop" style="height:220px;margin-bottom:20px">
+    <h3 style="font-size:22px;line-height:1.4;color:var(--ac2);margin-bottom:12px">&ldquo;Whereas the office was once the default and working from home was the exception, today it&rsquo;s becoming a negotiation between what companies want and what individuals need. Who should win that negotiation &mdash; and who usually does?&rdquo;</h3>
+    <p style="font-size:14px;color:var(--mu2);line-height:1.65">Since 2020, the debate over remote work has polarised organisations globally. Although productivity research consistently shows that hybrid arrangements benefit most knowledge workers, many senior leaders continue to push for full office return. As a result, thousands of professionals face a choice between their preferred work style and their job security. Furthermore, the debate has exposed something deeper: how much trust exists between organisations and the people who work for them. Despite the data, the decision is rarely made on evidence alone.</p>
+  </div>
+  <div class="tn to">
+    <button class="tn-btn" onclick="toggleTN(this)">&#9889; Teacher Note &mdash; &#167;2 Speaking</button>
+    <div class="tn-body">The speaking topic models all four linking word families again: whereas, although, as a result, furthermore, despite. After discussion, count them with the class and ask: &ldquo;Which linking word here changes the direction of the argument most sharply?&rdquo; Answer: &ldquo;Despite the data, the decision is rarely made on evidence alone.&rdquo; The contrast between data and reality is a recurring theme in B1.2 professional conversations.</div>
+  </div>
+</section>
+
+<!-- §3 VOCABULARY + SPIN THE WHEEL -->
+<section class="sec" id="sec-voc">
+  <div class="sec-label">&#167;3 &nbsp; Vocabulary &nbsp;&middot;&nbsp; 10 min</div>
+  <h2>Words for This Session</h2>
+
+  <!-- SPIN THE WHEEL MINI-GAME -->
+  <div class="act-box" style="margin-bottom:24px">
+    <div class="act-label">&#9889; MINI-GAME &mdash; SPIN THE WHEEL &mdash; Vocabulary in Professional Context</div>
+    <p style="font-size:13px;color:var(--mu2);margin-bottom:16px">Spin the wheel. Get a word. Make a sentence using that word AND a linking word from M6. Must be personal &mdash; your real work experience.</p>
+    <div class="wheel-area">
+      <div class="wheel-svg-wrap">
+        <svg viewBox="0 0 220 220" width="220" height="220" id="wheelSvg" style="cursor:pointer" onclick="spinWheel()">
+          <g id="wheelG" transform="rotate(0 110 110)">
+            <path d="M110,110 L110,10 A100,100 0 0,1 200,60 Z" fill="#34D399" opacity="0.9"/>
+            <path d="M110,110 L200,60 A100,100 0 0,1 200,160 Z" fill="#00CFFF" opacity="0.85"/>
+            <path d="M110,110 L200,160 A100,100 0 0,1 110,210 Z" fill="#FFB800" opacity="0.9"/>
+            <path d="M110,110 L110,210 A100,100 0 0,1 20,160 Z" fill="#FF4D6D" opacity="0.85"/>
+            <path d="M110,110 L20,160 A100,100 0 0,1 20,60 Z" fill="#6EE7B7" opacity="0.9"/>
+            <path d="M110,110 L20,60 A100,100 0 0,1 110,10 Z" fill="#FFD04D" opacity="0.85"/>
+            <text x="148" y="50" text-anchor="middle" fill="#080808" font-size="10" font-weight="700" font-family="sans-serif" transform="rotate(30 110 110)">flexibility</text>
+            <text x="180" y="115" text-anchor="middle" fill="#080808" font-size="10" font-weight="700" font-family="sans-serif" transform="rotate(90 110 110)">isolation</text>
+            <text x="148" y="185" text-anchor="middle" fill="#080808" font-size="10" font-weight="700" font-family="sans-serif" transform="rotate(150 110 110)">boundary</text>
+            <text x="72" y="185" text-anchor="middle" fill="#080808" font-size="10" font-weight="700" font-family="sans-serif" transform="rotate(210 110 110)">commute</text>
+            <text x="40" y="115" text-anchor="middle" fill="#080808" font-size="10" font-weight="700" font-family="sans-serif" transform="rotate(270 110 110)">culture</text>
+            <text x="72" y="50" text-anchor="middle" fill="#080808" font-size="10" font-weight="700" font-family="sans-serif" transform="rotate(330 110 110)">productivity</text>
+          </g>
+          <polygon points="110,5 115,20 105,20" fill="var(--danger)"/>
+          <circle cx="110" cy="110" r="14" fill="var(--s1)" stroke="var(--border2)" stroke-width="2"/>
+          <text x="110" y="115" text-anchor="middle" fill="var(--ac)" font-size="10" font-weight="700" font-family="sans-serif">SPIN</text>
+        </svg>
+      </div>
+      <div class="wheel-card">
+        <div style="font-size:11px;font-weight:700;color:var(--mu);letter-spacing:.6px;margin-bottom:6px">CURRENT WORD</div>
+        <div class="wheel-word" id="wheelWord">Click the wheel to spin</div>
+        <div class="wheel-prompt" id="wheelPrompt">Make a sentence using this word + a linking word from M6. Make it personal.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="voc-grid">
+    <div class="voc-card">
+      <img class="voc-img" src="https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=600&auto=format&fit=crop&q=80" alt="flexibility">
+      <div>
+        <div class="voc-word">flexibility</div>
+        <div class="voc-ipa">/ˌflek.sɪˈbɪl.ɪ.ti/</div>
+        <div class="voc-def">The ability to adapt work arrangements &mdash; hours, location, schedule &mdash; to individual needs</div>
+        <div class="voc-ex">&ldquo;Although I&rsquo;m more productive at home, the lack of flexibility in my contract means I commute every day.&rdquo;</div>
+        <span class="speak-btn" onclick="speak('flexibility')">&#9654; Hear</span>
+      </div>
+    </div>
+    <div class="voc-card">
+      <img class="voc-img" src="https://images.unsplash.com/photo-1531973576160-7125cd663d86?w=600&auto=format&fit=crop&q=80" alt="collaboration">
+      <div>
+        <div class="voc-word">collaboration</div>
+        <div class="voc-ipa">/kəˌlæb.əˈreɪ.ʃən/</div>
+        <div class="voc-def">Working with others towards a shared goal, typically requiring communication and coordination</div>
+        <div class="voc-ex">&ldquo;Despite working remotely for two years, our collaboration actually improved as a result of better tools.&rdquo;</div>
+        <span class="speak-btn" onclick="speak('collaboration')">&#9654; Hear</span>
+      </div>
+    </div>
+    <div class="voc-card">
+      <img class="voc-img" src="https://images.unsplash.com/photo-1553877522-43269d4ea984?w=600&auto=format&fit=crop&q=80" alt="productivity">
+      <div>
+        <div class="voc-word">productivity</div>
+        <div class="voc-ipa">/ˌprɒd.ʌkˈtɪv.ɪ.ti/</div>
+        <div class="voc-def">The amount of useful output produced relative to the time and resources invested</div>
+        <div class="voc-ex">&ldquo;Whereas office productivity was measured by hours present, remote work shifted it to output.&rdquo;</div>
+        <span class="speak-btn" onclick="speak('productivity')">&#9654; Hear</span>
+      </div>
+    </div>
+    <div class="voc-card">
+      <img class="voc-img" src="https://images.unsplash.com/photo-1560264280-88b68371db39?w=600&auto=format&fit=crop&q=80" alt="isolation">
+      <div>
+        <div class="voc-word">isolation</div>
+        <div class="voc-ipa">/ˌaɪ.səˈleɪ.ʃən/</div>
+        <div class="voc-def">The state of being separated from others; a significant psychological risk of extended remote work</div>
+        <div class="voc-ex">&ldquo;Although she loved working from home, the isolation became difficult after several months.&rdquo;</div>
+        <span class="speak-btn" onclick="speak('isolation')">&#9654; Hear</span>
+      </div>
+    </div>
+    <div class="voc-card">
+      <img class="voc-img" src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=600&auto=format&fit=crop&q=80" alt="commute">
+      <div>
+        <div class="voc-word">commute</div>
+        <div class="voc-ipa">/kəˈmjuːt/</div>
+        <div class="voc-def">The daily journey between home and work; a significant factor in employee wellbeing and retention</div>
+        <div class="voc-ex">&ldquo;Despite the 2-hour commute, he insisted the office was more productive. His team disagreed.&rdquo;</div>
+        <span class="speak-btn" onclick="speak('commute')">&#9654; Hear</span>
+      </div>
+    </div>
+    <div class="voc-card">
+      <img class="voc-img" src="https://images.unsplash.com/photo-1558655146-d09347e92766?w=600&auto=format&fit=crop&q=80" alt="boundary">
+      <div>
+        <div class="voc-word">boundary</div>
+        <div class="voc-ipa">/ˈbaʊnd.ri/</div>
+        <div class="voc-def">A limit that defines the separation between work and personal life; harder to maintain when working from home</div>
+        <div class="voc-ex">&ldquo;As a result of working from home, many people lost the boundary between office hours and family time.&rdquo;</div>
+        <span class="speak-btn" onclick="speak('boundary')">&#9654; Hear</span>
+      </div>
+    </div>
+    <div class="voc-card">
+      <img class="voc-img" src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=600&auto=format&fit=crop&q=80" alt="culture">
+      <div>
+        <div class="voc-word">culture</div>
+        <div class="voc-ipa">/ˈkʌl.tʃər/</div>
+        <div class="voc-def">The shared values, behaviours, and norms that define how an organisation operates and connects</div>
+        <div class="voc-ex">&ldquo;Furthermore, a strong company culture is harder to maintain when no one shares physical space.&rdquo;</div>
+        <span class="speak-btn" onclick="speak('culture')">&#9654; Hear</span>
+      </div>
+    </div>
+    <div class="voc-card">
+      <img class="voc-img" src="https://images.unsplash.com/photo-1521898284481-a5ec348cb555?w=600&auto=format&fit=crop&q=80" alt="to thrive">
+      <div>
+        <div class="voc-word">to thrive</div>
+        <div class="voc-ipa">/θraɪv/</div>
+        <div class="voc-def">To grow, develop, or succeed strongly; to flourish in a particular environment</div>
+        <div class="voc-ex">&ldquo;Whereas some people thrive in open offices, others need silence and solitude to do their best work.&rdquo;</div>
+        <span class="speak-btn" onclick="speak('to thrive')">&#9654; Hear</span>
+      </div>
+    </div>
+    <div class="voc-card">
+      <img class="voc-img" src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=600&auto=format&fit=crop&q=80" alt="to disconnect">
+      <div>
+        <div class="voc-word">to disconnect</div>
+        <div class="voc-ipa">/ˌdɪs.kəˈnekt/</div>
+        <div class="voc-def">To switch off from work mentally or digitally; to create a clear separation between work time and rest</div>
+        <div class="voc-ex">&ldquo;Despite working office hours, she couldn&rsquo;t disconnect at night &mdash; her laptop was always visible.&rdquo;</div>
+        <span class="speak-btn" onclick="speak('to disconnect')">&#9654; Hear</span>
+      </div>
+    </div>
+  </div>
+  <div class="micro">&#128172; <strong>Quick:</strong> Use 3 words from this section in sentences about your current work arrangement. Each sentence must include a different M6 linking word.</div>
+  <div class="tn to">
+    <button class="tn-btn" onclick="toggleTN(this)">&#9889; Teacher Note &mdash; &#167;3 Vocabulary</button>
+    <div class="tn-body">Spin the Wheel works particularly well for S4A because the topic is highly personal &mdash; every learner has a strong opinion about their work preference, and the vocabulary words are immediately relevant to their daily reality. The rule &ldquo;make it personal&rdquo; prevents abstract or textbook answers. If a learner says &ldquo;Flexibility is important in the modern workplace,&rdquo; push back: &ldquo;But is it important for YOU, specifically? Where? When?&rdquo;</div>
+  </div>
+</section>
+
+<!-- §4 COLLOQUIAL -->
+<section class="sec" id="sec-col">
+  <div class="sec-label">&#167;4 &nbsp; Colloquial &nbsp;&middot;&nbsp; 5 min</div>
+  <h2>Module 6 Phrases &mdash; In Work Preference Context</h2>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+    <div style="background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:16px 20px">
+      <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:16px;color:var(--ac);margin-bottom:4px">&ldquo;I&rsquo;m figuring it out.&rdquo;</div>
+      <div style="font-size:12px;color:var(--mu2);margin-bottom:6px">In the process of finding what works</div>
+      <div style="font-size:12px;font-style:italic;color:var(--txt);opacity:.8">&ldquo;Whereas before I thought the office was always better, now I&rsquo;m not so sure &mdash; I&rsquo;m still figuring it out.&rdquo;</div>
+    </div>
+    <div style="background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:16px 20px">
+      <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:16px;color:var(--ac);margin-bottom:4px">&ldquo;It&rsquo;s a game-changer.&rdquo;</div>
+      <div style="font-size:12px;color:var(--mu2);margin-bottom:6px">Something that transforms a situation</div>
+      <div style="font-size:12px;font-style:italic;color:var(--txt);opacity:.8">&ldquo;Although I was sceptical, working from home two days a week has been a game-changer for my focus.&rdquo;</div>
+    </div>
+    <div style="background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:16px 20px">
+      <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:16px;color:var(--ac);margin-bottom:4px">&ldquo;That&rsquo;s the goal.&rdquo;</div>
+      <div style="font-size:12px;color:var(--mu2);margin-bottom:6px">The clear objective you&rsquo;re working towards</div>
+      <div style="font-size:12px;font-style:italic;color:var(--txt);opacity:.8">&ldquo;A hybrid arrangement where I can manage my schedule freely? As a result of this experience, that&rsquo;s the goal.&rdquo;</div>
+    </div>
+    <div style="background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:16px 20px">
+      <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:16px;color:var(--ac);margin-bottom:4px">&ldquo;No looking back.&rdquo;</div>
+      <div style="font-size:12px;color:var(--mu2);margin-bottom:6px">Committed; no regret about the direction</div>
+      <div style="font-size:12px;font-style:italic;color:var(--txt);opacity:.8">&ldquo;Despite leaving a stable office job for a remote role, I have no regrets. No looking back.&rdquo;</div>
+    </div>
+  </div>
+  <div class="tn to">
+    <button class="tn-btn" onclick="toggleTN(this)">&#9889; Teacher Note &mdash; &#167;4 Colloquial</button>
+    <div class="tn-body">By S4A, all 5 M6 phrases should be automatic. Test without prompting: &ldquo;Name all 5 M6 phrases and use each in a sentence about your work preference.&rdquo; This is active production from memory &mdash; a B1.2 output standard. Learners who can do this have genuinely acquired the vocabulary, not just recognised it.</div>
+  </div>
+</section>
+
+<!-- §5 GRAMMAR -->
+<section class="sec" id="sec-gr">
+  <div class="sec-label">&#167;5 &nbsp; Grammar &nbsp;&middot;&nbsp; 12&ndash;15 min</div>
+  <h2>Linking Words &mdash; Applied to Debate &amp; Argument</h2>
+
+  <div class="situation-box">
+    <div class="sit-label">&#9888; REAL SITUATION</div>
+    <div class="sit-text">Your manager has announced that the team must return to the office five days a week starting next month. You disagree. You want to make a professional, structured case for a hybrid arrangement. You can&rsquo;t just say &ldquo;I prefer home&rdquo; &mdash; you need to connect evidence, contrast expectations, and show the consequences. That&rsquo;s what linking words do in professional debate.</div>
+  </div>
+
+  <div class="grammar-reveal">
+    <div class="gr-label">&#9998; LINKING WORDS IN PROFESSIONAL DEBATE &mdash; BUILDING AN ARGUMENT</div>
+    <div style="font-size:13px;color:var(--mu2);margin-bottom:12px">A strong argument needs contrast, evidence, consequences, and concessions. These linking words provide the architecture.</div>
+    <table class="gr-table">
+      <tr><th>What you&rsquo;re doing</th><th>Use</th><th>Work context example</th></tr>
+      <tr><td>Acknowledging the other side</td><td><span class="hl-go">Although / Even though</span></td><td><span class="hl-go">Although</span> I understand the benefits of the office, the productivity data shows otherwise.</td></tr>
+      <tr><td>Accepting difficulty, then pivoting</td><td><span class="hl-pk">Despite + -ing</span></td><td><span class="hl-pk">Despite</span> working from home for two years, my output increased by 30%.</td></tr>
+      <tr><td>Showing logical consequence</td><td><span class="hl-ac">As a result / Therefore</span></td><td>The commute adds 3 hours to my day. <span class="hl-ac">As a result</span>, I am exhausted by Thursday.</td></tr>
+      <tr><td>Adding a supporting argument</td><td><span class="hl-cy">Furthermore / In addition</span></td><td><span class="hl-cy">Furthermore</span>, hybrid arrangements reduce absenteeism according to research.</td></tr>
+      <tr><td>Contrasting two realities</td><td><span class="hl-go">Whereas / However</span></td><td><span class="hl-go">Whereas</span> managers value visibility, employees value autonomy.</td></tr>
+    </table>
+    <div style="margin-top:12px;background:rgba(255,77,109,.06);border:1px solid rgba(255,77,109,.25);border-radius:8px;padding:12px 16px;font-size:13px;color:var(--danger)">&#9888; <strong>Remind:</strong> &ldquo;Despite I prefer home&rdquo; &rarr; WRONG. &ldquo;Despite preferring home&rdquo; or &ldquo;Despite my preference for home&rdquo; &rarr; CORRECT.</div>
+  </div>
+
+  <!-- Activity A: MC -->
+  <div class="act-box">
+    <div class="act-label">ACTIVITY A &mdash; Remote vs Office Debate &mdash; Choose the correct linker</div>
+
+    <div class="mc-q">1. _____ remote work improves focus for many employees, it can damage team cohesion and culture over time.</div>
+    <div class="mc-opts" id="q1opts">
+      <div class="mc-opt" onclick="checkOpt(this,'Although','q1')">A. Although</div>
+      <div class="mc-opt" onclick="checkOpt(this,'As a result','q1')">B. As a result</div>
+      <div class="mc-opt" onclick="checkOpt(this,'Furthermore','q1')">C. Furthermore</div>
+    </div>
+    <div class="fb" id="q1fb"></div>
+
+    <div class="mc-q" style="margin-top:18px">2. Many employees commute two hours each way. _____, they arrive already tired and leave as early as possible.</div>
+    <div class="mc-opts" id="q2opts">
+      <div class="mc-opt" onclick="checkOpt(this,'As a result','q2')">A. As a result</div>
+      <div class="mc-opt" onclick="checkOpt(this,'Although','q2')">B. Although</div>
+      <div class="mc-opt" onclick="checkOpt(this,'Despite','q2')">C. Despite</div>
+    </div>
+    <div class="fb" id="q2fb"></div>
+
+    <div class="mc-q" style="margin-top:18px">3. _____ working fully remotely for 18 months, her performance ratings were the highest in the department.</div>
+    <div class="mc-opts" id="q3opts">
+      <div class="mc-opt" onclick="checkOpt(this,'Despite','q3')">A. Despite</div>
+      <div class="mc-opt" onclick="checkOpt(this,'Whereas','q3')">B. Whereas</div>
+      <div class="mc-opt" onclick="checkOpt(this,'However','q3')">C. However</div>
+    </div>
+    <div class="fb" id="q3fb"></div>
+
+    <div class="mc-q" style="margin-top:18px">4. Hybrid working reduces commute time significantly. _____, it gives employees greater control over their schedule and energy.</div>
+    <div class="mc-opts" id="q4opts">
+      <div class="mc-opt" onclick="checkOpt(this,'Furthermore','q4')">A. Furthermore</div>
+      <div class="mc-opt" onclick="checkOpt(this,'Although','q4')">B. Although</div>
+      <div class="mc-opt" onclick="checkOpt(this,'Despite','q4')">C. Despite</div>
+    </div>
+    <div class="fb" id="q4fb"></div>
+  </div>
+
+  <div class="micro">&#128172; <strong>Quick:</strong> Make a 60-second argument for OR against full remote work. Use at least 3 different linking words from the grammar table. Partner: which linking words did they use?</div>
+
+  <!-- Activity B: Unjumble -->
+  <div class="act-box">
+    <div class="act-label">ACTIVITY B &mdash; UNJUMBLE &mdash; Professional argument sentences</div>
+    <p style="font-size:13px;color:var(--mu2);margin-bottom:16px">Drag to reorder. Both sentences are arguments in a professional debate about remote work.</p>
+
+    <p style="font-size:13px;color:var(--mu);margin-bottom:8px"><strong>Sentence 1:</strong></p>
+    <ul class="drag-list" id="order1">
+      <li class="drag-item" draggable="true">her productivity</li>
+      <li class="drag-item" draggable="true">despite the isolation</li>
+      <li class="drag-item" draggable="true">of working from home</li>
+      <li class="drag-item" draggable="true">increased significantly</li>
+    </ul>
+    <button class="check-btn" onclick="checkOrder('order1',['despite the isolation','of working from home','her productivity','increased significantly'],'fb-ord1')">Check</button>
+    <div class="fb" id="fb-ord1"></div>
+
+    <p style="font-size:13px;color:var(--mu);margin-bottom:8px;margin-top:20px"><strong>Sentence 2:</strong></p>
+    <ul class="drag-list" id="order2">
+      <li class="drag-item" draggable="true">whereas managers</li>
+      <li class="drag-item" draggable="true">employees value</li>
+      <li class="drag-item" draggable="true">value visibility and control</li>
+      <li class="drag-item" draggable="true">flexibility and autonomy</li>
+    </ul>
+    <button class="check-btn" onclick="checkOrder('order2',['whereas managers','value visibility and control','employees value','flexibility and autonomy'],'fb-ord2')">Check</button>
+    <div class="fb" id="fb-ord2"></div>
+  </div>
+  <div class="tn to">
+    <button class="tn-btn" onclick="toggleTN(this)">&#9889; Teacher Note &mdash; &#167;5 Grammar</button>
+    <div class="tn-body">Activity B Sentence 2 is structurally interesting: the two halves of a &ldquo;whereas&rdquo; sentence must be parallel (managers value X &mdash; employees value Y). The parallel structure signals good English argument style. Point this out: &ldquo;Notice that &lsquo;whereas&rsquo; demands balance &mdash; both sides are described at the same grammatical level.&rdquo; This is an advanced discourse awareness point that most B1.2 learners have not encountered explicitly.</div>
+  </div>
+</section>
+
+<!-- §6 LISTENING -->
+<section class="sec" id="sec-li">
+  <div class="sec-label">&#167;6 &nbsp; Listening &nbsp;&middot;&nbsp; 10&ndash;12 min</div>
+  <h2>Carlos Mendez on Work Preference &amp; Trust</h2>
+
+  <div class="om-box">
+    <div style="font-size:12px;font-weight:700;color:var(--mu);letter-spacing:.6px;margin-bottom:8px">OPINION METER &mdash; Before you listen:</div>
+    <div class="om-stmt">&ldquo;Despite the productivity evidence, the remote work debate is really about trust &mdash; and most managers don&rsquo;t trust their teams as much as they claim to.&rdquo;</div>
+    <div class="om-labels"><span>&#128100; Strongly Disagree</span><span>&#128101;&#128101; Strongly Agree</span></div>
+    <div class="om-track"><div class="om-fill" id="omFill"></div></div>
+    <div style="font-size:13px;color:var(--ac);text-align:center;margin-bottom:8px" id="omPct">50%</div>
+    <div class="om-btns">
+      <button class="om-btn" onclick="moveMeter(-15)">&#128078; Disagree</button>
+      <button class="om-btn" onclick="moveMeter(-8)">&#128078; Somewhat</button>
+      <button class="om-btn" onclick="moveMeter(8)">&#128077; Somewhat</button>
+      <button class="om-btn" onclick="moveMeter(15)">&#128077; Strongly</button>
+    </div>
+  </div>
+
+  <div class="audio-player">
+    <button class="ap-btn" id="apBtn" onclick="toggleAudio()">&#9654;</button>
+    <div class="ap-body">
+      <div class="ap-title">Carlos Mendez &mdash; B1.2 M6 S4A &mdash; ElevenLabs speed 0.85</div>
+      <div class="ap-track" id="apTrack" onclick="seekAudio(event)">
+        <div class="ap-fill" id="apFill"></div>
+      </div>
+      <div class="ap-times"><span id="apCur">0:00</span><span id="apDur">1:50</span></div>
+    </div>
+    <div class="ap-wave paused" id="apWave">
+      <span style="height:6px"></span><span></span><span></span><span></span><span></span>
+    </div>
+  </div>
+
+  <button class="script-toggle to" onclick="toggleScript(this)">&#128196; Show Script (Teacher)</button>
+  <div class="script-box to" id="scriptBox">
+    <p><strong>Carlos Mendez:</strong></p>
+    <p style="margin-top:8px">I have a simple test I use with leadership teams when they debate return-to-office policies. I ask: &ldquo;If you had a team of 10 people and you couldn&rsquo;t see what they were doing &mdash; ever &mdash; would you trust them to deliver?&rdquo;</p>
+    <p style="margin-top:10px"><span class="hl-ac">Although most leaders say &ldquo;yes&rdquo; immediately, their return-to-office policy says something different.</span> They want people visible. They want proof of presence. And that tells me something very important about the relationship between managers and the people they lead.</p>
+    <p style="margin-top:10px"><span class="hl-go">Whereas productivity research consistently shows that knowledge workers perform as well or better remotely, the instinct to have people in a room persists.</span> Furthermore, I think this is partly cultural in Mexico and Latin America &mdash; presence has historically been confused with commitment. If you&rsquo;re in the building, you must be working. If you&rsquo;re not, you might be doing something else.</p>
+    <p style="margin-top:10px"><span class="hl-pk">Despite this, the shift is happening. Despite it being slow.</span> As a result, the professionals who will thrive are those who can make their work visible without being physically present &mdash; those who can communicate their value clearly, in English and in every other language their organisation speaks.</p>
+    <p style="margin-top:10px;font-size:11px;color:var(--mu)">&#127897; ElevenLabs: Carlos Mendez &mdash; speed 0.85 &mdash; approx. 185 words</p>
+  </div>
+
+  <div class="act-box" style="margin-top:20px">
+    <div class="act-label">COMPREHENSION &mdash; True or False</div>
+    <div class="mc-q">1. Carlos&rsquo;s test reveals that leaders who say they trust their teams often have policies that contradict that claim.</div>
+    <div class="mc-opts" id="lq1opts">
+      <div class="mc-opt" onclick="checkOpt(this,'True','lq1')">A. True</div>
+      <div class="mc-opt" onclick="checkOpt(this,'True','lq1')">B. False</div>
+    </div>
+    <div class="fb" id="lq1fb"></div>
+    <div class="mc-q" style="margin-top:16px">2. Carlos says the preference for office is purely about productivity in the Mexican context.</div>
+    <div class="mc-opts" id="lq2opts">
+      <div class="mc-opt" onclick="checkOpt(this,'False','lq2')">A. True</div>
+      <div class="mc-opt" onclick="checkOpt(this,'False','lq2')">B. False</div>
+    </div>
+    <div class="fb" id="lq2fb"></div>
+    <div class="mc-q" style="margin-top:16px">3. Carlos ends by saying the professionals who thrive will be those who can communicate their value clearly without physical presence.</div>
+    <div class="mc-opts" id="lq3opts">
+      <div class="mc-opt" onclick="checkOpt(this,'True','lq3')">A. True</div>
+      <div class="mc-opt" onclick="checkOpt(this,'True','lq3')">B. False</div>
+    </div>
+    <div class="fb" id="lq3fb"></div>
+  </div>
+  <div class="micro">&#128172; <strong>Quick:</strong> In 2 sentences, paraphrase what Carlos says about presence vs commitment in Mexican work culture. Use whereas in your answer.</div>
+  <div class="tn to">
+    <button class="tn-btn" onclick="toggleTN(this)">&#9889; Teacher Note &mdash; &#167;6 Listening</button>
+    <div class="tn-body">Carlos&rsquo;s observation about Mexican work culture &mdash; &ldquo;presence has historically been confused with commitment&rdquo; &mdash; is the most culturally specific insight in M6. It should land with recognition for most learners. Ask: &ldquo;Do you believe this is true in your company? And is it changing?&rdquo; Note also that Carlos ends with a direct connection to English learning: &ldquo;those who can communicate their value clearly, in English and in every other language.&rdquo; This seeds the S5 Capstone naturally.</div>
+  </div>
+</section>
+
+<!-- §SP SPEAKING PRACTICE -->
+<section class="sec" id="sec-spp">
+  <div class="sec-label">&#167;SP &nbsp; Speaking Practice &nbsp;&middot;&nbsp; 10&ndash;12 min</div>
+  <h2>Your Work Preference Argument</h2>
+  <div class="sp-grid">
+    <div class="sp-card">
+      <div class="sp-tag">RECALL</div>
+      <div class="sp-q">What does Carlos mean by &ldquo;presence has historically been confused with commitment?&rdquo; Do you agree? Use whereas to structure your answer: whereas before / now.</div>
+      <div class="sp-hint">Start: &ldquo;Whereas before, being in the office meant&hellip; now, however&hellip;&rdquo;</div>
+    </div>
+    <div class="sp-card">
+      <div class="sp-tag">PERSONAL</div>
+      <div class="sp-q">Describe your ideal work arrangement honestly &mdash; not what&rsquo;s available, but what would make you most productive, most fulfilled, and most connected to your team. Use linking words to justify each element.</div>
+      <div class="sp-hint">although / despite / furthermore / as a result &mdash; one per claim</div>
+    </div>
+    <div class="sp-card">
+      <div class="sp-tag">PROFESSIONAL</div>
+      <div class="sp-q">You need to make a case to your manager for a hybrid arrangement. Build the argument in 90 seconds using the debate structure from §5: although &rarr; despite &rarr; as a result &rarr; furthermore.</div>
+      <div class="sp-hint">Partner plays the manager. They ask one follow-up: &ldquo;But what about collaboration?&rdquo; Answer in 20 seconds.</div>
+    </div>
+    <div class="sp-card">
+      <div class="sp-tag">DEBATE</div>
+      <div class="sp-q">Argue the opposite of your actual preference. If you prefer remote, argue for the office &mdash; and vice versa. Use linking words to make the argument convincing even if you don&rsquo;t believe it.</div>
+      <div class="sp-hint">This is steelmanning &mdash; finding the best version of an argument you disagree with. B1.2 professional skill.</div>
+    </div>
+    <div class="sp-card">
+      <div class="sp-tag">WORK</div>
+      <div class="sp-q">In your specific company and role, what is genuinely impossible to do remotely &mdash; and what is unnecessarily done in person? Where does the company lose productivity by insisting on office?</div>
+      <div class="sp-hint">Use vocabulary: collaboration, productivity, culture, boundary, commute</div>
+    </div>
+    <div class="sp-card">
+      <div class="sp-tag">CHALLENGE</div>
+      <div class="sp-q">Carlos says the shift is happening, even if slowly. What does your company need to change in terms of culture and trust before it can genuinely offer flexibility? And what&rsquo;s your role in making that change?</div>
+      <div class="sp-hint">Ends the session with forward-looking language &mdash; use &ldquo;that&rsquo;s the goal&rdquo; or &ldquo;no looking back&rdquo; to close</div>
+    </div>
+  </div>
+  <div class="tn to">
+    <button class="tn-btn" onclick="toggleTN(this)">&#9889; Teacher Note &mdash; §SP Speaking</button>
+    <div class="tn-body">Q4 (steelmanning) is the most analytically demanding task in S4A §SP. Requiring learners to argue convincingly for a position they disagree with produces the most sophisticated linking word use &mdash; because they need structure to compensate for lack of genuine conviction. Q6 (change in company) seeds the S5 Capstone naturally: where do you see yourself in 5 years? The answer begins with the changes you want to make now. Signal this: &ldquo;Start thinking about this &mdash; next session is your Capstone.&rdquo;</div>
+  </div>
+</section>
+
+<!-- 3 PHRASES FOR THIS WEEK -->
+<section class="sec" id="sec-3ph">
+  <div class="phrases-sec">
+    <div class="phrases-header">&#127919; This week, you can use these 3 phrases at work:</div>
+    <div class="phrase-cards">
+      <div class="phrase-card">
+        <div class="ph-en">&ldquo;Whereas the team prefers flexibility, the policy requires presence.&rdquo;</div>
+        <div class="ph-use">Use in any meeting where team preferences and company policy are in tension. Names the gap without assigning blame. Works in HR conversations, team reviews, and negotiations.</div>
+      </div>
+      <div class="phrase-card">
+        <div class="ph-en">&ldquo;Despite working remotely, our productivity has increased.&rdquo;</div>
+        <div class="ph-use">One of the most useful sentences a professional can produce in an English-language performance discussion. &ldquo;Despite&rdquo; signals honesty; the rest states the evidence. Combine these two elements and you sound credible.</div>
+      </div>
+      <div class="phrase-card">
+        <div class="ph-en">&ldquo;Furthermore, this arrangement gives us better access to talent.&rdquo;</div>
+        <div class="ph-use">Use when building a business case for remote or hybrid work. &ldquo;Furthermore&rdquo; signals a structured argument. The specific claim about talent access is hard to argue against.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- §7 PRODUCTION -->
+<section class="sec" id="sec-prod">
+  <div class="sec-label">&#167;7 &nbsp; Production &nbsp;&middot;&nbsp; 8 min</div>
+  <h2>The Policy Debate &mdash; Argument Cards</h2>
+  <div style="background:var(--s2);border:1px solid var(--border);border-radius:14px;padding:28px;margin-bottom:16px">
+    <div style="font-size:12px;font-weight:700;color:var(--gold);letter-spacing:.7px;margin-bottom:12px">SPEAKING CARDS &mdash; DEBATE POSITIONS</div>
+    <p style="font-size:14px;color:var(--txt);line-height:1.6;margin-bottom:16px">Each card gives you a position in the remote work debate. 45 seconds. Use at least 3 linking words. Partner challenges the weakest point in your argument.</p>
+    <div style="display:flex;gap:24px;align-items:flex-start;flex-wrap:wrap">
+      <div style="flex:1;min-width:280px">
+        <div style="background:linear-gradient(135deg,var(--ac3),rgba(0,207,255,.06));border:2px solid var(--border2);border-radius:16px;padding:28px;text-align:center;margin-bottom:16px">
+          <div style="font-size:11px;color:var(--ac);font-weight:600;letter-spacing:.5px;margin-bottom:8px" id="scTag">DEBATE POSITION</div>
+          <div style="font-size:16px;font-family:'Syne',sans-serif;font-weight:700;color:var(--txt);line-height:1.45" id="scPrompt">Click Next to get your first position</div>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:center;gap:14px">
+          <button onclick="prevCard()" style="background:var(--s2);border:1px solid var(--border);color:var(--txt);padding:8px 18px;border-radius:8px;cursor:pointer;font-size:13px">&#8592; Prev</button>
+          <div style="font-size:13px;color:var(--mu);min-width:50px;text-align:center" id="scCtr">0 / 6</div>
+          <button onclick="nextCard()" style="background:var(--s2);border:1px solid var(--border);color:var(--txt);padding:8px 18px;border-radius:8px;cursor:pointer;font-size:13px">Next &#8594;</button>
+        </div>
+      </div>
+      <div style="flex-shrink:0;text-align:center">
+        <div class="timer-wrap">
+          <div class="timer-label">SPEAKING TIMER</div>
+          <svg width="96" height="96" viewBox="0 0 96 96">
+            <circle cx="48" cy="48" r="38" fill="none" stroke="rgba(52,211,153,.15)" stroke-width="6"/>
+            <circle id="tArc1" cx="48" cy="48" r="38" fill="none" stroke="var(--ac)" stroke-width="6"
+              stroke-dasharray="238.76" stroke-dashoffset="0" stroke-linecap="round" transform="rotate(-90 48 48)"/>
+            <text id="tNum1" x="48" y="54" text-anchor="middle" class="timer-num">45</text>
+          </svg>
+          <button class="check-btn" style="font-size:12px;padding:7px 18px" onclick="startTimer(1,45)">Start 45s</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="tn to">
+    <button class="tn-btn" onclick="toggleTN(this)">&#9889; Teacher Note &mdash; &#167;7 Production</button>
+    <div class="tn-body">The partner challenge (&ldquo;your weakest point is&hellip;&rdquo;) trains analytical listening &mdash; learners must evaluate arguments in real time. This is a genuinely B1.2 skill: not just speaking, but understanding the logical structure of what others say. At the end of §7, plant the Capstone seed: &ldquo;Next session, you&rsquo;ll give a 3-minute unscripted talk on where you see yourself in 5 years. Start thinking about it. Think about everything we&rsquo;ve discussed this module: university, success, failure, work. What do you want? Where are you going?&rdquo;</div>
+  </div>
+</section>
+
+<!-- §8 WRAP-UP -->
+<section class="sec" id="sec-wu2">
+  <div class="sec-label">&#167;8 &nbsp; Wrap-Up &nbsp;&middot;&nbsp; 5 min</div>
+  <h2>Session Complete &mdash; And One More Thing</h2>
+  <div class="exit-box">
+    <div class="exit-title">&#9989; I can now&hellip;</div>
+    <ul class="check-list" id="canList">
+      <li><input type="checkbox" id="c1" onchange="chkAll()"> Build a structured professional argument using contrast, result, addition, and concession linkers</li>
+      <li><input type="checkbox" id="c2" onchange="chkAll()"> Discuss remote work, flexibility, productivity, and culture using precise vocabulary</li>
+      <li><input type="checkbox" id="c3" onchange="chkAll()"> Argue convincingly for a position I may not personally hold (steelmanning)</li>
+      <li><input type="checkbox" id="c4" onchange="chkAll()"> Use &ldquo;whereas&rdquo; to create parallel argument structures in professional English</li>
+    </ul>
+    <button class="cert-btn" id="certBtn" onclick="generateCert()" style="display:none">&#127941; Generate Certificate</button>
+  </div>
+  <div class="exit-box win-box">
+    <div class="exit-title">&#127942; My Win Today</div>
+    <p style="font-size:13px;color:var(--mu2);margin-bottom:4px">Write one thing you said in English today that you&rsquo;re proud of:</p>
+    <textarea id="winTxt" placeholder="e.g. I said: Despite working from home for two years, my team's collaboration actually improved. Furthermore, I saved 10 hours a week in commute time..."></textarea>
+    <br><button class="save-btn" onclick="saveWin()">&#128190; Save</button>
+  </div>
+  <div style="background:linear-gradient(135deg,rgba(52,211,153,.1),rgba(255,184,0,.06));border:2px solid var(--border2);border-radius:12px;padding:22px 26px;margin-top:16px">
+    <div style="font-size:11px;font-weight:700;color:var(--gold);letter-spacing:.8px;margin-bottom:8px">&#9733; S5 CAPSTONE &mdash; HOMEWORK</div>
+    <div style="font-size:14px;color:var(--txt);line-height:1.65">Next session: <strong>&ldquo;Where do you see yourself in 5 years?&rdquo;</strong> &mdash; 3 minutes, no notes, unscripted.<br>Think about everything in M6: university, success, failure, work preference. What do you want? Where are you going? Use linking words, M6 phrases, and B1.2 vocabulary.<br><br><span style="color:var(--ac)">This is your final proof of fluency. Come ready.</span></div>
+  </div>
+  <div class="next-card to">
+    <div class="next-label">NEXT SESSION</div>
+    <div class="next-title">S4B &mdash; Production &amp; Fluency &mdash; Work Preference Debate</div>
+    <div style="font-size:13px;color:var(--mu2);margin-top:6px">Hot Take &bull; Pitch Round &bull; Relay &bull; Speed Round &bull; Solo Challenge</div>
+  </div>
+</section>
+
+</main>
+<footer>
+  <div class="footer-brand">Gabriel Turner &middot; English Training</div>
+  <div class="footer-sess"><span>S1</span><span>S2</span><span>S3</span><span class="active">S4</span><span>S5</span></div>
+  <div class="footer-levels"><span>A1.1</span><span>A1.2</span><span>A2.1</span><span>A2.2</span><span>B1.1</span><span class="active">B1.2</span><span>B2.1</span><span>B2.2</span></div>
+</footer>
+
+<script>
+window.addEventListener("scroll",function(){var d=document.documentElement;document.getElementById("pb").style.width=(d.scrollTop/(d.scrollHeight-d.clientHeight))*100+"%";});
+var studentMode=false;
+function toggleMode(){studentMode=!studentMode;document.body.classList.toggle("sm",studentMode);document.querySelector(".mode-btn").textContent=studentMode?"TEACHER MODE":"STUDENT MODE";}
+function toggleTN(btn){btn.nextElementSibling.classList.toggle("open");}
+var badges={b1:false,b2:false,b3:false,b4:false,b5:false};
+function earnBadge(id){if(badges[id])return;badges[id]=true;var el=document.getElementById(id);if(el)el.classList.add("earned");if(Object.values(badges).every(function(v){return v;}))launchConfetti();}
+function launchConfetti(){var colors=["#34D399","#6EE7B7","#00CFFF","#FFB800","#ffffff"];for(var i=0;i<90;i++){var d=document.createElement("div");d.style.cssText="position:fixed;width:8px;height:8px;border-radius:50%;pointer-events:none;z-index:9999;";d.style.background=colors[Math.floor(Math.random()*colors.length)];d.style.left=Math.random()*100+"vw";d.style.top="-10px";document.getElementById("confetti-container").appendChild(d);var dur=2000+Math.random()*2000;var delay=Math.random()*1500;setTimeout(function(el){el.style.transition="top "+dur+"ms ease-in,left "+dur+"ms ease-in-out,opacity 500ms "+dur+"ms";el.style.top=(80+Math.random()*20)+"vh";el.style.left=(parseFloat(el.style.left)+Math.random()*40-20)+"vw";setTimeout(function(e){e.style.opacity="0";setTimeout(function(e2){if(e2.parentNode)e2.parentNode.removeChild(e2);},600,e);},dur,el);},delay,d);}}
+/* Spin the Wheel */
+var wheelWords=["flexibility","isolation","boundary","commute","culture","productivity"];
+var wheelPrompts=[
+  "Personal sentence: use 'flexibility' + a linking word. How does flexibility (or the lack of it) affect your current work life?",
+  "Personal sentence: use 'isolation' + a linking word. Have you ever felt isolated at work — remote or in-person? Describe it.",
+  "Personal sentence: use 'boundary' + a linking word. Where is the boundary between work and personal life in your current setup?",
+  "Personal sentence: use 'commute' + a linking word. How does your commute affect your energy, mood, and productivity on a typical day?",
+  "Personal sentence: use 'culture' + a linking word. What does your company culture say about trust and flexibility, explicitly or implicitly?",
+  "Personal sentence: use 'productivity' + a linking word. Where and when are you most productive — and what makes the difference?"
+];
+var wheelSpinning=false;
+var wheelAngle=0;
+function spinWheel(){
+  if(wheelSpinning)return;
+  wheelSpinning=true;
+  var extra=Math.floor(Math.random()*360)+720;
+  wheelAngle+=extra;
+  var g=document.getElementById("wheelG");
+  g.style.transition="transform 2s cubic-bezier(.17,.67,.12,1)";
+  g.style.transform="rotate("+wheelAngle+"deg)";
+  setTimeout(function(){
+    wheelSpinning=false;
+    var segment=Math.floor(((360-(wheelAngle%360))/60))%6;
+    document.getElementById("wheelWord").textContent=wheelWords[segment];
+    document.getElementById("wheelPrompt").textContent=wheelPrompts[segment];
+    earnBadge("b1");
+    g.style.transition="";
+  },2000);
+}
+var answered={};
+function checkOpt(el,correct,qid){if(answered[qid])return;answered[qid]=true;var opts=el.parentElement.querySelectorAll(".mc-opt");opts.forEach(function(o){if(o===el&&o.textContent.trim()===correct)o.classList.add("correct");if(o===el&&!o.classList.contains("correct"))o.classList.add("wrong");});var fb=document.getElementById(qid+"fb");if(fb){var ok=el.classList.contains("correct");if(ok){fb.textContent="Correct!";fb.className="fb ok";earnBadge("b2");}else{fb.textContent="Not quite — think about the relationship between the ideas.";fb.className="fb err";}}}
+function initDrag(listId){var list=document.getElementById(listId);if(!list)return;var dragged=null;list.addEventListener("dragstart",function(e){dragged=e.target;e.target.style.opacity=".5";});list.addEventListener("dragend",function(e){e.target.style.opacity="1";list.querySelectorAll(".drag-item").forEach(function(i){i.classList.remove("over");});});list.addEventListener("dragover",function(e){e.preventDefault();var t=e.target.closest(".drag-item");if(t&&t!==dragged){list.querySelectorAll(".drag-item").forEach(function(i){i.classList.remove("over");});t.classList.add("over");}});list.addEventListener("drop",function(e){e.preventDefault();var t=e.target.closest(".drag-item");if(t&&t!==dragged){var items=Array.from(list.querySelectorAll(".drag-item"));var di=items.indexOf(dragged);var ti=items.indexOf(t);if(di<ti)list.insertBefore(dragged,t.nextSibling);else list.insertBefore(dragged,t);}});}
+function checkOrder(listId,correct,fbId){var items=document.getElementById(listId).querySelectorAll(".drag-item");var current=Array.from(items).map(function(i){return i.textContent.trim();});var fb=document.getElementById(fbId);var ok=correct.every(function(v,i){return v===current[i];});if(ok){fb.textContent="Perfect!";fb.className="fb ok";earnBadge("b3");}else{fb.textContent="Not quite — check the linking word placement and parallel structure.";fb.className="fb err";}}
+var scCards=[
+  {tag:"POSITION A",prompt:"Although remote work has many advantages, the office is still essential for culture, mentorship, and genuine team connection. The data doesn't capture everything."},
+  {tag:"POSITION B",prompt:"Full remote is the only truly equitable arrangement. Despite concerns about culture, it removes commute burden, childcare constraints, and geographical inequality from the equation."},
+  {tag:"POSITION C",prompt:"Hybrid is the compromise nobody loves but everyone needs. Whereas full remote kills culture and full office kills flexibility, a 3-2 split is the pragmatic solution for most organisations."},
+  {tag:"POSITION D",prompt:"The debate is a distraction. Furthermore, the real question is output — not location. As a result, companies should measure what people produce, not where or when they produce it."},
+  {tag:"POSITION E",prompt:"Return-to-office mandates are about control, not productivity. Despite the productivity evidence, many managers simply don't trust their teams — and remote work makes that distrust visible."},
+  {tag:"POSITION F",prompt:"The remote vs office debate is generational. Whereas younger professionals see remote as the default, experienced leaders built their careers in offices — and their instinct is to replicate what worked for them."}
+];
+var scIdx=0;
+function nextCard(){scIdx=(scIdx+1)%scCards.length;updateSC();}
+function prevCard(){scIdx=(scIdx-1+scCards.length)%scCards.length;updateSC();}
+function updateSC(){document.getElementById("scTag").textContent=scCards[scIdx].tag;document.getElementById("scPrompt").textContent=scCards[scIdx].prompt;document.getElementById("scCtr").textContent=(scIdx+1)+" / "+scCards.length;if(scIdx===scCards.length-1)earnBadge("b4");}
+nextCard();
+var timerIntervals={};
+function startTimer(n,secs){if(timerIntervals[n])clearInterval(timerIntervals[n]);var arc=document.getElementById("tArc"+n);var num=document.getElementById("tNum"+n);var total=secs;var circ=238.76;var remaining=total;arc.style.stroke="var(--ac)";timerIntervals[n]=setInterval(function(){remaining--;arc.style.strokeDashoffset=circ*(1-remaining/total);num.textContent=remaining;if(remaining<=5)arc.style.stroke="var(--danger)";if(remaining<=0){clearInterval(timerIntervals[n]);num.textContent="0";earnBadge("b5");}},1000);}
+var apPlaying=false,apProgress=0,apTimer=null;
+function toggleAudio(){apPlaying=!apPlaying;document.getElementById("apBtn").innerHTML=apPlaying?"&#9646;&#9646;":"&#9654;";document.getElementById("apWave").classList.toggle("paused",!apPlaying);if(apPlaying){apTimer=setInterval(function(){apProgress=Math.min(apProgress+100/110,100);document.getElementById("apFill").style.width=apProgress+"%";var cur=Math.floor(apProgress*110/100);document.getElementById("apCur").textContent="1:"+(cur<10?"0":"")+cur;if(apProgress>=100){clearInterval(apTimer);apPlaying=false;document.getElementById("apBtn").innerHTML="&#9654;";document.getElementById("apWave").classList.add("paused");earnBadge("b4");}},1000);}else{clearInterval(apTimer);}}
+function seekAudio(e){var rect=document.getElementById("apTrack").getBoundingClientRect();apProgress=((e.clientX-rect.left)/rect.width)*100;document.getElementById("apFill").style.width=apProgress+"%";}
+function toggleScript(btn){var box=document.getElementById("scriptBox");box.classList.toggle("open");btn.textContent=box.classList.contains("open")?"&#128196; Hide Script":"&#128196; Show Script (Teacher)";}
+var omVal=50;
+function moveMeter(d){omVal=Math.max(0,Math.min(100,omVal+d));document.getElementById("omFill").style.width=omVal+"%";document.getElementById("omPct").textContent=omVal+"%";}
+function chkAll(){var items=document.getElementById("canList").querySelectorAll("input[type=checkbox]");var all=Array.from(items).every(function(i){return i.checked;});var btn=document.getElementById("certBtn");if(btn)btn.style.display=all?"inline-block":"none";if(all)earnBadge("b5");}
+function generateCert(){launchConfetti();var w=window.open("","_blank","width=600,height=400");w.document.write("<html><body style='font-family:sans-serif;text-align:center;padding:40px;background:#080808;color:#F0F4F8'><h1 style='color:#34D399;font-size:26px'>Session Complete</h1><p style='font-size:18px;margin:16px 0'>GT English Training &mdash; B1.2 &mdash; M6 S4A</p><p style='font-size:14px;color:#6B7A8D'>Remote Work vs Office &mdash; Linking Words in Professional Debate</p><p style='font-size:12px;color:#6B7A8D;margin-top:16px'>Gabriel Turner &middot; English Training &mdash; Celaya, Gto.</p></body></html>");}
+function saveWin(){var txt=document.getElementById("winTxt").value.trim();if(txt){alert("Saved!");}}
+function speak(word){if("speechSynthesis" in window){var u=new SpeechSynthesisUtterance(word);u.lang="en-US";u.rate=0.9;window.speechSynthesis.speak(u);}}
+initDrag("order1");
+initDrag("order2");
+</script>
+</body>
+</html>

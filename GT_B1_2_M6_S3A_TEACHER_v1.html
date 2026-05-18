@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GT &middot; B1.2 &middot; M6 &middot; S3A &mdash; How Do You Handle Failure?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ac:#34D399;--ac2:#6EE7B7;--ac3:rgba(52,211,153,.12);
+  --bg:#080808;--s1:#0f1117;--s2:#161b24;--s3:#1c2130;
+  --border:rgba(52,211,153,.14);--border2:rgba(52,211,153,.28);
+  --txt:#F0F4F8;--mu:#6B7A8D;--mu2:#8A9BB0;
+  --danger:#FF4D6D;--ok:#00E5A0;--warn:#FFB347;
+  --cyan:#00CFFF;--gold:#FFB800;--pink:#FF1F5C;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif;font-weight:400;line-height:1.6;min-height:100vh}
+#pb{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--ac),var(--cyan));width:0%;z-index:999;transition:width .2s}
+header{background:var(--s1);border-bottom:1px solid var(--border);padding:18px 48px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;position:sticky;top:0;z-index:100}
+.brand{font-family:'Syne',sans-serif;font-weight:800;font-size:17px;letter-spacing:-.3px}
+.brand .dot{color:var(--gold)}
+.hdr-right{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.sess-pill{background:var(--ac3);border:1px solid var(--border2);color:var(--ac);font-size:11px;font-weight:600;padding:4px 10px;border-radius:20px;letter-spacing:.6px;text-transform:uppercase}
+.badge-row span{font-size:20px;opacity:.2;filter:grayscale(1);transition:all .4s;cursor:default}
+.badge-row span.earned{opacity:1;filter:none;animation:bpop .5s cubic-bezier(.34,1.56,.64,1)}
+@keyframes bpop{0%{transform:scale(.5)}60%{transform:scale(1.3)}100%{transform:scale(1)}}
+.mode-btn{background:transparent;border:1px solid var(--border2);color:var(--ac);font-size:11px;font-weight:600;padding:5px 12px;border-radius:6px;cursor:pointer;letter-spacing:.5px;transition:all .2s}
+.mode-btn:hover{background:var(--ac3)}
+.sm .to{display:none!important}
+main{max-width:1080px;margin:0 auto;padding:48px 48px 80px}
+h2{font-family:'Syne',sans-serif;font-weight:800;font-size:26px;letter-spacing:-.4px;margin-bottom:24px}
+h3{font-family:'Syne',sans-serif;font-weight:700;font-size:17px;margin-bottom:12px}
+.sec{margin-bottom:64px}
+.sec-label{display:inline-flex;align-items:center;gap:8px;background:var(--ac3);border:1px solid var(--border);color:var(--ac);font-size:11px;font-weight:700;padding:5px 14px;border-radius:20px;letter-spacing:.8px;text-transform:uppercase;margin-bottom:20px}
+.card{background:var(--s1);border:1px solid var(--border);border-radius:14px;padding:28px;margin-bottom:16px}
+img{border-radius:10px;width:100%;object-fit:cover;display:block}
+.wu-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.wu-card{background:var(--s1);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.wu-body{padding:18px}
+.wu-num{font-size:11px;font-weight:700;color:var(--ac);letter-spacing:.8px;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.wu-q{font-size:15px;line-height:1.55}
+.tag-pill{background:var(--ac3);color:var(--ac);font-size:10px;padding:2px 7px;border-radius:10px}
+.quick-win{background:linear-gradient(135deg,rgba(52,211,153,.1),rgba(0,207,255,.07));border:1px solid var(--border2);border-radius:12px;padding:22px 26px;margin-top:20px}
+.quick-win-label{font-size:11px;font-weight:700;color:var(--ac);letter-spacing:.8px;margin-bottom:8px}
+.gt-original{background:linear-gradient(135deg,rgba(255,184,0,.1),rgba(255,184,0,.04));border:1px solid rgba(255,184,0,.3);border-radius:12px;padding:20px 24px;margin-bottom:20px}
+.gt-label{font-size:11px;font-weight:700;color:var(--gold);letter-spacing:.8px;margin-bottom:8px}
+.gt-inst{font-size:14px;color:var(--txt);line-height:1.6}
+.tn{background:var(--s2);border-left:3px solid var(--cyan);border-radius:0 10px 10px 0;margin-top:14px;overflow:hidden}
+.tn-btn{width:100%;background:none;border:none;color:var(--cyan);font-size:12px;font-weight:600;padding:10px 16px;text-align:left;cursor:pointer;letter-spacing:.4px}
+.tn-body{padding:0 16px 14px;font-size:12.5px;color:var(--mu2);line-height:1.6;display:none}
+.tn-body.open{display:block}
+.tn.gold{border-left-color:var(--gold)}
+.tn.gold .tn-btn{color:var(--gold)}
+.tn.pink{border-left-color:var(--pink)}
+.tn.pink .tn-btn{color:var(--pink)}
+/* Matching pairs */
+.match-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.match-col h4{font-size:12px;font-weight:700;color:var(--mu);letter-spacing:.6px;margin-bottom:10px}
+.match-item{background:var(--s3);border:1px solid var(--border);border-radius:8px;padding:10px 14px;cursor:pointer;font-size:13.5px;margin-bottom:8px;transition:all .2s;user-select:none}
+.match-item:hover{border-color:var(--ac)}
+.match-item.selected{border-color:var(--gold);background:rgba(255,184,0,.1)}
+.match-item.matched{border-color:var(--ok);background:rgba(0,229,160,.1);cursor:default}
+.match-item.wrong-match{border-color:var(--danger);background:rgba(255,77,109,.1)}
+/* Vocab */
+.voc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.voc-card{background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:16px 18px;display:flex;align-items:flex-start;gap:12px}
+.voc-img{width:56px;height:56px;border-radius:8px;object-fit:cover;flex-shrink:0}
+.voc-word{font-family:'Syne',sans-serif;font-weight:700;font-size:15px;color:var(--cyan);margin-bottom:2px}
+.voc-ipa{font-size:11px;color:var(--mu);margin-bottom:4px;font-style:italic}
+.voc-def{font-size:12px;color:var(--mu2);line-height:1.45;margin-bottom:6px}
+.voc-ex{font-size:11.5px;color:var(--txt);opacity:.75;font-style:italic;line-height:1.4}
+.speak-btn{background:rgba(0,207,255,.1);border:1px solid rgba(0,207,255,.25);color:var(--cyan);font-size:11px;padding:3px 8px;border-radius:6px;cursor:pointer;margin-top:6px;display:inline-block}
+/* Grammar */
+.situation-box{background:linear-gradient(135deg,rgba(255,77,109,.08),rgba(255,77,109,.03));border:1px solid rgba(255,77,109,.25);border-radius:12px;padding:22px 26px;margin-bottom:20px}
+.sit-label{font-size:11px;font-weight:700;color:var(--danger);letter-spacing:.8px;margin-bottom:8px}
+.sit-text{font-size:15px;line-height:1.6;font-style:italic}
+.grammar-reveal{background:rgba(52,211,153,.06);border:1px solid var(--border2);border-radius:12px;padding:22px 26px;margin-bottom:20px}
+.gr-label{font-size:11px;font-weight:700;color:var(--ac);letter-spacing:.8px;margin-bottom:10px}
+.gr-table{width:100%;border-collapse:collapse;font-size:13px;margin-top:12px}
+.gr-table th{background:rgba(52,211,153,.12);color:var(--ac);font-weight:700;padding:10px 14px;text-align:left;border:1px solid var(--border)}
+.gr-table td{padding:10px 14px;border:1px solid var(--border);line-height:1.5}
+.gr-table tr:nth-child(even) td{background:rgba(255,255,255,.02)}
+.hl-ac{color:var(--ac);font-weight:600}
+.hl-cy{color:var(--cyan);font-weight:600}
+.hl-go{color:var(--gold);font-weight:600}
+.hl-pk{color:var(--pink);font-weight:600}
+.act-box{background:var(--s2);border:1px solid var(--border);border-radius:12px;padding:24px;margin-bottom:16px}
+.act-label{font-size:11px;font-weight:700;color:var(--gold);letter-spacing:.8px;margin-bottom:14px}
+.mc-q{font-size:14.5px;margin-bottom:12px;line-height:1.55}
+.mc-opts{display:flex;flex-direction:column;gap:8px;margin-bottom:14px}
+.mc-opt{background:var(--s3);border:1px solid var(--border);border-radius:8px;padding:10px 14px;cursor:pointer;font-size:13.5px;transition:all .2s}
+.mc-opt:hover{border-color:var(--ac);background:var(--ac3)}
+.mc-opt.correct{background:rgba(0,229,160,.1);border-color:var(--ok);color:var(--ok)}
+.mc-opt.wrong{background:rgba(255,77,109,.1);border-color:var(--danger);color:var(--danger)}
+.fb{font-size:12.5px;min-height:18px;margin-top:6px;font-weight:600}
+.fb.ok{color:var(--ok)}
+.fb.err{color:var(--danger)}
+.drag-list{list-style:none;display:flex;flex-direction:column;gap:8px}
+.drag-item{background:var(--s3);border:1px solid var(--border);border-radius:8px;padding:10px 14px;cursor:grab;font-size:13.5px;user-select:none;transition:border-color .2s}
+.drag-item:active{cursor:grabbing}
+.drag-item.over{border-color:var(--ac);background:var(--ac3)}
+.check-btn{background:var(--ac);color:#000;font-weight:700;font-size:13px;padding:9px 22px;border:none;border-radius:8px;cursor:pointer;margin-top:12px;transition:opacity .2s}
+.check-btn:hover{opacity:.85}
+.audio-player{background:var(--s2);border:1px solid var(--border);border-radius:12px;padding:20px 24px;display:flex;align-items:center;gap:16px;margin-bottom:20px}
+.ap-btn{width:44px;height:44px;border-radius:50%;background:var(--ac);border:none;color:#000;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ap-body{flex:1}
+.ap-title{font-size:12px;font-weight:600;color:var(--mu2);margin-bottom:6px}
+.ap-track{height:4px;background:rgba(255,255,255,.1);border-radius:2px;cursor:pointer;margin-bottom:6px}
+.ap-fill{height:100%;background:var(--ac);border-radius:2px;width:0%}
+.ap-times{display:flex;justify-content:space-between;font-size:11px;color:var(--mu)}
+.ap-wave{display:flex;align-items:center;gap:2px;height:20px;margin-left:8px}
+.ap-wave span{display:block;width:3px;background:var(--ac);border-radius:2px;animation:wave 1.2s ease-in-out infinite;opacity:.5}
+.ap-wave span:nth-child(2){animation-delay:.1s;height:10px}
+.ap-wave span:nth-child(3){animation-delay:.2s;height:16px}
+.ap-wave span:nth-child(4){animation-delay:.3s;height:8px}
+.ap-wave span:nth-child(5){animation-delay:.4s;height:14px}
+@keyframes wave{0%,100%{transform:scaleY(.4)}50%{transform:scaleY(1)}}
+.ap-wave.paused span{animation-play-state:paused}
+.script-toggle{background:none;border:1px solid var(--border);color:var(--mu2);font-size:12px;padding:6px 14px;border-radius:6px;cursor:pointer;margin-bottom:12px}
+.script-box{background:var(--s2);border-left:3px solid var(--ac);border-radius:0 10px 10px 0;padding:16px 20px;font-size:13px;line-height:1.7;color:var(--mu2);display:none}
+.script-box.open{display:block}
+.sp-grid{display:flex;flex-direction:column;gap:12px}
+.sp-card{background:var(--s2);border:1px solid var(--border);border-radius:12px;padding:20px 22px}
+.sp-tag{font-size:10px;font-weight:700;color:var(--ac);letter-spacing:.8px;margin-bottom:6px}
+.sp-q{font-size:14.5px;color:var(--txt);margin-bottom:6px;line-height:1.55}
+.sp-hint{font-size:12px;color:var(--mu);font-style:italic}
+.phrases-sec{background:linear-gradient(135deg,rgba(255,184,0,.08),rgba(52,211,153,.05));border:1px solid rgba(255,184,0,.2);border-radius:14px;padding:28px;margin-bottom:40px}
+.phrases-header{font-size:13px;font-weight:700;color:var(--gold);letter-spacing:.5px;margin-bottom:18px}
+.phrase-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.phrase-card{background:rgba(255,184,0,.05);border:1px solid rgba(255,184,0,.15);border-radius:10px;padding:16px 18px}
+.ph-en{font-family:'Syne',sans-serif;font-weight:700;font-size:15px;color:var(--gold);margin-bottom:4px}
+.ph-use{font-size:12px;color:var(--mu2);line-height:1.45}
+.om-box{background:var(--s2);border:1px solid var(--border);border-radius:12px;padding:22px 24px;margin-bottom:20px}
+.om-stmt{font-size:14px;font-style:italic;color:var(--txt);margin-bottom:12px;line-height:1.55}
+.om-labels{display:flex;justify-content:space-between;font-size:11px;color:var(--mu);margin-bottom:8px}
+.om-track{height:8px;background:rgba(255,255,255,.08);border-radius:4px;cursor:pointer;margin-bottom:10px}
+.om-fill{height:100%;background:linear-gradient(90deg,var(--danger),var(--ac));border-radius:4px;width:50%;transition:width .3s}
+.om-btns{display:flex;gap:8px;flex-wrap:wrap}
+.om-btn{background:var(--s3);border:1px solid var(--border);color:var(--txt);font-size:12px;padding:6px 14px;border-radius:6px;cursor:pointer;transition:all .2s}
+.om-btn:hover{border-color:var(--ac);color:var(--ac)}
+.timer-wrap{display:inline-flex;flex-direction:column;align-items:center;gap:8px}
+.timer-label{font-size:11px;font-weight:600;color:var(--mu);letter-spacing:.5px}
+.timer-num{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;fill:var(--txt)}
+.check-list{list-style:none;display:flex;flex-direction:column;gap:10px}
+.check-list li{display:flex;align-items:center;gap:10px;font-size:14px}
+.check-list input[type=checkbox]{width:18px;height:18px;accent-color:var(--ac);cursor:pointer;flex-shrink:0}
+.exit-box{background:var(--s2);border:1px solid var(--border);border-radius:12px;padding:24px;margin-bottom:16px}
+.exit-title{font-size:13px;font-weight:700;color:var(--ac);letter-spacing:.5px;margin-bottom:14px}
+.cert-btn{background:linear-gradient(135deg,var(--ac),var(--cyan));color:#000;font-weight:700;font-size:13px;padding:10px 26px;border:none;border-radius:8px;cursor:pointer;margin-top:14px;transition:opacity .2s}
+.win-box textarea{width:100%;background:var(--s3);border:1px solid var(--border);color:var(--txt);border-radius:8px;padding:12px 14px;font-size:13.5px;font-family:'DM Sans',sans-serif;resize:vertical;min-height:80px;margin-top:8px}
+.save-btn{background:var(--s2);border:1px solid var(--border2);color:var(--ac);font-size:12px;padding:7px 16px;border-radius:6px;cursor:pointer;margin-top:8px}
+.micro{background:rgba(52,211,153,.06);border:1px solid var(--border);border-radius:10px;padding:14px 18px;margin-top:14px;font-size:13.5px;color:var(--ac2)}
+.next-card{background:var(--s2);border:1px solid var(--border);border-radius:12px;padding:22px 26px;margin-top:20px}
+.next-label{font-size:11px;font-weight:700;color:var(--mu);letter-spacing:.8px;margin-bottom:8px}
+.next-title{font-size:16px;font-weight:700;font-family:'Syne',sans-serif;color:var(--ac2)}
+#confetti-container{position:fixed;inset:0;pointer-events:none;z-index:9999;overflow:hidden}
+footer{background:var(--s1);border-top:1px solid var(--border);padding:18px 48px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-top:40px}
+.footer-brand{font-family:'Syne',sans-serif;font-weight:700;font-size:14px;color:var(--mu)}
+.footer-sess{display:flex;gap:6px}
+.footer-sess span{font-size:11px;font-weight:700;padding:4px 10px;border-radius:6px;background:var(--s2);color:var(--mu);border:1px solid var(--border)}
+.footer-sess span.active{background:var(--ac3);color:var(--ac);border-color:var(--border2)}
+.footer-levels{display:flex;gap:6px;flex-wrap:wrap}
+.footer-levels span{font-size:10px;font-weight:600;padding:3px 8px;border-radius:4px;color:var(--mu);opacity:.4}
+.footer-levels span.active{opacity:1;color:var(--ac);background:var(--ac3)}
+@media(max-width:860px){
+  header,footer{padding:14px 20px}
+  main{padding:28px 20px 60px}
+  .wu-grid,.voc-grid,.phrase-cards,.match-grid{grid-template-columns:1fr}
+  footer{flex-direction:column;align-items:flex-start}
+}
+</style>
+</head>
+<body>
+<div id="pb"></div>
+<div id="confetti-container"></div>
+<header>
+  <div class="brand">Gabriel Turner <span class="dot">&middot;</span> English Training</div>
+  <div class="hdr-right">
+    <span class="sess-pill">B1.2 &nbsp;&middot;&nbsp; M6 &nbsp;&middot;&nbsp; S3A &nbsp;&middot;&nbsp; Discovery &amp; Drill</span>
+    <div class="badge-row">
+      <span id="b1">&#127860;</span><span id="b2">&#128218;</span><span id="b3">&#9878;&#65039;</span><span id="b4">&#127911;</span><span id="b5">&#127942;</span>
+    </div>
+    <button class="mode-btn" onclick="toggleMode()">STUDENT MODE</button>
+  </div>
+</header>
+<main>
+
+<!-- §1 WARM-UP -->
+<section class="sec" id="sec-wu">
+  <div class="sec-label">&#167;1 &nbsp; Warm-Up &nbsp;&middot;&nbsp; 5&ndash;8 min</div>
+  <h2>How Do You Handle Failure?</h2>
+
+  <div class="gt-original to">
+    <div class="gt-label">&#9733; GT ORIGINAL &mdash; Teacher Models First</div>
+    <div class="gt-inst">Before asking students to share, share your own brief example: a professional failure, what happened, what you learned, and what changed. Keep it to 60 seconds. This models vulnerability and makes it safe for learners to be honest. Without this, most corporate learners will give diplomatic non-answers.</div>
+  </div>
+
+  <div class="wu-grid">
+    <div class="wu-card">
+      <img src="https://images.unsplash.com/photo-1604881988758-f76ad2f7aac1?w=600&auto=format&fit=crop&q=80" alt="Person reflecting on failure">
+      <div class="wu-body">
+        <div class="wu-num">Q1 &nbsp;<span class="tag-pill">Honest</span></div>
+        <div class="wu-q">Think of a professional failure &mdash; not a small mistake, a real setback. Although you might not want to share the details, what was the first thing you felt? And what was the first thing you did?</div>
+      </div>
+    </div>
+    <div class="wu-card">
+      <img src="https://images.unsplash.com/photo-1559526324-4b87b5e36e44?w=600&auto=format&fit=crop&q=80" alt="Resilience comeback">
+      <div class="wu-body">
+        <div class="wu-num">Q2 &nbsp;<span class="tag-pill">Opinion</span></div>
+        <div class="wu-q">Is failure talked about openly at your company? Despite the research that says psychological safety improves performance, most organisations still punish failure. Why does that gap exist?</div>
+      </div>
+    </div>
+    <div class="wu-card">
+      <img src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=600&auto=format&fit=crop&q=80" alt="Growth mindset team">
+      <div class="wu-body">
+        <div class="wu-num">Q3 &nbsp;<span class="tag-pill">Debate</span></div>
+        <div class="wu-q">Is there such a thing as a &ldquo;good&rdquo; failure &mdash; one you would repeat, knowing what you know now? As a result of which failure did you grow the most?</div>
+      </div>
+    </div>
+    <div class="wu-card">
+      <img src="https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=600&auto=format&fit=crop&q=80" alt="Risk cliff edge">
+      <div class="wu-body">
+        <div class="wu-num">Q4 &nbsp;<span class="tag-pill">Work</span></div>
+        <div class="wu-q">Think of someone you admire at work. Although they appear very confident and successful today, what kind of failure do you think they&rsquo;ve experienced? How do you know?</div>
+      </div>
+    </div>
+  </div>
+  <div class="quick-win">
+    <div class="quick-win-label">&#9889; QUICK WIN &mdash; 30 SECONDS</div>
+    <div style="font-size:14px;line-height:1.6">Complete this sentence out loud: <strong>&ldquo;Despite [something that went wrong], I managed to [what you did]. As a result, I [what changed].&rdquo;</strong> &mdash; A three-part failure story with two linking words in under 30 seconds.</div>
+  </div>
+  <div class="tn to">
+    <button class="tn-btn" onclick="toggleTN(this)">&#9889; Teacher Note &mdash; &#167;1 Warm-Up</button>
+    <div class="tn-body">GT Original: this is the most emotionally significant session in B1.2. Corporate learners rarely have space to talk honestly about failure in English &mdash; or in any language at work. The teacher modelling vulnerability first is non-negotiable. Without it, most learners will give safe, polished answers. Q2 (failure culture at company) is the most professionally relevant &mdash; let it run if energy is high. Q3 (good failure) connects to the growth mindset vocabulary in §3.</div>
+  </div>
+  <div class="tn pink to">
+    <button class="tn-btn" onclick="toggleTN(this)">&#128293; Engagement Note</button>
+    <div class="tn-body">The emotional safety of this session is the product. If learners feel judged, they won&rsquo;t speak authentically &mdash; and the language produced will be flat and generic. Frame from the start: &ldquo;Today we&rsquo;re talking about something most English classes never touch. Real failure. Real stories. This is a safe room.&rdquo;</div>
+  </div>
+</section>
+
+<!-- §2 SPEAKING TOPIC -->
+<section class="sec" id="sec-sp">
+  <div class="sec-label">&#167;2 &nbsp; Speaking Topic &nbsp;&middot;&nbsp; 5 min</div>
+  <h2>The Big Question</h2>
+  <div class="card">
+    <img src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=600&auto=format&fit=crop&q=80" alt="Person reflecting window" style="height:220px;margin-bottom:20px">
+    <h3 style="font-size:22px;line-height:1.4;color:var(--ac2);margin-bottom:12px">&ldquo;Although failure is universally considered painful, the most successful professionals seem to treat it as a tool. What separates the ones who recover from those who don&rsquo;t?&rdquo;</h3>
+    <p style="font-size:14px;color:var(--mu2);line-height:1.65">Research in psychology consistently shows that resilience &mdash; the ability to recover from setbacks &mdash; is more predictive of long-term success than talent, intelligence, or experience alone. Despite this, most professional environments are structured to avoid failure rather than learn from it. As a result, many talented people develop what psychologists call &ldquo;failure avoidance&rdquo; &mdash; they stop taking risks that could accelerate their growth because the professional cost of failing is too high. The question is not whether you fail. It is how quickly and honestly you process it.</p>
+  </div>
+  <div class="tn to">
+    <button class="tn-btn" onclick="toggleTN(this)">&#9889; Teacher Note &mdash; &#167;2 Speaking</button>
+    <div class="tn-body">Point out the linking words used in the speaking topic text: &ldquo;Although,&rdquo; &ldquo;Despite this,&rdquo; &ldquo;As a result.&rdquo; Ask learners after 90 seconds: &ldquo;What&rsquo;s the difference between &lsquo;despite&rsquo; and &lsquo;although&rsquo; in terms of what follows?&rdquo; Let them figure out the rule: although + subject + verb; despite + noun/-ing. This reinforces S1A grammar naturally.</div>
+  </div>
+</section>
+
+<!-- §3 VOCABULARY + MATCHING PAIRS -->
+<section class="sec" id="sec-voc">
+  <div class="sec-label">&#167;3 &nbsp; Vocabulary &nbsp;&middot;&nbsp; 10 min</div>
+  <h2>Words for This Session</h2>
+
+  <!-- MATCHING PAIRS MINI-GAME -->
+  <div class="act-box" style="margin-bottom:24px">
+    <div class="act-label">&#9889; MINI-GAME &mdash; MATCHING PAIRS &mdash; Word to definition</div>
+    <p style="font-size:13px;color:var(--mu2);margin-bottom:16px">Click a word on the left, then its definition on the right. Link them all.</p>
+    <div class="match-grid">
+      <div>
+        <h4>WORDS</h4>
+        <div class="match-item" id="mw1" onclick="selectMatch(this,'1')">resilience</div>
+        <div class="match-item" id="mw2" onclick="selectMatch(this,'2')">setback</div>
+        <div class="match-item" id="mw3" onclick="selectMatch(this,'3')">mindset</div>
+        <div class="match-item" id="mw4" onclick="selectMatch(this,'4')">growth</div>
+        <div class="match-item" id="mw5" onclick="selectMatch(this,'5')">opportunity</div>
+        <div class="match-item" id="mw6" onclick="selectMatch(this,'6')">lesson</div>
+      </div>
+      <div>
+        <h4>DEFINITIONS</h4>
+        <div class="match-item" id="md3" onclick="selectMatch(this,'3')">The set of beliefs and attitudes you hold about your abilities and the world</div>
+        <div class="match-item" id="md6" onclick="selectMatch(this,'6')">Something valuable you learn from an experience, especially a difficult one</div>
+        <div class="match-item" id="md1" onclick="selectMatch(this,'1')">The ability to recover from setbacks, adapt to difficulty, and keep going</div>
+        <div class="match-item" id="md5" onclick="selectMatch(this,'5')">A favourable situation or chance that allows you to do something valuable</div>
+        <div class="match-item" id="md2" onclick="selectMatch(this,'2')">A problem or difficulty that delays or reverses progress towards a goal</div>
+        <div class="match-item" id="md4" onclick="selectMatch(this,'4')">Development or improvement in ability, knowledge, or character over time</div>
+      </div>
+    </div>
+    <div class="fb" id="matchFb" style="margin-top:12px"></div>
+  </div>
+
+  <div class="voc-grid">
+    <div class="voc-card">
+      <img class="voc-img" src="https://images.unsplash.com/photo-1604881988758-f76ad2f7aac1?w=600&auto=format&fit=crop&q=80" alt="failure">
+      <div>
+        <div class="voc-word">failure</div>
+        <div class="voc-ipa">/ˈfeɪ.ljər/</div>
+        <div class="voc-def">The fact of not achieving a goal or of not meeting an expected standard</div>
+        <div class="voc-ex">&ldquo;Although failure felt catastrophic at the time, as a result it redirected her entire career.&rdquo;</div>
+        <span class="speak-btn" onclick="speak('failure')">&#9654; Hear</span>
+      </div>
+    </div>
+    <div class="voc-card">
+      <img class="voc-img" src="https://images.unsplash.com/photo-1559526324-4b87b5e36e44?w=600&auto=format&fit=crop&q=80" alt="resilience">
+      <div>
+        <div class="voc-word">resilience</div>
+        <div class="voc-ipa">/rɪˈzɪl.i.əns/</div>
+        <div class="voc-def">The ability to recover from difficulties and adapt positively to adversity</div>
+        <div class="voc-ex">&ldquo;Despite the setbacks, her resilience meant she was back on track within six months.&rdquo;</div>
+        <span class="speak-btn" onclick="speak('resilience')">&#9654; Hear</span>
+      </div>
+    </div>
+    <div class="voc-card">
+      <img class="voc-img" src="https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?w=600&auto=format&fit=crop&q=80" alt="lesson">
+      <div>
+        <div class="voc-word">lesson</div>
+        <div class="voc-ipa">/ˈles.ən/</div>
+        <div class="voc-def">Something you learn from an experience that changes how you think or act</div>
+        <div class="voc-ex">&ldquo;Whereas the mistake was painful, the lesson it taught was worth far more than the cost.&rdquo;</div>
+        <span class="speak-btn" onclick="speak('lesson')">&#9654; Hear</span>
+      </div>
+    </div>
+    <div class="voc-card">
+      <img class="voc-img" src="https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=600&auto=format&fit=crop&q=80" alt="risk">
+      <div>
+        <div class="voc-word">risk</div>
+        <div class="voc-ipa">/rɪsk/</div>
+        <div class="voc-def">The possibility of something going wrong; a situation where there is a chance of loss or failure</div>
+        <div class="voc-ex">&ldquo;Although the risk was significant, furthermore the potential growth was too valuable to ignore.&rdquo;</div>
+        <span class="speak-btn" onclick="speak('risk')">&#9654; Hear</span>
+      </div>
+    </div>
+    <div class="voc-card">
+      <img class="voc-img" src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=600&auto=format&fit=crop&q=80" alt="mindset">
+      <div>
+        <div class="voc-word">mindset</div>
+        <div class="voc-ipa">/ˈmaɪnd.set/</div>
+        <div class="voc-def">The set of beliefs and attitudes that shape how you interpret and respond to experiences</div>
+        <div class="voc-ex">&ldquo;As a result of coaching, his mindset shifted from &lsquo;I failed&rsquo; to &lsquo;I found a lesson.&rsquo;&rdquo;</div>
+        <span class="speak-btn" onclick="speak('mindset')">&#9654; Hear</span>
+      </div>
+    </div>
+    <div class="voc-card">
+      <img class="voc-img" src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=600&auto=format&fit=crop&q=80" alt="overcome">
+      <div>
+        <div class="voc-word">to overcome</div>
+        <div class="voc-ipa">/ˌəʊ.vəˈkʌm/</div>
+        <div class="voc-def">To successfully deal with a problem, obstacle, or difficulty that was holding you back</div>
+        <div class="voc-ex">&ldquo;Despite the fear, she overcame it &mdash; and that experience defined the next decade of her career.&rdquo;</div>
+        <span class="speak-btn" onclick="speak('to overcome')">&#9654; Hear</span>
+      </div>
+    </div>
+    <div class="voc-card">
+      <img class="voc-img" src="https://images.unsplash.com/photo-1506784983877-45594efa4cbe?w=600&auto=format&fit=crop&q=80" alt="opportunity">
+      <div>
+        <div class="voc-word">opportunity</div>
+        <div class="voc-ipa">/ˌɒp.əˈtjuː.nɪ.ti/</div>
+        <div class="voc-def">A favourable set of circumstances that, if acted upon, can lead to growth or advancement</div>
+        <div class="voc-ex">&ldquo;Whereas others saw the restructuring as a threat, she saw it as an opportunity.&rdquo;</div>
+        <span class="speak-btn" onclick="speak('opportunity')">&#9654; Hear</span>
+      </div>
+    </div>
+    <div class="voc-card">
+      <img class="voc-img" src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=600&auto=format&fit=crop&q=80" alt="reflect">
+      <div>
+        <div class="voc-word">to reflect</div>
+        <div class="voc-ipa">/rɪˈflekt/</div>
+        <div class="voc-def">To think carefully and honestly about your own experiences, actions, and their implications</div>
+        <div class="voc-ex">&ldquo;Although it was uncomfortable, reflecting on what went wrong was the most useful thing she did.&rdquo;</div>
+        <span class="speak-btn" onclick="speak('to reflect')">&#9654; Hear</span>
+      </div>
+    </div>
+    <div class="voc-card">
+      <img class="voc-img" src="https://images.unsplash.com/photo-1604881988758-f76ad2f7aac1?w=600&auto=format&fit=crop&q=80" alt="to move on">
+      <div>
+        <div class="voc-word">to move on</div>
+        <div class="voc-ipa">/muːv ɒn/</div>
+        <div class="voc-def">To stop dwelling on a past failure and focus your energy on what comes next</div>
+        <div class="voc-ex">&ldquo;Despite the criticism, he moved on quickly &mdash; furthermore, he used it to motivate the next project.&rdquo;</div>
+        <span class="speak-btn" onclick="speak('to move on')">&#9654; Hear</span>
+      </div>
+    </div>
+  </div>
+  <div class="micro">&#128172; <strong>Quick:</strong> Use 3 of these words to describe a real setback you faced. Each sentence must use a different linking word from M6: although / despite / as a result / whereas.</div>
+  <div class="tn to">
+    <button class="tn-btn" onclick="toggleTN(this)">&#9889; Teacher Note &mdash; &#167;3 Vocabulary</button>
+    <div class="tn-body">Matching Pairs works particularly well here because learners who don&rsquo;t know the precise word can infer from the definition. After matching, ask: &ldquo;Which of these words do you use most at work? Which one do you avoid?&rdquo; The answer to &ldquo;which one do you avoid?&rdquo; often reveals something significant about the learner&rsquo;s professional culture.</div>
+  </div>
+</section>
+
+<!-- §4 COLLOQUIAL -->
+<section class="sec" id="sec-col">
+  <div class="sec-label">&#167;4 &nbsp; Colloquial &nbsp;&middot;&nbsp; 5 min</div>
+  <h2>Module 6 Phrases &mdash; In Failure &amp; Resilience Context</h2>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+    <div style="background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:16px 20px">
+      <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:16px;color:var(--ac);margin-bottom:4px">&ldquo;No looking back.&rdquo;</div>
+      <div style="font-size:12px;color:var(--mu2);margin-bottom:6px">Committed to moving forward; no regret</div>
+      <div style="font-size:12px;font-style:italic;color:var(--txt);opacity:.8">&ldquo;Despite how hard that failure was, I processed it and moved on. No looking back.&rdquo;</div>
+    </div>
+    <div style="background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:16px 20px">
+      <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:16px;color:var(--ac);margin-bottom:4px">&ldquo;It&rsquo;s a game-changer.&rdquo;</div>
+      <div style="font-size:12px;color:var(--mu2);margin-bottom:6px">Something that completely transforms a situation</div>
+      <div style="font-size:12px;font-style:italic;color:var(--txt);opacity:.8">&ldquo;That failure was a game-changer &mdash; although it hurt, as a result it changed everything about how I approach risk.&rdquo;</div>
+    </div>
+    <div style="background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:16px 20px">
+      <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:16px;color:var(--ac);margin-bottom:4px">&ldquo;I&rsquo;ve come a long way.&rdquo;</div>
+      <div style="font-size:12px;color:var(--mu2);margin-bottom:6px">Reflecting on how much you&rsquo;ve grown</div>
+      <div style="font-size:12px;font-style:italic;color:var(--txt);opacity:.8">&ldquo;Whereas before I would avoid all risk, now I take calculated ones. I&rsquo;ve come a long way since that setback.&rdquo;</div>
+    </div>
+    <div style="background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:16px 20px">
+      <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:16px;color:var(--ac);margin-bottom:4px">&ldquo;I&rsquo;m figuring it out.&rdquo;</div>
+      <div style="font-size:12px;color:var(--mu2);margin-bottom:6px">In the process of finding a way forward</div>
+      <div style="font-size:12px;font-style:italic;color:var(--txt);opacity:.8">&ldquo;After that project fell apart, I didn&rsquo;t have all the answers. I was figuring it out &mdash; and that was OK.&rdquo;</div>
+    </div>
+  </div>
+  <div class="tn to">
+    <button class="tn-btn" onclick="toggleTN(this)">&#9889; Teacher Note &mdash; &#167;4 Colloquial</button>
+    <div class="tn-body">By S3A, all 5 M6 phrases should be familiar. Test retention without showing the screen: &ldquo;What are the 5 M6 phrases?&rdquo; Anyone who can produce all 5 with their meaning has genuinely internalised them. In this session, &ldquo;I&rsquo;m figuring it out&rdquo; is particularly resonant because failure often means being mid-process &mdash; not having the answer yet is a valid and honest English response to professional difficulty.</div>
+  </div>
+</section>
+
+<!-- §5 GRAMMAR -->
+<section class="sec" id="sec-gr">
+  <div class="sec-label">&#167;5 &nbsp; Grammar &nbsp;&middot;&nbsp; 12&ndash;15 min</div>
+  <h2>Linking Words &mdash; Applied to Personal Narrative</h2>
+
+  <div class="situation-box">
+    <div class="sit-label">&#9888; REAL SITUATION</div>
+    <div class="sit-text">You&rsquo;re in a job interview. The interviewer says: &ldquo;Tell me about a time you failed and what you learned from it.&rdquo; This is one of the most common interview questions at B1+ English level. A generic answer sounds weak. A structured answer using linking words sounds professional, self-aware, and credible.</div>
+  </div>
+
+  <div class="grammar-reveal">
+    <div class="gr-label">&#9998; LINKING WORDS IN PERSONAL NARRATIVE &mdash; THE STORY STRUCTURE</div>
+    <div style="font-size:13px;color:var(--mu2);margin-bottom:12px">Failure stories in English need structure. These linking words provide it: they connect context, contrast, consequence, and conclusion.</div>
+    <table class="gr-table">
+      <tr><th>Story phase</th><th>Linking word</th><th>Example</th></tr>
+      <tr><td>Setting the scene</td><td><span class="hl-go">Although / Even though</span></td><td><span class="hl-go">Although</span> I had prepared well, the project went completely wrong.</td></tr>
+      <tr><td>Admitting the difficulty</td><td><span class="hl-pk">Despite + -ing</span></td><td><span class="hl-pk">Despite</span> working harder than ever, the outcome was a failure.</td></tr>
+      <tr><td>Explaining the consequence</td><td><span class="hl-ac">As a result / Consequently</span></td><td><span class="hl-ac">As a result</span>, I had to completely rethink my approach.</td></tr>
+      <tr><td>The lesson or growth</td><td><span class="hl-cy">However / Nevertheless</span></td><td><span class="hl-cy">However</span>, this taught me something I couldn&rsquo;t have learned any other way.</td></tr>
+      <tr><td>The forward move</td><td><span class="hl-go">Furthermore / In addition</span></td><td><span class="hl-go">Furthermore</span>, it changed how my whole team approaches risk.</td></tr>
+    </table>
+    <div style="margin-top:14px;background:rgba(52,211,153,.08);border:1px solid var(--border2);border-radius:8px;padding:12px 16px;font-size:13.5px;color:var(--ac2)">&#127775; <strong>The structure:</strong> Although [context] &rarr; Despite [difficulty] &rarr; As a result [consequence] &rarr; However [lesson] &rarr; Furthermore [growth]. Five linking words. One complete, professional failure story.</div>
+  </div>
+
+  <!-- Activity A: MC -->
+  <div class="act-box">
+    <div class="act-label">ACTIVITY A &mdash; Choose the correct linking word for each story phase</div>
+
+    <div class="mc-q">1. _____ I had done everything correctly, the client cancelled the project on the last day. It was completely outside my control.</div>
+    <div class="mc-opts" id="q1opts">
+      <div class="mc-opt" onclick="checkOpt(this,'Although','q1')">A. Although</div>
+      <div class="mc-opt" onclick="checkOpt(this,'As a result','q1')">B. As a result</div>
+      <div class="mc-opt" onclick="checkOpt(this,'Furthermore','q1')">C. Furthermore</div>
+    </div>
+    <div class="fb" id="q1fb"></div>
+
+    <div class="mc-q" style="margin-top:18px">2. _____ the project failing, my manager asked me to lead the next one. That was unexpected.</div>
+    <div class="mc-opts" id="q2opts">
+      <div class="mc-opt" onclick="checkOpt(this,'Despite','q2')">A. Despite</div>
+      <div class="mc-opt" onclick="checkOpt(this,'However','q2')">B. However</div>
+      <div class="mc-opt" onclick="checkOpt(this,'As a result','q2')">C. As a result</div>
+    </div>
+    <div class="fb" id="q2fb"></div>
+
+    <div class="mc-q" style="margin-top:18px">3. The team lost the contract. _____, we reviewed everything that went wrong and built a completely new process.</div>
+    <div class="mc-opts" id="q3opts">
+      <div class="mc-opt" onclick="checkOpt(this,'As a result','q3')">A. As a result</div>
+      <div class="mc-opt" onclick="checkOpt(this,'Although','q3')">B. Although</div>
+      <div class="mc-opt" onclick="checkOpt(this,'Whereas','q3')">C. Whereas</div>
+    </div>
+    <div class="fb" id="q3fb"></div>
+
+    <div class="mc-q" style="margin-top:18px">4. The failure was painful. _____, it taught me more about leadership than five years of success had.</div>
+    <div class="mc-opts" id="q4opts">
+      <div class="mc-opt" onclick="checkOpt(this,'However','q4')">A. However</div>
+      <div class="mc-opt" onclick="checkOpt(this,'Despite','q4')">B. Despite</div>
+      <div class="mc-opt" onclick="checkOpt(this,'Furthermore','q4')">C. Furthermore</div>
+    </div>
+    <div class="fb" id="q4fb"></div>
+  </div>
+
+  <div class="micro">&#128172; <strong>Quick:</strong> Use the 5-part structure (although &rarr; despite &rarr; as a result &rarr; however &rarr; furthermore) to tell a 60-second failure story. It doesn&rsquo;t have to be from work &mdash; any real story counts.</div>
+
+  <!-- Activity B: Unjumble -->
+  <div class="act-box">
+    <div class="act-label">ACTIVITY B &mdash; UNJUMBLE &mdash; Failure narrative sentences</div>
+    <p style="font-size:13px;color:var(--mu2);margin-bottom:16px">Drag to reorder. Both sentences are parts of a failure story.</p>
+
+    <p style="font-size:13px;color:var(--mu);margin-bottom:8px"><strong>Sentence 1:</strong></p>
+    <ul class="drag-list" id="order1">
+      <li class="drag-item" draggable="true">she reflected</li>
+      <li class="drag-item" draggable="true">despite the setback</li>
+      <li class="drag-item" draggable="true">on what had gone wrong</li>
+      <li class="drag-item" draggable="true">and moved forward</li>
+    </ul>
+    <button class="check-btn" onclick="checkOrder('order1',['despite the setback','she reflected','on what had gone wrong','and moved forward'],'fb-ord1')">Check</button>
+    <div class="fb" id="fb-ord1"></div>
+
+    <p style="font-size:13px;color:var(--mu);margin-bottom:8px;margin-top:20px"><strong>Sentence 2:</strong></p>
+    <ul class="drag-list" id="order2">
+      <li class="drag-item" draggable="true">he overcame his fear of failure</li>
+      <li class="drag-item" draggable="true">as a result</li>
+      <li class="drag-item" draggable="true">of reflecting on the lesson</li>
+      <li class="drag-item" draggable="true">and tried again</li>
+    </ul>
+    <button class="check-btn" onclick="checkOrder('order2',['as a result','of reflecting on the lesson','he overcame his fear of failure','and tried again'],'fb-ord2')">Check</button>
+    <div class="fb" id="fb-ord2"></div>
+  </div>
+  <div class="tn to">
+    <button class="tn-btn" onclick="toggleTN(this)">&#9889; Teacher Note &mdash; &#167;5 Grammar</button>
+    <div class="tn-body">The 5-part structure (although &rarr; despite &rarr; as a result &rarr; however &rarr; furthermore) is a transferable formula for professional storytelling in English. At B1.2, being able to use it under interview conditions is a significant skill. After Activity A, try the micro speaking challenge as a class: everyone tells their story simultaneously to a partner. The noise is productive &mdash; the real question is whether they can produce all 5 linking words under mild pressure. Award: who used all 5?</div>
+  </div>
+</section>
+
+<!-- §6 LISTENING -->
+<section class="sec" id="sec-li">
+  <div class="sec-label">&#167;6 &nbsp; Listening &nbsp;&middot;&nbsp; 10&ndash;12 min</div>
+  <h2>Carlos Mendez on Failure &amp; the Growth Mindset</h2>
+
+  <div class="om-box">
+    <div style="font-size:12px;font-weight:700;color:var(--mu);letter-spacing:.6px;margin-bottom:8px">OPINION METER &mdash; Before you listen:</div>
+    <div class="om-stmt">&ldquo;Although failure is painful, those who succeed most are generally those who have failed most &mdash; and reflected most honestly on those failures.&rdquo;</div>
+    <div class="om-labels"><span>&#128100; Strongly Disagree</span><span>&#128101;&#128101; Strongly Agree</span></div>
+    <div class="om-track"><div class="om-fill" id="omFill"></div></div>
+    <div style="font-size:13px;color:var(--ac);text-align:center;margin-bottom:8px" id="omPct">50%</div>
+    <div class="om-btns">
+      <button class="om-btn" onclick="moveMeter(-15)">&#128078; Disagree</button>
+      <button class="om-btn" onclick="moveMeter(-8)">&#128078; Somewhat</button>
+      <button class="om-btn" onclick="moveMeter(8)">&#128077; Somewhat</button>
+      <button class="om-btn" onclick="moveMeter(15)">&#128077; Strongly</button>
+    </div>
+  </div>
+
+  <div class="audio-player">
+    <button class="ap-btn" id="apBtn" onclick="toggleAudio()">&#9654;</button>
+    <div class="ap-body">
+      <div class="ap-title">Carlos Mendez &mdash; B1.2 M6 S3A &mdash; ElevenLabs speed 0.85</div>
+      <div class="ap-track" id="apTrack" onclick="seekAudio(event)">
+        <div class="ap-fill" id="apFill"></div>
+      </div>
+      <div class="ap-times"><span id="apCur">0:00</span><span id="apDur">1:50</span></div>
+    </div>
+    <div class="ap-wave paused" id="apWave">
+      <span style="height:6px"></span><span></span><span></span><span></span><span></span>
+    </div>
+  </div>
+
+  <button class="script-toggle to" onclick="toggleScript(this)">&#128196; Show Script (Teacher)</button>
+  <div class="script-box to" id="scriptBox">
+    <p><strong>Carlos Mendez:</strong></p>
+    <p style="margin-top:8px">In every coaching session I run, I ask the same question: &ldquo;Tell me about your most significant failure.&rdquo; <span class="hl-ac">Although most people are initially reluctant, the answer to this question tells me more about a person&rsquo;s professional character than any CV or performance review ever could.</span></p>
+    <p style="margin-top:10px">What I look for is not what happened. What happened is in the past and cannot be changed. What I look for is the relationship the person has with the story. <span class="hl-go">Whereas some people tell the failure story as if it&rsquo;s still happening to them &mdash; present tense, emotionally activated &mdash; others tell it as a chapter that ended and led somewhere.</span></p>
+    <p style="margin-top:10px"><span class="hl-cy">Despite the pain of failure, the most resilient professionals I know are those who have learned to distinguish between what they did and who they are.</span> A failed project is not a failed person. A setback is not a verdict. <span class="hl-ac">As a result of making that distinction, they recover faster, reflect better, and try again with more intelligence than before.</span></p>
+    <p style="margin-top:10px">Furthermore, I would argue that the ability to talk about failure clearly and without shame is itself a professional skill &mdash; one that distinguishes leaders from high-performers who peaked early and got comfortable.</p>
+    <p style="margin-top:10px;font-size:11px;color:var(--mu)">&#127897; ElevenLabs: Carlos Mendez &mdash; speed 0.85 &mdash; approx. 185 words</p>
+  </div>
+
+  <div class="act-box" style="margin-top:20px">
+    <div class="act-label">COMPREHENSION &mdash; True or False</div>
+    <div class="mc-q">1. Carlos says he learns more from how someone answers the failure question than from their CV.</div>
+    <div class="mc-opts" id="lq1opts">
+      <div class="mc-opt" onclick="checkOpt(this,'True','lq1')">A. True</div>
+      <div class="mc-opt" onclick="checkOpt(this,'True','lq1')">B. False</div>
+    </div>
+    <div class="fb" id="lq1fb"></div>
+    <div class="mc-q" style="margin-top:16px">2. The distinction Carlos considers most important is between what you did and who you are.</div>
+    <div class="mc-opts" id="lq2opts">
+      <div class="mc-opt" onclick="checkOpt(this,'True','lq2')">A. True</div>
+      <div class="mc-opt" onclick="checkOpt(this,'True','lq2')">B. False</div>
+    </div>
+    <div class="fb" id="lq2fb"></div>
+    <div class="mc-q" style="margin-top:16px">3. Carlos argues that talking about failure clearly and without shame is a personal quality, not a professional skill.</div>
+    <div class="mc-opts" id="lq3opts">
+      <div class="mc-opt" onclick="checkOpt(this,'False','lq3')">A. True</div>
+      <div class="mc-opt" onclick="checkOpt(this,'False','lq3')">B. False</div>
+    </div>
+    <div class="fb" id="lq3fb"></div>
+  </div>
+  <div class="micro">&#128172; <strong>Quick:</strong> Paraphrase Carlos&rsquo;s distinction between &ldquo;what you did&rdquo; and &ldquo;who you are.&rdquo; Use despite + -ing in your answer.</div>
+  <div class="tn to">
+    <button class="tn-btn" onclick="toggleTN(this)">&#9889; Teacher Note &mdash; &#167;6 Listening</button>
+    <div class="tn-body">Carlos&rsquo;s core insight &mdash; &ldquo;A failed project is not a failed person. A setback is not a verdict&rdquo; &mdash; is the most emotionally significant line of M6. Write it on the board. Let it sit. Ask: &ldquo;Is this easy to believe about yourself &mdash; or do you only believe it about other people?&rdquo; This question often produces the most authentic speaking of the session. Count the linking words Carlos uses: although, whereas, despite, as a result, furthermore &mdash; all five families in one short monologue.</div>
+  </div>
+</section>
+
+<!-- §SP SPEAKING PRACTICE -->
+<section class="sec" id="sec-spp">
+  <div class="sec-label">&#167;SP &nbsp; Speaking Practice &nbsp;&middot;&nbsp; 10&ndash;12 min</div>
+  <h2>Your Failure Story</h2>
+  <div class="sp-grid">
+    <div class="sp-card">
+      <div class="sp-tag">RECALL</div>
+      <div class="sp-q">What does Carlos mean when he says some people tell failure stories &ldquo;in present tense, emotionally activated?&rdquo; What does that look and sound like &mdash; and why is it a problem?</div>
+      <div class="sp-hint">Use: whereas / however to contrast that type with the type Carlos prefers</div>
+    </div>
+    <div class="sp-card">
+      <div class="sp-tag">STORY</div>
+      <div class="sp-q">Tell your failure story using the 5-part structure: although &rarr; despite &rarr; as a result &rarr; however &rarr; furthermore. One minute. Real story. No diplomacy.</div>
+      <div class="sp-hint">Partner: count how many linking words were used correctly. Give feedback after.</div>
+    </div>
+    <div class="sp-card">
+      <div class="sp-tag">PROFESSIONAL</div>
+      <div class="sp-q">Your company just lost a major client. You were part of the team. In a meeting, you&rsquo;re asked to reflect on what happened. How do you speak about it professionally &mdash; honestly, without blame, with learning?</div>
+      <div class="sp-hint">Use: although / despite / as a result / however &mdash; one per phase of your reflection</div>
+    </div>
+    <div class="sp-card">
+      <div class="sp-tag">INTERVIEW</div>
+      <div class="sp-q">Answer this question as if you&rsquo;re in an English-language job interview: &ldquo;Tell me about a time you failed and what you learned from it.&rdquo; Use the 5-part structure. 90 seconds max.</div>
+      <div class="sp-hint">This is a real interview question. Structure beats content every time at B1.2 level.</div>
+    </div>
+    <div class="sp-card">
+      <div class="sp-tag">DEBATE</div>
+      <div class="sp-q">Is it possible for a company to have a genuine &ldquo;growth mindset&rdquo; if it systematically punishes individuals who fail? Build an argument using evidence and linking words.</div>
+      <div class="sp-hint">Use: although, whereas, as a result, furthermore &mdash; each for a different part of your argument</div>
+    </div>
+    <div class="sp-card">
+      <div class="sp-tag">CHALLENGE</div>
+      <div class="sp-q">Describe the most useful failure you&rsquo;ve ever seen or experienced. Not your worst &mdash; your most useful. What made it useful? Use all 5 M6 phrases in your answer if possible.</div>
+      <div class="sp-hint">although, despite, as a result + game-changer, figuring it out, I&rsquo;ve come a long way</div>
+    </div>
+  </div>
+  <div class="tn to">
+    <button class="tn-btn" onclick="toggleTN(this)">&#9889; Teacher Note &mdash; §SP Speaking</button>
+    <div class="tn-body">Q4 (interview question) is the most practically valuable speaking task in M6. Every learner at B1.2 may eventually interview in English &mdash; or at least present in English to international stakeholders. The ability to answer &ldquo;tell me about a failure&rdquo; with structure and honesty is a genuine differentiator. If time allows, do Q4 as a group: one learner answers, the group evaluates structure (not content) using the five linking words as the checklist.</div>
+  </div>
+</section>
+
+<!-- 3 PHRASES FOR THIS WEEK -->
+<section class="sec" id="sec-3ph">
+  <div class="phrases-sec">
+    <div class="phrases-header">&#127919; This week, you can use these 3 phrases at work:</div>
+    <div class="phrase-cards">
+      <div class="phrase-card">
+        <div class="ph-en">&ldquo;Despite the setback, we&rsquo;re moving forward.&rdquo;</div>
+        <div class="ph-use">Use in any project review or team meeting after something has gone wrong. Acknowledges the difficulty without dwelling on it. Signals leadership and forward momentum.</div>
+      </div>
+      <div class="phrase-card">
+        <div class="ph-en">&ldquo;As a result of that experience, we changed our approach.&rdquo;</div>
+        <div class="ph-use">Use in retrospective meetings, client presentations, and audit reviews. Transforms failure into process improvement. One of the most professional phrases in this module.</div>
+      </div>
+      <div class="phrase-card">
+        <div class="ph-en">&ldquo;Although it didn&rsquo;t work this time, the lesson is clear.&rdquo;</div>
+        <div class="ph-use">Use to close any discussion about something that failed. The structure acknowledges failure, pivots to learning, and ends with confidence. Works in any professional context.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- §7 PRODUCTION -->
+<section class="sec" id="sec-prod">
+  <div class="sec-label">&#167;7 &nbsp; Production &nbsp;&middot;&nbsp; 8 min</div>
+  <h2>The Failure Interview &mdash; Coaching Cards</h2>
+  <div style="background:var(--s2);border:1px solid var(--border);border-radius:14px;padding:28px;margin-bottom:16px">
+    <div style="font-size:12px;font-weight:700;color:var(--gold);letter-spacing:.7px;margin-bottom:12px">SPEAKING CARDS &mdash; COACHING QUESTIONS</div>
+    <p style="font-size:14px;color:var(--txt);line-height:1.6;margin-bottom:16px">Each card is a coaching question that Carlos might ask. 45 seconds. Use S3A vocabulary and at least 2 linking words. Your partner is the coach &mdash; they listen without interrupting, then ask one follow-up question.</p>
+    <div style="display:flex;gap:24px;align-items:flex-start;flex-wrap:wrap">
+      <div style="flex:1;min-width:280px">
+        <div style="background:linear-gradient(135deg,var(--ac3),rgba(0,207,255,.06));border:2px solid var(--border2);border-radius:16px;padding:28px;text-align:center;margin-bottom:16px">
+          <div style="font-size:11px;color:var(--ac);font-weight:600;letter-spacing:.5px;margin-bottom:8px" id="scTag">COACHING QUESTION</div>
+          <div style="font-size:16px;font-family:'Syne',sans-serif;font-weight:700;color:var(--txt);line-height:1.45" id="scPrompt">Click Next to get your first question</div>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:center;gap:14px">
+          <button onclick="prevCard()" style="background:var(--s2);border:1px solid var(--border);color:var(--txt);padding:8px 18px;border-radius:8px;cursor:pointer;font-size:13px">&#8592; Prev</button>
+          <div style="font-size:13px;color:var(--mu);min-width:50px;text-align:center" id="scCtr">0 / 6</div>
+          <button onclick="nextCard()" style="background:var(--s2);border:1px solid var(--border);color:var(--txt);padding:8px 18px;border-radius:8px;cursor:pointer;font-size:13px">Next &#8594;</button>
+        </div>
+      </div>
+      <div style="flex-shrink:0;text-align:center">
+        <div class="timer-wrap">
+          <div class="timer-label">SPEAKING TIMER</div>
+          <svg width="96" height="96" viewBox="0 0 96 96">
+            <circle cx="48" cy="48" r="38" fill="none" stroke="rgba(52,211,153,.15)" stroke-width="6"/>
+            <circle id="tArc1" cx="48" cy="48" r="38" fill="none" stroke="var(--ac)" stroke-width="6"
+              stroke-dasharray="238.76" stroke-dashoffset="0" stroke-linecap="round" transform="rotate(-90 48 48)"/>
+            <text id="tNum1" x="48" y="54" text-anchor="middle" class="timer-num">45</text>
+          </svg>
+          <button class="check-btn" style="font-size:12px;padding:7px 18px" onclick="startTimer(1,45)">Start 45s</button>
+        </div>
+      </div>
+    </div>
+    <div style="margin-top:12px;font-size:13px;color:var(--mu2)">After 45s: coach asks one follow-up question. Speaker must answer in 20 seconds. This is real coaching language practice.</div>
+  </div>
+  <div class="tn to">
+    <button class="tn-btn" onclick="toggleTN(this)">&#9889; Teacher Note &mdash; &#167;7 Production</button>
+    <div class="tn-body">The coaching format is the most emotionally advanced production game in M6. The &ldquo;coach listens without interrupting&rdquo; rule mirrors real coaching dynamics &mdash; and is surprisingly hard for most people, in any language. Point this out: &ldquo;The ability to listen without filling silence is a professional skill. Great coaches and leaders do it naturally.&rdquo; The 20-second follow-up forces brief, precise English production under mild pressure.</div>
+  </div>
+</section>
+
+<!-- §8 WRAP-UP -->
+<section class="sec" id="sec-wu2">
+  <div class="sec-label">&#167;8 &nbsp; Wrap-Up &nbsp;&middot;&nbsp; 5 min</div>
+  <h2>Session Complete</h2>
+  <div class="exit-box">
+    <div class="exit-title">&#9989; I can now&hellip;</div>
+    <ul class="check-list" id="canList">
+      <li><input type="checkbox" id="c1" onchange="chkAll()"> Tell a structured failure story in English using the 5-part linking word framework</li>
+      <li><input type="checkbox" id="c2" onchange="chkAll()"> Discuss resilience, growth mindset, and learning from setbacks with precise vocabulary</li>
+      <li><input type="checkbox" id="c3" onchange="chkAll()"> Answer the interview question &ldquo;Tell me about a failure&rdquo; professionally in English</li>
+      <li><input type="checkbox" id="c4" onchange="chkAll()"> Distinguish between &ldquo;what I did&rdquo; and &ldquo;who I am&rdquo; when discussing professional setbacks</li>
+    </ul>
+    <button class="cert-btn" id="certBtn" onclick="generateCert()" style="display:none">&#127941; Generate Certificate</button>
+  </div>
+  <div class="exit-box win-box">
+    <div class="exit-title">&#127942; My Win Today</div>
+    <p style="font-size:13px;color:var(--mu2);margin-bottom:4px">Write one thing you said in English today that you&rsquo;re proud of:</p>
+    <textarea id="winTxt" placeholder="e.g. I said: Although the project failed, as a result I completely changed how I manage risk. Despite the setback, it was a game-changer..."></textarea>
+    <br><button class="save-btn" onclick="saveWin()">&#128190; Save</button>
+  </div>
+  <div class="next-card to">
+    <div class="next-label">NEXT SESSION</div>
+    <div class="next-title">S3B &mdash; Production &amp; Fluency &mdash; Failure Debate</div>
+    <div style="font-size:13px;color:var(--mu2);margin-top:6px">Hot Take &bull; Pitch Round &bull; Relay &bull; Speed Round &bull; Solo Challenge</div>
+  </div>
+</section>
+
+</main>
+<footer>
+  <div class="footer-brand">Gabriel Turner &middot; English Training</div>
+  <div class="footer-sess"><span>S1</span><span>S2</span><span class="active">S3</span><span>S4</span><span>S5</span></div>
+  <div class="footer-levels"><span>A1.1</span><span>A1.2</span><span>A2.1</span><span>A2.2</span><span>B1.1</span><span class="active">B1.2</span><span>B2.1</span><span>B2.2</span></div>
+</footer>
+
+<script>
+window.addEventListener("scroll",function(){var d=document.documentElement;document.getElementById("pb").style.width=(d.scrollTop/(d.scrollHeight-d.clientHeight))*100+"%";});
+var studentMode=false;
+function toggleMode(){studentMode=!studentMode;document.body.classList.toggle("sm",studentMode);document.querySelector(".mode-btn").textContent=studentMode?"TEACHER MODE":"STUDENT MODE";}
+function toggleTN(btn){btn.nextElementSibling.classList.toggle("open");}
+var badges={b1:false,b2:false,b3:false,b4:false,b5:false};
+function earnBadge(id){if(badges[id])return;badges[id]=true;var el=document.getElementById(id);if(el)el.classList.add("earned");if(Object.values(badges).every(function(v){return v;}))launchConfetti();}
+function launchConfetti(){var colors=["#34D399","#6EE7B7","#00CFFF","#FFB800","#ffffff"];for(var i=0;i<90;i++){var d=document.createElement("div");d.style.cssText="position:fixed;width:8px;height:8px;border-radius:50%;pointer-events:none;z-index:9999;";d.style.background=colors[Math.floor(Math.random()*colors.length)];d.style.left=Math.random()*100+"vw";d.style.top="-10px";document.getElementById("confetti-container").appendChild(d);var dur=2000+Math.random()*2000;var delay=Math.random()*1500;setTimeout(function(el){el.style.transition="top "+dur+"ms ease-in,left "+dur+"ms ease-in-out,opacity 500ms "+dur+"ms";el.style.top=(80+Math.random()*20)+"vh";el.style.left=(parseFloat(el.style.left)+Math.random()*40-20)+"vw";setTimeout(function(e){e.style.opacity="0";setTimeout(function(e2){if(e2.parentNode)e2.parentNode.removeChild(e2);},600,e);},dur,el);},delay,d);}}
+/* Matching pairs */
+var matchState={selected:null};
+var matchCorrect={mw1:"md1",mw2:"md2",mw3:"md3",mw4:"md4",mw5:"md5",mw6:"md6"};
+var matchCount=0;
+function selectMatch(el,pairId){
+  var id=el.id;
+  if(el.classList.contains("matched"))return;
+  var isWord=id.startsWith("mw");
+  var isDef=id.startsWith("md");
+  if(!matchState.selected){
+    document.querySelectorAll(".match-item.selected").forEach(function(i){i.classList.remove("selected");});
+    el.classList.add("selected");
+    matchState.selected={id:id,pairId:pairId,isWord:isWord};
+  }else{
+    var prev=matchState.selected;
+    if(prev.id===id){el.classList.remove("selected");matchState.selected=null;return;}
+    if(prev.isWord===isWord){
+      document.getElementById(prev.id).classList.remove("selected");
+      el.classList.add("selected");
+      matchState.selected={id:id,pairId:pairId,isWord:isWord};
+      return;
+    }
+    var wordId=isWord?id:prev.id;
+    var defId=isDef?id:prev.id;
+    var correct=matchCorrect[wordId]===defId;
+    document.getElementById(prev.id).classList.remove("selected");
+    if(correct){
+      document.getElementById(wordId).classList.add("matched");
+      document.getElementById(defId).classList.add("matched");
+      matchCount++;
+      earnBadge("b1");
+      if(matchCount>=6){var fb=document.getElementById("matchFb");fb.textContent="All matched! Excellent vocabulary precision.";fb.className="fb ok";earnBadge("b2");}
+    }else{
+      document.getElementById(wordId).classList.add("wrong-match");
+      document.getElementById(defId).classList.add("wrong-match");
+      setTimeout(function(){
+        document.getElementById(wordId).classList.remove("wrong-match","selected");
+        document.getElementById(defId).classList.remove("wrong-match","selected");
+      },700);
+    }
+    matchState.selected=null;
+  }
+}
+var answered={};
+function checkOpt(el,correct,qid){if(answered[qid])return;answered[qid]=true;var opts=el.parentElement.querySelectorAll(".mc-opt");opts.forEach(function(o){if(o===el&&o.textContent.trim()===correct)o.classList.add("correct");if(o===el&&!o.classList.contains("correct"))o.classList.add("wrong");});var fb=document.getElementById(qid+"fb");if(fb){var ok=el.classList.contains("correct");if(ok){fb.textContent="Correct!";fb.className="fb ok";earnBadge("b2");}else{fb.textContent="Not quite — think about which story phase this comes from.";fb.className="fb err";}}}
+function initDrag(listId){var list=document.getElementById(listId);if(!list)return;var dragged=null;list.addEventListener("dragstart",function(e){dragged=e.target;e.target.style.opacity=".5";});list.addEventListener("dragend",function(e){e.target.style.opacity="1";list.querySelectorAll(".drag-item").forEach(function(i){i.classList.remove("over");});});list.addEventListener("dragover",function(e){e.preventDefault();var t=e.target.closest(".drag-item");if(t&&t!==dragged){list.querySelectorAll(".drag-item").forEach(function(i){i.classList.remove("over");});t.classList.add("over");}});list.addEventListener("drop",function(e){e.preventDefault();var t=e.target.closest(".drag-item");if(t&&t!==dragged){var items=Array.from(list.querySelectorAll(".drag-item"));var di=items.indexOf(dragged);var ti=items.indexOf(t);if(di<ti)list.insertBefore(dragged,t.nextSibling);else list.insertBefore(dragged,t);}});}
+function checkOrder(listId,correct,fbId){var items=document.getElementById(listId).querySelectorAll(".drag-item");var current=Array.from(items).map(function(i){return i.textContent.trim();});var fb=document.getElementById(fbId);var ok=correct.every(function(v,i){return v===current[i];});if(ok){fb.textContent="Perfect!";fb.className="fb ok";earnBadge("b3");}else{fb.textContent="Not quite — the linking word starts the sentence, then the clause it connects.";fb.className="fb err";}}
+var scCards=[
+  {tag:"COACHING Q 1",prompt:"What was the failure that taught you the most? Not the biggest — the most useful. Describe it in one minute."},
+  {tag:"COACHING Q 2",prompt:"When you think about that failure now, what emotion do you feel? Is it still present tense — or has it become a story?"},
+  {tag:"COACHING Q 3",prompt:"What would you tell a younger version of yourself before that failure happened — and would that advice have actually helped?"},
+  {tag:"COACHING Q 4",prompt:"How did your team or manager respond to your failure? Did their response help you recover faster or slower?"},
+  {tag:"COACHING Q 5",prompt:"What risk are you currently avoiding because of a past failure? Is that avoidance protecting you — or limiting you?"},
+  {tag:"COACHING Q 6",prompt:"If your most significant failure became a public case study that other professionals could learn from, what would the title be?"}
+];
+var scIdx=0;
+function nextCard(){scIdx=(scIdx+1)%scCards.length;updateSC();}
+function prevCard(){scIdx=(scIdx-1+scCards.length)%scCards.length;updateSC();}
+function updateSC(){document.getElementById("scTag").textContent=scCards[scIdx].tag;document.getElementById("scPrompt").textContent=scCards[scIdx].prompt;document.getElementById("scCtr").textContent=(scIdx+1)+" / "+scCards.length;if(scIdx===scCards.length-1)earnBadge("b4");}
+nextCard();
+var timerIntervals={};
+function startTimer(n,secs){if(timerIntervals[n])clearInterval(timerIntervals[n]);var arc=document.getElementById("tArc"+n);var num=document.getElementById("tNum"+n);var total=secs;var circ=238.76;var remaining=total;arc.style.stroke="var(--ac)";timerIntervals[n]=setInterval(function(){remaining--;arc.style.strokeDashoffset=circ*(1-remaining/total);num.textContent=remaining;if(remaining<=5)arc.style.stroke="var(--danger)";if(remaining<=0){clearInterval(timerIntervals[n]);num.textContent="0";earnBadge("b5");}},1000);}
+var apPlaying=false,apProgress=0,apTimer=null;
+function toggleAudio(){apPlaying=!apPlaying;document.getElementById("apBtn").innerHTML=apPlaying?"&#9646;&#9646;":"&#9654;";document.getElementById("apWave").classList.toggle("paused",!apPlaying);if(apPlaying){apTimer=setInterval(function(){apProgress=Math.min(apProgress+100/110,100);document.getElementById("apFill").style.width=apProgress+"%";var cur=Math.floor(apProgress*110/100);document.getElementById("apCur").textContent="1:"+(cur<10?"0":"")+cur;if(apProgress>=100){clearInterval(apTimer);apPlaying=false;document.getElementById("apBtn").innerHTML="&#9654;";document.getElementById("apWave").classList.add("paused");earnBadge("b4");}},1000);}else{clearInterval(apTimer);}}
+function seekAudio(e){var rect=document.getElementById("apTrack").getBoundingClientRect();apProgress=((e.clientX-rect.left)/rect.width)*100;document.getElementById("apFill").style.width=apProgress+"%";}
+function toggleScript(btn){var box=document.getElementById("scriptBox");box.classList.toggle("open");btn.textContent=box.classList.contains("open")?"&#128196; Hide Script":"&#128196; Show Script (Teacher)";}
+var omVal=50;
+function moveMeter(d){omVal=Math.max(0,Math.min(100,omVal+d));document.getElementById("omFill").style.width=omVal+"%";document.getElementById("omPct").textContent=omVal+"%";}
+function chkAll(){var items=document.getElementById("canList").querySelectorAll("input[type=checkbox]");var all=Array.from(items).every(function(i){return i.checked;});var btn=document.getElementById("certBtn");if(btn)btn.style.display=all?"inline-block":"none";if(all)earnBadge("b5");}
+function generateCert(){launchConfetti();var w=window.open("","_blank","width=600,height=400");w.document.write("<html><body style='font-family:sans-serif;text-align:center;padding:40px;background:#080808;color:#F0F4F8'><h1 style='color:#34D399;font-size:26px'>Session Complete</h1><p style='font-size:18px;margin:16px 0'>GT English Training &mdash; B1.2 &mdash; M6 S3A</p><p style='font-size:14px;color:#6B7A8D'>How Do You Handle Failure?</p><p style='font-size:12px;color:#6B7A8D;margin-top:16px'>Gabriel Turner &middot; English Training &mdash; Celaya, Gto.</p></body></html>");}
+function saveWin(){var txt=document.getElementById("winTxt").value.trim();if(txt){alert("Saved!");}}
+function speak(word){if("speechSynthesis" in window){var u=new SpeechSynthesisUtterance(word);u.lang="en-US";u.rate=0.9;window.speechSynthesis.speak(u);}}
+initDrag("order1");
+initDrag("order2");
+</script>
+</body>
+</html>

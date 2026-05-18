@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GT &middot; B1.2 &middot; M5 &middot; S3A &mdash; Fake News</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ac:#34D399;--ac2:#6EE7B7;--ac3:rgba(52,211,153,.12);
+  --bg:#080808;--s1:#0f1117;--s2:#161b24;--s3:#1c2130;
+  --border:rgba(52,211,153,.14);--border2:rgba(52,211,153,.28);
+  --txt:#F0F4F8;--mu:#6B7A8D;--mu2:#8A9BB0;
+  --danger:#FF4D6D;--ok:#00E5A0;--warn:#FFB347;
+  --cyan:#00CFFF;--gold:#FFB800;--pink:#FF1F5C;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif;font-weight:400;line-height:1.6;min-height:100vh}
+#pb{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--ac),var(--cyan));width:0%;z-index:999;transition:width .2s}
+header{background:var(--s1);border-bottom:1px solid var(--border);padding:18px 48px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;position:sticky;top:0;z-index:100}
+.brand{font-family:'Syne',sans-serif;font-weight:800;font-size:17px;letter-spacing:-.3px}
+.brand .dot{color:var(--gold)}
+.hdr-right{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.sess-pill{background:var(--ac3);border:1px solid var(--border2);color:var(--ac);font-size:11px;font-weight:600;padding:4px 10px;border-radius:20px;letter-spacing:.6px;text-transform:uppercase}
+.badge-row span{font-size:20px;opacity:.2;filter:grayscale(1);transition:all .4s;cursor:default}
+.badge-row span.earned{opacity:1;filter:none;animation:bpop .5s cubic-bezier(.34,1.56,.64,1)}
+@keyframes bpop{0%{transform:scale(.5)}60%{transform:scale(1.3)}100%{transform:scale(1)}}
+.mode-btn{background:transparent;border:1px solid var(--border2);color:var(--ac);font-size:11px;font-weight:600;padding:5px 12px;border-radius:6px;cursor:pointer;letter-spacing:.5px;transition:all .2s}
+.mode-btn:hover{background:var(--ac3)}
+.sm .to{display:none!important}
+main{max-width:1080px;margin:0 auto;padding:48px 48px 80px}
+h2{font-family:'Syne',sans-serif;font-weight:800;font-size:26px;letter-spacing:-.4px;margin-bottom:24px}
+h3{font-family:'Syne',sans-serif;font-weight:700;font-size:17px;margin-bottom:12px}
+.sec{margin-bottom:64px}
+.sec-label{display:inline-flex;align-items:center;gap:8px;background:var(--ac3);border:1px solid var(--border);color:var(--ac);font-size:11px;font-weight:700;padding:5px 14px;border-radius:20px;letter-spacing:.8px;text-transform:uppercase;margin-bottom:20px}
+.card{background:var(--s1);border:1px solid var(--border);border-radius:14px;padding:28px;margin-bottom:16px}
+img{border-radius:10px;width:100%;object-fit:cover;display:block}
+.wu-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.wu-card{background:var(--s1);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.wu-body{padding:18px}
+.wu-num{font-size:11px;font-weight:700;color:var(--ac);letter-spacing:.8px;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.wu-q{font-size:15px;line-height:1.55}
+.tag-pill{background:var(--ac3);color:var(--ac);font-size:10px;padding:2px 7px;border-radius:10px}
+.quick-win{background:linear-gradient(135deg,rgba(52,211,153,.1),rgba(0,207,255,.07));border:1px solid var(--border2);border-radius:12px;padding:22px 26px;margin-top:20px}
+.quick-win-label{font-size:11px;font-weight:700;color:var(--ac);letter-spacing:.8px;margin-bottom:8px}
+.tn{background:var(--s2);border-left:3px solid var(--cyan);border-radius:0 10px 10px 0;margin-top:14px;overflow:hidden}
+.tn-btn{width:100%;background:none;border:none;color:var(--cyan);font-size:12px;font-weight:600;padding:10px 16px;text-align:left;cursor:pointer;letter-spacing:.4px}
+.tn-body{padding:0 16px 14px;font-size:12.5px;color:var(--mu2);line-height:1.6;display:none}
+.tn-body.open{display:block}
+.tn.gold{border-left-color:var(--gold)}
+.tn.gold .tn-btn{color:var(--gold)}
+.tn.pink{border-left-color:var(--pink)}
+.tn.pink .tn-btn{color:var(--pink)}
+/* Headline game */
+.hl-game{display:flex;flex-direction:column;gap:12px;margin-bottom:20px}
+.hl-card{background:var(--s2);border:1px solid var(--border);border-radius:12px;padding:18px 22px;cursor:pointer;transition:all .2s}
+.hl-card:hover{border-color:var(--border2)}
+.hl-num{font-size:10px;font-weight:700;color:var(--mu);letter-spacing:.6px;margin-bottom:6px}
+.hl-text{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--txt);margin-bottom:8px;line-height:1.4}
+.hl-btns{display:flex;gap:8px;flex-wrap:wrap}
+.hl-btn{padding:6px 14px;border:1px solid;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;background:transparent}
+.hl-btn.real{border-color:var(--ok);color:var(--ok)}
+.hl-btn.real:hover,.hl-btn.real.active{background:rgba(0,229,160,.12)}
+.hl-btn.partial{border-color:var(--warn);color:var(--warn)}
+.hl-btn.partial:hover,.hl-btn.partial.active{background:rgba(255,179,71,.12)}
+.hl-btn.fake{border-color:var(--danger);color:var(--danger)}
+.hl-btn.fake:hover,.hl-btn.fake.active{background:rgba(255,77,109,.12)}
+.hl-reveal{font-size:12.5px;color:var(--mu2);margin-top:10px;display:none;line-height:1.5}
+.hl-reveal.open{display:block}
+/* Vocab / matching pairs */
+.voc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.voc-card{background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:16px 18px;display:flex;align-items:flex-start;gap:12px}
+.voc-img{width:56px;height:56px;border-radius:8px;object-fit:cover;flex-shrink:0}
+.voc-word{font-family:'Syne',sans-serif;font-weight:700;font-size:15px;color:var(--ac);margin-bottom:2px}
+.voc-ipa{font-size:11px;color:var(--mu);margin-bottom:4px;font-style:italic}
+.voc-def{font-size:12px;color:var(--mu2);line-height:1.45;margin-bottom:6px}
+.voc-ex{font-size:11.5px;color:var(--txt);opacity:.75;font-style:italic;line-height:1.4}
+.speak-btn{background:var(--ac3);border:1px solid var(--border);color:var(--ac);font-size:11px;padding:3px 8px;border-radius:6px;cursor:pointer;margin-top:6px;display:inline-block}
+/* Matching pairs */
+.match-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.match-col h4{font-size:12px;font-weight:700;color:var(--mu);letter-spacing:.6px;margin-bottom:10px}
+.match-item{background:var(--s3);border:1px solid var(--border);border-radius:8px;padding:10px 14px;cursor:pointer;font-size:13.5px;margin-bottom:8px;transition:all .2s;user-select:none}
+.match-item:hover{border-color:var(--ac)}
+.match-item.selected{border-color:var(--gold);background:rgba(255,184,0,.1)}
+.match-item.matched{border-color:var(--ok);background:rgba(0,229,160,.1);cursor:default}
+.match-item.wrong{border-color:var(--danger);background:rgba(255,77,109,.1)}
+/* Grammar */
+.situation-box{background:linear-gradient(135deg,rgba(255,77,109,.08),rgba(255,77,109,.03));border:1px solid rgba(255,77,109,.25);border-radius:12px;padding:22px 26px;margin-bottom:20px}
+.sit-label{font-size:11px;font-weight:700;color:var(--danger);letter-spacing:.8px;margin-bottom:8px}
+.sit-text{font-size:15px;line-height:1.6;font-style:italic}
+.grammar-reveal{background:var(--ac3);border:1px solid var(--border2);border-radius:12px;padding:22px 26px;margin-bottom:20px}
+.gr-label{font-size:11px;font-weight:700;color:var(--ac);letter-spacing:.8px;margin-bottom:10px}
+.gr-table{width:100%;border-collapse:collapse;font-size:13px;margin-top:12px}
+.gr-table th{background:rgba(52,211,153,.12);color:var(--ac);font-weight:700;padding:10px 14px;text-align:left;border:1px solid var(--border)}
+.gr-table td{padding:10px 14px;border:1px solid var(--border);line-height:1.5}
+.gr-table tr:nth-child(even) td{background:rgba(255,255,255,.02)}
+.hl-ac{color:var(--ac);font-weight:600}
+.hl-cy{color:var(--cyan);font-weight:600}
+.hl-pk{color:var(--pink);font-weight:600}
+.hl-go{color:var(--gold);font-weight:600}
+.act-box{background:var(--s2);border:1px solid var(--border);border-radius:12px;padding:24px;margin-bottom:16px}
+.act-label{font-size:11px;font-weight:700;color:var(--gold);letter-spacing:.8px;margin-bottom:14px}
+.mc-q{font-size:14.5px;margin-bottom:12px;line-height:1.55}
+.mc-opts{display:flex;flex-direction:column;gap:8px;margin-bottom:14px}
+.mc-opt{background:var(--s3);border:1px solid var(--border);border-radius:8px;padding:10px 14px;cursor:pointer;font-size:13.5px;transition:all .2s}
+.mc-opt:hover{border-color:var(--ac);background:var(--ac3)}
+.mc-opt.correct{background:rgba(0,229,160,.1);border-color:var(--ok);color:var(--ok)}
+.mc-opt.wrong{background:rgba(255,77,109,.1);border-color:var(--danger);color:var(--danger)}
+.fb{font-size:12.5px;min-height:18px;margin-top:6px;font-weight:600}
+.fb.ok{color:var(--ok)}
+.fb.err{color:var(--danger)}
+.drag-list{list-style:none;display:flex;flex-direction:column;gap:8px}
+.drag-item{background:var(--s3);border:1px solid var(--border);border-radius:8px;padding:10px 14px;cursor:grab;font-size:13.5px;user-select:none;transition:border-color .2s}
+.drag-item:active{cursor:grabbing}
+.drag-item.over{border-color:var(--ac);background:var(--ac3)}
+.check-btn{background:var(--ac);color:#000;font-weight:700;font-size:13px;padding:9px 22px;border:none;border-radius:8px;cursor:pointer;margin-top:12px;transition:opacity .2s}
+.check-btn:hover{opacity:.85}
+/* Listening */
+.audio-player{background:var(--s2);border:1px solid var(--border);border-radius:12px;padding:20px 24px;display:flex;align-items:center;gap:16px;margin-bottom:20px}
+.ap-btn{width:44px;height:44px;border-radius:50%;background:var(--ac);border:none;color:#000;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ap-body{flex:1}
+.ap-title{font-size:12px;font-weight:600;color:var(--mu2);margin-bottom:6px}
+.ap-track{height:4px;background:rgba(255,255,255,.1);border-radius:2px;cursor:pointer;margin-bottom:6px}
+.ap-fill{height:100%;background:var(--ac);border-radius:2px;width:0%}
+.ap-times{display:flex;justify-content:space-between;font-size:11px;color:var(--mu)}
+.ap-wave{display:flex;align-items:center;gap:2px;height:20px;margin-left:8px}
+.ap-wave span{display:block;width:3px;background:var(--ac);border-radius:2px;animation:wave 1.2s ease-in-out infinite;opacity:.5}
+.ap-wave span:nth-child(2){animation-delay:.1s;height:10px}
+.ap-wave span:nth-child(3){animation-delay:.2s;height:16px}
+.ap-wave span:nth-child(4){animation-delay:.3s;height:8px}
+.ap-wave span:nth-child(5){animation-delay:.4s;height:14px}
+@keyframes wave{0%,100%{transform:scaleY(.4)}50%{transform:scaleY(1)}}
+.ap-wave.paused span{animation-play-state:paused}
+.script-toggle{background:none;border:1px solid var(--border);color:var(--mu2);font-size:12px;padding:6px 14px;border-radius:6px;cursor:pointer;margin-bottom:12px}
+.script-box{background:var(--s2);border-left:3px solid var(--ac);border-radius:0 10px 10px 0;padding:16px 20px;font-size:13px;line-height:1.7;color:var(--mu2);display:none}
+.script-box.open{display:block}
+.sp-grid{display:flex;flex-direction:column;gap:12px}
+.sp-card{background:var(--s2);border:1px solid var(--border);border-radius:12px;padding:20px 22px}
+.sp-tag{font-size:10px;font-weight:700;color:var(--ac);letter-spacing:.8px;margin-bottom:6px}
+.sp-q{font-size:14.5px;color:var(--txt);margin-bottom:6px;line-height:1.55}
+.sp-hint{font-size:12px;color:var(--mu);font-style:italic}
+.phrases-sec{background:linear-gradient(135deg,rgba(255,184,0,.08),rgba(52,211,153,.05));border:1px solid rgba(255,184,0,.2);border-radius:14px;padding:28px;margin-bottom:40px}
+.phrases-header{font-size:13px;font-weight:700;color:var(--gold);letter-spacing:.5px;margin-bottom:18px}
+.phrase-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.phrase-card{background:rgba(255,184,0,.05);border:1px solid rgba(255,184,0,.15);border-radius:10px;padding:16px 18px}
+.ph-en{font-family:'Syne',sans-serif;font-weight:700;font-size:15px;color:var(--gold);margin-bottom:4px}
+.ph-use{font-size:12px;color:var(--mu2);line-height:1.45}
+.om-box{background:var(--s2);border:1px solid var(--border);border-radius:12px;padding:22px 24px;margin-bottom:20px}
+.om-stmt{font-size:14px;font-style:italic;color:var(--txt);margin-bottom:12px;line-height:1.55}
+.om-labels{display:flex;justify-content:space-between;font-size:11px;color:var(--mu);margin-bottom:8px}
+.om-track{height:8px;background:rgba(255,255,255,.08);border-radius:4px;cursor:pointer;margin-bottom:10px}
+.om-fill{height:100%;background:linear-gradient(90deg,var(--danger),var(--ac));border-radius:4px;width:50%;transition:width .3s}
+.om-btns{display:flex;gap:8px;flex-wrap:wrap}
+.om-btn{background:var(--s3);border:1px solid var(--border);color:var(--txt);font-size:12px;padding:6px 14px;border-radius:6px;cursor:pointer;transition:all .2s}
+.om-btn:hover{border-color:var(--ac);color:var(--ac)}
+.timer-wrap{display:inline-flex;flex-direction:column;align-items:center;gap:8px}
+.timer-label{font-size:11px;font-weight:600;color:var(--mu);letter-spacing:.5px}
+.timer-num{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;fill:var(--txt)}
+.check-list{list-style:none;display:flex;flex-direction:column;gap:10px}
+.check-list li{display:flex;align-items:center;gap:10px;font-size:14px}
+.check-list input[type=checkbox]{width:18px;height:18px;accent-color:var(--ac);cursor:pointer;flex-shrink:0}
+.exit-box{background:var(--s2);border:1px solid var(--border);border-radius:12px;padding:24px;margin-bottom:16px}
+.exit-title{font-size:13px;font-weight:700;color:var(--ac);letter-spacing:.5px;margin-bottom:14px}
+.cert-btn{background:linear-gradient(135deg,var(--ac),var(--cyan));color:#000;font-weight:700;font-size:13px;padding:10px 26px;border:none;border-radius:8px;cursor:pointer;margin-top:14px;transition:opacity .2s}
+.win-box textarea{width:100%;background:var(--s3);border:1px solid var(--border);color:var(--txt);border-radius:8px;padding:12px 14px;font-size:13.5px;font-family:'DM Sans',sans-serif;resize:vertical;min-height:80px;margin-top:8px}
+.save-btn{background:var(--s2);border:1px solid var(--border2);color:var(--ac);font-size:12px;padding:7px 16px;border-radius:6px;cursor:pointer;margin-top:8px}
+.micro{background:rgba(52,211,153,.06);border:1px solid var(--border);border-radius:10px;padding:14px 18px;margin-top:14px;font-size:13.5px;color:var(--ac2)}
+.next-card{background:var(--s2);border:1px solid var(--border);border-radius:12px;padding:22px 26px;margin-top:20px}
+.next-label{font-size:11px;font-weight:700;color:var(--mu);letter-spacing:.8px;margin-bottom:8px}
+.next-title{font-size:16px;font-weight:700;font-family:'Syne',sans-serif;color:var(--ac2)}
+#confetti-container{position:fixed;inset:0;pointer-events:none;z-index:9999;overflow:hidden}
+footer{background:var(--s1);border-top:1px solid var(--border);padding:18px 48px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-top:40px}
+.footer-brand{font-family:'Syne',sans-serif;font-weight:700;font-size:14px;color:var(--mu)}
+.footer-sess{display:flex;gap:6px}
+.footer-sess span{font-size:11px;font-weight:700;padding:4px 10px;border-radius:6px;background:var(--s2);color:var(--mu);border:1px solid var(--border)}
+.footer-sess span.active{background:var(--ac3);color:var(--ac);border-color:var(--border2)}
+.footer-levels{display:flex;gap:6px;flex-wrap:wrap}
+.footer-levels span{font-size:10px;font-weight:600;padding:3px 8px;border-radius:4px;color:var(--mu);opacity:.4}
+.footer-levels span.active{opacity:1;color:var(--ac);background:var(--ac3)}
+@media(max-width:860px){
+  header,footer{padding:14px 20px}
+  main{padding:28px 20px 60px}
+  .wu-grid,.voc-grid,.phrase-cards,.match-grid{grid-template-columns:1fr}
+  footer{flex-direction:column;align-items:flex-start}
+}
+</style>
+</head>
+<body>
+<div id="pb"></div>
+<div id="confetti-container"></div>
+<header>
+  <div class="brand">Gabriel Turner <span class="dot">&middot;</span> English Training</div>
+  <div class="hdr-right">
+    <span class="sess-pill">B1.2 &nbsp;&middot;&nbsp; M5 &nbsp;&middot;&nbsp; S3A &nbsp;&middot;&nbsp; Discovery &amp; Drill</span>
+    <div class="badge-row">
+      <span id="b1">&#127860;</span><span id="b2">&#128218;</span><span id="b3">&#9878;&#65039;</span><span id="b4">&#127911;</span><span id="b5">&#127942;</span>
+    </div>
+    <button class="mode-btn" onclick="toggleMode()">STUDENT MODE</button>
+  </div>
+</header>
+<main>
+
+<!-- §1 WARM-UP -->
+<section class="sec" id="sec-wu">
+  <div class="sec-label">&#167;1 &nbsp; Warm-Up &nbsp;&middot;&nbsp; 5&ndash;8 min</div>
+  <h2>Fake News &mdash; How Do You Know What&rsquo;s Real?</h2>
+
+  <!-- GT ORIGINAL: Headline Game -->
+  <div style="background:linear-gradient(135deg,rgba(255,184,0,.08),rgba(52,211,153,.05));border:1px solid rgba(255,184,0,.2);border-radius:14px;padding:24px;margin-bottom:24px" class="to">
+    <div style="font-size:11px;font-weight:700;color:var(--gold);letter-spacing:.8px;margin-bottom:12px">&#9733; GT ORIGINAL &mdash; TEACHER ACTIVITY: 3 Headlines</div>
+    <p style="font-size:13px;color:var(--mu2);line-height:1.6">Before showing the interactive headline game below, write these 3 headlines on a whiteboard or share them verbally. Ask students to debate which is real, partially fake, or completely invented. Use modal deduction: &ldquo;This must be real because&hellip; / This can&rsquo;t be true because&hellip; / This might be partially edited because&hellip;&rdquo;</p>
+    <div style="margin-top:14px;display:flex;flex-direction:column;gap:10px">
+      <div style="background:var(--s2);border-left:3px solid var(--warn);padding:12px 16px;border-radius:0 8px 8px 0;font-size:14px;font-family:'Syne',sans-serif;font-weight:700">&#128240; &ldquo;Study finds people who drink coffee live longer than those who don&rsquo;t.&rdquo;</div>
+      <div style="background:var(--s2);border-left:3px solid var(--danger);padding:12px 16px;border-radius:0 8px 8px 0;font-size:14px;font-family:'Syne',sans-serif;font-weight:700">&#128240; &ldquo;Scientists confirm 5G towers cause brain damage &mdash; governments are hiding the report.&rdquo;</div>
+      <div style="background:var(--s2);border-left:3px solid var(--ac);padding:12px 16px;border-radius:0 8px 8px 0;font-size:14px;font-family:'Syne',sans-serif;font-weight:700">&#128240; &ldquo;WhatsApp will begin charging users &euro;3 per month starting January 2026.&rdquo;</div>
+    </div>
+    <p style="font-size:12px;color:var(--mu);margin-top:10px">Answers: (1) Partially real &mdash; some studies show correlation, not causation. (2) Completely fake. (3) Recurring urban myth &mdash; always false, always believed.</p>
+  </div>
+
+  <!-- Interactive Headline Game -->
+  <div class="act-box" style="margin-bottom:24px">
+    <div class="act-label">&#9889; HEADLINE GAME &mdash; Real, Partial, or Fake?</div>
+    <p style="font-size:13px;color:var(--mu2);margin-bottom:16px">Click your verdict for each headline. Justify your answer using must / can&rsquo;t / might.</p>
+    <div class="hl-game">
+      <div class="hl-card">
+        <div class="hl-num">HEADLINE 1</div>
+        <div class="hl-text">&ldquo;Mexico becomes world&rsquo;s largest avocado exporter, surpassing all other countries combined.&rdquo;</div>
+        <div class="hl-btns">
+          <button class="hl-btn real" onclick="verdictHL(this,1,'real')">&#9989; Real</button>
+          <button class="hl-btn partial" onclick="verdictHL(this,1,'partial')">&#128161; Partial</button>
+          <button class="hl-btn fake" onclick="verdictHL(this,1,'fake')">&#10060; Fake</button>
+        </div>
+        <div class="hl-reveal" id="hlR1">&#9989; <strong>Real</strong> &mdash; Mexico produces approximately 30% of the world&rsquo;s avocados and is the largest exporter. The phrasing is slightly misleading (&ldquo;all others combined&rdquo;) but broadly accurate.</div>
+      </div>
+      <div class="hl-card">
+        <div class="hl-num">HEADLINE 2</div>
+        <div class="hl-text">&ldquo;New study: reading on screens causes permanent vision loss in 80% of users over 30.&rdquo;</div>
+        <div class="hl-btns">
+          <button class="hl-btn real" onclick="verdictHL(this,2,'real')">&#9989; Real</button>
+          <button class="hl-btn partial" onclick="verdictHL(this,2,'partial')">&#128161; Partial</button>
+          <button class="hl-btn fake" onclick="verdictHL(this,2,'fake')">&#10060; Fake</button>
+        </div>
+        <div class="hl-reveal" id="hlR2">&#10060; <strong>Fake</strong> &mdash; No such study exists. Screen use can cause eye strain, not permanent vision loss. The &ldquo;80%&rdquo; statistic is invented. Classic fear-based misinformation structure.</div>
+      </div>
+      <div class="hl-card">
+        <div class="hl-num">HEADLINE 3</div>
+        <div class="hl-text">&ldquo;Electric vehicle sales in Mexico grow 40% in 2024 &mdash; but only 0.3% of total market.&rdquo;</div>
+        <div class="hl-btns">
+          <button class="hl-btn real" onclick="verdictHL(this,3,'real')">&#9989; Real</button>
+          <button class="hl-btn partial" onclick="verdictHL(this,3,'partial')">&#128161; Partial</button>
+          <button class="hl-btn fake" onclick="verdictHL(this,3,'fake')">&#10060; Fake</button>
+        </div>
+        <div class="hl-reveal" id="hlR3">&#9989; <strong>Real</strong> &mdash; This reflects actual Mexican EV market data. High growth percentage + very small base = both true simultaneously. This is how statistics are used selectively in media.</div>
+      </div>
+    </div>
+    <div class="fb" id="hlFb"></div>
+  </div>
+
+  <div class="wu-grid">
+    <div class="wu-card">
+      <img src="https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=600&auto=format&fit=crop&q=80" alt="Newspaper front page">
+      <div class="wu-body">
+        <div class="wu-num">Q1 &nbsp;<span class="tag-pill">Personal</span></div>
+        <div class="wu-q">Have you ever believed something that later turned out to be false? What was it, and how did you find out it was wrong?</div>
+      </div>
+    </div>
+    <div class="wu-card">
+      <img src="https://images.unsplash.com/photo-1586339949916-3e9457bef6d3?w=600&auto=format&fit=crop&q=80" alt="Scrolling phone news">
+      <div class="wu-body">
+        <div class="wu-num">Q2 &nbsp;<span class="tag-pill">Work</span></div>
+        <div class="wu-q">Has fake news or misinformation ever affected your company, your industry, or a supplier? What might the consequences have been?</div>
+      </div>
+    </div>
+  </div>
+  <div class="quick-win">
+    <div class="quick-win-label">&#9889; QUICK WIN &mdash; 30 SECONDS</div>
+    <div style="font-size:14px;line-height:1.6">Look at Headline 2 again. Say out loud: <strong>&ldquo;That can&rsquo;t be true because&hellip; A real study would have&hellip; They must be trying to&hellip;&rdquo;</strong> &mdash; Three modal deductions in 30 seconds. That&rsquo;s critical thinking in English.</div>
+  </div>
+  <div class="tn to">
+    <button class="tn-btn" onclick="toggleTN(this)">&#9889; Teacher Note &mdash; &#167;1 Warm-Up</button>
+    <div class="tn-body">GT Original for S3A: 3 headlines as a physical activity first, THEN the interactive game reinforces it digitally. The teacher&rsquo;s job is to make the debate emotional: &ldquo;Would you share Headline 1 with your family on WhatsApp? What about Headline 2?&rdquo; The gap between &ldquo;I wouldn&rsquo;t share that&rdquo; and &ldquo;my uncle already did&rdquo; drives authentic production. Modal deduction is the perfect grammar tool here: we reason about information we cannot fully verify.</div>
+  </div>
+  <div class="tn pink to">
+    <button class="tn-btn" onclick="toggleTN(this)">&#128293; Engagement Note</button>
+    <div class="tn-body">WhatsApp is the primary fake news vector in Mexico. Almost every learner in a Baj&iacute;o corporate context has a family group chat where misinformation spreads. Naming this specifically (without judgement) generates immediate personal engagement. Headline 3 (EV data) is the most professionally relevant &mdash; use it with engineering and logistics learners.</div>
+  </div>
+</section>
+
+<!-- §2 SPEAKING TOPIC -->
+<section class="sec" id="sec-sp">
+  <div class="sec-label">&#167;2 &nbsp; Speaking Topic &nbsp;&middot;&nbsp; 5 min</div>
+  <h2>The Big Question</h2>
+  <div class="card">
+    <img src="https://images.unsplash.com/photo-1495020689067-958852a7765e?w=600&auto=format&fit=crop&q=80" alt="Media screens information" style="height:220px;margin-bottom:20px">
+    <h3 style="font-size:22px;line-height:1.4;color:var(--ac2);margin-bottom:12px">&ldquo;If algorithms decide what news you see, can you ever trust your own opinion?&rdquo;</h3>
+    <p style="font-size:14px;color:var(--mu2);line-height:1.65">The average person encounters between 4,000 and 10,000 pieces of information per day &mdash; most of them on a phone screen. Algorithms decide what appears in your feed based on what keeps you engaged, not what is true. This creates echo chambers: you see content that confirms what you already believe. Fake news doesn&rsquo;t have to be believed by everyone &mdash; it just has to be shared often enough to shape perception.</p>
+  </div>
+  <div class="tn to">
+    <button class="tn-btn" onclick="toggleTN(this)">&#9889; Teacher Note &mdash; &#167;2 Speaking</button>
+    <div class="tn-body">The topic statement uses an indirect conditional to pose an epistemological problem &mdash; &ldquo;can you trust your own opinion?&rdquo; is not rhetorical. After 90 seconds of discussion, bridge to grammar: &ldquo;When you say &lsquo;I don&rsquo;t know if this is real,&rsquo; the English tools for that uncertainty are must / can&rsquo;t / might.&rdquo;</div>
+  </div>
+</section>
+
+<!-- §3 VOCABULARY + MATCHING PAIRS -->
+<section class="sec" id="sec-voc">
+  <div class="sec-label">&#167;3 &nbsp; Vocabulary &nbsp;&middot;&nbsp; 10 min</div>
+  <h2>Words for This Session</h2>
+
+  <!-- MATCHING PAIRS MINI-GAME -->
+  <div class="act-box" style="margin-bottom:24px">
+    <div class="act-label">&#9889; MINI-GAME &mdash; MATCHING PAIRS &mdash; Word to definition</div>
+    <p style="font-size:13px;color:var(--mu2);margin-bottom:16px">Click a word (left), then its correct definition (right).</p>
+    <div class="match-grid">
+      <div>
+        <h4>WORDS</h4>
+        <div class="match-item" id="mw1" onclick="selectMatch('mw1','1')">misinformation</div>
+        <div class="match-item" id="mw2" onclick="selectMatch('mw2','2')">echo chamber</div>
+        <div class="match-item" id="mw3" onclick="selectMatch('mw3','3')">credibility</div>
+        <div class="match-item" id="mw4" onclick="selectMatch('mw4','4')">algorithm</div>
+        <div class="match-item" id="mw5" onclick="selectMatch('mw5','5')">propaganda</div>
+        <div class="match-item" id="mw6" onclick="selectMatch('mw6','6')">to fact-check</div>
+      </div>
+      <div>
+        <h4>DEFINITIONS</h4>
+        <div class="match-item" id="md4" onclick="selectMatch('md4','4')">A set of rules a computer follows to decide what content to show you based on your past behaviour</div>
+        <div class="match-item" id="md1" onclick="selectMatch('md1','1')">False or inaccurate information spread without necessarily intending to deceive</div>
+        <div class="match-item" id="md6" onclick="selectMatch('md6','6')">To verify whether a claim or piece of information is accurate by checking reliable sources</div>
+        <div class="match-item" id="md5" onclick="selectMatch('md5','5')">Information, especially of a biased nature, used to promote a political cause or point of view</div>
+        <div class="match-item" id="md2" onclick="selectMatch('md2','2')">An environment where a person only encounters information that confirms their existing beliefs</div>
+        <div class="match-item" id="md3" onclick="selectMatch('md3','3')">The quality of being trusted and believed, especially as a source of information</div>
+      </div>
+    </div>
+    <div class="fb" id="matchFb" style="margin-top:12px"></div>
+  </div>
+
+  <div class="voc-grid">
+    <div class="voc-card">
+      <img class="voc-img" src="https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=600&auto=format&fit=crop&q=80" alt="misinformation">
+      <div>
+        <div class="voc-word">misinformation</div>
+        <div class="voc-ipa">/ˌmɪs.ɪn.fəˈmeɪ.ʃən/</div>
+        <div class="voc-def">False or inaccurate information, spread regardless of intent to deceive</div>
+        <div class="voc-ex">&ldquo;The misinformation must have spread through WhatsApp before anyone could check the source.&rdquo;</div>
+        <span class="speak-btn" onclick="speak('misinformation')">&#9654; Hear</span>
+      </div>
+    </div>
+    <div class="voc-card">
+      <img class="voc-img" src="https://images.unsplash.com/photo-1471107340929-a87cd0979e22?w=600&auto=format&fit=crop&q=80" alt="source">
+      <div>
+        <div class="voc-word">source</div>
+        <div class="voc-ipa">/sɔːs/</div>
+        <div class="voc-def">The origin of a piece of information; where it comes from and who produced it</div>
+        <div class="voc-ex">&ldquo;If the source is anonymous, you can&rsquo;t trust the information completely.&rdquo;</div>
+        <span class="speak-btn" onclick="speak('source')">&#9654; Hear</span>
+      </div>
+    </div>
+    <div class="voc-card">
+      <img class="voc-img" src="https://images.unsplash.com/photo-1522204523234-8729aa6a3d22?w=600&auto=format&fit=crop&q=80" alt="headline">
+      <div>
+        <div class="voc-word">headline</div>
+        <div class="voc-ipa">/ˈhed.laɪn/</div>
+        <div class="voc-def">The title of a news article, designed to attract attention and summarise the story</div>
+        <div class="voc-ex">&ldquo;The headline might be technically true while the full story contradicts it completely.&rdquo;</div>
+        <span class="speak-btn" onclick="speak('headline')">&#9654; Hear</span>
+      </div>
+    </div>
+    <div class="voc-card">
+      <img class="voc-img" src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=600&auto=format&fit=crop&q=80" alt="algorithm">
+      <div>
+        <div class="voc-word">algorithm</div>
+        <div class="voc-ipa">/ˈæl.ɡə.rɪ.ðəm/</div>
+        <div class="voc-def">A set of rules a system follows to decide what content to show based on your behaviour</div>
+        <div class="voc-ex">&ldquo;The algorithm must be showing you exactly what you want to believe &mdash; that&rsquo;s the danger.&rdquo;</div>
+        <span class="speak-btn" onclick="speak('algorithm')">&#9654; Hear</span>
+      </div>
+    </div>
+    <div class="voc-card">
+      <img class="voc-img" src="https://images.unsplash.com/photo-1624953587687-daf255b6b80a?w=600&auto=format&fit=crop&q=80" alt="fact-check">
+      <div>
+        <div class="voc-word">fact-check</div>
+        <div class="voc-ipa">/ˈfækt.tʃek/</div>
+        <div class="voc-def">To verify whether a claim or piece of information is accurate by checking reliable sources</div>
+        <div class="voc-ex">&ldquo;She must have fact-checked the story &mdash; she cited three independent sources.&rdquo;</div>
+        <span class="speak-btn" onclick="speak('fact-check')">&#9654; Hear</span>
+      </div>
+    </div>
+    <div class="voc-card">
+      <img class="voc-img" src="https://images.unsplash.com/photo-1553729459-efe14ef6055d?w=600&auto=format&fit=crop&q=80" alt="echo chamber">
+      <div>
+        <div class="voc-word">echo chamber</div>
+        <div class="voc-ipa">/ˈek.əʊ ˌtʃeɪm.bər/</div>
+        <div class="voc-def">An environment where you only encounter opinions that confirm what you already believe</div>
+        <div class="voc-ex">&ldquo;If you only follow people who agree with you, you might be living in an echo chamber.&rdquo;</div>
+        <span class="speak-btn" onclick="speak('echo chamber')">&#9654; Hear</span>
+      </div>
+    </div>
+    <div class="voc-card">
+      <img class="voc-img" src="https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=600&auto=format&fit=crop&q=80" alt="credibility">
+      <div>
+        <div class="voc-word">credibility</div>
+        <div class="voc-ipa">/ˌkred.ɪˈbɪl.ɪ.ti/</div>
+        <div class="voc-def">The quality of being trusted and believed; the reputation of a source as reliable and honest</div>
+        <div class="voc-ex">&ldquo;Once a media outlet loses credibility, it can&rsquo;t easily recover it.&rdquo;</div>
+        <span class="speak-btn" onclick="speak('credibility')">&#9654; Hear</span>
+      </div>
+    </div>
+    <div class="voc-card">
+      <img class="voc-img" src="https://images.unsplash.com/photo-1557672172-298e090bd0f1?w=600&auto=format&fit=crop&q=80" alt="propaganda">
+      <div>
+        <div class="voc-word">propaganda</div>
+        <div class="voc-ipa">/ˌprɒp.əˈɡæn.də/</div>
+        <div class="voc-def">Information used to promote a particular political, ideological, or commercial agenda</div>
+        <div class="voc-ex">&ldquo;The article must be propaganda &mdash; it only presents one side and dismisses all counter-evidence.&rdquo;</div>
+        <span class="speak-btn" onclick="speak('propaganda')">&#9654; Hear</span>
+      </div>
+    </div>
+    <div class="voc-card">
+      <img class="voc-img" src="https://images.unsplash.com/photo-1586339949916-3e9457bef6d3?w=600&auto=format&fit=crop&q=80" alt="to verify">
+      <div>
+        <div class="voc-word">to verify</div>
+        <div class="voc-ipa">/ˈver.ɪ.faɪ/</div>
+        <div class="voc-def">To confirm that something is accurate, true, or real through checking independent sources</div>
+        <div class="voc-ex">&ldquo;You can&rsquo;t verify a claim just by reading one article &mdash; you need multiple independent sources.&rdquo;</div>
+        <span class="speak-btn" onclick="speak('to verify')">&#9654; Hear</span>
+      </div>
+    </div>
+    <div class="voc-card">
+      <img class="voc-img" src="https://images.unsplash.com/photo-1495020689067-958852a7765e?w=600&auto=format&fit=crop&q=80" alt="bias">
+      <div>
+        <div class="voc-word">bias</div>
+        <div class="voc-ipa">/ˈbaɪ.əs/</div>
+        <div class="voc-def">An inclination or prejudice that unfairly influences how information is presented or received</div>
+        <div class="voc-ex">&ldquo;Every source has some bias &mdash; the key is identifying it and accounting for it.&rdquo;</div>
+        <span class="speak-btn" onclick="speak('bias')">&#9654; Hear</span>
+      </div>
+    </div>
+  </div>
+  <div class="micro">&#128172; <strong>Quick:</strong> Use &ldquo;must,&rdquo; &ldquo;can&rsquo;t,&rdquo; or &ldquo;might&rdquo; with 3 of these words. Example: &ldquo;An algorithm can&rsquo;t be completely neutral &mdash; it must reflect the values of the people who designed it.&rdquo;</div>
+  <div class="tn to">
+    <button class="tn-btn" onclick="toggleTN(this)">&#9889; Teacher Note &mdash; &#167;3 Vocabulary</button>
+    <div class="tn-body">Matching Pairs works particularly well here because definitions require precise understanding &mdash; &ldquo;misinformation&rdquo; vs &ldquo;propaganda&rdquo; is a distinction many learners conflate (intent vs structure). After matching, ask: &ldquo;Can something be both misinformation and propaganda?&rdquo; This produces the most authentic advanced vocabulary discussion of the session.</div>
+  </div>
+  <div class="tn gold to">
+    <button class="tn-btn" onclick="toggleTN(this)">&#9733; Retention Note</button>
+    <div class="tn-body">&#x1F4B0; These vocabulary words appear in international business communication, sustainability reports, investor communications, and global media monitoring. Learners who master this set can read The Economist, Reuters, or Bloomberg and fully understand the editorial language. Seed this idea: &ldquo;By B2.1, you&rsquo;ll be producing this kind of writing.&rdquo;</div>
+  </div>
+</section>
+
+<!-- §4 COLLOQUIAL -->
+<section class="sec" id="sec-col">
+  <div class="sec-label">&#167;4 &nbsp; Colloquial &nbsp;&middot;&nbsp; 5 min</div>
+  <h2>M5 Phrases &mdash; In Fake News Context</h2>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+    <div style="background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:16px 20px">
+      <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:16px;color:var(--ac);margin-bottom:4px">&ldquo;It went viral.&rdquo;</div>
+      <div style="font-size:12px;color:var(--mu2);margin-bottom:6px">Spread rapidly and massively</div>
+      <div style="font-size:12px;font-style:italic;color:var(--txt);opacity:.8">&ldquo;The fake vaccine story went viral before any fact-check could reach the same audience.&rdquo;</div>
+    </div>
+    <div style="background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:16px 20px">
+      <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:16px;color:var(--ac);margin-bottom:4px">&ldquo;They&rsquo;re clout-chasing.&rdquo;</div>
+      <div style="font-size:12px;color:var(--mu2);margin-bottom:6px">Seeking attention at any cost</div>
+      <div style="font-size:12px;font-style:italic;color:var(--txt);opacity:.8">&ldquo;Some media outlets share fake news because they&rsquo;re clout-chasing &mdash; engagement matters more than accuracy.&rdquo;</div>
+    </div>
+    <div style="background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:16px 20px">
+      <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:16px;color:var(--ac);margin-bottom:4px">&ldquo;No cap.&rdquo;</div>
+      <div style="font-size:12px;color:var(--mu2);margin-bottom:6px">I&rsquo;m being completely serious</div>
+      <div style="font-size:12px;font-style:italic;color:var(--txt);opacity:.8">&ldquo;No cap &mdash; I fact-checked that article and every single &ldquo;statistic&rdquo; in it was invented.&rdquo;</div>
+    </div>
+    <div style="background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:16px 20px">
+      <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:16px;color:var(--ac);margin-bottom:4px">&ldquo;Shade was thrown.&rdquo;</div>
+      <div style="font-size:12px;color:var(--mu2);margin-bottom:6px">Subtle indirect criticism</div>
+      <div style="font-size:12px;font-style:italic;color:var(--txt);opacity:.8">&ldquo;The newspaper said &lsquo;sources close to the government claim&hellip;&rsquo; &mdash; shade was thrown without accountability.&rdquo;</div>
+    </div>
+  </div>
+  <div class="tn to">
+    <button class="tn-btn" onclick="toggleTN(this)">&#9889; Teacher Note &mdash; &#167;4 Colloquial</button>
+    <div class="tn-body">The connection between &ldquo;shade was thrown&rdquo; and anonymous sourcing in journalism is a nuanced one &mdash; it shows how colloquial language can describe editorial tactics. If learners make this connection independently, acknowledge it: &ldquo;Exactly &mdash; anonymous sources can be a form of institutional shade-throwing.&rdquo; This kind of connection-making is what B1.2 fluency looks like.</div>
+  </div>
+</section>
+
+<!-- §5 GRAMMAR -->
+<section class="sec" id="sec-gr">
+  <div class="sec-label">&#167;5 &nbsp; Grammar &nbsp;&middot;&nbsp; 12&ndash;15 min</div>
+  <h2>Modal Deduction &mdash; Applied to Media &amp; Information</h2>
+
+  <div class="situation-box">
+    <div class="sit-label">&#9888; REAL SITUATION</div>
+    <div class="sit-text">Someone in your team shares a WhatsApp message: &ldquo;Scientists say coffee causes cancer in 90% of cases &mdash; stop drinking it immediately.&rdquo; No source, no date. You want to reason out loud about whether it&rsquo;s true before responding. How?</div>
+  </div>
+
+  <div class="grammar-reveal">
+    <div class="gr-label">&#9998; MODAL DEDUCTION IN CRITICAL THINKING CONTEXTS</div>
+    <table class="gr-table">
+      <tr><th>What you&rsquo;re doing</th><th>Structure</th><th>Example</th></tr>
+      <tr><td>Near-certain positive</td><td><span class="hl-ac">must be</span></td><td>This <span class="hl-ac">must be</span> misinformation &mdash; no credible study would phrase it that way.</td></tr>
+      <tr><td>Near-certain negative</td><td><span class="hl-pk">can&rsquo;t be</span></td><td>That claim <span class="hl-pk">can&rsquo;t be</span> accurate &mdash; it contradicts years of established research.</td></tr>
+      <tr><td>Expressing uncertainty</td><td><span class="hl-cy">might be</span></td><td>The headline <span class="hl-cy">might be</span> technically true but the context <span class="hl-cy">could be</span> misleading.</td></tr>
+      <tr><td>Past positive deduction</td><td><span class="hl-ac">must have</span></td><td>The article <span class="hl-ac">must have been</span> edited after publication &mdash; the original version said something different.</td></tr>
+      <tr><td>Past negative deduction</td><td><span class="hl-pk">can&rsquo;t have</span></td><td>The journalist <span class="hl-pk">can&rsquo;t have</span> verified this &mdash; there are no named sources anywhere.</td></tr>
+    </table>
+    <div style="margin-top:12px;font-size:12px;color:var(--danger);font-weight:600">&#9888; Common error: &ldquo;It must to be fake.&rdquo; &rarr; WRONG. Never use &ldquo;to&rdquo; after a modal verb.</div>
+  </div>
+
+  <!-- Activity A: MC -->
+  <div class="act-box">
+    <div class="act-label">ACTIVITY A &mdash; Fake News Analysis &mdash; Choose the correct deduction</div>
+
+    <div class="mc-q">1. The article has no author name, no date, and no linked sources. It _____ have gone through any editorial review process.</div>
+    <div class="mc-opts" id="q1opts">
+      <div class="mc-opt" onclick="checkOpt(this,'can't','q1')">A. can&rsquo;t</div>
+      <div class="mc-opt" onclick="checkOpt(this,'must','q1')">B. must</div>
+      <div class="mc-opt" onclick="checkOpt(this,'might','q1')">C. might</div>
+    </div>
+    <div class="fb" id="q1fb"></div>
+
+    <div class="mc-q" style="margin-top:18px">2. The same story appears on 12 different websites with nearly identical wording. It _____ have been coordinated &mdash; that&rsquo;s too consistent to be coincidence.</div>
+    <div class="mc-opts" id="q2opts">
+      <div class="mc-opt" onclick="checkOpt(this,'must','q2')">A. must</div>
+      <div class="mc-opt" onclick="checkOpt(this,'can't','q2')">B. can&rsquo;t</div>
+      <div class="mc-opt" onclick="checkOpt(this,'might','q2')">C. might</div>
+    </div>
+    <div class="fb" id="q2fb"></div>
+
+    <div class="mc-q" style="margin-top:18px">3. I&rsquo;m not sure, but this statistic _____ have been taken out of context. The original report said something quite different.</div>
+    <div class="mc-opts" id="q3opts">
+      <div class="mc-opt" onclick="checkOpt(this,'might','q3')">A. might</div>
+      <div class="mc-opt" onclick="checkOpt(this,'must','q3')">B. must</div>
+      <div class="mc-opt" onclick="checkOpt(this,'can't','q3')">C. can&rsquo;t</div>
+    </div>
+    <div class="fb" id="q3fb"></div>
+
+    <div class="mc-q" style="margin-top:18px">4. This algorithm _____ be showing users only content that confirms their political views &mdash; the engagement data proves it.</div>
+    <div class="mc-opts" id="q4opts">
+      <div class="mc-opt" onclick="checkOpt(this,'must','q4')">A. must</div>
+      <div class="mc-opt" onclick="checkOpt(this,'can't','q4')">B. can&rsquo;t</div>
+      <div class="mc-opt" onclick="checkOpt(this,'might','q4')">C. might</div>
+    </div>
+    <div class="fb" id="q4fb"></div>
+  </div>
+
+  <div class="micro">&#128172; <strong>Quick:</strong> Think of a piece of information you&rsquo;ve received recently on your phone or social media that seemed suspicious. Make 2 deductions about it out loud using must or can&rsquo;t.</div>
+
+  <!-- Activity B: Unjumble -->
+  <div class="act-box">
+    <div class="act-label">ACTIVITY B &mdash; UNJUMBLE &mdash; Reorder to make correct deduction sentences</div>
+    <p style="font-size:13px;color:var(--mu2);margin-bottom:16px">Drag to reorder. Both sentences use modal deduction to analyse media.</p>
+
+    <p style="font-size:13px;color:var(--mu);margin-bottom:8px"><strong>Sentence 1:</strong></p>
+    <ul class="drag-list" id="order1">
+      <li class="drag-item" draggable="true">the journalist</li>
+      <li class="drag-item" draggable="true">since there are no sources</li>
+      <li class="drag-item" draggable="true">can't have</li>
+      <li class="drag-item" draggable="true">fact-checked this story</li>
+    </ul>
+    <button class="check-btn" onclick="checkOrder('order1',['the journalist','can't have','fact-checked this story','since there are no sources'],'fb-ord1')">Check</button>
+    <div class="fb" id="fb-ord1"></div>
+
+    <p style="font-size:13px;color:var(--mu);margin-bottom:8px;margin-top:20px"><strong>Sentence 2:</strong></p>
+    <ul class="drag-list" id="order2">
+      <li class="drag-item" draggable="true">designing it to filter</li>
+      <li class="drag-item" draggable="true">the algorithm must</li>
+      <li class="drag-item" draggable="true">be</li>
+      <li class="drag-item" draggable="true">content by political bias</li>
+    </ul>
+    <button class="check-btn" onclick="checkOrder('order2',['the algorithm must','be','designing it to filter','content by political bias'],'fb-ord2')">Check</button>
+    <div class="fb" id="fb-ord2"></div>
+  </div>
+  <div class="tn to">
+    <button class="tn-btn" onclick="toggleTN(this)">&#9889; Teacher Note &mdash; &#167;5 Grammar</button>
+    <div class="tn-body">Activity B Sentence 2 has a subtle issue: &ldquo;the algorithm must be designing it to filter&rdquo; sounds slightly odd because &ldquo;designing&rdquo; implies someone designed it, not that it&rsquo;s still in progress. This is a real grammatical nuance worth discussing at B1.2: &ldquo;must be + -ing&rdquo; implies an ongoing action. You could also say &ldquo;must have been designed to filter&rdquo; (past passive deduction). Point this out as a bonus for strong groups &mdash; don&rsquo;t let it derail the session.</div>
+  </div>
+</section>
+
+<!-- §6 LISTENING -->
+<section class="sec" id="sec-li">
+  <div class="sec-label">&#167;6 &nbsp; Listening &nbsp;&middot;&nbsp; 10&ndash;12 min</div>
+  <h2>Carlos Mendez on Information &amp; Trust</h2>
+
+  <div class="om-box">
+    <div style="font-size:12px;font-weight:700;color:var(--mu);letter-spacing:.6px;margin-bottom:8px">OPINION METER &mdash; Before you listen:</div>
+    <div class="om-stmt">&ldquo;Most people can&rsquo;t reliably identify fake news &mdash; including highly educated professionals.&rdquo;</div>
+    <div class="om-labels"><span>&#128100; Strongly Disagree</span><span>&#128101;&#128101; Strongly Agree</span></div>
+    <div class="om-track"><div class="om-fill" id="omFill"></div></div>
+    <div style="font-size:13px;color:var(--ac);text-align:center;margin-bottom:8px" id="omPct">50%</div>
+    <div class="om-btns">
+      <button class="om-btn" onclick="moveMeter(-15)">&#128078; Disagree</button>
+      <button class="om-btn" onclick="moveMeter(-8)">&#128078; Somewhat</button>
+      <button class="om-btn" onclick="moveMeter(8)">&#128077; Somewhat</button>
+      <button class="om-btn" onclick="moveMeter(15)">&#128077; Strongly</button>
+    </div>
+  </div>
+
+  <div class="audio-player">
+    <button class="ap-btn" id="apBtn" onclick="toggleAudio()">&#9654;</button>
+    <div class="ap-body">
+      <div class="ap-title">Carlos Mendez &mdash; B1.2 M5 S3A &mdash; ElevenLabs speed 0.85</div>
+      <div class="ap-track" id="apTrack" onclick="seekAudio(event)">
+        <div class="ap-fill" id="apFill"></div>
+      </div>
+      <div class="ap-times"><span id="apCur">0:00</span><span id="apDur">1:50</span></div>
+    </div>
+    <div class="ap-wave paused" id="apWave">
+      <span style="height:6px"></span><span></span><span></span><span></span><span></span>
+    </div>
+  </div>
+
+  <button class="script-toggle to" onclick="toggleScript(this)">&#128196; Show Script (Teacher)</button>
+  <div class="script-box to" id="scriptBox">
+    <p><strong>Carlos Mendez:</strong></p>
+    <p style="margin-top:8px">I run a critical thinking workshop for senior managers. In every session, I show them three pieces of information and ask: which is real? And every single time, at least one highly educated executive gets it wrong. Every time.</p>
+    <p style="margin-top:10px"><span class="hl-ac">The problem must be deeper than intelligence or education.</span> Research in cognitive psychology suggests that we don&rsquo;t evaluate information based on truth &mdash; we evaluate it based on how it makes us feel. Information that confirms what we already believe feels credible. Information that challenges us <span class="hl-cy">might feel</span> threatening, even when it&rsquo;s accurate.</p>
+    <p style="margin-top:10px">Think about this: if you read a headline that supports your political view, how long do you spend checking the source? Thirty seconds? None at all? Now compare that to a headline that contradicts your view. <span class="hl-pk">The journalist can&rsquo;t have been wrong</span> &mdash; you&rsquo;ll check everything twice.</p>
+    <p style="margin-top:10px">This is what algorithms exploit. They <span class="hl-ac">must have been designed</span> to understand that emotional engagement beats informational accuracy every time. So the question is not &ldquo;is this fake news?&rdquo; The question is: <span class="hl-go">&ldquo;Why does this feel true to me? And is that a reason to trust it &mdash; or a reason to be suspicious?&rdquo;</span></p>
+    <p style="margin-top:10px;font-size:11px;color:var(--mu)">&#127897; ElevenLabs: Carlos Mendez &mdash; speed 0.85 &mdash; approx. 175 words</p>
+  </div>
+
+  <div class="act-box" style="margin-top:20px">
+    <div class="act-label">COMPREHENSION &mdash; True or False</div>
+    <div class="mc-q">1. Carlos says that intelligence is the main factor in being able to identify misinformation.</div>
+    <div class="mc-opts" id="lq1opts">
+      <div class="mc-opt" onclick="checkOpt(this,'False','lq1')">A. True</div>
+      <div class="mc-opt" onclick="checkOpt(this,'False','lq1')">B. False</div>
+    </div>
+    <div class="fb" id="lq1fb"></div>
+
+    <div class="mc-q" style="margin-top:16px">2. According to Carlos, we tend to fact-check more when a headline confirms our existing beliefs.</div>
+    <div class="mc-opts" id="lq2opts">
+      <div class="mc-opt" onclick="checkOpt(this,'False','lq2')">A. True</div>
+      <div class="mc-opt" onclick="checkOpt(this,'False','lq2')">B. False</div>
+    </div>
+    <div class="fb" id="lq2fb"></div>
+
+    <div class="mc-q" style="margin-top:16px">3. Carlos says the best signal that information may be manipulative is that it makes you feel emotionally confirmed.</div>
+    <div class="mc-opts" id="lq3opts">
+      <div class="mc-opt" onclick="checkOpt(this,'True','lq3')">A. True</div>
+      <div class="mc-opt" onclick="checkOpt(this,'True','lq3')">B. False</div>
+    </div>
+    <div class="fb" id="lq3fb"></div>
+  </div>
+  <div class="micro">&#128172; <strong>Quick:</strong> In 2 sentences, summarise Carlos&rsquo;s core argument. Include at least one modal deduction from his own words.</div>
+  <div class="tn to">
+    <button class="tn-btn" onclick="toggleTN(this)">&#9889; Teacher Note &mdash; &#167;6 Listening</button>
+    <div class="tn-body">Carlos&rsquo;s final question &mdash; &ldquo;Why does this feel true to me? And is that a reason to trust it &mdash; or a reason to be suspicious?&rdquo; &mdash; is the takeaway of the session. After comprehension, ask learners to think of one thing they currently believe strongly. Ask: &ldquo;Is it possible you believe it partly because it feels emotionally right?&rdquo; Do not push for answers &mdash; let the question sit. This level of metacognitive awareness is exactly what B1.2 philosophical discussion requires.</div>
+  </div>
+</section>
+
+<!-- §SP SPEAKING PRACTICE -->
+<section class="sec" id="sec-spp">
+  <div class="sec-label">&#167;SP &nbsp; Speaking Practice &nbsp;&middot;&nbsp; 10&ndash;12 min</div>
+  <h2>Think Out Loud</h2>
+  <div class="sp-grid">
+    <div class="sp-card">
+      <div class="sp-tag">RECALL</div>
+      <div class="sp-q">What does Carlos say about the relationship between emotion and credibility? Paraphrase his argument using &ldquo;he must be suggesting that&hellip;&rdquo;</div>
+      <div class="sp-hint">Start with: &ldquo;He must be saying that when information confirms our beliefs, we&hellip;&rdquo;</div>
+    </div>
+    <div class="sp-card">
+      <div class="sp-tag">DEDUCTION</div>
+      <div class="sp-q">Your colleague shares a news article without a byline, published on a website you&rsquo;ve never heard of. Make 3 deductions about its reliability using must / can&rsquo;t / might.</div>
+      <div class="sp-hint">Use vocabulary: source, credibility, fact-check, verify</div>
+    </div>
+    <div class="sp-card">
+      <div class="sp-tag">WORK CONTEXT</div>
+      <div class="sp-q">How might fake news or misinformation affect your industry specifically? Think about supply chain rumours, competitor information, or regulatory news.</div>
+      <div class="sp-hint">&ldquo;If a competitor spread misinformation about our product, it might&hellip; / We can&rsquo;t afford to ignore&hellip;&rdquo;</div>
+    </div>
+    <div class="sp-card">
+      <div class="sp-tag">DEBATE</div>
+      <div class="sp-q">Is it the user&rsquo;s responsibility to fact-check, or should platforms and governments do it for us? Argue your position.</div>
+      <div class="sp-hint">Use &ldquo;No cap&rdquo; or &ldquo;it went viral&rdquo; to anchor your argument with M5 language</div>
+    </div>
+    <div class="sp-card">
+      <div class="sp-tag">PERSONAL</div>
+      <div class="sp-q">Think of one thing you believe strongly. Applying Carlos&rsquo;s logic: why do you believe it? Is it possible the algorithm has shaped your view on this?</div>
+      <div class="sp-hint">This is about honesty, not politics. Use &ldquo;I might be&hellip;&rdquo; to stay open</div>
+    </div>
+    <div class="sp-card">
+      <div class="sp-tag">CHALLENGE</div>
+      <div class="sp-q">Create 2 fake headlines about a company in the Baj&iacute;o region that sound believable. Then explain what must be missing from each one that a critical reader would catch.</div>
+      <div class="sp-hint">Use vocabulary: source, bias, credibility, context &mdash; apply the criteria you learned today</div>
+    </div>
+  </div>
+  <div class="tn to">
+    <button class="tn-btn" onclick="toggleTN(this)">&#9889; Teacher Note &mdash; §SP Speaking</button>
+    <div class="tn-body">Q6 (create fake headlines) is the most creative and analytically demanding activity. Learners must understand what makes misinformation believable in order to construct it &mdash; this reversal forces deep comprehension of the vocabulary and concepts. Q5 (personal question about beliefs) requires psychological safety &mdash; model it with yourself first: &ldquo;I&rsquo;ll be honest &mdash; I might have an echo chamber around [topic]. I realised it when&hellip;&rdquo;</div>
+  </div>
+</section>
+
+<!-- 3 PHRASES FOR THIS WEEK -->
+<section class="sec" id="sec-3ph">
+  <div class="phrases-sec">
+    <div class="phrases-header">&#127919; This week, you can use these 3 phrases at work:</div>
+    <div class="phrase-cards">
+      <div class="phrase-card">
+        <div class="ph-en">&ldquo;Let me verify that before we act on it.&rdquo;</div>
+        <div class="ph-use">Use when a colleague presents surprising data or news. Professional, non-accusatory. Signals analytical rigour without questioning the person&rsquo;s integrity.</div>
+      </div>
+      <div class="phrase-card">
+        <div class="ph-en">&ldquo;That can&rsquo;t be the full picture &mdash; what&rsquo;s the source?&rdquo;</div>
+        <div class="ph-use">Use in meetings when decisions are being made on partial information. Combines modal deduction with a practical follow-up question. This phrase stops bad decisions.</div>
+      </div>
+      <div class="phrase-card">
+        <div class="ph-en">&ldquo;We might be in an echo chamber on this.&rdquo;</div>
+        <div class="ph-use">Use in strategy sessions when the group has been agreeing too easily. Shows leadership awareness and intellectual humility. Rare in corporate Mexico &mdash; powerful when used.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- §7 PRODUCTION -->
+<section class="sec" id="sec-prod">
+  <div class="sec-label">&#167;7 &nbsp; Production &nbsp;&middot;&nbsp; 8 min</div>
+  <h2>The Fact-Checker Challenge</h2>
+  <div style="background:var(--s2);border:1px solid var(--border);border-radius:14px;padding:28px;margin-bottom:16px">
+    <div style="font-size:12px;font-weight:700;color:var(--gold);letter-spacing:.7px;margin-bottom:12px">SPEAKING CARDS &mdash; CLAIM ANALYSIS</div>
+    <p style="font-size:14px;color:var(--txt);line-height:1.6;margin-bottom:16px">Each card gives you a claim. Your job: analyse it in 45 seconds using modal deduction. Say what must be true, what can&rsquo;t be true, and what might be true about it.</p>
+    <div style="display:flex;gap:24px;align-items:flex-start;flex-wrap:wrap">
+      <div style="flex:1;min-width:280px">
+        <div style="background:linear-gradient(135deg,var(--ac3),rgba(0,207,255,.06));border:2px solid var(--border2);border-radius:16px;padding:28px;text-align:center;margin-bottom:16px">
+          <div style="font-size:11px;color:var(--ac);font-weight:600;letter-spacing:.5px;margin-bottom:8px" id="scTag">CLAIM</div>
+          <div style="font-size:16px;font-family:'Syne',sans-serif;font-weight:700;color:var(--txt);line-height:1.45" id="scPrompt">Click Next to get your first claim</div>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:center;gap:14px">
+          <button onclick="prevCard()" style="background:var(--s2);border:1px solid var(--border);color:var(--txt);padding:8px 18px;border-radius:8px;cursor:pointer;font-size:13px">&#8592; Prev</button>
+          <div style="font-size:13px;color:var(--mu);min-width:50px;text-align:center" id="scCtr">0 / 6</div>
+          <button onclick="nextCard()" style="background:var(--s2);border:1px solid var(--border);color:var(--txt);padding:8px 18px;border-radius:8px;cursor:pointer;font-size:13px">Next &#8594;</button>
+        </div>
+      </div>
+      <div style="flex-shrink:0;text-align:center">
+        <div class="timer-wrap">
+          <div class="timer-label">SPEAKING TIMER</div>
+          <svg width="96" height="96" viewBox="0 0 96 96">
+            <circle cx="48" cy="48" r="38" fill="none" stroke="rgba(52,211,153,.15)" stroke-width="6"/>
+            <circle id="tArc1" cx="48" cy="48" r="38" fill="none" stroke="var(--ac)" stroke-width="6"
+              stroke-dasharray="238.76" stroke-dashoffset="0" stroke-linecap="round" transform="rotate(-90 48 48)"/>
+            <text id="tNum1" x="48" y="54" text-anchor="middle" class="timer-num">45</text>
+          </svg>
+          <button class="check-btn" style="font-size:12px;padding:7px 18px" onclick="startTimer(1,45)">Start 45s</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="tn to">
+    <button class="tn-btn" onclick="toggleTN(this)">&#9889; Teacher Note &mdash; &#167;7 Production</button>
+    <div class="tn-body">The Fact-Checker format requires learners to produce all three modals (must / can&rsquo;t / might) on each card &mdash; one for what&rsquo;s almost certainly true, one for what&rsquo;s almost certainly false, and one for uncertainty. This structured triple production is the most rigorous modal deduction practice in any M5 session. Peer feedback: &ldquo;Did they use all three modals? Were the deductions logically sound?&rdquo;</div>
+  </div>
+</section>
+
+<!-- §8 WRAP-UP -->
+<section class="sec" id="sec-wu2">
+  <div class="sec-label">&#167;8 &nbsp; Wrap-Up &nbsp;&middot;&nbsp; 5 min</div>
+  <h2>Session Complete</h2>
+  <div class="exit-box">
+    <div class="exit-title">&#9989; I can now&hellip;</div>
+    <ul class="check-list" id="canList">
+      <li><input type="checkbox" id="c1" onchange="chkAll()"> Identify and analyse misinformation using modal deduction in English</li>
+      <li><input type="checkbox" id="c2" onchange="chkAll()"> Use must have / can&rsquo;t have to make confident past deductions about information credibility</li>
+      <li><input type="checkbox" id="c3" onchange="chkAll()"> Discuss echo chambers, algorithms, and bias with accurate vocabulary</li>
+      <li><input type="checkbox" id="c4" onchange="chkAll()"> Apply a critical thinking framework to information in English</li>
+    </ul>
+    <button class="cert-btn" id="certBtn" onclick="generateCert()" style="display:none">&#127941; Generate Certificate</button>
+  </div>
+  <div class="exit-box win-box">
+    <div class="exit-title">&#127942; My Win Today</div>
+    <p style="font-size:13px;color:var(--mu2);margin-bottom:4px">Write one thing you said in English today that you&rsquo;re proud of:</p>
+    <textarea id="winTxt" placeholder="e.g. I said: The journalist can't have verified this story &mdash; there are no named sources and no date..."></textarea>
+    <br><button class="save-btn" onclick="saveWin()">&#128190; Save</button>
+  </div>
+  <div class="next-card to">
+    <div class="next-label">NEXT SESSION</div>
+    <div class="next-title">S3B &mdash; Production &amp; Fluency &mdash; Fake News Debate</div>
+    <div style="font-size:13px;color:var(--mu2);margin-top:6px">Hot Take &bull; Pitch Round &bull; Relay &bull; Speed Round &bull; Solo Challenge</div>
+  </div>
+</section>
+
+</main>
+<footer>
+  <div class="footer-brand">Gabriel Turner &middot; English Training</div>
+  <div class="footer-sess"><span>S1</span><span>S2</span><span class="active">S3</span><span>S4</span><span>S5</span></div>
+  <div class="footer-levels"><span>A1.1</span><span>A1.2</span><span>A2.1</span><span>A2.2</span><span>B1.1</span><span class="active">B1.2</span><span>B2.1</span><span>B2.2</span></div>
+</footer>
+
+<script>
+window.addEventListener("scroll",function(){var d=document.documentElement;document.getElementById("pb").style.width=(d.scrollTop/(d.scrollHeight-d.clientHeight))*100+"%";});
+var studentMode=false;
+function toggleMode(){studentMode=!studentMode;document.body.classList.toggle("sm",studentMode);document.querySelector(".mode-btn").textContent=studentMode?"TEACHER MODE":"STUDENT MODE";}
+function toggleTN(btn){btn.nextElementSibling.classList.toggle("open");}
+var badges={b1:false,b2:false,b3:false,b4:false,b5:false};
+function earnBadge(id){if(badges[id])return;badges[id]=true;var el=document.getElementById(id);if(el)el.classList.add("earned");if(Object.values(badges).every(function(v){return v;}))launchConfetti();}
+function launchConfetti(){var colors=["#34D399","#6EE7B7","#00CFFF","#FFB800","#ffffff"];for(var i=0;i<90;i++){var d=document.createElement("div");d.style.cssText="position:fixed;width:8px;height:8px;border-radius:50%;pointer-events:none;z-index:9999;";d.style.background=colors[Math.floor(Math.random()*colors.length)];d.style.left=Math.random()*100+"vw";d.style.top="-10px";document.getElementById("confetti-container").appendChild(d);var dur=2000+Math.random()*2000;var delay=Math.random()*1500;setTimeout(function(el){el.style.transition="top "+dur+"ms ease-in,left "+dur+"ms ease-in-out,opacity 500ms "+dur+"ms";el.style.top=(80+Math.random()*20)+"vh";el.style.left=(parseFloat(el.style.left)+Math.random()*40-20)+"vw";setTimeout(function(e){e.style.opacity="0";setTimeout(function(e2){if(e2.parentNode)e2.parentNode.removeChild(e2);},600,e);},dur,el);},delay,d);}}
+var answered={};
+function checkOpt(el,correct,qid){if(answered[qid])return;answered[qid]=true;var opts=el.parentElement.querySelectorAll(".mc-opt");opts.forEach(function(o){if(o===el&&o.textContent.trim()===correct)o.classList.add("correct");if(o===el&&!o.classList.contains("correct"))o.classList.add("wrong");});var fb=document.getElementById(qid+"fb");if(fb){var ok=el.classList.contains("correct");if(ok){fb.textContent="Correct!";fb.className="fb ok";earnBadge("b1");}else{fb.textContent="Not quite — check the certainty level of the deduction.";fb.className="fb err";}}}
+function initDrag(listId){var list=document.getElementById(listId);if(!list)return;var dragged=null;list.addEventListener("dragstart",function(e){dragged=e.target;e.target.style.opacity=".5";});list.addEventListener("dragend",function(e){e.target.style.opacity="1";list.querySelectorAll(".drag-item").forEach(function(i){i.classList.remove("over");});});list.addEventListener("dragover",function(e){e.preventDefault();var t=e.target.closest(".drag-item");if(t&&t!==dragged){list.querySelectorAll(".drag-item").forEach(function(i){i.classList.remove("over");});t.classList.add("over");}});list.addEventListener("drop",function(e){e.preventDefault();var t=e.target.closest(".drag-item");if(t&&t!==dragged){var items=Array.from(list.querySelectorAll(".drag-item"));var di=items.indexOf(dragged);var ti=items.indexOf(t);if(di<ti)list.insertBefore(dragged,t.nextSibling);else list.insertBefore(dragged,t);}});}
+function checkOrder(listId,correct,fbId){var items=document.getElementById(listId).querySelectorAll(".drag-item");var current=Array.from(items).map(function(i){return i.textContent.trim();});var fb=document.getElementById(fbId);var ok=correct.every(function(v,i){return v===current[i];});if(ok){fb.textContent="Perfect!";fb.className="fb ok";earnBadge("b2");}else{fb.textContent="Not quite — the modal must follow the subject.";fb.className="fb err";}}
+/* Headline game */
+var hlAnswered={};
+function verdictHL(btn,n,verdict){if(hlAnswered[n])return;hlAnswered[n]=verdict;document.querySelectorAll("[onclick*='verdictHL(this,"+n+"']").forEach(function(b){b.classList.remove("active");});btn.classList.add("active");document.getElementById("hlR"+n).classList.add("open");earnBadge("b3");var allDone=hlAnswered[1]&&hlAnswered[2]&&hlAnswered[3];if(allDone){var fb=document.getElementById("hlFb");fb.textContent="All headlines assessed! Check the explanations above.";fb.className="fb ok";}}
+/* Matching pairs */
+var matchState={selected:null,pairs:{}};
+var matchCorrect={mw1:"md1",mw2:"md2",mw3:"md3",mw4:"md4",mw5:"md5",mw6:"md6"};
+var matchCount=0;
+function selectMatch(id,pairId){var el=document.getElementById(id);if(el.classList.contains("matched"))return;var isWord=id.startsWith("mw");var isDef=id.startsWith("md");if(!matchState.selected){document.querySelectorAll(".match-item.selected").forEach(function(i){i.classList.remove("selected");});el.classList.add("selected");matchState.selected={id:id,pairId:pairId,isWord:isWord};}else{var prev=matchState.selected;if(prev.id===id){el.classList.remove("selected");matchState.selected=null;return;}if(prev.isWord===isWord){document.getElementById(prev.id).classList.remove("selected");el.classList.add("selected");matchState.selected={id:id,pairId:pairId,isWord:isWord};return;}var wordId=isWord?id:prev.id;var defId=isDef?id:prev.id;var correct=matchCorrect[wordId]===defId;document.getElementById(prev.id).classList.remove("selected");if(correct){document.getElementById(wordId).classList.add("matched");document.getElementById(defId).classList.add("matched");matchCount++;if(matchCount>=6){var fb=document.getElementById("matchFb");fb.textContent="All 6 matched! Excellent vocabulary precision.";fb.className="fb ok";earnBadge("b2");}}else{document.getElementById(wordId).classList.add("wrong");document.getElementById(defId).classList.add("wrong");setTimeout(function(){document.getElementById(wordId).classList.remove("wrong","selected");document.getElementById(defId).classList.remove("wrong","selected");},800);}matchState.selected=null;}}
+/* Speaking cards */
+var scCards=[
+  {tag:"CLAIM #1",prompt:"'Studies show that people who eat breakfast every day earn 30% more than those who skip it.'"},
+  {tag:"CLAIM #2",prompt:"'A Mexican pharmaceutical company has developed a 100% effective cure for the common cold. Governments are blocking its release.'"},
+  {tag:"CLAIM #3",prompt:"'Young people today read less than any previous generation in history.'"},
+  {tag:"CLAIM #4",prompt:"'AI will eliminate 85 million jobs globally by 2025, according to the World Economic Forum.'"},
+  {tag:"CLAIM #5",prompt:"'Scientists have discovered that smelling coffee in the morning has the same health benefits as drinking it.'"},
+  {tag:"CLAIM #6",prompt:"'Mexico City is now the most visited city in Latin America, surpassing Buenos Aires and Rio de Janeiro.'"}
+];
+var scIdx=0;
+function nextCard(){scIdx=(scIdx+1)%scCards.length;updateSC();}
+function prevCard(){scIdx=(scIdx-1+scCards.length)%scCards.length;updateSC();}
+function updateSC(){document.getElementById("scTag").textContent=scCards[scIdx].tag;document.getElementById("scPrompt").textContent=scCards[scIdx].prompt;document.getElementById("scCtr").textContent=(scIdx+1)+" / "+scCards.length;if(scIdx===scCards.length-1)earnBadge("b4");}
+nextCard();
+var timerIntervals={};
+function startTimer(n,secs){if(timerIntervals[n])clearInterval(timerIntervals[n]);var arc=document.getElementById("tArc"+n);var num=document.getElementById("tNum"+n);var total=secs;var circ=238.76;var remaining=total;arc.style.stroke="var(--ac)";timerIntervals[n]=setInterval(function(){remaining--;arc.style.strokeDashoffset=circ*(1-remaining/total);num.textContent=remaining;if(remaining<=5)arc.style.stroke="var(--danger)";if(remaining<=0){clearInterval(timerIntervals[n]);num.textContent="0";earnBadge("b5");}},1000);}
+var apPlaying=false,apProgress=0,apTimer=null;
+function toggleAudio(){apPlaying=!apPlaying;document.getElementById("apBtn").innerHTML=apPlaying?"&#9646;&#9646;":"&#9654;";document.getElementById("apWave").classList.toggle("paused",!apPlaying);if(apPlaying){apTimer=setInterval(function(){apProgress=Math.min(apProgress+100/110,100);document.getElementById("apFill").style.width=apProgress+"%";var cur=Math.floor(apProgress*110/100);document.getElementById("apCur").textContent="1:"+(cur<10?"0":"")+cur;if(apProgress>=100){clearInterval(apTimer);apPlaying=false;document.getElementById("apBtn").innerHTML="&#9654;";document.getElementById("apWave").classList.add("paused");earnBadge("b4");}},1000);}else{clearInterval(apTimer);}}
+function seekAudio(e){var rect=document.getElementById("apTrack").getBoundingClientRect();apProgress=((e.clientX-rect.left)/rect.width)*100;document.getElementById("apFill").style.width=apProgress+"%";}
+function toggleScript(btn){var box=document.getElementById("scriptBox");box.classList.toggle("open");btn.textContent=box.classList.contains("open")?"&#128196; Hide Script":"&#128196; Show Script (Teacher)";}
+var omVal=50;
+function moveMeter(d){omVal=Math.max(0,Math.min(100,omVal+d));document.getElementById("omFill").style.width=omVal+"%";document.getElementById("omPct").textContent=omVal+"%";}
+function chkAll(){var items=document.getElementById("canList").querySelectorAll("input[type=checkbox]");var all=Array.from(items).every(function(i){return i.checked;});var btn=document.getElementById("certBtn");if(btn)btn.style.display=all?"inline-block":"none";if(all)earnBadge("b5");}
+function generateCert(){launchConfetti();var w=window.open("","_blank","width=600,height=400");w.document.write("<html><body style='font-family:sans-serif;text-align:center;padding:40px;background:#080808;color:#F0F4F8'><h1 style='color:#34D399;font-size:26px'>Session Complete</h1><p style='font-size:18px;margin:16px 0'>GT English Training &mdash; B1.2 &mdash; M5 S3A</p><p style='font-size:14px;color:#6B7A8D'>Fake News &mdash; Modal Deduction</p><p style='font-size:12px;color:#6B7A8D;margin-top:16px'>Gabriel Turner &middot; English Training &mdash; Celaya, Gto.</p></body></html>");}
+function saveWin(){var txt=document.getElementById("winTxt").value.trim();if(txt){alert("Saved!");}}
+function speak(word){if("speechSynthesis" in window){var u=new SpeechSynthesisUtterance(word);u.lang="en-US";u.rate=0.9;window.speechSynthesis.speak(u);}}
+initDrag("order1");
+initDrag("order2");
+</script>
+</body>
+</html>
