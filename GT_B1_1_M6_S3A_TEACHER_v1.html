@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GT &middot; B1.1 &middot; M6 &middot; S3A &middot; Food, Culture &amp; Identity</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --accent:#10B981;--accent2:#34D399;
+  --bg:#080808;--surface:#111318;--surface2:#1a1f28;
+  --border:rgba(16,185,129,.18);
+  --text:#F0F4F8;--muted:#8A9BB0;
+  --danger:#FF4D6D;--success:#00E5A0;--warn:#FFB347;
+  --font-head:'Syne',sans-serif;--font-body:'DM Sans',sans-serif
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:15px;line-height:1.65;min-height:100vh}
+#progressBar{position:fixed;top:0;left:0;width:0%;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent2));z-index:9999;transition:width .3s}
+.site-header{position:sticky;top:0;z-index:900;background:rgba(8,8,8,.92);backdrop-filter:blur(14px);border-bottom:1px solid var(--border);padding:0 24px}
+.header-inner{max-width:960px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:58px;gap:12px;flex-wrap:wrap}
+.header-brand{font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--accent);letter-spacing:.08em;text-transform:uppercase}
+.header-meta{font-size:12px;color:var(--muted);font-weight:500}
+.badge-strip{display:flex;gap:6px}
+.badge-strip span{font-size:18px;opacity:.25;transition:all .4s;filter:grayscale(1)}
+.badge-strip span.earned{opacity:1;filter:none;animation:badgePop .5s cubic-bezier(.34,1.56,.64,1)}
+@keyframes badgePop{0%{transform:scale(.4) rotate(-20deg);opacity:0}70%{transform:scale(1.25) rotate(4deg)}100%{transform:scale(1) rotate(0)}}
+.mode-toggle{background:var(--surface2);border:1px solid var(--border);color:var(--accent);font-family:var(--font-head);font-size:11px;font-weight:700;padding:5px 12px;border-radius:6px;cursor:pointer;letter-spacing:.06em}
+.mode-toggle:hover{background:var(--accent);color:var(--bg)}
+.sticky-nav{position:sticky;top:58px;z-index:800;background:rgba(8,8,8,.88);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none}
+.sticky-nav::-webkit-scrollbar{display:none}
+.nav-inner{max-width:960px;margin:0 auto;display:flex;padding:0 16px}
+.nav-inner a{font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:.06em;color:var(--muted);text-decoration:none;padding:10px 14px;border-bottom:2px solid transparent;white-space:nowrap;transition:all .2s}
+.nav-inner a:hover{color:var(--accent);border-color:var(--accent)}
+.main{max-width:960px;margin:0 auto;padding:32px 20px 80px}
+.section{margin-bottom:48px;border:1px solid var(--border);border-radius:16px;overflow:hidden;background:var(--surface)}
+.section-header{display:flex;align-items:center;gap:14px;padding:18px 24px;background:linear-gradient(135deg,rgba(16,185,129,.08),transparent);border-bottom:1px solid var(--border)}
+.section-number{font-family:var(--font-head);font-size:11px;font-weight:800;color:var(--accent);letter-spacing:.12em;text-transform:uppercase;background:rgba(16,185,129,.1);border:1px solid var(--border);padding:3px 10px;border-radius:20px}
+.section-title{font-family:var(--font-head);font-size:18px;font-weight:800;color:var(--text);flex:1}
+.section-time{font-size:12px;color:var(--muted);background:var(--surface2);padding:3px 10px;border-radius:20px}
+.section-body{padding:24px}
+.img-card{border-radius:10px;overflow:hidden;position:relative;margin-bottom:18px}
+.img-card img{width:100%;height:200px;object-fit:cover;display:block;filter:brightness(.52)}
+.img-overlay{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(8,8,8,.88));padding:12px 16px;font-size:13px;color:rgba(255,255,255,.85)}
+.teacher-note{background:rgba(16,185,129,.06);border-left:3px solid var(--accent);border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0;font-size:13px;color:var(--muted)}
+.teacher-note strong{color:var(--accent)}
+.teacher-note.tn-gold{background:rgba(255,179,71,.06);border-color:var(--warn)}
+.teacher-note.tn-gold strong{color:var(--warn)}
+.teacher-note.tn-cyan{background:rgba(0,207,255,.06);border-color:#00CFFF}
+.teacher-note.tn-cyan strong{color:#00CFFF}
+.teacher-only{}
+body.student-mode .teacher-only{display:none}
+.warmup-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0}
+.warmup-q{background:var(--surface2);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.warmup-q img{width:100%;height:130px;object-fit:cover;filter:brightness(.5)}
+.warmup-q-body{padding:14px}
+.qnum{font-family:var(--font-head);font-size:10px;font-weight:800;color:var(--accent);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px}
+.timer-wrap{display:flex;flex-direction:column;align-items:center;gap:10px;margin:16px 0}
+.timer-bg{fill:none;stroke:rgba(255,255,255,.07)}
+.timer-arc{fill:none;stroke:var(--accent);stroke-linecap:round;transition:stroke .5s;transform:rotate(-90deg);transform-origin:40px 40px}
+.timer-text{font-family:var(--font-head);font-weight:800;font-size:14px;fill:var(--text);dominant-baseline:middle;text-anchor:middle}
+.timer-label{font-size:9px;fill:var(--muted);dominant-baseline:middle;text-anchor:middle}
+.timer-btns{display:flex;gap:8px}
+.btn{font-family:var(--font-head);font-size:12px;font-weight:700;letter-spacing:.06em;padding:7px 18px;border-radius:8px;border:none;cursor:pointer;transition:all .2s}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-primary:hover{background:var(--accent2)}
+.btn-ghost{background:var(--surface2);border:1px solid var(--border);color:var(--muted)}
+.btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
+.quickwin{background:linear-gradient(135deg,rgba(16,185,129,.08),rgba(52,211,153,.04));border:1px solid var(--border);border-radius:12px;padding:20px;margin:16px 0}
+.quickwin-title{font-family:var(--font-head);font-size:11px;font-weight:700;color:var(--accent);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px}
+.quickwin-text{font-size:15px;font-weight:600;color:var(--text);margin-bottom:14px;line-height:1.5}
+.topic-card{background:linear-gradient(135deg,rgba(16,185,129,.07),rgba(52,211,153,.04));border:1px solid var(--border);border-radius:12px;padding:22px;margin:16px 0}
+.topic-card h3{font-family:var(--font-head);font-size:20px;font-weight:800;color:var(--accent);margin-bottom:6px}
+.rounds{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:14px 0}
+.round-card{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px 10px}
+.round-card .rnum{font-family:var(--font-head);font-size:10px;font-weight:700;color:var(--accent);letter-spacing:.1em;margin-bottom:4px;text-transform:uppercase}
+.round-card .rq{font-size:13px;font-weight:500;line-height:1.45}
+.tag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;font-family:var(--font-head);letter-spacing:.04em;margin-right:4px}
+.tag-t2s{background:rgba(16,185,129,.15);color:var(--accent)}
+.tag-s2s{background:rgba(255,179,71,.15);color:var(--warn)}
+.tag-class{background:rgba(138,155,176,.12);color:var(--muted)}
+.reveal-btn{background:transparent;border:1px dashed var(--accent);color:var(--accent);font-family:var(--font-head);font-size:11px;font-weight:700;padding:7px 16px;border-radius:8px;cursor:pointer;margin-top:14px}
+.model-box{display:none;margin-top:12px;background:rgba(16,185,129,.06);border:1px solid var(--border);border-radius:10px;padding:16px;font-size:14px;line-height:1.8}
+.model-box .h{color:var(--accent);font-weight:600}
+.model-box .fc{color:#A78BFA;font-weight:600}
+.model-box .pp{color:#00CFFF;font-weight:600}
+.model-box .op{color:var(--warn);font-weight:600}
+.vocab-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin:16px 0}
+.vocab-card{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:14px;cursor:pointer;transition:all .2s;display:flex;flex-direction:column;gap:4px}
+.vocab-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.vocab-word{font-family:var(--font-head);font-size:15px;font-weight:700;color:var(--accent)}
+.vocab-ipa{font-size:12px;color:var(--muted);font-style:italic}
+.vocab-def{font-size:13px;color:var(--text)}
+.vocab-ex{font-size:12px;color:var(--muted);font-style:italic;border-left:2px solid var(--accent);padding-left:8px;margin-top:4px}
+.speak-btn{background:rgba(16,185,129,.12);border:none;border-radius:5px;color:var(--accent);font-size:11px;padding:2px 8px;cursor:pointer;font-family:var(--font-head);font-weight:700;margin-top:4px}
+.micro-speak{background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.2);border-radius:10px;padding:14px 18px;margin:14px 0;font-size:14px;color:var(--text);line-height:1.6}
+.micro-speak strong{color:var(--accent)}
+/* MATCH UP */
+.match-wrap{margin:16px 0}
+.match-cols{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.match-col-title{font-family:var(--font-head);font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px}
+.match-item{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-size:13px;cursor:pointer;transition:all .2s;margin-bottom:6px;line-height:1.4}
+.match-item:hover{border-color:var(--accent)}
+.match-item.selected{border-color:var(--accent);background:rgba(16,185,129,.08);color:var(--accent)}
+.match-item.matched{border-color:var(--success);background:rgba(0,229,160,.08);color:var(--success);cursor:not-allowed}
+.match-item.wrong{border-color:var(--danger);background:rgba(255,77,109,.08);animation:shake .3s}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+.match-fb{font-size:13px;color:var(--muted);margin-top:10px;min-height:20px}
+/* POLL */
+.poll-group{margin-bottom:18px}
+.poll-q{font-size:14px;font-weight:600;color:var(--text);margin-bottom:10px;padding:12px 16px;background:var(--surface2);border-left:3px solid var(--accent);border-radius:0 8px 8px 0}
+.poll-opts{display:flex;gap:8px;flex-wrap:wrap}
+.poll-btn{background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:9px 16px;border-radius:8px;font-family:var(--font-body);font-size:13px;cursor:pointer;transition:all .2s}
+.poll-btn:hover:not(:disabled){border-color:var(--accent);color:var(--accent)}
+.poll-btn.correct-ans{background:rgba(0,229,160,.12);border-color:var(--success);color:var(--success)}
+.poll-btn.wrong-ans{background:rgba(255,77,109,.08);border-color:var(--danger);color:var(--danger)}
+.poll-btn:disabled{cursor:not-allowed}
+.poll-fb{font-size:13px;margin-top:8px;min-height:18px;color:var(--muted)}
+.act-score{font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--accent);margin-bottom:12px}
+/* DRAG */
+.reorder-list{display:flex;flex-direction:column;gap:7px;margin-bottom:10px;list-style:none}
+.reorder-item{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;cursor:grab;font-size:13px;color:var(--text);display:flex;align-items:center;gap:9px;user-select:none;transition:border-color .2s}
+.reorder-item:active{cursor:grabbing}
+.reorder-item.dragging{opacity:.4}
+.reorder-item.drag-over{border-color:var(--accent);border-style:dashed}
+.drag-handle{color:var(--muted);font-size:13px;flex-shrink:0}
+.check-btn{background:var(--accent);border:none;color:#fff;padding:8px 20px;border-radius:8px;font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:.1em;cursor:pointer;margin-top:8px}
+.drag-fb{display:none;padding:10px 14px;font-size:13px;margin-top:8px;border-radius:8px;line-height:1.5}
+.drag-fb.show{display:block}
+.drag-fb.ok{background:rgba(0,229,160,.1);border:1px solid rgba(0,229,160,.3);color:var(--success)}
+.drag-fb.no{background:rgba(255,77,109,.08);border:1px solid rgba(255,77,109,.25);color:var(--danger)}
+/* COLLOQUIAL */
+.col-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}
+.col-card{background:var(--surface2);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.col-card img{width:100%;height:100px;object-fit:cover;filter:brightness(.5)}
+.col-card-body{padding:14px}
+.col-phrase{font-family:var(--font-head);font-size:15px;font-weight:700;color:var(--text);margin-bottom:4px}
+.col-use{font-size:11px;color:var(--accent);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
+.col-example{font-size:13px;color:var(--muted);font-style:italic;line-height:1.5}
+/* GRAMMAR */
+.problem-card{background:rgba(255,77,109,.06);border:1px solid rgba(255,77,109,.25);border-left:4px solid var(--danger);border-radius:0 10px 10px 0;padding:16px 20px;margin:14px 0}
+.problem-card .p-label{font-family:var(--font-head);font-size:10px;font-weight:700;color:var(--danger);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px}
+.tool-card{background:rgba(16,185,129,.06);border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:0 10px 10px 0;padding:16px 20px;margin:14px 0}
+.tool-card .t-label{font-family:var(--font-head);font-size:10px;font-weight:700;color:var(--accent);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px}
+.grammar-table-wrap{overflow-x:auto;margin:16px 0;border-radius:10px;overflow:hidden}
+table.grammar{width:100%;border-collapse:collapse}
+table.grammar thead{background:var(--surface2)}
+table.grammar th{padding:12px 16px;text-align:left;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);border-bottom:2px solid var(--accent)}
+table.grammar td{padding:12px 16px;border-bottom:1px solid var(--border);font-size:13px}
+table.grammar tbody tr:hover td{background:rgba(16,185,129,.04)}
+.gram-form{font-family:var(--font-head);font-size:12px;font-weight:700;color:var(--accent)}
+.gram-fc{color:#A78BFA;font-weight:600}
+.gram-ex{font-style:italic;color:var(--text)}
+.err-box{background:rgba(255,77,109,.05);border:1px solid rgba(255,77,109,.2);border-radius:10px;padding:14px 18px;margin:14px 0;font-size:13px;color:rgba(255,120,120,.9);line-height:1.8}
+.err-box strong{color:var(--danger)}
+/* OPINION BOX */
+.opinion-box{background:rgba(255,179,71,.05);border:1px solid rgba(255,179,71,.2);border-radius:10px;padding:16px 20px;margin:14px 0}
+.opinion-box-label{font-family:var(--font-head);font-size:10px;font-weight:700;color:var(--warn);letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px}
+.opinion-phrases{display:flex;flex-direction:column;gap:6px}
+.opinion-phrase{font-size:13px;color:var(--text);padding:8px 12px;background:rgba(255,179,71,.06);border-left:2px solid var(--warn);line-height:1.4}
+/* PLAYER */
+.player-card{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:20px;margin:14px 0}
+.player-top{display:flex;align-items:center;gap:16px;margin-bottom:12px}
+.play-btn-aud{width:44px;height:44px;background:var(--accent);border:none;border-radius:50%;cursor:pointer;font-size:16px;color:#fff;flex-shrink:0}
+.track-info .track-title{font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--text);margin-bottom:3px}
+.track-info .track-sub{font-size:11px;color:var(--muted)}
+.waveform{display:flex;align-items:center;gap:2px;height:40px}
+.wbar{width:3px;background:var(--accent);border-radius:2px;opacity:.35;flex-shrink:0}
+.script-toggle{background:none;border:1px solid var(--border);color:var(--muted);padding:7px 16px;border-radius:6px;font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:.06em;cursor:pointer;margin-bottom:12px}
+.script-box{display:none;background:rgba(0,207,255,.04);border:1px solid rgba(0,207,255,.15);border-radius:8px;padding:16px;font-size:13px;color:var(--text);line-height:1.9;font-style:italic}
+/* SPEAK CARDS */
+.speak-sec{display:flex;flex-direction:column;gap:11px}
+.speak-card{background:var(--surface2);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.speak-card img{width:100%;height:110px;object-fit:cover;filter:brightness(.5)}
+.speak-card-body{padding:14px}
+.sc-lbl{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:5px}
+.sc-q{font-size:14px;color:var(--text);font-weight:600;margin-bottom:9px;line-height:1.5}
+.sc-hint{font-size:12px;color:var(--muted);font-style:italic}
+/* METER */
+.meter-wrap{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:18px;margin:18px 0}
+.meter-lbl{font-family:var(--font-head);font-size:11px;font-weight:700;color:var(--accent);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px}
+.meter-q{font-size:14px;font-weight:600;color:var(--text);margin-bottom:14px}
+.meter-track{position:relative;height:8px;background:rgba(255,255,255,.07);border-radius:10px;margin:0 0 8px;cursor:pointer}
+.meter-fill{position:absolute;left:0;top:0;height:100%;border-radius:10px;background:linear-gradient(90deg,var(--danger),var(--success));width:50%;transition:width .4s}
+.meter-ends{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:12px}
+.meter-btns{display:flex;gap:8px;justify-content:center}
+.meter-btn{background:var(--surface);border:1px solid var(--border);color:var(--text);padding:8px 20px;border-radius:8px;font-family:var(--font-head);font-size:12px;font-weight:700;cursor:pointer;transition:all .2s}
+.meter-btn:hover{border-color:var(--accent);color:var(--accent)}
+.meter-pct{font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--accent);margin-top:8px}
+/* 3 PHRASES */
+.phrases-section{background:linear-gradient(135deg,rgba(255,179,71,.06),rgba(255,179,71,.02));border-top:1px solid rgba(255,179,71,.15);border-bottom:1px solid rgba(255,179,71,.15);border-radius:12px;overflow:hidden;margin-bottom:48px}
+.phrases-inner{padding:24px}
+.ph-lbl{font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--warn);margin-bottom:6px}
+.ph-title{font-family:var(--font-head);font-size:22px;font-weight:800;color:var(--text);margin-bottom:20px;line-height:1.2}
+.ph-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.ph-card{background:var(--surface2);border:1px solid rgba(255,179,71,.2);border-radius:10px;overflow:hidden}
+.ph-card img{width:100%;height:90px;object-fit:cover;filter:brightness(.45)}
+.ph-card-body{padding:14px}
+.ph-num{font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:.1em;color:var(--warn);margin-bottom:6px}
+.ph-phrase{font-family:var(--font-head);font-size:14px;font-weight:700;color:var(--text);margin-bottom:8px;line-height:1.4}
+.ph-ctx{font-size:12px;color:var(--muted);line-height:1.55}
+/* CHECKLIST + WIN */
+.checklist{display:flex;flex-direction:column;gap:7px;margin:14px 0}
+.cl-item{display:flex;align-items:center;gap:12px;padding:11px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;cursor:pointer;transition:all .2s;font-size:13px;color:var(--muted)}
+.cl-item:hover{border-color:var(--accent);color:var(--text)}
+.cl-item.done{border-color:var(--success);color:var(--success);background:rgba(0,229,160,.06)}
+.cl-box{width:18px;height:18px;border:2px solid var(--muted);border-radius:4px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px}
+.cl-item.done .cl-box{border-color:var(--success);background:var(--success);color:#fff}
+.cl-item.done .cl-box::after{content:"\2713"}
+.win-wrap{margin:22px 0;background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:20px}
+.win-label{font-family:var(--font-head);font-size:12px;font-weight:700;color:var(--warn);letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px}
+.win-input{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text);padding:12px 14px;font-family:var(--font-body);font-size:13px;resize:vertical;margin-bottom:10px}
+.win-input:focus{outline:none;border-color:var(--accent)}
+.win-saved{display:none;font-size:13px;color:var(--success);margin-top:6px;padding:8px 12px;background:rgba(0,229,160,.08);border-radius:6px}
+.gt-box{background:rgba(255,179,71,.04);border:1px solid rgba(255,179,71,.2);border-radius:10px;padding:18px 20px;margin:16px 0}
+.gt-hdr{font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--warn);margin-bottom:10px}
+.gt-hdr::before{content:"\2605  ";font-size:12px}
+.gt-tips{list-style:none;display:flex;flex-direction:column;gap:7px}
+.gt-tips li{font-size:13px;color:rgba(255,179,71,.85);padding-left:14px;position:relative;line-height:1.5}
+.gt-tips li::before{content:"\2192";position:absolute;left:0;color:var(--warn)}
+/* VIDEO PLACEHOLDER — S1 only */
+.video-placeholder{background:var(--surface2);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin:16px 0}
+.video-placeholder-inner{position:relative;height:200px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,rgba(16,185,129,.06),rgba(0,207,255,.04))}
+.video-play-icon{width:60px;height:60px;background:rgba(16,185,129,.2);border:2px solid var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px}
+.video-label{position:absolute;bottom:14px;left:16px;font-family:var(--font-head);font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.1em;text-transform:uppercase}
+/* NEXT CARD */
+.next-card{display:flex;background:rgba(0,207,255,.04);border:1px solid rgba(0,207,255,.18);border-radius:12px;overflow:hidden;margin-top:20px}
+.next-card img{width:160px;object-fit:cover;filter:brightness(.55);flex-shrink:0}
+.next-card-body{padding:18px 20px}
+.next-lbl{font-family:var(--font-head);font-size:10px;font-weight:700;color:#00CFFF;letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px}
+.next-title{font-family:var(--font-head);font-size:16px;font-weight:700;color:var(--text);margin-bottom:6px}
+.next-sub{font-size:13px;color:var(--muted);line-height:1.55}
+#confettiWrap{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9998;display:none;overflow:hidden}
+.site-footer{background:var(--surface);border-top:1px solid var(--border);padding:20px 24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+.footer-brand{font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.level-tags{display:flex;gap:4px;flex-wrap:wrap}
+.level-tag{font-family:var(--font-head);font-size:10px;font-weight:700;padding:3px 10px;background:var(--surface2);color:rgba(255,255,255,.25);border-radius:4px}
+.level-tag.active{background:var(--accent);color:#fff}
+@media(max-width:860px){
+  .warmup-grid,.rounds,.ph-grid,.match-cols,.col-grid{grid-template-columns:1fr}
+  .vocab-grid{grid-template-columns:1fr 1fr}
+  .next-card{flex-direction:column}
+  .next-card img{width:100%;height:120px}
+  .header-inner{height:auto;padding:10px 0}
+}
+
+/* SPIN WHEEL */
+.spin-wrap{display:flex;flex-direction:column;align-items:center;gap:14px;margin:16px 0}
+.spin-canvas{border-radius:50%;border:3px solid var(--accent);display:block}
+.spin-result{min-height:52px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px 18px;font-size:14px;color:var(--text);width:100%;max-width:420px;text-align:center;line-height:1.6}
+.spin-result strong{color:var(--accent)}
+.spin-btn{background:var(--accent);border:none;color:#fff;font-family:var(--font-head);font-size:13px;font-weight:700;padding:10px 28px;border-radius:8px;cursor:pointer;letter-spacing:.06em}
+/* FLASH CARDS (S3) */
+.fc3-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:14px 0}
+.fc3{perspective:600px;height:110px;cursor:pointer}
+.fc3-inner{position:relative;width:100%;height:100%;transition:transform .5s;transform-style:preserve-3d}
+.fc3.flipped .fc3-inner{transform:rotateY(180deg)}
+.fc3-front,.fc3-back{position:absolute;width:100%;height:100%;backface-visibility:hidden;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:10px;text-align:center}
+.fc3-front{background:var(--surface2);border:1px solid var(--border)}
+.fc3-back{background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.3);transform:rotateY(180deg)}
+.fc3-word{font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--accent)}
+.fc3-def{font-size:11px;color:var(--text);line-height:1.3;margin-top:4px}
+</style>
+<body>
+<div id="progressBar"></div>
+<div id="confettiWrap"></div>
+
+<header class="site-header">
+  <div class="header-inner">
+    <div>
+      <div class="header-brand">Gabriel Turner &middot; English Training</div>
+      <div class="header-meta">B1.1 &nbsp;&middot;&nbsp; Module 6 &nbsp;&middot;&nbsp; Session 3A &nbsp;&middot;&nbsp; Discovery &amp; Drill &nbsp;&middot;&nbsp; Teacher Edition</div>
+    </div>
+    <div class="badge-strip">
+      <span id="b1" title="Warm-Up complete">&#127829;</span>
+      <span id="b2" title="Vocab complete">&#127968;</span>
+      <span id="b3" title="Grammar ace">&#9889;</span>
+      <span id="b4" title="Listening pro">&#127911;</span>
+      <span id="b5" title="Session complete">&#127942;</span>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <div class="header-meta">Teacher Edition &middot; 120 min</div>
+      <button class="mode-toggle" onclick="toggleMode()">STUDENT MODE</button>
+    </div>
+  </div>
+</header>
+
+<nav class="sticky-nav">
+  <div class="nav-inner">
+    <a href="#s1">&sect;1 Warm-Up</a>
+    <a href="#s2">&sect;2 Speaking</a>
+    <a href="#s3">&sect;3 Vocab</a>
+    <a href="#s4">&sect;4 Colloquial</a>
+    <a href="#s5">&sect;5 Grammar</a>
+    <a href="#s6">&sect;6 Listening</a>
+    <a href="#s7">&sect;7 Production</a>
+    <a href="#phrases">&sect; Phrases</a>
+    <a href="#s8">&sect;8 Wrap-Up</a>
+  </div>
+</nav>
+
+<main class="main">
+
+<!-- §1 WARM-UP -->
+<section class="section" id="s1">
+  <div class="section-header">
+    <span class="section-number">&sect;1</span>
+    <h2 class="section-title">&#127829; Warm-Up &mdash; Food, Culture &amp; Identity</h2>
+    <span class="section-time">5&ndash;8 min</span>
+  </div>
+  <div class="section-body">
+    <div class="img-card">
+      <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=900&auto=format&fit=crop&q=80" alt="A spread of culturally significant foods from different traditions">
+      <div class="img-overlay">Module 6 &middot; Session 3A &mdash; Food, Culture &amp; Identity &middot; What does food say about who you are?</div>
+    </div>
+
+    <div class="warmup-grid">
+      <div class="warmup-q">
+        <img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=600&auto=format&fit=crop&q=80" alt="Traditional family recipe" loading="lazy">
+        <div class="warmup-q-body"><div class="qnum">Q1 &mdash; Your food identity</div><div>What is ONE food that is inseparable from your culture or your family? Why does it matter? Could you live without it?</div></div>
+      </div>
+      <div class="warmup-q">
+        <img src="https://images.unsplash.com/photo-1476224203421-9ac39bcb3327?w=600&auto=format&fit=crop&q=80" alt="Person cooking a traditional recipe" loading="lazy">
+        <div class="warmup-q-body"><div class="qnum">Q2 &mdash; Memory and food</div><div>Think of a meal that takes you back to a specific time or place. Who cooked it? What does it remind you of? Why do you think food is so connected to memory?</div></div>
+      </div>
+      <div class="warmup-q">
+        <img src="https://images.unsplash.com/photo-1493770348161-369560ae357d?w=600&auto=format&fit=crop&q=80" alt="International food experience" loading="lazy">
+        <div class="warmup-q-body"><div class="qnum">Q3 &mdash; Other cultures</div><div>Have you ever tried food from a culture very different from yours? Did it change the way you saw that culture? What happened?</div></div>
+      </div>
+      <div class="warmup-q">
+        <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=600&auto=format&fit=crop&q=80" alt="Modern fusion food and tradition" loading="lazy">
+        <div class="warmup-q-body"><div class="qnum">Q4 &mdash; The First Conditional angle</div><div>"If we stop preserving traditional food recipes, we will lose part of our cultural identity." Agree or disagree? What is the consequence of losing food traditions?</div></div>
+      </div>
+    </div>
+
+    <div class="quickwin">
+      <div class="quickwin-title">&#9889; Quick Win &mdash; 20 seconds</div>
+      <div class="quickwin-text">Say out loud: <strong>"Food has always been a big part of my culture and identity. If we don&apos;t share and preserve our recipes, future generations will lose that connection."</strong><br><span style="font-size:13px;color:var(--muted)">Present Perfect + First Conditional. The grammar of cultural memory.</span></div>
+      <div class="timer-wrap">
+        <svg width="80" height="80" viewBox="0 0 80 80"><circle class="timer-bg" cx="40" cy="40" r="34" stroke-width="6"/><circle class="timer-arc" id="arc1" cx="40" cy="40" r="34" stroke-width="6" stroke-dasharray="213.63" stroke-dashoffset="0"/><text class="timer-text" x="40" y="37" id="txt1">0:20</text><text class="timer-label" x="40" y="51">sec</text></svg>
+        <div class="timer-btns">
+          <button class="btn btn-primary" onclick="startTimerSVG('arc1','txt1',20,213.63,'b1')">&#9654; Start</button>
+          <button class="btn btn-ghost" onclick="resetTimerSVG('arc1','txt1','0:20',213.63)">&#8635;</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="teacher-note teacher-only">
+      <strong>Teacher note &mdash; PROGRAMA GT Original:</strong> This session is documented in the PROGRAMA as one of the best of the entire B1.1 level for Mexican students. Food is deeply personal, emotionally connected, and immediately available as a speaking topic. Every student has a story. Do not rush the warm-up. Let it breathe. The grammar target (First Conditional + PP) will arise naturally if you ask: "What will happen to this dish if no one teaches it to the next generation?" That question generates authentic language.
+    </div>
+  </div>
+</section>
+
+<!-- §2 SPEAKING -->
+<section class="section" id="s2">
+  <div class="section-header">
+    <span class="section-number">&sect;2</span>
+    <h2 class="section-title">&#128483;&#65039; Speaking Topic &mdash; How Important Is Food to Your Cultural Identity?</h2>
+    <span class="section-time">8 min</span>
+  </div>
+  <div class="section-body">
+    <div class="topic-card">
+      <h3>How important is food to your cultural identity? Is there a food you couldn&apos;t live without?</h3>
+      <p style="font-size:13px;color:var(--muted)">Personal, cultural, emotional. The richest speaking topic of Module 6. The grammar serves the story &mdash; opinion language + First Conditional &mdash; but the story is what matters here.</p>
+    </div>
+    <div class="img-card">
+      <img src="https://images.unsplash.com/photo-1498837167922-ddd27525d352?w=900&auto=format&fit=crop&q=80" alt="Family gathered around a culturally significant meal" loading="lazy">
+      <div class="img-overlay">Speaking &middot; 3 rounds &middot; Your food, your culture, your First Conditional argument</div>
+    </div>
+    <div class="rounds">
+      <div class="round-card">
+        <div class="rnum"><span class="tag tag-t2s">T&rarr;S</span> Round 1</div>
+        <div class="rq">Describe a food that is part of your cultural identity. What is it, who makes it, and what does it mean to you? Use vocabulary: identity, tradition, memory, heritage. Close with a First Conditional: "If I couldn&apos;t eat it anymore, I would feel..."</div>
+      </div>
+      <div class="round-card">
+        <div class="rnum"><span class="tag tag-s2s">S&harr;S</span> Round 2</div>
+        <div class="rq">Share a food memory with your partner. When did you eat it? Who was there? What do you associate it with? Use: "That dish reminds me of..." and Present Perfect for how the food has become part of your identity: "This food has always been..."</div>
+      </div>
+      <div class="round-card">
+        <div class="rnum"><span class="tag tag-class">Class</span> Round 3</div>
+        <div class="rq">The cultural question: "If Mexican food traditions disappear in the next 50 years, what will we lose beyond just recipes?" Use First Conditional + opinion language to make the argument.</div>
+      </div>
+    </div>
+    <button class="reveal-btn" onclick="toggleReveal('model1')">&#9660; Show Model Answer (B1.1)</button>
+    <div class="model-box" id="model1">
+      <p><span class="op">In my opinion,</span> food is one of the strongest carriers of cultural identity. For me, tamales aren&apos;t just food &mdash; they&apos;re a whole ritual. <span class="pp">My grandmother has made them the same way for fifty years.</span> Every Christmas, every family reunion &mdash; the recipe has never changed. <span class="h">"That dish reminds me of home"</span> in a way that nothing else does. <span class="op">I strongly believe that</span> <span class="fc">if younger generations don&apos;t learn these recipes, we will lose something that no museum can preserve.</span> <span class="op">The reality is</span> &mdash; food is memory made physical. <span class="fc">If we stop cooking together, we will stop transmitting who we are.</span></p>
+      <p style="font-size:12px;color:var(--muted);margin-top:10px"><span class="op">Opinion</span> &middot; <span class="fc">First Conditional ×2</span> &middot; <span class="pp">Present Perfect</span> &middot; <span class="h">Colloquial</span></p>
+    </div>
+    <div class="teacher-note teacher-only">
+      <strong>Teacher note:</strong> The model answer uses First Conditional twice with different consequences: one about knowledge, one about identity transmission. This is the most advanced level of FC argumentation at B1.1 &mdash; stacking conditionals to build a complete argument. After sharing the model, ask: "Can you build a two-FC argument about any food from your region?"
+    </div>
+  </div>
+</section>
+
+<!-- §3 VOCABULARY -->
+<section class="section" id="s3">
+  <div class="section-header">
+    <span class="section-number">&sect;3</span>
+    <h2 class="section-title">&#127968; Vocabulary &mdash; Food, Culture &amp; Identity</h2>
+    <span class="section-time">10 min</span>
+  </div>
+  <div class="section-body">
+    <div class="img-card">
+      <img src="https://images.unsplash.com/photo-1455619452474-d2be8b1e70cd?w=900&auto=format&fit=crop&q=80" alt="Colorful ingredients representing cultural diversity" loading="lazy">
+      <div class="img-overlay">Session 3 vocabulary &middot; 16 words &middot; 8 nouns + 8 verbs &middot; IPA &middot; Click to hear</div>
+    </div>
+    <div class="vocab-grid">
+      <div class="vocab-card" onclick="speakWord('identity')"><div class="vocab-word">identity</div><div class="vocab-ipa">/a&#618;&#712;dent&#618;ti/</div><div class="vocab-def">Who a person or group is; the characteristics that define them</div><div class="vocab-ex">"Food has always been central to Mexican cultural identity."</div><button class="speak-btn">&#128266; Hear it</button></div>
+      <div class="vocab-card" onclick="speakWord('tradition')"><div class="vocab-word">tradition</div><div class="vocab-ipa">/tr&#601;&#712;d&#618;&#643;n/</div><div class="vocab-def">A custom or practice passed down through generations</div><div class="vocab-ex">"If we don&apos;t maintain our food traditions, they will disappear."</div><button class="speak-btn">&#128266; Hear it</button></div>
+      <div class="vocab-card" onclick="speakWord('memory')"><div class="vocab-word">memory</div><div class="vocab-ipa">/&#712;mem&#601;ri/</div><div class="vocab-def">Something remembered from the past; the capacity to remember</div><div class="vocab-ex">"That smell brings back a very specific memory from childhood."</div><button class="speak-btn">&#128266; Hear it</button></div>
+      <div class="vocab-card" onclick="speakWord('recipe')"><div class="vocab-word">recipe</div><div class="vocab-ipa">/&#712;res&#618;pi/</div><div class="vocab-def">Instructions for preparing a dish; figuratively, a formula for success</div><div class="vocab-ex">"My grandmother&apos;s recipe has never been written down &mdash; it lives in her hands."</div><button class="speak-btn">&#128266; Hear it</button></div>
+      <div class="vocab-card" onclick="speakWord('ingredient')"><div class="vocab-word">ingredient</div><div class="vocab-ipa">/&#618;n&#712;&#609;ri&#720;d&#618;&#601;nt/</div><div class="vocab-def">A component used in preparing a dish or mixture</div><div class="vocab-ex">"The ingredient that changes everything is the way it was grown, not what it is."</div><button class="speak-btn">&#128266; Hear it</button></div>
+      <div class="vocab-card" onclick="speakWord('heritage')"><div class="vocab-word">heritage</div><div class="vocab-ipa">/&#712;her&#618;t&#618;d&#658;/</div><div class="vocab-def">Cultural inheritance passed from one generation to the next</div><div class="vocab-ex">"Mexico&apos;s culinary heritage is recognized by UNESCO as intangible cultural heritage."</div><button class="speak-btn">&#128266; Hear it</button></div>
+      <div class="vocab-card" onclick="speakWord('comfort food')"><div class="vocab-word">comfort food</div><div class="vocab-ipa">/&#712;k&#652;mf&#601;t fu&#720;d/</div><div class="vocab-def">Food that provides emotional reassurance or nostalgic pleasure</div><div class="vocab-ex">"Pozole is my comfort food &mdash; I associate it with family gatherings."</div><button class="speak-btn">&#128266; Hear it</button></div>
+      <div class="vocab-card" onclick="speakWord('culture')"><div class="vocab-word">culture</div><div class="vocab-ipa">/&#712;k&#652;lt&#643;&#601;/</div><div class="vocab-def">The shared values, beliefs, customs, and practices of a group</div><div class="vocab-ex">"If you want to understand a culture, start with its food."</div><button class="speak-btn">&#128266; Hear it</button></div>
+      <!-- Verbs -->
+      <div class="vocab-card" onclick="speakWord('connect')"><div class="vocab-word">connect</div><div class="vocab-ipa">/k&#601;&#712;nekt/</div><div class="vocab-def">To link or form a relationship between people or ideas</div><div class="vocab-ex">"Sharing a meal connects people across cultural differences."</div><button class="speak-btn">&#128266; Hear it</button></div>
+      <div class="vocab-card" onclick="speakWord('share')"><div class="vocab-word">share</div><div class="vocab-ipa">/&#643;e&#601;/</div><div class="vocab-def">To give a portion of something to others; to tell others about your experience</div><div class="vocab-ex">"If we share our recipes, we keep the tradition alive."</div><button class="speak-btn">&#128266; Hear it</button></div>
+      <div class="vocab-card" onclick="speakWord('cook')"><div class="vocab-word">cook</div><div class="vocab-ipa">/k&#650;k/</div><div class="vocab-def">To prepare food using heat; also: someone who prepares food</div><div class="vocab-ex">"My mother cooks the same dish every Sunday &mdash; it has become a ritual."</div><button class="speak-btn">&#128266; Hear it</button></div>
+      <div class="vocab-card" onclick="speakWord('preserve')"><div class="vocab-word">preserve</div><div class="vocab-ipa">/pr&#618;&#712;z&#601;&#720;v/</div><div class="vocab-def">To keep something from being lost or destroyed over time</div><div class="vocab-ex">"If families don&apos;t preserve their recipes, the knowledge will be lost forever."</div><button class="speak-btn">&#128266; Hear it</button></div>
+      <div class="vocab-card" onclick="speakWord('discover')"><div class="vocab-word">discover</div><div class="vocab-ipa">/d&#618;&#712;sk&#652;v&#601;/</div><div class="vocab-def">To find or learn about something for the first time</div><div class="vocab-ex">"I discovered Korean food on a work trip and it changed the way I cook."</div><button class="speak-btn">&#128266; Hear it</button></div>
+      <div class="vocab-card" onclick="speakWord('try')"><div class="vocab-word">try</div><div class="vocab-ipa">/tra&#618;/</div><div class="vocab-def">To taste or experience something new; to make an effort</div><div class="vocab-ex">"I love trying new food &mdash; it&apos;s one of the reasons I enjoy travel."</div><button class="speak-btn">&#128266; Hear it</button></div>
+      <div class="vocab-card" onclick="speakWord('associate')"><div class="vocab-word">associate</div><div class="vocab-ipa">/&#601;&#712;s&#601;&#650;&#643;ie&#618;t/</div><div class="vocab-def">To connect or link one thing mentally with another</div><div class="vocab-ex">"I associate the smell of tortillas with my grandmother&apos;s kitchen."</div><button class="speak-btn">&#128266; Hear it</button></div>
+      <div class="vocab-card" onclick="speakWord('celebrate')"><div class="vocab-word">celebrate</div><div class="vocab-ipa">/&#712;sel&#618;bre&#618;t/</div><div class="vocab-def">To mark a special occasion with festivities, often involving food</div><div class="vocab-ex">"If we don&apos;t celebrate our traditions, who will?"</div><button class="speak-btn">&#128266; Hear it</button></div>
+    </div>
+
+    <div class="micro-speak">
+      <strong>&#128483;&#65039; Micro-Speaking:</strong> Choose 2 vocabulary words. Build one sentence using both + a First Conditional. Real context: your family, your region, your food. 20 seconds.
+    </div>
+
+    <!-- SPIN THE WHEEL (new mini-game, different from S1A and S2A) -->
+    <div style="margin-top:28px">
+      <div style="font-family:var(--font-head);font-size:14px;font-weight:700;color:var(--text);margin-bottom:6px">&#127918; Spin the Wheel &mdash; Food &amp; Culture Speaking Prompts</div>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:14px">Spin for a speaking prompt. Student who lands on it speaks for 30 seconds. Must use at least one vocabulary word and one First Conditional or opinion phrase.</p>
+      <div class="spin-wrap">
+        <canvas id="spinCanvas" class="spin-canvas" width="280" height="280"></canvas>
+        <div class="spin-result" id="spinResult">Spin the wheel for your prompt</div>
+        <button class="spin-btn" onclick="spinWheel()">&#127918; Spin</button>
+      </div>
+      <div class="act-score" id="spinCount">Spins completed: 0 / 6</div>
+    </div>
+
+    <!-- FLASH CARDS MINI-GAME -->
+    <div style="margin-top:28px">
+      <div style="font-family:var(--font-head);font-size:14px;font-weight:700;color:var(--text);margin-bottom:6px">&#127881; Flash Cards &mdash; Vocabulary Quick Review</div>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:14px">Click to flip. Front: English word. Back: IPA + definition. Work through all 8 key words for badge b2.</p>
+      <div class="fc3-grid">
+        <div class="fc3" onclick="flipFC3(this)"><div class="fc3-inner"><div class="fc3-front"><div class="fc3-word">identity</div></div><div class="fc3-back"><div class="fc3-word">/a&#618;&#712;dent&#618;ti/</div><div class="fc3-def">Who a person or group is; the characteristics that define them</div></div></div></div>
+        <div class="fc3" onclick="flipFC3(this)"><div class="fc3-inner"><div class="fc3-front"><div class="fc3-word">tradition</div></div><div class="fc3-back"><div class="fc3-word">/tr&#601;&#712;d&#618;&#643;n/</div><div class="fc3-def">A custom passed down through generations</div></div></div></div>
+        <div class="fc3" onclick="flipFC3(this)"><div class="fc3-inner"><div class="fc3-front"><div class="fc3-word">heritage</div></div><div class="fc3-back"><div class="fc3-word">/&#712;her&#618;t&#618;d&#658;/</div><div class="fc3-def">Cultural inheritance from previous generations</div></div></div></div>
+        <div class="fc3" onclick="flipFC3(this)"><div class="fc3-inner"><div class="fc3-front"><div class="fc3-word">comfort food</div></div><div class="fc3-back"><div class="fc3-word">/&#712;k&#652;mf&#601;t fu&#720;d/</div><div class="fc3-def">Food that gives emotional reassurance or nostalgia</div></div></div></div>
+        <div class="fc3" onclick="flipFC3(this)"><div class="fc3-inner"><div class="fc3-front"><div class="fc3-word">preserve</div></div><div class="fc3-back"><div class="fc3-word">/pr&#618;&#712;z&#601;&#720;v/</div><div class="fc3-def">To keep something from being lost over time</div></div></div></div>
+        <div class="fc3" onclick="flipFC3(this)"><div class="fc3-inner"><div class="fc3-front"><div class="fc3-word">associate</div></div><div class="fc3-back"><div class="fc3-word">/&#601;&#712;s&#601;&#650;&#643;ie&#618;t/</div><div class="fc3-def">To link one thing mentally with another</div></div></div></div>
+        <div class="fc3" onclick="flipFC3(this)"><div class="fc3-inner"><div class="fc3-front"><div class="fc3-word">identity (FC)</div></div><div class="fc3-back"><div class="fc3-word" style="font-size:11px;line-height:1.5">"If we don&apos;t share our recipes, we will lose part of our identity."</div></div></div></div>
+        <div class="fc3" onclick="flipFC3(this)"><div class="fc3-inner"><div class="fc3-front"><div class="fc3-word">culture (FC)</div></div><div class="fc3-back"><div class="fc3-word" style="font-size:11px;line-height:1.5">"If we try the food of another culture, we will understand them better."</div></div></div></div>
+      </div>
+      <div style="display:flex;justify-content:center;margin-top:10px">
+        <button class="btn btn-primary" onclick="earnBadge('b2')">&#10003; All cards reviewed &mdash; Earn badge</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- §4 COLLOQUIAL + OPINION -->
+<section class="section" id="s4">
+  <div class="section-header">
+    <span class="section-number">&sect;4</span>
+    <h2 class="section-title">&#128172; Colloquial &amp; Opinion Language</h2>
+    <span class="section-time">5 min</span>
+  </div>
+  <div class="section-body">
+    <div class="col-grid">
+      <div class="col-card">
+        <img src="https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=600&auto=format&fit=crop&q=80" alt="A meal that triggers a strong memory" loading="lazy">
+        <div class="col-card-body">
+          <div class="col-phrase">"That dish reminds me of home."</div>
+          <div class="col-use">When to use</div>
+          <div class="col-example">The most personal colloquial phrase in Module 6. Use when you want to connect food to identity or memory in conversation. "That dish reminds me of home &mdash; and if I don&apos;t make it at least once a month, I feel disconnected from where I come from."</div>
+        </div>
+      </div>
+      <div class="col-card">
+        <img src="https://images.unsplash.com/photo-1484723091739-30a097e8f929?w=600&auto=format&fit=crop&q=80" alt="Person trying food from another culture" loading="lazy">
+        <div class="col-card-body">
+          <div class="col-phrase">"I love trying new food."</div>
+          <div class="col-use">When to use</div>
+          <div class="col-example">Use when expressing cultural openness. "I love trying new food &mdash; and every time I do, I understand that culture a little better. If more people tried the food of others, there would be less division." Open + First Conditional.</div>
+        </div>
+      </div>
+      <div class="col-card">
+        <img src="https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=600&auto=format&fit=crop&q=80" alt="A person refusing to give up their traditional food" loading="lazy">
+        <div class="col-card-body">
+          <div class="col-phrase">"Some things you just can&apos;t give up."</div>
+          <div class="col-use">When to use</div>
+          <div class="col-example">Use for cultural anchors &mdash; the non-negotiables. "I have adapted a lot since I moved here. But some things you just can&apos;t give up. If I had to stop eating [X], I would lose a piece of who I am." Honest, direct, human.</div>
+        </div>
+      </div>
+    </div>
+    <div class="opinion-box">
+      <div class="opinion-box-label">&#127919; Opinion Language &mdash; Applied to Food &amp; Culture</div>
+      <div class="opinion-phrases">
+        <div class="opinion-phrase"><strong style="color:var(--warn)">I strongly believe that&hellip;</strong> &mdash; "I strongly believe that food is the fastest way to understand another culture."</div>
+        <div class="opinion-phrase"><strong style="color:var(--warn)">In my opinion&hellip;</strong> &mdash; "In my opinion, losing a traditional recipe is as serious as losing a language."</div>
+        <div class="opinion-phrase"><strong style="color:var(--warn)">I see both sides, but&hellip;</strong> &mdash; "I see both sides &mdash; globalization brings new foods AND threatens old ones. But I think the gain outweighs the loss."</div>
+        <div class="opinion-phrase"><strong style="color:var(--warn)">That&apos;s a good point, however&hellip;</strong> &mdash; "That&apos;s a good point, however not everyone has access to traditional ingredients &mdash; and that affects cultural continuity too."</div>
+        <div class="opinion-phrase"><strong style="color:var(--warn)">The reality is&hellip;</strong> &mdash; "The reality is that food traditions are already disappearing in many regions &mdash; and if we don&apos;t document them, they will be gone."</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- §5 GRAMMAR -->
+<section class="section" id="s5">
+  <div class="section-header">
+    <span class="section-number">&sect;5</span>
+    <h2 class="section-title">&#9889; Grammar &mdash; First Conditional as Cultural Argument</h2>
+    <span class="section-time">12 min</span>
+  </div>
+  <div class="section-body">
+    <div class="img-card">
+      <img src="https://images.unsplash.com/photo-1546833998-877b37c2e5c6?w=900&auto=format&fit=crop&q=80" alt="Street food market representing cultural exchange" loading="lazy">
+      <div class="img-overlay">Grammar &middot; First Conditional for cultural consequences &middot; Stacking conditionals for deeper arguments</div>
+    </div>
+    <div class="tool-card">
+      <div class="t-label">&#128295; Stacking First Conditionals for Stronger Arguments</div>
+      <p style="font-size:14px;color:var(--text);line-height:1.7">One First Conditional states a consequence. Two First Conditionals build a chain of reasoning. Three create a complete advocacy argument. Each builds on the last.</p>
+      <div style="margin-top:12px;padding:12px;background:rgba(16,185,129,.06);border-radius:8px;font-size:13px;font-style:italic;color:var(--text);line-height:2.2">
+        <span class="fc">If younger generations don&apos;t learn to cook traditional dishes,</span> the recipes will disappear.<br>
+        <span class="fc">If the recipes disappear,</span> we will lose a form of cultural memory that no book can replace.<br>
+        <span class="fc">And if we lose that memory,</span> future generations will have no connection to where they came from.<br>
+        <span style="color:var(--warn)">&#8594; Three conditionals = one complete cultural argument.</span>
+      </div>
+    </div>
+    <div class="err-box">
+      <strong>Common errors in S3A context:</strong><br>
+      &#10007; "If we <strong>will lose</strong> these traditions, things will change." &rarr; No will in IF clause. "If we <strong>lose</strong> these traditions..."<br>
+      &#10007; "Food <strong>is</strong> always connected to memory." &rarr; Use Present Perfect for a state that has developed over time: "Food <strong>has always been</strong> connected to memory."<br>
+      &#10007; "I associate tamales <strong>with</strong> Christmas." (correct) vs. "I associate tamales <strong>to</strong> Christmas." (wrong preposition in English)
+    </div>
+    <div style="margin-top:20px">
+      <div style="font-family:var(--font-head);font-size:14px;font-weight:700;color:var(--text);margin-bottom:12px">&#9997;&#65039; Activity &mdash; Complete the Cultural Conditional Chain</div>
+      <div class="act-score" id="scoreA">Score: 0 / 3</div>
+      <div class="poll-group">
+        <div class="poll-q">1. "If families ___ sharing traditional recipes, the knowledge will be lost forever."</div>
+        <div class="poll-opts">
+          <button class="poll-btn" onclick="checkPoll(this,'pa1a','fbA1','scoreA',3)">stop</button>
+          <button class="poll-btn" onclick="checkPoll(this,'pa1b','fbA1','scoreA',3)">will stop</button>
+          <button class="poll-btn" onclick="checkPoll(this,'pa1c','fbA1','scoreA',3)">stopped</button>
+        </div>
+        <div class="poll-fb" id="fbA1"></div>
+      </div>
+      <div class="poll-group">
+        <div class="poll-q">2. Choose the best way to open a cultural argument with nuance:</div>
+        <div class="poll-opts">
+          <button class="poll-btn" onclick="checkPoll(this,'pa2b','fbA2','scoreA',3)">I see both sides, but personally I feel that food traditions are irreplaceable.</button>
+          <button class="poll-btn" onclick="checkPoll(this,'pa2a','fbA2','scoreA',3)">I think food is important.</button>
+          <button class="poll-btn" onclick="checkPoll(this,'pa2c','fbA2','scoreA',3)">Food is good and traditions matter.</button>
+        </div>
+        <div class="poll-fb" id="fbA2"></div>
+      </div>
+      <div class="poll-group">
+        <div class="poll-q">3. "Mexican food ___ part of the UNESCO Intangible Cultural Heritage list since 2010." (Present Perfect)</div>
+        <div class="poll-opts">
+          <button class="poll-btn" onclick="checkPoll(this,'pa3a','fbA3','scoreA',3)">has been</button>
+          <button class="poll-btn" onclick="checkPoll(this,'pa3b','fbA3','scoreA',3)">was</button>
+          <button class="poll-btn" onclick="checkPoll(this,'pa3c','fbA3','scoreA',3)">is</button>
+        </div>
+        <div class="poll-fb" id="fbA3"></div>
+      </div>
+    </div>
+    <div class="micro-speak" style="margin-top:16px">
+      <strong>&#128483;&#65039; Micro-Speaking &mdash; Stack the Conditionals:</strong> Build a 2-FC argument about food culture. "If [X] doesn&apos;t happen, [Y] will occur &mdash; and if [Y] occurs, [Z] will follow." 30 seconds. No notes.
+    </div>
+  </div>
+</section>
+
+<!-- §6 LISTENING -->
+<section class="section" id="s6">
+  <div class="section-header">
+    <span class="section-number">&sect;6</span>
+    <h2 class="section-title">&#127911; Listening &mdash; Rodrigo and the Japanese Business Dinner</h2>
+    <span class="section-time">10 min</span>
+  </div>
+  <div class="section-body">
+    <div class="img-card">
+      <img src="https://images.unsplash.com/photo-1528605248644-14dd04022da1?w=900&auto=format&fit=crop&q=80" alt="Cross-cultural business dinner experience" loading="lazy">
+      <div class="img-overlay">Listening &middot; Rodrigo on the meal that changed how he saw another culture</div>
+    </div>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:16px">Rodrigo speaks informally about a business trip to Japan and the meal that changed his perspective on cultural identity. Listen for opinion phrases, First Conditional, and Present Perfect.</p>
+    <div class="player-card">
+      <div class="player-top">
+        <button class="play-btn-aud">&#9654;</button>
+        <div class="track-info">
+          <div class="track-title">The Japanese Dinner &mdash; Rodrigo Vega</div>
+          <div class="track-sub">B1.1 &middot; M6 &middot; S3A &middot; Voice: Adam &middot; Speed: 0.85 &middot; ElevenLabs</div>
+        </div>
+      </div>
+      <div class="waveform" id="wv"></div>
+    </div>
+    <button class="script-toggle" onclick="toggleScript('scriptBox')">&#9660; Show ElevenLabs Script</button>
+    <div class="script-box" id="scriptBox">
+      A few years ago I traveled to Osaka for a supplier meeting &mdash; first time in Japan. And I want to tell you about the dinner, because it changed the way I think about food and culture.
+
+      Our host took us to a small restaurant &mdash; maybe eight tables. And the meal lasted three hours. Three hours. Every dish was presented as if it were a piece of art. And between dishes, the chef came out and explained what we were eating &mdash; where the ingredients came from, what season they were connected to, what memory the dish was supposed to evoke.
+
+      I&apos;ve eaten in many countries. But I had never experienced food as a complete philosophy before that night. In my opinion, that dinner taught me more about Japanese culture than any book I&apos;ve read. The way they preserve their culinary traditions &mdash; the precision, the connection to seasons and memory &mdash; it was extraordinary.
+
+      And here&apos;s what I thought on the flight home: if we had that relationship with food in Mexico &mdash; the same intentionality, the same reverence &mdash; our culinary heritage would be presented to the world completely differently. We have UNESCO recognition. We have incredible variety. But if we don&apos;t invest in preserving and presenting it with the same pride, we will risk losing it to fast food and globalization.
+
+      That dish reminded me of something my grandmother used to say: "If you cook with memory, the people you feed will remember." I think about that a lot now.
+    </div>
+    <div style="margin-top:20px">
+      <div style="font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--text);margin-bottom:12px">&#128202; Comprehension</div>
+      <div class="poll-group">
+        <div class="poll-q">1. What surprised Rodrigo most about the Japanese dining experience?</div>
+        <div class="poll-opts">
+          <button class="poll-btn" onclick="checkListen(this,'cl1a','fbL1')">The chef explained the memory and season each dish was connected to</button>
+          <button class="poll-btn" onclick="checkListen(this,'cl1b','fbL1')">The meal was extremely expensive</button>
+          <button class="poll-btn" onclick="checkListen(this,'cl1c','fbL1')">The restaurant only had eight tables</button>
+        </div>
+        <div class="poll-fb" id="fbL1"></div>
+      </div>
+      <div class="poll-group">
+        <div class="poll-q">2. What concern does Rodrigo express about Mexican culinary heritage?</div>
+        <div class="poll-opts">
+          <button class="poll-btn" onclick="checkListen(this,'cl2a','fbL2')">It is losing its UNESCO recognition</button>
+          <button class="poll-btn" onclick="checkListen(this,'cl2b','fbL2')">Without investment in preservation and presentation, it risks being lost to fast food and globalization</button>
+          <button class="poll-btn" onclick="checkListen(this,'cl2c','fbL2')">Mexican chefs are less talented than Japanese ones</button>
+        </div>
+        <div class="poll-fb" id="fbL2"></div>
+      </div>
+    </div>
+    <button class="btn btn-primary" onclick="earnBadge('b4')" style="margin-top:14px">&#10003; Listening complete &mdash; Earn badge</button>
+  </div>
+</section>
+
+<!-- §7 PRODUCTION -->
+<section class="section" id="s7">
+  <div class="section-header">
+    <span class="section-number">&sect;7</span>
+    <h2 class="section-title">&#128483;&#65039; Production &mdash; Speaking Practice</h2>
+    <span class="section-time">12 min</span>
+  </div>
+  <div class="section-body">
+    <div class="img-card">
+      <img src="https://images.unsplash.com/photo-1555126634-323283e090fa?w=900&auto=format&fit=crop&q=80" alt="People sharing a meal from different cultures" loading="lazy">
+      <div class="img-overlay">Production &middot; Your food, your culture, your argument &middot; FC + PP + Opinion Language</div>
+    </div>
+    <div class="meter-wrap">
+      <div class="meter-lbl">&#127919; Class Opinion Meter</div>
+      <div class="meter-q">"Food is one of the most powerful ways to preserve and share cultural identity."</div>
+      <div class="meter-track" onclick="meterClick(event,this)"><div class="meter-fill" id="meterFill"></div></div>
+      <div class="meter-ends"><span>Strongly Disagree</span><span>Strongly Agree</span></div>
+      <div class="meter-btns">
+        <button class="meter-btn" onclick="moveMeter(-8)">&#9664; Disagree</button>
+        <button class="meter-btn" onclick="moveMeter(8)">Agree &#9654;</button>
+      </div>
+      <div class="meter-pct" id="meterPercent">Class: 50% agree</div>
+    </div>
+    <div class="speak-sec">
+      <div class="speak-card">
+        <img src="https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=600&auto=format&fit=crop&q=80" alt="Traditional family recipe being prepared" loading="lazy">
+        <div class="speak-card-body">
+          <div class="sc-lbl"><span class="tag tag-t2s">T&rarr;S</span> Q1 &mdash; Your Food Argument</div>
+          <div class="sc-q">Build a 3-sentence argument about why ONE food from your culture matters. Use: Present Perfect ("This food has always been..."), First Conditional ("If we stop making it..."), and one colloquial phrase.</div>
+          <div class="sc-hint">Vocabulary: identity, tradition, memory, heritage, preserve</div>
+        </div>
+      </div>
+      <div class="speak-card">
+        <img src="https://images.unsplash.com/photo-1504754524776-8f4f37790ca0?w=600&auto=format&fit=crop&q=80" alt="Person experiencing a different food culture" loading="lazy">
+        <div class="speak-card-body">
+          <div class="sc-lbl"><span class="tag tag-s2s">S&harr;S</span> Q2 &mdash; Cross-Cultural Food Experience</div>
+          <div class="sc-q">Tell your partner about a time you tried food from another culture. Did it change your view of that culture? Use: "I discovered..." / "It made me realize..." / "If I hadn&apos;t tried it, I would never have known..."</div>
+          <div class="sc-hint">Colloquial: "I love trying new food."</div>
+        </div>
+      </div>
+      <div class="speak-card">
+        <img src="https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=600&auto=format&fit=crop&q=80" alt="Person choosing traditional food over modern options" loading="lazy">
+        <div class="speak-card-body">
+          <div class="sc-lbl"><span class="tag tag-class">Class</span> Q3 &mdash; Globalization Debate</div>
+          <div class="sc-q">"Globalization has helped food cultures spread &mdash; but it has also threatened local traditions." Debate: has globalization been good or bad for food culture? Use Present Perfect + First Conditional + "That&apos;s a good point, however..."</div>
+          <div class="sc-hint">Colloquial: "Some things you just can&apos;t give up."</div>
+        </div>
+      </div>
+    </div>
+    <div style="margin-top:20px;padding:20px;background:rgba(16,185,129,.06);border:1px solid var(--border);border-radius:12px">
+      <div style="font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--accent);margin-bottom:8px">&#9889; Solo Challenge &mdash; 90 seconds</div>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:14px">Pick one food from your culture. Make the case for why it matters. Stack two First Conditionals. Use one Present Perfect. Use 2 opinion phrases. Connect it to identity, memory, or heritage. No notes.</p>
+      <div class="timer-wrap">
+        <svg width="80" height="80" viewBox="0 0 80 80"><circle class="timer-bg" cx="40" cy="40" r="34" stroke-width="6"/><circle class="timer-arc" id="arc2" cx="40" cy="40" r="34" stroke-width="6" stroke-dasharray="213.63" stroke-dashoffset="0"/><text class="timer-text" x="40" y="37" id="txt2">1:30</text><text class="timer-label" x="40" y="51">solo</text></svg>
+        <div class="timer-btns">
+          <button class="btn btn-primary" onclick="startTimerSVG('arc2','txt2',90,213.63,'b3')">&#9654; Start</button>
+          <button class="btn btn-ghost" onclick="resetTimerSVG('arc2','txt2','1:30',213.63)">&#8635;</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 3 PHRASES -->
+<section class="phrases-section" id="phrases">
+  <div class="phrases-inner">
+    <div class="ph-lbl">&#127919; This week, use these 3 phrases at work</div>
+    <div class="ph-title">3 Phrases for This Week</div>
+    <div class="ph-grid">
+      <div class="ph-card">
+        <img src="https://images.unsplash.com/photo-1565299543923-37dd37887442?w=600&auto=format&fit=crop&q=80" alt="A meal that triggers nostalgia" loading="lazy">
+        <div class="ph-card-body"><div class="ph-num">PHRASE 1</div><div class="ph-phrase">"That dish reminds me of home."</div><div class="ph-ctx">Use when someone asks about your food preferences, your region, or your family. It immediately makes the conversation personal and authentic. Follow it with more: "That dish reminds me of home &mdash; my grandmother has made it the same way my whole life."</div></div>
+      </div>
+      <div class="ph-card">
+        <img src="https://images.unsplash.com/photo-1567529684892-09290a1b2d05?w=600&auto=format&fit=crop&q=80" alt="Person excited to try new food" loading="lazy">
+        <div class="ph-card-body"><div class="ph-num">PHRASE 2</div><div class="ph-phrase">"I love trying new food."</div><div class="ph-ctx">Use this when talking about travel, other cultures, or simply your own curiosity. Add a First Conditional: "I love trying new food &mdash; and if you give me a recommendation, I&apos;ll try it this weekend." Enthusiasm + action = memorable phrase.</div></div>
+      </div>
+      <div class="ph-card">
+        <img src="https://images.unsplash.com/photo-1473093295043-cdd812d0e601?w=600&auto=format&fit=crop&q=80" alt="Person holding onto a cultural food tradition" loading="lazy">
+        <div class="ph-card-body"><div class="ph-num">PHRASE 3</div><div class="ph-phrase">"Some things you just can&apos;t give up."</div><div class="ph-ctx">One of the most naturally English colloquial phrases in Module 6. Use it about food, family, habits &mdash; anything that connects deeply to identity. "I&apos;ve adapted a lot in my life, but some things you just can&apos;t give up."</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- §8 WRAP-UP -->
+<section class="section" id="s8">
+  <div class="section-header">
+    <span class="section-number">&sect;8</span>
+    <h2 class="section-title">&#127942; Wrap-Up</h2>
+    <span class="section-time">5&ndash;8 min</span>
+  </div>
+  <div class="section-body">
+    <div style="font-family:var(--font-head);font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin:14px 0 10px">&#9989; I Can Now&hellip;</div>
+    <div class="checklist">
+      <div class="cl-item" onclick="this.classList.toggle('done');checkAllDone()"><div class="cl-box"></div>Stack two First Conditionals to build a complete cultural argument.</div>
+      <div class="cl-item" onclick="this.classList.toggle('done');checkAllDone()"><div class="cl-box"></div>Use today&apos;s vocabulary: identity, tradition, heritage, comfort food, preserve, associate, connect.</div>
+      <div class="cl-item" onclick="this.classList.toggle('done');checkAllDone()"><div class="cl-box"></div>Express cultural identity through food in English for 90 seconds without notes.</div>
+      <div class="cl-item" onclick="this.classList.toggle('done');checkAllDone()"><div class="cl-box"></div>Use "That dish reminds me of home," "I love trying new food," and "Some things you just can&apos;t give up" naturally.</div>
+      <div class="cl-item" onclick="this.classList.toggle('done');checkAllDone()"><div class="cl-box"></div>Debate the effect of globalization on food culture using PP + FC + all 5 opinion phrases.</div>
+    </div>
+    <div class="win-wrap">
+      <div class="win-label">&#127941; My Win Today</div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:8px">Complete: <em>"Today I talked about my culture in English. The food I chose was ___ and I said..."</em></div>
+      <textarea class="win-input" id="winInput" placeholder="Type your win here..." rows="2"></textarea>
+      <button class="btn btn-primary" onclick="saveWin()">Save My Win &#127942;</button>
+      <div class="win-saved" id="winSaved"></div>
+    </div>
+    <div class="next-card">
+      <img src="https://images.unsplash.com/photo-1530819568329-97653eafbbfa?w=900&auto=format&fit=crop&q=80" alt="Travel and perspective — the next session" loading="lazy">
+      <div class="next-card-body">
+        <div class="next-lbl">&#9654; Next Class &mdash; B1.1 &middot; M6 &middot; S4A</div>
+        <div class="next-title">Travel &amp; Perspective</div>
+        <div class="next-sub">New vocabulary (16 words): perspective, assumption, privilege, curiosity, experience, destination, openness, culture &middot; First Conditional for travel arguments &middot; "Has travel changed the way you see the world? Is it a privilege?" &middot; S5 Exit Project topic is revealed at end of S4A &mdash; prepare students.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="footer-brand">Gabriel Turner &middot; English Training &middot; Teacher Edition</div>
+  <div style="font-size:12px;color:var(--muted)">GT_B1_1_M6_S3A_TEACHER_v1</div>
+  <div class="level-tags">
+    <span class="level-tag">A1.1</span><span class="level-tag">A1.2</span><span class="level-tag">A2.1</span><span class="level-tag">A2.2</span>
+    <span class="level-tag active">B1.1</span>
+    <span class="level-tag">B1.2</span><span class="level-tag">B2.1</span><span class="level-tag">B2.2</span>
+  </div>
+</footer>
+<script>
+var earnedBadges={};
+function earnBadge(id){if(earnedBadges[id])return;earnedBadges[id]=true;var el=document.getElementById(id);if(el)el.classList.add('earned');if(Object.keys(earnedBadges).length>=5)launchConfetti();}
+function launchConfetti(){var w=document.getElementById('confettiWrap');w.style.display='block';var cols=['#10B981','#34D399','#FFB347','#00E5A0','#FF4D6D','#A78BFA'];for(var i=0;i<90;i++){var c=document.createElement('div');c.style.cssText='position:absolute;width:8px;height:8px;background:'+cols[i%cols.length]+';border-radius:50%;left:'+Math.random()*100+'%;top:-10px;animation:confFall '+(1.5+Math.random()*2)+'s ease-out forwards;animation-delay:'+Math.random()*.5+'s;';w.appendChild(c);}var s=document.createElement('style');s.textContent='@keyframes confFall{0%{transform:translateY(0) rotate(0);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}';document.head.appendChild(s);}
+var timerIntervals={};
+function startTimerSVG(arcId,textId,seconds,circumference,badgeId){if(timerIntervals[arcId])clearInterval(timerIntervals[arcId]);var arc=document.getElementById(arcId),txt=document.getElementById(textId),rem=seconds;function update(){arc.style.strokeDashoffset=circumference*(1-rem/seconds);var m=Math.floor(rem/60),s=rem%60;txt.textContent=m+':'+(s<10?'0':'')+s;if(rem<=5)arc.style.stroke='var(--danger)';if(rem<=0){clearInterval(timerIntervals[arcId]);arc.style.stroke='var(--success)';if(badgeId)earnBadge(badgeId);return;}rem--;}update();timerIntervals[arcId]=setInterval(update,1000);}
+function resetTimerSVG(arcId,textId,label,circumference){if(timerIntervals[arcId]){clearInterval(timerIntervals[arcId]);delete timerIntervals[arcId];}var arc=document.getElementById(arcId);arc.style.strokeDashoffset=0;arc.style.stroke='var(--accent)';document.getElementById(textId).textContent=label;}
+window.addEventListener('scroll',function(){var h=document.documentElement;document.getElementById('progressBar').style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100+'%';},{passive:true});
+function toggleMode(){document.body.classList.toggle('student-mode');document.querySelector('.mode-toggle').textContent=document.body.classList.contains('student-mode')?'TEACHER MODE':'STUDENT MODE';}
+function speakWord(t){if(!window.speechSynthesis)return;window.speechSynthesis.cancel();var u=new SpeechSynthesisUtterance(t);u.lang='en-US';u.rate=0.85;window.speechSynthesis.speak(u);}
+function toggleReveal(id){var el=document.getElementById(id);el.style.display=el.style.display==='block'?'none':'block';el.previousElementSibling.textContent=el.style.display==='block'?'\u25b2 Hide Model Answer':'\u25bc Show Model Answer (B1.1)';}
+function toggleScript(id){var el=document.getElementById(id);el.style.display=el.style.display==='block'?'none':'block';el.previousElementSibling.textContent=el.style.display==='block'?'\u25b2 Hide Script':'\u25bc Show ElevenLabs Script';}
+function flipFC3(el){el.classList.toggle('flipped');}
+var meterVal=50;
+function moveMeter(d){meterVal=Math.max(5,Math.min(95,meterVal+d));document.getElementById('meterFill').style.width=meterVal+'%';document.getElementById('meterPercent').textContent='Class: '+meterVal+'% agree';}
+function meterClick(e,el){var rect=el.getBoundingClientRect();meterVal=Math.round(((e.clientX-rect.left)/rect.width)*100);meterVal=Math.max(5,Math.min(95,meterVal));document.getElementById('meterFill').style.width=meterVal+'%';document.getElementById('meterPercent').textContent='Class: '+meterVal+'% agree';}
+function saveWin(){var t=document.getElementById('winInput').value.trim();if(!t)return;var s=document.getElementById('winSaved');s.style.display='block';s.textContent='\ud83c\udfc6 "'+t+'" \u2014 That is your proof.';earnBadge('b5');}
+function checkAllDone(){var items=document.querySelectorAll('.cl-item');var done=document.querySelectorAll('.cl-item.done');if(done.length===items.length)earnBadge('b5');}
+var spinPrompts=[
+  {label:"Heritage",text:"Describe ONE food tradition from your region that you are afraid will disappear. Use a First Conditional."},
+  {label:"Memory",text:"Describe a food memory from childhood. Start with: &quot;That dish reminds me of...&quot;"},
+  {label:"Globalization",text:"Has globalization helped or hurt food culture in Mexico? Give your opinion with 2 First Conditionals."},
+  {label:"Identity",text:"What does your country&apos;s cuisine say about its culture and identity? Use opinion language."},
+  {label:"Discovery",text:"Talk about a food from another culture you discovered. Use: &quot;I love trying new food&quot; + PP + FC."},
+  {label:"Preservation",text:"What would be lost if one traditional dish from your culture disappeared? Stack 2 First Conditionals."},
+];
+
+var spinCount=0;var spinning=false;
+var spinAngle=0;var targetAngle=0;
+var canvas=document.getElementById('spinCanvas');
+var ctx=canvas?canvas.getContext('2d'):null;
+var COLORS=['#10B981','#34D399','#059669','#065F46','#047857','#0D9488'];
+function drawWheel(angle){
+  if(!ctx)return;
+  var cx=140,cy=140,r=130,n=spinPrompts.length;
+  ctx.clearRect(0,0,280,280);
+  for(var i=0;i<n;i++){
+    var start=angle+i*(2*Math.PI/n),end=start+2*Math.PI/n;
+    ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,r,start,end);ctx.closePath();
+    ctx.fillStyle=COLORS[i%COLORS.length];ctx.fill();
+    ctx.strokeStyle='rgba(8,8,8,.2)';ctx.lineWidth=2;ctx.stroke();
+    ctx.save();ctx.translate(cx,cy);ctx.rotate(start+(end-start)/2);
+    ctx.textAlign='right';ctx.fillStyle='#fff';ctx.font='bold 11px Syne,sans-serif';
+    ctx.fillText(spinPrompts[i].label,r-8,5);ctx.restore();
+  }
+  ctx.beginPath();ctx.arc(cx,cy,14,0,2*Math.PI);ctx.fillStyle='var(--bg)';ctx.fill();ctx.strokeStyle='var(--accent)';ctx.lineWidth=2;ctx.stroke();
+}
+drawWheel(0);
+function spinWheel(){
+  if(spinning)return;spinning=true;
+  targetAngle=spinAngle+2*Math.PI*(3+Math.random()*3)+Math.random()*2*Math.PI;
+  var start=performance.now();var dur=3000;var from=spinAngle;
+  function anim(now){var t=Math.min((now-start)/dur,1);var ease=1-Math.pow(1-t,3);var cur=from+(targetAngle-from)*ease;drawWheel(cur);if(t<1){requestAnimationFrame(anim);}else{spinAngle=cur%(2*Math.PI);var idx=Math.floor((2*Math.PI-spinAngle%(2*Math.PI))/(2*Math.PI/spinPrompts.length))%spinPrompts.length;var p=spinPrompts[idx];document.getElementById('spinResult').innerHTML='<strong>'+p.label+'</strong><br>'+p.text;spinCount++;document.getElementById('spinCount').textContent='Spins completed: '+spinCount+' / 6';if(spinCount>=6)earnBadge('b2');spinning=false;}}
+  requestAnimationFrame(anim);
+}
+var pollData={
+  "pa1a":{correct:true,msg:"Correct. IF clause = present simple. \'If families stop\' — no will."},
+  "pa1b":{correct:false,msg:"Never use will in the IF clause. Present simple: \'if families stop.\'"},
+  "pa1c":{correct:false,msg:"Past simple = second conditional. For real/possible consequence, use present simple."},
+  "pa2b":{correct:true,msg:"Correct. Opens with nuance (\'I see both sides\') then states a position. B1.1 level."},
+  "pa2a":{correct:false,msg:"Too simple. No opinion phrase, no structure. Upgrade: \'In my opinion, food is one of the most important carriers of cultural identity.\'"},
+  "pa2c":{correct:false,msg:"Grammatically fine but too simple for B1.1. Use an opinion opener."},
+  "pa3a":{correct:true,msg:"Correct. Present Perfect: \'has been\' — an ongoing state since 2010."},
+  "pa3b":{correct:false,msg:"Past simple: \'was\' — this would mean it\'s no longer on the list. Use \'has been.\'"},
+  "pa3c":{correct:false,msg:"Present simple states a fact but doesn\'t connect to the duration (\'since 2010\')."},
+};
+var pollAnswered={};var scoreAVal=0;
+function checkPoll(btn,key,fbId,scoreId,maxScore){if(pollAnswered[fbId])return;pollAnswered[fbId]=true;var info=pollData[key];var opts=btn.parentElement.querySelectorAll('.poll-btn');opts.forEach(function(b){b.disabled=true;b.classList.add('wrong-ans');});var fb=document.getElementById(fbId);if(info&&info.correct){btn.classList.remove('wrong-ans');btn.classList.add('correct-ans');if(fb)fb.textContent=info.msg;scoreAVal++;var sc=document.getElementById(scoreId);if(sc)sc.textContent='Score: '+scoreAVal+' / '+maxScore;if(scoreAVal>=3)earnBadge('b3');}else{btn.classList.add('wrong-ans');if(fb)fb.textContent=info?info.msg:'\u274c';}}
+var listenData={
+  "cl1a":{correct:true,msg:"Correct — the chef came out and explained the memory and season each dish was connected to."},
+  "cl1b":{correct:false,msg:"The cost is not mentioned."},
+  "cl1c":{correct:false,msg:"The small size of the restaurant was noted but not described as surprising."},
+  "cl2a":{correct:false,msg:"He doesn\'t say Mexico is losing its UNESCO recognition."},
+  "cl2b":{correct:true,msg:"Correct — \'if we don\'t invest in preserving and presenting it with the same pride, we will risk losing it to fast food and globalization.\'"},
+  "cl2c":{correct:false,msg:"He doesn\'t compare Mexican and Japanese chefs."},
+};
+function checkListen(btn,key,fbId){var opts=btn.parentElement.querySelectorAll('.poll-btn');opts.forEach(function(b){b.disabled=true;b.classList.add('wrong-ans');});var fb=document.getElementById(fbId);var info=listenData[key];if(info&&info.correct){btn.classList.remove('wrong-ans');btn.classList.add('correct-ans');if(fb)fb.textContent=info.msg;}else{if(fb)fb.textContent=info?info.msg:'\u274c';}}
+var wv=document.getElementById('wv');if(wv){for(var i=0;i<60;i++){var b=document.createElement('div');b.className='wbar';b.style.height=(8+Math.sin(i*.6)*10+Math.random()*18)+'px';b.style.opacity=.25+Math.random()*.35;wv.appendChild(b);}}
+</script>
+</body>
+</html>

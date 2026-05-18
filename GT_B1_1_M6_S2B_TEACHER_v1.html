@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GT &middot; B1.1 &middot; M6 &middot; S2B &mdash; Is Education Keeping Up? &mdash; Production</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --accent:#10B981;--accent2:#34D399;
+  --bg:#080808;--surface:#111318;--surface2:#1a1f28;
+  --border:rgba(16,185,129,.18);
+  --text:#F0F4F8;--muted:#8A9BB0;
+  --danger:#FF4D6D;--success:#00E5A0;--warn:#FFB347;
+  --font-head:'Syne',sans-serif;--font-body:'DM Sans',sans-serif
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:15px;line-height:1.65;min-height:100vh}
+#progressBar{position:fixed;top:0;left:0;width:0%;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent2));z-index:9999;transition:width .3s}
+.site-header{position:sticky;top:0;z-index:900;background:rgba(8,8,8,.92);backdrop-filter:blur(14px);border-bottom:1px solid var(--border);padding:0 24px}
+.header-inner{max-width:960px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:58px;gap:12px;flex-wrap:wrap}
+.header-brand{font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--accent);letter-spacing:.08em;text-transform:uppercase}
+.header-meta{font-size:12px;color:var(--muted);font-weight:500}
+.badge-strip{display:flex;gap:6px}
+.badge-strip span{font-size:18px;opacity:.25;transition:all .4s;filter:grayscale(1);cursor:default}
+.badge-strip span.earned{opacity:1;filter:none;animation:badgePop .5s cubic-bezier(.34,1.56,.64,1)}
+@keyframes badgePop{0%{transform:scale(.4) rotate(-20deg);opacity:0}70%{transform:scale(1.25) rotate(4deg);opacity:1}100%{transform:scale(1) rotate(0)}}
+.mode-toggle{background:var(--surface2);border:1px solid var(--border);color:var(--accent);font-family:var(--font-head);font-size:11px;font-weight:700;padding:5px 12px;border-radius:6px;cursor:pointer;letter-spacing:.06em}
+.mode-toggle:hover{background:var(--accent);color:var(--bg)}
+.sticky-nav{position:sticky;top:58px;z-index:800;background:rgba(8,8,8,.88);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none}
+.sticky-nav::-webkit-scrollbar{display:none}
+.nav-inner{max-width:960px;margin:0 auto;display:flex;padding:0 16px}
+.nav-inner a{font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:.06em;color:var(--muted);text-decoration:none;padding:10px 14px;border-bottom:2px solid transparent;white-space:nowrap;transition:all .2s}
+.nav-inner a:hover{color:var(--accent);border-color:var(--accent)}
+.main{max-width:960px;margin:0 auto;padding:32px 20px 80px}
+.section{margin-bottom:48px;border:1px solid var(--border);border-radius:16px;overflow:hidden;background:var(--surface)}
+.section-header{display:flex;align-items:center;gap:14px;padding:18px 24px;background:linear-gradient(135deg,rgba(16,185,129,.08),transparent);border-bottom:1px solid var(--border)}
+.section-number{font-family:var(--font-head);font-size:11px;font-weight:800;color:var(--accent);letter-spacing:.12em;text-transform:uppercase;background:rgba(16,185,129,.1);border:1px solid var(--border);padding:3px 10px;border-radius:20px}
+.section-title{font-family:var(--font-head);font-size:18px;font-weight:800;color:var(--text);flex:1}
+.section-time{font-size:12px;color:var(--muted);background:var(--surface2);padding:3px 10px;border-radius:20px}
+.section-body{padding:24px}
+.img-card{border-radius:10px;overflow:hidden;position:relative;margin-bottom:18px}
+.img-card img{width:100%;height:200px;object-fit:cover;display:block;filter:brightness(.55)}
+.img-overlay{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(8,8,8,.88));padding:12px 16px;font-size:13px;color:rgba(255,255,255,.85)}
+.teacher-note{background:rgba(16,185,129,.06);border-left:3px solid var(--accent);border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0;font-size:13px;color:var(--muted)}
+.teacher-note strong{color:var(--accent)}
+.teacher-note.tn-gold{background:rgba(255,179,71,.06);border-color:var(--warn)}
+.teacher-note.tn-gold strong{color:var(--warn)}
+.teacher-note.tn-cyan{background:rgba(0,207,255,.06);border-color:#00CFFF}
+.teacher-note.tn-cyan strong{color:#00CFFF}
+.teacher-only{}
+body.student-mode .teacher-only{display:none}
+/* TIMER */
+.timer-wrap{display:flex;flex-direction:column;align-items:center;gap:10px;margin:16px 0}
+.timer-bg{fill:none;stroke:rgba(255,255,255,.07)}
+.timer-arc{fill:none;stroke:var(--accent);stroke-linecap:round;transition:stroke .5s;transform:rotate(-90deg);transform-origin:40px 40px}
+.timer-text{font-family:var(--font-head);font-weight:800;font-size:14px;fill:var(--text);dominant-baseline:middle;text-anchor:middle}
+.timer-label{font-size:9px;fill:var(--muted);dominant-baseline:middle;text-anchor:middle}
+.timer-btns{display:flex;gap:8px}
+.btn{font-family:var(--font-head);font-size:12px;font-weight:700;letter-spacing:.06em;padding:7px 18px;border-radius:8px;border:none;cursor:pointer;transition:all .2s}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-primary:hover{background:var(--accent2)}
+.btn-ghost{background:var(--surface2);border:1px solid var(--border);color:var(--muted)}
+.btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
+.tag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;font-family:var(--font-head);letter-spacing:.04em;margin-right:4px}
+.tag-t2s{background:rgba(16,185,129,.15);color:var(--accent)}
+.tag-s2s{background:rgba(255,179,71,.15);color:var(--warn)}
+.tag-class{background:rgba(138,155,176,.12);color:var(--muted)}
+/* HOT TAKE */
+.hot-take-card{background:linear-gradient(135deg,rgba(255,77,109,.08),rgba(255,77,109,.03));border:1px solid rgba(255,77,109,.25);border-left:4px solid var(--danger);border-radius:0 12px 12px 0;padding:22px 24px;margin:14px 0}
+.hot-take-label{font-family:var(--font-head);font-size:10px;font-weight:700;color:var(--danger);letter-spacing:.12em;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.hot-take-label::before{content:"\1F525";font-size:14px}
+.hot-take-statement{font-size:18px;font-weight:700;color:var(--text);line-height:1.4;margin-bottom:14px}
+.stance-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.stance-card{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px;cursor:pointer;transition:all .2s}
+.stance-card:hover{border-color:var(--accent)}
+.stance-card.chosen{border-color:var(--accent);background:rgba(16,185,129,.08)}
+.stance-label{font-family:var(--font-head);font-size:10px;font-weight:700;color:var(--accent);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px}
+.stance-desc{font-size:13px;color:var(--muted);line-height:1.5}
+/* PITCH / DEBATE */
+.debate-wrap{display:flex;flex-direction:column;gap:14px;margin:14px 0}
+.debate-round{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:18px 20px}
+.debate-num{font-family:var(--font-head);font-size:10px;font-weight:700;color:var(--accent);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px}
+.debate-q{font-size:14px;color:var(--text);font-weight:600;line-height:1.5;margin-bottom:8px}
+.debate-hint{font-size:12px;color:var(--muted);font-style:italic}
+/* RELAY */
+.relay-wrap{margin:14px 0}
+.relay-visual{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:22px;margin-bottom:14px}
+.relay-title{font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--accent);margin-bottom:14px;letter-spacing:.06em;text-transform:uppercase}
+.relay-chain{display:flex;align-items:center;gap:0;flex-wrap:wrap}
+.relay-node{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-size:13px;color:var(--text);flex:1;min-width:140px;text-align:center;line-height:1.4}
+.relay-node.active{border-color:var(--accent);color:var(--accent);font-weight:600}
+.relay-arrow{font-size:20px;color:var(--muted);padding:0 8px;flex-shrink:0}
+.relay-instructions{font-size:13px;color:var(--muted);line-height:1.7}
+/* SPEED ROUND */
+.speed-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:14px 0}
+.speed-card{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:16px 14px;text-align:center;cursor:pointer;transition:all .2s}
+.speed-card:hover{border-color:var(--accent)}
+.speed-card.done{border-color:var(--success);background:rgba(0,229,160,.06)}
+.speed-num{font-family:var(--font-head);font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px}
+.speed-prompt{font-size:13px;color:var(--text);font-weight:500;line-height:1.4}
+.speed-done-btn{background:none;border:1px solid var(--border);color:var(--muted);font-family:var(--font-head);font-size:10px;font-weight:700;padding:4px 10px;border-radius:6px;cursor:pointer;margin-top:10px;letter-spacing:.06em}
+.speed-done-btn:hover{border-color:var(--success);color:var(--success)}
+/* SOLO CHALLENGE */
+.challenge-card{background:linear-gradient(135deg,rgba(16,185,129,.07),rgba(52,211,153,.03));border:1px solid var(--border);border-radius:12px;padding:22px;margin:14px 0}
+.challenge-title{font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--accent);letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px}
+.challenge-brief{font-size:14px;color:var(--text);line-height:1.7;margin-bottom:16px}
+.challenge-rubric{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}
+.rubric-item{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 12px;cursor:pointer;transition:all .2s}
+.rubric-item:hover{border-color:var(--accent)}
+.rubric-item.checked{border-color:var(--success);background:rgba(0,229,160,.06)}
+.rubric-label{font-family:var(--font-head);font-size:9px;font-weight:700;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px}
+.rubric-desc{font-size:12px;color:var(--text);line-height:1.4}
+.rubric-item.checked .rubric-label{color:var(--success)}
+/* LEADERBOARD */
+.lb-wrap{margin:14px 0}
+.lb-title{font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--accent);letter-spacing:.06em;text-transform:uppercase;margin-bottom:12px}
+.lb-add{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.lb-name-input{background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);padding:8px 12px;font-family:var(--font-body);font-size:13px;flex:1;min-width:140px}
+.lb-name-input:focus{outline:none;border-color:var(--accent)}
+.lb-score-input{background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);padding:8px 12px;font-family:var(--font-body);font-size:13px;width:80px;text-align:center}
+.lb-score-input:focus{outline:none;border-color:var(--accent)}
+.lb-add-btn{background:var(--accent);border:none;color:#fff;font-family:var(--font-head);font-size:11px;font-weight:700;padding:8px 18px;border-radius:8px;cursor:pointer;letter-spacing:.06em}
+.lb-table{width:100%;border-collapse:collapse}
+.lb-table th{padding:10px 14px;text-align:left;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);border-bottom:2px solid var(--accent)}
+.lb-table td{padding:10px 14px;border-bottom:1px solid var(--border);font-size:13px}
+.lb-table tr:hover td{background:rgba(16,185,129,.04)}
+.lb-rank{font-family:var(--font-head);font-weight:800;color:var(--accent)}
+.lb-empty{font-size:13px;color:var(--muted);font-style:italic;padding:14px}
+/* CERTIFICATE */
+.cert-wrap{background:linear-gradient(135deg,rgba(16,185,129,.06),rgba(52,211,153,.03));border:1px solid rgba(16,185,129,.3);border-radius:14px;padding:26px;margin:20px 0;text-align:center}
+.cert-title{font-family:var(--font-head);font-size:22px;font-weight:800;color:var(--accent);margin-bottom:6px}
+.cert-sub{font-size:13px;color:var(--muted);margin-bottom:18px}
+.cert-input-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:14px}
+.cert-name-input{background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);padding:10px 16px;font-family:var(--font-body);font-size:14px;min-width:220px}
+.cert-name-input:focus{outline:none;border-color:var(--accent)}
+.cert-gen-btn{background:var(--accent);border:none;color:#fff;font-family:var(--font-head);font-size:12px;font-weight:700;padding:10px 22px;border-radius:8px;cursor:pointer;letter-spacing:.06em}
+.cert-display{display:none;background:var(--surface);border:2px solid var(--accent);border-radius:12px;padding:28px;margin-top:14px}
+.cert-display-title{font-family:var(--font-head);font-size:14px;font-weight:700;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px}
+.cert-student-name{font-family:var(--font-head);font-size:28px;font-weight:800;color:var(--accent);margin-bottom:6px}
+.cert-session-info{font-size:13px;color:var(--muted);line-height:1.6}
+/* WIN / CHECKLIST */
+.checklist{display:flex;flex-direction:column;gap:7px;margin:14px 0}
+.cl-item{display:flex;align-items:center;gap:12px;padding:11px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;cursor:pointer;transition:all .2s;font-size:13px;color:var(--muted)}
+.cl-item:hover{border-color:var(--accent);color:var(--text)}
+.cl-item.done{border-color:var(--success);color:var(--success);background:rgba(0,229,160,.06)}
+.cl-box{width:18px;height:18px;border:2px solid var(--muted);border-radius:4px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px}
+.cl-item.done .cl-box{border-color:var(--success);background:var(--success);color:#fff}
+.cl-item.done .cl-box::after{content:"\2713"}
+.win-wrap{margin:22px 0;background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:20px}
+.win-label{font-family:var(--font-head);font-size:12px;font-weight:700;color:var(--warn);letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px}
+.win-input{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text);padding:12px 14px;font-family:var(--font-body);font-size:13px;resize:vertical;margin-bottom:10px}
+.win-input:focus{outline:none;border-color:var(--accent)}
+.win-saved{display:none;font-size:13px;color:var(--success);margin-top:6px;padding:8px 12px;background:rgba(0,229,160,.08);border-radius:6px}
+#confettiWrap{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9998;display:none;overflow:hidden}
+.site-footer{background:var(--surface);border-top:1px solid var(--border);padding:20px 24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+.footer-brand{font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.level-tags{display:flex;gap:4px;flex-wrap:wrap}
+.level-tag{font-family:var(--font-head);font-size:10px;font-weight:700;padding:3px 10px;background:var(--surface2);color:rgba(255,255,255,.25);border-radius:4px}
+.level-tag.active{background:var(--accent);color:#fff}
+@media(max-width:860px){
+  .stance-grid,.debate-wrap,.challenge-rubric,.speed-grid,.lb-add{grid-template-columns:1fr}
+  .relay-chain{flex-direction:column}
+  .relay-arrow{transform:rotate(90deg)}
+  .header-inner{height:auto;padding:10px 0}
+}
+
+.edu-chain{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px}
+.erc-node{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px 10px;text-align:center;transition:border-color .2s;cursor:pointer}
+.erc-node:hover{border-color:var(--accent)}
+.erc-node.active-turn{border-color:var(--accent);background:rgba(16,185,129,.08)}
+.erc-node .pn-num{font-family:var(--font-head);font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px}
+.erc-node .pn-role{font-size:12px;color:var(--text);font-weight:600;line-height:1.3}
+.erc-node .pn-desc{font-size:10px;color:var(--muted);margin-top:3px;line-height:1.3}
+.pc-arrow{font-size:18px;color:var(--muted);display:flex;align-items:center;justify-content:center}
+</style>
+<body>
+<div id="progressBar"></div>
+<div id="confettiWrap"></div>
+<header class="site-header">
+  <div class="header-inner">
+    <div>
+      <div class="header-brand">Gabriel Turner &middot; English Training</div>
+      <div class="header-meta">B1.1 &nbsp;&middot;&nbsp; Module 6 &nbsp;&middot;&nbsp; Session 2B &nbsp;&middot;&nbsp; Production &amp; Fluency &nbsp;&middot;&nbsp; Teacher Edition</div>
+    </div>
+    <div class="badge-strip">
+      <span id="b1" title="Hot Take">&#127979;</span>
+      <span id="b2" title="Pitch/Debate">&#128483;&#65039;</span>
+      <span id="b3" title="Speed Round">&#9889;</span>
+      <span id="b4" title="Solo Challenge">&#127919;</span>
+      <span id="b5" title="Champion">&#127942;</span>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <div class="header-meta">Teacher Edition &middot; 90&ndash;120 min</div>
+      <button class="mode-toggle" onclick="toggleMode()">STUDENT MODE</button>
+    </div>
+  </div>
+</header>
+<nav class="sticky-nav">
+  <div class="nav-inner">
+    <a href="#hot-take">&#128293; Hot Take</a>
+    <a href="#pitch">&#128483;&#65039; Pitch</a>
+    <a href="#relay">&#127939; Relay</a>
+    <a href="#speed">&#9889; Speed</a>
+    <a href="#solo">&#127919; Solo</a>
+    <a href="#assessment">&#127942; Assessment</a>
+    <a href="#wrapup">&#127881; Wrap-Up</a>
+  </div>
+</nav>
+<main class="main">
+
+<!-- INTRO STRIP -->
+<div style="background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.2);border-radius:10px;padding:16px 20px;margin-bottom:28px">
+  <div style="font-family:var(--font-head);font-size:11px;font-weight:700;color:var(--accent);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px">&#128257; S2B &mdash; Production &amp; Fluency</div>
+  <p style="font-size:13px;color:var(--muted);line-height:1.7">From S2A: <strong style="color:var(--text)">PP + FC combined argument</strong> ("The system hasn&apos;t changed &mdash; if it doesn&apos;t, the gap will grow") &middot; <strong style="color:var(--text)">Vocabulary</strong>: curriculum, critical thinking, skill, application, gap, preparation, develop, fail &middot; <strong style="color:var(--text)">Colloquial</strong>: "School didn&apos;t prepare me for everything," "Practical skills matter just as much," "The system needs to change." Today: 100% production &mdash; argue, pitch, and defend.</p>
+</div>
+
+<!-- HOT TAKE -->
+<section class="section" id="hot-take">
+  <div class="section-header"><span class="section-number">&#128293;</span><h2 class="section-title">Hot Take &mdash; Education &amp; Employment</h2><span class="section-time">10 min</span></div>
+  <div class="section-body">
+    <div class="img-card"><img src="https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=900&auto=format&fit=crop&q=80" alt="Graduation ceremony with students questioning what their degree means"><div class="img-overlay">Hot Take &middot; Pick a side &middot; PP + FC required &middot; 90 seconds on the clock</div></div>
+    <div class="hot-take-card">
+      <div class="hot-take-label">Today&apos;s Hot Take</div>
+      <div class="hot-take-statement">"Universities produce graduates who are unemployable &mdash; and the companies that hire them know it before the interview is over."</div>
+      <div class="stance-grid">
+        <div class="stance-card" onclick="this.classList.toggle('chosen')">
+          <div class="stance-label">&#9989; Agree</div>
+          <div class="stance-desc">Degrees have become credentials, not competencies. Employers spend months training new graduates in skills school should have taught. The gap between what universities teach and what industries need has widened every decade.</div>
+        </div>
+        <div class="stance-card" onclick="this.classList.toggle('chosen')">
+          <div class="stance-label">&#10007; Disagree</div>
+          <div class="stance-desc">Universities build critical thinking, adaptability, and intellectual foundations. A degree is not a job manual &mdash; it is a mind-building exercise. The best graduates apply what they learned; the gap is in application, not education.</div>
+        </div>
+      </div>
+    </div>
+    <div style="margin-top:20px">
+      <div style="font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--text);margin-bottom:10px"><span class="tag tag-t2s">T&rarr;S</span> Round 1 &mdash; Your Hot Take (90 sec)</div>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:14px">State your position using an opinion phrase opener + PP evidence (what has happened) + FC consequence (what will happen if nothing changes). Vocabulary required: curriculum, gap, skill, application, prepare.</p>
+      <div class="timer-wrap">
+        <svg width="80" height="80" viewBox="0 0 80 80"><circle class="timer-bg" cx="40" cy="40" r="34" stroke-width="6"/><circle class="timer-arc" id="arc1" cx="40" cy="40" r="34" stroke-width="6" stroke-dasharray="213.63" stroke-dashoffset="0"/><text class="timer-text" x="40" y="37" id="txt1">1:30</text><text class="timer-label" x="40" y="51">argue</text></svg>
+        <div class="timer-btns"><button class="btn btn-primary" onclick="startTimerSVG('arc1','txt1',90,213.63,'b1')">&#9654; Start</button><button class="btn btn-ghost" onclick="resetTimerSVG('arc1','txt1','1:30',213.63)">&#8635;</button></div>
+      </div>
+    </div>
+    <div style="margin-top:20px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:18px">
+      <div style="font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--text);margin-bottom:8px"><span class="tag tag-s2s">S&harr;S</span> Round 2 &mdash; The Counter (60 sec)</div>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:12px">Counter with "That&apos;s a good point, however..." then use PP + FC together: "The gap has grown, yes &mdash; but if companies invested in graduate training, the transition would be smoother." Alternate. Both must produce at least one PP + one FC in their counter.</p>
+      <div class="timer-wrap">
+        <svg width="80" height="80" viewBox="0 0 80 80"><circle class="timer-bg" cx="40" cy="40" r="34" stroke-width="6"/><circle class="timer-arc" id="arc2" cx="40" cy="40" r="34" stroke-width="6" stroke-dasharray="213.63" stroke-dashoffset="0"/><text class="timer-text" x="40" y="37" id="txt2">1:00</text><text class="timer-label" x="40" y="51">counter</text></svg>
+        <div class="timer-btns"><button class="btn btn-primary" onclick="startTimerSVG('arc2','txt2',60,213.63,null)">&#9654; Start</button><button class="btn btn-ghost" onclick="resetTimerSVG('arc2','txt2','1:00',213.63)">&#8635;</button></div>
+      </div>
+    </div>
+    <div class="teacher-note teacher-only"><strong>Teacher note:</strong> The "unemployable graduates" statement is deliberately extreme &mdash; most students will know it is partially true and partially unfair. That productive tension is the point. Students who have hired people (team leaders, coordinators) will have particularly strong opinions based on real experience. Let those voices lead Round 1. The most authentic production of the session often comes in the first 5 minutes when the topic is personal.</div>
+  </div>
+</section>
+
+<!-- PITCH / DEBATE -->
+<section class="section" id="pitch">
+  <div class="section-header"><span class="section-number">&#128483;&#65039;</span><h2 class="section-title">Pitch / Debate &mdash; The Education Reform Proposal</h2><span class="section-time">15 min</span></div>
+  <div class="section-body">
+    <div class="img-card"><img src="https://images.unsplash.com/photo-1497633762265-9d179a990aa6?w=900&auto=format&fit=crop&q=80" alt="Person presenting an education reform proposal" loading="lazy"><div class="img-overlay">Pitch &middot; Reform the system &middot; PP evidence + double FC argument &middot; Professional English</div></div>
+    <div class="debate-wrap">
+      <div class="debate-round">
+        <div class="debate-num"><span class="tag tag-t2s">T&rarr;S</span> Pitch Round 1 &mdash; The Reform Proposal (3 min)</div>
+        <div class="debate-q">You are advising the Secretary of Education. Propose ONE concrete change to the national curriculum that would close the skills gap. Structure: (1) What the system has failed to do &mdash; PP evidence &mdash; (2) What will happen if nothing changes &mdash; FC warning &mdash; (3) Your specific proposal &mdash; (4) What will happen if it is implemented &mdash; FC opportunity. Minimum: 2 FC + 1 PP + 2 opinion phrases + 3 vocabulary words.</div>
+        <div class="debate-hint">Vocabulary: curriculum, critical thinking, gap, application, develop, preparation, skill, fail.</div>
+      </div>
+      <div class="debate-round">
+        <div class="debate-num"><span class="tag tag-s2s">S&harr;S</span> Debate Round 2 &mdash; The Traditionalist (90 sec)</div>
+        <div class="debate-q">Partner plays a conservative education official: "You said the curriculum has failed &mdash; but it has also produced engineers, doctors, and scientists for decades. If we change it too quickly, we will lose the academic foundation that makes our universities respected." Pitcher responds: "That&apos;s a good point, however the gap has widened precisely because..." Use PP + FC to defend the reform.</div>
+        <div class="debate-hint">Key structure: "I see both sides, but the reality is that..." then PP evidence then FC consequence.</div>
+      </div>
+      <div class="debate-round">
+        <div class="debate-num"><span class="tag tag-class">Class</span> Debate Round 3 &mdash; Best Reform Vote (2 min)</div>
+        <div class="debate-q">Class votes on the most realistic and impactful reform proposal. The winner summarizes: "The class has agreed that... / Several colleagues have pointed out that if this change is implemented, graduates will..." Close with: "The system needs to change &mdash; and this is how."</div>
+        <div class="debate-hint">Colloquial close: "Practical skills matter just as much."</div>
+      </div>
+    </div>
+    <div class="teacher-note teacher-only"><strong>Teacher note &mdash; Reform Proposal:</strong> Students in manufacturing and logistics have direct experience of the skills gap &mdash; they work with graduates and with self-taught technicians. The best proposals will draw on this: "If we introduced factory simulation projects in engineering programs, students would arrive ready to work." Ground the grammar in real observations. The most convincing pitches are specific, not abstract.</div>
+    <div class="teacher-note tn-gold teacher-only"><strong>Upsell note:</strong> After the best proposal, say: "If you could present this argument in English to your company&apos;s HR director or the director of an engineering school &mdash; would they listen? After today, you have the language to do exactly that."</div>
+  </div>
+</section>
+
+<!-- RELAY: EDUCATION REFORM CHAIN (unique) -->
+<section class="section" id="relay">
+  <div class="section-header"><span class="section-number">&#127939;</span><h2 class="section-title">Relay &mdash; The Education Reform Chain</h2><span class="section-time">10 min</span></div>
+  <div class="section-body">
+    <div class="img-card"><img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=900&auto=format&fit=crop&q=80" alt="Reform idea moving from student to teacher to company to government" loading="lazy"><div class="img-overlay">Relay &middot; Education Reform Chain &middot; 4 voices &middot; Student &rarr; Teacher &rarr; Company &rarr; Government</div></div>
+    <div class="relay-wrap">
+      <div class="relay-visual">
+        <div class="relay-title">&#127939; Education Reform Chain &mdash; 4 Voices, One Reform</div>
+        <div style="display:grid;grid-template-columns:1fr auto 1fr auto 1fr auto 1fr;gap:0;align-items:center;margin-bottom:16px">
+          <div class="erc-node active-turn"><div class="pn-num">Voice 1</div><div class="pn-role">&#127891; The Student</div><div class="pn-desc">Identifies a skill they didn&apos;t learn + FC</div></div>
+          <div class="pc-arrow">&#8594;</div>
+          <div class="erc-node"><div class="pn-num">Voice 2</div><div class="pn-role">&#128218; The Teacher</div><div class="pn-desc">Scales to curriculum level: "If we taught X, students would..."</div></div>
+          <div class="pc-arrow">&#8594;</div>
+          <div class="erc-node"><div class="pn-num">Voice 3</div><div class="pn-role">&#127970; The Company</div><div class="pn-desc">States the employment impact: "If graduates arrived with X, we would..."</div></div>
+          <div class="pc-arrow">&#8594;</div>
+          <div class="erc-node"><div class="pn-num">Voice 4</div><div class="pn-role">&#127961;&#65039; The Government</div><div class="pn-desc">States national consequence with PP + double FC</div></div>
+        </div>
+        <div style="font-size:13px;color:var(--muted);line-height:1.8">
+          <strong style="color:var(--text)">How it works:</strong><br>
+          Voice 1: "School didn&apos;t prepare me for professional communication. If it had, my first year at work would have been completely different."<br>
+          Voice 2: "If we introduced real project work in the curriculum, students would develop critical thinking and communication skills together."<br>
+          Voice 3: "If graduates arrived with those skills, we would reduce our onboarding time significantly &mdash; and invest that time in innovation instead."<br>
+          Voice 4: "Companies have been absorbing the cost of inadequate preparation for decades. If the curriculum changes, productivity will improve. And if productivity improves, GDP will grow &mdash; which is the argument that makes governments listen."<br><br>
+          <strong style="color:var(--text)">Target language:</strong> Each voice must include at least one FC. Voice 4 must use PP + double FC. The chain must be logically consistent from individual experience to national policy.
+        </div>
+      </div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:16px;margin-top:8px">
+        <div style="font-family:var(--font-head);font-size:11px;font-weight:700;color:var(--accent);letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px">Starter skills for Voice 1 (teacher chooses)</div>
+        <div style="display:flex;flex-direction:column;gap:6px;font-size:13px;color:var(--muted);font-style:italic">
+          <div>"School never taught me how to present my ideas clearly to a group."</div>
+          <div>"I learned financial basics on the job, not in any classroom."</div>
+          <div>"No one taught me how to negotiate, manage conflict, or give feedback."</div>
+        </div>
+      </div>
+    </div>
+    <div class="teacher-note teacher-only"><strong>Teacher note &mdash; Relay debrief:</strong> Ask Voice 1 after Voice 4 speaks: "Is that the same reform you proposed? Did anything change?" The best relay chains maintain logical continuity. The most common failure: Voice 3 (the Company) breaks the chain by introducing a new topic. Use this as a teachable moment: "In professional English, clarity of argument across multiple speakers requires each person to build on what the previous person said &mdash; not restart."</div>
+  </div>
+</section>
+
+<!-- SPEED ROUND -->
+<section class="section" id="speed">
+  <div class="section-header"><span class="section-number">&#9889;</span><h2 class="section-title">Speed Round &mdash; 30 Seconds Each</h2><span class="section-time">10 min</span></div>
+  <div class="section-body">
+    <div class="img-card"><img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=900&auto=format&fit=crop&q=80" alt="Professional responding quickly and confidently" loading="lazy"><div class="img-overlay">Speed Round &middot; 30 seconds &middot; PP + FC + opinion language &middot; No pausing</div></div>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:16px">30 seconds, one student. Each response must include PP + FC + one opinion phrase. Click Done when complete.</p>
+    <div class="timer-wrap" style="margin-bottom:20px">
+      <svg width="80" height="80" viewBox="0 0 80 80"><circle class="timer-bg" cx="40" cy="40" r="34" stroke-width="6"/><circle class="timer-arc" id="arc3" cx="40" cy="40" r="34" stroke-width="6" stroke-dasharray="213.63" stroke-dashoffset="0"/><text class="timer-text" x="40" y="37" id="txt3">0:30</text><text class="timer-label" x="40" y="51">sec</text></svg>
+      <div class="timer-btns"><button class="btn btn-primary" onclick="startTimerSVG('arc3','txt3',30,213.63,null)">&#9654; Start</button><button class="btn btn-ghost" onclick="resetTimerSVG('arc3','txt3','0:30',213.63)">&#8635;</button></div>
+    </div>
+    <div class="speed-grid" id="speedGrid">
+      <div class="speed-card" id="sp1"><div class="speed-num">Prompt 1</div><div class="speed-prompt">Use "School didn&apos;t prepare me for everything" as your opener. Give 2 specific things school failed to teach you and one FC consequence of that failure.</div><button class="speed-done-btn" onclick="speedDone(1)">&#10003; Done</button></div>
+      <div class="speed-card" id="sp2"><div class="speed-num">Prompt 2</div><div class="speed-prompt">Describe the skills gap at your company using PP: "We have had to train graduates in... / The gap has cost us..." Then FC: "If universities don&apos;t change..."</div><button class="speed-done-btn" onclick="speedDone(2)">&#10003; Done</button></div>
+      <div class="speed-card" id="sp3"><div class="speed-num">Prompt 3</div><div class="speed-prompt">Use "I strongly believe that..." to defend one of these: exams, degrees, vocational training, or online learning. PP + FC required.</div><button class="speed-done-btn" onclick="speedDone(3)">&#10003; Done</button></div>
+      <div class="speed-card" id="sp4"><div class="speed-num">Prompt 4</div><div class="speed-prompt">Report what Rodrigo said about education in S2A listening. "He said the curriculum had never taught him... / He believed that if the system didn&apos;t change..."</div><button class="speed-done-btn" onclick="speedDone(4)">&#10003; Done</button></div>
+      <div class="speed-card" id="sp5"><div class="speed-num">Prompt 5</div><div class="speed-prompt">Argue: "Practical skills matter just as much as academic knowledge." Use PP evidence from your own experience + double FC.</div><button class="speed-done-btn" onclick="speedDone(5)">&#10003; Done</button></div>
+      <div class="speed-card" id="sp6"><div class="speed-num">Prompt 6</div><div class="speed-prompt">Defend the university system: "I see both sides, but..." Use PP to acknowledge what universities have achieved, then FC for what they could improve.</div><button class="speed-done-btn" onclick="speedDone(6)">&#10003; Done</button></div>
+    </div>
+    <div style="font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--muted);margin-top:12px">Completed: <span id="speedCount" style="color:var(--accent)">0</span> / 6</div>
+  </div>
+</section>
+
+<!-- SOLO CHALLENGE -->
+<section class="section" id="solo">
+  <div class="section-header"><span class="section-number">&#127919;</span><h2 class="section-title">Solo Challenge &mdash; The Education Pitch</h2><span class="section-time">15 min</span></div>
+  <div class="section-body">
+    <div class="img-card"><img src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=900&auto=format&fit=crop&q=80" alt="Person delivering an education reform pitch" loading="lazy"><div class="img-overlay">Solo Challenge &middot; 2 minutes &middot; Reform pitch to HR director &middot; PP + double FC + opinion language</div></div>
+    <div class="challenge-card">
+      <div class="challenge-title">&#127919; The Challenge Brief</div>
+      <div class="challenge-brief">
+        Your company&apos;s HR director asks you: <em style="color:var(--accent)">"We keep hiring graduates who need 6 months of extra training before they are productive. What do you think the real problem is &mdash; and what should change?"</em><br><br>
+        Answer as yourself in 2 minutes. Include:<br>
+        &bull; What has happened with graduate readiness in your experience &mdash; PP evidence<br>
+        &bull; What will happen if universities don&apos;t change &mdash; First FC (warning)<br>
+        &bull; What will happen if they do change &mdash; Second FC (opportunity)<br>
+        &bull; At least 3 opinion phrases used naturally<br>
+        &bull; At least 4 vocabulary words from S2A<br>
+        &bull; Close with: "The system needs to change &mdash; and here is where we start."<br><br>
+        No notes. HR director register: professional, honest, solution-focused.
+      </div>
+      <div style="font-family:var(--font-head);font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px">Teacher Rubric &mdash; Click when met</div>
+      <div class="challenge-rubric">
+        <div class="rubric-item" onclick="this.classList.toggle('checked')"><div class="rubric-label">PP Evidence</div><div class="rubric-desc">"Graduates have arrived without... / The gap has been growing..." Correct PP form + honest specifics.</div></div>
+        <div class="rubric-item" onclick="this.classList.toggle('checked')"><div class="rubric-label">FC Warning</div><div class="rubric-desc">"If universities don&apos;t change X, companies will keep spending Y." IF clause = present simple.</div></div>
+        <div class="rubric-item" onclick="this.classList.toggle('checked')"><div class="rubric-label">FC Opportunity</div><div class="rubric-desc">"If schools introduce Z, graduates will arrive ready to contribute." Logical and specific.</div></div>
+        <div class="rubric-item" onclick="this.classList.toggle('checked')"><div class="rubric-label">Opinion Phrases</div><div class="rubric-desc">3+ phrases: "I strongly believe / In my opinion / I see both sides / That&apos;s a good point / The reality is..."</div></div>
+        <div class="rubric-item" onclick="this.classList.toggle('checked')"><div class="rubric-label">Vocabulary</div><div class="rubric-desc">4+ S2A words: curriculum, critical thinking, gap, application, develop, preparation, skill, fail.</div></div>
+        <div class="rubric-item" onclick="this.classList.toggle('checked')"><div class="rubric-label">Fluency &amp; Register</div><div class="rubric-desc">Professional, solution-focused, 90+ seconds, no Spanish filler.</div></div>
+      </div>
+      <div class="timer-wrap">
+        <svg width="90" height="90" viewBox="0 0 80 80"><circle class="timer-bg" cx="40" cy="40" r="34" stroke-width="6"/><circle class="timer-arc" id="arc4" cx="40" cy="40" r="34" stroke-width="6" stroke-dasharray="213.63" stroke-dashoffset="0"/><text class="timer-text" x="40" y="37" id="txt4">2:00</text><text class="timer-label" x="40" y="51">solo</text></svg>
+        <div class="timer-btns"><button class="btn btn-primary" onclick="startTimerSVG('arc4','txt4',120,213.63,'b4')">&#9654; Start</button><button class="btn btn-ghost" onclick="resetTimerSVG('arc4','txt4','2:00',213.63)">&#8635;</button></div>
+      </div>
+    </div>
+    <div class="teacher-note teacher-only"><strong>Teacher note &mdash; HR Director framing:</strong> This scenario is real for every student who has ever interviewed, hired, or been responsible for team development. The best answers will include specific examples from real experience: "We hired an engineer who had a degree but had never used Excel for data analysis. We spent three months training him on a skill that should have been in the curriculum." Specificity at this level is B1.2-adjacent performance. Name it explicitly when you hear it.</div>
+  </div>
+</section>
+
+<!-- ASSESSMENT -->
+<section class="section" id="assessment">
+  <div class="section-header"><span class="section-number">&#127942;</span><h2 class="section-title">Assessment &mdash; Session Leaderboard</h2><span class="section-time">8 min</span></div>
+  <div class="section-body">
+    <div class="img-card"><img src="https://images.unsplash.com/photo-1552664730-d307ca884978?w=900&auto=format&fit=crop&q=80" alt="Team at end of strong production session" loading="lazy"><div class="img-overlay">Session 2B Assessment &middot; PP + FC combined precision &middot; Auto-sorted</div></div>
+    <div class="lb-wrap">
+      <div class="lb-title">&#127942; Session Leaderboard</div>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:14px">Score 0&ndash;10. Criteria: PP + FC combined argument precision (4pts) + Opinion language range (3pts) + Vocabulary + fluency (3pts).</p>
+      <div class="lb-add">
+        <input class="lb-name-input" id="lbName" placeholder="Student name..." type="text">
+        <input class="lb-score-input" id="lbScore" placeholder="0&ndash;10" type="number" min="0" max="10">
+        <button class="lb-add-btn" onclick="addToLB()">+ Add</button>
+      </div>
+      <table class="lb-table">
+        <thead><tr><th>#</th><th>Student</th><th>Score</th><th>Level</th></tr></thead>
+        <tbody id="lbBody"><tr><td colspan="4" class="lb-empty">No entries yet</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- WRAP-UP -->
+<section class="section" id="wrapup">
+  <div class="section-header"><span class="section-number">&#127881;</span><h2 class="section-title">Wrap-Up &mdash; Certificate &amp; My Win Today</h2><span class="section-time">5 min</span></div>
+  <div class="section-body">
+    <div class="img-card"><img src="https://images.unsplash.com/photo-1588196749597-9ff075ee6b5b?w=900&auto=format&fit=crop&q=80" alt="Session 2B complete" loading="lazy"><div class="img-overlay">M6 &middot; S2B Complete &mdash; Is Education Keeping Up? &middot; Production &amp; Fluency achieved</div></div>
+    <div style="font-family:var(--font-head);font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin:18px 0 10px">&#9989; I Can Now&hellip;</div>
+    <div class="checklist">
+      <div class="cl-item" onclick="this.classList.toggle('done');checkAllDone()"><div class="cl-box"></div>Argue about education reform for 90 seconds using PP evidence + double FC + opinion language.</div>
+      <div class="cl-item" onclick="this.classList.toggle('done');checkAllDone()"><div class="cl-box"></div>Build an Education Reform Chain: individual experience &rarr; curriculum change &rarr; employer benefit &rarr; national impact.</div>
+      <div class="cl-item" onclick="this.classList.toggle('done');checkAllDone()"><div class="cl-box"></div>Present a skills gap proposal to HR leadership professionally: specific, evidence-based, solution-focused.</div>
+      <div class="cl-item" onclick="this.classList.toggle('done');checkAllDone()"><div class="cl-box"></div>Counter a traditionalist argument: "That&apos;s a good point, however the gap has grown precisely because..."</div>
+      <div class="cl-item" onclick="this.classList.toggle('done');checkAllDone()"><div class="cl-box"></div>Use "School didn&apos;t prepare me for everything," "Practical skills matter just as much," and "The system needs to change" naturally in professional debate.</div>
+    </div>
+    <div class="cert-wrap">
+      <div class="cert-title">&#127942; Session Certificate</div>
+      <div class="cert-sub">B1.1 &middot; Module 6 &middot; Session 2B &mdash; Production &amp; Fluency &middot; Is Education Keeping Up?</div>
+      <div class="cert-input-row">
+        <input class="cert-name-input" id="certName" type="text" placeholder="Enter student name...">
+        <button class="cert-gen-btn" onclick="generateCert()">Generate &#127942;</button>
+      </div>
+      <div class="cert-display" id="certDisplay">
+        <div class="cert-display-title">Certificate of Completion</div>
+        <div class="cert-student-name" id="certStudentName"></div>
+        <div class="cert-session-info">has successfully completed<br><strong style="color:var(--accent)">B1.1 &middot; Module 6 &middot; Session 2B &mdash; Is Education Keeping Up?</strong><br>Production &amp; Fluency &middot; Gabriel Turner English Training<br><span id="certDate" style="color:var(--muted);font-size:12px"></span></div>
+      </div>
+    </div>
+    <div class="win-wrap">
+      <div class="win-label">&#127941; My Win Today</div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:8px">Complete: <em>"Today I made a real argument about education in English. The moment I was most fluent was when I said..."</em></div>
+      <textarea class="win-input" id="winInput" placeholder="Type your win here..." rows="2"></textarea>
+      <button class="btn btn-primary" onclick="saveWin()">Save My Win &#127942;</button>
+      <div class="win-saved" id="winSaved"></div>
+    </div>
+    <div style="background:rgba(0,207,255,.04);border:1px solid rgba(0,207,255,.18);border-radius:12px;padding:20px;margin-top:20px">
+      <div style="font-family:var(--font-head);font-size:10px;font-weight:700;color:#00CFFF;letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px">&#9654; Next Class &mdash; B1.1 &middot; M6 &middot; S3A</div>
+      <div style="font-family:var(--font-head);font-size:16px;font-weight:700;color:var(--text);margin-bottom:6px">Discovery &amp; Drill &mdash; Food, Culture &amp; Identity</div>
+      <div style="font-size:13px;color:var(--muted);line-height:1.55">16 new words (identity, tradition, heritage, preserve, associate...) &middot; Stacking First Conditionals for cultural arguments &middot; Spin the Wheel + Flash Cards &middot; Rodrigo and the Japanese dinner. Come ready to talk about food and who you are.</div>
+    </div>
+  </div>
+</section>
+</main>
+<footer class="site-footer">
+  <div class="footer-brand">Gabriel Turner &middot; English Training &middot; Teacher Edition</div>
+  <div style="font-size:12px;color:var(--muted)">GT_B1_1_M6_S2B_TEACHER_v1</div>
+  <div class="level-tags">
+    <span class="level-tag">A1.1</span><span class="level-tag">A1.2</span><span class="level-tag">A2.1</span><span class="level-tag">A2.2</span>
+    <span class="level-tag active">B1.1</span>
+    <span class="level-tag">B1.2</span><span class="level-tag">B2.1</span><span class="level-tag">B2.2</span>
+  </div>
+</footer>
+
+<script>
+var earnedBadges={};
+function earnBadge(id){if(earnedBadges[id])return;earnedBadges[id]=true;var el=document.getElementById(id);if(el)el.classList.add('earned');if(Object.keys(earnedBadges).length>=5)launchConfetti();}
+function launchConfetti(){var w=document.getElementById('confettiWrap');w.style.display='block';var cols=['#10B981','#34D399','#FFB347','#00E5A0','#FF4D6D','#A78BFA'];for(var i=0;i<90;i++){var c=document.createElement('div');c.style.cssText='position:absolute;width:8px;height:8px;background:'+cols[i%cols.length]+';border-radius:50%;left:'+Math.random()*100+'%;top:-10px;animation:confFall '+(1.5+Math.random()*2)+'s ease-out forwards;animation-delay:'+Math.random()*.5+'s;';w.appendChild(c);}var s=document.createElement('style');s.textContent='@keyframes confFall{0%{transform:translateY(0) rotate(0);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}';document.head.appendChild(s);}
+var timerIntervals={};
+function startTimerSVG(arcId,textId,seconds,circumference,badgeId){if(timerIntervals[arcId])clearInterval(timerIntervals[arcId]);var arc=document.getElementById(arcId),txt=document.getElementById(textId),rem=seconds;function update(){arc.style.strokeDashoffset=circumference*(1-rem/seconds);var m=Math.floor(rem/60),s=rem%60;txt.textContent=m+':'+(s<10?'0':'')+s;if(rem<=5)arc.style.stroke='var(--danger)';if(rem<=0){clearInterval(timerIntervals[arcId]);arc.style.stroke='var(--success)';if(badgeId)earnBadge(badgeId);return;}rem--;}update();timerIntervals[arcId]=setInterval(update,1000);}
+function resetTimerSVG(arcId,textId,label,circumference){if(timerIntervals[arcId]){clearInterval(timerIntervals[arcId]);delete timerIntervals[arcId];}var arc=document.getElementById(arcId);arc.style.strokeDashoffset=0;arc.style.stroke='var(--accent)';document.getElementById(textId).textContent=label;}
+window.addEventListener('scroll',function(){var h=document.documentElement;document.getElementById('progressBar').style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100+'%';},{passive:true});
+function toggleMode(){document.body.classList.toggle('student-mode');document.querySelector('.mode-toggle').textContent=document.body.classList.contains('student-mode')?'TEACHER MODE':'STUDENT MODE';}
+var speedDoneCount=0;
+function speedDone(n){var card=document.getElementById('sp'+n);if(card.classList.contains('done'))return;card.classList.add('done');speedDoneCount++;document.getElementById('speedCount').textContent=speedDoneCount;if(speedDoneCount>=6)earnBadge('b3');}
+var lbData=[];
+function addToLB(){var name=document.getElementById('lbName').value.trim();var score=parseInt(document.getElementById('lbScore').value);if(!name||isNaN(score)||score<0||score>10)return;lbData.push({name:name,score:score});lbData.sort(function(a,b){return b.score-a.score;});document.getElementById('lbName').value='';document.getElementById('lbScore').value='';renderLB();}
+function renderLB(){var body=document.getElementById('lbBody');if(lbData.length===0){body.innerHTML='<tr><td colspan="4" class="lb-empty">No entries yet</td></tr>';return;}body.innerHTML=lbData.map(function(d,i){var level=d.score>=9?'&#127942; Excellent':d.score>=7?'&#128218; Proficient':d.score>=5?'&#9889; Developing':'&#128293; Keep going';return '<tr><td class="lb-rank">'+(i+1)+'</td><td>'+d.name+'</td><td style="font-family:var(--font-head);font-weight:700;color:var(--accent)">'+d.score+' / 10</td><td style="font-size:12px;color:var(--muted)">'+level+'</td></tr>';}).join('');}
+function generateCert(){var name=document.getElementById('certName').value.trim();if(!name)return;document.getElementById('certStudentName').textContent=name;var now=new Date();document.getElementById('certDate').textContent=now.toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});document.getElementById('certDisplay').style.display='block';earnBadge('b5');launchConfetti();}
+function saveWin(){var t=document.getElementById('winInput').value.trim();if(!t)return;var s=document.getElementById('winSaved');s.style.display='block';s.textContent='\ud83c\udfc6 "'+t+'" \u2014 That is your proof.';earnBadge('b5');}
+function checkAllDone(){var items=document.querySelectorAll('.cl-item');var done=document.querySelectorAll('.cl-item.done');if(done.length===items.length)earnBadge('b5');}
+document.querySelectorAll('.debate-round').forEach(function(r,i){var btn=document.createElement('button');btn.style.cssText='margin-top:12px;background:none;border:1px solid var(--border);color:var(--muted);font-family:var(--font-head);font-size:10px;font-weight:700;padding:5px 12px;border-radius:6px;cursor:pointer;letter-spacing:.06em;';btn.textContent='\u2713 Round complete';btn.onclick=function(){btn.style.borderColor='var(--success)';btn.style.color='var(--success)';if(i===2)earnBadge('b2');};r.appendChild(btn);});
+</script>
+</body>
+</html>

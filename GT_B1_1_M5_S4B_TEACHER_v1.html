@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GT &middot; B1.1 &middot; M5 &middot; S4B &mdash; Mental Health Awareness &mdash; Production</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{--accent:#10B981;--accent2:#34D399;--bg:#080808;--surface:#111318;--surface2:#1a1f28;--border:rgba(16,185,129,.18);--text:#F0F4F8;--muted:#8A9BB0;--danger:#FF4D6D;--success:#00E5A0;--warn:#FFB347;--font-head:'Syne',sans-serif;--font-body:'DM Sans',sans-serif}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:15px;line-height:1.65;min-height:100vh}
+#progressBar{position:fixed;top:0;left:0;width:0%;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent2));z-index:9999;transition:width .3s}
+.site-header{position:sticky;top:0;z-index:900;background:rgba(8,8,8,.92);backdrop-filter:blur(14px);border-bottom:1px solid var(--border);padding:0 24px}
+.header-inner{max-width:960px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:58px;gap:12px;flex-wrap:wrap}
+.header-brand{font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--accent);letter-spacing:.08em;text-transform:uppercase}
+.header-meta{font-size:12px;color:var(--muted);font-weight:500}
+.badge-strip{display:flex;gap:6px}
+.badge-strip span{font-size:18px;opacity:.25;transition:all .4s;filter:grayscale(1);cursor:default}
+.badge-strip span.earned{opacity:1;filter:none;animation:badgePop .5s cubic-bezier(.34,1.56,.64,1)}
+@keyframes badgePop{0%{transform:scale(.4) rotate(-20deg);opacity:0}70%{transform:scale(1.25) rotate(4deg);opacity:1}100%{transform:scale(1) rotate(0)}}
+.mode-toggle{background:var(--surface2);border:1px solid var(--border);color:var(--accent);font-family:var(--font-head);font-size:11px;font-weight:700;padding:5px 12px;border-radius:6px;cursor:pointer;letter-spacing:.06em}
+.mode-toggle:hover{background:var(--accent);color:var(--bg)}
+.sticky-nav{position:sticky;top:58px;z-index:800;background:rgba(8,8,8,.88);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none}
+.sticky-nav::-webkit-scrollbar{display:none}
+.nav-inner{max-width:960px;margin:0 auto;display:flex;padding:0 16px}
+.nav-inner a{font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:.06em;color:var(--muted);text-decoration:none;padding:10px 14px;border-bottom:2px solid transparent;white-space:nowrap;transition:all .2s}
+.nav-inner a:hover{color:var(--accent);border-color:var(--accent)}
+.main{max-width:960px;margin:0 auto;padding:32px 20px 80px}
+.section{margin-bottom:48px;border:1px solid var(--border);border-radius:16px;overflow:hidden;background:var(--surface)}
+.section-header{display:flex;align-items:center;gap:14px;padding:18px 24px;background:linear-gradient(135deg,rgba(16,185,129,.08),transparent);border-bottom:1px solid var(--border)}
+.section-number{font-family:var(--font-head);font-size:11px;font-weight:800;color:var(--accent);letter-spacing:.12em;text-transform:uppercase;background:rgba(16,185,129,.1);border:1px solid var(--border);padding:3px 10px;border-radius:20px}
+.section-title{font-family:var(--font-head);font-size:18px;font-weight:800;color:var(--text);flex:1}
+.section-time{font-size:12px;color:var(--muted);background:var(--surface2);padding:3px 10px;border-radius:20px}
+.section-body{padding:24px}
+.img-card{border-radius:10px;overflow:hidden;position:relative;margin-bottom:18px}
+.img-card img{width:100%;height:200px;object-fit:cover;display:block;filter:brightness(.55)}
+.img-overlay{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(8,8,8,.88));padding:12px 16px;font-size:13px;color:rgba(255,255,255,.85)}
+.teacher-note{background:rgba(16,185,129,.06);border-left:3px solid var(--accent);border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0;font-size:13px;color:var(--muted)}
+.teacher-note strong{color:var(--accent)}
+.teacher-note.tn-gold{background:rgba(255,179,71,.06);border-color:var(--warn)}
+.teacher-note.tn-gold strong{color:var(--warn)}
+.teacher-note.tn-cyan{background:rgba(0,207,255,.06);border-color:#00CFFF}
+.teacher-note.tn-cyan strong{color:#00CFFF}
+.teacher-only{}
+body.student-mode .teacher-only{display:none}
+.timer-wrap{display:flex;flex-direction:column;align-items:center;gap:10px;margin:16px 0}
+.timer-bg{fill:none;stroke:rgba(255,255,255,.07)}
+.timer-arc{fill:none;stroke:var(--accent);stroke-linecap:round;transition:stroke .5s;transform:rotate(-90deg);transform-origin:40px 40px}
+.timer-text{font-family:var(--font-head);font-weight:800;font-size:14px;fill:var(--text);dominant-baseline:middle;text-anchor:middle}
+.timer-label{font-size:9px;fill:var(--muted);dominant-baseline:middle;text-anchor:middle}
+.timer-btns{display:flex;gap:8px}
+.btn{font-family:var(--font-head);font-size:12px;font-weight:700;letter-spacing:.06em;padding:7px 18px;border-radius:8px;border:none;cursor:pointer;transition:all .2s}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-primary:hover{background:var(--accent2)}
+.btn-ghost{background:var(--surface2);border:1px solid var(--border);color:var(--muted)}
+.btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
+.tag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;font-family:var(--font-head);letter-spacing:.04em;margin-right:4px}
+.tag-t2s{background:rgba(16,185,129,.15);color:var(--accent)}
+.tag-s2s{background:rgba(255,179,71,.15);color:var(--warn)}
+.tag-class{background:rgba(138,155,176,.12);color:var(--muted)}
+.hot-take-card{background:linear-gradient(135deg,rgba(255,77,109,.08),rgba(255,77,109,.03));border:1px solid rgba(255,77,109,.25);border-left:4px solid var(--danger);border-radius:0 12px 12px 0;padding:22px 24px;margin:14px 0}
+.hot-take-label{font-family:var(--font-head);font-size:10px;font-weight:700;color:var(--danger);letter-spacing:.12em;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.hot-take-label::before{content:"\1F525";font-size:14px}
+.hot-take-statement{font-size:18px;font-weight:700;color:var(--text);line-height:1.4;margin-bottom:14px}
+.stance-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.stance-card{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px;cursor:pointer;transition:all .2s}
+.stance-card:hover{border-color:var(--accent)}
+.stance-card.chosen{border-color:var(--accent);background:rgba(16,185,129,.08)}
+.stance-label{font-family:var(--font-head);font-size:10px;font-weight:700;color:var(--accent);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px}
+.stance-desc{font-size:13px;color:var(--muted);line-height:1.5}
+.debate-wrap{display:flex;flex-direction:column;gap:14px;margin:14px 0}
+.debate-round{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:18px 20px}
+.debate-num{font-family:var(--font-head);font-size:10px;font-weight:700;color:var(--accent);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px}
+.debate-q{font-size:14px;color:var(--text);font-weight:600;line-height:1.5;margin-bottom:8px}
+.debate-hint{font-size:12px;color:var(--muted);font-style:italic}
+.relay-wrap{margin:14px 0}
+.relay-visual{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:22px;margin-bottom:14px}
+.relay-title{font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--accent);margin-bottom:14px;letter-spacing:.06em;text-transform:uppercase}
+/* Unique relay for S2B: hobby interview cards */
+.hobby-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px}
+.hobby-card-relay{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px;text-align:center;transition:border-color .2s;cursor:pointer}
+.hobby-card-relay:hover{border-color:var(--accent)}
+.hobby-card-relay.active-turn{border-color:var(--accent);background:rgba(16,185,129,.06)}
+.hobby-card-relay .hc-num{font-family:var(--font-head);font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.1em;margin-bottom:4px}
+.hobby-card-relay .hc-role{font-size:12px;color:var(--text);font-weight:600;line-height:1.3}
+.relay-instructions{font-size:13px;color:var(--muted);line-height:1.7}
+.speed-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:14px 0}
+.speed-card{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:16px 14px;text-align:center;cursor:pointer;transition:all .2s}
+.speed-card:hover{border-color:var(--accent)}
+.speed-card.done{border-color:var(--success);background:rgba(0,229,160,.06)}
+.speed-num{font-family:var(--font-head);font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px}
+.speed-prompt{font-size:13px;color:var(--text);font-weight:500;line-height:1.4}
+.speed-done-btn{background:none;border:1px solid var(--border);color:var(--muted);font-family:var(--font-head);font-size:10px;font-weight:700;padding:4px 10px;border-radius:6px;cursor:pointer;margin-top:10px;letter-spacing:.06em}
+.speed-done-btn:hover{border-color:var(--success);color:var(--success)}
+.challenge-card{background:linear-gradient(135deg,rgba(16,185,129,.07),rgba(52,211,153,.03));border:1px solid var(--border);border-radius:12px;padding:22px;margin:14px 0}
+.challenge-title{font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--accent);letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px}
+.challenge-brief{font-size:14px;color:var(--text);line-height:1.7;margin-bottom:16px}
+.challenge-rubric{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}
+.rubric-item{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 12px;cursor:pointer;transition:all .2s}
+.rubric-item:hover{border-color:var(--accent)}
+.rubric-item.checked{border-color:var(--success);background:rgba(0,229,160,.06)}
+.rubric-label{font-family:var(--font-head);font-size:9px;font-weight:700;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px}
+.rubric-desc{font-size:12px;color:var(--text);line-height:1.4}
+.rubric-item.checked .rubric-label{color:var(--success)}
+.lb-wrap{margin:14px 0}
+.lb-title{font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--accent);letter-spacing:.06em;text-transform:uppercase;margin-bottom:12px}
+.lb-add{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.lb-name-input{background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);padding:8px 12px;font-family:var(--font-body);font-size:13px;flex:1;min-width:140px}
+.lb-name-input:focus{outline:none;border-color:var(--accent)}
+.lb-score-input{background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);padding:8px 12px;font-family:var(--font-body);font-size:13px;width:80px;text-align:center}
+.lb-score-input:focus{outline:none;border-color:var(--accent)}
+.lb-add-btn{background:var(--accent);border:none;color:#fff;font-family:var(--font-head);font-size:11px;font-weight:700;padding:8px 18px;border-radius:8px;cursor:pointer;letter-spacing:.06em}
+.lb-table{width:100%;border-collapse:collapse}
+.lb-table th{padding:10px 14px;text-align:left;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);border-bottom:2px solid var(--accent)}
+.lb-table td{padding:10px 14px;border-bottom:1px solid var(--border);font-size:13px}
+.lb-rank{font-family:var(--font-head);font-weight:800;color:var(--accent)}
+.lb-empty{font-size:13px;color:var(--muted);font-style:italic;padding:14px}
+.cert-wrap{background:linear-gradient(135deg,rgba(16,185,129,.06),rgba(52,211,153,.03));border:1px solid rgba(16,185,129,.3);border-radius:14px;padding:26px;margin:20px 0;text-align:center}
+.cert-title{font-family:var(--font-head);font-size:22px;font-weight:800;color:var(--accent);margin-bottom:6px}
+.cert-sub{font-size:13px;color:var(--muted);margin-bottom:18px}
+.cert-input-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:14px}
+.cert-name-input{background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);padding:10px 16px;font-family:var(--font-body);font-size:14px;min-width:220px}
+.cert-name-input:focus{outline:none;border-color:var(--accent)}
+.cert-gen-btn{background:var(--accent);border:none;color:#fff;font-family:var(--font-head);font-size:12px;font-weight:700;padding:10px 22px;border-radius:8px;cursor:pointer;letter-spacing:.06em}
+.cert-display{display:none;background:var(--surface);border:2px solid var(--accent);border-radius:12px;padding:28px;margin-top:14px}
+.cert-display-title{font-family:var(--font-head);font-size:14px;font-weight:700;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px}
+.cert-student-name{font-family:var(--font-head);font-size:28px;font-weight:800;color:var(--accent);margin-bottom:6px}
+.cert-session-info{font-size:13px;color:var(--muted);line-height:1.6}
+.checklist{display:flex;flex-direction:column;gap:7px;margin:14px 0}
+.cl-item{display:flex;align-items:center;gap:12px;padding:11px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;cursor:pointer;transition:all .2s;font-size:13px;color:var(--muted)}
+.cl-item:hover{border-color:var(--accent);color:var(--text)}
+.cl-item.done{border-color:var(--success);color:var(--success);background:rgba(0,229,160,.06)}
+.cl-box{width:18px;height:18px;border:2px solid var(--muted);border-radius:4px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px}
+.cl-item.done .cl-box{border-color:var(--success);background:var(--success);color:#fff}
+.cl-item.done .cl-box::after{content:"\2713"}
+.win-wrap{margin:22px 0;background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:20px}
+.win-label{font-family:var(--font-head);font-size:12px;font-weight:700;color:var(--warn);letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px}
+.win-input{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text);padding:12px 14px;font-family:var(--font-body);font-size:13px;resize:vertical;margin-bottom:10px}
+.win-input:focus{outline:none;border-color:var(--accent)}
+.win-saved{display:none;font-size:13px;color:var(--success);margin-top:6px;padding:8px 12px;background:rgba(0,229,160,.08);border-radius:6px}
+#confettiWrap{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9998;display:none;overflow:hidden}
+.site-footer{background:var(--surface);border-top:1px solid var(--border);padding:20px 24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+.footer-brand{font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.level-tags{display:flex;gap:4px;flex-wrap:wrap}
+.level-tag{font-family:var(--font-head);font-size:10px;font-weight:700;padding:3px 10px;background:var(--surface2);color:rgba(255,255,255,.25);border-radius:4px}
+.level-tag.active{background:var(--accent);color:#fff}
+@media(max-width:860px){.stance-grid,.challenge-rubric,.speed-grid,.hobby-cards{grid-template-columns:1fr 1fr}.header-inner{height:auto;padding:10px 0}}
+</style>
+</head>
+<body>
+<div id="progressBar"></div>
+<div id="confettiWrap"></div>
+<header class="site-header">
+  <div class="header-inner">
+    <div>
+      <div class="header-brand">Gabriel Turner &middot; English Training</div>
+      <div class="header-meta">B1.1 &nbsp;&middot;&nbsp; Module 5 &nbsp;&middot;&nbsp; Session 4B &nbsp;&middot;&nbsp; Production &amp; Fluency &nbsp;&middot;&nbsp; Teacher Edition</div>
+    </div>
+    <div class="badge-strip">
+      <span id="b1" title="Hot Take complete">&#129505;</span>
+      <span id="b2" title="Pitch/Debate complete">&#129309;</span>
+      <span id="b3" title="Speed Round complete">&#9889;</span>
+      <span id="b4" title="Solo Challenge complete">&#127919;</span>
+      <span id="b5" title="Session champion">&#127942;</span>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <div class="header-meta">Teacher Edition &middot; 90&ndash;120 min</div>
+      <button class="mode-toggle" onclick="toggleMode()">STUDENT MODE</button>
+    </div>
+  </div>
+</header>
+<nav class="sticky-nav">
+  <div class="nav-inner">
+    <a href="#hot-take">&#128293; Hot Take</a>
+    <a href="#pitch">&#127914; Pitch</a>
+    <a href="#relay">&#127939; Relay</a>
+    <a href="#speed">&#9889; Speed</a>
+    <a href="#solo">&#127919; Solo</a>
+    <a href="#assessment">&#127942; Assessment</a>
+    <a href="#wrapup">&#127881; Wrap-Up</a>
+  </div>
+</nav>
+<main class="main">
+
+<div style="background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.2);border-radius:10px;padding:16px 20px;margin-bottom:28px">
+  <div style="font-family:var(--font-head);font-size:11px;font-weight:700;color:var(--accent);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px">&#128257; S3B &mdash; Production &amp; Fluency</div>
+  <p style="font-size:13px;color:var(--muted);line-height:1.7">From S4A: <strong style="color:var(--text)">Precision Reported Speech in sensitive contexts</strong> (exact tense choices matter) &middot; <strong style="color:var(--text)">Mental health vocabulary</strong>: stigma, anxiety, wellbeing, psychological safety, normalize, acknowledge, therapy, destigmatize &middot; <strong style="color:var(--text)">Colloquial</strong>: "How are you really doing?", "People talk about it more now," "It's okay to ask for help." Today: apply this language at the highest level of professional fluency.</p>
+</div>
+
+<!-- HOT TAKE -->
+<section class="section" id="hot-take">
+  <div class="section-header">
+    <span class="section-number">&#128293;</span>
+    <h2 class="section-title">Hot Take &mdash; Hobbies &amp; Identity</h2>
+    <span class="section-time">10 min</span>
+  </div>
+  <div class="section-body">
+    <div class="img-card">
+      <img src="https://images.unsplash.com/photo-1487611272720-3e9c80cc4ec4?w=900&auto=format&fit=crop&q=80" alt="Person fully committed to a creative passion">
+      <div class="img-overlay">Hot Take &middot; Defend your hobby &middot; 90 seconds &middot; No mercy</div>
+    </div>
+    <div class="hot-take-card">
+      <div class="hot-take-label">Today&apos;s Hot Take</div>
+      <div class="hot-take-statement">"Companies that invest in employee mental health will have better business results &mdash; and the data already proves it."</div>
+      <div class="stance-grid">
+        <div class="stance-card" onclick="this.classList.toggle('chosen')">
+          <div class="stance-label">&#9989; Agree</div>
+          <div class="stance-desc">Mental health investment reduces absenteeism, improves retention, and increases productivity. The ROI is documented. This is not charity &mdash; it is strategy.</div>
+        </div>
+        <div class="stance-card" onclick="this.classList.toggle('chosen')">
+          <div class="stance-label">&#10007; Disagree</div>
+          <div class="stance-desc">Companies say they care but most initiatives are cosmetic. A poster about mindfulness does not address structural overwork, toxic management, or job insecurity. Real change requires structural investment.</div>
+        </div>
+      </div>
+    </div>
+    <div style="margin-top:20px">
+      <div style="font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--text);margin-bottom:10px"><span class="tag tag-t2s">T&rarr;S</span> Round 1 &mdash; Your Hot Take (90 sec)</div>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:14px">State your position + use ONE reported question as evidence: "A friend asked me once if I had a real passion outside of work &mdash; and I didn&apos;t have an answer." Use vocabulary: pursue, recharge, community, creativity, disconnect.</p>
+      <div class="timer-wrap">
+        <svg width="80" height="80" viewBox="0 0 80 80"><circle class="timer-bg" cx="40" cy="40" r="34" stroke-width="6"/><circle class="timer-arc" id="arc1" cx="40" cy="40" r="34" stroke-width="6" stroke-dasharray="213.63" stroke-dashoffset="0"/><text class="timer-text" x="40" y="37" id="txt1">1:30</text><text class="timer-label" x="40" y="51">argue</text></svg>
+        <div class="timer-btns">
+          <button class="btn btn-primary" onclick="startTimerSVG('arc1','txt1',90,213.63,'b1')">&#9654; Start</button>
+          <button class="btn btn-ghost" onclick="resetTimerSVG('arc1','txt1','1:30',213.63)">&#8635;</button>
+        </div>
+      </div>
+    </div>
+    <div style="margin-top:20px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:18px">
+      <div style="font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--text);margin-bottom:8px"><span class="tag tag-s2s">S&harr;S</span> Round 2 &mdash; Ask &amp; Report (60 sec)</div>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:12px">Partner A asks Partner B: "Do you think your company takes mental health seriously?" Then A reports: "I asked my partner whether... She said that... She also told me that... Then I asked her if..." Use precision: do NOT say &quot;she IS struggling&quot; &mdash; say &quot;she WAS.&quot;</p>
+      <div class="timer-wrap">
+        <svg width="80" height="80" viewBox="0 0 80 80"><circle class="timer-bg" cx="40" cy="40" r="34" stroke-width="6"/><circle class="timer-arc" id="arc2" cx="40" cy="40" r="34" stroke-width="6" stroke-dasharray="213.63" stroke-dashoffset="0"/><text class="timer-text" x="40" y="37" id="txt2">1:00</text><text class="timer-label" x="40" y="51">pairs</text></svg>
+        <div class="timer-btns">
+          <button class="btn btn-primary" onclick="startTimerSVG('arc2','txt2',60,213.63,null)">&#9654; Start</button>
+          <button class="btn btn-ghost" onclick="resetTimerSVG('arc2','txt2','1:00',213.63)">&#8635;</button>
+        </div>
+      </div>
+    </div>
+    <div class="teacher-note teacher-only">
+      <strong>Teacher note:</strong> Round 2 is the S2A grammar review in disguise &mdash; reporting a question you yourself asked. This is the productive inverse of S2A: students now generate the reported question, not just transform one. Listen for "I asked her if she had" (correct) vs. "I asked her if she has" (tense error). Correct between rounds, not during.
+    </div>
+  </div>
+</section>
+
+<!-- PITCH / DEBATE -->
+<section class="section" id="pitch">
+  <div class="section-header">
+    <span class="section-number">&#127914;</span>
+    <h2 class="section-title">Pitch/Debate &mdash; The Mental Health Proposal</h2>
+    <span class="section-time">15 min</span>
+  </div>
+  <div class="section-body">
+    <div class="img-card">
+      <img src="https://images.unsplash.com/photo-1455390582262-044cdead277a?w=900&auto=format&fit=crop&q=80" alt="Person pitching their passion with energy" loading="lazy">
+      <div class="img-overlay">Pitch &middot; Propose a real mental health initiative &middot; Use Reported Speech as evidence from S4A</div>
+    </div>
+    <div class="debate-wrap">
+      <div class="debate-round">
+        <div class="debate-num"><span class="tag tag-t2s">T&rarr;S</span> Pitch Round 1 &mdash; The Wellbeing Proposal (2 min)</div>
+        <div class="debate-q">Pitch your hobby to the class. Convince them to try it. Structure: (1) What it is and how you started &mdash; (2) What it has given you: use vocabulary from S2A (creativity, community, skill, recharge) &mdash; (3) Social proof: "People who do this often say that..." / "A friend told me it had changed the way she..." &mdash; (4) Close: what you would ask someone to try first.</div>
+        <div class="debate-hint">Grammar requirement: at least 2 reported statements + 1 reported question, with correct precision tense choices. Remember: &quot;said she WAS,&quot; not &quot;said she IS.&quot;</div>
+      </div>
+      <div class="debate-round">
+        <div class="debate-num"><span class="tag tag-s2s">S&harr;S</span> Debate Round 2 &mdash; The Leadership Challenge (90 sec)</div>
+        <div class="debate-q">After the pitch, your partner plays a skeptic: "You said this hobby helped you disconnect &mdash; but I want to know: did you ask yourself whether you actually had time for it? How do you manage?" The pitcher must respond and defend using more Reported Speech.</div>
+        <div class="debate-hint">Skeptic pattern: "You said... but..." / "You told us... What did you mean by...?"</div>
+      </div>
+      <div class="debate-round">
+        <div class="debate-num"><span class="tag tag-class">Class</span> Debate Round 3 &mdash; The Company Vote (2 min)</div>
+        <div class="debate-q">Class votes: whose pitch was most convincing? The winner summarizes the class&apos;s decision using Reported Speech: "Several people said they would try my hobby because... Someone asked me whether... and I told them..."</div>
+        <div class="debate-hint">S4A grammar victory lap: precision reported speech in a professional advocacy context.</div>
+      </div>
+    </div>
+    <div class="teacher-note teacher-only">
+      <strong>Teacher note &mdash; Wellbeing Proposal:</strong> This round works best when students draw on real experiences from their companies. Do not push personal disclosure &mdash; professional observations are enough: &quot;I have noticed that...&quot; or &quot;HR said at the last meeting that...&quot; The precision element is critical here: flag any student who uses present tense in reported speech and correct immediately but gently.
+    </div>
+    <div class="teacher-note tn-gold teacher-only">
+      <strong>Upsell layer:</strong> After the best pitch, ask: "If you were in a job interview and they asked &apos;What do you do outside of work?&apos; &mdash; could you answer like that in English?" Most students will say they couldn&apos;t before this session. Now they can. Name that transformation.
+    </div>
+  </div>
+</section>
+
+<!-- RELAY: unique visual — Hobby Interview Chain -->
+<section class="section" id="relay">
+  <div class="section-header">
+    <span class="section-number">&#127939;</span>
+    <h2 class="section-title">Relay &mdash; The HR Report Chain</h2>
+    <span class="section-time">10 min</span>
+  </div>
+  <div class="section-body">
+    <div class="img-card">
+      <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=900&auto=format&fit=crop&q=80" alt="Team passing questions and answers down the line" loading="lazy">
+      <div class="img-overlay">Relay &middot; The HR Report Chain &middot; Report the mental health meeting through 4 professional voices</div>
+    </div>
+    <div class="relay-wrap">
+      <div class="relay-visual">
+        <div class="relay-title">&#127939; HR Report Chain &mdash; 4 Professional Voices</div>
+        <div class="hobby-cards">
+          <div class="hobby-card-relay active-turn">
+            <div class="hc-num">Voice 1</div>
+            <div class="hc-role">&#128203; The Attendee<br><span style="font-size:11px;color:var(--muted)">Was at the HR meeting</span></div>
+          </div>
+          <div class="hobby-card-relay">
+            <div class="hc-num">Voice 2</div>
+            <div class="hc-role">&#128172; The Colleague<br><span style="font-size:11px;color:var(--muted)">Asks what happened</span></div>
+          </div>
+          <div class="hobby-card-relay">
+            <div class="hc-num">Voice 3</div>
+            <div class="hc-role">&#127381; The Manager<br><span style="font-size:11px;color:var(--muted)">Asks their team for feedback</span></div>
+          </div>
+          <div class="hobby-card-relay">
+            <div class="hc-num">Voice 4</div>
+            <div class="hc-role">&#127942; The Director<br><span style="font-size:11px;color:var(--muted)">Presents to company leadership</span></div>
+          </div>
+        </div>
+        <div class="relay-instructions">
+          <strong style="color:var(--text)">How it works:</strong><br>
+          Voice 1 reports the HR meeting: &quot;The HR director said the company had acknowledged the problem.&quot;<br>
+          Voice 2 asks: &quot;Did they say what had caused it?&quot; Voice 1 answers, Voice 2 reports to Voice 3.<br>
+          Voice 3 (manager) asks their team: &quot;What did Voice 2 tell you the HR director had said?&quot;<br>
+          Voice 4 presents to leadership: &quot;The team reported that HR had said... / A colleague asked whether... / The manager told us that...&quot;<br><br>
+          <strong style="color:var(--text)">Target language:</strong> Precision tense throughout. Sensitive content requires exact reported forms &mdash; this is where S4A grammar meets real professional stakes.
+        </div>
+      </div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:16px;margin-top:8px">
+        <div style="font-family:var(--font-head);font-size:11px;font-weight:700;color:var(--accent);letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px">Starter sentences for Voice 1 (from S4A listening &mdash; teacher chooses)</div>
+        <div style="display:flex;flex-direction:column;gap:6px;font-size:13px;color:var(--muted);font-style:italic">
+          <div>"The HR director said the company had decided to take wellbeing more seriously."</div>
+          <div>"She said she knew that some people had been struggling in silence."</div>
+          <div>"She told us that from that month, every employee would have access to six free therapy sessions."</div>
+          <div></div>
+        </div>
+      </div>
+    </div>
+    <div class="teacher-note teacher-only">
+      <strong>Teacher note &mdash; Relay debrief:</strong> After Role 4 presents, ask Role 1: "Is that what you said? Is anything different?" The accuracy comparison is the learning moment. Differences between what was said and what was reported surface both grammar errors (tense drift) and information distortion. Both are instructive. Two rounds minimum to give everyone a role.
+    </div>
+  </div>
+</section>
+
+<!-- SPEED ROUND -->
+<section class="section" id="speed">
+  <div class="section-header">
+    <span class="section-number">&#9889;</span>
+    <h2 class="section-title">Speed Round &mdash; 30 Seconds Each</h2>
+    <span class="section-time">10 min</span>
+  </div>
+  <div class="section-body">
+    <div class="img-card">
+      <img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=900&auto=format&fit=crop&q=80" alt="Person responding fast and with energy" loading="lazy">
+      <div class="img-overlay">Speed Round &middot; 30 seconds &middot; No pausing &middot; Hobbies &amp; Reported Questions</div>
+    </div>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:16px">30 seconds, one student, no stopping. Rotate. All 6 must be completed. Timer below applies to each prompt.</p>
+    <div class="timer-wrap" style="margin-bottom:20px">
+      <svg width="80" height="80" viewBox="0 0 80 80"><circle class="timer-bg" cx="40" cy="40" r="34" stroke-width="6"/><circle class="timer-arc" id="arc3" cx="40" cy="40" r="34" stroke-width="6" stroke-dasharray="213.63" stroke-dashoffset="0"/><text class="timer-text" x="40" y="37" id="txt3">0:30</text><text class="timer-label" x="40" y="51">sec</text></svg>
+      <div class="timer-btns">
+        <button class="btn btn-primary" onclick="startTimerSVG('arc3','txt3',30,213.63,null)">&#9654; Start</button>
+        <button class="btn btn-ghost" onclick="resetTimerSVG('arc3','txt3','0:30',213.63)">&#8635;</button>
+      </div>
+    </div>
+    <div class="speed-grid">
+      <div class="speed-card" id="sp1"><div class="speed-num">Prompt 1</div><div class="speed-prompt">Report what the HR director said in the S4A listening &mdash; from memory. Use: &quot;She said... She also told us... She acknowledged that... She asked us whether...&quot;</div><button class="speed-done-btn" onclick="speedDone(1)">&#10003; Done</button></div>
+      <div class="speed-card" id="sp2"><div class="speed-num">Prompt 2</div><div class="speed-prompt">Report a question someone asked you about your free time. Use "She asked me if..." or "He asked me what..."</div><button class="speed-done-btn" onclick="speedDone(2)">&#10003; Done</button></div>
+      <div class="speed-card" id="sp3"><div class="speed-num">Prompt 3</div><div class="speed-prompt">Use the phrase "I lose track of time" in a sentence. Then say what someone told you about their hobby using Reported Speech.</div><button class="speed-done-btn" onclick="speedDone(3)">&#10003; Done</button></div>
+      <div class="speed-card" id="sp4"><div class="speed-num">Prompt 4</div><div class="speed-prompt">Report a request: "She asked me to try her hobby." Add what you said in response. "I told her that..."</div><button class="speed-done-btn" onclick="speedDone(4)">&#10003; Done</button></div>
+      <div class="speed-card" id="sp5"><div class="speed-num">Prompt 5</div><div class="speed-prompt">Why do YOU need personal time? Use: "I need that time for myself because..." and include one thing someone said about it.</div><button class="speed-done-btn" onclick="speedDone(5)">&#10003; Done</button></div>
+      <div class="speed-card" id="sp6"><div class="speed-num">Prompt 6</div><div class="speed-prompt">Say &quot;It's okay to ask for help&quot; in a sentence. Then report what someone said to you (or you wish someone had said) when you were having a hard time at work.</div><button class="speed-done-btn" onclick="speedDone(6)">&#10003; Done</button></div>
+    </div>
+    <div style="font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--muted);margin-top:12px">Completed: <span id="speedCount" style="color:var(--accent)">0</span> / 6</div>
+  </div>
+</section>
+
+<!-- SOLO CHALLENGE -->
+<section class="section" id="solo">
+  <div class="section-header">
+    <span class="section-number">&#127919;</span>
+    <h2 class="section-title">Solo Challenge &mdash; The Mental Health Advocate</h2>
+    <span class="section-time">15 min</span>
+  </div>
+  <div class="section-body">
+    <div class="img-card">
+      <img src="https://images.unsplash.com/photo-1475721027785-f74eccf877e2?w=900&auto=format&fit=crop&q=80" alt="Professional advocating for workplace wellbeing before leadership" loading="lazy">
+      <div class="img-overlay">Solo Challenge &middot; Mental Health Advocacy &middot; 2 minutes &middot; No notes</div>
+    </div>
+    <div class="challenge-card">
+      <div class="challenge-title">&#127919; The Challenge Brief</div>
+      <p style="font-size:14px;color:var(--accent);font-weight:600;margin-bottom:12px;line-height:1.6">Your company&apos;s leadership asks: &ldquo;We are launching a mental health initiative. What have employees told you they need? And what have they said about the current culture?&rdquo;</p>
+      <div class="challenge-brief">Advocate for your team to company leadership. In 2 minutes, cover:<br>
+        &bull; What employees have said they need &mdash; at least 2 reported statements with precision tense<br>
+        &bull; What the HR director said or asked in S4A &mdash; reported accurately<br>
+        &bull; What someone personally told you about stigma or wellbeing &mdash; precise past tense<br>
+        &bull; What initiative you propose and why &mdash; include a reported question as framing<br>
+        &bull; Connectors: "She said... She also told us... Then she asked... I told her that..."<br><br>
+        No notes. Module 5 capstone production moment.</div>
+      <div style="font-family:var(--font-head);font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px">Teacher Rubric &mdash; Click when met</div>
+      <div class="challenge-rubric">
+        <div class="rubric-item" onclick="this.classList.toggle('checked')"><div class="rubric-label">2 Precision Statements</div><div class="rubric-desc">"She said she had been feeling..." NOT "she said she is." Tense accuracy checked</div></div>
+        <div class="rubric-item" onclick="this.classList.toggle('checked')"><div class="rubric-label">Reported Question</div><div class="rubric-desc">"She asked me if / what / whether..." + no inversion</div></div>
+        <div class="rubric-item" onclick="this.classList.toggle('checked')"><div class="rubric-label">Vocabulary</div><div class="rubric-desc">3+ S4A words: stigma, anxiety, wellbeing, psychological safety, normalize, acknowledge</div></div>
+        <div class="rubric-item" onclick="this.classList.toggle('checked')"><div class="rubric-label">Colloquial</div><div class="rubric-desc">"I lose track of time" / "I need that time" / "It helps me relax"</div></div>
+        <div class="rubric-item" onclick="this.classList.toggle('checked')"><div class="rubric-label">Professional tone</div><div class="rubric-desc">Language is measured, not dramatizing. Represents others accurately and with care</div></div>
+        <div class="rubric-item" onclick="this.classList.toggle('checked')"><div class="rubric-label">Fluency &amp; time</div><div class="rubric-desc">Speaks 90+ seconds, no long pauses, coherent structure</div></div>
+      </div>
+      <div class="timer-wrap">
+        <svg width="90" height="90" viewBox="0 0 80 80"><circle class="timer-bg" cx="40" cy="40" r="34" stroke-width="6"/><circle class="timer-arc" id="arc4" cx="40" cy="40" r="34" stroke-width="6" stroke-dasharray="213.63" stroke-dashoffset="0"/><text class="timer-text" x="40" y="37" id="txt4">2:00</text><text class="timer-label" x="40" y="51">solo</text></svg>
+        <div class="timer-btns">
+          <button class="btn btn-primary" onclick="startTimerSVG('arc4','txt4',120,213.63,'b4')">&#9654; Start</button>
+          <button class="btn btn-ghost" onclick="resetTimerSVG('arc4','txt4','2:00',213.63)">&#8635;</button>
+        </div>
+      </div>
+    </div>
+    <div class="teacher-note teacher-only">
+      <strong>Teacher note &mdash; Job Interview framing:</strong> The interviewer framing is a masterstroke for adult learners. It gives the activity real stakes that feel immediately meaningful. Most students have never answered this question in English before. After the challenge, say: "You just answered a real interview question. In English. For 2 minutes. That is what this program is for." This moment justifies the entire session.
+    </div>
+  </div>
+</section>
+
+<!-- ASSESSMENT -->
+<section class="section" id="assessment">
+  <div class="section-header">
+    <span class="section-number">&#127942;</span>
+    <h2 class="section-title">Assessment &mdash; Session Leaderboard</h2>
+    <span class="section-time">8 min</span>
+  </div>
+  <div class="section-body">
+    <div class="img-card">
+      <img src="https://images.unsplash.com/photo-1552581234-26160f608093?w=900&auto=format&fit=crop&q=80" alt="Team celebrating a strong session together" loading="lazy">
+      <div class="img-overlay">Session 4B Assessment &middot; Production scores &middot; Auto-sorted</div>
+    </div>
+    <div class="lb-wrap">
+      <div class="lb-title">&#127942; Session Leaderboard</div>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:14px">Score 0&ndash;10 per student. Criteria: Precision Reported Speech in sensitive contexts (4pts) + Vocabulary range (3pts) + Professional advocacy fluency (3pts).</p>
+      <div class="lb-add">
+        <input class="lb-name-input" id="lbName" placeholder="Student name..." type="text">
+        <input class="lb-score-input" id="lbScore" placeholder="0&ndash;10" type="number" min="0" max="10">
+        <button class="lb-add-btn" onclick="addToLB()">+ Add</button>
+      </div>
+      <table class="lb-table">
+        <thead><tr><th>#</th><th>Student</th><th>Score</th><th>Level</th></tr></thead>
+        <tbody id="lbBody"><tr><td colspan="4" class="lb-empty">No entries yet</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- WRAP-UP -->
+<section class="section" id="wrapup">
+  <div class="section-header">
+    <span class="section-number">&#127881;</span>
+    <h2 class="section-title">Wrap-Up &mdash; Certificate &amp; My Win Today</h2>
+    <span class="section-time">5 min</span>
+  </div>
+  <div class="section-body">
+    <div class="img-card">
+      <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=900&auto=format&fit=crop&q=80" alt="Person celebrating completion with energy" loading="lazy">
+      <div class="img-overlay">M5 &middot; S4B Complete &mdash; Hobbies &amp; Personal Time &middot; Fluency achieved</div>
+    </div>
+    <div style="font-family:var(--font-head);font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin:18px 0 10px">&#9989; I Can Now&hellip;</div>
+    <div class="checklist">
+      <div class="cl-item" onclick="this.classList.toggle('done');checkAllDone()"><div class="cl-box"></div>Answer "What do you do outside of work?" in English for 2 minutes, including Reported Speech as evidence.</div>
+      <div class="cl-item" onclick="this.classList.toggle('done');checkAllDone()"><div class="cl-box"></div>Report a question I asked someone AND their answer: "I asked her if... She told me that..."</div>
+      <div class="cl-item" onclick="this.classList.toggle('done');checkAllDone()"><div class="cl-box"></div>Use &quot;How are you really doing?,&quot; &quot;It's okay to ask for help,&quot; and &quot;People talk about it more now&quot; naturally.</div>
+      <div class="cl-item" onclick="this.classList.toggle('done');checkAllDone()"><div class="cl-box"></div>Explain what &quot;psychological safety&quot; means and why it matters &mdash; in English, professionally.</div>
+      <div class="cl-item" onclick="this.classList.toggle('done');checkAllDone()"><div class="cl-box"></div>Use "I lose track of time," "I need that time for myself" and "It helps me relax" naturally in conversation.</div>
+    </div>
+    <div class="cert-wrap">
+      <div class="cert-title">&#127942; Session Certificate</div>
+      <div class="cert-sub">B1.1 &middot; Module 5 &middot; Session 4B &mdash; Production &amp; Fluency &middot; Hobbies &amp; Personal Time</div>
+      <div class="cert-input-row">
+        <input class="cert-name-input" id="certName" type="text" placeholder="Enter student name...">
+        <button class="cert-gen-btn" onclick="generateCert()">Generate &#127942;</button>
+      </div>
+      <div class="cert-display" id="certDisplay">
+        <div class="cert-display-title">Certificate of Completion</div>
+        <div class="cert-student-name" id="certStudentName"></div>
+        <div class="cert-session-info">has successfully completed<br><strong style="color:var(--accent)">B1.1 &middot; Module 5 &middot; Session 4B &mdash; Hobbies &amp; Personal Time</strong><br>Production &amp; Fluency &middot; Gabriel Turner English Training<br><span id="certDate" style="color:var(--muted);font-size:12px"></span></div>
+      </div>
+    </div>
+    <div class="win-wrap">
+      <div class="win-label">&#127941; My Win Today</div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:8px">Complete this: <em>"Today I used Reported Speech to advocate for something I believe in by..."</em></div>
+      <textarea class="win-input" id="winInput" placeholder="Type your win here..." rows="2"></textarea>
+      <button class="btn btn-primary" onclick="saveWin()">Save My Win &#127942;</button>
+      <div class="win-saved" id="winSaved"></div>
+    </div>
+    <div style="background:rgba(0,207,255,.04);border:1px solid rgba(0,207,255,.18);border-radius:12px;padding:20px;margin-top:20px">
+      <div style="font-family:var(--font-head);font-size:10px;font-weight:700;color:#00CFFF;letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px">&#9654; Next Class &mdash; B1.1 &middot; M5 &middot; S5</div>
+      <div style="font-family:var(--font-head);font-size:16px;font-weight:700;color:var(--text);margin-bottom:6px">Discovery &amp; Drill &mdash; Exercise &amp; Health Routines</div>
+      <div style="font-size:13px;color:var(--muted);line-height:1.55">S5 covers all of Module 5: all vocabulary, all grammar, all colloquial phrases. Rodrigo&apos;s full story &mdash; from stress to guitar to wellness to mental health. Come ready for the exit task: Report + Present Perfect in one 3-minute talk.</div>
+    </div>
+  </div>
+</section>
+
+</main>
+<footer class="site-footer">
+  <div class="footer-brand">Gabriel Turner &middot; English Training &middot; Teacher Edition</div>
+  <div style="font-size:12px;color:var(--muted)">GT_B1_1_M5_S4B_TEACHER_v1</div>
+  <div class="level-tags">
+    <span class="level-tag">A1.1</span><span class="level-tag">A1.2</span><span class="level-tag">A2.1</span><span class="level-tag">A2.2</span>
+    <span class="level-tag active">B1.1</span>
+    <span class="level-tag">B1.2</span><span class="level-tag">B2.1</span><span class="level-tag">B2.2</span>
+  </div>
+</footer>
+
+<script>
+var earnedBadges={};
+function earnBadge(id){if(earnedBadges[id])return;earnedBadges[id]=true;var el=document.getElementById(id);if(el)el.classList.add('earned');if(Object.keys(earnedBadges).length>=5)launchConfetti();}
+function launchConfetti(){var w=document.getElementById('confettiWrap');w.style.display='block';var cols=['#10B981','#34D399','#FFB347','#00E5A0','#FF4D6D','#A78BFA'];for(var i=0;i<90;i++){var c=document.createElement('div');c.style.cssText='position:absolute;width:8px;height:8px;background:'+cols[i%cols.length]+';border-radius:50%;left:'+Math.random()*100+'%;top:-10px;animation:confFall '+(1.5+Math.random()*2)+'s ease-out forwards;animation-delay:'+Math.random()*.5+'s;';w.appendChild(c);}var s=document.createElement('style');s.textContent='@keyframes confFall{0%{transform:translateY(0) rotate(0);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}';document.head.appendChild(s);}
+var timerIntervals={};
+function startTimerSVG(arcId,textId,seconds,circumference,badgeId){if(timerIntervals[arcId])clearInterval(timerIntervals[arcId]);var arc=document.getElementById(arcId),txt=document.getElementById(textId),rem=seconds;function update(){arc.style.strokeDashoffset=circumference*(1-rem/seconds);var m=Math.floor(rem/60),s=rem%60;txt.textContent=m+':'+(s<10?'0':'')+s;if(rem<=5)arc.style.stroke='var(--danger)';if(rem<=0){clearInterval(timerIntervals[arcId]);arc.style.stroke='var(--success)';if(badgeId)earnBadge(badgeId);return;}rem--;}update();timerIntervals[arcId]=setInterval(update,1000);}
+function resetTimerSVG(arcId,textId,label,circumference){if(timerIntervals[arcId]){clearInterval(timerIntervals[arcId]);delete timerIntervals[arcId];}var arc=document.getElementById(arcId);arc.style.strokeDashoffset=0;arc.style.stroke='var(--accent)';document.getElementById(textId).textContent=label;}
+window.addEventListener('scroll',function(){var h=document.documentElement;document.getElementById('progressBar').style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100+'%';},{passive:true});
+function toggleMode(){document.body.classList.toggle('student-mode');document.querySelector('.mode-toggle').textContent=document.body.classList.contains('student-mode')?'TEACHER MODE':'STUDENT MODE';}
+var speedDoneCount=0;
+function speedDone(n){var card=document.getElementById('sp'+n);if(card.classList.contains('done'))return;card.classList.add('done');speedDoneCount++;document.getElementById('speedCount').textContent=speedDoneCount;if(speedDoneCount>=6)earnBadge('b3');}
+var lbData=[];
+function addToLB(){var name=document.getElementById('lbName').value.trim();var score=parseInt(document.getElementById('lbScore').value);if(!name||isNaN(score)||score<0||score>10)return;lbData.push({name:name,score:score});lbData.sort(function(a,b){return b.score-a.score;});document.getElementById('lbName').value='';document.getElementById('lbScore').value='';renderLB();}
+function renderLB(){var body=document.getElementById('lbBody');if(lbData.length===0){body.innerHTML='<tr><td colspan="4" class="lb-empty">No entries yet</td></tr>';return;}body.innerHTML=lbData.map(function(d,i){var level=d.score>=9?'\u{1F3C6} Excellent':d.score>=7?'\u{1F4DA} Proficient':d.score>=5?'\u26A1 Developing':'\u{1F525} Keep going';return '<tr><td class="lb-rank">'+(i+1)+'</td><td>'+d.name+'</td><td style="font-family:var(--font-head);font-weight:700;color:var(--accent)">'+d.score+' / 10</td><td style="font-size:12px;color:var(--muted)">'+level+'</td></tr>';}).join('');}
+function generateCert(){var name=document.getElementById('certName').value.trim();if(!name)return;document.getElementById('certStudentName').textContent=name;var now=new Date();document.getElementById('certDate').textContent=now.toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});document.getElementById('certDisplay').style.display='block';earnBadge('b5');launchConfetti();}
+function saveWin(){var t=document.getElementById('winInput').value.trim();if(!t)return;var s=document.getElementById('winSaved');s.style.display='block';s.textContent='\ud83c\udfc6 "'+t+'" \u2014 Your proof.';earnBadge('b5');}
+function checkAllDone(){var items=document.querySelectorAll('.cl-item');var done=document.querySelectorAll('.cl-item.done');if(done.length===items.length)earnBadge('b5');}
+document.querySelectorAll('.debate-round').forEach(function(r,i){var btn=document.createElement('button');btn.style.cssText='margin-top:12px;background:none;border:1px solid var(--border);color:var(--muted);font-family:var(--font-head);font-size:10px;font-weight:700;padding:5px 12px;border-radius:6px;cursor:pointer;letter-spacing:.06em;';btn.textContent='\u2713 Round complete';btn.onclick=function(){btn.style.borderColor='var(--success)';btn.style.color='var(--success)';if(i===2)earnBadge('b2');};r.appendChild(btn);});
+</script>
+</body>
+</html>

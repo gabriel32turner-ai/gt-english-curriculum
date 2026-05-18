@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GT &middot; B1.1 &middot; M6 &middot; S4B &mdash; Travel &amp; Perspective &mdash; Production</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --accent:#10B981;--accent2:#34D399;
+  --bg:#080808;--surface:#111318;--surface2:#1a1f28;
+  --border:rgba(16,185,129,.18);
+  --text:#F0F4F8;--muted:#8A9BB0;
+  --danger:#FF4D6D;--success:#00E5A0;--warn:#FFB347;
+  --font-head:'Syne',sans-serif;--font-body:'DM Sans',sans-serif
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:15px;line-height:1.65;min-height:100vh}
+#progressBar{position:fixed;top:0;left:0;width:0%;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent2));z-index:9999;transition:width .3s}
+.site-header{position:sticky;top:0;z-index:900;background:rgba(8,8,8,.92);backdrop-filter:blur(14px);border-bottom:1px solid var(--border);padding:0 24px}
+.header-inner{max-width:960px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:58px;gap:12px;flex-wrap:wrap}
+.header-brand{font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--accent);letter-spacing:.08em;text-transform:uppercase}
+.header-meta{font-size:12px;color:var(--muted);font-weight:500}
+.badge-strip{display:flex;gap:6px}
+.badge-strip span{font-size:18px;opacity:.25;transition:all .4s;filter:grayscale(1);cursor:default}
+.badge-strip span.earned{opacity:1;filter:none;animation:badgePop .5s cubic-bezier(.34,1.56,.64,1)}
+@keyframes badgePop{0%{transform:scale(.4) rotate(-20deg);opacity:0}70%{transform:scale(1.25) rotate(4deg);opacity:1}100%{transform:scale(1) rotate(0)}}
+.mode-toggle{background:var(--surface2);border:1px solid var(--border);color:var(--accent);font-family:var(--font-head);font-size:11px;font-weight:700;padding:5px 12px;border-radius:6px;cursor:pointer;letter-spacing:.06em}
+.mode-toggle:hover{background:var(--accent);color:var(--bg)}
+.sticky-nav{position:sticky;top:58px;z-index:800;background:rgba(8,8,8,.88);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none}
+.sticky-nav::-webkit-scrollbar{display:none}
+.nav-inner{max-width:960px;margin:0 auto;display:flex;padding:0 16px}
+.nav-inner a{font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:.06em;color:var(--muted);text-decoration:none;padding:10px 14px;border-bottom:2px solid transparent;white-space:nowrap;transition:all .2s}
+.nav-inner a:hover{color:var(--accent);border-color:var(--accent)}
+.main{max-width:960px;margin:0 auto;padding:32px 20px 80px}
+.section{margin-bottom:48px;border:1px solid var(--border);border-radius:16px;overflow:hidden;background:var(--surface)}
+.section-header{display:flex;align-items:center;gap:14px;padding:18px 24px;background:linear-gradient(135deg,rgba(16,185,129,.08),transparent);border-bottom:1px solid var(--border)}
+.section-number{font-family:var(--font-head);font-size:11px;font-weight:800;color:var(--accent);letter-spacing:.12em;text-transform:uppercase;background:rgba(16,185,129,.1);border:1px solid var(--border);padding:3px 10px;border-radius:20px}
+.section-title{font-family:var(--font-head);font-size:18px;font-weight:800;color:var(--text);flex:1}
+.section-time{font-size:12px;color:var(--muted);background:var(--surface2);padding:3px 10px;border-radius:20px}
+.section-body{padding:24px}
+.img-card{border-radius:10px;overflow:hidden;position:relative;margin-bottom:18px}
+.img-card img{width:100%;height:200px;object-fit:cover;display:block;filter:brightness(.55)}
+.img-overlay{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(8,8,8,.88));padding:12px 16px;font-size:13px;color:rgba(255,255,255,.85)}
+.teacher-note{background:rgba(16,185,129,.06);border-left:3px solid var(--accent);border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0;font-size:13px;color:var(--muted)}
+.teacher-note strong{color:var(--accent)}
+.teacher-note.tn-gold{background:rgba(255,179,71,.06);border-color:var(--warn)}
+.teacher-note.tn-gold strong{color:var(--warn)}
+.teacher-note.tn-cyan{background:rgba(0,207,255,.06);border-color:#00CFFF}
+.teacher-note.tn-cyan strong{color:#00CFFF}
+.teacher-only{}
+body.student-mode .teacher-only{display:none}
+/* TIMER */
+.timer-wrap{display:flex;flex-direction:column;align-items:center;gap:10px;margin:16px 0}
+.timer-bg{fill:none;stroke:rgba(255,255,255,.07)}
+.timer-arc{fill:none;stroke:var(--accent);stroke-linecap:round;transition:stroke .5s;transform:rotate(-90deg);transform-origin:40px 40px}
+.timer-text{font-family:var(--font-head);font-weight:800;font-size:14px;fill:var(--text);dominant-baseline:middle;text-anchor:middle}
+.timer-label{font-size:9px;fill:var(--muted);dominant-baseline:middle;text-anchor:middle}
+.timer-btns{display:flex;gap:8px}
+.btn{font-family:var(--font-head);font-size:12px;font-weight:700;letter-spacing:.06em;padding:7px 18px;border-radius:8px;border:none;cursor:pointer;transition:all .2s}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-primary:hover{background:var(--accent2)}
+.btn-ghost{background:var(--surface2);border:1px solid var(--border);color:var(--muted)}
+.btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
+.tag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;font-family:var(--font-head);letter-spacing:.04em;margin-right:4px}
+.tag-t2s{background:rgba(16,185,129,.15);color:var(--accent)}
+.tag-s2s{background:rgba(255,179,71,.15);color:var(--warn)}
+.tag-class{background:rgba(138,155,176,.12);color:var(--muted)}
+/* HOT TAKE */
+.hot-take-card{background:linear-gradient(135deg,rgba(255,77,109,.08),rgba(255,77,109,.03));border:1px solid rgba(255,77,109,.25);border-left:4px solid var(--danger);border-radius:0 12px 12px 0;padding:22px 24px;margin:14px 0}
+.hot-take-label{font-family:var(--font-head);font-size:10px;font-weight:700;color:var(--danger);letter-spacing:.12em;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.hot-take-label::before{content:"\1F525";font-size:14px}
+.hot-take-statement{font-size:18px;font-weight:700;color:var(--text);line-height:1.4;margin-bottom:14px}
+.stance-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.stance-card{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px;cursor:pointer;transition:all .2s}
+.stance-card:hover{border-color:var(--accent)}
+.stance-card.chosen{border-color:var(--accent);background:rgba(16,185,129,.08)}
+.stance-label{font-family:var(--font-head);font-size:10px;font-weight:700;color:var(--accent);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px}
+.stance-desc{font-size:13px;color:var(--muted);line-height:1.5}
+/* PITCH / DEBATE */
+.debate-wrap{display:flex;flex-direction:column;gap:14px;margin:14px 0}
+.debate-round{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:18px 20px}
+.debate-num{font-family:var(--font-head);font-size:10px;font-weight:700;color:var(--accent);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px}
+.debate-q{font-size:14px;color:var(--text);font-weight:600;line-height:1.5;margin-bottom:8px}
+.debate-hint{font-size:12px;color:var(--muted);font-style:italic}
+/* RELAY */
+.relay-wrap{margin:14px 0}
+.relay-visual{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:22px;margin-bottom:14px}
+.relay-title{font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--accent);margin-bottom:14px;letter-spacing:.06em;text-transform:uppercase}
+.relay-chain{display:flex;align-items:center;gap:0;flex-wrap:wrap}
+.relay-node{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-size:13px;color:var(--text);flex:1;min-width:140px;text-align:center;line-height:1.4}
+.relay-node.active{border-color:var(--accent);color:var(--accent);font-weight:600}
+.relay-arrow{font-size:20px;color:var(--muted);padding:0 8px;flex-shrink:0}
+.relay-instructions{font-size:13px;color:var(--muted);line-height:1.7}
+/* SPEED ROUND */
+.speed-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:14px 0}
+.speed-card{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:16px 14px;text-align:center;cursor:pointer;transition:all .2s}
+.speed-card:hover{border-color:var(--accent)}
+.speed-card.done{border-color:var(--success);background:rgba(0,229,160,.06)}
+.speed-num{font-family:var(--font-head);font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px}
+.speed-prompt{font-size:13px;color:var(--text);font-weight:500;line-height:1.4}
+.speed-done-btn{background:none;border:1px solid var(--border);color:var(--muted);font-family:var(--font-head);font-size:10px;font-weight:700;padding:4px 10px;border-radius:6px;cursor:pointer;margin-top:10px;letter-spacing:.06em}
+.speed-done-btn:hover{border-color:var(--success);color:var(--success)}
+/* SOLO CHALLENGE */
+.challenge-card{background:linear-gradient(135deg,rgba(16,185,129,.07),rgba(52,211,153,.03));border:1px solid var(--border);border-radius:12px;padding:22px;margin:14px 0}
+.challenge-title{font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--accent);letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px}
+.challenge-brief{font-size:14px;color:var(--text);line-height:1.7;margin-bottom:16px}
+.challenge-rubric{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}
+.rubric-item{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 12px;cursor:pointer;transition:all .2s}
+.rubric-item:hover{border-color:var(--accent)}
+.rubric-item.checked{border-color:var(--success);background:rgba(0,229,160,.06)}
+.rubric-label{font-family:var(--font-head);font-size:9px;font-weight:700;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px}
+.rubric-desc{font-size:12px;color:var(--text);line-height:1.4}
+.rubric-item.checked .rubric-label{color:var(--success)}
+/* LEADERBOARD */
+.lb-wrap{margin:14px 0}
+.lb-title{font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--accent);letter-spacing:.06em;text-transform:uppercase;margin-bottom:12px}
+.lb-add{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.lb-name-input{background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);padding:8px 12px;font-family:var(--font-body);font-size:13px;flex:1;min-width:140px}
+.lb-name-input:focus{outline:none;border-color:var(--accent)}
+.lb-score-input{background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);padding:8px 12px;font-family:var(--font-body);font-size:13px;width:80px;text-align:center}
+.lb-score-input:focus{outline:none;border-color:var(--accent)}
+.lb-add-btn{background:var(--accent);border:none;color:#fff;font-family:var(--font-head);font-size:11px;font-weight:700;padding:8px 18px;border-radius:8px;cursor:pointer;letter-spacing:.06em}
+.lb-table{width:100%;border-collapse:collapse}
+.lb-table th{padding:10px 14px;text-align:left;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);border-bottom:2px solid var(--accent)}
+.lb-table td{padding:10px 14px;border-bottom:1px solid var(--border);font-size:13px}
+.lb-table tr:hover td{background:rgba(16,185,129,.04)}
+.lb-rank{font-family:var(--font-head);font-weight:800;color:var(--accent)}
+.lb-empty{font-size:13px;color:var(--muted);font-style:italic;padding:14px}
+/* CERTIFICATE */
+.cert-wrap{background:linear-gradient(135deg,rgba(16,185,129,.06),rgba(52,211,153,.03));border:1px solid rgba(16,185,129,.3);border-radius:14px;padding:26px;margin:20px 0;text-align:center}
+.cert-title{font-family:var(--font-head);font-size:22px;font-weight:800;color:var(--accent);margin-bottom:6px}
+.cert-sub{font-size:13px;color:var(--muted);margin-bottom:18px}
+.cert-input-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:14px}
+.cert-name-input{background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);padding:10px 16px;font-family:var(--font-body);font-size:14px;min-width:220px}
+.cert-name-input:focus{outline:none;border-color:var(--accent)}
+.cert-gen-btn{background:var(--accent);border:none;color:#fff;font-family:var(--font-head);font-size:12px;font-weight:700;padding:10px 22px;border-radius:8px;cursor:pointer;letter-spacing:.06em}
+.cert-display{display:none;background:var(--surface);border:2px solid var(--accent);border-radius:12px;padding:28px;margin-top:14px}
+.cert-display-title{font-family:var(--font-head);font-size:14px;font-weight:700;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px}
+.cert-student-name{font-family:var(--font-head);font-size:28px;font-weight:800;color:var(--accent);margin-bottom:6px}
+.cert-session-info{font-size:13px;color:var(--muted);line-height:1.6}
+/* WIN / CHECKLIST */
+.checklist{display:flex;flex-direction:column;gap:7px;margin:14px 0}
+.cl-item{display:flex;align-items:center;gap:12px;padding:11px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;cursor:pointer;transition:all .2s;font-size:13px;color:var(--muted)}
+.cl-item:hover{border-color:var(--accent);color:var(--text)}
+.cl-item.done{border-color:var(--success);color:var(--success);background:rgba(0,229,160,.06)}
+.cl-box{width:18px;height:18px;border:2px solid var(--muted);border-radius:4px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px}
+.cl-item.done .cl-box{border-color:var(--success);background:var(--success);color:#fff}
+.cl-item.done .cl-box::after{content:"\2713"}
+.win-wrap{margin:22px 0;background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:20px}
+.win-label{font-family:var(--font-head);font-size:12px;font-weight:700;color:var(--warn);letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px}
+.win-input{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text);padding:12px 14px;font-family:var(--font-body);font-size:13px;resize:vertical;margin-bottom:10px}
+.win-input:focus{outline:none;border-color:var(--accent)}
+.win-saved{display:none;font-size:13px;color:var(--success);margin-top:6px;padding:8px 12px;background:rgba(0,229,160,.08);border-radius:6px}
+#confettiWrap{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9998;display:none;overflow:hidden}
+.site-footer{background:var(--surface);border-top:1px solid var(--border);padding:20px 24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+.footer-brand{font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.level-tags{display:flex;gap:4px;flex-wrap:wrap}
+.level-tag{font-family:var(--font-head);font-size:10px;font-weight:700;padding:3px 10px;background:var(--surface2);color:rgba(255,255,255,.25);border-radius:4px}
+.level-tag.active{background:var(--accent);color:#fff}
+@media(max-width:860px){
+  .stance-grid,.debate-wrap,.challenge-rubric,.speed-grid,.lb-add{grid-template-columns:1fr}
+  .relay-chain{flex-direction:column}
+  .relay-arrow{transform:rotate(90deg)}
+  .header-inner{height:auto;padding:10px 0}
+}
+
+.edu-chain{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px}
+.acc-node{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px 10px;text-align:center;transition:border-color .2s;cursor:pointer}
+.acc-node:hover{border-color:var(--accent)}
+.acc-node.active-turn{border-color:var(--accent);background:rgba(16,185,129,.08)}
+.acc-node .pn-num{font-family:var(--font-head);font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px}
+.acc-node .pn-role{font-size:12px;color:var(--text);font-weight:600;line-height:1.3}
+.acc-node .pn-desc{font-size:10px;color:var(--muted);margin-top:3px;line-height:1.3}
+.pc-arrow{font-size:18px;color:var(--muted);display:flex;align-items:center;justify-content:center}
+</style>
+<body>
+<div id="progressBar"></div>
+<div id="confettiWrap"></div>
+<header class="site-header">
+  <div class="header-inner">
+    <div>
+      <div class="header-brand">Gabriel Turner &middot; English Training</div>
+      <div class="header-meta">B1.1 &nbsp;&middot;&nbsp; Module 6 &nbsp;&middot;&nbsp; Session 4B &nbsp;&middot;&nbsp; Production &amp; Fluency &nbsp;&middot;&nbsp; Teacher Edition</div>
+    </div>
+    <div class="badge-strip">
+      <span id="b1" title="Hot Take complete">&#9992;&#65039;</span>
+      <span id="b2" title="Pitch complete">&#128483;&#65039;</span>
+      <span id="b3" title="Speed Round">&#9889;</span>
+      <span id="b4" title="Solo Challenge">&#127919;</span>
+      <span id="b5" title="B1.1 Complete">&#127942;</span>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <div class="header-meta">Teacher Edition &middot; 90&ndash;120 min &middot; Final B-Session</div>
+      <button class="mode-toggle" onclick="toggleMode()">STUDENT MODE</button>
+    </div>
+  </div>
+</header>
+<nav class="sticky-nav">
+  <div class="nav-inner">
+    <a href="#hot-take">&#128293; Hot Take</a>
+    <a href="#pitch">&#128483;&#65039; Pitch</a>
+    <a href="#relay">&#127939; Relay</a>
+    <a href="#speed">&#9889; Speed</a>
+    <a href="#solo">&#127919; Solo</a>
+    <a href="#assessment">&#127942; Assessment</a>
+    <a href="#wrapup">&#127881; Wrap-Up</a>
+  </div>
+</nav>
+<main class="main">
+
+<!-- INTRO STRIP -->
+<div style="background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.2);border-radius:10px;padding:16px 20px;margin-bottom:28px">
+  <div style="font-family:var(--font-head);font-size:11px;font-weight:700;color:var(--accent);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px">S4B &mdash; Production &amp; Fluency &mdash; Final B-Session of B1.1</div>
+  <p style="font-size:13px;color:var(--muted);line-height:1.7">From S4A: <strong style="color:var(--text)">Complete B1.1 opinion toolkit</strong> (PP + FC + 5 opinion phrases, spontaneously) &middot; <strong style="color:var(--text)">Vocabulary</strong>: perspective, assumption, privilege, curiosity, openness, humble, broaden, challenge &middot; <strong style="color:var(--text)">Colloquial</strong>: "I saw things differently after that trip," "Not everyone has the chance to travel," "Even short trips open your mind." Today: 100% production &mdash; full toolkit &mdash; final B-session before the Exit Project.</p>
+  <div style="margin-top:10px;background:rgba(255,179,71,.06);border:1px solid rgba(255,179,71,.2);border-radius:8px;padding:10px 14px;font-size:13px;color:var(--warn)">Exit Project reminder: S5 is the Exit Project delivery. Students should have their topic and argument ready. Today&apos;s Solo Challenge is the final rehearsal.</div>
+</div>
+
+<!-- HOT TAKE -->
+<section class="section" id="hot-take">
+  <div class="section-header"><span class="section-number">&#128293;</span><h2 class="section-title">Hot Take &mdash; Travel, Power &amp; Perspective</h2><span class="section-time">10 min</span></div>
+  <div class="section-body">
+    <div class="img-card"><img src="https://images.unsplash.com/photo-1488085061387-422e29b40080?w=900&auto=format&fit=crop&q=80" alt="Airplane window view &mdash; perspective only travel gives"><div class="img-overlay">Hot Take &middot; Full toolkit required &middot; 90 seconds &middot; Final B-session opener</div></div>
+    <div class="hot-take-card">
+      <div class="hot-take-label">Today&apos;s Hot Take</div>
+      <div class="hot-take-statement">"People who have never left their own city cannot make decisions that affect people who live differently &mdash; and most of our politicians and executives are exactly that problem."</div>
+      <div class="stance-grid">
+        <div class="stance-card" onclick="this.classList.toggle('chosen')"><div class="stance-label">&#9989; Agree</div><div class="stance-desc">You cannot understand what you have never experienced. A leader who has never seen a different economic reality will always manage from their own bubble. Limited perspective produces limited decisions.</div></div>
+        <div class="stance-card" onclick="this.classList.toggle('chosen')"><div class="stance-label">&#10007; Disagree</div><div class="stance-desc">Empathy and good judgment can be built through reading, listening, data, and diverse teams &mdash; not just travel. Some of the most effective leaders have governed places they never visited.</div></div>
+      </div>
+    </div>
+    <div style="margin-top:20px">
+      <div style="font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--text);margin-bottom:10px"><span class="tag tag-t2s">T&rarr;S</span> Round 1 &mdash; Your Hot Take (90 sec)</div>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:14px">Full toolkit: PP (what has happened because of limited perspective) + FC (what will happen if leaders don&apos;t broaden their view) + 2 opinion phrases + S4A vocabulary: assumption, perspective, privilege, openness, humble.</p>
+      <div class="timer-wrap">
+        <svg width="80" height="80" viewBox="0 0 80 80"><circle class="timer-bg" cx="40" cy="40" r="34" stroke-width="6"/><circle class="timer-arc" id="arc1" cx="40" cy="40" r="34" stroke-width="6" stroke-dasharray="213.63" stroke-dashoffset="0"/><text class="timer-text" x="40" y="37" id="txt1">1:30</text><text class="timer-label" x="40" y="51">argue</text></svg>
+        <div class="timer-btns"><button class="btn btn-primary" onclick="startTimerSVG('arc1','txt1',90,213.63,'b1')">&#9654; Start</button><button class="btn btn-ghost" onclick="resetTimerSVG('arc1','txt1','1:30',213.63)">&#8635;</button></div>
+      </div>
+    </div>
+    <div style="margin-top:20px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:18px">
+      <div style="font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--text);margin-bottom:8px"><span class="tag tag-s2s">S&harr;S</span> Round 2 &mdash; The Counter (60 sec)</div>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:12px">Counter with "That&apos;s a good point, however..." then PP + FC + opinion phrase. Required: at least 2 different opinion phrases across the full exchange.</p>
+      <div class="timer-wrap">
+        <svg width="80" height="80" viewBox="0 0 80 80"><circle class="timer-bg" cx="40" cy="40" r="34" stroke-width="6"/><circle class="timer-arc" id="arc2" cx="40" cy="40" r="34" stroke-width="6" stroke-dasharray="213.63" stroke-dashoffset="0"/><text class="timer-text" x="40" y="37" id="txt2">1:00</text><text class="timer-label" x="40" y="51">counter</text></svg>
+        <div class="timer-btns"><button class="btn btn-primary" onclick="startTimerSVG('arc2','txt2',60,213.63,null)">&#9654; Start</button><button class="btn btn-ghost" onclick="resetTimerSVG('arc2','txt2','1:00',213.63)">&#8635;</button></div>
+      </div>
+    </div>
+    <div class="teacher-note teacher-only"><strong>Teacher note &mdash; Final Hot Take of M6 B-sessions:</strong> Students in manufacturing who report to executives who have never visited their facility will feel this immediately. The grammar is the vehicle. The experience is the fuel. This is what fluency looks like when connected to real life.</div>
+    <div class="teacher-note tn-gold teacher-only"><strong>Session tone:</strong> S4B is the last B-session of B1.1. Set the tone: "Today is the final production session before your Exit Project. Everything you have learned &mdash; PP, FC, opinion language &mdash; you are going to use all of it today. This is your dress rehearsal."</div>
+  </div>
+</section>
+
+<!-- PITCH / DEBATE -->
+<section class="section" id="pitch">
+  <div class="section-header"><span class="section-number">&#128483;&#65039;</span><h2 class="section-title">Pitch / Debate &mdash; The Perspective Argument</h2><span class="section-time">15 min</span></div>
+  <div class="section-body">
+    <div class="img-card"><img src="https://images.unsplash.com/photo-1506929562872-bb421503ef21?w=900&auto=format&fit=crop&q=80" alt="Person making a complete professional argument" loading="lazy"><div class="img-overlay">Pitch &middot; Full toolkit &middot; PP + stacked FC + opinion &middot; Board-level argument</div></div>
+    <div class="debate-wrap">
+      <div class="debate-round">
+        <div class="debate-num"><span class="tag tag-t2s">T&rarr;S</span> Pitch Round 1 &mdash; The Perspective Case (3 min)</div>
+        <div class="debate-q">You are presenting to your company&apos;s board. Argue that investing in employee travel &mdash; to suppliers, clients, other facilities &mdash; produces better professionals. Structure: (1) What has happened when perspective was limited &mdash; PP evidence &mdash; (2) What will happen if the company never invests in perspective &mdash; FC warning &mdash; (3) And if that happens, what competitive disadvantage follows &mdash; stacked FC &mdash; (4) Specific proposal. Full toolkit required: PP + double FC + 3 opinion phrases + S4A vocabulary.</div>
+        <div class="debate-hint">Vocabulary: perspective, assumption, privilege, curiosity, challenge, appreciate, openness, humble.</div>
+      </div>
+      <div class="debate-round">
+        <div class="debate-num"><span class="tag tag-s2s">S&harr;S</span> Debate Round 2 &mdash; The CFO (90 sec)</div>
+        <div class="debate-q">Partner plays CFO: "If we send employees to visit suppliers, the cost will impact quarterly results. And if results drop, the board will ask why we are funding tourism." Pitcher responds: "That&apos;s a good point, however the data has shown... / If we don&apos;t invest in perspective, we will lose... / And if we lose that, our competitors will..."</div>
+        <div class="debate-hint">Use PP to present evidence, then double FC to show the cost of NOT investing outweighs the cost of travel.</div>
+      </div>
+      <div class="debate-round">
+        <div class="debate-num"><span class="tag tag-class">Class</span> Debate Round 3 &mdash; Best Perspective Argument (2 min)</div>
+        <div class="debate-q">Class votes on the most convincing and well-structured argument. The winner delivers the complete PP + double FC + opinion chain one final time. Close: "Even short trips open your mind &mdash; and open minds build better companies."</div>
+        <div class="debate-hint">Colloquial: "Not everyone has the chance to travel &mdash; and that is exactly why companies that invest in perspective have a competitive advantage."</div>
+      </div>
+    </div>
+    <div class="teacher-note teacher-only"><strong>Teacher note &mdash; CFO framing:</strong> The CFO objection is real. Students who have approved or rejected travel budgets know this negotiation. Best responses will be specific: "The Rodrigo example &mdash; he saved a key supplier relationship by visiting in person. What is the value of that relationship compared to the cost of one trip?" Specificity defeats abstraction.</div>
+    <div class="teacher-note tn-gold teacher-only"><strong>Upsell note:</strong> "You just argued for professional development investment in front of an imaginary CFO &mdash; in English, with evidence, double FC, and professional language. That is exactly what a bilingual manager does in an international company."</div>
+  </div>
+</section>
+
+<!-- RELAY: ASSUMPTION COLLAPSE CHAIN -->
+<section class="section" id="relay">
+  <div class="section-header"><span class="section-number">&#127939;</span><h2 class="section-title">Relay &mdash; The Assumption Collapse Chain</h2><span class="section-time">10 min</span></div>
+  <div class="section-body">
+    <div class="img-card"><img src="https://images.unsplash.com/photo-1494783367193-149034c05e8f?w=900&auto=format&fit=crop&q=80" alt="Mountain landscape &mdash; a view that collapses assumptions" loading="lazy"><div class="img-overlay">Relay &middot; Assumption Collapse Chain &middot; 4 voices &middot; Assumption &rarr; Trip &rarr; Discovery &rarr; Changed worldview</div></div>
+    <div class="relay-wrap">
+      <div class="relay-visual">
+        <div class="relay-title">&#127939; Assumption Collapse Chain &mdash; 4 Voices, One Changed Mind</div>
+        <div style="display:grid;grid-template-columns:1fr auto 1fr auto 1fr auto 1fr;gap:0;align-items:center;margin-bottom:16px">
+          <div class="acc-node active-turn"><div class="pn-num">Voice 1</div><div class="pn-role">&#128100; The Assumption</div><div class="pn-desc">States what they believed before travel &mdash; PP</div></div>
+          <div class="pc-arrow">&#8594;</div>
+          <div class="acc-node"><div class="pn-num">Voice 2</div><div class="pn-role">&#9992;&#65039; The Trip</div><div class="pn-desc">Describes what happened that challenged the assumption &mdash; PP narrative</div></div>
+          <div class="pc-arrow">&#8594;</div>
+          <div class="acc-node"><div class="pn-num">Voice 3</div><div class="pn-role">&#128161; The Discovery</div><div class="pn-desc">States what collapsed &mdash; PP + one FC</div></div>
+          <div class="pc-arrow">&#8594;</div>
+          <div class="acc-node"><div class="pn-num">Voice 4</div><div class="pn-role">&#127758; Changed View</div><div class="pn-desc">States global consequence &mdash; PP + stacked double FC</div></div>
+        </div>
+        <div style="font-size:13px;color:var(--muted);line-height:1.8">
+          <strong style="color:var(--text)">How it works:</strong><br>
+          Voice 1: "Before I traveled to Monterrey for work, I had assumed that the way we worked in Celaya was the standard."<br>
+          Voice 2: "During that trip, I saw a facility running a completely different process &mdash; faster, more collaborative, with less hierarchy."<br>
+          Voice 3: "I discovered that my assumption had been limiting my thinking. If I had stayed in my own bubble, I would have continued proposing solutions that only worked in one context."<br>
+          Voice 4: "Travel has humbled me professionally. If every manager visited a supplier outside their own region, they would make better decisions. And if they made better decisions, the companies they led would be more competitive &mdash; and more human."<br><br>
+          <strong style="color:var(--text)">Target:</strong> Voice 4 must use PP + stacked double FC. The chain moves from personal limitation to professional consequence to global argument.
+        </div>
+      </div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:16px;margin-top:8px">
+        <div style="font-family:var(--font-head);font-size:11px;font-weight:700;color:var(--accent);letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px">Starter assumptions for Voice 1</div>
+        <div style="display:flex;flex-direction:column;gap:6px;font-size:13px;color:var(--muted);font-style:italic">
+          <div>"I had assumed that the way we did things in my company was the only efficient way."</div>
+          <div>"I had always assumed that people in another region of Mexico thought about work and family the same way we did."</div>
+          <div>"I had assumed that international clients wanted the same things Mexican clients wanted &mdash; until the first meeting proved me wrong."</div>
+        </div>
+      </div>
+    </div>
+    <div class="teacher-note teacher-only"><strong>Teacher note &mdash; Relay debrief:</strong> After Voice 4, connect to Rodrigo&apos;s Oaxaca story from S4A: "How is this chain similar to what Rodrigo described? What was his assumption? What collapsed it?" This connects listening from S4A to live production in S4B &mdash; full module integration.</div>
+  </div>
+</section>
+
+<!-- SPEED ROUND -->
+<section class="section" id="speed">
+  <div class="section-header"><span class="section-number">&#9889;</span><h2 class="section-title">Speed Round &mdash; 30 Seconds Each</h2><span class="section-time">10 min</span></div>
+  <div class="section-body">
+    <div class="img-card"><img src="https://images.unsplash.com/photo-1516483638261-f4dbaf036963?w=900&auto=format&fit=crop&q=80" alt="Street scene in a foreign city" loading="lazy"><div class="img-overlay">Speed Round &middot; 30 seconds &middot; Full toolkit &middot; Final speed round of B1.1</div></div>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:16px">30 seconds, one student. Full toolkit required: PP + FC + one opinion phrase. Final speed round of B1.1 &mdash; no pausing, no Spanish.</p>
+    <div class="timer-wrap" style="margin-bottom:20px">
+      <svg width="80" height="80" viewBox="0 0 80 80"><circle class="timer-bg" cx="40" cy="40" r="34" stroke-width="6"/><circle class="timer-arc" id="arc3" cx="40" cy="40" r="34" stroke-width="6" stroke-dasharray="213.63" stroke-dashoffset="0"/><text class="timer-text" x="40" y="37" id="txt3">0:30</text><text class="timer-label" x="40" y="51">sec</text></svg>
+      <div class="timer-btns"><button class="btn btn-primary" onclick="startTimerSVG('arc3','txt3',30,213.63,null)">&#9654; Start</button><button class="btn btn-ghost" onclick="resetTimerSVG('arc3','txt3','0:30',213.63)">&#8635;</button></div>
+    </div>
+    <div class="speed-grid" id="speedGrid">
+      <div class="speed-card" id="sp1"><div class="speed-num">Prompt 1</div><div class="speed-prompt">Use "I saw things differently after that trip" as your opener. PP of what changed + FC of what you would have missed if you had never gone.</div><button class="speed-done-btn" onclick="speedDone(1)">&#10003; Done</button></div>
+      <div class="speed-card" id="sp2"><div class="speed-num">Prompt 2</div><div class="speed-prompt">Recall Rodrigo&apos;s Oaxaca trip from S4A. Report using PP: "He had assumed... / The trip had shown him... / He said that if he hadn&apos;t made that visit..." Full reported + PP + FC.</div><button class="speed-done-btn" onclick="speedDone(2)">&#10003; Done</button></div>
+      <div class="speed-card" id="sp3"><div class="speed-num">Prompt 3</div><div class="speed-prompt">Argue: "Not everyone has the chance to travel &mdash; and that inequality has consequences." PP of the problem + stacked double FC of what happens when perspective is limited by access.</div><button class="speed-done-btn" onclick="speedDone(3)">&#10003; Done</button></div>
+      <div class="speed-card" id="sp4"><div class="speed-num">Prompt 4</div><div class="speed-prompt">Use "Even short trips open your mind." Give a real example from your experience + PP of what it changed + FC of what would be different if you had stayed in your bubble.</div><button class="speed-done-btn" onclick="speedDone(4)">&#10003; Done</button></div>
+      <div class="speed-card" id="sp5"><div class="speed-num">Prompt 5 &mdash; Exit Project</div><div class="speed-prompt">Exit Project warm-up: State your S5 topic + "I strongly believe that if people don&apos;t understand [topic], [consequence] will happen. And the evidence is..." PP + FC + opinion. 30 seconds of your Exit Project.</div><button class="speed-done-btn" onclick="speedDone(5)">&#10003; Done</button></div>
+      <div class="speed-card" id="sp6"><div class="speed-num">Prompt 6</div><div class="speed-prompt">Counter the Hot Take: "Great leaders can govern places they have never visited if they listen to diverse voices." PP evidence + FC + "I see both sides, but the reality is..." Full toolkit in 30 seconds.</div><button class="speed-done-btn" onclick="speedDone(6)">&#10003; Done</button></div>
+    </div>
+    <div style="font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--muted);margin-top:12px">Completed: <span id="speedCount" style="color:var(--accent)">0</span> / 6</div>
+    <div class="teacher-note teacher-only" style="margin-top:14px"><strong>Teacher note &mdash; Prompt 5:</strong> Every student must do this one. After the full round, go back to Prompt 5 and ask: "Whose 30-second Exit Project argument was most complete?" This generates peer feedback and Exit Project anticipation before the Solo Challenge.</div>
+  </div>
+</section>
+
+<!-- SOLO CHALLENGE — EXIT PROJECT REHEARSAL -->
+<section class="section" id="solo">
+  <div class="section-header"><span class="section-number">&#127919;</span><h2 class="section-title">Solo Challenge &mdash; Exit Project Final Rehearsal</h2><span class="section-time">20 min</span></div>
+  <div class="section-body">
+    <div class="img-card"><img src="https://images.unsplash.com/photo-1495231916856-69f99f408a0b?w=900&auto=format&fit=crop&q=80" alt="World map &mdash; perspective of the whole" loading="lazy"><div class="img-overlay">Solo Challenge &middot; 90 seconds &middot; Exit Project rehearsal &middot; Full B1.1 toolkit &middot; No notes</div></div>
+    <div class="challenge-card">
+      <div class="challenge-title">&#127919; The Challenge Brief &mdash; Exit Project Rehearsal</div>
+      <div class="challenge-brief">
+        This is your <strong style="color:var(--accent)">Exit Project rehearsal</strong>. Any topic. 90 seconds.<br><br>
+        &bull; Present Perfect &mdash; at least twice<br>
+        &bull; First Conditional &mdash; at least twice<br>
+        &bull; Opinion language &mdash; at least 3 of the 5 phrases<br>
+        &bull; 3+ B1.1 vocabulary words from any module<br>
+        &bull; No notes. No reading. No Spanish.<br><br>
+        After you finish, the class gives one piece of specific feedback: "The strongest thing you said was..." Then you do it again &mdash; better. This is the final preparation for S5.
+      </div>
+      <div style="font-family:var(--font-head);font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px">Teacher Rubric &mdash; B1.1 Exit Project Standard</div>
+      <div class="challenge-rubric">
+        <div class="rubric-item" onclick="this.classList.toggle('checked')"><div class="rubric-label">Present Perfect x2</div><div class="rubric-desc">"has/have + past participle" at least twice. Natural, not forced. Evidence of real state or change.</div></div>
+        <div class="rubric-item" onclick="this.classList.toggle('checked')"><div class="rubric-label">First Conditional x2</div><div class="rubric-desc">IF clause = present simple (never will). Main clause = will + base verb. At least twice, different subjects.</div></div>
+        <div class="rubric-item" onclick="this.classList.toggle('checked')"><div class="rubric-label">Opinion Language x3</div><div class="rubric-desc">3+ of the 5 phrases: "I strongly believe / In my opinion / I see both sides / That&apos;s a good point / The reality is..."</div></div>
+        <div class="rubric-item" onclick="this.classList.toggle('checked')"><div class="rubric-label">Vocabulary Range</div><div class="rubric-desc">3+ B1.1 vocabulary words from any module &mdash; used naturally, not forced.</div></div>
+        <div class="rubric-item" onclick="this.classList.toggle('checked')"><div class="rubric-label">Fluency &amp; Time</div><div class="rubric-desc">90+ seconds, no long pauses, no Spanish. Coherent: evidence then consequence then position.</div></div>
+        <div class="rubric-item" onclick="this.classList.toggle('checked')"><div class="rubric-label">Engagement</div><div class="rubric-desc">The speaker means it. The class listens. The argument is connected to something real.</div></div>
+      </div>
+      <div class="timer-wrap">
+        <svg width="90" height="90" viewBox="0 0 80 80"><circle class="timer-bg" cx="40" cy="40" r="34" stroke-width="6"/><circle class="timer-arc" id="arc4" cx="40" cy="40" r="34" stroke-width="6" stroke-dasharray="213.63" stroke-dashoffset="0"/><text class="timer-text" x="40" y="37" id="txt4">1:30</text><text class="timer-label" x="40" y="51">rehearsal</text></svg>
+        <div class="timer-btns"><button class="btn btn-primary" onclick="startTimerSVG('arc4','txt4',90,213.63,'b4')">&#9654; Start</button><button class="btn btn-ghost" onclick="resetTimerSVG('arc4','txt4','1:30',213.63)">&#8635;</button></div>
+      </div>
+      <div style="margin-top:16px;background:rgba(255,179,71,.05);border:1px solid rgba(255,179,71,.2);border-radius:8px;padding:14px">
+        <div style="font-family:var(--font-head);font-size:11px;font-weight:700;color:var(--warn);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px">Round 2 &mdash; Do It Again, Better (90 sec)</div>
+        <p style="font-size:13px;color:var(--muted)">After class feedback, run the timer again. One fix only. Everything else stays.</p>
+        <div class="timer-wrap">
+          <svg width="80" height="80" viewBox="0 0 80 80"><circle class="timer-bg" cx="40" cy="40" r="34" stroke-width="6"/><circle class="timer-arc" id="arc5" cx="40" cy="40" r="34" stroke-width="6" stroke-dasharray="213.63" stroke-dashoffset="0"/><text class="timer-text" x="40" y="37" id="txt5">1:30</text><text class="timer-label" x="40" y="51">attempt 2</text></svg>
+          <div class="timer-btns"><button class="btn btn-primary" onclick="startTimerSVG('arc5','txt5',90,213.63,null)">&#9654; Start</button><button class="btn btn-ghost" onclick="resetTimerSVG('arc5','txt5','1:30',213.63)">&#8635;</button></div>
+        </div>
+      </div>
+    </div>
+    <div class="teacher-note teacher-only"><strong>Teacher note &mdash; Two-attempt format:</strong> Specific, immediate feedback followed by a second attempt produces the most significant learning gains. Class feedback must be specific ("The strongest thing you said was X"). Correction must be singular ("The only thing to fix is Y"). One thing at a time. One more attempt.</div>
+    <div class="teacher-note tn-gold teacher-only"><strong>GT Original &mdash; S4B is the last production session before the Exit Project.</strong> Every student should leave knowing: (1) their topic, (2) their core PP + double FC argument, (3) the one thing to improve. If a student doesn&apos;t know these three things, they are not ready for S5. Identify them and give targeted guidance before next class.</div>
+  </div>
+</section>
+
+<!-- ASSESSMENT -->
+<section class="section" id="assessment">
+  <div class="section-header"><span class="section-number">&#127942;</span><h2 class="section-title">Assessment &mdash; Final B-Session Leaderboard</h2><span class="section-time">8 min</span></div>
+  <div class="section-body">
+    <div class="img-card"><img src="https://images.unsplash.com/photo-1527786356703-4b100091cd2c?w=900&auto=format&fit=crop&q=80" alt="City skyline &mdash; view from the top of B1.1" loading="lazy"><div class="img-overlay">Session 4B Assessment &middot; Final B-session of B1.1 &middot; Full toolkit precision &middot; Auto-sorted</div></div>
+    <div class="lb-wrap">
+      <div class="lb-title">&#127942; Final B-Session Leaderboard &mdash; M6 S4B</div>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:14px">Score 0&ndash;10. Criteria: Full toolkit precision (4pts) + Exit Project rehearsal quality (3pts) + Vocabulary range + engagement (3pts).</p>
+      <div class="lb-add">
+        <input class="lb-name-input" id="lbName" placeholder="Student name..." type="text">
+        <input class="lb-score-input" id="lbScore" placeholder="0&ndash;10" type="number" min="0" max="10">
+        <button class="lb-add-btn" onclick="addToLB()">+ Add</button>
+      </div>
+      <table class="lb-table">
+        <thead><tr><th>#</th><th>Student</th><th>Score</th><th>Exit Project Ready?</th></tr></thead>
+        <tbody id="lbBody"><tr><td colspan="4" class="lb-empty">No entries yet</td></tr></tbody>
+      </table>
+    </div>
+    <div class="teacher-note teacher-only"><strong>Teacher note:</strong> After the leaderboard, go through each student and say publicly: "Ready" or "Almost ready &mdash; work on [one specific thing] before S5." Public accountability + specific guidance = the best preparation for the Exit Project.</div>
+  </div>
+</section>
+
+<!-- WRAP-UP -->
+<section class="section" id="wrapup">
+  <div class="section-header"><span class="section-number">&#127881;</span><h2 class="section-title">Wrap-Up &mdash; Final B-Session of B1.1</h2><span class="section-time">8 min</span></div>
+  <div class="section-body">
+    <div class="img-card"><img src="https://images.unsplash.com/photo-1501426026826-31c667bdf23d?w=900&auto=format&fit=crop&q=80" alt="Person at viewpoint looking forward &mdash; Exit Project ahead" loading="lazy"><div class="img-overlay">M6 &middot; S4B Complete &mdash; Travel &amp; Perspective &middot; Final B-Session of B1.1 &middot; Exit Project next</div></div>
+
+    <div style="background:linear-gradient(135deg,rgba(16,185,129,.07),rgba(52,211,153,.03));border:2px solid var(--accent);border-radius:12px;padding:20px;margin:16px 0;text-align:center">
+      <div style="font-family:var(--font-head);font-size:12px;font-weight:700;color:var(--accent);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px">This was the last B-session of B1.1</div>
+      <div style="font-size:14px;color:var(--text);line-height:1.7;max-width:560px;margin:0 auto">You have completed <strong style="color:var(--accent)">8 Production &amp; Fluency sessions</strong> across Modules 5 and 6. You have argued, debated, pitched, and spoken in English under time pressure on real topics with the complete B1.1 toolkit. <strong style="color:var(--accent)">Next: the Exit Project.</strong> Three minutes. No notes. Your topic. Your proof.</div>
+    </div>
+
+    <div style="font-family:var(--font-head);font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin:18px 0 10px">&#9989; I Can Now&hellip;</div>
+    <div class="checklist">
+      <div class="cl-item" onclick="this.classList.toggle('done');checkAllDone()"><div class="cl-box"></div>Use the complete B1.1 opinion toolkit spontaneously: PP + FC + 5 opinion phrases, without prompting.</div>
+      <div class="cl-item" onclick="this.classList.toggle('done');checkAllDone()"><div class="cl-box"></div>Build an Assumption Collapse Chain: assumption I held &rarr; what travel showed me &rarr; what I discovered &rarr; what the world would be if everyone made this journey.</div>
+      <div class="cl-item" onclick="this.classList.toggle('done');checkAllDone()"><div class="cl-box"></div>Argue for professional travel investment before a CFO using evidence, double FC, and professional language.</div>
+      <div class="cl-item" onclick="this.classList.toggle('done');checkAllDone()"><div class="cl-box"></div>Deliver a 90-second Exit Project rehearsal &mdash; and improve it in a second attempt based on specific feedback.</div>
+      <div class="cl-item" onclick="this.classList.toggle('done');checkAllDone()"><div class="cl-box"></div>I know my Exit Project topic, my core argument (PP + double FC), and the one thing I still need to improve before S5.</div>
+    </div>
+
+    <div class="cert-wrap">
+      <div class="cert-title">&#127942; Final B-Session Certificate</div>
+      <div class="cert-sub">B1.1 &middot; Module 6 &middot; Session 4B &mdash; Travel &amp; Perspective &middot; Final B-Session of B1.1</div>
+      <div class="cert-input-row">
+        <input class="cert-name-input" id="certName" type="text" placeholder="Enter student name...">
+        <button class="cert-gen-btn" onclick="generateCert()">Generate Certificate &#127942;</button>
+      </div>
+      <div class="cert-display" id="certDisplay">
+        <div class="cert-display-title">Certificate of Completion</div>
+        <div class="cert-student-name" id="certStudentName"></div>
+        <div class="cert-session-info">has successfully completed<br><strong style="color:var(--accent)">B1.1 &middot; Module 6 &middot; Session 4B &mdash; Travel &amp; Perspective</strong><br>Final Production &amp; Fluency Session &middot; Gabriel Turner English Training<br><span id="certDate" style="color:var(--muted);font-size:12px"></span></div>
+      </div>
+    </div>
+
+    <div class="win-wrap">
+      <div class="win-label">My Win &mdash; Final B-Session of B1.1</div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:8px">Complete: <em>"The moment I felt most fluent today was when I said... And for S5, I am going to talk about..."</em></div>
+      <textarea class="win-input" id="winInput" placeholder="Type your win and your Exit Project topic here..." rows="2"></textarea>
+      <button class="btn btn-primary" onclick="saveWin()">Save My Win &#127942;</button>
+      <div class="win-saved" id="winSaved"></div>
+    </div>
+
+    <div style="background:rgba(255,179,71,.04);border:2px solid rgba(255,179,71,.3);border-radius:12px;padding:22px;margin-top:20px;text-align:center">
+      <div style="font-family:var(--font-head);font-size:10px;font-weight:700;color:var(--warn);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px">Next Class &mdash; B1.1 &middot; M6 &middot; S5 &mdash; Exit Project</div>
+      <div style="font-family:var(--font-head);font-size:20px;font-weight:800;color:var(--text);margin-bottom:8px">Your Story &mdash; Final Talk</div>
+      <div style="font-size:14px;color:var(--muted);line-height:1.7;max-width:520px;margin:0 auto">No new grammar. No new vocabulary. 100% speaking. 3-minute unscripted talk. CEFR rubric. B1.1 Level Certificate.<br><br><strong style="color:var(--warn)">Come ready. Topic confirmed. Argument built. No notes.</strong></div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer class="site-footer">
+  <div class="footer-brand">Gabriel Turner &middot; English Training &middot; Teacher Edition</div>
+  <div style="font-size:12px;color:var(--muted)">GT_B1_1_M6_S4B_TEACHER_v1</div>
+  <div class="level-tags">
+    <span class="level-tag">A1.1</span><span class="level-tag">A1.2</span><span class="level-tag">A2.1</span><span class="level-tag">A2.2</span>
+    <span class="level-tag active">B1.1</span>
+    <span class="level-tag">B1.2</span><span class="level-tag">B2.1</span><span class="level-tag">B2.2</span>
+  </div>
+</footer>
+
+<script>
+var earnedBadges={};
+function earnBadge(id){if(earnedBadges[id])return;earnedBadges[id]=true;var el=document.getElementById(id);if(el)el.classList.add('earned');if(Object.keys(earnedBadges).length>=5)launchConfetti();}
+function launchConfetti(){var w=document.getElementById('confettiWrap');w.style.display='block';var cols=['#10B981','#34D399','#FFB347','#00E5A0','#FF4D6D','#A78BFA'];for(var i=0;i<120;i++){var c=document.createElement('div');c.style.cssText='position:absolute;width:8px;height:8px;background:'+cols[i%cols.length]+';border-radius:50%;left:'+Math.random()*100+'%;top:-10px;animation:confFall '+(1.5+Math.random()*2.5)+'s ease-out forwards;animation-delay:'+Math.random()*.8+'s;';w.appendChild(c);}var s=document.createElement('style');s.textContent='@keyframes confFall{0%{transform:translateY(0) rotate(0);opacity:1}100%{transform:translateY(110vh) rotate(720deg);opacity:0}}';document.head.appendChild(s);}
+var timerIntervals={};
+function startTimerSVG(arcId,textId,seconds,circumference,badgeId){if(timerIntervals[arcId])clearInterval(timerIntervals[arcId]);var arc=document.getElementById(arcId),txt=document.getElementById(textId),rem=seconds;function update(){arc.style.strokeDashoffset=circumference*(1-rem/seconds);var m=Math.floor(rem/60),s=rem%60;txt.textContent=m+':'+(s<10?'0':'')+s;if(rem<=5)arc.style.stroke='var(--danger)';if(rem<=0){clearInterval(timerIntervals[arcId]);arc.style.stroke='var(--success)';if(badgeId)earnBadge(badgeId);return;}rem--;}update();timerIntervals[arcId]=setInterval(update,1000);}
+function resetTimerSVG(arcId,textId,label,circumference){if(timerIntervals[arcId]){clearInterval(timerIntervals[arcId]);delete timerIntervals[arcId];}var arc=document.getElementById(arcId);arc.style.strokeDashoffset=0;arc.style.stroke='var(--accent)';document.getElementById(textId).textContent=label;}
+window.addEventListener('scroll',function(){var h=document.documentElement;document.getElementById('progressBar').style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100+'%';},{passive:true});
+function toggleMode(){document.body.classList.toggle('student-mode');document.querySelector('.mode-toggle').textContent=document.body.classList.contains('student-mode')?'TEACHER MODE':'STUDENT MODE';}
+var speedDoneCount=0;
+function speedDone(n){var card=document.getElementById('sp'+n);if(card.classList.contains('done'))return;card.classList.add('done');speedDoneCount++;document.getElementById('speedCount').textContent=speedDoneCount;if(speedDoneCount>=6)earnBadge('b3');}
+var lbData=[];
+function addToLB(){var name=document.getElementById('lbName').value.trim();var score=parseInt(document.getElementById('lbScore').value);if(!name||isNaN(score)||score<0||score>10)return;lbData.push({name:name,score:score});lbData.sort(function(a,b){return b.score-a.score;});document.getElementById('lbName').value='';document.getElementById('lbScore').value='';renderLB();}
+function renderLB(){var body=document.getElementById('lbBody');if(lbData.length===0){body.innerHTML='<tr><td colspan="4" class="lb-empty">No entries yet</td></tr>';return;}body.innerHTML=lbData.map(function(d,i){var ready=d.score>=8?'Ready for S5':d.score>=6?'Almost ready':d.score>=4?'Keep building':'More practice needed';return '<tr><td class="lb-rank">'+(i+1)+'</td><td>'+d.name+'</td><td style="font-family:var(--font-head);font-weight:700;color:var(--accent)">'+d.score+' / 10</td><td style="font-size:12px;color:var(--muted)">'+ready+'</td></tr>';}).join('');}
+function generateCert(){var name=document.getElementById('certName').value.trim();if(!name)return;document.getElementById('certStudentName').textContent=name;var now=new Date();document.getElementById('certDate').textContent=now.toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});document.getElementById('certDisplay').style.display='block';earnBadge('b5');launchConfetti();}
+function saveWin(){var t=document.getElementById('winInput').value.trim();if(!t)return;var s=document.getElementById('winSaved');s.style.display='block';s.textContent='Exit Project confirmed: "'+t+'"';earnBadge('b5');}
+function checkAllDone(){var items=document.querySelectorAll('.cl-item');var done=document.querySelectorAll('.cl-item.done');if(done.length===items.length)earnBadge('b5');}
+document.querySelectorAll('.debate-round').forEach(function(r,i){var btn=document.createElement('button');btn.style.cssText='margin-top:12px;background:none;border:1px solid var(--border);color:var(--muted);font-family:var(--font-head);font-size:10px;font-weight:700;padding:5px 12px;border-radius:6px;cursor:pointer;letter-spacing:.06em;';btn.textContent='Round complete';btn.onclick=function(){btn.style.borderColor='var(--success)';btn.style.color='var(--success)';if(i===2)earnBadge('b2');};r.appendChild(btn);});
+</script>
+</body>
+</html>

@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GT &middot; B1.1 &middot; M6 &middot; S4A &middot; Travel &amp; Perspective</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --accent:#10B981;--accent2:#34D399;
+  --bg:#080808;--surface:#111318;--surface2:#1a1f28;
+  --border:rgba(16,185,129,.18);
+  --text:#F0F4F8;--muted:#8A9BB0;
+  --danger:#FF4D6D;--success:#00E5A0;--warn:#FFB347;
+  --font-head:'Syne',sans-serif;--font-body:'DM Sans',sans-serif
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:15px;line-height:1.65;min-height:100vh}
+#progressBar{position:fixed;top:0;left:0;width:0%;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent2));z-index:9999;transition:width .3s}
+.site-header{position:sticky;top:0;z-index:900;background:rgba(8,8,8,.92);backdrop-filter:blur(14px);border-bottom:1px solid var(--border);padding:0 24px}
+.header-inner{max-width:960px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:58px;gap:12px;flex-wrap:wrap}
+.header-brand{font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--accent);letter-spacing:.08em;text-transform:uppercase}
+.header-meta{font-size:12px;color:var(--muted);font-weight:500}
+.badge-strip{display:flex;gap:6px}
+.badge-strip span{font-size:18px;opacity:.25;transition:all .4s;filter:grayscale(1)}
+.badge-strip span.earned{opacity:1;filter:none;animation:badgePop .5s cubic-bezier(.34,1.56,.64,1)}
+@keyframes badgePop{0%{transform:scale(.4) rotate(-20deg);opacity:0}70%{transform:scale(1.25) rotate(4deg)}100%{transform:scale(1) rotate(0)}}
+.mode-toggle{background:var(--surface2);border:1px solid var(--border);color:var(--accent);font-family:var(--font-head);font-size:11px;font-weight:700;padding:5px 12px;border-radius:6px;cursor:pointer;letter-spacing:.06em}
+.mode-toggle:hover{background:var(--accent);color:var(--bg)}
+.sticky-nav{position:sticky;top:58px;z-index:800;background:rgba(8,8,8,.88);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none}
+.sticky-nav::-webkit-scrollbar{display:none}
+.nav-inner{max-width:960px;margin:0 auto;display:flex;padding:0 16px}
+.nav-inner a{font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:.06em;color:var(--muted);text-decoration:none;padding:10px 14px;border-bottom:2px solid transparent;white-space:nowrap;transition:all .2s}
+.nav-inner a:hover{color:var(--accent);border-color:var(--accent)}
+.main{max-width:960px;margin:0 auto;padding:32px 20px 80px}
+.section{margin-bottom:48px;border:1px solid var(--border);border-radius:16px;overflow:hidden;background:var(--surface)}
+.section-header{display:flex;align-items:center;gap:14px;padding:18px 24px;background:linear-gradient(135deg,rgba(16,185,129,.08),transparent);border-bottom:1px solid var(--border)}
+.section-number{font-family:var(--font-head);font-size:11px;font-weight:800;color:var(--accent);letter-spacing:.12em;text-transform:uppercase;background:rgba(16,185,129,.1);border:1px solid var(--border);padding:3px 10px;border-radius:20px}
+.section-title{font-family:var(--font-head);font-size:18px;font-weight:800;color:var(--text);flex:1}
+.section-time{font-size:12px;color:var(--muted);background:var(--surface2);padding:3px 10px;border-radius:20px}
+.section-body{padding:24px}
+.img-card{border-radius:10px;overflow:hidden;position:relative;margin-bottom:18px}
+.img-card img{width:100%;height:200px;object-fit:cover;display:block;filter:brightness(.52)}
+.img-overlay{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(8,8,8,.88));padding:12px 16px;font-size:13px;color:rgba(255,255,255,.85)}
+.teacher-note{background:rgba(16,185,129,.06);border-left:3px solid var(--accent);border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0;font-size:13px;color:var(--muted)}
+.teacher-note strong{color:var(--accent)}
+.teacher-note.tn-gold{background:rgba(255,179,71,.06);border-color:var(--warn)}
+.teacher-note.tn-gold strong{color:var(--warn)}
+.teacher-note.tn-cyan{background:rgba(0,207,255,.06);border-color:#00CFFF}
+.teacher-note.tn-cyan strong{color:#00CFFF}
+.teacher-only{}
+body.student-mode .teacher-only{display:none}
+.warmup-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0}
+.warmup-q{background:var(--surface2);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.warmup-q img{width:100%;height:130px;object-fit:cover;filter:brightness(.5)}
+.warmup-q-body{padding:14px}
+.qnum{font-family:var(--font-head);font-size:10px;font-weight:800;color:var(--accent);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px}
+.timer-wrap{display:flex;flex-direction:column;align-items:center;gap:10px;margin:16px 0}
+.timer-bg{fill:none;stroke:rgba(255,255,255,.07)}
+.timer-arc{fill:none;stroke:var(--accent);stroke-linecap:round;transition:stroke .5s;transform:rotate(-90deg);transform-origin:40px 40px}
+.timer-text{font-family:var(--font-head);font-weight:800;font-size:14px;fill:var(--text);dominant-baseline:middle;text-anchor:middle}
+.timer-label{font-size:9px;fill:var(--muted);dominant-baseline:middle;text-anchor:middle}
+.timer-btns{display:flex;gap:8px}
+.btn{font-family:var(--font-head);font-size:12px;font-weight:700;letter-spacing:.06em;padding:7px 18px;border-radius:8px;border:none;cursor:pointer;transition:all .2s}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-primary:hover{background:var(--accent2)}
+.btn-ghost{background:var(--surface2);border:1px solid var(--border);color:var(--muted)}
+.btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
+.quickwin{background:linear-gradient(135deg,rgba(16,185,129,.08),rgba(52,211,153,.04));border:1px solid var(--border);border-radius:12px;padding:20px;margin:16px 0}
+.quickwin-title{font-family:var(--font-head);font-size:11px;font-weight:700;color:var(--accent);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px}
+.quickwin-text{font-size:15px;font-weight:600;color:var(--text);margin-bottom:14px;line-height:1.5}
+.topic-card{background:linear-gradient(135deg,rgba(16,185,129,.07),rgba(52,211,153,.04));border:1px solid var(--border);border-radius:12px;padding:22px;margin:16px 0}
+.topic-card h3{font-family:var(--font-head);font-size:20px;font-weight:800;color:var(--accent);margin-bottom:6px}
+.rounds{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:14px 0}
+.round-card{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px 10px}
+.round-card .rnum{font-family:var(--font-head);font-size:10px;font-weight:700;color:var(--accent);letter-spacing:.1em;margin-bottom:4px;text-transform:uppercase}
+.round-card .rq{font-size:13px;font-weight:500;line-height:1.45}
+.tag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;font-family:var(--font-head);letter-spacing:.04em;margin-right:4px}
+.tag-t2s{background:rgba(16,185,129,.15);color:var(--accent)}
+.tag-s2s{background:rgba(255,179,71,.15);color:var(--warn)}
+.tag-class{background:rgba(138,155,176,.12);color:var(--muted)}
+.reveal-btn{background:transparent;border:1px dashed var(--accent);color:var(--accent);font-family:var(--font-head);font-size:11px;font-weight:700;padding:7px 16px;border-radius:8px;cursor:pointer;margin-top:14px}
+.model-box{display:none;margin-top:12px;background:rgba(16,185,129,.06);border:1px solid var(--border);border-radius:10px;padding:16px;font-size:14px;line-height:1.8}
+.model-box .h{color:var(--accent);font-weight:600}
+.model-box .fc{color:#A78BFA;font-weight:600}
+.model-box .pp{color:#00CFFF;font-weight:600}
+.model-box .op{color:var(--warn);font-weight:600}
+.vocab-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin:16px 0}
+.vocab-card{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:14px;cursor:pointer;transition:all .2s;display:flex;flex-direction:column;gap:4px}
+.vocab-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.vocab-word{font-family:var(--font-head);font-size:15px;font-weight:700;color:var(--accent)}
+.vocab-ipa{font-size:12px;color:var(--muted);font-style:italic}
+.vocab-def{font-size:13px;color:var(--text)}
+.vocab-ex{font-size:12px;color:var(--muted);font-style:italic;border-left:2px solid var(--accent);padding-left:8px;margin-top:4px}
+.speak-btn{background:rgba(16,185,129,.12);border:none;border-radius:5px;color:var(--accent);font-size:11px;padding:2px 8px;cursor:pointer;font-family:var(--font-head);font-weight:700;margin-top:4px}
+.micro-speak{background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.2);border-radius:10px;padding:14px 18px;margin:14px 0;font-size:14px;color:var(--text);line-height:1.6}
+.micro-speak strong{color:var(--accent)}
+/* MATCH UP */
+.match-wrap{margin:16px 0}
+.match-cols{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.match-col-title{font-family:var(--font-head);font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px}
+.match-item{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-size:13px;cursor:pointer;transition:all .2s;margin-bottom:6px;line-height:1.4}
+.match-item:hover{border-color:var(--accent)}
+.match-item.selected{border-color:var(--accent);background:rgba(16,185,129,.08);color:var(--accent)}
+.match-item.matched{border-color:var(--success);background:rgba(0,229,160,.08);color:var(--success);cursor:not-allowed}
+.match-item.wrong{border-color:var(--danger);background:rgba(255,77,109,.08);animation:shake .3s}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+.match-fb{font-size:13px;color:var(--muted);margin-top:10px;min-height:20px}
+/* POLL */
+.poll-group{margin-bottom:18px}
+.poll-q{font-size:14px;font-weight:600;color:var(--text);margin-bottom:10px;padding:12px 16px;background:var(--surface2);border-left:3px solid var(--accent);border-radius:0 8px 8px 0}
+.poll-opts{display:flex;gap:8px;flex-wrap:wrap}
+.poll-btn{background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:9px 16px;border-radius:8px;font-family:var(--font-body);font-size:13px;cursor:pointer;transition:all .2s}
+.poll-btn:hover:not(:disabled){border-color:var(--accent);color:var(--accent)}
+.poll-btn.correct-ans{background:rgba(0,229,160,.12);border-color:var(--success);color:var(--success)}
+.poll-btn.wrong-ans{background:rgba(255,77,109,.08);border-color:var(--danger);color:var(--danger)}
+.poll-btn:disabled{cursor:not-allowed}
+.poll-fb{font-size:13px;margin-top:8px;min-height:18px;color:var(--muted)}
+.act-score{font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--accent);margin-bottom:12px}
+/* DRAG */
+.reorder-list{display:flex;flex-direction:column;gap:7px;margin-bottom:10px;list-style:none}
+.reorder-item{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;cursor:grab;font-size:13px;color:var(--text);display:flex;align-items:center;gap:9px;user-select:none;transition:border-color .2s}
+.reorder-item:active{cursor:grabbing}
+.reorder-item.dragging{opacity:.4}
+.reorder-item.drag-over{border-color:var(--accent);border-style:dashed}
+.drag-handle{color:var(--muted);font-size:13px;flex-shrink:0}
+.check-btn{background:var(--accent);border:none;color:#fff;padding:8px 20px;border-radius:8px;font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:.1em;cursor:pointer;margin-top:8px}
+.drag-fb{display:none;padding:10px 14px;font-size:13px;margin-top:8px;border-radius:8px;line-height:1.5}
+.drag-fb.show{display:block}
+.drag-fb.ok{background:rgba(0,229,160,.1);border:1px solid rgba(0,229,160,.3);color:var(--success)}
+.drag-fb.no{background:rgba(255,77,109,.08);border:1px solid rgba(255,77,109,.25);color:var(--danger)}
+/* COLLOQUIAL */
+.col-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}
+.col-card{background:var(--surface2);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.col-card img{width:100%;height:100px;object-fit:cover;filter:brightness(.5)}
+.col-card-body{padding:14px}
+.col-phrase{font-family:var(--font-head);font-size:15px;font-weight:700;color:var(--text);margin-bottom:4px}
+.col-use{font-size:11px;color:var(--accent);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
+.col-example{font-size:13px;color:var(--muted);font-style:italic;line-height:1.5}
+/* GRAMMAR */
+.problem-card{background:rgba(255,77,109,.06);border:1px solid rgba(255,77,109,.25);border-left:4px solid var(--danger);border-radius:0 10px 10px 0;padding:16px 20px;margin:14px 0}
+.problem-card .p-label{font-family:var(--font-head);font-size:10px;font-weight:700;color:var(--danger);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px}
+.tool-card{background:rgba(16,185,129,.06);border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:0 10px 10px 0;padding:16px 20px;margin:14px 0}
+.tool-card .t-label{font-family:var(--font-head);font-size:10px;font-weight:700;color:var(--accent);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px}
+.grammar-table-wrap{overflow-x:auto;margin:16px 0;border-radius:10px;overflow:hidden}
+table.grammar{width:100%;border-collapse:collapse}
+table.grammar thead{background:var(--surface2)}
+table.grammar th{padding:12px 16px;text-align:left;font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);border-bottom:2px solid var(--accent)}
+table.grammar td{padding:12px 16px;border-bottom:1px solid var(--border);font-size:13px}
+table.grammar tbody tr:hover td{background:rgba(16,185,129,.04)}
+.gram-form{font-family:var(--font-head);font-size:12px;font-weight:700;color:var(--accent)}
+.gram-fc{color:#A78BFA;font-weight:600}
+.gram-ex{font-style:italic;color:var(--text)}
+.err-box{background:rgba(255,77,109,.05);border:1px solid rgba(255,77,109,.2);border-radius:10px;padding:14px 18px;margin:14px 0;font-size:13px;color:rgba(255,120,120,.9);line-height:1.8}
+.err-box strong{color:var(--danger)}
+/* OPINION BOX */
+.opinion-box{background:rgba(255,179,71,.05);border:1px solid rgba(255,179,71,.2);border-radius:10px;padding:16px 20px;margin:14px 0}
+.opinion-box-label{font-family:var(--font-head);font-size:10px;font-weight:700;color:var(--warn);letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px}
+.opinion-phrases{display:flex;flex-direction:column;gap:6px}
+.opinion-phrase{font-size:13px;color:var(--text);padding:8px 12px;background:rgba(255,179,71,.06);border-left:2px solid var(--warn);line-height:1.4}
+/* PLAYER */
+.player-card{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:20px;margin:14px 0}
+.player-top{display:flex;align-items:center;gap:16px;margin-bottom:12px}
+.play-btn-aud{width:44px;height:44px;background:var(--accent);border:none;border-radius:50%;cursor:pointer;font-size:16px;color:#fff;flex-shrink:0}
+.track-info .track-title{font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--text);margin-bottom:3px}
+.track-info .track-sub{font-size:11px;color:var(--muted)}
+.waveform{display:flex;align-items:center;gap:2px;height:40px}
+.wbar{width:3px;background:var(--accent);border-radius:2px;opacity:.35;flex-shrink:0}
+.script-toggle{background:none;border:1px solid var(--border);color:var(--muted);padding:7px 16px;border-radius:6px;font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:.06em;cursor:pointer;margin-bottom:12px}
+.script-box{display:none;background:rgba(0,207,255,.04);border:1px solid rgba(0,207,255,.15);border-radius:8px;padding:16px;font-size:13px;color:var(--text);line-height:1.9;font-style:italic}
+/* SPEAK CARDS */
+.speak-sec{display:flex;flex-direction:column;gap:11px}
+.speak-card{background:var(--surface2);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.speak-card img{width:100%;height:110px;object-fit:cover;filter:brightness(.5)}
+.speak-card-body{padding:14px}
+.sc-lbl{font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:5px}
+.sc-q{font-size:14px;color:var(--text);font-weight:600;margin-bottom:9px;line-height:1.5}
+.sc-hint{font-size:12px;color:var(--muted);font-style:italic}
+/* METER */
+.meter-wrap{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:18px;margin:18px 0}
+.meter-lbl{font-family:var(--font-head);font-size:11px;font-weight:700;color:var(--accent);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px}
+.meter-q{font-size:14px;font-weight:600;color:var(--text);margin-bottom:14px}
+.meter-track{position:relative;height:8px;background:rgba(255,255,255,.07);border-radius:10px;margin:0 0 8px;cursor:pointer}
+.meter-fill{position:absolute;left:0;top:0;height:100%;border-radius:10px;background:linear-gradient(90deg,var(--danger),var(--success));width:50%;transition:width .4s}
+.meter-ends{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:12px}
+.meter-btns{display:flex;gap:8px;justify-content:center}
+.meter-btn{background:var(--surface);border:1px solid var(--border);color:var(--text);padding:8px 20px;border-radius:8px;font-family:var(--font-head);font-size:12px;font-weight:700;cursor:pointer;transition:all .2s}
+.meter-btn:hover{border-color:var(--accent);color:var(--accent)}
+.meter-pct{font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--accent);margin-top:8px}
+/* 3 PHRASES */
+.phrases-section{background:linear-gradient(135deg,rgba(255,179,71,.06),rgba(255,179,71,.02));border-top:1px solid rgba(255,179,71,.15);border-bottom:1px solid rgba(255,179,71,.15);border-radius:12px;overflow:hidden;margin-bottom:48px}
+.phrases-inner{padding:24px}
+.ph-lbl{font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--warn);margin-bottom:6px}
+.ph-title{font-family:var(--font-head);font-size:22px;font-weight:800;color:var(--text);margin-bottom:20px;line-height:1.2}
+.ph-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.ph-card{background:var(--surface2);border:1px solid rgba(255,179,71,.2);border-radius:10px;overflow:hidden}
+.ph-card img{width:100%;height:90px;object-fit:cover;filter:brightness(.45)}
+.ph-card-body{padding:14px}
+.ph-num{font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:.1em;color:var(--warn);margin-bottom:6px}
+.ph-phrase{font-family:var(--font-head);font-size:14px;font-weight:700;color:var(--text);margin-bottom:8px;line-height:1.4}
+.ph-ctx{font-size:12px;color:var(--muted);line-height:1.55}
+/* CHECKLIST + WIN */
+.checklist{display:flex;flex-direction:column;gap:7px;margin:14px 0}
+.cl-item{display:flex;align-items:center;gap:12px;padding:11px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;cursor:pointer;transition:all .2s;font-size:13px;color:var(--muted)}
+.cl-item:hover{border-color:var(--accent);color:var(--text)}
+.cl-item.done{border-color:var(--success);color:var(--success);background:rgba(0,229,160,.06)}
+.cl-box{width:18px;height:18px;border:2px solid var(--muted);border-radius:4px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px}
+.cl-item.done .cl-box{border-color:var(--success);background:var(--success);color:#fff}
+.cl-item.done .cl-box::after{content:"\2713"}
+.win-wrap{margin:22px 0;background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:20px}
+.win-label{font-family:var(--font-head);font-size:12px;font-weight:700;color:var(--warn);letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px}
+.win-input{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text);padding:12px 14px;font-family:var(--font-body);font-size:13px;resize:vertical;margin-bottom:10px}
+.win-input:focus{outline:none;border-color:var(--accent)}
+.win-saved{display:none;font-size:13px;color:var(--success);margin-top:6px;padding:8px 12px;background:rgba(0,229,160,.08);border-radius:6px}
+.gt-box{background:rgba(255,179,71,.04);border:1px solid rgba(255,179,71,.2);border-radius:10px;padding:18px 20px;margin:16px 0}
+.gt-hdr{font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--warn);margin-bottom:10px}
+.gt-hdr::before{content:"\2605  ";font-size:12px}
+.gt-tips{list-style:none;display:flex;flex-direction:column;gap:7px}
+.gt-tips li{font-size:13px;color:rgba(255,179,71,.85);padding-left:14px;position:relative;line-height:1.5}
+.gt-tips li::before{content:"\2192";position:absolute;left:0;color:var(--warn)}
+/* VIDEO PLACEHOLDER — S1 only */
+.video-placeholder{background:var(--surface2);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin:16px 0}
+.video-placeholder-inner{position:relative;height:200px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,rgba(16,185,129,.06),rgba(0,207,255,.04))}
+.video-play-icon{width:60px;height:60px;background:rgba(16,185,129,.2);border:2px solid var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px}
+.video-label{position:absolute;bottom:14px;left:16px;font-family:var(--font-head);font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.1em;text-transform:uppercase}
+/* NEXT CARD */
+.next-card{display:flex;background:rgba(0,207,255,.04);border:1px solid rgba(0,207,255,.18);border-radius:12px;overflow:hidden;margin-top:20px}
+.next-card img{width:160px;object-fit:cover;filter:brightness(.55);flex-shrink:0}
+.next-card-body{padding:18px 20px}
+.next-lbl{font-family:var(--font-head);font-size:10px;font-weight:700;color:#00CFFF;letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px}
+.next-title{font-family:var(--font-head);font-size:16px;font-weight:700;color:var(--text);margin-bottom:6px}
+.next-sub{font-size:13px;color:var(--muted);line-height:1.55}
+#confettiWrap{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9998;display:none;overflow:hidden}
+.site-footer{background:var(--surface);border-top:1px solid var(--border);padding:20px 24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+.footer-brand{font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.level-tags{display:flex;gap:4px;flex-wrap:wrap}
+.level-tag{font-family:var(--font-head);font-size:10px;font-weight:700;padding:3px 10px;background:var(--surface2);color:rgba(255,255,255,.25);border-radius:4px}
+.level-tag.active{background:var(--accent);color:#fff}
+@media(max-width:860px){
+  .warmup-grid,.rounds,.ph-grid,.match-cols,.col-grid{grid-template-columns:1fr}
+  .vocab-grid{grid-template-columns:1fr 1fr}
+  .next-card{flex-direction:column}
+  .next-card img{width:100%;height:120px}
+  .header-inner{height:auto;padding:10px 0}
+}
+
+/* SPIN WHEEL */
+.spin-wrap{display:flex;flex-direction:column;align-items:center;gap:14px;margin:16px 0}
+.spin-canvas{border-radius:50%;border:3px solid var(--accent);display:block}
+.spin-result{min-height:52px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px 18px;font-size:14px;color:var(--text);width:100%;max-width:420px;text-align:center;line-height:1.6}
+.spin-result strong{color:var(--accent)}
+.spin-btn{background:var(--accent);border:none;color:#fff;font-family:var(--font-head);font-size:13px;font-weight:700;padding:10px 28px;border-radius:8px;cursor:pointer;letter-spacing:.06em}
+/* FLASH CARDS (S3) */
+.fc3-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:14px 0}
+.fc3{perspective:600px;height:110px;cursor:pointer}
+.fc3-inner{position:relative;width:100%;height:100%;transition:transform .5s;transform-style:preserve-3d}
+.fc3.flipped .fc3-inner{transform:rotateY(180deg)}
+.fc3-front,.fc3-back{position:absolute;width:100%;height:100%;backface-visibility:hidden;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:10px;text-align:center}
+.fc3-front{background:var(--surface2);border:1px solid var(--border)}
+.fc3-back{background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.3);transform:rotateY(180deg)}
+.fc3-word{font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--accent)}
+.fc3-def{font-size:11px;color:var(--text);line-height:1.3;margin-top:4px}
+
+.otb-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:14px 0}
+.otb-box{background:var(--surface2);border:2px solid var(--border);border-radius:10px;padding:18px 10px;text-align:center;cursor:pointer;transition:all .3s;min-height:90px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:6px}
+.otb-box:hover{border-color:var(--accent);transform:translateY(-2px)}
+.otb-box.opened{border-color:var(--success);background:rgba(0,229,160,.06);cursor:default}
+.otb-box .box-icon{font-size:26px}
+.otb-box .box-label{font-family:var(--font-head);font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
+.otb-box.opened .box-label{color:var(--success)}
+.otb-content{display:none;font-size:12px;color:var(--text);line-height:1.5;margin-top:6px;text-align:left}
+.otb-box.opened .otb-content{display:block}
+.sc-deck{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:14px 0}
+.sc-item{background:linear-gradient(135deg,rgba(16,185,129,.08),rgba(52,211,153,.04));border:1px solid var(--border);border-radius:10px;padding:16px;cursor:pointer;transition:all .2s}
+.sc-item:hover{border-color:var(--accent)}
+.sc-item-num{font-family:var(--font-head);font-size:10px;font-weight:700;color:var(--accent);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px}
+.sc-item-q{font-size:13px;font-weight:600;color:var(--text);line-height:1.45;margin-bottom:6px}
+.sc-item-hint{font-size:11px;color:var(--muted);font-style:italic}
+.exit-project{background:linear-gradient(135deg,rgba(255,179,71,.08),rgba(255,179,71,.04));border:2px solid var(--warn);border-radius:16px;padding:28px;margin:20px 0;text-align:center}
+.ep-label{font-family:var(--font-head);font-size:11px;font-weight:700;color:var(--warn);letter-spacing:.14em;text-transform:uppercase;margin-bottom:10px}
+.ep-title{font-family:var(--font-head);font-size:28px;font-weight:800;color:var(--text);margin-bottom:8px}
+.ep-sub{font-size:14px;color:var(--muted);line-height:1.7;margin-bottom:18px;max-width:560px;margin-left:auto;margin-right:auto}
+.ep-box{background:var(--surface2);border:1px solid rgba(255,179,71,.3);border-radius:10px;padding:18px 20px;text-align:left;max-width:620px;margin:0 auto 18px}
+.ep-box-label{font-family:var(--font-head);font-size:10px;font-weight:700;color:var(--warn);letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px}
+.ep-criteria{display:flex;flex-direction:column;gap:7px}
+.ep-crit{font-size:13px;color:var(--text);padding-left:16px;position:relative;line-height:1.5}
+.ep-crit::before{content:"\2714";position:absolute;left:0;color:var(--warn);font-size:11px}
+</style>
+<body>
+<div id="progressBar"></div>
+<div id="confettiWrap"></div>
+<header class="site-header">
+  <div class="header-inner">
+    <div>
+      <div class="header-brand">Gabriel Turner &middot; English Training</div>
+      <div class="header-meta">B1.1 &nbsp;&middot;&nbsp; Module 6 &nbsp;&middot;&nbsp; Session 4A &nbsp;&middot;&nbsp; Discovery &amp; Drill &nbsp;&middot;&nbsp; Teacher Edition</div>
+    </div>
+    <div class="badge-strip">
+      <span id="b1" title="Warm-Up">&#9992;&#65039;</span>
+      <span id="b2" title="Vocab">&#127758;</span>
+      <span id="b3" title="Grammar">&#9889;</span>
+      <span id="b4" title="Listening">&#127911;</span>
+      <span id="b5" title="Complete">&#127942;</span>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <div class="header-meta">Teacher Edition &middot; 120 min</div>
+      <button class="mode-toggle" onclick="toggleMode()">STUDENT MODE</button>
+    </div>
+  </div>
+</header>
+<nav class="sticky-nav">
+  <div class="nav-inner">
+    <a href="#s1">&sect;1 Warm-Up</a><a href="#s2">&sect;2 Speaking</a><a href="#s3">&sect;3 Vocab</a>
+    <a href="#s4">&sect;4 Colloquial</a><a href="#s5">&sect;5 Grammar</a><a href="#s6">&sect;6 Listening</a>
+    <a href="#s7">&sect;7 Production</a><a href="#phrases">&sect; Phrases</a><a href="#s8">&sect;8 Wrap-Up</a>
+  </div>
+</nav>
+<main class="main">
+
+<section class="section" id="s1">
+  <div class="section-header"><span class="section-number">&sect;1</span><h2 class="section-title">&#9992;&#65039; Warm-Up &mdash; Travel &amp; Perspective</h2><span class="section-time">5&ndash;8 min</span></div>
+  <div class="section-body">
+    <div class="img-card"><img src="https://images.unsplash.com/photo-1530789253388-582c481c54b0?w=900&auto=format&fit=crop&q=80" alt="Person at a destination looking out with changed perspective"><div class="img-overlay">M6 &middot; S4A &mdash; Travel &amp; Perspective &middot; Has travel changed the way you see the world?</div></div>
+    <div class="warmup-grid">
+      <div class="warmup-q"><img src="https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=600&auto=format&fit=crop&q=80" alt="Traveler arriving somewhere new" loading="lazy"><div class="warmup-q-body"><div class="qnum">Q1 &mdash; Has travel changed you?</div><div>Think of a trip that changed how you see the world. What happened? What do you understand now that you didn&apos;t before? Use PP: "Travel has taught me..."</div></div></div>
+      <div class="warmup-q"><img src="https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=600&auto=format&fit=crop&q=80" alt="Traveler at a landmark" loading="lazy"><div class="warmup-q-body"><div class="qnum">Q2 &mdash; Is it a privilege?</div><div>"Not everyone has the chance to travel." Is travel a privilege? What does it mean that some people never leave their city and others travel internationally every year?</div></div></div>
+      <div class="warmup-q"><img src="https://images.unsplash.com/photo-1452421822248-d4c2b47f0c81?w=600&auto=format&fit=crop&q=80" alt="Person exploring" loading="lazy"><div class="warmup-q-body"><div class="qnum">Q3 &mdash; Your assumption was wrong</div><div>Did you ever travel somewhere and discover your assumption about the place or people was completely wrong? What did you assume? What did you find?</div></div></div>
+      <div class="warmup-q"><img src="https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=600&auto=format&fit=crop&q=80" alt="Road and open horizon" loading="lazy"><div class="warmup-q-body"><div class="qnum">Q4 &mdash; First Conditional frame</div><div>"If more people traveled outside their comfort zone, there would be less prejudice in the world." Agree or disagree? Use First Conditional + opinion language.</div></div></div>
+    </div>
+    <div class="quickwin">
+      <div class="quickwin-title">&#9889; Quick Win &mdash; 20 seconds</div>
+      <div class="quickwin-text">Say out loud: <strong>"Travel has changed the way I think. I strongly believe that if you travel with real curiosity, your assumptions will dissolve &mdash; and you will become a better professional and a better person."</strong><br><span style="font-size:13px;color:var(--muted)">PP + Opinion + FC. Your Exit Project in one sentence.</span></div>
+      <div class="timer-wrap"><svg width="80" height="80" viewBox="0 0 80 80"><circle class="timer-bg" cx="40" cy="40" r="34" stroke-width="6"/><circle class="timer-arc" id="arc1" cx="40" cy="40" r="34" stroke-width="6" stroke-dasharray="213.63" stroke-dashoffset="0"/><text class="timer-text" x="40" y="37" id="txt1">0:20</text><text class="timer-label" x="40" y="51">sec</text></svg>
+      <div class="timer-btns"><button class="btn btn-primary" onclick="startTimerSVG('arc1','txt1',20,213.63,'b1')">&#9654; Start</button><button class="btn btn-ghost" onclick="resetTimerSVG('arc1','txt1','0:20',213.63)">&#8635;</button></div></div>
+    </div>
+    <div class="teacher-note teacher-only"><strong>Teacher note:</strong> Q4 introduces the Exit Project logic. At the end of S4A you will formally reveal the Exit Project brief. Today is the preparation. Students who can answer Q4 fluently with PP + FC + opinion language are already performing at Exit Project level.</div>
+  </div>
+</section>
+
+<section class="section" id="s2">
+  <div class="section-header"><span class="section-number">&sect;2</span><h2 class="section-title">&#128483;&#65039; Speaking Topic &mdash; Has Travel Changed the Way You See the World?</h2><span class="section-time">8 min</span></div>
+  <div class="section-body">
+    <div class="topic-card"><h3>Has travel changed the way you see the world? Is it a privilege?</h3><p style="font-size:13px;color:var(--muted)">The travel question connects assumption, privilege, openness, and perspective. All require PP + FC + opinion language. The Exit Project theme appears here.</p></div>
+    <div class="img-card"><img src="https://images.unsplash.com/photo-1503220317375-aaad61436b1b?w=900&auto=format&fit=crop&q=80" alt="Traveler looking at the horizon" loading="lazy"><div class="img-overlay">Speaking &middot; 3 rounds &middot; PP + FC + Opinion Language &middot; Exit Project preview</div></div>
+    <div class="rounds">
+      <div class="round-card"><div class="rnum"><span class="tag tag-t2s">T&rarr;S</span> Round 1</div><div class="rq">Has travel changed your perspective? Use PP: "Travel has taught me... / I have discovered..." Then add one FC: "If I hadn&apos;t gone, I would never have..." Use one opinion phrase to open.</div></div>
+      <div class="round-card"><div class="rnum"><span class="tag tag-s2s">S&harr;S</span> Round 2</div><div class="rq">Privilege debate: "Is travel a right or a luxury?" One argues access, one argues privilege. Required: PP + FC each. Counter-phrase: "That&apos;s a good point, however..."</div></div>
+      <div class="round-card"><div class="rnum"><span class="tag tag-class">Class</span> Round 3</div><div class="rq">Exit Project preview: "What is one thing you feel strongly about?" Class shares topic ideas. One volunteer tries 60 seconds of their Exit Project argument. Class gives feedback.</div></div>
+    </div>
+    <button class="reveal-btn" onclick="toggleReveal('model1')">&#9660; Show Model Answer (B1.1)</button>
+    <div class="model-box" id="model1"><p><span class="pp">Travel has changed the way I see the world.</span> Before a work trip to Monterrey &mdash; just 3 hours away &mdash; I had assumptions about how people there worked. I was wrong about most of them. <span class="op">I strongly believe that</span> <span class="fc">if you never leave your own city, you will always see the world through the same lens.</span> <span class="op">In my opinion,</span> travel doesn&apos;t mean flying abroad. <span class="fc">If you explore the region around you with real curiosity, you will discover things that challenge your assumptions.</span> <span class="h">"I saw things differently after that trip."</span></p><p style="font-size:12px;color:var(--muted);margin-top:10px"><span class="pp">PP</span> &middot; <span class="fc">FC ×2</span> &middot; <span class="op">Opinion</span> &middot; <span class="h">Colloquial</span></p></div>
+    <div class="teacher-note teacher-only"><strong>Teacher note:</strong> The model uses FC twice with different subjects: "if you never leave" (general) and "if you explore" (specific action). This is the most sophisticated FC use in M6 &mdash; varying the subject of the condition. After sharing, ask students to identify both and then produce their own with different subjects.</div>
+  </div>
+</section>
+
+<section class="section" id="s3">
+  <div class="section-header"><span class="section-number">&sect;3</span><h2 class="section-title">&#127758; Vocabulary &mdash; Travel &amp; Perspective</h2><span class="section-time">10 min</span></div>
+  <div class="section-body">
+    <div class="img-card"><img src="https://images.unsplash.com/photo-1501555088652-021faa106b9b?w=900&auto=format&fit=crop&q=80" alt="Explorer in mountain landscape" loading="lazy"><div class="img-overlay">Session 4 vocabulary &middot; 16 words &middot; 8 nouns + 8 verbs &middot; IPA &middot; Click to hear</div></div>
+    <div class="vocab-grid">
+      <div class="vocab-card" onclick="speakWord('perspective')"><div class="vocab-word">perspective</div><div class="vocab-ipa">/p&#601;&#712;spektiv/</div><div class="vocab-def">A particular way of thinking about or viewing something</div><div class="vocab-ex">"Travel has completely changed my perspective on what matters in life."</div><button class="speak-btn">&#128266; Hear it</button></div>
+      <div class="vocab-card" onclick="speakWord('assumption')"><div class="vocab-word">assumption</div><div class="vocab-ipa">/&#601;&#712;s&#652;mp&#643;n/</div><div class="vocab-def">Something believed to be true without evidence</div><div class="vocab-ex">"If we don&apos;t challenge our assumptions, we will never grow."</div><button class="speak-btn">&#128266; Hear it</button></div>
+      <div class="vocab-card" onclick="speakWord('privilege')"><div class="vocab-word">privilege</div><div class="vocab-ipa">/&#712;pr&#618;v&#618;l&#618;d&#658;/</div><div class="vocab-def">A special advantage available only to a particular group</div><div class="vocab-ex">"Travel is a privilege &mdash; not everyone has access to it."</div><button class="speak-btn">&#128266; Hear it</button></div>
+      <div class="vocab-card" onclick="speakWord('curiosity')"><div class="vocab-word">curiosity</div><div class="vocab-ipa">/&#716;kjj&#650;&#601;ri&#712;&#596;s&#618;ti/</div><div class="vocab-def">A strong desire to know or learn something new</div><div class="vocab-ex">"If you travel with curiosity instead of a checklist, you see different things."</div><button class="speak-btn">&#128266; Hear it</button></div>
+      <div class="vocab-card" onclick="speakWord('experience')"><div class="vocab-word">experience</div><div class="vocab-ipa">/&#618;k&#712;sp&#618;&#601;ri&#601;ns/</div><div class="vocab-def">Something that happens to you; practical knowledge from events</div><div class="vocab-ex">"The experience of being lost in an unfamiliar city teaches more than a guidebook."</div><button class="speak-btn">&#128266; Hear it</button></div>
+      <div class="vocab-card" onclick="speakWord('destination')"><div class="vocab-word">destination</div><div class="vocab-ipa">/&#716;dest&#618;&#712;ne&#618;&#643;n/</div><div class="vocab-def">The place you are traveling to</div><div class="vocab-ex">"The destination matters less than the mindset you bring to it."</div><button class="speak-btn">&#128266; Hear it</button></div>
+      <div class="vocab-card" onclick="speakWord('openness')"><div class="vocab-word">openness</div><div class="vocab-ipa">/&#712;&#601;&#650;p&#601;nn&#601;s/</div><div class="vocab-def">Willingness to consider new ideas or experiences</div><div class="vocab-ex">"If you travel without openness, you will return with the same opinions you left with."</div><button class="speak-btn">&#128266; Hear it</button></div>
+      <div class="vocab-card" onclick="speakWord('culture')"><div class="vocab-word">culture</div><div class="vocab-ipa">/&#712;k&#652;lt&#643;&#601;/</div><div class="vocab-def">The shared values, practices, and identity of a group or place</div><div class="vocab-ex">"Understanding another culture requires more than one visit &mdash; but one visit is a start."</div><button class="speak-btn">&#128266; Hear it</button></div>
+      <div class="vocab-card" onclick="speakWord('travel')"><div class="vocab-word">travel</div><div class="vocab-ipa">/&#712;tr&aelig;v&#601;l/</div><div class="vocab-def">To move from one place to another, especially over a distance</div><div class="vocab-ex">"If you travel with an open mind, you will always come back changed."</div><button class="speak-btn">&#128266; Hear it</button></div>
+      <div class="vocab-card" onclick="speakWord('explore')"><div class="vocab-word">explore</div><div class="vocab-ipa">/&#618;k&#712;spl&#596;&#720;/</div><div class="vocab-def">To investigate or discover a place or idea in depth</div><div class="vocab-ex">"We have explored our own region less than we think &mdash; there is so much unseen."</div><button class="speak-btn">&#128266; Hear it</button></div>
+      <div class="vocab-card" onclick="speakWord('discover')"><div class="vocab-word">discover</div><div class="vocab-ipa">/d&#618;&#712;sk&#652;v&#601;/</div><div class="vocab-def">To find or realize something for the first time</div><div class="vocab-ex">"I discovered that my assumptions about northern Mexico were completely wrong."</div><button class="speak-btn">&#128266; Hear it</button></div>
+      <div class="vocab-card" onclick="speakWord('challenge')"><div class="vocab-word">challenge</div><div class="vocab-ipa">/&#712;t&#643;&aelig;l&#618;nd&#658;/</div><div class="vocab-def">To question or test something you previously believed</div><div class="vocab-ex">"If travel doesn&apos;t challenge your assumptions, you aren&apos;t really traveling."</div><button class="speak-btn">&#128266; Hear it</button></div>
+      <div class="vocab-card" onclick="speakWord('appreciate')"><div class="vocab-word">appreciate</div><div class="vocab-ipa">/&#601;&#712;pri&#720;&#643;ie&#618;t/</div><div class="vocab-def">To recognize and value something fully</div><div class="vocab-ex">"I have learned to appreciate my own region more after traveling to other places."</div><button class="speak-btn">&#128266; Hear it</button></div>
+      <div class="vocab-card" onclick="speakWord('connect')"><div class="vocab-word">connect</div><div class="vocab-ipa">/k&#601;&#712;nekt/</div><div class="vocab-def">To form a relationship or link between people or ideas</div><div class="vocab-ex">"If you connect with locals, you will understand the place completely differently."</div><button class="speak-btn">&#128266; Hear it</button></div>
+      <div class="vocab-card" onclick="speakWord('humble')"><div class="vocab-word">humble</div><div class="vocab-ipa">/&#712;h&#652;mb&#601;l/</div><div class="vocab-def">(v) To make someone feel less important; (adj) not arrogant</div><div class="vocab-ex">"Travel has humbled me &mdash; I realized how much I didn&apos;t know."</div><button class="speak-btn">&#128266; Hear it</button></div>
+      <div class="vocab-card" onclick="speakWord('broaden')"><div class="vocab-word">broaden</div><div class="vocab-ipa">/&#712;br&#596;&#720;d&#601;n/</div><div class="vocab-def">To make wider or more extensive; to expand the mind or range</div><div class="vocab-ex">"If you broaden your view beyond your own region, you will become a better leader."</div><button class="speak-btn">&#128266; Hear it</button></div>
+    </div>
+
+    <div class="micro-speak"><strong>&#128483;&#65039; Micro-Speaking:</strong> Pick one word. One sentence about a real experience using that word + Present Perfect. 20 seconds.</div>
+
+    <!-- OPEN THE BOX -->
+    <div style="margin-top:28px">
+      <div style="font-family:var(--font-head);font-size:14px;font-weight:700;color:var(--text);margin-bottom:6px">&#127381; Open the Box &mdash; Travel Speaking Challenges</div>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:14px">Click a box to reveal the speaking challenge. Complete it aloud. Open all 8 to earn badge b2.</p>
+      <div class="otb-grid">
+        <div class="otb-box" onclick="openBox(this,1)"><div class="box-icon">&#127381;</div><div class="box-label">Box 1</div><div class="otb-content">Use "perspective" + "assumption" in one sentence. Include PP: "Travel has changed my assumption that..."</div></div>
+        <div class="otb-box" onclick="openBox(this,2)"><div class="box-icon">&#127381;</div><div class="box-label">Box 2</div><div class="otb-content">Is travel a privilege? 4-sentence answer using: privilege, access, openness, and one First Conditional.</div></div>
+        <div class="otb-box" onclick="openBox(this,3)"><div class="box-icon">&#127381;</div><div class="box-label">Box 3</div><div class="otb-content">Describe a destination you have visited. PP: "I have explored..." Then: "If I hadn&apos;t gone, I would never have..."</div></div>
+        <div class="otb-box" onclick="openBox(this,4)"><div class="box-icon">&#127381;</div><div class="box-label">Box 4</div><div class="otb-content">Use "humble" about travel. "Travel has humbled me because..." Add a First Conditional consequence.</div></div>
+        <div class="otb-box" onclick="openBox(this,5)"><div class="box-icon">&#127381;</div><div class="box-label">Box 5</div><div class="otb-content">Say: "I saw things differently after that trip." Explain what changed and why. Use curiosity + discover.</div></div>
+        <div class="otb-box" onclick="openBox(this,6)"><div class="box-icon">&#127381;</div><div class="box-label">Box 6</div><div class="otb-content">Argue: "Even short trips open your mind." Give 2 First Conditional examples of small trips with big impact.</div></div>
+        <div class="otb-box" onclick="openBox(this,7)"><div class="box-icon">&#127381;</div><div class="box-label">Box 7</div><div class="otb-content">Use: "Not everyone has the chance to travel." Give 2 consequences using First Conditional + opinion phrase.</div></div>
+        <div class="otb-box" onclick="openBox(this,8)"><div class="box-icon">&#127381;</div><div class="box-label">Box 8</div><div class="otb-content">Exit Project warm-up: Say your S5 topic in one sentence. Add one FC: "If I don&apos;t speak about this, people won&apos;t know that..."</div></div>
+      </div>
+      <div class="act-score" id="otbScore">Boxes opened: 0 / 8</div>
+    </div>
+
+    <!-- SPEAKING CARDS -->
+    <div style="margin-top:28px">
+      <div style="font-family:var(--font-head);font-size:14px;font-weight:700;color:var(--text);margin-bottom:6px">&#128483;&#65039; Speaking Cards &mdash; Debate &amp; Discussion</div>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:14px">Pick a card. 30 seconds. 1 vocab word + 1 FC + 1 opinion phrase. Rotate through the class.</p>
+      <div class="sc-deck">
+        <div class="sc-item"><div class="sc-item-num">Card A</div><div class="sc-item-q">Has a trip ever changed an assumption you had? What did you think before, and after?</div><div class="sc-item-hint">PP + challenge + perspective</div></div>
+        <div class="sc-item"><div class="sc-item-num">Card B</div><div class="sc-item-q">"You don&apos;t need to travel far to gain perspective." Agree or disagree? Build a FC argument.</div><div class="sc-item-hint">destination + curiosity + openness</div></div>
+        <div class="sc-item"><div class="sc-item-num">Card C</div><div class="sc-item-q">What would the world be like if everyone had equal access to travel? Build 2 First Conditionals.</div><div class="sc-item-hint">privilege + connect + appreciate</div></div>
+        <div class="sc-item"><div class="sc-item-num">Card D</div><div class="sc-item-q">Describe the best or most surprising trip you have taken &mdash; or wish you could take.</div><div class="sc-item-hint">experience + discover + humble</div></div>
+        <div class="sc-item"><div class="sc-item-num">Card E</div><div class="sc-item-q">"Some people travel the world without ever truly seeing it." What does this mean?</div><div class="sc-item-hint">openness + challenge + broaden</div></div>
+        <div class="sc-item"><div class="sc-item-num">Card F</div><div class="sc-item-q">S5 warm-up: What is one thing you feel strongly about? One FC: "If I don&apos;t talk about this..."</div><div class="sc-item-hint">Exit Project preparation</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="s4">
+  <div class="section-header"><span class="section-number">&sect;4</span><h2 class="section-title">&#128172; Colloquial &amp; Opinion Language</h2><span class="section-time">5 min</span></div>
+  <div class="section-body">
+    <div class="col-grid">
+      <div class="col-card"><img src="https://images.unsplash.com/photo-1539635278303-d4002c07eae3?w=600&auto=format&fit=crop&q=80" alt="Person changed by travel" loading="lazy"><div class="col-card-body"><div class="col-phrase">"I saw things differently after that trip."</div><div class="col-use">When to use</div><div class="col-example">When describing how an experience changed your view. Works with any experience &mdash; not just travel. "I saw things differently after that project / that meeting." Adaptable, human, B1.1 level.</div></div></div>
+      <div class="col-card"><img src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=600&auto=format&fit=crop&q=80" alt="Thinking about who gets to travel" loading="lazy"><div class="col-card-body"><div class="col-phrase">"Not everyone has the chance to travel."</div><div class="col-use">When to use</div><div class="col-example">Acknowledges privilege with empathy and realism. "Not everyone has the chance to travel &mdash; and if more people did, I believe the world would have fewer misunderstandings." Privilege + FC = nuanced argument.</div></div></div>
+      <div class="col-card"><img src="https://images.unsplash.com/photo-1508672019048-805c876b67e2?w=600&auto=format&fit=crop&q=80" alt="Short trip opening the mind" loading="lazy"><div class="col-card-body"><div class="col-phrase">"Even short trips open your mind."</div><div class="col-use">When to use</div><div class="col-example">Democratizes the conversation. Works for travel AND for learning: "Even short courses open your mind." "Even a 30-minute conversation with someone different opens your mind." Adaptable, optimistic.</div></div></div>
+    </div>
+    <div class="opinion-box">
+      <div class="opinion-box-label">&#127919; Opinion Language &mdash; All 5 Phrases: Final Active Repaso</div>
+      <div class="opinion-phrases">
+        <div class="opinion-phrase"><strong style="color:var(--warn)">I strongly believe that&hellip;</strong> &mdash; "I strongly believe that travel builds empathy more than any classroom."</div>
+        <div class="opinion-phrase"><strong style="color:var(--warn)">In my opinion&hellip;</strong> &mdash; "In my opinion, it&apos;s not the distance that matters &mdash; it&apos;s the openness you bring."</div>
+        <div class="opinion-phrase"><strong style="color:var(--warn)">I see both sides, but&hellip;</strong> &mdash; "I see both sides &mdash; travel is a privilege AND a mindset. But if the mindset is right, even a short trip will change you."</div>
+        <div class="opinion-phrase"><strong style="color:var(--warn)">That&apos;s a good point, however&hellip;</strong> &mdash; "That&apos;s a good point, however not all travel changes people &mdash; some visit 40 countries and never challenge a single assumption."</div>
+        <div class="opinion-phrase"><strong style="color:var(--warn)">The reality is&hellip;</strong> &mdash; "The reality is that most people never leave their comfort zone &mdash; geographically or intellectually."</div>
+      </div>
+    </div>
+    <div class="teacher-note teacher-only"><strong>Teacher note &mdash; Exit Project bridge:</strong> At the end of &sect;4, pause and say: "You have been using these 5 phrases for four sessions. In S5, you will use them in a 3-minute talk on any topic you choose. Start thinking now." First formal preview of the Exit Project &mdash; full reveal comes at &sect;8.</div>
+  </div>
+</section>
+
+<section class="section" id="s5">
+  <div class="section-header"><span class="section-number">&sect;5</span><h2 class="section-title">&#9889; Grammar &mdash; PP + FC + Opinion: The Complete B1.1 Opinion Toolkit</h2><span class="section-time">12 min</span></div>
+  <div class="section-body">
+    <div class="img-card"><img src="https://images.unsplash.com/photo-1519046904884-53103b34b206?w=900&auto=format&fit=crop&q=80" alt="Person making a complete argument" loading="lazy"><div class="img-overlay">Grammar &middot; The full toolkit &middot; Exit Project level argument</div></div>
+    <div class="tool-card">
+      <div class="t-label">&#128295; The Complete B1.1 Opinion Framework</div>
+      <p style="font-size:14px;color:var(--text);line-height:1.7">A complete B1.1 opinion has three components working together. By S4A you should produce all three naturally, without prompting.</p>
+      <div style="margin-top:12px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
+        <div style="background:var(--surface);border:1px solid rgba(0,207,255,.2);border-radius:8px;padding:12px"><div style="font-family:var(--font-head);font-size:10px;font-weight:700;color:#00CFFF;letter-spacing:.1em;margin-bottom:6px">EVIDENCE (PP)</div><div style="font-size:12px;color:var(--muted);font-style:italic;line-height:1.6">"Travel has changed the way I see the world. I have discovered that..."</div></div>
+        <div style="background:var(--surface);border:1px solid rgba(16,185,129,.2);border-radius:8px;padding:12px"><div style="font-family:var(--font-head);font-size:10px;font-weight:700;color:var(--accent);letter-spacing:.1em;margin-bottom:6px">CONSEQUENCE (FC)</div><div style="font-size:12px;color:var(--muted);font-style:italic;line-height:1.6">"If more people traveled with curiosity, assumptions would dissolve."</div></div>
+        <div style="background:var(--surface);border:1px solid rgba(255,179,71,.2);border-radius:8px;padding:12px"><div style="font-family:var(--font-head);font-size:10px;font-weight:700;color:var(--warn);letter-spacing:.1em;margin-bottom:6px">POSITION (OPINION)</div><div style="font-size:12px;color:var(--muted);font-style:italic;line-height:1.6">"I strongly believe that openness is the most important skill a traveler can have."</div></div>
+      </div>
+    </div>
+    <div class="err-box">
+      <strong>S4A error focus:</strong><br>
+      &#10007; "Travel has change my perspective." &rarr; <strong>has changed</strong> (PP = has + past participle)<br>
+      &#10007; "If I will travel more, I will understand more." &rarr; IF clause = present simple: <strong>If I travel more,</strong> I will understand more.<br>
+      &#10007; Mixing: "If I had traveled, I will understand." &rarr; Choose FC (real) or 2C (hypothetical). Never mix.
+    </div>
+    <div style="margin-top:20px">
+      <div style="font-family:var(--font-head);font-size:14px;font-weight:700;color:var(--text);margin-bottom:12px">&#9997;&#65039; Activity &mdash; Build the Complete Opinion</div>
+      <div class="act-score" id="scoreA">Score: 0 / 3</div>
+      <div class="poll-group">
+        <div class="poll-q">1. Which sentence correctly combines PP + FC?</div>
+        <div class="poll-opts">
+          <button class="poll-btn" onclick="checkPoll(this,'pa1a','fbA1','scoreA',3)">Travel has changed me &mdash; and if I travel more, I will understand even more.</button>
+          <button class="poll-btn" onclick="checkPoll(this,'pa1b','fbA1','scoreA',3)">Travel changed me &mdash; and if I will travel more, I would understand.</button>
+          <button class="poll-btn" onclick="checkPoll(this,'pa1c','fbA1','scoreA',3)">Travel has changed me &mdash; and if I had traveled more, I would understand more.</button>
+        </div>
+        <div class="poll-fb" id="fbA1"></div>
+      </div>
+      <div class="poll-group">
+        <div class="poll-q">2. You want to acknowledge someone&apos;s point AND disagree. You say:</div>
+        <div class="poll-opts">
+          <button class="poll-btn" onclick="checkPoll(this,'pa2a','fbA2','scoreA',3)">That&apos;s a good point, however not all travel builds empathy.</button>
+          <button class="poll-btn" onclick="checkPoll(this,'pa2b','fbA2','scoreA',3)">I strongly believe not all travel builds empathy.</button>
+          <button class="poll-btn" onclick="checkPoll(this,'pa2c','fbA2','scoreA',3)">The reality is not all travel builds empathy.</button>
+        </div>
+        <div class="poll-fb" id="fbA2"></div>
+      </div>
+      <div class="poll-group">
+        <div class="poll-q">3. "I have traveled to five countries &mdash; and if I hadn&apos;t, I ___ still have many of the assumptions I started with."</div>
+        <div class="poll-opts">
+          <button class="poll-btn" onclick="checkPoll(this,'pa3a','fbA3','scoreA',3)">would</button>
+          <button class="poll-btn" onclick="checkPoll(this,'pa3b','fbA3','scoreA',3)">will</button>
+          <button class="poll-btn" onclick="checkPoll(this,'pa3c','fbA3','scoreA',3)">had</button>
+        </div>
+        <div class="poll-fb" id="fbA3"></div>
+      </div>
+    </div>
+    <div class="micro-speak" style="margin-top:14px"><strong>&#128483;&#65039; Micro-Speaking &mdash; Full Toolkit:</strong> 60 seconds. Build a complete opinion on travel using PP + FC + 2 opinion phrases. No notes. This is Exit Project practice.</div>
+  </div>
+</section>
+
+<section class="section" id="s6">
+  <div class="section-header"><span class="section-number">&sect;6</span><h2 class="section-title">&#127911; Listening &mdash; Rodrigo on the Trip That Humbled Him</h2><span class="section-time">10 min</span></div>
+  <div class="section-body">
+    <div class="img-card"><img src="https://images.unsplash.com/photo-1527631746610-bca00a040d60?w=900&auto=format&fit=crop&q=80" alt="Traveler in an unfamiliar place feeling humbled" loading="lazy"><div class="img-overlay">Listening &middot; Rodrigo on the supply chain visit to Oaxaca that changed his professional assumptions</div></div>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:16px">Rodrigo tells his team about a work visit to a rural supplier in Oaxaca that completely changed how he saw his assumptions. Listen for PP, FC, and opinion phrases.</p>
+    <div class="player-card">
+      <div class="player-top"><button class="play-btn-aud">&#9654;</button><div class="track-info"><div class="track-title">The Trip That Humbled Me &mdash; Rodrigo Vega</div><div class="track-sub">B1.1 &middot; M6 &middot; S4A &middot; Voice: Adam &middot; Speed: 0.85 &middot; ElevenLabs</div></div></div>
+      <div class="waveform" id="wv"></div>
+    </div>
+    <button class="script-toggle" onclick="toggleScript('scriptBox')">&#9660; Show ElevenLabs Script</button>
+    <div class="script-box" id="scriptBox">
+      I want to tell you about a trip I made two years ago &mdash; not for vacation, for work. We had a new supplier in a rural community in Oaxaca. Small operation, family-run. And I drove there thinking I would evaluate their process, give some recommendations, and leave. That was my assumption.
+
+      What actually happened was completely different. I spent three days there. By the end of the first day, I understood that their production system &mdash; which looked inefficient on paper &mdash; was actually designed around the seasons, the community, and a set of values that I had never considered in my logistics models.
+
+      Travel has humbled me many times. But that trip humbled me professionally. In my opinion, if we had not made that visit in person, we would have made a decision that lost us one of our best suppliers. We would have measured them against a standard that had nothing to do with their reality.
+
+      I strongly believe that if you only see your suppliers on a spreadsheet, you will never understand what drives their quality. I see both sides &mdash; efficiency matters, numbers matter. But if you don&apos;t connect with the people behind the numbers, something essential is missing.
+
+      The lesson I brought back: every time I have traveled with assumptions, I have come back without most of them. And every time that has happened, I have become a better professional.
+    </div>
+    <div style="margin-top:20px">
+      <div style="font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--text);margin-bottom:12px">&#128202; Comprehension</div>
+      <div class="poll-group">
+        <div class="poll-q">1. What was Rodrigo&apos;s original assumption when he went to Oaxaca?</div>
+        <div class="poll-opts">
+          <button class="poll-btn" onclick="checkListen(this,'cl1a','fbL1')">He would evaluate, give recommendations, and leave quickly</button>
+          <button class="poll-btn" onclick="checkListen(this,'cl1b','fbL1')">He expected to find a highly efficient supplier</button>
+          <button class="poll-btn" onclick="checkListen(this,'cl1c','fbL1')">He planned to end the supplier relationship</button>
+        </div>
+        <div class="poll-fb" id="fbL1"></div>
+      </div>
+      <div class="poll-group">
+        <div class="poll-q">2. What did Rodrigo discover about the supplier&apos;s production system?</div>
+        <div class="poll-opts">
+          <button class="poll-btn" onclick="checkListen(this,'cl2a','fbL2')">It was actually inefficient and needed to change</button>
+          <button class="poll-btn" onclick="checkListen(this,'cl2b','fbL2')">It was designed around seasons, community, and values not in his logistics models</button>
+          <button class="poll-btn" onclick="checkListen(this,'cl2c','fbL2')">It was exactly what he expected from the spreadsheet</button>
+        </div>
+        <div class="poll-fb" id="fbL2"></div>
+      </div>
+      <div class="poll-group">
+        <div class="poll-q">3. What lesson does Rodrigo say he brings back from every trip where he had assumptions?</div>
+        <div class="poll-opts">
+          <button class="poll-btn" onclick="checkListen(this,'cl3a','fbL3')">He has come back without most of his assumptions &mdash; and become a better professional</button>
+          <button class="poll-btn" onclick="checkListen(this,'cl3b','fbL3')">His assumptions were usually correct</button>
+          <button class="poll-btn" onclick="checkListen(this,'cl3c','fbL3')">He now avoids traveling for work</button>
+        </div>
+        <div class="poll-fb" id="fbL3"></div>
+      </div>
+    </div>
+    <button class="btn btn-primary" onclick="earnBadge('b4')" style="margin-top:12px">&#10003; Listening complete &mdash; Earn badge</button>
+  </div>
+</section>
+
+<section class="section" id="s7">
+  <div class="section-header"><span class="section-number">&sect;7</span><h2 class="section-title">&#128483;&#65039; Production &mdash; Speaking Practice</h2><span class="section-time">12 min</span></div>
+  <div class="section-body">
+    <div class="img-card"><img src="https://images.unsplash.com/photo-1555400038-63f5ba517a47?w=900&auto=format&fit=crop&q=80" alt="Person making a confident argument" loading="lazy"><div class="img-overlay">Production &middot; Complete B1.1 opinion toolkit &middot; Exit Project rehearsal</div></div>
+    <div class="meter-wrap">
+      <div class="meter-lbl">&#127919; Class Opinion Meter</div>
+      <div class="meter-q">"Travel &mdash; even within your own country &mdash; is one of the most important things you can do for your personal and professional development."</div>
+      <div class="meter-track" onclick="meterClick(event,this)"><div class="meter-fill" id="meterFill"></div></div>
+      <div class="meter-ends"><span>Strongly Disagree</span><span>Strongly Agree</span></div>
+      <div class="meter-btns"><button class="meter-btn" onclick="moveMeter(-8)">&#9664; Disagree</button><button class="meter-btn" onclick="moveMeter(8)">Agree &#9654;</button></div>
+      <div class="meter-pct" id="meterPercent">Class: 50% agree</div>
+    </div>
+    <div class="speak-sec">
+      <div class="speak-card"><img src="https://images.unsplash.com/photo-1519519421-2e89e8f4b3c3?w=600&auto=format&fit=crop&q=80" alt="Traveler changed by experience" loading="lazy"><div class="speak-card-body"><div class="sc-lbl"><span class="tag tag-t2s">T&rarr;S</span> Q1 &mdash; Your Best Trip Argument</div><div class="sc-q">Describe one trip that changed you. PP (what happened to your perspective) + FC (what if you hadn&apos;t gone) + 1 opinion phrase. 60 seconds.</div><div class="sc-hint">Colloquial: "I saw things differently after that trip."</div></div></div>
+      <div class="speak-card"><img src="https://images.unsplash.com/photo-1531366936337-7c912a4589a7?w=600&auto=format&fit=crop&q=80" alt="Travel privilege debate" loading="lazy"><div class="speak-card-body"><div class="sc-lbl"><span class="tag tag-s2s">S&harr;S</span> Q2 &mdash; The Privilege Debate</div><div class="sc-q">One partner: "Travel is a privilege &mdash; not everyone can or should be expected to do it." Other: "Even within Mexico, short trips are accessible and transformative." Both use PP + FC + "That&apos;s a good point, however..."</div><div class="sc-hint">privilege, openness, assumption, curiosity</div></div></div>
+      <div class="speak-card"><img src="https://images.unsplash.com/photo-1508739773434-c26b3d09e071?w=600&auto=format&fit=crop&q=80" alt="Exit Project rehearsal" loading="lazy"><div class="speak-card-body"><div class="sc-lbl"><span class="tag tag-class">Class</span> Q3 &mdash; Exit Project Rehearsal</div><div class="sc-q">Each student says in one sentence what topic they feel strongly about for S5. One volunteer tries 60 seconds of their Exit Project argument &mdash; PP + FC + opinion phrases. Class gives feedback: "What worked? What was missing?"</div><div class="sc-hint">S5: PP + FC + opinion language + 5 B1.1 vocab words. 3 min, no notes.</div></div></div>
+    </div>
+    <div style="margin-top:20px;padding:20px;background:rgba(16,185,129,.06);border:1px solid var(--border);border-radius:12px">
+      <div style="font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--accent);margin-bottom:8px">&#9889; Solo Challenge &mdash; 90 seconds</div>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:14px">Your Exit Project dry run. Any topic you feel strongly about. PP evidence + 2 FC consequences + 2 opinion phrases + 3 vocabulary words. No notes. This is preparation for S5.</p>
+      <div class="timer-wrap"><svg width="80" height="80" viewBox="0 0 80 80"><circle class="timer-bg" cx="40" cy="40" r="34" stroke-width="6"/><circle class="timer-arc" id="arc2" cx="40" cy="40" r="34" stroke-width="6" stroke-dasharray="213.63" stroke-dashoffset="0"/><text class="timer-text" x="40" y="37" id="txt2">1:30</text><text class="timer-label" x="40" y="51">solo</text></svg>
+      <div class="timer-btns"><button class="btn btn-primary" onclick="startTimerSVG('arc2','txt2',90,213.63,'b3')">&#9654; Start</button><button class="btn btn-ghost" onclick="resetTimerSVG('arc2','txt2','1:30',213.63)">&#8635;</button></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="phrases-section" id="phrases">
+  <div class="phrases-inner">
+    <div class="ph-lbl">&#127919; This week, use these 3 phrases at work</div>
+    <div class="ph-title">3 Phrases for This Week</div>
+    <div class="ph-grid">
+      <div class="ph-card"><img src="https://images.unsplash.com/photo-1478131143081-80f7f84ca84d?w=600&auto=format&fit=crop&q=80" alt="Person who saw things differently" loading="lazy"><div class="ph-card-body"><div class="ph-num">PHRASE 1</div><div class="ph-phrase">"I saw things differently after that trip."</div><div class="ph-ctx">Works with any experience &mdash; not just travel. "I saw things differently after that project / conversation / training." Personal, honest, B1.1. Follow with PP: "...because travel has shown me that my assumptions were wrong."</div></div></div>
+      <div class="ph-card"><img src="https://images.unsplash.com/photo-1551918120-9739cb430c6d?w=600&auto=format&fit=crop&q=80" alt="Acknowledging that not everyone travels" loading="lazy"><div class="ph-card-body"><div class="ph-num">PHRASE 2</div><div class="ph-phrase">"Not everyone has the chance to travel."</div><div class="ph-ctx">Shows empathy and awareness of privilege. Adaptable to any opportunity. "Not everyone has the chance to [learn English / study abroad / work internationally] &mdash; and if they did, things would be different." Awareness + FC = sophisticated.</div></div></div>
+      <div class="ph-card"><img src="https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=600&auto=format&fit=crop&q=80" alt="Short trip opening the mind" loading="lazy"><div class="ph-card-body"><div class="ph-num">PHRASE 3</div><div class="ph-phrase">"Even short trips open your mind."</div><div class="ph-ctx">Democratize the argument. Applies to travel AND learning. "Even short conversations with people from different departments open your mind &mdash; if you listen with real curiosity." This week: use it in any context where small actions lead to big perspective shifts.</div></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="s8">
+  <div class="section-header"><span class="section-number">&sect;8</span><h2 class="section-title">&#127942; Wrap-Up &amp; Exit Project Reveal</h2><span class="section-time">8 min</span></div>
+  <div class="section-body">
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:16px 0">
+      <div style="background:var(--surface2);border:1px solid var(--border);border-top:3px solid var(--accent);border-radius:8px;padding:16px"><div style="font-family:var(--font-head);font-size:22px;font-weight:800;color:var(--accent);margin-bottom:6px">01</div><div style="font-size:13px;color:var(--muted);line-height:1.5"><strong style="color:var(--text)">You have the complete toolkit.</strong> PP (evidence) + FC (consequence) + 5 opinion phrases (position). Used together, spontaneously, for 4 sessions. You are ready for S5.</div></div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-top:3px solid var(--accent);border-radius:8px;padding:16px"><div style="font-family:var(--font-head);font-size:22px;font-weight:800;color:var(--accent);margin-bottom:6px">02</div><div style="font-size:13px;color:var(--muted);line-height:1.5"><strong style="color:var(--text)">Assumptions are not knowledge.</strong> The Oaxaca trip showed: you can believe something strongly and still be completely wrong. Challenge your assumptions &mdash; in English and in life.</div></div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-top:3px solid var(--accent);border-radius:8px;padding:16px"><div style="font-family:var(--font-head);font-size:22px;font-weight:800;color:var(--accent);margin-bottom:6px">03</div><div style="font-size:13px;color:var(--muted);line-height:1.5"><strong style="color:var(--text)">The Exit Project is next.</strong> Topic: anything you feel strongly about. 3 minutes. No notes. All M6 grammar. This is what B1.1 looks like at the ceiling.</div></div>
+    </div>
+
+    <div style="font-family:var(--font-head);font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin:18px 0 10px">&#9989; I Can Now&hellip;</div>
+    <div class="checklist">
+      <div class="cl-item" onclick="this.classList.toggle('done');checkAllDone()"><div class="cl-box"></div>Use PP + FC + opinion language together spontaneously &mdash; no prompting needed.</div>
+      <div class="cl-item" onclick="this.classList.toggle('done');checkAllDone()"><div class="cl-box"></div>Use all 5 opinion phrases: I strongly believe / In my opinion / I see both sides / That&apos;s a good point, however / The reality is.</div>
+      <div class="cl-item" onclick="this.classList.toggle('done');checkAllDone()"><div class="cl-box"></div>Describe how travel changed my perspective using: assumption, openness, curiosity, humble, discover, broaden.</div>
+      <div class="cl-item" onclick="this.classList.toggle('done');checkAllDone()"><div class="cl-box"></div>Give a 90-second argument on any topic from Module 6 &mdash; no notes, complete structure.</div>
+      <div class="cl-item" onclick="this.classList.toggle('done');checkAllDone()"><div class="cl-box"></div>I know my Exit Project topic for S5 and I have rehearsed a first draft of my argument.</div>
+    </div>
+
+    <!-- EXIT PROJECT REVEAL -->
+    <div class="exit-project">
+      <div class="ep-label">&#127919; Exit Project B1.1 &mdash; Revealed at End of S4A</div>
+      <div class="ep-title">Your Story &mdash; Final Talk</div>
+      <div class="ep-sub">In the next class (S5), you will give a 3-minute unscripted talk on a topic you feel strongly about. Any topic. No notes. This is the final assessment of B1.1.</div>
+      <div class="ep-box">
+        <div class="ep-box-label">&#9989; You must include</div>
+        <div class="ep-criteria">
+          <div class="ep-crit">Present Perfect: what has happened up to now that makes this matter &mdash; at least twice</div>
+          <div class="ep-crit">First Conditional: what will happen if nothing changes &mdash; at least twice</div>
+          <div class="ep-crit">Opinion language: at least 3 of the 5 phrases</div>
+          <div class="ep-crit">5 B1.1 vocabulary words from any module &mdash; used naturally</div>
+          <div class="ep-crit">3 minutes minimum &mdash; no notes, no reading</div>
+        </div>
+      </div>
+      <div style="font-size:13px;color:var(--muted);line-height:1.7;max-width:580px;margin:0 auto">
+        <strong style="color:var(--warn)">Topic ideas:</strong> The environment in your industry &middot; Why education needs to change &middot; A food tradition worth preserving &middot; Why travel matters &middot; Work-life balance in your company &middot; Mental health at work &middot; Anything from any module &mdash; or something you care about deeply.<br><br>
+        <strong style="color:var(--warn)">Preparation:</strong> You have until next class. You may take notes home &mdash; but you cannot read from them in S5. Practice speaking, not writing.
+      </div>
+    </div>
+
+    <div class="win-wrap">
+      <div class="win-label">&#127941; My Win Today</div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:8px">Complete: <em>"Today I used PP + FC + opinion language to argue about travel. And for S5, my topic will be..."</em></div>
+      <textarea class="win-input" id="winInput" placeholder="Type your win and your S5 topic here..." rows="2"></textarea>
+      <button class="btn btn-primary" onclick="saveWin()">Save My Win &#127942;</button>
+      <div class="win-saved" id="winSaved"></div>
+    </div>
+    <div class="next-card">
+      <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=900&auto=format&fit=crop&q=80" alt="Open ocean representing the final session" loading="lazy">
+      <div class="next-card-body">
+        <div class="next-lbl">&#9654; Next Class &mdash; B1.1 &middot; M6 &middot; S5 &mdash; Exit Project</div>
+        <div class="next-title">Your Story &mdash; Final Talk</div>
+        <div class="next-sub">No new vocabulary. No new grammar. 100% speaking. Each student delivers a 3-minute unscripted talk on their chosen topic. CEFR rubric: fluency &middot; vocabulary range &middot; opinion expression &middot; grammar in context &middot; engagement. This is what B1.1 fluency looks like at the ceiling.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+<footer class="site-footer">
+  <div class="footer-brand">Gabriel Turner &middot; English Training &middot; Teacher Edition</div>
+  <div style="font-size:12px;color:var(--muted)">GT_B1_1_M6_S4A_TEACHER_v1</div>
+  <div class="level-tags">
+    <span class="level-tag">A1.1</span><span class="level-tag">A1.2</span><span class="level-tag">A2.1</span><span class="level-tag">A2.2</span>
+    <span class="level-tag active">B1.1</span>
+    <span class="level-tag">B1.2</span><span class="level-tag">B2.1</span><span class="level-tag">B2.2</span>
+  </div>
+</footer>
+<script>
+var earnedBadges={};
+function earnBadge(id){if(earnedBadges[id])return;earnedBadges[id]=true;var el=document.getElementById(id);if(el)el.classList.add('earned');if(Object.keys(earnedBadges).length>=5)launchConfetti();}
+function launchConfetti(){var w=document.getElementById('confettiWrap');w.style.display='block';var cols=['#10B981','#34D399','#FFB347','#00E5A0','#FF4D6D','#A78BFA'];for(var i=0;i<90;i++){var c=document.createElement('div');c.style.cssText='position:absolute;width:8px;height:8px;background:'+cols[i%cols.length]+';border-radius:50%;left:'+Math.random()*100+'%;top:-10px;animation:confFall '+(1.5+Math.random()*2)+'s ease-out forwards;animation-delay:'+Math.random()*.5+'s;';w.appendChild(c);}var s=document.createElement('style');s.textContent='@keyframes confFall{0%{transform:translateY(0) rotate(0);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}';document.head.appendChild(s);}
+var timerIntervals={};
+function startTimerSVG(arcId,textId,seconds,circumference,badgeId){if(timerIntervals[arcId])clearInterval(timerIntervals[arcId]);var arc=document.getElementById(arcId),txt=document.getElementById(textId),rem=seconds;function update(){arc.style.strokeDashoffset=circumference*(1-rem/seconds);var m=Math.floor(rem/60),s=rem%60;txt.textContent=m+':'+(s<10?'0':'')+s;if(rem<=5)arc.style.stroke='var(--danger)';if(rem<=0){clearInterval(timerIntervals[arcId]);arc.style.stroke='var(--success)';if(badgeId)earnBadge(badgeId);return;}rem--;}update();timerIntervals[arcId]=setInterval(update,1000);}
+function resetTimerSVG(arcId,textId,label,circumference){if(timerIntervals[arcId]){clearInterval(timerIntervals[arcId]);delete timerIntervals[arcId];}var arc=document.getElementById(arcId);arc.style.strokeDashoffset=0;arc.style.stroke='var(--accent)';document.getElementById(textId).textContent=label;}
+window.addEventListener('scroll',function(){var h=document.documentElement;document.getElementById('progressBar').style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100+'%';},{passive:true});
+function toggleMode(){document.body.classList.toggle('student-mode');document.querySelector('.mode-toggle').textContent=document.body.classList.contains('student-mode')?'TEACHER MODE':'STUDENT MODE';}
+function speakWord(t){if(!window.speechSynthesis)return;window.speechSynthesis.cancel();var u=new SpeechSynthesisUtterance(t);u.lang='en-US';u.rate=0.85;window.speechSynthesis.speak(u);}
+function toggleReveal(id){var el=document.getElementById(id);el.style.display=el.style.display==='block'?'none':'block';el.previousElementSibling.textContent=el.style.display==='block'?'\u25b2 Hide Model Answer':'\u25bc Show Model Answer (B1.1)';}
+function toggleScript(id){var el=document.getElementById(id);el.style.display=el.style.display==='block'?'none':'block';el.previousElementSibling.textContent=el.style.display==='block'?'\u25b2 Hide Script':'\u25bc Show ElevenLabs Script';}
+var meterVal=50;function moveMeter(d){meterVal=Math.max(5,Math.min(95,meterVal+d));document.getElementById('meterFill').style.width=meterVal+'%';document.getElementById('meterPercent').textContent='Class: '+meterVal+'% agree';}function meterClick(e,el){var rect=el.getBoundingClientRect();meterVal=Math.round(((e.clientX-rect.left)/rect.width)*100);meterVal=Math.max(5,Math.min(95,meterVal));document.getElementById('meterFill').style.width=meterVal+'%';document.getElementById('meterPercent').textContent='Class: '+meterVal+'% agree';}
+function saveWin(){var t=document.getElementById('winInput').value.trim();if(!t)return;var s=document.getElementById('winSaved');s.style.display='block';s.textContent='\ud83c\udfc6 "'+t+'" \u2014 That is your proof.';earnBadge('b5');}
+function checkAllDone(){var items=document.querySelectorAll('.cl-item');var done=document.querySelectorAll('.cl-item.done');if(done.length===items.length)earnBadge('b5');}
+var otbCount=0;function openBox(el,n){if(el.classList.contains('opened'))return;el.classList.add('opened');el.querySelector('.box-icon').textContent='\u2705';otbCount++;document.getElementById('otbScore').textContent='Boxes opened: '+otbCount+' / 8';if(otbCount>=8)earnBadge('b2');}
+var pollData={
+  "pa1a":{correct:true,msg:"Correct. PP \'has changed\' + FC IF present simple \'if I travel\' + will. Perfect."},
+  "pa1b":{correct:false,msg:"Two errors: past simple \'changed\' (need PP) + \'will travel\' in IF clause (never). Fix both."},
+  "pa1c":{correct:false,msg:"Mixing conditionals. For a real consequence use FC: \'if I travel more, I WILL understand.\'"},
+  "pa2a":{correct:true,msg:"Correct. Acknowledges the point before countering. Professional and respectful."},
+  "pa2b":{correct:false,msg:"\'I strongly believe\' states your own position. It doesn\'t engage with the other argument first."},
+  "pa2c":{correct:false,msg:"\'The reality is\' is strong self-assertion. It doesn\'t acknowledge what the other person said."},
+  "pa3a":{correct:true,msg:"Correct. \'Would\' for counterfactual past: \'if I hadn\'t..., I would still have...\'"},
+  "pa3b":{correct:false,msg:"\'Will\' is for real future FC. Here we have a past unreal condition, so use \'would\'."},
+  "pa3c":{correct:false,msg:"\'Had\' doesn\'t complete this. \'Would\' is the correct modal for the result clause."},
+};
+var pollAnswered={};var scoreAVal=0;function checkPoll(btn,key,fbId,scoreId,maxScore){if(pollAnswered[fbId])return;pollAnswered[fbId]=true;var info=pollData[key];var opts=btn.parentElement.querySelectorAll('.poll-btn');opts.forEach(function(b){b.disabled=true;b.classList.add('wrong-ans');});var fb=document.getElementById(fbId);if(info&&info.correct){btn.classList.remove('wrong-ans');btn.classList.add('correct-ans');if(fb)fb.textContent=info.msg;scoreAVal++;var sc=document.getElementById(scoreId);if(sc)sc.textContent='Score: '+scoreAVal+' / '+maxScore;if(scoreAVal>=3)earnBadge('b3');}else{btn.classList.add('wrong-ans');if(fb)fb.textContent=info?info.msg:'\u274c';}}
+var listenData={
+  "cl1a":{correct:true,msg:"Correct — \'evaluate, give recommendations, and leave.\'"},
+  "cl1b":{correct:false,msg:"He didn\'t mention expecting efficiency."},
+  "cl1c":{correct:false,msg:"The opposite — the trip saved the supplier relationship."},
+  "cl2a":{correct:false,msg:"He says it \'looked inefficient on paper\' but had real logic."},
+  "cl2b":{correct:true,msg:"Correct — designed around seasons, the community, and values not in his logistics models."},
+  "cl2c":{correct:false,msg:"The spreadsheet gave him the wrong picture entirely."},
+  "cl3a":{correct:true,msg:"Correct — \'every time I have traveled with assumptions, I have come back without most of them.\'"},
+  "cl3b":{correct:false,msg:"The opposite — his assumptions were consistently wrong."},
+  "cl3c":{correct:false,msg:"He doesn\'t say this."},
+};
+function checkListen(btn,key,fbId){var opts=btn.parentElement.querySelectorAll('.poll-btn');opts.forEach(function(b){b.disabled=true;b.classList.add('wrong-ans');});var fb=document.getElementById(fbId);var info=listenData[key];if(info&&info.correct){btn.classList.remove('wrong-ans');btn.classList.add('correct-ans');if(fb)fb.textContent=info.msg;}else{if(fb)fb.textContent=info?info.msg:'\u274c';}}
+var wv=document.getElementById('wv');if(wv){for(var i=0;i<60;i++){var b=document.createElement('div');b.className='wbar';b.style.height=(8+Math.sin(i*.6)*10+Math.random()*18)+'px';b.style.opacity=.25+Math.random()*.35;wv.appendChild(b);}}
+</script>
+</body>
+</html>
