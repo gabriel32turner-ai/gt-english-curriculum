@@ -1,0 +1,1165 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Intermedio 2 · S13 · Return It, Repair It</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap">
+<style>
+:root{
+  --navy:#16213E; --navy2:#22305A; --cream:#F4F7FF; --paper:#FFFFFF; --ink:#1B1B2F; --mut:#5E6275; --line:#DCE4F8;
+  --lvl:#6B4DF0; --lvl-d:#3F2BB0; --lvl-t:#ECE7FF;
+  --sun:#FFC233; --sun-t:#FFF3D1; --teal:#0A7F75; --teal-t:#DCF2EF; --pink:#C71F5E; --pink-t:#FBE3EC; --grm:#C2410C; --grm-t:#FFEDE0;
+  --ok:#15A34A; --ok-t:#E3F7EA; --err:#E5484D; --err-t:#FDE8E8;
+  --r:18px; --r-sm:12px; --sh:0 6px 22px rgba(27,27,47,.08); --sh-lg:0 18px 44px rgba(27,27,47,.16);
+  color-scheme:light;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+[hidden]{display:none!important}
+html{scroll-behavior:smooth;scroll-padding-top:150px}
+body{background:var(--cream);color:var(--ink);font-family:"DM Sans","Segoe UI",system-ui,sans-serif;font-size:17px;line-height:1.55;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4,.nun{font-family:Nunito,"Segoe UI",system-ui,sans-serif;letter-spacing:-.01em;line-height:1.15;text-wrap:balance}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+button:focus-visible,a:focus-visible,textarea:focus-visible,input:focus-visible{outline:3px solid var(--lvl);outline-offset:2px}
+img{max-width:100%;display:block}
+.wrap{max-width:1100px;margin:0 auto;padding-inline:16px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+/* ---------- top bar ---------- */
+.topbar{background:var(--navy);color:#fff}
+.topbar .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding-block:10px}
+.brand{display:flex;align-items:center;gap:10px;font-family:Nunito;font-weight:900;font-size:14px;letter-spacing:.08em}
+.brand i{width:10px;height:10px;border-radius:50%;background:var(--lvl);box-shadow:0 0 0 4px rgba(107,77,240,.35)}
+.brand a{color:#fff;text-decoration:none}
+.brand small{font-family:"DM Sans";font-weight:500;letter-spacing:0;opacity:.7;font-size:13px}
+.toggles{display:flex;gap:8px;flex-wrap:wrap}
+.tg{border:1.5px solid rgba(255,255,255,.3);color:#fff;border-radius:99px;padding:6px 14px;font-size:13px;font-weight:700}
+.tg[aria-pressed="true"]{background:var(--sun);border-color:var(--sun);color:var(--navy)}
+
+/* ---------- hero ---------- */
+.hero{position:relative;background:var(--navy);color:#fff;overflow:hidden}
+.hero .bg{position:absolute;inset:0;background:url(img/i2s01_hero.jpg) center/cover}
+.hero .bg::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(28,18,78,.97) 0%,rgba(28,18,78,.87) 45%,rgba(28,18,78,.28) 100%)}
+.hero .wrap{position:relative;padding-block:44px 40px}
+.kick{font-family:Nunito;font-weight:900;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--sun)}
+.hero h1{font-size:clamp(40px,6.5vw,72px);font-weight:900;margin:8px 0 10px;max-width:16ch}
+.hero h1 span{color:var(--lvl);text-shadow:0 0 0 transparent}
+.hero p.obj{max-width:56ch;font-size:18px;opacity:.94}
+.pills{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.pill{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.28);border-radius:99px;padding:5px 13px;font-size:14px;font-weight:700}
+.pill.sun{background:var(--sun);border-color:var(--sun);color:var(--navy)}
+.coach{display:inline-flex;align-items:center;gap:12px;margin-top:20px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);border-radius:99px;padding:6px 18px 6px 6px}
+.coach .cav{width:44px;height:44px;border-radius:50%;background:var(--lvl);display:grid;place-items:center;font-family:Nunito;font-weight:900;font-size:16px;letter-spacing:.02em}
+.coach b{display:block;font-family:Nunito;font-weight:900;font-size:17px;line-height:1.1}
+.coach small{font-size:13px;color:var(--sun);font-weight:700;letter-spacing:.04em}
+
+/* ---------- sticky nav ---------- */
+.nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:40;background:rgba(244,247,255,.96);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.nav .wrap{padding-block:10px 8px}
+.prog{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+.bar{flex:1;height:10px;background:#E4E9F9;border-radius:99px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--lvl),var(--sun));border-radius:99px;transition:width .4s}
+.xp{font-family:Nunito;font-weight:900;font-size:15px;color:var(--lvl-d);white-space:nowrap}
+.clock{font-family:Nunito;font-weight:900;font-size:15px;background:var(--navy);color:#fff;border-radius:99px;padding:5px 12px;font-variant-numeric:tabular-nums}
+.steps{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}
+.steps::-webkit-scrollbar{display:none}
+.steps a{flex:1 0 auto;text-decoration:none;color:var(--mut);background:#EAF0FB;border-radius:10px;padding:8px 12px;font-weight:700;font-size:14px;white-space:nowrap;text-align:center;border:1.5px solid transparent}
+.steps a b{font-family:Nunito;margin-right:4px}
+.steps a.on{background:var(--c,var(--lvl));color:#fff}
+.steps a.done{border-color:var(--ok);color:var(--ok)}
+.steps a.done.on{color:#fff}
+
+/* ---------- sections ---------- */
+main{padding-block:26px 80px}
+.sec{background:var(--paper);border-radius:24px;box-shadow:var(--sh);margin-bottom:26px;overflow:hidden;border-top:8px solid var(--c)}
+.shead{display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between;padding:22px 26px 6px}
+.snum{display:flex;align-items:center;gap:14px}
+.snum .n{width:54px;height:54px;border-radius:16px;background:var(--c);color:#fff;display:grid;place-items:center;font-family:Nunito;font-weight:900;font-size:22px;flex:none}
+.snum h2{font-size:clamp(26px,3.4vw,36px);font-weight:900}
+.snum .sub{font-size:14px;color:var(--mut);font-weight:500}
+.meta{display:flex;gap:8px;flex-wrap:wrap}
+.chip{border-radius:99px;padding:5px 12px;font-size:13px;font-weight:700;background:var(--ct);color:var(--ink)}
+.chip.dark{background:var(--navy);color:#fff}
+.sbody{padding:14px 26px 28px;display:grid;gap:22px}
+.block{display:grid;gap:12px}
+.bt{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.bt h3{font-size:22px;font-weight:900}
+.bt .tag{font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--c)}
+.hint{color:var(--mut);font-size:15px}
+.card{background:var(--paper);border:1.5px solid var(--line);border-radius:var(--r);padding:18px}
+.tint{background:var(--ct);border-color:transparent}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+@media (max-width:820px){.g2,.g3{grid-template-columns:1fr}}
+.btn{border-radius:99px;padding:10px 18px;font-weight:700;font-size:15px;background:var(--paper);border:1.5px solid var(--line)}
+.btn.main{background:var(--c,var(--lvl));border-color:var(--c,var(--lvl));color:#fff}
+.btn.dark{background:var(--navy);border-color:var(--navy);color:#fff}
+.btn.sm{padding:6px 12px;font-size:14px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.say{width:40px;height:40px;border-radius:50%;background:var(--c,var(--lvl));color:#fff;display:inline-grid;place-items:center;flex:none;font-size:16px}
+.say svg{width:18px;height:18px;fill:#fff}
+
+/* teacher notes */
+.tn{border-radius:var(--r);background:#FFFBEA;border:1.5px dashed #E9C46A}
+.tn summary{list-style:none;padding:12px 16px;font-weight:800;font-family:Nunito;cursor:pointer;display:flex;justify-content:space-between;color:#7A5A00}
+.tn summary::-webkit-details-marker{display:none}
+.tn summary::after{content:"＋";font-weight:900}
+.tn[open] summary::after{content:"－"}
+.tn .layers{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;padding:0 16px 16px}
+@media (max-width:820px){.tn .layers{grid-template-columns:1fr}}
+.tn .ly{background:#fff;border-radius:12px;padding:12px 14px;font-size:15px}
+.tn .ly h4{font-size:13px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px}
+.tn .ly:nth-child(1) h4{color:var(--grm)} .tn .ly:nth-child(2) h4{color:var(--lvl-d)} .tn .ly:nth-child(3) h4{color:var(--teal)}
+.tn ul{padding-left:18px} .tn li{margin-bottom:4px}
+body.student .tn, body.student .key{display:none!important}
+
+/* ---------- §1 warm-up ---------- */
+.scene{display:grid;grid-template-columns:1.1fr 1fr;border-radius:var(--r);overflow:hidden;background:var(--navy);color:#fff}
+@media (max-width:820px){.scene{grid-template-columns:1fr}}
+.scene img{height:100%;min-height:260px;object-fit:cover}
+.scene .txt{padding:26px;display:grid;gap:12px;align-content:center}
+.bubble{background:#fff;color:var(--ink);border-radius:18px 18px 18px 4px;padding:12px 16px;font-size:20px;font-weight:700;max-width:28ch;position:relative}
+.bubble.me{background:var(--lvl);color:#fff;border-radius:18px 18px 4px 18px;justify-self:end}
+.poll{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+@media (max-width:900px){.poll{grid-template-columns:repeat(3,1fr)}}
+@media (max-width:520px){.poll{grid-template-columns:repeat(2,1fr)}}
+.pc{border-radius:var(--r);overflow:hidden;background:var(--paper);border:2px solid var(--line);display:grid;transition:transform .15s,border-color .15s}
+.pc .em{aspect-ratio:4/3;display:grid;place-items:center;font-size:40px;background:var(--pc-bg,var(--ct))}
+.pc .pb{padding:10px 12px;display:grid;gap:8px}
+.pc .nm{font-family:Nunito;font-weight:900;font-size:16px;line-height:1.15;min-height:2.3em}
+.pc .vt{display:flex;align-items:center;justify-content:space-between}
+.pc .vt button{width:34px;height:34px;border-radius:50%;background:var(--ct);font-weight:900;font-size:18px}
+.pc .vt output{font-family:Nunito;font-weight:900;font-size:22px;font-variant-numeric:tabular-nums}
+.pc .pbar{height:8px;border-radius:99px;background:#EDF1FB;overflow:hidden}
+.pc .pbar i{display:block;height:100%;width:0;background:var(--c);transition:width .3s}
+.pc.win{border-color:var(--c);transform:translateY(-3px)}
+.result{font-family:Nunito;font-weight:900;font-size:20px}
+.fq{display:grid;gap:8px}
+.fq div{background:var(--ct);border-radius:12px;padding:10px 14px;font-weight:700}
+.fq div span{color:var(--mut);font-weight:500}
+
+/* ---------- §2 vocab ---------- */
+.flips{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+@media (max-width:900px){.flips{grid-template-columns:repeat(3,1fr)}}
+@media (max-width:520px){.flips{grid-template-columns:repeat(2,1fr)}}
+.flip{perspective:900px;height:170px}
+.flip .in{position:relative;width:100%;height:100%;transition:transform .5s;transform-style:preserve-3d}
+.flip.on .in{transform:rotateY(180deg)}
+.flip .f,.flip .b{position:absolute;inset:0;border-radius:var(--r);backface-visibility:hidden;padding:14px;display:grid;align-content:space-between}
+.flip .f{background:var(--fc);color:#fff}
+.flip .b{background:#fff;border:2px solid var(--fc);transform:rotateY(180deg)}
+.flip .num{font-family:Nunito;font-weight:900;font-size:13px;opacity:.8}
+.flip .w{font-family:Nunito;font-weight:900;font-size:19px;line-height:1.15}
+.flip .es{font-weight:700;color:var(--mut);font-size:14px}
+.flip .ex{font-size:14px}
+.flip .fb{display:flex;justify-content:space-between;align-items:end}
+.flip .fb .say{background:rgba(255,255,255,.25)}
+.flip .tap{font-size:12px;font-weight:700;opacity:.85}
+.flip .seen{position:absolute;top:10px;right:10px;background:var(--ok);color:#fff;border-radius:99px;font-size:11px;font-weight:800;padding:2px 8px}
+.match{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.match .col{display:grid;gap:10px}
+.mi{border:2px solid var(--line);background:#fff;border-radius:14px;padding:12px 14px;font-weight:700;text-align:left;transition:.15s}
+.mi.sel{border-color:var(--c);background:var(--ct)}
+.mi.ok{border-color:var(--ok);background:var(--ok-t);color:var(--ok);cursor:default}
+.mi.bad{border-color:var(--err);background:var(--err-t);animation:shake .3s}
+@keyframes shake{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+.board{display:flex;flex-wrap:wrap;gap:10px}
+.dw{border-radius:12px;padding:10px 14px;font-family:Nunito;font-weight:900;font-size:17px;background:var(--navy);color:#fff}
+.dw[aria-pressed="true"]{background:#E4E9F9;color:#9FA9C2;text-decoration:line-through}
+.timer{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.timer output{font-family:Nunito;font-weight:900;font-size:34px;font-variant-numeric:tabular-nums;min-width:4.5ch}
+.timer.end output{color:var(--err)}
+.closeout{background:var(--navy);color:#fff;border-radius:14px;padding:12px 16px;font-family:Nunito;font-weight:900;font-size:19px}
+.stat{font-family:Nunito;font-weight:900}
+.stat b{color:var(--c);font-size:26px}
+
+/* ---------- §3 grammar ---------- */
+.disc{display:grid;grid-template-columns:1fr 1.2fr;gap:0;border-radius:var(--r);overflow:hidden;border:1.5px solid var(--line)}
+@media (max-width:820px){.disc{grid-template-columns:1fr}}
+.disc img{height:100%;min-height:240px;object-fit:cover}
+.disc .chat{padding:20px;display:grid;gap:10px;align-content:center;background:var(--grm-t)}
+.disc .chat p{background:#fff;border-radius:14px;padding:10px 14px;font-size:18px;font-weight:500;max-width:34ch}
+.disc .chat p:nth-child(even){justify-self:end;background:var(--grm);color:#fff}
+mark.hl{background:transparent;color:inherit;border-radius:4px;transition:.2s}
+.show-hl mark.hl{background:var(--sun);color:var(--ink);padding:0 3px;font-weight:800}
+.tool{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media (max-width:820px){.tool{grid-template-columns:1fr}}
+.tool .card h4{font-size:14px;letter-spacing:.08em;text-transform:uppercase;color:var(--grm);margin-bottom:6px}
+.tool .big{font-family:Nunito;font-weight:900;font-size:24px}
+.tool .big em{font-style:normal;color:var(--grm)}
+.forms{border-radius:var(--r);overflow:hidden;border:1.5px solid var(--line)}
+.forms table{width:100%;border-collapse:collapse;font-size:16px}
+.forms th{background:var(--grm);color:#fff;font-family:Nunito;text-align:left;padding:10px 14px}
+.forms td{padding:10px 14px;border-top:1px solid var(--line);background:#fff}
+.forms td:first-child{font-family:Nunito;font-weight:900;font-size:22px;color:var(--grm);width:56px;text-align:center}
+.forms b{color:var(--grm)}
+.es-box{background:#fff;border:2px dashed var(--grm);border-radius:var(--r);padding:16px 18px;display:grid;gap:8px}
+.answerbox{background:var(--navy);color:#fff;border-radius:var(--r);padding:16px 18px;font-family:Nunito;font-weight:900;font-size:19px;display:flex;align-items:center;gap:12px}
+.answerbox .tagi{background:var(--sun);color:var(--navy);border-radius:8px;padding:3px 10px;font-size:12px;letter-spacing:.06em}
+.mc{display:grid;gap:12px}
+.mcq{background:#fff;border:1.5px solid var(--line);border-radius:14px;padding:14px 16px;display:grid;gap:10px}
+.mcq .q{font-weight:700;font-size:18px}
+.mcq .q .n{font-family:Nunito;font-weight:900;color:var(--c);margin-right:6px}
+.opts{display:flex;gap:8px;flex-wrap:wrap}
+.opt{border:2px solid var(--line);border-radius:99px;padding:7px 16px;font-weight:700;background:#fff}
+.opt:hover{border-color:var(--c)}
+.opt.ok{background:var(--ok);border-color:var(--ok);color:#fff}
+.opt.no{background:var(--err-t);border-color:var(--err);color:var(--err)}
+.mcq .fb{font-size:15px;font-weight:700}
+.mcq .fb.ok{color:var(--ok)} .mcq .fb.no{color:var(--err)}
+.score{font-family:Nunito;font-weight:900;font-size:18px}
+.builder .dst,.builder .src{display:flex;flex-wrap:wrap;gap:8px;min-height:56px;padding:10px;border-radius:14px}
+.builder .dst{border:2.5px dashed var(--c);background:var(--ct)}
+.wchip{background:#fff;border:2px solid var(--line);border-radius:12px;padding:8px 14px;font-family:Nunito;font-weight:900;font-size:18px;box-shadow:0 3px 0 var(--line)}
+.dst .wchip{border-color:var(--c);box-shadow:0 3px 0 var(--c)}
+.errs{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media (max-width:820px){.errs{grid-template-columns:1fr}}
+.err{border-radius:14px;padding:14px;background:#fff;border:1.5px solid var(--line);display:grid;gap:4px}
+.err s{color:var(--err);font-weight:700}
+.err b{color:var(--ok)}
+
+/* ---------- §4 reading ---------- */
+.phone{max-width:420px;margin:0 auto;background:#fff;border-radius:34px;border:10px solid var(--navy);box-shadow:var(--sh-lg);overflow:hidden}
+.phone .ph{background:var(--teal);color:#fff;padding:14px 16px;display:flex;align-items:center;gap:10px}
+.phone .ph b{font-family:Nunito;font-weight:900}
+.phone .ph small{display:block;opacity:.9;font-size:12px}
+.phone .ms{background:#EFE9E1;padding:14px 12px;display:grid;gap:10px}
+.msg{display:grid;grid-template-columns:36px 1fr;gap:8px;align-items:start}
+.msg img,.msg .av{width:36px;height:36px;border-radius:50%;object-fit:cover}
+.msg .av{color:#fff;display:grid;place-items:center;font-family:Nunito;font-weight:900}
+.msg .bb{background:#fff;border-radius:4px 14px 14px 14px;padding:8px 12px;font-size:16px}
+.msg .bb .who{font-family:Nunito;font-weight:900;font-size:13px;color:var(--teal)}
+
+/* ---------- §5 listening ---------- */
+.player{display:grid;grid-template-columns:260px 1fr;gap:0;border-radius:var(--r);overflow:hidden;background:var(--navy);color:#fff}
+@media (max-width:820px){.player{grid-template-columns:1fr}}
+.player img{height:100%;min-height:200px;object-fit:cover}
+.player .pp{padding:22px;display:grid;gap:12px;align-content:center}
+.predict{display:grid;gap:10px}
+.pbet{background:#fff;border:1.5px solid var(--line);border-radius:14px;padding:12px 14px;display:grid;gap:8px}
+.pbet .st{font-weight:700;font-size:16px}
+.pbet .row2{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.tf{display:flex;gap:6px}
+.tf button{border:2px solid var(--line);border-radius:99px;padding:5px 14px;font-weight:800;font-size:13px}
+.tf button[aria-pressed="true"].t{background:var(--ok);border-color:var(--ok);color:#fff}
+.tf button[aria-pressed="true"].f{background:var(--err);border-color:var(--err);color:#fff}
+.pts{display:flex;align-items:center;gap:8px}
+.pts button{width:28px;height:28px;border-radius:50%;background:var(--pink-t);color:var(--pink);font-weight:900}
+.pts output{font-family:Nunito;font-weight:900;min-width:2ch;text-align:center}
+.pbet.rev.right{border-color:var(--ok);background:var(--ok-t)}
+.pbet.rev.wrong{border-color:var(--err);background:var(--err-t)}
+.play{background:var(--pink);color:#fff;border-radius:99px;padding:12px 22px;font-family:Nunito;font-weight:900;font-size:18px;display:inline-flex;gap:10px;align-items:center}
+.script{background:#fff;border-radius:var(--r);border:1.5px solid var(--line);padding:16px 18px;font-size:17px;display:grid;gap:6px}
+.script p b{color:var(--pink);font-family:Nunito}
+.rec{display:inline-block;background:var(--navy);color:#fff;font-size:11px;font-weight:800;letter-spacing:.1em;padding:3px 8px;border-radius:4px}
+.pron{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media (max-width:820px){.pron{grid-template-columns:1fr 1fr}}
+.pr{background:var(--pink-t);border-radius:14px;padding:14px;display:grid;gap:8px;justify-items:start}
+.pr .w{font-family:Nunito;font-weight:900;font-size:21px}
+.pr .ipa{color:var(--mut);font-size:14px}
+
+/* ---------- §6 speaking ---------- */
+.rounds{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media (max-width:820px){.rounds{grid-template-columns:1fr}}
+.rd{border-radius:var(--r);overflow:hidden;border:2.5px solid var(--line);background:#fff;text-align:left;display:grid}
+.rd img{aspect-ratio:16/10;object-fit:cover;width:100%}
+.rd .initcard{aspect-ratio:16/10;width:100%;display:grid;place-items:center;font-family:Nunito;font-weight:900;font-size:44px;color:#fff}
+.rd .rb{padding:14px;display:grid;gap:6px}
+.rd h4{font-size:20px;font-weight:900}
+.rd .who{font-size:14px;font-weight:700;color:var(--lvl-d)}
+.rd ul{padding-left:18px;font-size:15px}
+.rd[aria-pressed="true"]{border-color:var(--c);box-shadow:0 0 0 4px var(--ct)}
+.deck{display:grid;grid-template-columns:1fr 1.3fr;border-radius:var(--r);overflow:hidden;background:var(--c);color:#fff}
+@media (max-width:820px){.deck{grid-template-columns:1fr}}
+.deck img{height:100%;min-height:260px;object-fit:cover}
+.deck .dq{padding:26px;display:grid;gap:14px;align-content:center}
+.deck .qn{font-family:Nunito;font-weight:900;letter-spacing:.12em;font-size:13px;opacity:.9}
+.deck .qt{font-family:Nunito;font-weight:900;font-size:clamp(26px,3.4vw,40px);line-height:1.1}
+.deck .fu{display:grid;gap:6px;font-size:18px;font-weight:500}
+.deck .fu span::before{content:"→ ";font-weight:900;color:var(--sun)}
+.deck .row .btn{background:rgba(255,255,255,.18);border-color:rgba(255,255,255,.35);color:#fff}
+.dots{display:flex;gap:6px}
+.dots button{width:11px;height:11px;border-radius:50%;background:rgba(255,255,255,.35)}
+.dots button[aria-current="true"]{background:#fff}
+.help{display:flex;flex-wrap:wrap;gap:8px}
+.help span{background:var(--navy);color:#fff;border-radius:99px;padding:6px 14px;font-weight:700;font-size:15px}
+
+/* ---------- §7 mission ---------- */
+.mission{position:relative;border-radius:var(--r);overflow:hidden;color:#fff;background:var(--navy)}
+.mission img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.32}
+.mission .mt{position:relative;padding:28px;display:grid;gap:10px;max-width:70ch}
+.mission h3{font-size:30px;font-weight:900}
+.guest{background:#fff;border-radius:var(--r);border:1.5px solid var(--line);overflow:hidden;display:grid}
+.guest .gh{display:flex;gap:12px;align-items:center;padding:14px;background:var(--ct)}
+.guest .gh img{width:72px;height:72px;border-radius:50%;object-fit:cover;border:3px solid #fff}
+.guest .gh .initcircle{width:72px;height:72px;border-radius:50%;display:grid;place-items:center;font-family:Nunito;font-weight:900;color:#fff;border:3px solid #fff;flex:none;font-size:26px}
+.guest h4{font-size:20px;font-weight:900}
+.guest .gh small{color:var(--mut);font-weight:700}
+.guest .line{padding:10px 14px 0;font-style:italic;color:var(--mut);font-size:15px}
+.moves{display:grid;gap:8px;padding:14px}
+.mv{display:flex;align-items:center;gap:10px;border:1.5px solid var(--line);border-radius:12px;padding:9px 12px;font-weight:700;font-size:15px;text-align:left;background:#fff}
+.mv i{width:22px;height:22px;border-radius:7px;border:2px solid var(--line);display:grid;place-items:center;flex:none;font-style:normal;color:#fff;font-size:13px}
+.mv[aria-pressed="true"]{background:var(--ok-t);border-color:var(--ok)}
+.mv[aria-pressed="true"] i{background:var(--ok);border-color:var(--ok)}
+
+/* ---------- §8 wrap ---------- */
+.sur{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media (max-width:900px){.sur{grid-template-columns:1fr 1fr}}
+@media (max-width:520px){.sur{grid-template-columns:1fr}}
+.sur .card h4{font-size:18px;font-weight:900;margin-bottom:6px}
+.sur .card:nth-child(1){border-top:5px solid var(--ok)} .sur .card:nth-child(2){border-top:5px solid var(--sun)} .sur .card:nth-child(3){border-top:5px solid var(--err)} .sur .card:nth-child(4){border-top:5px solid var(--grm)}
+textarea{width:100%;min-height:92px;border:1.5px solid var(--line);border-radius:12px;padding:10px 12px;font:inherit;font-size:15px;resize:vertical;background:#fff;color:var(--ink)}
+.selfev{display:flex;flex-wrap:wrap;gap:8px}
+.selfev button{border:2px solid var(--line);border-radius:99px;padding:8px 14px;font-weight:700;background:#fff}
+.selfev button[aria-pressed="true"]{background:var(--navy);border-color:var(--navy);color:#fff}
+.badge{display:flex;gap:18px;align-items:center;background:linear-gradient(120deg,var(--navy),var(--navy2));color:#fff;border-radius:var(--r);padding:22px}
+.badge .medal{width:84px;height:84px;border-radius:50%;background:var(--sun);color:var(--navy);display:grid;place-items:center;font-family:Nunito;font-weight:900;font-size:28px;flex:none;border:6px solid rgba(255,255,255,.3)}
+footer{color:var(--mut);font-size:13px;text-align:center;padding:10px 16px 40px}
+/* ---------- Intermedio 2 · additions ---------- */
+.sec[data-dur]{scroll-margin-top:150px}
+.card-session{border-radius:var(--r);background:#FFFBEA;border:1.5px dashed #E9C46A;margin-bottom:22px}
+.card-session summary{list-style:none;padding:12px 16px;font-weight:800;font-family:Nunito;cursor:pointer;display:flex;justify-content:space-between;color:#7A5A00}
+.card-session summary::-webkit-details-marker{display:none}
+.card-session summary::after{content:"＋";font-weight:900}
+.card-session[open] summary::after{content:"－"}
+.card-session .cs{padding:0 16px 16px;display:grid;gap:12px;font-size:15px}
+.card-session table{width:100%;border-collapse:collapse;font-size:14px;background:#fff;border-radius:12px;overflow:hidden}
+.card-session th,.card-session td{padding:7px 10px;border-top:1px solid var(--line);text-align:left;vertical-align:top}
+.card-session th{background:var(--navy);color:#fff;font-family:Nunito}
+.card-session .tot{font-family:Nunito;font-weight:900;font-size:17px}
+body.student .card-session{display:none!important}
+.anote{font-size:13px;font-weight:700;color:var(--mut)}
+.anote.warn{color:#9A5B00}
+.hero .bg{background-position:center 30%}
+
+:root{--blue:#1D6FD6;--blue-t:#E1EEFF;--tk:#F2A900;--tk-t:#FFF1C9;--tk-d:#7A5200;--rs:#C71F5E;--rs-t:#FBE3EC}
+.hearbtn{display:inline-flex;align-items:center;gap:8px;border:1.5px solid var(--line);border-radius:99px;padding:5px 12px;font-weight:700;font-size:14px;background:#fff}
+.hearbtn svg{width:16px;height:16px;fill:currentColor}
+.hook{background:var(--navy);color:#fff;border-radius:var(--r);padding:16px 20px;display:grid;gap:6px}
+.hook b{color:var(--sun);font-family:Nunito;letter-spacing:.08em;font-size:12px}
+.hook p{font-size:19px;font-weight:700}
+.rec{display:inline-block;background:var(--navy);color:#fff;font-size:11px;font-weight:800;letter-spacing:.1em;padding:3px 8px;border-radius:4px}
+.hero .bg{background-image:url(img/i2s02_door.jpg);background-position:center 62%}
+.s13-rules{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+@media (max-width:820px){.s13-rules{grid-template-columns:1fr}}
+.s13-rules div{background:var(--tk-t);border-radius:14px;padding:10px 14px;font-weight:700;font-size:15px;border-left:6px solid var(--tk)}
+.s13-rules b{font-family:Nunito;color:var(--tk-d);margin-right:4px}
+.s13-frames{display:flex;flex-wrap:wrap;gap:8px}
+.s13-frames span{background:var(--navy);color:#fff;border-radius:99px;padding:6px 14px;font-weight:700;font-size:15px}
+/* hero ticket */
+.s13-hero{display:flex;gap:14px;flex-wrap:wrap;margin-top:18px;align-items:center}
+.s13-claim{position:relative;background:var(--tk-t);color:var(--ink);border-radius:12px;padding:10px 26px;display:grid;gap:2px;min-width:200px;box-shadow:0 8px 24px rgba(0,0,0,.25)}
+.s13-claim::before,.s13-claim::after{content:"";position:absolute;top:50%;width:18px;height:18px;margin-top:-9px;border-radius:50%;background:var(--navy)}
+.s13-claim::before{left:-9px}.s13-claim::after{right:-9px}
+.s13-claim small{font-family:Nunito;font-weight:900;letter-spacing:.14em;font-size:11px;color:var(--tk-d)}
+.s13-claim b{font-family:Nunito;font-weight:900;font-size:20px}
+.s13-stamp{display:inline-block;border:3px solid currentColor;border-radius:8px;padding:1px 10px;font-family:Nunito;font-weight:900;letter-spacing:.12em;font-size:15px;transform:rotate(-5deg);background:rgba(255,255,255,.06)}
+.s13-stamps{display:flex;gap:10px;flex-wrap:wrap}
+.s13-stamps .s13-stamp:nth-child(1){color:#FFB4C8}.s13-stamps .s13-stamp:nth-child(2){color:#9CE7DD;transform:rotate(3deg)}.s13-stamps .s13-stamp:nth-child(3){color:#FFD97A}
+/* §1 claim tickets */
+.s13-tix{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+@media (max-width:900px){.s13-tix{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:560px){.s13-tix{grid-template-columns:1fr}}
+.s13-tx{position:relative;background:var(--tk-t);border-radius:16px;display:grid;overflow:hidden;box-shadow:var(--sh)}
+.s13-tx .hd{display:flex;justify-content:space-between;align-items:center;padding:8px 14px;background:var(--tk);color:#3A2600;font-family:Nunito;font-weight:900;font-size:12px;letter-spacing:.14em}
+.s13-tx .bd{padding:12px 14px 6px;display:grid;grid-template-columns:54px 1fr;gap:10px;align-items:center}
+.s13-tx .em{font-size:42px;line-height:1;text-align:center}
+.s13-tx .nm{font-family:Nunito;font-weight:900;font-size:18px;line-height:1.1}
+.s13-tx .st{font-size:14px;color:#5B4A1F;font-weight:500;line-height:1.3}
+.s13-tx .perf{border-top:3px dashed rgba(122,82,0,.35);margin:6px 0 0;position:relative}
+.s13-tx .perf::before,.s13-tx .perf::after{content:"";position:absolute;top:-10px;width:18px;height:18px;border-radius:50%;background:var(--paper)}
+.s13-tx .perf::before{left:-9px}.s13-tx .perf::after{right:-9px}
+.s13-tx .sb{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding:10px 12px 12px}
+.s13-st{border:2.5px solid currentColor;border-radius:10px;padding:6px 2px;font-family:Nunito;font-weight:900;font-size:12px;letter-spacing:.06em;background:#fff;display:grid;gap:2px;justify-items:center;line-height:1.1}
+.s13-st output{font-size:20px;color:var(--ink);font-variant-numeric:tabular-nums}
+.s13-st.r{color:var(--rs)}.s13-st.p{color:var(--teal)}.s13-st.c{color:#B45309}
+.s13-st:hover{background:#fff8}
+.s13-st.hit{outline:3px solid currentColor;outline-offset:1px}
+.s13-say{background:var(--navy);color:#fff;border-radius:14px;padding:12px 16px;font-weight:700;min-height:48px}
+.s13-say em{font-style:normal;color:var(--sun)}
+/* §2 vocabulary stalls */
+.s13-kit{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+@media (max-width:900px){.s13-kit{grid-template-columns:repeat(3,1fr)}}
+@media (max-width:560px){.s13-kit{grid-template-columns:repeat(2,1fr)}}
+.s13-wd{position:relative;text-align:left;border-radius:12px 12px 12px 12px;background:var(--wc,#fff);border:2px solid var(--line);padding:10px 12px 10px 24px;display:grid;gap:2px;overflow:hidden}
+.s13-wd::before{content:"";position:absolute;left:6px;top:50%;margin-top:-4px;width:8px;height:8px;border-radius:50%;background:#fff;border:2px solid var(--line)}
+.s13-wd b{font-family:Nunito;font-weight:900;font-size:17px;line-height:1.15}
+.s13-wd small{font-size:11px;font-weight:800;letter-spacing:.08em;color:var(--mut)}
+.s13-wd.new{background:#E3F7EA;border-color:var(--ok)}
+.s13-wd.sel{border-color:var(--teal);box-shadow:0 0 0 4px var(--teal-t)}
+.s13-wd.seen::after{content:"✓";position:absolute;right:8px;top:6px;color:var(--ok);font-weight:900}
+.s13-det{background:var(--navy);color:#fff;border-radius:var(--r);padding:14px 18px;display:grid;gap:6px;min-height:92px}
+.s13-det .ty{font-family:Nunito;font-weight:900;font-size:12px;letter-spacing:.12em;color:var(--sun)}
+.s13-det .w{font-family:Nunito;font-weight:900;font-size:26px}
+.s13-det .ex{font-style:italic;opacity:.95}
+.s13-det .hearbtn{justify-self:start}
+.s13-duels{display:flex;gap:8px;flex-wrap:wrap}
+.s13-duels button{border:2px solid var(--line);border-radius:99px;padding:8px 16px;font-weight:800;background:#fff;font-family:Nunito}
+.s13-duels button[aria-pressed="true"]{background:var(--teal);border-color:var(--teal);color:#fff}
+.s13-duels button.done::after{content:" ✓"}
+.s13-arena{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:stretch}
+@media (max-width:820px){.s13-arena{grid-template-columns:1fr}}
+.s13-stall{border-radius:var(--r);overflow:hidden;border:3px solid var(--line);background:#fff;display:grid;grid-template-rows:auto 1fr;text-align:left}
+.s13-stall .aw{height:44px;background:repeating-linear-gradient(90deg,var(--sc) 0 28px,#fff 28px 56px);border-bottom:4px solid var(--sc);border-radius:0 0 18px 18px/0 0 14px 14px}
+.s13-stall .sb2{padding:12px 16px 16px;display:grid;gap:6px}
+.s13-stall .lb{font-family:Nunito;font-weight:900;font-size:12px;letter-spacing:.14em;color:var(--sc)}
+.s13-stall .wd{font-family:Nunito;font-weight:900;font-size:32px;line-height:1}
+.s13-stall .pk{justify-self:start;margin-top:4px}
+.s13-stall[aria-pressed="true"]{border-color:var(--sc);box-shadow:0 0 0 5px var(--sct)}
+.s13-bell{display:grid;place-items:center;gap:8px;align-content:center}
+.s13-bell output{font-family:Nunito;font-weight:900;font-size:40px;font-variant-numeric:tabular-nums;background:var(--navy);color:#fff;border-radius:16px;padding:6px 14px;min-width:3.2ch;text-align:center}
+.s13-bell .timer{flex-direction:column;gap:8px;align-items:center}
+.s13-bell .timer output{font-size:40px;min-width:3.2ch}
+.s13-scene{background:var(--teal-t);border-radius:12px;padding:10px 14px;font-weight:700}
+.s13-ticks{display:grid;gap:8px}
+.s13-ticks label{display:flex;gap:10px;align-items:flex-start;background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:9px 12px;font-weight:600;font-size:15px;cursor:pointer}
+.s13-ticks input{width:20px;height:20px;margin-top:2px;flex:none;accent-color:var(--teal)}
+.s13-verdict{background:#FFFBEA;border:1.5px dashed #E9C46A;border-radius:12px;padding:12px 14px;font-size:15px}
+.s13-pts{font-family:Nunito;font-weight:900;font-size:18px}
+.s13-pts b{color:var(--teal);font-size:24px}
+/* §3 grammar */
+.s13-swap{display:grid;grid-template-columns:1.1fr 1fr;border-radius:var(--r);overflow:hidden;border:1.5px solid var(--line)}
+@media (max-width:820px){.s13-swap{grid-template-columns:1fr}}
+.s13-swap .org{background:var(--navy);color:#fff;padding:18px;display:grid;gap:10px;align-content:start}
+.s13-swap .org h4{font-size:13px;letter-spacing:.14em;color:var(--sun)}
+.s13-swap .row3{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.s13-pair{background:rgba(255,255,255,.12);border:1.5px solid rgba(255,255,255,.28);border-radius:12px;padding:8px 12px;font-weight:700;text-align:left;color:#fff;font-size:15px}
+.s13-pair[aria-pressed="true"]{background:var(--sun);color:var(--navy);border-color:var(--sun)}
+.s13-swap .sw{padding:18px;background:var(--grm-t);display:grid;gap:12px;align-content:center}
+.s13-sent{background:#fff;border-radius:14px;padding:14px 16px;font-size:22px;font-weight:700;font-family:Nunito;border-left:8px solid var(--grm);transition:.25s}
+.s13-sent u{text-decoration:none;color:var(--grm);border-bottom:3px solid var(--grm)}
+.s13-sent.b{border-left-color:var(--teal)}
+.s13-sent.b u{color:var(--teal);border-bottom-color:var(--teal)}
+.s13-rule3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media (max-width:820px){.s13-rule3{grid-template-columns:1fr}}
+.s13-rule3 .r{align-content:start;background:#fff;border:1.5px solid var(--line);border-top:6px solid var(--grm);border-radius:14px;padding:12px 14px;display:grid;gap:6px;font-size:16px}
+.s13-rule3 .n{font-family:Nunito;font-weight:900;color:var(--grm);font-size:22px}
+.s13-rule3 .x{color:var(--err);text-decoration:line-through;font-weight:700}
+.s13-rule3 .v{color:var(--ok);font-weight:800}
+.s13-chips{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.s13-chip{width:38px;height:38px;border-radius:50%;background:var(--tk);border:3px solid var(--tk-d);display:grid;place-items:center;font-weight:900;color:var(--tk-d);font-family:Nunito;transition:.25s}
+.s13-chip.lost{background:#E4E9F9;border-color:#C9D1EA;color:#9FA9C2;transform:scale(.8)}
+.s13-fcard{background:#fff;border:2px solid var(--line);border-radius:var(--r);padding:16px;display:grid;gap:10px}
+.s13-fcard .task{display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:center}
+.s13-fcard .em{font-size:44px}
+.s13-fcard .tt{font-family:Nunito;font-weight:900;font-size:24px;line-height:1.1}
+.s13-fcard .ow{display:inline-block;background:var(--grm);color:#fff;border-radius:8px;padding:2px 10px;font-weight:800;font-size:14px;margin-top:4px}
+.s13-ban{display:inline-block;background:var(--err);color:#fff;border-radius:99px;padding:3px 12px;font-family:Nunito;font-weight:900;letter-spacing:.08em;font-size:13px}
+.s13-use{display:grid;gap:8px}
+.s13-use label{display:flex;gap:10px;align-items:center;background:var(--grm-t);border-radius:12px;padding:10px 14px;font-weight:700;cursor:pointer}
+.s13-use input{width:20px;height:20px;accent-color:var(--grm)}
+/* §4 reading */
+.s13-rd{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media (max-width:820px){.s13-rd{grid-template-columns:1fr}}
+.s13-sign{background:#fff;border:6px solid var(--rs);border-radius:10px;padding:16px 18px;display:grid;gap:8px;box-shadow:var(--sh);position:relative}
+.s13-sign .fr{font-family:Nunito;font-weight:900;letter-spacing:.14em;font-size:12px;color:var(--rs)}
+.s13-sign p{font-size:18px}
+.s13-mail{background:#fff;border-radius:14px;overflow:hidden;box-shadow:var(--sh);border:1.5px solid var(--line);display:grid}
+.s13-mail .mh{background:var(--blue);color:#fff;padding:10px 16px;font-family:Nunito;font-weight:900;font-size:13px;letter-spacing:.06em;display:grid;gap:2px}
+.s13-mail .mh small{font-weight:500;opacity:.9;font-family:"DM Sans"}
+.s13-mail img{width:100%;height:110px;object-fit:cover}
+.s13-mail p{padding:14px 18px 18px;font-size:18px}
+.s13-rd mark.lk{background:transparent;color:inherit;border-radius:5px}
+.s13-rd.show-hl mark.lk{background:var(--sun);color:var(--ink);padding:0 3px;font-weight:800}
+/* §5 voicemail */
+.s13-inbox{border-radius:var(--r);overflow:hidden;background:var(--navy);color:#fff;display:grid;grid-template-columns:230px 1fr}
+@media (max-width:820px){.s13-inbox{grid-template-columns:1fr}}
+.s13-inbox img{height:100%;min-height:150px;object-fit:cover;width:100%}
+.s13-inbox .tx{padding:20px;display:grid;gap:8px;align-content:center}
+.s13-vms{display:grid;gap:12px}
+.s13-vm{background:#fff;border:2px solid var(--line);border-radius:var(--r);padding:12px 14px;display:grid;grid-template-columns:auto 1fr;gap:6px 14px;align-items:center}
+.s13-vm .av{width:52px;height:52px;border-radius:50%;display:grid;place-items:center;color:#fff;font-family:Nunito;font-weight:900;font-size:20px;grid-row:span 2}
+.s13-vm .t1{display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:space-between}
+.s13-vm .t1 b{font-family:Nunito;font-weight:900;font-size:18px}
+.s13-vm .t1 .ply{background:var(--pink);color:#fff;border-radius:99px;padding:7px 16px;font-weight:800;display:inline-flex;gap:8px;align-items:center}
+.s13-vm .t1 .ply svg{width:16px;height:16px;fill:#fff}
+.s13-vm .t2{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.s13-vm .rk{display:flex;gap:4px}
+.s13-vm .rk button{width:34px;height:34px;border-radius:50%;border:2px solid var(--line);font-family:Nunito;font-weight:900;background:#fff}
+.s13-vm .rk button[aria-pressed="true"]{background:var(--pink);border-color:var(--pink);color:#fff}
+.s13-vm select{border:2px solid var(--line);border-radius:10px;padding:6px 10px;font:inherit;font-weight:700;background:#fff;color:var(--ink)}
+.s13-vm .lab{font-size:12px;font-weight:800;letter-spacing:.08em;color:var(--mut)}
+.s13-vm.ok{border-color:var(--ok);background:var(--ok-t)}
+.s13-vm.no{border-color:var(--err);background:var(--err-t)}
+.s13-vm .played{font-size:12px;font-weight:800;color:var(--ok)}
+.s13-fb{font-weight:700;font-size:16px;min-height:1.4em}
+.s13-fb.ok{color:var(--ok)}.s13-fb.no{color:var(--err)}
+/* §6 case detective */
+.s13-case{border-radius:var(--r);overflow:hidden;background:#F3E7C8;border:1.5px solid #D9C68F;display:grid;grid-template-columns:200px 1fr}
+@media (max-width:700px){.s13-case{grid-template-columns:1fr}}
+.s13-case img{height:100%;min-height:140px;width:100%;object-fit:cover;filter:sepia(.35)}
+.s13-case .tx{padding:16px 20px;display:grid;gap:6px;position:relative}
+.s13-case .lb{font-family:Nunito;font-weight:900;letter-spacing:.16em;font-size:12px;color:#7A5A00}
+.s13-case h4{font-size:24px;font-weight:900}
+.s13-case .stp{position:absolute;right:14px;top:10px;color:var(--rs);border-color:var(--rs);transform:rotate(7deg);font-size:13px}
+.s13-wit{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+@media (max-width:820px){.s13-wit{grid-template-columns:1fr}}
+.s13-wc{background:#fff;border:2px solid var(--line);border-radius:var(--r);overflow:hidden;display:grid;align-content:start}
+.s13-wc .wh{display:flex;gap:12px;align-items:center;padding:12px 14px;background:var(--wcl)}
+.s13-wc .wh .ci{width:52px;height:52px;border-radius:50%;background:#fff;color:var(--wcd);display:grid;place-items:center;font-family:Nunito;font-weight:900;font-size:22px;border:3px solid var(--wcd);flex:none}
+.s13-wc .wh b{font-family:Nunito;font-weight:900;font-size:19px;display:block;line-height:1.1}
+.s13-wc .wh small{font-weight:700;color:var(--mut)}
+.s13-wc .cues{display:grid;gap:8px;padding:12px 14px 14px}
+.s13-cue{border:2px solid var(--line);border-radius:12px;background:#fff;padding:8px 12px;text-align:left;display:grid;gap:4px}
+.s13-cue .cl{font-weight:800;font-size:14px;color:var(--wcd)}
+.s13-cue .cl::before{content:"ASK ABOUT · ";font-size:11px;letter-spacing:.1em;color:var(--mut)}
+.s13-cue label{display:flex;gap:8px;align-items:center;font-size:14px;font-weight:600}
+.s13-cue label input{accent-color:var(--wcd);width:18px;height:18px}
+.s13-cue .an{display:none;background:var(--wcl);border-radius:8px;padding:8px 10px;font-weight:600;font-size:15px}
+.s13-cue.open .an{display:block}
+.s13-log{background:#fff;border:2px solid var(--ink);border-radius:var(--r);padding:0;overflow:hidden}
+.s13-log .lh{background:var(--ink);color:#7CFFC4;font-family:ui-monospace,Menlo,Consolas,monospace;padding:8px 14px;font-size:13px;letter-spacing:.08em}
+.s13-log table{width:100%;border-collapse:collapse;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:14px}
+.s13-log td{padding:8px 14px;border-top:1px solid var(--line);vertical-align:top}
+.s13-log td:first-child{white-space:nowrap;color:var(--mut);font-weight:700;width:1%}
+.s13-log tr.warn td{background:var(--err-t);color:#9B1C1C;font-weight:700}
+.s13-pick{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+@media (max-width:820px){.s13-pick{grid-template-columns:1fr 1fr}}
+.s13-pick button{border:2.5px solid var(--line);border-radius:14px;padding:10px 12px;background:#fff;text-align:left;font-weight:700;font-size:15px;display:grid;gap:4px}
+.s13-pick button b{font-family:Nunito;font-weight:900;font-size:17px}
+.s13-pick button.ok{border-color:var(--ok);background:var(--ok-t)}
+.s13-pick button.no{border-color:var(--err);background:var(--err-t);animation:shake .3s}
+.s13-twist{background:var(--navy);color:#fff;border-radius:var(--r);padding:16px 20px;display:grid;gap:10px}
+.s13-twist .t{font-family:Nunito;font-weight:900;font-size:21px;min-height:2.4em}
+.s13-twist label{display:flex;gap:8px;align-items:center;font-weight:600}
+.s13-twist input{width:20px;height:20px;accent-color:var(--sun)}
+.s13-opts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media (max-width:820px){.s13-opts{grid-template-columns:1fr}}
+.s13-qdeck{background:var(--lvl);color:#fff;border-radius:var(--r);padding:18px 22px;display:grid;gap:10px}
+.s13-qdeck small{font-family:Nunito;font-weight:900;letter-spacing:.12em;opacity:.9}
+.s13-qdeck .q{font-family:Nunito;font-weight:900;font-size:clamp(22px,3vw,32px);line-height:1.15}
+.s13-qdeck .f{display:grid;gap:4px;font-weight:500;font-size:17px}
+.s13-qdeck .f span::before{content:"→ ";font-weight:900;color:var(--sun)}
+.s13-qdeck .btn{background:rgba(255,255,255,.18);border-color:rgba(255,255,255,.4);color:#fff}
+/* §7 mission */
+.s13-tabs{display:flex;gap:8px;flex-wrap:wrap}
+.s13-tab{border:2.5px solid var(--line);border-radius:14px;padding:8px 14px;background:#fff;font-family:Nunito;font-weight:900;text-align:left;display:grid}
+.s13-tab small{font-family:"DM Sans";font-weight:600;color:var(--mut);font-size:12px}
+.s13-tab[aria-pressed="true"]{border-color:var(--teal);background:var(--teal-t)}
+.s13-mc{display:grid;grid-template-columns:1fr 1.3fr;gap:16px}
+@media (max-width:820px){.s13-mc{grid-template-columns:1fr}}
+.s13-claimc{position:relative;border-radius:var(--r);overflow:hidden;background:var(--navy);color:#fff;display:grid}
+.s13-claimc img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.25}
+.s13-claimc .tx{position:relative;padding:20px;display:grid;gap:8px;align-content:start}
+.s13-claimc .ctx{font-family:Nunito;font-weight:900;letter-spacing:.14em;font-size:12px;color:var(--sun)}
+.s13-claimc h4{font-size:24px;font-weight:900;line-height:1.1}
+.s13-claimc .em{font-size:44px}
+.s13-claimc .want{background:rgba(255,255,255,.14);border-radius:10px;padding:8px 12px;font-weight:700}
+.s13-sheet{background:#fff;border-radius:12px;color:var(--ink);padding:8px 12px;font-size:14px;display:grid;gap:3px}
+.s13-sheet b{font-family:Nunito;color:var(--teal)}
+.s13-relay{display:grid;gap:12px}
+.s13-step{background:#fff;border:2px solid var(--line);border-radius:14px;padding:12px 14px;display:grid;gap:8px}
+.s13-step .sn{font-family:Nunito;font-weight:900;font-size:13px;letter-spacing:.1em;color:var(--teal)}
+.s13-step .stx{font-weight:700;font-size:17px}
+.s13-step .ows{display:flex;gap:8px;flex-wrap:wrap}
+.s13-step .ows button{border:2px solid var(--line);border-radius:99px;padding:6px 14px;font-weight:800;font-size:14px;background:#fff}
+.s13-step .ows button.ok{background:var(--ok);border-color:var(--ok);color:#fff}
+.s13-step .ows button.no{background:var(--err-t);border-color:var(--err);color:var(--err)}
+.s13-step.done{border-color:var(--ok);background:var(--ok-t)}
+.s13-mv{display:grid;gap:8px}
+.s13-mv button{display:flex;align-items:center;gap:10px;border:1.5px solid var(--line);border-radius:12px;padding:9px 12px;font-weight:700;font-size:15px;text-align:left;background:#fff}
+.s13-mv button i{width:22px;height:22px;border-radius:7px;border:2px solid var(--line);display:grid;place-items:center;flex:none;font-style:normal;color:#fff;font-size:13px}
+.s13-mv button[aria-pressed="true"]{background:var(--ok-t);border-color:var(--ok)}
+.s13-mv button[aria-pressed="true"] i{background:var(--ok);border-color:var(--ok)}
+.s13-prog{height:10px;border-radius:99px;background:#E4E9F9;overflow:hidden}
+.s13-prog i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--teal),var(--sun));transition:width .3s}
+.s13-model{font-weight:600;font-size:15px;background:var(--teal-t);border-radius:12px;padding:10px 14px}
+.s13-lisimg{width:100%;height:150px;object-fit:cover;border-radius:var(--r)}
+
+</style>
+</head>
+<body>
+
+<div class="topbar"><div class="wrap">
+  <div class="brand"><i></i><a href="./">GABRIEL TURNER · YOUR BUSINESS COACH</a><small>Intermedio 2 · B1.2</small></div>
+  <div class="toggles">
+    <button class="tg" id="tgTeacher" aria-pressed="true">Teacher view</button>
+    <button class="tg" id="tgStudent" aria-pressed="false">Student view</button>
+    <button class="tg" id="tgGroup" aria-pressed="true">Group</button>
+    <button class="tg" id="tgOne" aria-pressed="false">1:1</button>
+  </div>
+</div></div>
+
+<header class="hero">
+  <div class="bg" role="img" aria-label="A parcel on a doorstep, ready to be returned"></div>
+  <div class="wrap">
+    <div class="kick">Intermedio 2 · Block 2 · PROCESS · Session 13 of 32</div>
+    <h1>Return It, <span>Repair It</span></h1>
+    <p class="obj">By the end of this class you can say who is responsible for each step when something is returned, repaired or replaced — and ask the right person, in English, without reading.</p>
+    <div class="pills"><span class="pill sun">60 min · live online</span><span class="pill">8 stages</span><span class="pill">is responsible for · is handled by</span><span class="pill">Speaking first</span></div>
+    <div class="s13-hero" aria-hidden="true"><div class="s13-claim"><small>CLAIM TICKET</small><b>No. 0013 · Service Desk</b></div><div class="s13-stamps"><span class="s13-stamp">RETURN</span><span class="s13-stamp">REPAIR</span><span class="s13-stamp">REPLACE</span></div></div>
+    <div class="coach"><span class="cav">GT</span><span><b>Gabriel Turner</b><small>Your Business Coach</small></span></div>
+  </div>
+</header>
+
+<nav class="nav" aria-label="Session stages"><div class="wrap">
+  <div class="prog"><div class="bar"><i id="pbar"></i></div><span class="xp" id="xp">0 XP</span><button class="clock" id="clock" title="Start / pause class clock">00:00</button></div>
+  <div class="steps" id="steps"></div>
+</div></nav>
+
+<main class="wrap" id="main">
+
+<details class="card-session"><summary>Teacher · Session card (Ficha de Sesión)</summary><div class="cs">
+  <table>
+    <tr><th>Campo</th><th>Valor</th></tr>
+    <tr><td>Nivel / MCER</td><td>Intermedio 2 · GT English Path Nivel 08 · B1.2 · online (grupo / 1:1) · modo Interacción (+ mediación ligera: pasar un mensaje de voz a quien no habla inglés)</td></tr>
+    <tr><td>Bloque / riesgo / temperatura</td><td>Bloque 2 PROCESS · sesión 13 de 32 · riesgo Seguro · temperatura Mild · contexto V (vida cotidiana: devoluciones y reparaciones) con casos de trabajo (≈50/50 en el curso)</td></tr>
+    <tr><td>Objetivo</td><td>Decir quién es responsable de cada paso de una devolución, reparación o cambio, preguntar por la persona o el departamento correctos y decir el estatus y el siguiente paso.</td></tr>
+    <tr><td>Disagreement hook</td><td>“It is better to repair things” vs “It is better to buy new things” (una razón; sin debate largo).</td></tr>
+    <tr><td>Punto de lengua (uno)</td><td>Responsabilidad: <i>X is responsible for Y</i> / <i>Y is handled by X</i> (+ <i>Who is responsible for…?</i>, <i>It is not handled by…</i>). La pasiva se limita a la forma frecuente <i>is/are handled by</i> (ya vista en S09/S11 como <i>handles</i>). Límite: sin pasiva completa en otros verbos ni en pasado, sin <i>responsible for + -ing</i> productivo, sin hipótesis.</td></tr>
+    <tr><td>Léxico (12; 9 reaparecen = 75 %)</td><td>Nuevos (3): return · refund · repair. Reciclados (9): handle · in charge of · department (S11) · request · pending (S07) · status · confirm (S01) · follow up (S07) · missing (S12). Palabras de contraste de VOC-10 (nivel A2, no cuentan como léxico meta): send back · fix · money back · deal with.</td></tr>
+    <tr><td>Dinámicas (4 familias)</td><td>VOC-10 Sixty-Second Sell (CONTRARRELOJ) · GRM-09 Forbidden Form (ELIMINACIÓN, etapa comunicativa; forma prohibida: <i>do / does / did</i> para asignar responsabilidad) · B18-17 The Case Detective (IMPOSTOR: una declaración no coincide con el registro; 1ª vez, vuelve como misión de bloque en S20) · LIS-04 Voicemail Triage (RANKING + mediación)</td></tr>
+    <tr><td>Evidencia</td><td>Duelos de vocabulario (razones y oración por duelo) · fichas conservadas en Forbidden Form · caso resuelto: quién actúa, qué falla, siguiente paso · triage de 3 mensajes (orden, ruta, mediación) · Misión “Three Claims”: 3 casos × 5 movimientos = 15; éxito ≥12/15 sin leer, más 9/9 pasos asignados.</td></tr>
+    <tr><td>Audio</td><td>15 clips (8 vocab, 3 listening —buzón de voz: Tom EE. UU., Yuki inglés de Japón, Lucia inglés de Brasil—, 4 pronunciación). Estado: scripts listos, audio pendiente. Mientras tanto la página usa la voz del navegador con aviso visible.</td></tr>
+    <tr><td>Fotos</td><td>Sin fotos nuevas (Unsplash no responde desde el contenedor y no hay navegador): se reutilizan i2s02_door (hero), i2s02_phone, i2s07_seal, i2s05_meeting e i2s05_desk con otro encuadre. Créditos no reverificados. Pendiente de mejora.</td></tr>
+  </table>
+  <div id="timeTable"></div>
+</div></details>
+
+<!-- §1 WARM-UP -->
+<section class="sec" id="s1" style="--c:var(--lvl);--ct:var(--lvl-t)" data-name="Warm-up" data-min="0–4" data-dur="4">
+  <div class="shead"><div class="snum"><span class="n">1</span><div><h2>Warm-up · The Service Desk opens</h2><div class="sub">0–4 min · Speaking first</div></div></div>
+    <div class="meta"><span class="chip">6 claim tickets</span><span class="chip dark">4 hook questions</span></div></div>
+  <div class="sbody">
+    <div class="hook"><b>TODAY’S QUESTION</b><p>“It is better to repair things.” — or — “It is better to buy new things.” Pick one. Give ONE reason.</p></div>
+    <div class="block"><div class="bt"><span class="tag">Claim tickets</span><h3>Return it, repair it or replace it?</h3><span class="score" id="wuCount"></span></div>
+      <p class="hint">Read a ticket. Stamp what you do. Say it out loud: “I ___ it because ___.” Stamp at least 4 tickets. In a group, everybody stamps.</p>
+      <div class="s13-tix" id="tix"></div>
+      <div class="s13-say" id="wuSay" aria-live="polite">Stamp a ticket to start.</div></div>
+    <div class="block"><div class="bt"><span class="tag">Speak</span><h3>Now your real life</h3></div>
+      <div class="fq"><div>What is the last thing that you returned to a store? <span>→ Why did you return it? → Did you get a refund?</span></div>
+      <div>Who is the person who repairs things in your home or at work? <span>→ How do you contact that person? → How long does it take?</span></div>
+      <div>What is something that you keep even if it is broken?</div>
+      <div>Where do you keep your receipts?</div></div></div>
+    <details class="tn"><summary>Teacher notes · §1 Warm-up</summary><div class="layers">
+      <div class="ly"><h4>Pedagógica</h4><ul><li>Objetivo: activar el vocabulario de devolver/reparar/cambiar antes de dar la estructura. No corrijas todavía: anota cómo dice el alumno “quién se encarga” (suele decir <i>the responsible</i>, <i>is responsible of</i>, <i>is handle by</i>). Esa lista alimenta Grammar y Forbidden Form.</li><li>Cada ficha pide una oración completa con <i>because</i>. Si responde con una palabra (“repair”), repregunta “And why?”. La pregunta 4 recicla <i>keep</i> de S12.</li></ul></div>
+      <div class="ly"><h4>Engagement</h4><ul><li>Frase del coach: “Todos tenemos algo roto en casa. Hoy aprendes a decir quién se encarga y qué sigue, sin quedarte callado.”</li><li>Grupo: cada quien sella una opción distinta y los demás preguntan “Why?”. 1:1: tú también sellas, y defiendes la contraria (gancho Mild, una razón, sin debate largo).</li></ul></div>
+      <div class="ly"><h4>Crecimiento</h4><ul><li>Gancho comercial: devoluciones, garantías y reparaciones son tareas diarias de cualquier planta y de cualquier casa. Si el alumno cuenta un caso real, apúntalo: es material para un taller corporativo “English for Returns and Repairs”.</li><li>Evidencia hoy: ≥4 fichas selladas con oración completa + 2 respuestas largas sobre su vida.</li></ul></div>
+    </div></details>
+  </div>
+</section>
+
+<!-- §2 VOCABULARY -->
+<section class="sec" id="s2" style="--c:var(--teal);--ct:var(--teal-t)" data-name="Vocabulary" data-min="4–12" data-dur="8">
+  <div class="shead"><div class="snum"><span class="n">2</span><div><h2>Vocabulary · Sixty-Second Sell</h2><div class="sub">4–12 min · VOC-10 · Pick a stall · Sell your word</div></div></div>
+    <div class="meta"><span class="chip">CONTRARRELOJ</span><span class="chip dark">12 words · 4 duels</span></div></div>
+  <div class="sbody">
+    <div class="s13-rules"><div><b>1</b>Two words, one situation. Pick a stall.</div><div><b>2</b>You have 60 seconds: why THIS word and not the other?</div><div><b>3</b>Points = reasons and sentences you say. Not speed.</div></div>
+    <div class="block"><div class="bt"><span class="tag">The 12 words · 2 min</span><h3>Tap each tag. Say it.</h3><span class="score" id="kitCount"></span></div>
+      <div class="s13-kit" id="kit"></div>
+      <div class="s13-det" id="det" aria-live="polite"><div class="ty">WORD</div><div class="ex">Tap a tag. Green tags are new today; the others come back from earlier sessions.</div></div>
+      <p class="anote" hidden></p></div>
+    <div class="block"><div class="bt"><span class="tag">VOC-10 · 5 min</span><h3>Four duels</h3><span class="score" id="duelTot"></span></div>
+      <div class="s13-duels" id="duelTabs"></div>
+      <div class="s13-scene" id="dScene"></div>
+      <div class="s13-arena">
+        <button class="s13-stall" id="stA" aria-pressed="false"></button>
+        <div class="s13-bell"><div class="timer" data-sec="60" id="tmDuel"><output>01:00</output><button class="btn main sm" data-a="go">Start</button><button class="btn sm" data-a="re">Reset</button></div></div>
+        <button class="s13-stall" id="stB" aria-pressed="false"></button>
+      </div>
+      <div class="s13-ticks" id="dTicks"></div>
+      <div class="row"><button class="btn dark sm" id="dReveal" disabled>Reveal the coach’s verdict</button><span class="s13-pts" id="dPts"></span></div>
+      <div class="s13-verdict" id="dVerdict" hidden></div>
+      <div class="closeout" id="vocOut" hidden></div></div>
+    <details class="tn"><summary>Teacher notes · §2 Vocabulary</summary><div class="layers">
+      <div class="ly"><h4>Pedagógica</h4><ul><li>VOC-10 Sixty-Second Sell: el alumno elige un puesto y defiende <b>por qué esa palabra y no su sinónimo</b> (registro, connotación, con quién se usa). Los 4 pares tienen diferencia real: return/send back (oficial vs cotidiano) · repair/fix (máquinas y talleres vs rápido e informal) · refund/money back (documento vs queja hablada) · handle/deal with (tarea que te toca vs problema o persona difícil). Si el par fuera intercambiable no habría nada que vender; aquí no lo es.</li><li>Léxico 12 (9 reciclados = 75 %): nuevos return · refund · repair; reciclados handle · in charge of · department (S11), request · pending (S07), status · confirm (S01), follow up (S07), missing (S12). Los otros 8 se ven en el kit y reaparecen en Grammar, Reading y Misión. 60 s es solo reloj de referencia: el punto se gana por razones dichas y una oración propia, nunca por rapidez.</li></ul></div>
+      <div class="ly"><h4>Engagement</h4><ul><li>Grupo: dos equipos, cada uno toma un puesto; el resto vota con la mano qué defensa “compra”. 1:1: el alumno elige puesto y tú eres el cliente que “compra” o no; luego intercambian puestos en 30 s.</li><li>Frase del coach: “No importa cuál palabra ganó. Importa que ya sabes decir por qué una suena mejor en cada situación.”</li></ul></div>
+      <div class="ly"><h4>Crecimiento</h4><ul><li>Registro (formal vs hablado) es lo que más valora un cliente corporativo: úsalo como argumento de venta (“tu equipo ya diferencia el tono de un correo y el de una llamada”).</li><li>Cierre declarado en voz alta (close_out): “I sold __ words today. My points are __.” Registra los puntos como línea base para S21 (VOC-11).</li></ul></div>
+    </div></details>
+  </div>
+</section>
+
+<!-- §3 GRAMMAR -->
+<section class="sec" id="s3" style="--c:var(--grm);--ct:var(--grm-t)" data-name="Grammar" data-min="12–24" data-dur="12">
+  <div class="shead"><div class="snum"><span class="n">3</span><div><h2>Grammar · Who is responsible?</h2><div class="sub">12–24 min · discover 2 · tool 3 · practice 2 · forbidden form 4 · use 1</div></div></div>
+    <div class="meta"><span class="chip">GRM-09 · ELIMINACIÓN</span><span class="chip dark">Mechanical → Communicative</span></div></div>
+  <div class="sbody">
+    <div class="block"><div class="bt"><span class="tag">Discover · 2 min</span><h3>Same fact, two starting points</h3></div>
+      <div class="s13-swap">
+        <div class="org"><h4>THE SERVICE DESK · WHO DOES WHAT</h4><div class="row3" id="pairs"></div><p class="hint" style="color:#fff;opacity:.85">Tap a fact. Then tap “Swap” and listen.</p></div>
+        <div class="sw"><div class="s13-sent" id="sentA"></div><div class="row"><button class="btn main sm" id="swapBtn" style="background:var(--grm);border-color:var(--grm)">⇄ Swap</button><button class="hearbtn" id="hrSw" aria-label="Hear the sentence"></button></div><div class="s13-sent b" id="sentB" hidden></div></div>
+      </div></div>
+    <div class="block"><div class="bt"><span class="tag">Tool · 3 min</span><h3>Three rules</h3></div>
+      <div class="s13-rule3">
+        <div class="r"><b class="n">1</b><div><b>X is responsible FOR Y.</b> The person or department comes first.<br><span class="v">Nina is responsible for returns.</span> <button class="hearbtn" id="hr1" aria-label="Hear: Nina is responsible for returns."></button></div></div>
+        <div class="r"><b class="n">2</b><div><b>Y is handled BY X.</b> The thing comes first. Say <b>by</b> before the person.<br><span class="v">Refunds are handled by Finance.</span> <button class="hearbtn" id="hr2" aria-label="Hear: Refunds are handled by Finance."></button></div></div>
+        <div class="r"><b class="n">3</b><div>Questions and negatives are easy. Do not say <span class="x">responsible of</span>, <span class="x">handle by</span> or <span class="x">the responsible</span>.<br><span class="v">Who is responsible for this repair?</span> <button class="hearbtn" id="hr3" aria-label="Hear: Who is responsible for this repair?"></button><br><span class="v">It is not handled by the store.</span> <button class="hearbtn" id="hr4" aria-label="Hear: It is not handled by the store."></button></div></div>
+      </div></div>
+    <div class="block"><div class="bt"><span class="tag">Practice · 2 min</span><h3>Quick check · for, by or of?</h3><span class="score" id="scG"></span></div><div class="mc" id="mcG"></div></div>
+    <div class="block"><div class="bt"><span class="tag">GRM-09 · Forbidden Form · 4 min</span><h3>Say it WITHOUT “do”</h3><span class="s13-ban">FORBIDDEN: do · does · did</span></div>
+      <div class="s13-rules"><div><b>1</b>Read the task and the owner.</div><div><b>2</b>Say who is responsible. Do NOT use “do, does, did”.</div><div><b>3</b>You have 5 chips. Say “do” = lose a chip. Rounds 5–8: say it twice, in two ways.</div></div>
+      <div class="s13-chips" id="chips" aria-label="Chips"></div>
+      <div class="s13-fcard" id="fc"></div>
+      <div class="row"><button class="btn main sm" id="fSafe" style="background:var(--ok);border-color:var(--ok)">✓ Safe: no “do”</button><button class="btn sm" id="fFall" style="color:var(--err);border-color:var(--err)">✗ I said “do”: lose a chip</button><span class="s13-pts" id="fPts"></span></div>
+      <div class="closeout" id="fOut" hidden></div></div>
+    <div class="block"><div class="bt"><span class="tag">Use · 1 min</span><h3>Say your own · tick when you said it</h3></div>
+      <div class="s13-use" id="use"></div></div>
+    <details class="tn"><summary>Teacher notes · §3 Grammar</summary><div class="layers">
+      <div class="ly"><h4>Pedagógica</h4><ul><li>Un solo punto: responsabilidad. <i>X is responsible for Y</i> / <i>Y is handled by X</i>. Explicación ≤3 min con el tablero “Swap”: el mismo hecho, otro punto de partida (quién / qué va primero). Errores típicos del hispanohablante: <i>responsible of</i> (calco “responsable de”), <i>the responsible</i> (“el responsable”), <i>is handle by / handled for</i>, y evitar el problema diciendo <i>Nina does the returns</i>. La pasiva solo en la forma frecuente <i>is/are handled by</i>: no se enseña otra.</li><li>Práctica mecánica = 2 min (6 ítems) ≤1/3 del bloque (12 min). GRM-09 (comunicativa): forma prohibida <i>do/does/did</i>; 8 rondas; cada ronda tú o un compañero marca “Safe” o “lose a chip”. Rondas 5–8: dos formas (<i>responsible for</i> + <i>handled by</i>). Nada de pasado, reported speech ni hipótesis.</li></ul></div>
+      <div class="ly"><h4>Engagement</h4><ul><li>Grupo: cada quien juega con sus propias fichas y el equipo cuenta fichas al final. 1:1: tú dices la tarea y el alumno responde; tú eres el árbitro (no compitas). El punto es producir la forma, no hablar rápido.</li><li>Frase del coach: “Casi todos dicen ‘she does the returns’. Hoy te quito esa palabra y descubres que ya sabes decirlo mejor.”</li></ul></div>
+      <div class="ly"><h4>Crecimiento</h4><ul><li>Anota con cuántas fichas termina y qué forma usa más (for o by): es la métrica que muestras al cliente como “errores que ya no comete”. Se reutiliza en S21 (Passing the Baton) y S27 (Family Logistics).</li><li>Cierre declarado: “I kept __ chips and I said __ sentences without ‘do’.” Léxico para S14+: return · refund · repair + los 9 reciclados.</li></ul></div>
+    </div></details>
+  </div>
+</section>
+
+<!-- §4 READING -->
+<section class="sec" id="s4" style="--c:var(--blue);--ct:var(--blue-t)" data-name="Reading" data-min="24–27" data-dur="3">
+  <div class="shead"><div class="snum"><span class="n">4</span><div><h2>Reading · A sign and an email</h2><div class="sub">24–27 min · ≤60 words each · 5 questions</div></div></div>
+    <div class="meta"><span class="chip">Home + Work</span><span class="chip dark">Read, then answer</span></div></div>
+  <div class="sbody">
+    <div class="row"><button class="btn main" id="hlBtn" aria-pressed="false">Highlight: responsible for · handled by</button><span class="hint">Read first without the highlights.</span></div>
+    <div class="s13-rd" id="rd">
+      <article class="s13-sign"><span class="fr">SIGN AT THE STORE · RETURN DESK</span>
+        <p>Bring the item and your receipt. The desk checks the item first. If it is damaged, the Repair Team looks at it. Refunds <mark class="lk">are handled by</mark> Finance and take five days. Replacements <mark class="lk">are handled by</mark> the Returns Desk. Ask for Nina. She <mark class="lk">is responsible for</mark> all returns. Please keep your receipt.</p></article>
+      <article class="s13-mail"><div class="mh">EMAIL · FROM ROSA TO THE TEAM<small>Subject: Printer on floor two</small></div><img src="img/i2s05_meeting.jpg" alt="Papers and a phone on a meeting table" style="object-position:50% 60%">
+        <p>Hi team, the printer on floor two is broken again. Who <mark class="lk">is responsible for</mark> it? Mark is in charge of IT, but repairs <mark class="lk">are handled by</mark> the supplier. Please send the request today. It is pending my approval, and I will approve it tomorrow morning. Keep me posted. Rosa</p></article>
+    </div>
+    <div class="block"><div class="bt"><span class="tag">Check</span><h3>5 questions</h3><span class="score" id="scR"></span></div><div class="mc" id="mcR"></div></div>
+    <details class="tn"><summary>Teacher notes · §4 Reading</summary><div class="layers">
+      <div class="ly"><h4>Pedagógica</h4><ul><li>Textos de 51 y 49 palabras (tope 60). Cada uno contiene <i>is responsible for</i> y <i>are handled by</i> en contexto, más léxico reciclado (check, request, pending, approve, in charge of, keep posted). El botón de resaltado se usa DESPUÉS de leer: pregunta “What comes after <i>by</i>? A person or a thing?”. Respuestas: the desk · Finance · Nina · the supplier · the request.</li></ul></div>
+      <div class="ly"><h4>Engagement</h4><ul><li>Un letrero de tienda y un correo de oficina: mismo patrón, dos mundos. Pregunta puente: “¿Cuál de las dos situaciones te pasó esta semana?”.</li></ul></div>
+      <div class="ly"><h4>Crecimiento</h4><ul><li>Los dos textos sirven como plantilla real: un aviso de política de devoluciones y un correo al equipo. Pídele al alumno que escriba una versión con su empresa para portafolio.</li></ul></div>
+    </div></details>
+  </div>
+</section>
+
+<!-- §5 LISTENING -->
+<section class="sec" id="s5" style="--c:var(--pink);--ct:var(--pink-t)" data-name="Listening" data-min="27–34" data-dur="7">
+  <div class="shead"><div class="snum"><span class="n">5</span><div><h2>Listening · Voicemail Triage</h2><div class="sub">27–34 min · LIS-04 · Listen · Rank · Route · Pass it on</div></div></div>
+    <div class="meta"><span class="chip">RANKING</span><span class="chip dark">Accents: US · Japan · Brazil</span></div></div>
+  <div class="sbody">
+    <div class="s13-inbox"><img src="img/i2s02_phone.jpg" alt="Hands holding a phone" style="object-position:50% 40%"><div class="tx"><span class="kick">Customer Service · voicemail</span><h3 style="font-size:26px;font-weight:900">You have 3 new messages.</h3><p style="opacity:.92">You work at the Service Desk. Listen to each message once. Decide: which one first? Who is responsible? Then pass the most urgent one to a colleague.</p><span class="s13-fb" style="color:var(--sun)" id="playedN" aria-live="polite">0 / 3 played</span><p class="anote" hidden></p></div></div>
+    <div class="block"><div class="bt"><span class="tag">Step 1 · Listen</span><h3>Play each message. Take notes.</h3></div>
+      <p class="hint">Task 1 (global): who needs help first? Task 2: what does each person want?</p>
+      <div class="s13-vms" id="vms"></div>
+      <div class="row"><button class="btn main" id="vmCheck">Check my triage</button><span class="hint">Rank 1 = first, 3 = last. Route = who handles it.</span></div>
+      <div class="s13-fb" id="vmFb" aria-live="polite"></div>
+      <label class="row" style="gap:8px;font-weight:700"><input type="checkbox" id="vmMed" style="width:20px;height:20px"> I passed the most urgent message to a colleague in Spanish (mediation).</label></div>
+    <div class="block"><div class="bt"><span class="tag">Detail</span><h3>3 questions</h3><span class="score" id="scL"></span></div><div class="mc" id="mcL"></div></div>
+    <div class="key"><details class="tn" style="margin-top:0"><summary>[PARA GRABAR] Script literal · answer key (teacher)</summary><div style="padding:0 16px 16px;font-size:15px" id="scriptBox"></div></details></div>
+    <details class="tn"><summary>Teacher notes · §5 Listening</summary><div class="layers">
+      <div class="ly"><h4>Pedagógica</h4><ul><li>LIS-04 Voicemail Triage (RANKING, mediación). 3 mensajes de 1 hablante cada uno: Tom (inglés de EE. UU., nativo), Yuki (inglés de Japón, no nativa), Lucia (inglés de Brasil, no nativa). Guion total de 141 palabras. Clave: urgente = Yuki (presentación mañana a las 9; pide llamada hoy antes de las 5) → Repair Team · 2.º Tom (reembolso pendiente; “this week”) → Finance · 3.º Lucia (silla dañada; “no rush”) → Returns Desk.</li><li>Orden: reproducir una vez cada mensaje → rank → route → “Check my triage” → mediación: el alumno pasa el mensaje de Yuki en español (modelo: “Yuki Tanaka: su laptop está en reparación y la necesita mañana a las 9 para una presentación. Quiere que le llamen hoy antes de las 5. Es urgente.”). <i>responsible for / handled by</i> aparecen 3 veces sin subrayar.</li></ul></div>
+      <div class="ly"><h4>Engagement</h4><ul><li>Frase del coach: “En la vida real nadie te da los mensajes en orden. Hoy decides cuál va primero y por qué.”</li><li>Grupo: cada equipo ordena distinto y defiende; solo cuenta el consenso final. 1:1: tú ordenas en privado y comparas.</li></ul></div>
+      <div class="ly"><h4>Crecimiento</h4><ul><li>Dos de los tres acentos son no nativos (≥1 de cada 3 por regla del programa). Registra cuántos datos captó de cada hablante: es la línea base para S22 (Accent Roulette) y evidencia de mejora para renovar.</li></ul></div>
+    </div></details>
+  </div>
+</section>
+
+<!-- §6 SPEAKING -->
+<section class="sec" id="s6" style="--c:var(--lvl);--ct:var(--lvl-t)" data-name="Speaking" data-min="34–46" data-dur="12">
+  <div class="shead"><div class="snum"><span class="n">6</span><div><h2>Speaking · The Case Detective</h2><div class="sub">34–46 min · B18-17 · Ask · Find the false statement · Fix it</div></div></div>
+    <div class="meta"><span class="chip">IMPOSTOR</span><span class="chip dark">The Missing Refund</span></div></div>
+  <div class="sbody">
+    <div class="s13-case"><img src="img/i2s05_meeting.jpg" alt="A table with forms and a phone" style="object-position:30% 50%"><div class="tx"><span class="lb">CASE FILE No. 0013</span><h4>The Missing Refund</h4><span class="s13-stamp stp">OPEN</span><p>Mr. Ruiz returned a broken blender ten days ago. He still has no refund. Four people worked on his case. <b>One statement does not match the log.</b> Find it, then say who must act now.</p></div></div>
+    <div class="s13-rules"><div><b>1</b>Choose a witness. Choose a topic.</div><div><b>2</b>Ask the question out loud, in English.</div><div><b>3</b>Only then open the answer.</div></div>
+    <div class="block"><div class="bt"><span class="tag">Setup · 1 min</span><h3>Your questions</h3></div>
+      <div class="s13-frames"><span>Who is responsible for ___?</span><span>When did you ___?</span><span>Did you send ___?</span><span>What is the status of ___?</span><span>Is it handled by ___?</span></div></div>
+    <div class="block"><div class="bt"><span class="tag">Interviews · 4 min</span><h3>Four witnesses</h3><span class="score" id="wiN"></span></div>
+      <div class="s13-wit" id="wit"></div>
+      <p class="anote" id="wiNote" data-m="one" hidden>1:1: the teacher reads the answer aloud after the student asks. Student view hides the written answer until the box is ticked.</p></div>
+    <div class="block"><div class="bt"><span class="tag">The log · 1 min</span><h3>Check the system log</h3></div>
+      <div class="s13-log"><div class="lh">SERVICE-LOG · BLENDER · MR. RUIZ</div><table><tbody id="logRows"></tbody></table></div></div>
+    <div class="block"><div class="bt"><span class="tag">Theory · 1 min</span><h3>Which statement does NOT match the log?</h3></div>
+      <div class="s13-pick" id="pickSt"></div><div class="s13-fb" id="pickFb" aria-live="polite"></div></div>
+    <div class="block"><div class="bt"><span class="tag">Twist · 1 min</span><h3>New clue: confirm it</h3></div>
+      <div class="s13-twist"><div class="t" id="twT">Press the button for a new clue.</div><div class="row"><button class="btn dark sm" id="twBtn" style="background:var(--sun);color:var(--navy);border-color:var(--sun)">New clue</button><label><input type="checkbox" id="twOk"> I confirmed with a question (“So…, right?”)</label></div></div></div>
+    <div class="block"><div class="bt"><span class="tag">Solve · 2 min</span><h3>Who acts now? What happens next?</h3><span class="score" id="solN"></span></div>
+      <div class="s13-opts"><div><p class="hint">Who must act now?</p><div class="s13-pick" id="pickWho"></div></div><div><p class="hint">What must happen next?</p><div class="s13-pick" id="pickWhat" style="grid-template-columns:1fr"></div></div></div>
+      <div class="s13-fb" id="solFb" aria-live="polite"></div>
+      <div class="s13-mv" id="caseMv"></div>
+      <p class="hint">Tell the whole case in 60–90 seconds. Tick each move you said.</p></div>
+    <div class="block"><div class="bt"><span class="tag">Real life · 3 min</span><h3>Now your life</h3><span class="score" id="qN"></span></div>
+      <div class="s13-qdeck"><small id="qTag">QUESTION 1 OF 14</small><div class="q" id="qTx"></div><div class="f" id="qF"></div><div class="row"><button class="btn sm" id="qPrev">← Back</button><button class="btn sm" id="qNext">Next question →</button></div></div></div>
+    <details class="tn"><summary>Teacher notes · §6 Speaking</summary><div class="layers">
+      <div class="ly"><h4>Pedagógica</h4><ul><li>B18-17 The Case Detective (familia IMPOSTOR: una declaración no coincide con el registro). Del PDF: el alumno descubre la situación preguntando; tú solo das información cuando la pregunta es clara. Secuencia: pistas (caso) → preguntas a 4 testigos → nuevas pistas (log) → teoría → qué hacer, quién actúa y qué pasa después → contar el caso completo. Respuestas: Nina dice que envió la solicitud; el log muestra DRAFT (no enviada); Finance no la tiene. Responsable ahora: Nina (Returns Desk): enviar hoy la solicitud; después Finance procesa el reembolso (5 días) y Nina da seguimiento.</li><li>Twist: la solicitud está en la carpeta de borradores (<i>drafts folder</i>, recicla “folder”): no fue mentira, fue un error. El alumno confirma con pregunta (<i>So the request is in the drafts folder, right?</i>). Encuadre “el sistema/el paso falló”, nunca “quién tiene la culpa” (riesgo Seguro). 14 preguntas de vida real (8 con 2 follow-ups).</li></ul></div>
+      <div class="ly"><h4>Engagement</h4><ul><li>Puntuación por producir lenguaje: una respuesta solo se abre después de que el alumno hizo la pregunta en inglés. Si se bloquea, ofrece el marco de la barra “Your questions”. No pases la respuesta si la pregunta no se entiende.</li><li>Frase del coach: “Un buen coordinador no busca culpables: encuentra el paso que falló y dice quién lo arregla.”</li></ul></div>
+      <div class="ly"><h4>Crecimiento</h4><ul><li>Registra cuántas preguntas formuló el alumno (vs. cuántas contestó): es el indicador de autonomía que Gabriel puede mostrar al cliente. En S20 vuelve The Case Detective como misión de bloque: hoy es la línea base (escalation_note: S20 exige 3 pistas nuevas y teoría con 2 causas).</li></ul></div>
+    </div></details>
+  </div>
+</section>
+
+<!-- §7 MISSION -->
+<section class="sec" id="s7" style="--c:var(--teal);--ct:var(--teal-t)" data-name="Mission" data-min="46–54" data-dur="8">
+  <div class="shead"><div class="snum"><span class="n">7</span><div><h2>Mission · Three Claims</h2><div class="sub">46–54 min · Assign the steps, then explain the claim without reading</div></div></div>
+    <div class="meta"><span class="chip">3 claims × 5 moves = 15</span><span class="chip dark">Success ≥ 12 / 15</span></div></div>
+  <div class="sbody">
+    <div class="s13-tabs" id="mTabs"></div>
+    <div class="s13-mc">
+      <div class="s13-claimc"><img id="mImg" src="img/i2s02_phone.jpg" alt=""><div class="tx"><span class="ctx" id="mCtx"></span><span class="em" id="mEm" aria-hidden="true"></span><h4 id="mNeed"></h4><div class="want" id="mWant"></div><div class="s13-sheet" id="mSheet"></div></div></div>
+      <div class="block"><div class="bt"><span class="tag">Step 1</span><h3>Who is responsible for each step?</h3><span class="score" id="stN"></span></div>
+        <div class="s13-relay" id="relay"></div></div>
+    </div>
+    <div class="block"><div class="bt"><span class="tag">Step 2</span><h3>Explain the claim without reading · tick each move you said</h3><span class="score"><span id="mvN">0</span> / 15</span></div>
+      <div class="s13-prog" aria-hidden="true"><i id="mvBar"></i></div>
+      <div class="s13-mv" id="moves"></div>
+      <details><summary class="hint" style="cursor:pointer">Model (try first without it)</summary><p class="s13-model" id="mModel" style="margin-top:8px"></p></details>
+      <div class="row"><button class="btn sm" id="mvRe">Reset moves</button><span class="hint">Steps assigned: <b id="stT">0</b> / 9</span></div></div>
+    <details class="tn"><summary>Teacher notes · §7 Mission</summary><div class="layers">
+      <div class="ly"><h4>Pedagógica</h4><ul><li>Misión “Three Claims”: producto de evidencia = una llamada de reclamo completa por caso. Primero el alumno asigna 3 pasos por caso con la hoja “who handles what” (quién es responsable de cada paso); después explica el reclamo sin leer. Casos: HOME teléfono con pantalla rota (Returns Desk → Repair Team → Warehouse) · SHOP chamarra de talla incorrecta (Returns Desk → Warehouse → Finance) · WORK impresora de oficina (Manager → Supplier → Finance). Éxito = ≥12/15 movimientos sin leer.</li><li>Movimientos: 1 problema y qué quieres (<i>return / repair / replace</i>) · 2 quién es responsable (<i>X is responsible for…</i>) · 3 cómo se maneja (<i>It is handled by…</i>) · 4 estatus (<i>pending / missing / confirm</i>) · 5 siguiente paso (<i>I will follow up… / Please confirm…</i>).</li></ul></div>
+      <div class="ly"><h4>Engagement</h4><ul><li>Frase del coach: “Esta llamada la has hecho muchas veces en español. Hoy la haces entera en inglés, con quién, qué y cuándo.”</li></ul></div>
+      <div class="ly"><h4>Crecimiento</h4><ul><li>Los 3 casos son plantillas: pídele que cambie uno por un caso real de su trabajo (garantía de un equipo, devolución a un proveedor). Si lo hace sin leer, es evidencia fuerte para renovar o proponer un taller “Returns, Repairs and Claims”.</li></ul></div>
+    </div></details>
+  </div>
+</section>
+
+<!-- §8 WRAP-UP -->
+<section class="sec" id="s8" style="--c:var(--navy);--ct:#E6E9F2" data-name="Wrap-up" data-min="54–60" data-dur="6">
+  <div class="shead"><div class="snum"><span class="n">8</span><div><h2>Wrap-up · Who is responsible?</h2><div class="sub">54–60 min · Feedback · Exit quiz · Say it out loud</div></div></div>
+    <div class="meta"><span class="chip">Success → Upgrade → Repair → Next use</span></div></div>
+  <div class="sbody">
+    <div class="sur">
+      <div class="card"><h4>✓ Success</h4><textarea id="fS" aria-label="Success" placeholder="One thing that worked…"></textarea></div>
+      <div class="card"><h4>↑ Upgrade</h4><textarea id="fU" aria-label="Upgrade" placeholder="Make one responsibility sentence better…"></textarea></div>
+      <div class="card"><h4>✎ Repair</h4><textarea id="fR" aria-label="Repair" placeholder="One sentence to repair…"></textarea></div>
+      <div class="card"><h4>↻ Next use</h4><p class="hint">Where will you say “is responsible for” or “is handled by” this week? Tell your partner.</p></div>
+    </div>
+    <div class="block"><div class="bt"><span class="tag">Exit quiz</span><h3>5 questions — say the answer before you click</h3><span class="score" id="scQ"></span></div><div class="mc" id="mcQ"></div></div>
+    <div class="block"><div class="bt"><span class="tag">Say it out loud</span><h3>Today I can… (tick, then say it)</h3></div>
+      <div class="selfev" id="selfev"></div>
+      <div class="closeout" id="wrapOut">Say it: “I can say who is responsible. ___ is responsible for ___. It is handled by ___. Next I will ___.”</div></div>
+    <div class="badge"><div class="medal">13</div><div><div class="kick">Session complete</div><h3 style="font-size:26px;font-weight:900">You can say who is responsible — and what comes next.</h3><p style="opacity:.9">Homework: choose ONE thing at home or at work that was returned, repaired or replaced. Write 4 lines: what happened, who is responsible, how it is handled, what the status is. Next: <b>Session 14 · Why Did It Take So Long?</b></p>
+      <div class="row" style="margin-top:12px"><button class="btn main" id="doneBtn" style="background:var(--sun);border-color:var(--sun);color:var(--navy)">Mark session complete</button></div></div></div>
+    <details class="tn"><summary>Teacher notes · §8 Wrap-up</summary><div class="layers">
+      <div class="ly"><h4>Pedagógica</h4><ul><li>Success → Upgrade → Repair → Next use. Máximo 2 aciertos y 3 correcciones de alto valor (<i>responsible of</i>, <i>handle by</i>, <i>does</i> como muleta). Respuestas del quiz: for · by · Refunds are handled by Finance. · Who is responsible for this repair? · Nina is responsible for returns.</li><li>Close_out: el alumno declara en voz alta lo que ya puede hacer. Registra con “Mark session complete”.</li></ul></div>
+      <div class="ly"><h4>Engagement</h4><ul><li>“En el minuto 1 dijiste ‘repair’ con una palabra. En el minuto 55 explicaste un reclamo: quién es responsable, cómo se maneja y qué sigue.”</li></ul></div>
+      <div class="ly"><h4>Crecimiento</h4><ul><li>La tarea es el borrador de un “mapa de responsables” real (paso + responsable + estatus): insumo para un taller corporativo.</li><li>Léxico para reciclar en S14+: return · refund · repair (nuevos) + handle · in charge of · department · request · pending · status · confirm · follow up · missing. Frase modelo: “Refunds are handled by Finance.”</li></ul></div>
+    </div></details>
+  </div>
+</section>
+
+</main>
+<footer>Gabriel Turner · Your Business Coach · Intermedio 2 · Session 13 of 32 · v1.0 · Photos (reused from sessions 2, 5, 7; Unsplash contributors, file-to-photographer match not re-verified)</footer>
+
+<script>
+(function(){
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const st={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
+const fmt=s=>String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');
+const SPK='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4z"/></svg>';
+
+
+/* ---- speech + audio files (mp3 first, browser voice as fallback) ---- */
+const TTS='speechSynthesis' in window; let voices=[];
+function loadV(){try{voices=speechSynthesis.getVoices().filter(v=>/^en/i.test(v.lang))}catch(e){}}
+if(TTS){loadV();try{speechSynthesis.onvoiceschanged=loadV}catch(e){}}
+function pick(pref){return voices.find(v=>pref.test(v.name+' '+v.lang))||voices[0]}
+function say(t,opt={}){if(!TTS)return false;try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='en-US';u.rate=opt.rate||.85;const v=opt.voice||pick(/US|United States/i);if(v)u.voice=v;speechSynthesis.speak(u);return true}catch(e){return false}}
+function voiceFor(who){const a=pick(/female|Zira|Samantha|Jenny|Aria|US/i);if(who==='A')return a;return voices.find(v=>/GB|India|UK|en-IN/i.test(v.name+' '+v.lang)&&v!==a)||voices.find(v=>v!==a)||a}
+function note(msg,warn){const tn=$('#ttsNote');if(tn)tn.textContent=msg;$$('.anote').forEach(n=>{n.hidden=false;n.textContent=msg;n.classList.toggle('warn',!!warn)})}
+let cur=null;
+function clip(file,text,opt){ /* plays audio/<file>; if missing -> browser voice + visible notice */
+ try{if(cur){cur.pause();cur=null}}catch(e){}
+ let used=false;const fb=()=>{if(used)return;used=true;if(say(text,opt))note('Audio file not available yet — using your browser’s voice. (Audio no disponible)',true);else note('Audio no disponible: read the text aloud.',true)};
+ try{const a=new Audio('audio/'+file);cur=a;a.addEventListener('error',fb);const p=a.play();if(p&&p.catch)p.catch(fb)}catch(e){fb()}}
+function stopAll(){try{if(cur){cur.pause();cur=null}}catch(e){}try{speechSynthesis.cancel()}catch(e){}}
+
+/* ---- modes ---- */
+function setView(student){document.body.classList.toggle('student',student);$('#tgStudent').setAttribute('aria-pressed',student);$('#tgTeacher').setAttribute('aria-pressed',!student)}
+$('#tgStudent').onclick=()=>setView(true);$('#tgTeacher').onclick=()=>setView(false);
+function setMode(m){$$('[data-m]').forEach(e=>e.hidden=e.dataset.m!==m);$('#tgGroup').setAttribute('aria-pressed',m==='group');$('#tgOne').setAttribute('aria-pressed',m==='one');st.set('gt08-mode',m)}
+$('#tgGroup').onclick=()=>setMode('group');$('#tgOne').onclick=()=>setMode('one');setMode(st.get('gt08-mode')||'group');
+
+/* ---- XP + nav ---- */
+let xp=0;const done=new Set();
+function addXP(n,key){if(key){if(done.has(key))return;done.add(key)}xp+=n;$('#xp').textContent=xp+' XP'}
+const secs=$$('.sec');const steps=$('#steps');
+secs.forEach((s,i)=>{const a=document.createElement('a');a.href='#'+s.id;a.innerHTML=`<b>${i+1}</b>${s.dataset.name}`;a.style.setProperty('--c',getComputedStyle(s).getPropertyValue('--c'));steps.appendChild(a)});
+const links=[...steps.children];
+function onScroll(){let c=0;secs.forEach((s,i)=>{if(s.getBoundingClientRect().top<200)c=i});links.forEach((a,i)=>a.classList.toggle('on',i===c));$('#pbar').style.width=((c+1)/secs.length*100)+'%';const on=links[c];if(on&&steps.scrollWidth>steps.clientWidth){steps.scrollLeft=on.offsetLeft-40}}
+addEventListener('scroll',onScroll,{passive:true});onScroll();
+function markDone(i){links[i]&&links[i].classList.add('done')}
+
+/* ---- time table (sum must be 60) ---- */
+(function(){let tot=0,rows='';secs.forEach((s,i)=>{const d=+s.dataset.dur;tot+=d;rows+=`<tr><td>${i+1}</td><td>${s.dataset.name}</td><td>${s.dataset.min}</td><td>${d} min</td></tr>`});
+ $('#timeTable').innerHTML=`<table><tr><th>#</th><th>Stage</th><th>Minutes</th><th>Duration</th></tr>${rows}</table><p class="tot" id="timeTot" data-total="${tot}">Total: ${tot} min ${tot===60?'✓':'✗ (must be 60)'}</p>`})();
+
+/* ---- class clock ---- */
+let cs=0,cId=null;$('#clock').onclick=()=>{if(cId){clearInterval(cId);cId=null}else cId=setInterval(()=>{cs++;$('#clock').textContent=fmt(cs)},1000)};
+
+/* ---- timers ---- */
+function timer(el,onEnd){const tot=+el.dataset.sec;let left=tot,id=null;const o=el.querySelector('output'),g=el.querySelector('[data-a=go]');
+ const draw=()=>{o.textContent=fmt(left);el.classList.toggle('end',left===0)};const stop=()=>{clearInterval(id);id=null;g.textContent='Start'};
+ g.onclick=()=>{if(id){stop();return}if(!left)left=tot;g.textContent='Pause';id=setInterval(()=>{left--;draw();if(left<=0){stop();onEnd&&onEnd()}},1000)};
+ el.querySelector('[data-a=re]').onclick=()=>{stop();left=tot;draw()};return{reset(){stop();left=tot;draw()},used(){return tot-left},stop,add(s){left+=s;draw()}}}
+
+/* ---- MC engine ---- */
+function mc(box,items,scoreEl,xpKey,sec){let right=0,answered=0;
+ items.forEach((it,i)=>{const d=document.createElement('div');d.className='mcq';d.innerHTML=`<div class="q"><span class="n">${i+1}</span>${it.q}</div><div class="opts"></div><div class="fb" aria-live="polite"></div>`;
+  const os=d.querySelector('.opts'),fb=d.querySelector('.fb');let locked=false;
+  it.o.forEach((t,k)=>{const b=document.createElement('button');b.className='opt';b.textContent=t;b.onclick=()=>{if(locked)return;
+    if(k===it.a){b.classList.add('ok');locked=true;answered++;if(!d.dataset.miss)right++;fb.className='fb ok';fb.textContent='✓ '+(it.ok||'Correct!');addXP(10);
+      if(answered===items.length){scoreEl.textContent=`${right} / ${items.length} first try`;addXP(0,xpKey);markDone(sec)}}
+    else{b.classList.add('no');d.dataset.miss=1;fb.className='fb no';fb.textContent='✗ '+(it.no||'Try again.')}};os.appendChild(b)});box.appendChild(d)})}
+const shuf=a=>{const b=a.slice();for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]]}return b};
+
+/* ===================== S13 · Return It, Repair It ===================== */
+const pad=n=>String(n).padStart(3,'0');
+const mk=(tag,cls,html)=>{const e=document.createElement(tag);if(cls)e.className=cls;if(html!=null)e.innerHTML=html;return e};
+const curMode=()=>st.get('gt08-mode')||'group';
+const applyMode=()=>$$('[data-m]').forEach(e=>e.hidden=e.dataset.m!==curMode());
+const vfile=n=>`L08-S13-vocab-${pad(n)}-narrator.mp3`;
+const pfile=n=>`L08-S13-pron-${pad(n)}-narrator.mp3`;
+const hearBtn=(label,fn)=>{const b=mk('button','hearbtn',`${SPK}<span>hear</span>`);b.setAttribute('aria-label','Hear: '+label);b.onclick=e=>{e.stopPropagation();fn()};return b};
+const esc=s=>s.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+
+/* ===== §1 Claim tickets ===== */
+const TIX=[["👟","Sneakers","Bought two weeks ago. There is a hole in the left shoe."],["📱","Phone","Two years old. The screen is cracked."],["☕","Coffee machine","Still in warranty. It does not make coffee."],["🎧","Headphones","The right side has no sound."],["🧥","Jacket","New, with the receipt. It is too small."],["🚲","Bike","Old bike. The back tire is flat."]];
+const VERB={r:'return',p:'repair',c:'replace'};
+const voted=new Set();
+TIX.forEach(([em,nm,story],i)=>{
+ const t=mk('article','s13-tx',`<div class="hd"><span>CLAIM</span><span>No. 00${i+1}</span></div><div class="bd"><span class="em" aria-hidden="true">${em}</span><div><div class="nm">${nm}</div><div class="st">${story}</div></div></div><div class="perf"></div><div class="sb"></div>`);
+ const sb=t.querySelector('.sb');
+ [['r','RETURN'],['p','REPAIR'],['c','REPLACE']].forEach(([k,lab])=>{
+  const b=mk('button','s13-st '+k,`${lab}<output>0</output>`);b.setAttribute('aria-label',`${lab} the ${nm}`);
+  b.onclick=()=>{const o=b.querySelector('output');o.textContent=+o.textContent+1;sb.querySelectorAll('.s13-st').forEach(x=>x.classList.remove('hit'));b.classList.add('hit');
+   $('#wuSay').innerHTML=`<em>${em} ${nm}</em> · Say: “I ${VERB[k]} it because ___.”`;addXP(2,'tix'+i);voted.add(i);$('#wuCount').textContent=voted.size+' / 6 stamped';
+   if(voted.size>=4){addXP(10,'tixall');markDone(0)}};
+  sb.appendChild(b)});
+ $('#tix').appendChild(t)});
+$('#wuCount').textContent='0 / 6 stamped';
+
+/* ===== §2 Vocabulary ===== */
+const WORDS=[
+ ["return","VERB / NOUN","to take something back to the shop","You can return the jacket in 30 days.",1,"NEW"],
+ ["refund","NOUN","the money that the shop gives back","Can I get a refund, please?",2,"NEW"],
+ ["repair","VERB","to make a broken thing work again","The Repair Team can repair the screen.",3,"NEW"],
+ ["handle","VERB","to take care of a task or a problem","Finance handles all refunds.",4,"S11"],
+ ["in charge of","CHUNK","the person whose job it is","Nina is in charge of returns.",5,"S11"],
+ ["department","NOUN","a part of a company","Please call the Service department.",6,"S11"],
+ ["request","NOUN","a formal ask for something","The repair request is still pending.",7,"S07"],
+ ["pending","ADJECTIVE","waiting; not finished yet","The repair request is still pending.",7,"S01"],
+ ["status","NOUN","how far something is","What is the status of my refund?",0,"S01"],
+ ["confirm","VERB","say that something is correct","I will follow up and confirm the date.",8,"S01"],
+ ["follow up","CHUNK","contact someone again later","I will follow up and confirm the date.",8,"S07"],
+ ["missing","ADJECTIVE","not there; you cannot find it","The receipt is missing.",0,"S12"]];
+const seenW=new Set();
+WORDS.forEach((w,i)=>{const b=mk('button','s13-wd'+(w[5]==='NEW'?' new':''),`<b>${w[0]}</b><small>${w[1]}</small>`);b.setAttribute('aria-label','Word: '+w[0]);
+ b.onclick=()=>{$$('.s13-wd').forEach(x=>x.classList.remove('sel'));b.classList.add('sel','seen');seenW.add(i);addXP(1,'w'+i);
+  const d=$('#det');d.innerHTML=`<div class="ty">${w[1]} · ${w[5]==='NEW'?'NEW WORD':'RECYCLED FROM '+w[5]}</div><div class="w">${w[0]}</div><div>${w[2]}</div><div class="ex">“${w[3]}”</div>`;
+  d.appendChild(hearBtn(w[3],()=>w[4]?clip(vfile(w[4]),w[3]):say(w[3])));
+  $('#kitCount').textContent=seenW.size+' / 12 seen';if(seenW.size===12){addXP(6,'kit')}};
+ $('#kit').appendChild(b)});
+$('#kitCount').textContent='0 / 12 seen';
+
+const DUELS=[
+ {a:'return',b:'send back',scene:'Situation: you write the sign for a store policy. Customers read it at the Return Desk.',best:'a',
+  ra:['It is the official word in shops and policies.','It is also a noun: “a return”, “the Returns Desk”.','It is short and clear on a written sign.'],
+  rb:['It is a normal everyday phrase.','It works for any object, not only in a shop.','It sounds friendly in a message to a friend.'],
+  ex:'You can return the jacket in 30 days.',
+  v:'Best here: <b>return</b>. In a policy or a customer email it is official and short, and it also works as a noun (the Returns Desk). “Send back” is fine in a chat with a friend, but it sounds less official.'},
+ {a:'repair',b:'fix',scene:'Situation: your phone has a cracked screen. You are at a service shop with a written form.',best:'a',
+  ra:['It is the word for machines and objects in a shop.','It is the word on forms and for the Repair Team.','It sounds careful and professional.'],
+  rb:['It is quick and informal.','It also works for problems: “fix the schedule”.','You can say it at home with a friend.'],
+  ex:'The Repair Team can repair the screen.',
+  v:'Best here: <b>repair</b>. For a machine in a shop or on a form, repair is the standard word. “Fix” is more informal and also works for problems (fix the plan). At home both are fine: the situation decides.'},
+ {a:'refund',b:'money back',scene:'Situation: a shop did not send your money. You are upset, but you write a formal email.',best:'a',
+  ra:['It is the official word in emails and policies.','It is a noun and a verb: “a refund”, “to refund”.','It sounds calm and professional.'],
+  rb:['It is natural in a spoken call.','It is direct: you say exactly what you want.','It can sound angry in a written email.'],
+  ex:'Can I get a refund, please?',
+  v:'Best in a formal email: <b>refund</b>. “I want my money back” is spoken and direct, and it can sound angry. Use it in a call with a friend, not in a company email.'},
+ {a:'handle',b:'deal with',scene:'Situation: a manager explains whose job a task is: “Finance ___ all refunds.”',best:'a',
+  ra:['It means: this task is part of your job.','It is neutral and professional.','It matches “is handled by”.'],
+  rb:['It means you face a difficult thing or person.','“I deal with angry customers” sounds like a hard day.','It is more personal and less about the process.'],
+  ex:'Finance handles all refunds.',
+  v:'Best here: <b>handle</b>. “Handle” = a task or process that belongs to someone (Finance handles refunds). “Deal with” = face a difficult problem or person (I deal with angry customers). Same area, different feeling.'}];
+let dI=0;const dState=DUELS.map(()=>({side:null,ticks:new Set(),rev:false}));
+const tmD=timer($('#tmDuel'),()=>{$('#dScene').insertAdjacentHTML('beforeend',' <b>Time! Finish your sentence.</b>')});
+DUELS.forEach((d,i)=>{const b=mk('button','',`Duel ${i+1}`);b.setAttribute('aria-pressed',i===0);b.onclick=()=>{dI=i;tmD.reset();drawDuel()};$('#duelTabs').appendChild(b)});
+function ptsOf(i){const s=dState[i];return s.ticks.size?([...s.ticks].filter(k=>k!=='ex').length*2+(s.ticks.has('ex')?3:0)):0}
+function updPts(){const s=dState[dI];$('#dPts').innerHTML=s.side?`Duel points: <b>${ptsOf(dI)}</b>`:'';$('#duelTot').textContent=dState.reduce((a,_,i)=>a+ptsOf(i),0)+' points · '+dState.filter(x=>x.rev).length+' / 4 duels'}
+function drawDuel(){const d=DUELS[dI],s=dState[dI];
+ $$('#duelTabs button').forEach((b,i)=>{b.setAttribute('aria-pressed',i===dI);b.classList.toggle('done',dState[i].rev)});
+ $('#dScene').textContent=d.scene;
+ [['A',d.a,'#C2410C','#FFEDE0'],['B',d.b,'#1D6FD6','#E1EEFF']].forEach(([k,w,c,ct])=>{const el=$('#st'+k);el.style.setProperty('--sc',c);el.style.setProperty('--sct',ct);el.setAttribute('aria-pressed',s.side===k);
+  el.innerHTML=`<span class="aw"></span><span class="sb2"><span class="lb">STALL ${k}</span><span class="wd">${esc(w)}</span><span class="btn sm pk">${s.side===k?'✓ I sell this word':'I sell this word'}</span></span>`;
+  el.onclick=()=>{if(s.rev)return;if(s.side!==k){s.side=k;s.ticks.clear()}drawDuel()}});
+ const box=$('#dTicks');box.innerHTML='';
+ if(s.side){const rs=s.side==='A'?d.ra:d.rb;const wd=s.side==='A'?d.a:d.b;
+  rs.forEach((r,k)=>{const l=mk('label','',`<input type="checkbox"><span>I said: ${r}</span>`);const inp=l.querySelector('input');inp.checked=s.ticks.has(k);inp.disabled=s.rev;inp.onchange=()=>{inp.checked?(s.ticks.add(k),addXP(2)):s.ticks.delete(k);updPts()};box.appendChild(l)});
+  const l=mk('label','',`<input type="checkbox"><span>I said ONE sentence of my own with “${esc(wd)}”.</span>`);const inp=l.querySelector('input');inp.checked=s.ticks.has('ex');inp.disabled=s.rev;inp.onchange=()=>{inp.checked?(s.ticks.add('ex'),addXP(3)):s.ticks.delete('ex');updPts()};box.appendChild(l)}
+ else box.innerHTML='<p class="hint">Pick a stall to see reasons you can use. You can add your own.</p>';
+ $('#dReveal').disabled=!s.side||s.rev;$('#dPts').innerHTML=s.side?`Duel points: <b>${ptsOf(dI)}</b>`:'';
+ const v=$('#dVerdict');v.hidden=!s.rev;if(s.rev)v.innerHTML=`<b>Coach’s verdict.</b> ${d.v}<br><i>Model: “${d.ex}”</i>`;
+ $('#duelTot').textContent=dState.reduce((a,_,i)=>a+ptsOf(i),0)+' points · '+dState.filter(x=>x.rev).length+' / 4 duels'}
+$('#dReveal').onclick=()=>{const s=dState[dI];if(!s.side)return;s.rev=true;addXP(5,'duel'+dI);drawDuel();
+ if(dState.every(x=>x.rev)){const o=$('#vocOut');o.hidden=false;o.textContent=`Say it: “I sold ${dState.length} words today. My points are ${dState.reduce((a,_,i)=>a+ptsOf(i),0)}. The best reason was ___.”`;addXP(10,'voc');markDone(1)}};
+drawDuel();
+
+/* ===== §3 Grammar ===== */
+SPK&&['hrSw','hr1','hr2','hr3','hr4'].forEach(id=>{$('#'+id).innerHTML=`${SPK}<span>hear</span>`});
+const SENT_CLIP={"Nina is responsible for returns.":1,"Refunds are handled by Finance.":2,"Who is responsible for this repair?":3,"It is not handled by the store.":4};
+const hearS=t=>SENT_CLIP[t]?clip(pfile(SENT_CLIP[t]),t):say(t);
+[['#hr1',"Nina is responsible for returns."],['#hr2',"Refunds are handled by Finance."],['#hr3',"Who is responsible for this repair?"],['#hr4',"It is not handled by the store."]].forEach(([id,t])=>{$(id).onclick=()=>hearS(t)});
+const PAIRS=[["Nina","returns","Nina is responsible for returns.","Returns are handled by Nina."],["Finance","refunds","Finance is responsible for refunds.","Refunds are handled by Finance."],["The Repair Team","broken screens","The Repair Team is responsible for broken screens.","Broken screens are handled by the Repair Team."],["The Warehouse","new stock","The Warehouse is responsible for new stock.","New stock is handled by the Warehouse."]];
+let pI=0,flip=false;
+const hl=s=>esc(s).replace(/responsible for|handled by/,m=>`<u>${m}</u>`);
+PAIRS.forEach((p,i)=>{const b=mk('button','s13-pair',`<b>${p[0]}</b> · ${p[1]}`);b.setAttribute('aria-pressed',i===0);b.onclick=()=>{pI=i;flip=false;drawPair()};$('#pairs').appendChild(b)});
+function drawPair(){const p=PAIRS[pI];$$('#pairs button').forEach((b,i)=>b.setAttribute('aria-pressed',i===pI));$('#sentA').innerHTML=hl(p[2]);$('#sentB').innerHTML=hl(p[3]);$('#sentB').hidden=!flip;$('#swapBtn').textContent=flip?'⇄ Back':'⇄ Swap'}
+$('#swapBtn').onclick=()=>{flip=!flip;drawPair();addXP(1,'sw'+pI);hearS(flip?PAIRS[pI][3]:PAIRS[pI][2])};
+$('#hrSw').onclick=()=>hearS(flip?PAIRS[pI][3]:PAIRS[pI][2]);
+drawPair();
+mc($('#mcG'),[
+ {q:'Nina is responsible ___ returns.',o:['for','of','by'],a:0,ok:'responsible FOR.',no:'In English we say responsible for, not of.'},
+ {q:'Refunds are handled ___ Finance.',o:['for','by','of'],a:1,ok:'handled BY + person or department.',no:'Think: who handles it? Use by.'},
+ {q:'Who is responsible ___ this repair?',o:['for','to','by'],a:0,ok:'Who is responsible for…?',no:'The question uses for.'},
+ {q:'The repair is handled ___ the Repair Team.',o:['for','by','from'],a:1,ok:'by + the Repair Team.',no:'Use by before the person or team.'},
+ {q:'Which sentence is correct?',o:['Nina is responsible of returns.','Nina is responsible for returns.','Nina is the responsible for returns.'],a:1,ok:'No “of” and no “the” before responsible.',no:'Check the little word after responsible.'},
+ {q:'Which sentence is correct?',o:['Refunds are handle by Finance.','Refunds are handled for Finance.','Refunds are handled by Finance.'],a:2,ok:'are handled by.',no:'Check the verb ending and the small word.'}],$('#scG'),'mcG',2);
+
+/* GRM-09 Forbidden Form */
+const FT=[["💸","refunds","Finance"],["📦","damaged items","the Repair Team"],["🧾","receipts and replacements","the Returns Desk"],["📥","new stock","the Warehouse"],["🖨️","the printer repair","the supplier"],["📝","repair approvals","the Manager"],["📞","customer calls","the Service Desk"],["🔧","phone screens","the Repair Team"]];
+let fR=0,chips=5,fSafeN=0,fDone=false;
+function drawChips(){const c=$('#chips');c.innerHTML='';for(let i=0;i<5;i++)c.appendChild(mk('span','s13-chip'+(i>=chips?' lost':''),i<chips?'●':'×'));}
+function drawF(){const f=$('#fc');
+ if(fDone){f.innerHTML='<div class="tt">All 8 rounds finished.</div>';return}
+ const [em,tk,ow]=FT[fR];const two=fR>=4;
+ f.innerHTML=`<div class="task"><span class="em" aria-hidden="true">${em}</span><div><div class="tt">ROUND ${fR+1} / 8 · TASK: ${tk}</div><span class="ow">OWNER: ${ow}</span></div></div><div class="hint">${two?'Say it TWICE: once with “responsible for” and once with “handled by”.':'Say who is responsible. Use “responsible for” OR “handled by”.'} <b>No “do, does, did”.</b></div>`;
+ $('#fPts').innerHTML=`Chips: <b style="color:var(--tk-d)">${chips}</b> · Safe: <b style="color:var(--ok)">${fSafeN}</b>`}
+function nextF(){fR++;if(fR>=FT.length){fDone=true;$('#fSafe').disabled=true;$('#fFall').disabled=true;const o=$('#fOut');o.hidden=false;o.textContent=`Say it: “I kept ${chips} chips and I said ${fSafeN} sentences without ‘do’. My best sentence was ___.”`;addXP(12,'forb');markDone(2)}drawChips();drawF()}
+$('#fSafe').onclick=()=>{if(fDone)return;fSafeN++;addXP(2);nextF()};
+$('#fFall').onclick=()=>{if(fDone)return;chips=Math.max(0,chips-1);nextF()};
+drawChips();drawF();
+[["___ is responsible for ___ at my work.","u1"],["___ is handled by ___ at my work.","u2"],["Who is responsible for ___ at your home?","u3"]].forEach(([t,k])=>{const l=mk('label','',`<input type="checkbox"> ${esc(t)}`);l.querySelector('input').onchange=e=>{if(e.target.checked)addXP(3,k)};$('#use').appendChild(l)});
+
+/* ===== §4 Reading ===== */
+$('#hlBtn').onclick=e=>{const on=e.currentTarget.getAttribute('aria-pressed')!=='true';e.currentTarget.setAttribute('aria-pressed',on);$('#rd').classList.toggle('show-hl',on)};
+mc($('#mcR'),[
+ {q:'Who checks the item first?',o:['The desk','The Repair Team','Finance'],a:0,ok:'The desk checks the item first.',no:'Read the second sentence of the sign.'},
+ {q:'Who handles refunds?',o:['The Returns Desk','Finance','Nina'],a:1,ok:'Refunds are handled by Finance.',no:'Look for “refunds are handled by”.'},
+ {q:'Who is responsible for all returns?',o:['Nina','Rosa','Mark'],a:0,ok:'Nina is responsible for all returns.',no:'Ask for… who?'},
+ {q:'Who handles the printer repairs?',o:['Mark, in IT','The supplier','Rosa'],a:1,ok:'Repairs are handled by the supplier.',no:'Mark is in charge of IT, but not of repairs.'},
+ {q:'What is pending Rosa’s approval?',o:['The printer','The request','The supplier'],a:1,ok:'The request is pending.',no:'Read: “Please send the request today. It is pending…”'}],$('#scR'),'mcR',3);
+
+/* ===== §5 Listening · Voicemail Triage ===== */
+const MSGS=[
+ {n:1,who:'Tom Baker',init:'T',col:'#0A7F75',acc:'US English (native)',file:'L08-S13-listening-001-tom.mp3',route:'Finance',rank:2,
+  text:'Hi, this is Tom Baker. Last week I returned a jacket, and I still have no refund. Is it handled by Finance or by the store? Please check the status. I think it is pending. It is not urgent, but please call me back this week. Thank you.'},
+ {n:2,who:'Yuki Tanaka',init:'Y',col:'#C71F5E',acc:'Japanese English (non-native)',file:'L08-S13-listening-002-yuki.mp3',route:'Repair Team',rank:1,
+  text:'Hello, this is Yuki Tanaka. My laptop is broken, and I need it for a presentation tomorrow at nine. The Repair Team has it, but nobody has called me. Who is responsible for this repair? Please call me today, before five o’clock. It is very urgent. Thank you.'},
+ {n:3,who:'Lucia Costa',init:'L',col:'#1D6FD6',acc:'Brazilian English (non-native)',file:'L08-S13-listening-003-lucia.mp3',route:'Returns Desk',rank:3,
+  text:'Good morning, this is Lucia Costa. My new chair arrived damaged, so I want a replacement. I have the receipt and some photos. I know my request is handled by the Returns Desk. Please confirm that you have it. There is no rush. Thank you!'}];
+const ROUTES=['Returns Desk','Repair Team','Finance','Warehouse'];
+const vmS=MSGS.map(()=>({rank:0,route:'',played:false}));let playedN=0;
+function drawVM(){const box=$('#vms');box.innerHTML='';
+ MSGS.forEach((m,i)=>{const s=vmS[i];const d=mk('div','s13-vm',`<span class="av" style="background:${m.col}" aria-hidden="true">${m.init}</span><div class="t1"><b>Message ${m.n}</b><button class="ply">${SPK} Play</button></div><div class="t2"><span class="lab">RANK</span><span class="rk"></span><span class="lab">ROUTE</span><select aria-label="Route message ${m.n}"><option value="">Who handles it?</option>${ROUTES.map(r=>`<option${s.route===r?' selected':''}>${r}</option>`).join('')}</select><span class="played">${s.played?'✓ played':''}</span></div>`);
+  d.querySelector('.ply').onclick=()=>{clip(m.file,m.text,{rate:.9});if(!s.played){s.played=true;playedN++;addXP(2);$('#playedN').textContent=playedN+' / 3 played';d.querySelector('.played').textContent='✓ played'}};
+  const rk=d.querySelector('.rk');[1,2,3].forEach(r=>{const b=mk('button','',r);b.setAttribute('aria-pressed',s.rank===r);b.setAttribute('aria-label',`Message ${m.n} rank ${r}`);b.onclick=()=>{vmS.forEach(x=>{if(x.rank===r)x.rank=0});s.rank=s.rank===r?0:r;drawVM()};rk.appendChild(b)});
+  d.querySelector('select').onchange=e=>{s.route=e.target.value};
+  if(s.res)d.classList.add(s.res);box.appendChild(d)})}
+drawVM();
+$('#vmCheck').onclick=()=>{const fb=$('#vmFb');
+ if(vmS.some(s=>!s.rank||!s.route)){fb.className='s13-fb no';fb.textContent='Rank all three messages (1, 2, 3) and choose who handles each one.';return}
+ let ok=0;vmS.forEach((s,i)=>{const good=s.rank===MSGS[i].rank&&s.route===MSGS[i].route;s.res=good?'ok':'no';if(good)ok++});
+ fb.className='s13-fb '+(ok===3?'ok':'no');
+ fb.textContent=ok===3?'✓ 3 / 3. Yuki is first: her presentation is tomorrow at nine and she wants a call today. Now say her message in Spanish.':`${ok} / 3. Think: who has a deadline? Who says “not urgent” or “no rush”? Who handles a laptop, a refund, a chair? Try again.`;
+ if(ok===3){addXP(20,'triage');markDone(4)}drawVM()};
+mc($('#mcL'),[
+ {q:'What does Tom want?',o:['A new jacket','To know the status of his refund','A repair'],a:1,ok:'He asks: “Please check the status.”',no:'Listen for “refund” and “status”.'},
+ {q:'When does Yuki need her laptop?',o:['Tomorrow at nine','Today at five','Next week'],a:0,ok:'A presentation tomorrow at nine.',no:'Listen for the presentation.'},
+ {q:'What is wrong with Lucia’s chair?',o:['It is missing','It arrived damaged','It is too small'],a:1,ok:'It arrived damaged: she wants a replacement.',no:'Listen after “My new chair…”.'}],$('#scL'),'mcL',4);
+$('#scriptBox').innerHTML=`<p><span class="rec">[PARA GRABAR]</span> 3 voicemails · 1 speaker each · ${MSGS.reduce((a,m)=>a+m.text.split(/\s+/).length,0)} words in total · scenario: Customer Service voicemail box</p>`+MSGS.map(m=>`<p><b>${m.who}</b> (${m.acc}) · ${m.text.split(/\s+/).length} words<br>${esc(m.text)}</p>`).join('')+`<p><b>Answer key.</b> Task 1: Yuki first (laptop for a presentation tomorrow at nine; wants a call today before five). Order: 1 Yuki · 2 Tom (“this week”) · 3 Lucia (“no rush”). Route: Yuki → Repair Team · Tom → Finance · Lucia → Returns Desk. Task 2: Tom = status of a refund · Yuki = a call about her laptop repair · Lucia = a replacement for a damaged chair.<br><b>Mediation (Spanish model):</b> “Yuki Tanaka: su laptop está en reparación y la necesita mañana a las 9 para una presentación. Quiere que le llamen hoy antes de las 5. Es urgente.”</p>`;
+
+/* ===== §6 Speaking · The Case Detective ===== */
+const WIT=[
+ {n:'Nina',role:'Returns Desk',init:'N',cl:'#FBE3EC',cd:'#C71F5E',cues:[['the receipt and the blender','“Mr. Ruiz had his receipt. I checked the blender on October 1st. It was damaged, so I sent it to the warehouse.”'],['the refund request','“I sent the refund request to Finance the same day.”'],['her job','“I am responsible for returns and for refund requests.”']]},
+ {n:'Omar',role:'Warehouse',init:'O',cl:'#DCF2EF',cd:'#0A7F75',cues:[['when the blender arrived','“It arrived on October 2nd. We sent it to the Repair Team the same day.”'],['damaged items','“Damaged items are handled by the Repair Team.”'],['refunds','“Not my job. Refunds are handled by Finance.”']]},
+ {n:'Sam',role:'Repair Team',init:'S',cl:'#E1EEFF',cd:'#1D6FD6',cues:[['the blender','“We checked it on October 3rd. The motor is broken.”'],['who knows about it','“We told the Returns Desk the same day.”'],['the status','“The blender is here, in repair storage.”']]},
+ {n:'Lena',role:'Finance',init:'L',cl:'#FFF1C9',cd:'#7A5200',cues:[['a request for Mr. Ruiz','“I do not have a request for Mr. Ruiz.”'],['her job','“I am responsible for refunds, but I need a request from the Returns Desk first.”'],['the status of the refund','“It is pending. Nothing arrived.”']]}];
+let askedN=0;
+WIT.forEach((w,wi)=>{const c=mk('article','s13-wc',`<div class="wh" style="--wcl:${w.cl};--wcd:${w.cd}"><span class="ci">${w.init}</span><div><b>${w.n}</b><small>${w.role}</small></div></div><div class="cues" style="--wcl:${w.cl};--wcd:${w.cd}"></div>`);
+ const cu=c.querySelector('.cues');
+ w.cues.forEach(([cue,ans],ci)=>{const q=mk('div','s13-cue',`<span class="cl">${cue}</span><label><input type="checkbox"> I asked a question out loud</label><div class="an">${ans}</div><div class="key anote">Teacher answer: ${ans}</div>`);
+  q.querySelector('input').onchange=e=>{const on=e.target.checked;q.classList.toggle('open',on);if(on){askedN++;addXP(2)}else askedN--;$('#wiN').textContent=askedN+' / 12 asked';if(askedN>=8)addXP(10,'wit')};cu.appendChild(q)});
+ $('#wit').appendChild(c)});
+$('#wiN').textContent='0 / 12 asked';
+const LOG=[["Oct 1","Returns Desk: blender received. Receipt OK. Refund request: DRAFT (not sent).",1],["Oct 2","Warehouse: item received. Sent to Repair Team.",0],["Oct 3","Repair Team: item checked. Damaged (motor). Message sent to Returns Desk.",0],["Oct 4–10","Finance inbox: no refund request for Mr. Ruiz.",1]];
+$('#logRows').innerHTML=LOG.map(r=>`<tr class="${r[2]?'warn':''}"><td>${r[0]}</td><td>${r[1]}</td></tr>`).join('');
+const STS=[["Nina","“I sent the refund request to Finance the same day.”",1],["Omar","“We sent it to the Repair Team the same day.”",0],["Sam","“We told the Returns Desk the same day.”",0],["Lena","“I do not have a request for Mr. Ruiz.”",0]];
+STS.forEach(([n,t,ok])=>{const b=mk('button','',`<b>${n}</b>${t}`);b.onclick=()=>{if(b.classList.contains('ok'))return;
+ if(ok){b.classList.add('ok');$('#pickFb').className='s13-fb ok';$('#pickFb').textContent='✓ Nina’s statement does not match the log: the request is a DRAFT. It was not sent. Say it: “The request is not in Finance.”';addXP(10,'imp')}
+ else{b.classList.add('no');$('#pickFb').className='s13-fb no';$('#pickFb').textContent=`Check the log again: does ${n}’s statement match it?`;setTimeout(()=>b.classList.remove('no'),500)}};$('#pickSt').appendChild(b)});
+$('#twBtn').onclick=()=>{$('#twT').textContent='NEW CLUE: Nina’s draft is in the Drafts folder. It has the right customer and the right amount.';addXP(2,'tw')};
+$('#twOk').onchange=e=>{if(e.target.checked)addXP(5,'twok')};
+let wh=false,wt=false;
+function solved(){$('#solN').textContent=(wh+wt)+' / 2';if(wh&&wt){$('#solFb').className='s13-fb ok';$('#solFb').textContent='✓ Nina is responsible for the request. She sends it today. Then Finance handles the refund and Nina follows up.';addXP(15,'solve');markDone(5)}}
+[["Nina","Returns Desk",1],["Lena","Finance",0],["Omar","Warehouse",0],["Sam","Repair Team",0]].forEach(([n,r,ok])=>{const b=mk('button','',`<b>${n}</b>${r}`);b.onclick=()=>{if(ok){b.classList.add('ok');wh=true;solved()}else{b.classList.add('no');$('#solFb').className='s13-fb no';$('#solFb').textContent='Who is responsible for the request step? Look at the log and the clue.';setTimeout(()=>b.classList.remove('no'),500)}};$('#pickWho').appendChild(b)});
+[["Send the request to Finance today.",1],["Call Mr. Ruiz and say sorry. Nothing else.",0],["Ask the Repair Team to repair the blender.",0],["Wait. Finance will find it.",0]].forEach(([t,ok])=>{const b=mk('button','',t);b.onclick=()=>{if(ok){b.classList.add('ok');wt=true;solved()}else{b.classList.add('no');$('#solFb').className='s13-fb no';$('#solFb').textContent='Does that fix the failed step? Finance needs the request.';setTimeout(()=>b.classList.remove('no'),500)}};$('#pickWhat').appendChild(b)});
+const CMV=["Say the problem: “Mr. Ruiz still has no refund.”","Say who is responsible: “Nina is responsible for ___.”","Say what failed: “The request is in the ___ folder.”","Say what to do now: “Nina sends it ___.”","Say what happens next: “Finance handles ___. I will follow up.”"];
+const cmS=CMV.map(()=>false);
+CMV.forEach((m,k)=>{const b=mk('button','',`<i>✓</i>${m}`);b.setAttribute('aria-pressed','false');b.onclick=()=>{cmS[k]=!cmS[k];b.setAttribute('aria-pressed',cmS[k]);if(cmS[k])addXP(2,'cm'+k)};$('#caseMv').appendChild(b)});
+const QS=[
+ ["What is the last thing that you returned to a store?",["Why did you return it?","Did you get a refund?"]],
+ ["Who is responsible for repairs in your home?",["How do you contact that person?","What happens when it is urgent?"]],
+ ["Where do you keep the receipts for important things?",["Is it a good place?","What do you do when a receipt is missing?"]],
+ ["What is something that broke recently?",["What did you do first?","Did you repair it or replace it?"]],
+ ["At work, who is responsible for ordering new equipment?",["How long does it take?","Who approves the request?"]],
+ ["Who handles problems with the internet at your home?",["What do you check first?","How long do you wait for an answer?"]],
+ ["Tell me about a company that handled your problem well.",["What was the problem?","What did the person say?"]],
+ ["What is the department that you contact most at work?",["Why do you contact it?","Who is the person who answers?"]],
+ ["Which is better for a phone: to repair it or to buy a new one? Give ONE reason.",[]],
+ ["Who is responsible for the shopping in your family?",["How do you share the work?","What happens when someone forgets?"]],
+ ["Which step in your work process is handled by another department?",[]],
+ ["What is the first thing that you check when something is broken?",[]],
+ ["Who is the person you call when your car does not start?",[]],
+ ["What is the status of something that you are waiting for today?",[]]];
+let qi=0;const qSeen=new Set();
+function drawQ(){const [q,f]=QS[qi];$('#qTag').textContent=`QUESTION ${qi+1} OF ${QS.length}`;$('#qTx').textContent=q;$('#qF').innerHTML=f.map(x=>`<span>${x}</span>`).join('');qSeen.add(qi);$('#qN').textContent=qSeen.size+' / '+QS.length+' asked';if(qSeen.size>=10)addXP(10,'qs')}
+$('#qNext').onclick=()=>{qi=(qi+1)%QS.length;drawQ()};$('#qPrev').onclick=()=>{qi=(qi+QS.length-1)%QS.length;drawQ()};drawQ();
+
+/* ===== §7 Mission ===== */
+const CASES=[
+ {ctx:'HOME · PHONE',em:'📱',need:'Cracked phone screen',want:'You want to repair the phone.',img:['img/i2s02_phone.jpg','50% 40%'],
+  sheet:[['Returns Desk','receipts and warranty checks'],['Repair Team','broken screens and parts'],['Warehouse','sending items to customers'],['Finance','refunds and payments']],
+  steps:[['Check the receipt and the warranty','Returns Desk'],['Repair the screen','Repair Team'],['Send the phone back to the customer','Warehouse']],
+  model:'My phone screen is cracked, and I want to repair it. The Returns Desk is responsible for the receipt and the warranty. The repair is handled by the Repair Team. The status is pending: I am waiting for confirmation. I will follow up on Friday.'},
+ {ctx:'SHOP · JACKET',em:'🧥',need:'Jacket: wrong size',want:'You want to return the jacket and get a refund.',img:['img/i2s07_seal.jpg','50% 50%'],
+  sheet:[['Returns Desk','receipts and checking items'],['Warehouse','new stock and old stock'],['Finance','refunds and payments'],['Manager','approvals and special cases']],
+  steps:[['Check the jacket and the receipt','Returns Desk'],['Put the jacket back in stock','Warehouse'],['Pay the money back','Finance']],
+  model:'The jacket is the wrong size, so I want to return it and get a refund. Nina at the Returns Desk is responsible for checking it. The refund is handled by Finance. The status is pending. Please confirm the date, and I will follow up next week.'},
+ {ctx:'WORK · PRINTER',em:'🖨️',need:'Office printer: broken again',want:'You need a repair, and the request is pending.',img:['img/i2s05_desk.jpg','50% 40%'],
+  sheet:[['Manager','approvals'],['Supplier','repairs'],['Finance','invoices and payments'],['IT Department','computers and the network']],
+  steps:[['Approve the repair request','Manager'],['Repair the printer','Supplier'],['Pay the supplier’s invoice','Finance']],
+  model:'The printer on floor two is broken again, and we need a repair. The Manager is responsible for the approval. The repair is handled by the supplier, not by the IT Department. The request is pending. I will follow up with the supplier tomorrow.'}];
+const MOVES=["Say the problem and what you want: “My ___ is broken. I want to return / repair / replace it.”","Say who is responsible: “___ is responsible for ___.”","Say how it is handled: “It is handled by ___.”","Say the status: “It is pending. I am waiting for confirmation.”","Say the next step: “I will follow up… / Please confirm…”"];
+let mc2=0;const stDone=CASES.map(c=>c.steps.map(()=>false)),mvS=CASES.map(()=>MOVES.map(()=>false));
+CASES.forEach((c,i)=>{const b=mk('button','s13-tab','');b.onclick=()=>{mc2=i;drawCase()};$('#mTabs').appendChild(b)});
+function updTabs(){$$('#mTabs button').forEach((b,i)=>{b.innerHTML=`Claim ${i+1} · ${CASES[i].ctx.split(' · ')[0]}<small>${stDone[i].filter(Boolean).length}/3 steps · ${mvS[i].filter(Boolean).length}/5 moves</small>`;b.setAttribute('aria-pressed',i===mc2)})}
+function drawCase(){const c=CASES[mc2];
+ updTabs();
+ $('#mCtx').textContent=`CLAIM ${mc2+1} · ${c.ctx}`;$('#mEm').textContent=c.em;$('#mNeed').textContent=c.need;$('#mWant').textContent=c.want;
+ const im=$('#mImg');im.src=c.img[0];im.style.objectPosition=c.img[1];
+ $('#mSheet').innerHTML='<b>WHO HANDLES WHAT</b>'+c.sheet.map(s=>`<div><b>${s[0]}</b> · ${s[1]}</div>`).join('');
+ const rl=$('#relay');rl.innerHTML='';
+ const owners=c.sheet.map(s=>s[0]);
+ c.steps.forEach(([tx,ow],k)=>{const s=mk('div','s13-step'+(stDone[mc2][k]?' done':''),`<span class="sn">STEP ${k+1}</span><span class="stx">${tx}</span><div class="ows"></div>`);
+  owners.forEach(o=>{const b=mk('button',stDone[mc2][k]&&o===ow?'ok':'',o);b.disabled=stDone[mc2][k]&&o!==ow;
+   b.onclick=()=>{if(stDone[mc2][k])return;if(o===ow){stDone[mc2][k]=true;addXP(4,`st${mc2}${k}`);drawCase()}else{b.classList.add('no');$('#stN').textContent='Check the sheet: who handles that?';setTimeout(()=>{b.classList.remove('no');drawStN()},900)}};s.querySelector('.ows').appendChild(b)});
+  rl.appendChild(s)});
+ $('#mModel').textContent=c.model;
+ const mv=$('#moves');mv.innerHTML='';MOVES.forEach((m,k)=>{const b=mk('button','',`<i>✓</i>${m}`);b.setAttribute('aria-pressed',mvS[mc2][k]);b.onclick=()=>{mvS[mc2][k]=!mvS[mc2][k];b.setAttribute('aria-pressed',mvS[mc2][k]);updTabs();drawMv()};mv.appendChild(b)});
+ drawStN()}
+function drawStN(){const n=stDone[mc2].filter(Boolean).length;$('#stN').textContent=n+' / 3';$('#stT').textContent=stDone.flat().filter(Boolean).length}
+function drawMv(){const n=mvS.flat().filter(Boolean).length;$('#mvN').textContent=n;$('#mvBar').style.width=n/15*100+'%';if(n>=12){addXP(30,'mission');markDone(6)}}
+$('#mvRe').onclick=()=>{mvS.forEach(a=>a.fill(false));drawCase();drawMv()};
+drawCase();
+
+/* ===== §8 Wrap-up ===== */
+mc($('#mcQ'),[
+ {q:'Finance is responsible ___ refunds.',o:['by','for','of'],a:1,ok:'responsible FOR.',no:'Responsible takes for.'},
+ {q:'The repair is handled ___ the supplier.',o:['by','for','of'],a:0,ok:'handled BY.',no:'Think: who handles it? Use by.'},
+ {q:'Which sentence is correct?',o:['Refunds handled are by Finance.','Refunds are handled by Finance.','Refunds are handle by Finance.'],a:1,ok:'are handled by.',no:'Check the order and the verb.'},
+ {q:'Which question is correct?',o:['Who is responsible for this repair?','Who is the responsible of this repair?','Who is responsible by this repair?'],a:0,ok:'Who is responsible for…?',no:'No “the” and no “of”.'},
+ {q:'Say “Nina does the returns” in a better way:',o:['Nina is responsible for returns.','Nina is returns.','Nina has for returns.'],a:0,ok:'Responsible for, without “does”.',no:'Use the structure from today.'}],$('#scQ'),'mcQ',7);
+["I can say who is responsible: “___ is responsible for ___.”","I can say how it is handled: “It is handled by ___.”","I can ask: “Who is responsible for ___?”","I can explain a return, a repair or a replacement.","I can say the status and the next step."].forEach(t=>{const b=mk('button','',t);b.setAttribute('aria-pressed','false');b.onclick=()=>b.setAttribute('aria-pressed',b.getAttribute('aria-pressed')!=='true');$('#selfev').appendChild(b)});
+function showDone(){$('#doneBtn').textContent='✓ Session complete';$('#doneBtn').disabled=true}
+if(st.get('gt08-s13-done'))showDone();
+$('#doneBtn').onclick=()=>{st.set('gt08-s13-done','1');addXP(50,'done');markDone(7);showDone()};
+$('#tgGroup').addEventListener('click',applyMode);$('#tgOne').addEventListener('click',applyMode);
+applyMode();
+})();
+
+</script>
+</body>
+</html>

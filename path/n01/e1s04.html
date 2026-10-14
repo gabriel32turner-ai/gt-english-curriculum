@@ -1,0 +1,1607 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Básico 1 · S04 · The Contact List</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&family=Caveat:wght@600;700&display=swap">
+<style>
+:root{
+  --navy:#16213E; --navy2:#22305A; --cream:#FFF8F0; --paper:#FFFFFF; --ink:#1B1B2F; --mut:#5E6275; --line:#F0E4D4;
+  --coral:#FF5A36; --coral-d:#D93D1C; --coral-t:#FFE6DE;
+  --sun:#FFC233; --sun-t:#FFF3D1; --teal:#12B5A6; --teal-t:#D9F5F2; --pink:#FF3D7F; --pink-t:#FFE1EC; --violet:#5733CC; --violet-t:#ECE7FF;
+  --ok:#15A34A; --ok-t:#E3F7EA; --err:#E5484D; --err-t:#FDE8E8;
+  --r:18px; --r-sm:12px; --sh:0 6px 22px rgba(27,27,47,.08); --sh-lg:0 18px 44px rgba(27,27,47,.16);
+  color-scheme:light;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+[hidden]{display:none!important}
+html{scroll-behavior:smooth;scroll-padding-top:150px}
+body{background:var(--cream);color:var(--ink);font-family:"DM Sans","Segoe UI",system-ui,sans-serif;font-size:17px;line-height:1.55;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4,.nun{font-family:Nunito,"Segoe UI",system-ui,sans-serif;letter-spacing:-.01em;line-height:1.15;text-wrap:balance}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+button:focus-visible,a:focus-visible,textarea:focus-visible,input:focus-visible{outline:3px solid var(--violet);outline-offset:2px}
+img{max-width:100%;display:block}
+.wrap{max-width:1100px;margin:0 auto;padding-inline:16px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+/* ---------- top bar ---------- */
+.topbar{background:var(--navy);color:#fff}
+.topbar .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding-block:10px}
+.brand{display:flex;align-items:center;gap:10px;font-family:Nunito;font-weight:900;font-size:14px;letter-spacing:.08em}
+.brand i{width:10px;height:10px;border-radius:50%;background:var(--coral);box-shadow:0 0 0 4px rgba(255,90,54,.25)}
+.brand a{color:#fff;text-decoration:none}
+.brand small{font-family:"DM Sans";font-weight:500;letter-spacing:0;opacity:.7;font-size:13px}
+.toggles{display:flex;gap:8px;flex-wrap:wrap}
+.tg{border:1.5px solid rgba(255,255,255,.3);color:#fff;border-radius:99px;padding:6px 14px;font-size:13px;font-weight:700}
+.tg[aria-pressed="true"]{background:var(--sun);border-color:var(--sun);color:var(--navy)}
+
+/* ---------- hero ---------- */
+.hero{position:relative;background:var(--navy);color:#fff;overflow:hidden}
+.hero .bg{position:absolute;inset:0;background:url(img/hero_cafe.jpg) center/cover}
+.hero .bg::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(22,33,62,.97) 0%,rgba(22,33,62,.86) 45%,rgba(22,33,62,.25) 100%)}
+.hero .wrap{position:relative;padding-block:44px 40px}
+.kick{font-family:Nunito;font-weight:900;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--sun)}
+.hero h1{font-size:clamp(40px,6.5vw,72px);font-weight:900;margin:8px 0 10px;max-width:14ch}
+.hero h1 span{color:var(--coral)}
+.hero p.obj{max-width:56ch;font-size:18px;opacity:.94}
+.pills{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.pill{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.28);border-radius:99px;padding:5px 13px;font-size:14px;font-weight:700}
+.pill.sun{background:var(--sun);border-color:var(--sun);color:var(--navy)}
+.coach{display:inline-flex;align-items:center;gap:12px;margin-top:20px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);border-radius:99px;padding:6px 18px 6px 6px}
+.coach .cav{width:44px;height:44px;border-radius:50%;background:var(--coral);display:grid;place-items:center;font-family:Nunito;font-weight:900;font-size:16px;letter-spacing:.02em}
+.coach b{display:block;font-family:Nunito;font-weight:900;font-size:17px;line-height:1.1}
+.coach small{font-size:13px;color:var(--sun);font-weight:700;letter-spacing:.04em}
+
+/* ---------- sticky nav ---------- */
+.nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:40;background:rgba(255,248,240,.96);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.nav .wrap{padding-block:10px 8px}
+.prog{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+.bar{flex:1;height:10px;background:#F1E6D7;border-radius:99px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--coral),var(--sun));border-radius:99px;transition:width .4s}
+.xp{font-family:Nunito;font-weight:900;font-size:15px;color:var(--coral-d);white-space:nowrap}
+.clock{font-family:Nunito;font-weight:900;font-size:15px;background:var(--navy);color:#fff;border-radius:99px;padding:5px 12px;font-variant-numeric:tabular-nums}
+.steps{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}
+.steps::-webkit-scrollbar{display:none}
+.steps a{flex:1 0 auto;text-decoration:none;color:var(--mut);background:#F6EDE1;border-radius:10px;padding:8px 12px;font-weight:700;font-size:14px;white-space:nowrap;text-align:center;border:1.5px solid transparent}
+.steps a b{font-family:Nunito;margin-right:4px}
+.steps a.on{background:var(--c,var(--coral));color:#fff}
+.steps a.done{border-color:var(--ok);color:var(--ok)}
+.steps a.done.on{color:#fff}
+
+/* ---------- sections ---------- */
+main{padding-block:26px 80px}
+.sec{background:var(--paper);border-radius:24px;box-shadow:var(--sh);margin-bottom:26px;overflow:hidden;border-top:8px solid var(--c)}
+.shead{display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between;padding:22px 26px 6px}
+.snum{display:flex;align-items:center;gap:14px}
+.snum .n{width:54px;height:54px;border-radius:16px;background:var(--c);color:#fff;display:grid;place-items:center;font-family:Nunito;font-weight:900;font-size:22px;flex:none}
+.snum h2{font-size:clamp(26px,3.4vw,36px);font-weight:900}
+.snum .sub{font-size:14px;color:var(--mut);font-weight:500}
+.meta{display:flex;gap:8px;flex-wrap:wrap}
+.chip{border-radius:99px;padding:5px 12px;font-size:13px;font-weight:700;background:var(--ct);color:var(--ink)}
+.chip.dark{background:var(--navy);color:#fff}
+.sbody{padding:14px 26px 28px;display:grid;gap:22px}
+.block{display:grid;gap:12px}
+.bt{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.bt h3{font-size:22px;font-weight:900}
+.bt .tag{font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--c)}
+.hint{color:var(--mut);font-size:15px}
+.card{background:var(--paper);border:1.5px solid var(--line);border-radius:var(--r);padding:18px}
+.tint{background:var(--ct);border-color:transparent}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+@media (max-width:820px){.g2,.g3{grid-template-columns:1fr}}
+.btn{border-radius:99px;padding:10px 18px;font-weight:700;font-size:15px;background:var(--paper);border:1.5px solid var(--line)}
+.btn.main{background:var(--c,var(--coral));border-color:var(--c,var(--coral));color:#fff}
+.btn.dark{background:var(--navy);border-color:var(--navy);color:#fff}
+.btn.sm{padding:6px 12px;font-size:14px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.say{width:40px;height:40px;border-radius:50%;background:var(--c,var(--coral));color:#fff;display:inline-grid;place-items:center;flex:none;font-size:16px}
+.say svg{width:18px;height:18px;fill:#fff}
+
+/* teacher notes */
+.tn{border-radius:var(--r);background:#FFFBEA;border:1.5px dashed #E9C46A}
+.tn summary{list-style:none;padding:12px 16px;font-weight:800;font-family:Nunito;cursor:pointer;display:flex;justify-content:space-between;color:#7A5A00}
+.tn summary::-webkit-details-marker{display:none}
+.tn summary::after{content:"＋";font-weight:900}
+.tn[open] summary::after{content:"－"}
+.tn .layers{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;padding:0 16px 16px}
+@media (max-width:820px){.tn .layers{grid-template-columns:1fr}}
+.tn .ly{background:#fff;border-radius:12px;padding:12px 14px;font-size:15px}
+.tn .ly h4{font-size:13px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px}
+.tn .ly:nth-child(1) h4{color:var(--violet)} .tn .ly:nth-child(2) h4{color:var(--coral-d)} .tn .ly:nth-child(3) h4{color:var(--teal)}
+.tn ul{padding-left:18px} .tn li{margin-bottom:4px}
+body.student .tn, body.student .key{display:none!important}
+
+/* ---------- §1 warm-up ---------- */
+.scene{display:grid;grid-template-columns:1.1fr 1fr;border-radius:var(--r);overflow:hidden;background:var(--navy);color:#fff}
+@media (max-width:820px){.scene{grid-template-columns:1fr}}
+.scene img{height:100%;min-height:260px;object-fit:cover}
+.scene .txt{padding:26px;display:grid;gap:12px;align-content:center}
+.bubble{background:#fff;color:var(--ink);border-radius:18px 18px 18px 4px;padding:12px 16px;font-size:20px;font-weight:700;max-width:28ch;position:relative}
+.bubble.me{background:var(--coral);color:#fff;border-radius:18px 18px 4px 18px;justify-self:end}
+.poll{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+@media (max-width:900px){.poll{grid-template-columns:repeat(3,1fr)}}
+@media (max-width:520px){.poll{grid-template-columns:repeat(2,1fr)}}
+.pc{border-radius:var(--r);overflow:hidden;background:var(--paper);border:2px solid var(--line);display:grid;transition:transform .15s,border-color .15s}
+.pc img{aspect-ratio:4/3;object-fit:cover;width:100%}
+.pc .pb{padding:10px 12px;display:grid;gap:8px}
+.pc .nm{font-family:Nunito;font-weight:900;font-size:18px}
+.pc .vt{display:flex;align-items:center;justify-content:space-between}
+.pc .vt button{width:34px;height:34px;border-radius:50%;background:var(--ct);font-weight:900;font-size:18px}
+.pc .vt output{font-family:Nunito;font-weight:900;font-size:22px;font-variant-numeric:tabular-nums}
+.pc .pbar{height:8px;border-radius:99px;background:#F4ECE0;overflow:hidden}
+.pc .pbar i{display:block;height:100%;width:0;background:var(--c);transition:width .3s}
+.pc.win{border-color:var(--c);transform:translateY(-3px)}
+.result{font-family:Nunito;font-weight:900;font-size:20px}
+.fq{display:grid;gap:8px}
+.fq div{background:var(--ct);border-radius:12px;padding:10px 14px;font-weight:700}
+.fq div span{color:var(--mut);font-weight:500}
+
+/* ---------- §2 vocab ---------- */
+.flips{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+@media (max-width:900px){.flips{grid-template-columns:repeat(3,1fr)}}
+@media (max-width:520px){.flips{grid-template-columns:repeat(2,1fr)}}
+.flip{perspective:900px;height:170px}
+.flip .in{position:relative;width:100%;height:100%;transition:transform .5s;transform-style:preserve-3d}
+.flip.on .in{transform:rotateY(180deg)}
+.flip .f,.flip .b{position:absolute;inset:0;border-radius:var(--r);backface-visibility:hidden;padding:14px;display:grid;align-content:space-between}
+.flip .f{background:var(--fc);color:#fff}
+.flip .b{background:#fff;border:2px solid var(--fc);transform:rotateY(180deg)}
+.flip .num{font-family:Nunito;font-weight:900;font-size:13px;opacity:.8}
+.flip .w{font-family:Nunito;font-weight:900;font-size:20px;line-height:1.15}
+.flip .es{font-weight:700;color:var(--mut);font-size:14px}
+.flip .ex{font-size:14px}
+.flip .fb{display:flex;justify-content:space-between;align-items:end}
+.flip .fb .say{background:rgba(255,255,255,.25)}
+.flip .tap{font-size:12px;font-weight:700;opacity:.85}
+.flip .seen{position:absolute;top:10px;right:10px;background:var(--ok);color:#fff;border-radius:99px;font-size:11px;font-weight:800;padding:2px 8px}
+.match{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.match .col{display:grid;gap:10px}
+.mi{border:2px solid var(--line);background:#fff;border-radius:14px;padding:12px 14px;font-weight:700;text-align:left;transition:.15s}
+.mi.sel{border-color:var(--c);background:var(--ct)}
+.mi.ok{border-color:var(--ok);background:var(--ok-t);color:var(--ok);cursor:default}
+.mi.bad{border-color:var(--err);background:var(--err-t);animation:shake .3s}
+@keyframes shake{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+.board{display:flex;flex-wrap:wrap;gap:10px}
+.dw{border-radius:12px;padding:10px 14px;font-family:Nunito;font-weight:900;font-size:18px;background:var(--navy);color:#fff}
+.dw[aria-pressed="true"]{background:#EDE6DB;color:#A79E92;text-decoration:line-through}
+.timer{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.timer output{font-family:Nunito;font-weight:900;font-size:34px;font-variant-numeric:tabular-nums;min-width:4.5ch}
+.timer.end output{color:var(--err)}
+.closeout{background:var(--navy);color:#fff;border-radius:14px;padding:12px 16px;font-family:Nunito;font-weight:900;font-size:19px}
+.stat{font-family:Nunito;font-weight:900}
+.stat b{color:var(--c);font-size:26px}
+
+/* ---------- §3 grammar ---------- */
+.disc{display:grid;grid-template-columns:1fr 1.2fr;gap:0;border-radius:var(--r);overflow:hidden;border:1.5px solid var(--line)}
+@media (max-width:820px){.disc{grid-template-columns:1fr}}
+.disc img{height:100%;min-height:240px;object-fit:cover}
+.disc .chat{padding:20px;display:grid;gap:10px;align-content:center;background:var(--violet-t)}
+.disc .chat p{background:#fff;border-radius:14px;padding:10px 14px;font-size:18px;font-weight:500;max-width:34ch}
+.disc .chat p:nth-child(even){justify-self:end;background:var(--violet);color:#fff}
+mark.hl{background:transparent;color:inherit;border-radius:4px;transition:.2s}
+.show-hl mark.hl{background:var(--sun);color:var(--ink);padding:0 3px;font-weight:800}
+.tool{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media (max-width:820px){.tool{grid-template-columns:1fr}}
+.tool .card h4{font-size:14px;letter-spacing:.08em;text-transform:uppercase;color:var(--violet);margin-bottom:6px}
+.tool .big{font-family:Nunito;font-weight:900;font-size:26px}
+.tool .big em{font-style:normal;color:var(--violet)}
+.forms{border-radius:var(--r);overflow:hidden;border:1.5px solid var(--line)}
+.forms table{width:100%;border-collapse:collapse;font-size:17px}
+.forms th{background:var(--violet);color:#fff;font-family:Nunito;text-align:left;padding:10px 14px}
+.forms td{padding:10px 14px;border-top:1px solid var(--line);background:#fff}
+.forms td:first-child{font-family:Nunito;font-weight:900;font-size:22px;color:var(--violet);width:56px;text-align:center}
+.forms b{color:var(--violet)}
+.es-box{background:#fff;border:2px dashed var(--violet);border-radius:var(--r);padding:16px 18px;display:grid;gap:8px}
+.machine{display:flex;align-items:center;gap:14px;flex-wrap:wrap;justify-content:center;background:var(--navy);color:#fff;border-radius:var(--r);padding:22px}
+.machine .from{font-family:Nunito;font-weight:900;font-size:30px}
+.machine .arrow{font-size:30px;color:var(--sun)}
+.machine .to{font-family:Nunito;font-weight:900;font-size:40px;color:var(--sun);min-width:5ch;text-align:center}
+.mc{display:grid;gap:12px}
+.mcq{background:#fff;border:1.5px solid var(--line);border-radius:14px;padding:14px 16px;display:grid;gap:10px}
+.mcq .q{font-weight:700;font-size:18px}
+.mcq .q .n{font-family:Nunito;font-weight:900;color:var(--c);margin-right:6px}
+.opts{display:flex;gap:8px;flex-wrap:wrap}
+.opt{border:2px solid var(--line);border-radius:99px;padding:7px 16px;font-weight:700;background:#fff}
+.opt:hover{border-color:var(--c)}
+.opt.ok{background:var(--ok);border-color:var(--ok);color:#fff}
+.opt.no{background:var(--err-t);border-color:var(--err);color:var(--err)}
+.mcq .fb{font-size:15px;font-weight:700}
+.mcq .fb.ok{color:var(--ok)} .mcq .fb.no{color:var(--err)}
+.score{font-family:Nunito;font-weight:900;font-size:18px}
+.builder .dst,.builder .src{display:flex;flex-wrap:wrap;gap:8px;min-height:56px;padding:10px;border-radius:14px}
+.builder .dst{border:2.5px dashed var(--c);background:var(--ct)}
+.wchip{background:#fff;border:2px solid var(--line);border-radius:12px;padding:8px 14px;font-family:Nunito;font-weight:900;font-size:19px;box-shadow:0 3px 0 var(--line)}
+.dst .wchip{border-color:var(--c);box-shadow:0 3px 0 var(--c)}
+.errs{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media (max-width:820px){.errs{grid-template-columns:1fr}}
+.err{border-radius:14px;padding:14px;background:#fff;border:1.5px solid var(--line);display:grid;gap:4px}
+.err s{color:var(--err);font-weight:700}
+.err b{color:var(--ok)}
+
+/* ---------- §4 reading ---------- */
+.phone{max-width:420px;margin:0 auto;background:#fff;border-radius:34px;border:10px solid var(--navy);box-shadow:var(--sh-lg);overflow:hidden}
+.phone .ph{background:var(--teal);color:#fff;padding:14px 16px;display:flex;align-items:center;gap:10px}
+.phone .ph b{font-family:Nunito;font-weight:900}
+.phone .ph small{display:block;opacity:.9;font-size:12px}
+.phone .ms{background:#EFE9E1;padding:14px 12px;display:grid;gap:10px}
+.msg{display:grid;grid-template-columns:36px 1fr;gap:8px;align-items:start}
+.msg img,.msg .av{width:36px;height:36px;border-radius:50%;object-fit:cover}
+.msg .av{background:var(--coral);color:#fff;display:grid;place-items:center;font-family:Nunito;font-weight:900}
+.msg .bb{background:#fff;border-radius:4px 14px 14px 14px;padding:8px 12px;font-size:16px}
+.msg .bb .who{font-family:Nunito;font-weight:900;font-size:13px;color:var(--teal)}
+.msg.t .bb .who{color:var(--coral-d)}
+
+/* ---------- §5 listening ---------- */
+.player{display:grid;grid-template-columns:260px 1fr;gap:0;border-radius:var(--r);overflow:hidden;background:var(--navy);color:#fff}
+@media (max-width:820px){.player{grid-template-columns:1fr}}
+.player img{height:100%;min-height:200px;object-fit:cover}
+.player .pp{padding:22px;display:grid;gap:12px;align-content:center}
+.phases{display:flex;gap:8px;flex-wrap:wrap}
+.phase{border:1.5px solid rgba(255,255,255,.35);border-radius:99px;padding:6px 14px;font-weight:700;font-size:14px}
+.phase[aria-pressed="true"]{background:var(--pink);border-color:var(--pink)}
+.play{background:var(--pink);color:#fff;border-radius:99px;padding:12px 22px;font-family:Nunito;font-weight:900;font-size:18px;display:inline-flex;gap:10px;align-items:center}
+.script{background:#fff;border-radius:var(--r);border:1.5px solid var(--line);padding:16px 18px;font-size:17px;display:grid;gap:6px}
+.script p b{color:var(--pink);font-family:Nunito}
+.rec{display:inline-block;background:var(--navy);color:#fff;font-size:11px;font-weight:800;letter-spacing:.1em;padding:3px 8px;border-radius:4px}
+.pron{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media (max-width:820px){.pron{grid-template-columns:1fr 1fr}}
+.pr{background:var(--pink-t);border-radius:14px;padding:14px;display:grid;gap:8px;justify-items:start}
+.pr .w{font-family:Nunito;font-weight:900;font-size:22px}
+.pr .ipa{color:var(--mut);font-size:14px}
+
+/* ---------- §6 speaking ---------- */
+.rounds{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media (max-width:820px){.rounds{grid-template-columns:1fr}}
+.rd{border-radius:var(--r);overflow:hidden;border:2.5px solid var(--line);background:#fff;text-align:left;display:grid}
+.rd img{aspect-ratio:16/10;object-fit:cover;width:100%}
+.rd .rb{padding:14px;display:grid;gap:6px}
+.rd h4{font-size:20px;font-weight:900}
+.rd .who{font-size:14px;font-weight:700;color:var(--coral-d)}
+.rd ul{padding-left:18px;font-size:15px}
+.rd[aria-pressed="true"]{border-color:var(--c);box-shadow:0 0 0 4px var(--ct)}
+.deck{display:grid;grid-template-columns:1fr 1.3fr;border-radius:var(--r);overflow:hidden;background:var(--c);color:#fff}
+@media (max-width:820px){.deck{grid-template-columns:1fr}}
+.deck img{height:100%;min-height:260px;object-fit:cover}
+.deck .dq{padding:26px;display:grid;gap:14px;align-content:center}
+.deck .qn{font-family:Nunito;font-weight:900;letter-spacing:.12em;font-size:13px;opacity:.9}
+.deck .qt{font-family:Nunito;font-weight:900;font-size:clamp(28px,3.6vw,42px);line-height:1.1}
+.deck .fu{display:grid;gap:6px;font-size:19px;font-weight:500}
+.deck .fu span::before{content:"→ ";font-weight:900;color:var(--sun)}
+.deck .row .btn{background:rgba(255,255,255,.18);border-color:rgba(255,255,255,.35);color:#fff}
+.dots{display:flex;gap:6px}
+.dots button{width:11px;height:11px;border-radius:50%;background:rgba(255,255,255,.35)}
+.dots button[aria-current="true"]{background:#fff}
+.help{display:flex;flex-wrap:wrap;gap:8px}
+.help span{background:var(--navy);color:#fff;border-radius:99px;padding:6px 14px;font-weight:700;font-size:15px}
+
+/* ---------- §7 mission ---------- */
+.mission{position:relative;border-radius:var(--r);overflow:hidden;color:#fff;background:var(--navy)}
+.mission img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.35}
+.mission .mt{position:relative;padding:28px;display:grid;gap:10px;max-width:70ch}
+.mission h3{font-size:30px;font-weight:900}
+.guest{background:#fff;border-radius:var(--r);border:1.5px solid var(--line);overflow:hidden;display:grid}
+.guest .gh{display:flex;gap:12px;align-items:center;padding:14px;background:var(--ct)}
+.guest .gh img{width:72px;height:72px;border-radius:50%;object-fit:cover;border:3px solid #fff}
+.guest h4{font-size:20px;font-weight:900}
+.guest .gh small{color:var(--mut);font-weight:700}
+.guest .line{padding:10px 14px 0;font-style:italic;color:var(--mut);font-size:15px}
+.moves{display:grid;gap:8px;padding:14px}
+.mv{display:flex;align-items:center;gap:10px;border:1.5px solid var(--line);border-radius:12px;padding:9px 12px;font-weight:700;font-size:15px;text-align:left;background:#fff}
+.mv i{width:22px;height:22px;border-radius:7px;border:2px solid var(--line);display:grid;place-items:center;flex:none;font-style:normal;color:#fff;font-size:13px}
+.mv[aria-pressed="true"]{background:var(--ok-t);border-color:var(--ok)}
+.mv[aria-pressed="true"] i{background:var(--ok);border-color:var(--ok)}
+
+/* ---------- §8 wrap ---------- */
+.sur{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media (max-width:900px){.sur{grid-template-columns:1fr 1fr}}
+@media (max-width:520px){.sur{grid-template-columns:1fr}}
+.sur .card h4{font-size:18px;font-weight:900;margin-bottom:6px}
+.sur .card:nth-child(1){border-top:5px solid var(--ok)} .sur .card:nth-child(2){border-top:5px solid var(--sun)} .sur .card:nth-child(3){border-top:5px solid var(--err)} .sur .card:nth-child(4){border-top:5px solid var(--violet)}
+textarea{width:100%;min-height:92px;border:1.5px solid var(--line);border-radius:12px;padding:10px 12px;font:inherit;font-size:15px;resize:vertical;background:#fff;color:var(--ink)}
+.selfev{display:flex;flex-wrap:wrap;gap:8px}
+.selfev button{border:2px solid var(--line);border-radius:99px;padding:8px 14px;font-weight:700;background:#fff}
+.selfev button[aria-pressed="true"]{background:var(--navy);border-color:var(--navy);color:#fff}
+.badge{display:flex;gap:18px;align-items:center;background:linear-gradient(120deg,var(--navy),var(--navy2));color:#fff;border-radius:var(--r);padding:22px}
+.badge .medal{width:84px;height:84px;border-radius:50%;background:var(--sun);color:var(--navy);display:grid;place-items:center;font-family:Nunito;font-weight:900;font-size:30px;flex:none;border:6px solid rgba(255,255,255,.3)}
+footer{color:var(--mut);font-size:13px;text-align:center;padding:10px 16px 40px}
+footer a{color:var(--mut)}
+
+.flag{display:inline-block;width:42px;height:28px;border-radius:5px;overflow:hidden;box-shadow:0 0 0 1.5px rgba(0,0,0,.12);flex:none;vertical-align:middle}
+.flag svg{width:100%;height:100%;display:block}
+.teams{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.team{border-radius:14px;padding:12px;display:grid;gap:6px;background:var(--ct);text-align:center}
+.team b{font-family:Nunito;font-weight:900;font-size:36px;line-height:1}
+.team small{font-weight:800;letter-spacing:.08em;font-size:12px}
+.team button{background:#fff;border:1.5px solid var(--line);border-radius:99px;padding:6px 10px;font-weight:700;font-size:14px}
+.team.on{outline:3px solid var(--c)}
+.models{display:flex;flex-wrap:wrap;gap:8px}
+.models span{background:var(--navy);color:#fff;border-radius:99px;padding:6px 14px;font-weight:700;font-size:15px}
+.pmap{display:grid;grid-template-columns:repeat(7,1fr);gap:8px}
+@media (max-width:900px){.pmap{grid-template-columns:repeat(4,1fr)}}
+@media (max-width:480px){.pmap{grid-template-columns:repeat(2,1fr)}}
+.pn{border-radius:14px;border:2px solid var(--line);background:#fff;padding:10px 8px;display:grid;gap:4px;justify-items:center;text-align:center}
+.pn svg{width:52px;height:40px}
+.pn b{font-family:Nunito;font-weight:900;font-size:22px}
+.pn small{font-size:13px;color:var(--mut);font-weight:700}
+.pn em{font-style:normal;font-family:Nunito;font-weight:900;font-size:15px;border-radius:99px;padding:1px 10px;color:#fff}
+.pn em.is{background:var(--violet)} .pn em.are{background:var(--pink)} .pn em.am{background:#E5A100}
+.pn[aria-pressed="true"]{border-color:var(--violet);background:var(--violet-t);transform:translateY(-2px)}
+.split{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:640px){.split{grid-template-columns:1fr}}
+.split .card h4{font-family:Nunito;font-weight:900;font-size:26px}
+.split .card h4 em{font-style:normal;color:var(--violet)}
+.fld{display:grid;gap:4px;background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:10px 12px}
+.fld label{font-size:13px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--mut);display:flex;justify-content:space-between;align-items:center;gap:8px}
+.fld input{font:inherit;font-size:17px;font-weight:700;border:0;border-bottom:2px solid var(--line);padding:4px 2px;background:transparent;color:var(--ink);width:100%;min-width:0}
+.fld.ok{border-color:var(--ok);background:var(--ok-t)}
+.fld.no{border-color:var(--err);background:var(--err-t)}
+.fld .say{width:30px;height:30px;background:var(--pink)}
+.fld .ans{font-size:13px;font-weight:700;color:var(--err)}
+.glist{display:grid;gap:10px}
+.regcard{background:#fff;border-radius:var(--r);border:1.5px solid var(--line);overflow:hidden;display:grid}
+.regcard .rh{background:var(--teal);color:#fff;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.regcard .rh b{font-family:Nunito;font-weight:900;font-size:20px;letter-spacing:.04em}
+.mycard{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+@media (max-width:640px){.mycard{grid-template-columns:1fr}}
+.qm{display:grid;gap:14px;background:var(--navy);color:#fff;border-radius:var(--r);padding:22px}
+.qm .nouns{display:flex;flex-wrap:wrap;gap:8px}
+.qm .nouns button{border:1.5px solid rgba(255,255,255,.35);border-radius:99px;padding:7px 16px;font-weight:700}
+.qm .nouns button[aria-pressed="true"]{background:var(--sun);border-color:var(--sun);color:var(--navy)}
+.qm .pair{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:640px){.qm .pair{grid-template-columns:1fr}}
+.qm .bx{background:rgba(255,255,255,.08);border-radius:14px;padding:14px;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.qm .bx small{display:block;color:var(--sun);font-weight:800;font-size:12px;letter-spacing:.1em}
+.qm .bx span.t{font-family:Nunito;font-weight:900;font-size:clamp(20px,3vw,26px);overflow-wrap:anywhere}
+.qm .bx em{font-style:normal;color:var(--sun)}
+.accent{display:grid;grid-template-columns:1fr 1.1fr;border-radius:var(--r);overflow:hidden;background:var(--navy);color:#fff}
+@media (max-width:820px){.accent{grid-template-columns:1fr}}
+.accent img{height:100%;min-height:220px;object-fit:cover}
+.accent .txt{padding:24px;display:grid;gap:12px;align-content:center}
+.vote3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+@media (max-width:520px){.vote3{grid-template-columns:1fr}}
+.vote3 button{background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.3);border-radius:14px;padding:10px;color:#fff;font-weight:700;text-align:left;display:grid;gap:4px}
+.vote3 button b{font-family:Nunito;font-size:26px;color:var(--sun)}
+
+/* ---------- S04 · The Contact List ---------- */
+.hero .bg{background:url(img/b1s04_hero.jpg) center 30%/cover}
+.hero .bg::after{background:linear-gradient(90deg,rgba(22,33,62,.97) 0%,rgba(22,33,62,.86) 46%,rgba(22,33,62,.2) 100%)}
+.hand{font-family:Caveat,"Segoe Print",cursive}
+.num{font-variant-numeric:tabular-nums}
+/* warm-up: contact app */
+.hook{display:grid;grid-template-columns:minmax(0,340px) 1fr;gap:20px;align-items:start}
+@media (max-width:820px){.hook{grid-template-columns:1fr}}
+.capp{background:#fff;border-radius:30px;border:9px solid var(--navy);box-shadow:var(--sh-lg);overflow:hidden;max-width:340px;width:100%;justify-self:center}
+.capp .ch{background:var(--coral);color:#fff;padding:14px 16px 12px;display:grid;gap:8px}
+.capp .ch b{font-family:Nunito;font-weight:900;font-size:22px}
+.capp .ch .srch{background:rgba(255,255,255,.22);border-radius:99px;padding:6px 12px;font-size:14px;font-weight:700}
+.capp .cl{display:grid;max-height:420px;overflow:auto}
+.crow{display:grid;grid-template-columns:40px 1fr auto;gap:10px;align-items:center;padding:9px 14px;border-bottom:1px solid var(--line);text-align:left;width:100%;background:#fff}
+.crow .av{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;font-family:Nunito;font-weight:900;color:#fff;overflow:hidden}
+.crow .av img{width:100%;height:100%;object-fit:cover}
+.crow b{font-weight:700;font-size:16px}
+.crow small{font-size:12px;color:var(--mut);display:block}
+.crow .qx{font-family:Nunito;font-weight:900;font-size:13px;background:var(--coral-t);color:var(--coral-d);border-radius:99px;padding:2px 9px}
+.crow[aria-pressed="true"]{background:var(--coral-t)}
+.crow.lt{font-size:12px;font-weight:800;letter-spacing:.12em;color:var(--mut);padding:4px 14px;background:#FAF6EF;display:block}
+.rv{border-radius:var(--r);overflow:hidden;background:var(--navy);color:#fff;display:grid;grid-template-columns:1fr 1.1fr;min-height:260px}
+@media (max-width:560px){.rv{grid-template-columns:1fr}}
+.rv img{width:100%;height:100%;min-height:220px;object-fit:cover}
+.rv .rt{padding:20px;display:grid;gap:10px;align-content:center}
+.rv .rt .big{font-family:Nunito;font-weight:900;font-size:26px;line-height:1.15}
+.rv .rt .big em{font-style:normal;color:var(--sun)}
+.rv .ph0{display:grid;place-items:center;text-align:center;padding:30px;background:repeating-linear-gradient(45deg,#1F2B4F,#1F2B4F 12px,#22305A 12px,#22305A 24px);font-family:Nunito;font-weight:900;font-size:22px}
+/* vocab match */
+.match .mi{font-family:Nunito;font-size:20px;font-weight:900;text-align:center}
+.match .mi.dig{font-size:26px}
+/* VOC-13 picture flash */
+.flash{display:grid;grid-template-columns:1.2fr 1fr;gap:18px;align-items:start}
+@media (max-width:820px){.flash{grid-template-columns:1fr}}
+.fstage{position:relative;aspect-ratio:3/2;border-radius:var(--r);overflow:hidden;background:var(--navy);border:6px solid var(--navy);display:grid;place-items:center}
+.fstage img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.fstage .fn{position:relative;font-family:Nunito;font-weight:900;font-size:clamp(90px,16vw,170px);color:#fff;line-height:1;text-shadow:0 6px 0 rgba(0,0,0,.25)}
+.fstage .tagn{position:absolute;right:14px;bottom:14px;background:var(--sun);color:var(--navy);font-family:Nunito;font-weight:900;font-size:clamp(28px,5vw,44px);border-radius:16px;padding:4px 16px;box-shadow:0 6px 18px rgba(0,0,0,.3)}
+.fstage .cover{position:absolute;inset:0;background:var(--navy);color:#fff;display:grid;place-items:center;text-align:center;font-family:Nunito;font-weight:900;font-size:24px;padding:20px}
+.fstage .cover small{display:block;color:var(--sun);font-size:15px;letter-spacing:.08em}
+.fstage .cnt{position:absolute;left:12px;top:12px;background:var(--sun);color:var(--navy);font-family:Nunito;font-weight:900;border-radius:99px;padding:5px 12px;font-size:15px;z-index:3}
+.fside{display:grid;gap:12px}
+.fscore{display:flex;gap:12px;flex-wrap:wrap}
+.fscore div{background:var(--ct);border-radius:14px;padding:10px 14px;display:grid;min-width:110px}
+.fscore b{font-family:Nunito;font-weight:900;font-size:34px;line-height:1;color:var(--c)}
+.fscore small{font-weight:800;font-size:12px;letter-spacing:.08em}
+.fmodel{background:var(--navy);color:#fff;border-radius:14px;padding:10px 14px;font-family:Nunito;font-weight:900;font-size:20px;min-height:50px;display:flex;align-items:center;gap:10px}
+/* grammar: owner map */
+.own{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+@media (max-width:820px){.own{grid-template-columns:repeat(3,1fr)}}
+@media (max-width:480px){.own{grid-template-columns:repeat(2,1fr)}}
+.ow{border-radius:16px;border:2px solid var(--line);background:#fff;padding:10px 8px 12px;display:grid;gap:6px;justify-items:center;text-align:center}
+.ow .ph{width:74px;height:74px;border-radius:50%;overflow:hidden;background:var(--violet-t);display:grid;place-items:center;font-family:Nunito;font-weight:900;font-size:22px;color:var(--violet)}
+.ow .ph img{width:100%;height:100%;object-fit:cover}
+.ow .ph.two{width:110px;border-radius:40px}
+.ow .sub{font-size:13px;font-weight:700;color:var(--mut)}
+.ow .arrow{font-family:Nunito;font-weight:900;font-size:15px;color:var(--mut)}
+.ow em{font-style:normal;font-family:Nunito;font-weight:900;font-size:22px;border-radius:99px;padding:0 14px;color:#fff;background:var(--violet)}
+.ow em.her{background:var(--pink)} .ow em.their{background:var(--teal)} .ow em.my,.ow em.your{background:#E5A100}
+.ow[aria-pressed="true"]{border-color:var(--violet);background:var(--violet-t);transform:translateY(-2px)}
+/* GRM-15 tic-tac-toe */
+.tttw{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.9fr);gap:18px;align-items:start}
+@media (max-width:860px){.tttw{grid-template-columns:1fr}}
+.ttt{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;background:var(--navy);padding:8px;border-radius:var(--r)}
+.sq{position:relative;border-radius:12px;overflow:hidden;background:#fff;aspect-ratio:1;display:grid;text-align:left}
+.sq img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.sq .lb{position:absolute;left:6px;right:6px;bottom:6px;background:rgba(255,255,255,.95);border-radius:10px;padding:5px 8px;font-size:13px;font-weight:700;line-height:1.2;color:var(--ink)}
+.sq .lb b{display:block;font-family:Nunito;font-weight:900;font-size:15px}
+.sq[aria-pressed="true"]{outline:4px solid var(--sun);outline-offset:-4px}
+.sq .mk{position:absolute;inset:0;display:grid;place-items:center;font-family:Nunito;font-weight:900;font-size:clamp(70px,12vw,120px);color:#fff}
+.sq.X .mk{background:rgba(255,90,54,.82)} .sq.O .mk{background:rgba(18,181,166,.85)}
+.sq.win .mk{outline:6px solid var(--sun);outline-offset:-6px}
+@media (max-width:480px){.sq .lb{font-size:11px;padding:3px 5px}.sq .lb b{font-size:12px}}
+.tpanel{display:grid;gap:12px;background:var(--navy);color:#fff;border-radius:var(--r);padding:18px}
+.tpanel .turn{display:flex;gap:8px;flex-wrap:wrap}
+.tpanel .turn span{border-radius:99px;padding:6px 14px;font-family:Nunito;font-weight:900;border:1.5px solid rgba(255,255,255,.3)}
+.tpanel .turn span.on.X{background:var(--coral);border-color:var(--coral)} .tpanel .turn span.on.O{background:var(--teal);border-color:var(--teal)}
+.tpanel .pr2{font-family:Nunito;font-weight:900;font-size:22px;min-height:1.3em}
+.tpanel .pr2 small{display:block;color:var(--sun);font-size:12px;letter-spacing:.12em}
+.tpanel .mdl{background:rgba(255,255,255,.1);border-radius:12px;padding:10px 12px;font-weight:700}
+.tpanel .btn{color:var(--ink)}
+/* reading: fridge note */
+.fridge{display:grid;grid-template-columns:1fr 1.2fr;gap:0;border-radius:var(--r);overflow:hidden;background:#7FC8E8}
+@media (max-width:820px){.fridge{grid-template-columns:1fr}}
+.fridge>img{width:100%;height:100%;min-height:220px;object-fit:cover}
+.fwrap{padding:24px 18px;display:grid;place-items:center;background:linear-gradient(135deg,#8FD3EE,#5FB7DC)}
+.fnote{position:relative;background:#FFF6A8;width:min(100%,420px);padding:30px 22px 20px;box-shadow:0 14px 26px rgba(0,0,0,.2);transform:rotate(-1.5deg)}
+.fnote::before{content:"";position:absolute;top:-12px;left:50%;width:34px;height:34px;margin-left:-17px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#FF8A6A,var(--coral-d));box-shadow:0 4px 6px rgba(0,0,0,.3)}
+.fnote h4{font-family:Caveat,cursive;font-size:34px;font-weight:700;color:var(--coral-d);text-align:center;margin-bottom:6px}
+.fnote ul{list-style:none;display:grid;gap:4px}
+.fnote li{font-family:Caveat,cursive;font-size:24px;line-height:1.15;color:#1B2A4A;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;border-bottom:1px dashed rgba(27,42,74,.2);padding-bottom:3px}
+.fnote li span:last-child{font-weight:700;white-space:nowrap}
+.fnote .em{color:var(--err)}
+/* listening */
+.ocards{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media (max-width:760px){.ocards{grid-template-columns:repeat(2,1fr)}}
+.oc{position:relative;border-radius:16px;border:2.5px solid var(--line);background:#fff;overflow:hidden;display:grid;text-align:center}
+.oc .oi{aspect-ratio:4/3;display:grid;place-items:center;background:var(--pink-t);overflow:hidden}
+.oc .oi img{width:100%;height:100%;object-fit:cover}
+.oc .oi .two{display:grid;grid-template-columns:1fr 1fr;width:100%;height:100%}
+.oc .oi .bign{font-family:Nunito;font-weight:900;font-size:64px;color:var(--pink)}
+.oc .oi .spell{font-family:Nunito;font-weight:900;font-size:30px;letter-spacing:.14em;color:var(--navy)}
+.oc b{font-family:Nunito;font-weight:900;font-size:17px;padding:8px}
+.oc .pos{position:absolute;top:8px;left:8px;width:40px;height:40px;border-radius:50%;background:var(--pink);color:#fff;font-family:Nunito;font-weight:900;font-size:22px;display:grid;place-items:center;box-shadow:0 3px 8px rgba(0,0,0,.25)}
+.oc.ok{border-color:var(--ok)} .oc.ok .pos{background:var(--ok)}
+.oc.no{border-color:var(--err)} .oc.no .pos{background:var(--err)}
+.teens{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));gap:10px}
+.tn2{background:#fff;border:1.5px solid var(--line);border-radius:14px;padding:12px;display:grid;gap:8px}
+.tn2 .top2{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.tn2 .top2 b{font-family:Nunito;font-weight:900;color:var(--pink)}
+.tn2 .ch2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.tn2 .ch2 button{border:2px solid var(--line);border-radius:12px;padding:8px 6px;display:grid;justify-items:center;gap:2px;background:#fff}
+.tn2 .ch2 button b{font-family:Nunito;font-weight:900;font-size:30px;line-height:1}
+.tn2 .ch2 button small{font-size:13px;font-weight:700;color:var(--mut)}
+.tn2 .ch2 button small u{text-decoration:none;color:var(--pink);font-weight:900;text-transform:uppercase}
+.tn2 .ch2 button.ok{border-color:var(--ok);background:var(--ok-t)}
+.tn2 .ch2 button.no{border-color:var(--err);background:var(--err-t)}
+.stressbox{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:560px){.stressbox{grid-template-columns:1fr}}
+.stressbox div{background:var(--navy);color:#fff;border-radius:14px;padding:14px;text-align:center;font-family:Nunito;font-weight:900;font-size:26px}
+.stressbox div small{display:block;font-size:13px;color:var(--sun);letter-spacing:.08em}
+.stressbox u{text-decoration:none;color:var(--sun);font-size:34px}
+/* speaking: info gap */
+.roles{display:flex;gap:8px;flex-wrap:wrap}
+.roles button{border:2px solid var(--line);border-radius:99px;padding:8px 18px;font-family:Nunito;font-weight:900;background:#fff}
+.roles button[aria-pressed="true"]{background:var(--c);border-color:var(--c);color:#fff}
+.gap{display:grid;gap:8px}
+.grow{display:grid;grid-template-columns:46px minmax(0,.8fr) minmax(0,1fr) minmax(0,1.3fr);gap:8px;align-items:center;background:#fff;border:1.5px solid var(--line);border-radius:14px;padding:8px 10px}
+.grow.hd{background:transparent;border:0;padding:0 10px;font-size:12px;font-weight:800;letter-spacing:.1em;color:var(--mut);text-transform:uppercase}
+@media (max-width:640px){.grow{grid-template-columns:46px 1fr}.grow>.gv{grid-column:2}.grow.hd{display:none}}
+.grow .av{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;font-family:Nunito;font-weight:900;color:#fff}
+.grow .gv{font-weight:700;font-size:16px;min-width:0;overflow-wrap:anywhere}
+.grow .gv small{display:block;font-size:12px;color:var(--mut);font-weight:700}
+.grow input{font:inherit;font-size:16px;font-weight:700;border:1.5px dashed var(--c);border-radius:10px;padding:6px 8px;width:100%;min-width:0;background:var(--ct);color:var(--ink)}
+.grow input.ok{border:1.5px solid var(--ok);background:var(--ok-t)} .grow input.no{border:1.5px solid var(--err);background:var(--err-t)}
+.decide{background:var(--navy);color:#fff;border-radius:var(--r);padding:16px 18px;display:grid;gap:10px}
+.decide .opts .opt{color:var(--ink)}
+/* mission */
+.mcards{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+@media (max-width:980px){.mcards{grid-template-columns:repeat(3,1fr)}}
+@media (max-width:560px){.mcards{grid-template-columns:repeat(2,1fr)}}
+.mcard{border-radius:16px;overflow:hidden;background:#fff;border:2px solid var(--line);display:grid;text-align:left}
+.mcard .mi2{position:relative;aspect-ratio:1}
+.mcard .mi2 img{width:100%;height:100%;object-fit:cover}
+.mcard .mi2 .cov{position:absolute;inset:0;display:grid;place-items:center;text-align:center;background:repeating-linear-gradient(45deg,#0A7F75,#0A7F75 10px,#12A597 10px,#12A597 20px);color:#fff;font-family:Nunito;font-weight:900;padding:8px}
+.mcard .mi2 .cov small{display:block;font-size:12px;color:var(--sun)}
+.mcard dl{padding:8px 10px;display:grid;gap:1px}
+.mcard dt{font-size:10px;font-weight:800;letter-spacing:.1em;color:var(--mut);text-transform:uppercase}
+.mcard dd{font-family:Nunito;font-weight:900;font-size:15px;line-height:1.15;overflow-wrap:anywhere}
+.gchat{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.8fr);gap:16px;align-items:start}
+@media (max-width:860px){.gchat{grid-template-columns:1fr}}
+.gphone{background:#fff;border-radius:28px;border:9px solid var(--navy);overflow:hidden;box-shadow:var(--sh-lg)}
+.gphone .gh2{background:var(--teal);color:#fff;padding:12px 16px;display:flex;align-items:center;gap:10px}
+.gphone .gh2 img{width:44px;height:44px;border-radius:50%;object-fit:cover;border:2px solid #fff}
+.gphone .gh2 b{font-family:Nunito;font-weight:900;font-size:18px;display:block}
+.gphone .gh2 small{opacity:.9;font-size:13px}
+.gphone .gb{padding:12px;display:grid;gap:8px;background:#EEF7F5}
+.mrow{display:grid;grid-template-columns:28px minmax(0,1fr) minmax(0,1fr);gap:6px;align-items:center;background:#fff;border-radius:12px;padding:6px 8px}
+@media (max-width:480px){.mrow{grid-template-columns:28px 1fr}.mrow input:last-child{grid-column:2}}
+.mrow .k{font-family:Nunito;font-weight:900;color:var(--teal);text-align:center}
+.mrow input{font:inherit;font-size:15px;font-weight:700;border:1.5px solid var(--line);border-radius:10px;padding:6px 8px;width:100%;min-width:0;background:#fff;color:var(--ink)}
+.mrow input.ok{border-color:var(--ok);background:var(--ok-t)} .mrow input.no{border-color:var(--err);background:var(--err-t)}
+.repair{display:grid;gap:8px}
+.rp{display:flex;align-items:center;justify-content:space-between;gap:8px;background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:8px 10px;font-weight:700}
+.rp .ctl{display:flex;align-items:center;gap:6px}
+.rp .ctl button{width:32px;height:32px;border-radius:50%;background:var(--teal-t);font-weight:900}
+.rp output{font-family:Nunito;font-weight:900;font-size:20px;min-width:1.5ch;text-align:center;color:var(--teal)}
+.sq .lb{overflow-wrap:anywhere}
+</style>
+<style id="gt-premium">
+/* ===== GT premium layer · Básico 2 · loaded after each session's own styles ===== */
+:root{
+  --teal:#0A7F75;--ok:#0F7A37;--err:#C9343C;--pink:#DD1F6E;--violet:#5733CC;--coral-d:#C23517;
+  --ink-navy:#16213E;--hair:rgba(27,27,47,.08);
+  --sh:0 1px 0 rgba(27,27,47,.04),0 10px 30px -10px rgba(27,27,47,.16);
+  --sh-lg:0 24px 60px -18px rgba(27,27,47,.35);
+  --r:20px;--r-sm:14px;
+  --ease:cubic-bezier(.2,.7,.2,1);
+}
+html{scroll-padding-top:168px}
+body{background:radial-gradient(900px 420px at 92% -4%,var(--sun-t) 0,rgba(255,243,209,0) 70%),var(--cream);-webkit-text-size-adjust:100%}
+h1,h2,h3,h4{text-wrap:balance}
+.wrap{max-width:1120px}
+::selection{background:var(--sun);color:var(--navy)}
+button,.btn,.opt,.mi,.imp,.mv,.tg,.steps a,a.sq,a.cta2{-webkit-tap-highlight-color:transparent}
+button:disabled{cursor:not-allowed}
+
+/* ---------- top bar ---------- */
+.topbar{background:linear-gradient(180deg,#18244A,#121B36);border-bottom:1px solid rgba(255,255,255,.07)}
+.topbar .wrap{padding-block:8px;gap:8px 16px}
+.brand a{letter-spacing:.09em}
+.brand small{opacity:.65}
+.toggles{gap:10px 12px;align-items:center}
+.seg{display:inline-flex;align-items:center;gap:2px;background:rgba(255,255,255,.09);border-radius:99px;padding:3px}
+.seg .tg{border:0;padding:6px 14px;border-radius:99px;color:rgba(255,255,255,.86);font-weight:700;font-size:13px;min-height:32px;transition:background .15s,color .15s}
+.seg .tg:hover{background:rgba(255,255,255,.12)}
+.seg .tg[aria-pressed="true"]{background:var(--sun);color:var(--navy);box-shadow:0 2px 8px rgba(0,0,0,.25)}
+
+/* ---------- hero ---------- */
+.hero{isolation:isolate}
+.hero .wrap{padding-block:30px 52px}
+.hero .wrap>*{position:relative;z-index:1}
+.hero .wrap::after{content:attr(data-n);position:absolute;right:16px;bottom:-26px;z-index:0;font-family:Nunito,sans-serif;font-weight:900;font-size:clamp(130px,24vw,280px);line-height:.8;letter-spacing:-.04em;color:rgba(255,255,255,.07);pointer-events:none;user-select:none}
+.hero h1{font-size:clamp(42px,7vw,84px);letter-spacing:-.025em;line-height:1.02;margin:10px 0 14px}
+.hero p.obj{font-size:19px;line-height:1.5;max-width:58ch}
+.hero .kick{letter-spacing:.16em}
+.hero::after{content:"";position:absolute;left:0;right:0;bottom:0;height:5px;background:linear-gradient(90deg,var(--coral),var(--sun) 40%,var(--teal) 70%,var(--violet));z-index:2}
+.crumbs{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:18px;font-family:Nunito,sans-serif;font-weight:800;font-size:13px}
+.crumbs a{color:#fff;text-decoration:none;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.22);border-radius:99px;padding:5px 12px;transition:background .15s}
+.crumbs a:hover{background:rgba(255,255,255,.22)}
+.crumbs .sp{flex:1}
+.crumbs a[aria-disabled="true"]{opacity:.35;pointer-events:none}
+.hero .pills{margin-top:18px}
+.pill{backdrop-filter:blur(4px)}
+
+/* ---------- sticky nav ---------- */
+.nav{background:rgba(255,248,240,.9);backdrop-filter:saturate(1.5) blur(12px);-webkit-backdrop-filter:saturate(1.5) blur(12px);border-bottom:1px solid var(--hair);box-shadow:0 8px 22px -14px rgba(27,27,47,.3)}
+.nav .wrap{padding-block:9px 9px}
+.prog{gap:12px;margin-bottom:8px}
+.bar{height:8px;background:#EBDFCD}
+.bar i{background:linear-gradient(90deg,var(--coral),var(--sun))}
+.xp{background:var(--coral-t);color:var(--coral-d);border-radius:99px;padding:3px 12px;font-size:14px;font-variant-numeric:tabular-nums}
+.clock{display:inline-flex;align-items:center;gap:7px;min-height:32px;transition:background .15s}
+.clock::before{content:"";width:0;height:0;border-left:8px solid var(--sun);border-top:5px solid transparent;border-bottom:5px solid transparent}
+.clock.run::before{width:9px;height:10px;border:0;background:linear-gradient(90deg,var(--sun) 0 3px,transparent 3px 6px,var(--sun) 6px 9px)}
+.clock.run{background:#22305A}
+.steps{gap:6px;padding-bottom:1px}
+.steps a{display:flex;flex-direction:column;align-items:center;gap:1px;line-height:1.15;padding:6px 12px 5px;border-radius:12px;background:#F4EADC;transition:background .15s,color .15s,transform .15s}
+.steps a:hover{background:#EFE1CE}
+.steps a b{margin:0 4px 0 0}
+.steps a small{font-size:11px;font-weight:700;opacity:.72;font-variant-numeric:tabular-nums}
+.steps a.on{color:var(--on,#fff);box-shadow:0 6px 14px -6px rgba(27,27,47,.5)}
+.steps a.on:hover{background:var(--c)}
+.steps a.done{border-color:rgba(21,163,74,.55);color:#0F7A38}
+.steps a.done::after{content:"✓";font-size:10px;font-weight:900;line-height:1}
+.steps a.done.on{color:var(--on,#fff)}
+
+/* ---------- sections ---------- */
+main{padding-block:30px 40px}
+.sec{--cd:color-mix(in srgb,var(--c) 66%,#000);border-radius:28px;border-top-width:7px;box-shadow:var(--sh);margin-bottom:30px;scroll-margin-top:150px}
+.shead{padding:26px 32px 4px}
+.sbody{padding:14px 32px 34px;gap:28px}
+@media (max-width:620px){.shead{padding:20px 18px 2px}.sbody{padding:12px 18px 26px;gap:24px}}
+.snum{gap:16px}
+.snum .n{width:58px;height:58px;border-radius:18px;font-size:24px;color:var(--on,#fff);box-shadow:0 8px 18px -8px color-mix(in srgb,var(--c) 85%,#000)}
+.snum h2{letter-spacing:-.02em;line-height:1.08}
+.snum .sub{margin-top:3px;font-size:14px}
+.chip{font-weight:700;border:1px solid color-mix(in srgb,var(--c) 22%,transparent)}
+.chip.dark{border-color:transparent}
+.block{gap:14px}
+.bt{gap:6px 12px}
+.bt h3{letter-spacing:-.012em}
+.bt .tag{background:var(--ct,#eee);color:var(--cd);padding:3px 10px;border-radius:99px;font-size:11px;letter-spacing:.11em;border:1px solid color-mix(in srgb,var(--c) 25%,transparent)}
+.hint{line-height:1.45}
+.card{border-radius:var(--r);border-color:var(--hair);box-shadow:0 1px 0 rgba(27,27,47,.03)}
+.tint{box-shadow:none}
+
+/* buttons & choices */
+.btn{min-height:40px;transition:transform .14s var(--ease),box-shadow .14s var(--ease),background .14s,border-color .14s;border-color:#E6D8C4}
+.btn:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 8px 16px -8px rgba(27,27,47,.4)}
+.btn:active:not(:disabled){transform:translateY(0);box-shadow:none}
+.btn:disabled{opacity:.45}
+.btn.main{color:var(--on,#fff)}
+.btn.sm{min-height:34px}
+.say{color:var(--on,#fff);transition:transform .14s var(--ease),box-shadow .14s}
+.say svg{fill:currentColor}
+.say:hover{transform:scale(1.08);box-shadow:0 6px 14px -6px rgba(27,27,47,.5)}
+.opt,.mi,.imp,.mv,.choice button,.selfev button{transition:border-color .15s,background .15s,color .15s,transform .15s var(--ease),box-shadow .15s}
+.opt:hover:not(:disabled):not(.ok):not(.no){transform:translateY(-1px);box-shadow:0 6px 12px -8px rgba(27,27,47,.5)}
+.mi:hover:not(.ok),.imp:hover:not(.locked),.mv:hover{border-color:var(--c);box-shadow:0 6px 14px -10px rgba(27,27,47,.5)}
+.opt.ok{box-shadow:0 6px 14px -8px rgba(21,163,74,.7)}
+.mcq{border-radius:var(--r-sm);border-color:var(--hair);transition:border-color .2s,background .2s}
+.mcq .fb{min-height:1.2em}
+.mcq:has(.opt.ok){border-color:rgba(21,163,74,.35)}
+.mcq .q{line-height:1.35}
+.closeout{position:relative;border-radius:var(--r-sm);padding:13px 18px 13px 54px;box-shadow:0 10px 24px -14px rgba(22,33,62,.8);animation:rise .35s var(--ease)}
+.closeout::before{content:"✓";position:absolute;left:15px;top:50%;margin-top:-13px;width:26px;height:26px;border-radius:50%;background:var(--sun);color:var(--navy);display:grid;place-items:center;font-size:15px;font-weight:900}
+@keyframes rise{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+textarea{border-radius:var(--r-sm);line-height:1.45;transition:border-color .15s,box-shadow .15s}
+textarea:focus{border-color:var(--violet);box-shadow:0 0 0 4px rgba(106,75,230,.15);outline:0}
+.score{color:var(--cd)}
+.stat b{color:var(--cd)}
+
+/* flip cards */
+.flip{transition:transform .2s var(--ease)}
+.flip:not(.on):hover{transform:translateY(-3px)}
+.flip:focus-visible{outline:3px solid var(--violet);outline-offset:3px;border-radius:var(--r)}
+.flip .f,.flip .b{box-shadow:0 10px 24px -14px rgba(27,27,47,.5)}
+.flip[data-ink="dark"] .f{color:var(--navy)}
+.flip[data-ink="dark"] .fb .say{background:rgba(22,33,62,.18);color:var(--navy)}
+.flip .tap{letter-spacing:.02em}
+
+/* media blocks */
+.scene,.disc,.deck,.mission{box-shadow:0 14px 34px -18px rgba(27,27,47,.5)}
+.deck{color:var(--on,#fff)}
+.deck[data-ink="dark"] .qn{opacity:.8}
+.deck[data-ink="dark"] .row .btn{background:rgba(22,33,62,.12);border-color:rgba(22,33,62,.3);color:var(--navy)}
+.deck[data-ink="dark"] .fu span::before{color:var(--navy)}
+.deck[data-ink="dark"] .dots button{background:rgba(22,33,62,.3)}
+.deck[data-ink="dark"] .dots button[aria-current="true"]{background:var(--navy)}
+.phone{box-shadow:var(--sh-lg)}
+.pc,.rd,.guest{border-radius:var(--r);transition:transform .18s var(--ease),border-color .18s,box-shadow .18s}
+.rd:hover,.pc:hover{box-shadow:0 12px 26px -16px rgba(27,27,47,.55)}
+.forms{border-radius:var(--r);box-shadow:0 1px 0 rgba(27,27,47,.03)}
+.forms tr:nth-child(even) td{background:#FDFAF6}
+.forms th{letter-spacing:.02em}
+
+/* teacher notes */
+.tn{background:#FFFAEB;border:1.5px solid #F0DDA4;border-left:5px solid #E9B949}
+.tn summary{padding:13px 18px;color:#6E5000;letter-spacing:.01em;transition:background .15s;border-radius:var(--r)}
+.tn summary:hover{background:rgba(233,185,73,.14)}
+.tn summary::before{content:"Teacher only";font-size:10px;letter-spacing:.12em;text-transform:uppercase;background:#E9B949;color:#3E2D00;border-radius:6px;padding:2px 7px;margin-right:10px;align-self:center}
+.tn summary{justify-content:flex-start;align-items:center}
+.tn summary::after{margin-left:auto}
+
+/* end-of-session */
+.badge{border-radius:var(--r);box-shadow:var(--sh-lg);background:radial-gradient(circle at 94% -8%,rgba(255,194,51,.30),transparent 52%),linear-gradient(120deg,var(--navy),var(--navy2))}
+.badge .medal{box-shadow:0 0 0 6px rgba(255,194,51,.25),inset 0 -6px 0 rgba(0,0,0,.08)}
+body.is-done .badge .medal{background:#4ADE80}
+.seqnav{display:grid;grid-template-columns:1fr 1fr;gap:16px;padding-block:0 56px}
+@media (max-width:620px){.seqnav{grid-template-columns:1fr}}
+a.sq{display:grid;gap:4px;text-decoration:none;color:var(--ink);background:#fff;border:1.5px solid var(--hair);border-radius:var(--r);padding:16px 20px;box-shadow:var(--sh);transition:transform .16s var(--ease),border-color .16s,box-shadow .16s;min-width:0}
+a.sq:hover{transform:translateY(-2px);border-color:var(--coral);box-shadow:0 16px 30px -16px rgba(27,27,47,.5)}
+a.sq small{font-family:Nunito,sans-serif;font-weight:900;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--mut)}
+a.sq b{font-family:Nunito,sans-serif;font-weight:900;font-size:20px;line-height:1.2}
+a.sq.next{text-align:right;background:var(--navy);color:#fff;border-color:var(--navy)}
+a.sq.next small{color:var(--sun)}
+a.sq.next:hover{border-color:var(--sun)}
+a.sq.prev:only-child{grid-column:1}
+body.is-done a.sq.next{box-shadow:0 0 0 4px rgba(255,194,51,.35),var(--sh)}
+a.sq.ghost{visibility:hidden}
+@media (max-width:620px){a.sq.next{text-align:left}a.sq.ghost{display:none}}
+
+footer{max-width:820px;margin-inline:auto;padding:6px 16px 48px;line-height:1.5}
+footer details{margin-top:8px}
+footer summary{cursor:pointer;display:inline-block;font-weight:700}
+footer details p{margin-top:6px;font-size:12px}
+
+@media (max-width:520px){.steps a small{display:none}.hero .wrap::after{opacity:.6}}
+/* ---------- accessibility & motion ---------- */
+.sec[data-ink="dark"]{--on:#16213E}
+.steps a[data-ink="dark"]{--on:#16213E}
+button:focus-visible,a:focus-visible,summary:focus-visible,textarea:focus-visible,input:focus-visible{outline:3px solid var(--violet);outline-offset:2px;border-radius:10px}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important;animation:none!important}}
+body.student .seg:last-child{opacity:1}
+
+/* ---------- audit fixes: small targets, wrapping, contrast ---------- */
+.badge{flex-wrap:wrap}
+.badge>div:last-child{min-width:0;flex:1 1 230px}
+.coach .cav{color:var(--navy)}
+.flip .f{background:color-mix(in srgb,var(--fc) 86%,#16213E)}
+.flip[data-ink="dark"] .f{background:var(--fc)}
+.flip .num,.flip .tap{opacity:1}
+.dots button{position:relative;overflow:visible}
+.dots button::after{content:"";position:absolute;inset:-12px -6px}
+.dots{gap:10px}
+.choice button,.selfev button,.chips button,.judge button,.skillcard button,.rbtns button,.teams button,.agtabs button,.betchips button,.tm button,.gapbtns button{min-height:38px}
+summary{min-height:34px}
+
+/* ---------- rewards: restrained progress feedback (no confetti, no sound) ---------- */
+.gt-toasts{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);display:grid;gap:8px;z-index:90;pointer-events:none;width:min(92vw,360px)}
+.gt-toast{background:var(--navy);color:#fff;border-radius:14px;padding:11px 16px;box-shadow:0 14px 34px -10px rgba(0,0,0,.5);border-left:4px solid var(--sun);opacity:0;transform:translateY(8px);transition:opacity .25s,transform .25s}
+.gt-toast.in{opacity:1;transform:none}
+.gt-toast b{display:block;font-family:Nunito,sans-serif;font-weight:900;font-size:15px}
+.gt-toast small{display:block;opacity:.8;font-size:13px}
+.xp-float{position:fixed;z-index:95;font-family:Nunito,sans-serif;font-weight:900;font-size:15px;color:var(--navy);background:var(--sun);border-radius:99px;padding:2px 10px;pointer-events:none;animation:xpup 1s var(--ease) forwards;white-space:nowrap}
+@keyframes xpup{0%{opacity:0;transform:translate(-50%,6px)}15%{opacity:1}100%{opacity:0;transform:translate(-50%,-34px)}}
+.reward{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.reward .rw{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:14px;padding:8px 14px;min-width:112px}
+.reward .l{display:block;font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;opacity:.75}
+.reward b{display:block;font-family:Nunito,sans-serif;font-weight:900;font-size:22px;line-height:1.15;font-variant-numeric:tabular-nums}
+.reward small{display:block;font-size:12px;opacity:.8}
+.substeps{display:none;gap:6px;margin-top:8px;overflow-x:auto;scrollbar-width:none}
+.substeps::-webkit-scrollbar{display:none}
+.substeps.show{display:flex}
+.substeps a{flex:1 0 auto;text-decoration:none;text-align:center;border-radius:10px;padding:5px 12px;background:#F4EADC;color:var(--mut);font-size:13px;font-weight:700;display:grid;line-height:1.15;border:1.5px solid transparent;transition:background .15s,color .15s}
+.substeps a:hover{background:#EFE1CE}
+.substeps a.on{background:var(--navy);color:#fff}
+.substeps a small{font-size:11px;opacity:.75;font-variant-numeric:tabular-nums}
+@media (prefers-reduced-motion:reduce){.xp-float{animation:none;opacity:0}.gt-toast{transition:none}}
+
+/* ---------- small-screen safety for card grids and tables ---------- */
+.forms{overflow-x:auto}
+.guest,.pc{min-width:0;overflow-wrap:anywhere}
+.pc .pb{min-width:0}
+.pts button{width:36px;height:36px;min-width:36px}
+@media (max-width:520px){.roomies,.g4,.g3,.g2{grid-template-columns:1fr!important}}
+.pc{grid-template-columns:minmax(0,1fr)}
+.guest .answered button{min-height:36px}
+.block,.block>*,.sbody>*{min-width:0}
+.artpic{max-width:100%}
+@media (max-width:820px){.disc,.player,.scene,.deck,.g2,.g3,.tool,.errs{grid-template-columns:minmax(0,1fr)}}
+.ttt button .pr{background:none;padding:0;display:block}
+.gapc .chips{flex-wrap:wrap}
+.ttt{grid-template-columns:repeat(3,minmax(0,1fr))}
+.ttt button{min-width:0;overflow-wrap:anywhere;hyphens:auto}
+@media (max-width:520px){.ttt button{font-size:12.5px;padding:4px}.ttt .ic{font-size:24px}}
+.initcard,.rd,.rd .rb{max-width:100%;min-width:0}
+
+</style>
+</head>
+<body>
+<div style="background:#0B0E24;color:#fff;font:700 15px/1.45 system-ui,sans-serif;padding:10px 16px;text-align:center;position:relative;z-index:99">Edition 1 · 32-session program (archive). <a href="index.html" style="color:#FFC233">Go to the current 40-session program →</a></div>
+<div class="topbar"><div class="wrap">
+  <div class="brand"><i></i><a href="edition1.html">GABRIEL TURNER · YOUR BUSINESS COACH</a><small>Básico 1 · A1.1</small></div>
+  <div class="toggles">
+    <button class="tg" id="tgTeacher" aria-pressed="true">Teacher view</button>
+    <button class="tg" id="tgStudent" aria-pressed="false">Student view</button>
+    <button class="tg" id="tgGroup" aria-pressed="true">Group</button>
+    <button class="tg" id="tgOne" aria-pressed="false">1:1</button>
+  </div>
+</div></div>
+
+<header class="hero">
+  <div class="bg" role="img" aria-label="A woman at a café table looks at the contacts on her phone"></div>
+  <div class="wrap">
+    <div class="kick">Básico 1 · Block 1 · Explore · Session 04 of 32</div>
+    <h1>The Contact <span>List</span></h1>
+    <p class="obj">By the end of this class you can give, ask for and check phone numbers — “What's her number? — It's four-six-one…” — and talk about other people — their names and numbers — with <b>his</b>, <b>her</b> and <b>their</b>.</p>
+    <div class="pills"><span class="pill sun">60 min · live online</span><span class="pill">8 stages</span><span class="pill">his · her · their</span><span class="pill">numbers 0–100</span><span class="pill">Integration mission</span></div>
+    <div class="coach"><span class="cav">GT</span><span><b>Gabriel Turner</b><small>Your Business Coach</small></span></div>
+  </div>
+</header>
+
+<nav class="nav" aria-label="Session stages"><div class="wrap">
+  <div class="prog"><div class="bar"><i id="pbar"></i></div><span class="xp" id="xp">0 XP</span><button class="clock" id="clock" title="Start / pause class clock">00:00</button></div>
+  <div class="steps" id="steps"></div>
+</div></nav>
+
+<main class="wrap" id="main">
+
+<!-- §1 WARM-UP -->
+<section class="sec" id="s1" style="--c:var(--coral);--ct:var(--coral-t)" data-name="Warm-up" data-min="0–5">
+  <div class="shead"><div class="snum"><span class="n">1</span><div><h2>Warm-up · 400 contacts</h2><div class="sub">0–5 min · Activate, no correction</div></div></div>
+    <div class="meta"><span class="chip">Phone detective</span><span class="chip dark">Speaking from minute 1</span></div></div>
+  <div class="sbody">
+    <div class="block">
+      <div class="bt"><span class="tag">Guess</span><h3>Your phone has 400 contacts. Who is “Juan Taller”? Who is “Ana Gym”?</h3><button class="say" id="wuSay" aria-label="Listen to the question"></button></div>
+      <p class="hint">Tap a contact with <b>?</b> and guess first: “He's… / She's…”. Then open the card.</p>
+      <div class="hook">
+        <div class="capp" aria-label="Phone contact list">
+          <div class="ch"><b>Contacts</b><span class="srch">🔍 Search · 400 contacts</span></div>
+          <div class="cl" id="clist"></div>
+        </div>
+        <div class="rv" id="rv"><div class="ph0">Tap a contact<br>with a “?”</div></div>
+      </div>
+    </div>
+    <div class="block">
+      <div class="bt"><span class="tag">Quick poll</span><h3>How do you save a new contact?</h3></div>
+      <div class="accent">
+        <img src="img/b1s04_exchange.jpg" alt="Two people look at a phone screen to save a new number">
+        <div class="txt">
+          <div class="kick">Agree or not?</div>
+          <p style="font-size:19px;font-weight:700">Some people save “Juan Taller”. Other people save “Juan Luna Pérez”.</p>
+          <div class="vote3" id="vote3"></div>
+          <div class="result" id="v3Res" style="font-size:17px">Vote with the buttons. One vote per person.</div>
+        </div>
+      </div>
+    </div>
+    <details class="tn"><summary>Teacher notes · §1 Warm-up</summary><div class="layers">
+      <div class="ly"><h4>Pedagógica</h4><ul><li>Reciclaje S03 (60 s): dos alumnos dicen de memoria sus frases de tarea (“My neighbor is from…”).</li><li>Teléfono con apodos: el grupo adivina antes de abrir (“He's… a mechanic?”). Acepta español para la profesión: el objetivo es <b>His name is… / Her number is…</b>, que aparece en cada tarjeta. Tú lees la tarjeta una vez; ellos repiten.</li><li>No expliques his/her todavía: se descubre en §3.</li></ul></div>
+      <div class="ly"><h4>Engagement</h4><ul><li>Pregunta real: “¿Cuál es el nombre más raro de tu teléfono?” (sin mostrar el teléfono).</li><li>Poll del desacuerdo: apodo o nombre completo. Declara: “The class says: ___.”</li></ul></div>
+      <div class="ly"><h4>Crecimiento</h4><ul><li>“In 45 minutes you'll build a group chat with 5 people — every number 100% correct.”</li><li>Anota si el alumno ya dice los números por pares (fifty-eight) o dígito por dígito: es su “antes”.</li></ul></div>
+    </div></details>
+  </div>
+</section>
+
+<!-- §2 VOCABULARY -->
+<section class="sec" id="s2" style="--c:var(--teal);--ct:var(--teal-t)" data-name="Vocabulary" data-min="5–14">
+  <div class="shead"><div class="snum"><span class="n">2</span><div><h2>Vocabulary · Numbers &amp; contacts</h2><div class="sub">5–14 min · Hear it · Match it · Flash it</div></div></div>
+    <div class="meta"><span class="chip">Flip cards</span><span class="chip">Teens vs tens</span><span class="chip dark">VOC-13 Picture Flash</span></div></div>
+  <div class="sbody">
+    <div class="block">
+      <div class="bt"><span class="tag">Step A</span><h3>Tap to flip · 🔊 to listen</h3><span class="hint" id="flipCount">0 / 10 flipped</span></div>
+      <div class="flips" id="flips"></div>
+    </div>
+    <div class="block">
+      <div class="bt"><span class="tag">Step B</span><h3>Match the number and the word</h3><span class="score" id="mScore"></span></div>
+      <p class="hint">Tap a number, then its word. Say it out loud: “thirTEEN” · “THIRty”.</p>
+      <div class="match"><div class="col" id="mL"></div><div class="col" id="mR"></div></div>
+    </div>
+    <div class="block">
+      <div class="bt"><span class="tag">Step C · Game</span><h3>Picture Flash — 3 seconds, one full sentence</h3></div>
+      <div class="card tint"><p style="font-weight:700">1. A picture appears for 3 seconds. &nbsp;2. Say a full sentence: “It's thirteen.” / “Her number is…”. &nbsp;3. Only full sentences count — one word = 0.</p></div>
+      <div class="flash">
+        <div class="fstage" id="fst"><div class="cover" id="fcov"><span><small>PICTURE FLASH</small>Press “Flash!”</span></div><span class="cnt" id="fcnt" hidden></span></div>
+        <div class="fside">
+          <div class="row"><button class="btn main" id="fGo">Flash!</button><button class="btn" id="fOk" disabled>✓ Full sentence</button><button class="btn" id="fNo" disabled>✗ One word / wrong</button></div>
+          <div class="fmodel" id="fModel"><span class="hint" style="color:#C9CEE0">Model answer appears after the answer.</span></div>
+          <div class="fscore"><div><small>SENTENCES</small><b id="fPts">0</b></div><div><small>CARDS</small><b id="fN">0</b></div><div><small>TIME LEFT</small><b id="fT">3:00</b></div></div>
+          <div class="models"><span>It's thirteen.</span><span>It's double five.</span><span>His number is…</span><span>Their number is…</span></div>
+          <div class="closeout" id="fOut" hidden></div>
+        </div>
+      </div>
+    </div>
+    <details class="tn"><summary>Teacher notes · §2 Vocabulary</summary><div class="layers">
+      <div class="ly"><h4>Pedagógica</h4><ul><li>Tarjetas (3 min): tú dices, ellos repiten 2 veces. Marca el contraste: thir<b>TEEN</b> (acento al final, “n” clara) vs <b>THIR</b>ty (acento al inicio, “ty” suave).</li><li>En números de teléfono: 0 = “zero” u “oh”. En México se dicen por pares: 461 · 234 · 58 · 13 = four-six-one, two-three-four, fifty-eight, thirteen. 55 = “fifty-five” o “double five”.</li><li>Picture Flash (3-3-3, 3 min): la imagen dura 3 s y se tapa; tienen 5 s para una oración completa. Tú marcas ✓ solo si es oración completa (“It's forty.”). “Forty!” = 0. Grupo: por turnos en orden de lista. 1:1: el alumno va solo contra su récord.</li></ul></div>
+      <div class="ly"><h4>Engagement</h4><ul><li>Cierre en voz alta: “__ sentences in 3 minutes. That is your record today.” Escribe el récord en el chat.</li><li>Truco: las tarjetas de personas piden his / her / their — preparan §3 sin explicarlo.</li></ul></div>
+      <div class="ly"><h4>Crecimiento</h4><ul><li>Los números regresan en S17 (horas), S18 (fechas) y S26 (precios).</li><li>Límite: sin posesivo ’s (no “Juan's phone”). Si lo dicen, recast: “His phone.”</li></ul></div>
+    </div></details>
+  </div>
+</section>
+
+<!-- §3 GRAMMAR -->
+<section class="sec" id="s3" style="--c:var(--violet);--ct:var(--violet-t)" data-name="Grammar" data-min="14–25">
+  <div class="shead"><div class="snum"><span class="n">3</span><div><h2>Grammar · His number, her name, their email</h2><div class="sub">14–25 min · Discover → understand → practice</div></div></div>
+    <div class="meta"><span class="chip">his / her / their</span><span class="chip dark">GRM-15 Tic-Tac-Toe</span></div></div>
+  <div class="sbody">
+    <div class="block">
+      <div class="bt"><span class="tag">Discover</span><h3>Read the chat after class. Find the owner words.</h3></div>
+      <div class="disc" id="disc">
+        <img src="img/b1s04_groupchat.jpg" alt="Two women laugh as they look at their phones">
+        <div class="chat">
+          <p>New contacts! This is Maria. What's <mark class="hl">her</mark> number?</p>
+          <p><mark class="hl">Her</mark> number is 461 234 58 13.</p>
+          <p>And Tom? What's <mark class="hl">his</mark> last name?</p>
+          <p><mark class="hl">His</mark> last name is Webb. W-E-double B.</p>
+          <p>Tom and Jen — what's <mark class="hl">their</mark> number?</p>
+          <p><mark class="hl">Their</mark> number is the same. It's home.</p>
+        </div>
+      </div>
+      <div class="row"><button class="btn main" id="hlBtn" aria-pressed="false">Show the key words</button><span class="hint">A man → ? · A woman → ? · Two people → ?</span><span class="key hint">(Respuesta: his · her · their)</span></div>
+    </div>
+    <div class="block">
+      <div class="bt"><span class="tag">The tool</span><h3>Who is the owner?</h3><span class="hint">Tap a person → hear the sentence and the question</span></div>
+      <div class="own" id="own"></div>
+      <div class="qm"><div class="pair"><div class="bx"><span><small>SAY</small><span class="t" id="owS"></span></span><button class="say" id="owSs" aria-label="Listen to the sentence" style="background:var(--violet)"></button></div>
+        <div class="bx"><span><small>ASK</small><span class="t" id="owQ"></span></span><button class="say" id="owQs" aria-label="Listen to the question" style="background:var(--violet)"></button></div></div></div>
+      <div class="forms"><table>
+        <tr><th></th><th>his / her / their + name, number, email…</th></tr>
+        <tr><td>+</td><td><b>Her</b> number is 461 234 56 78. <b>His</b> name is Tom. <b>Their</b> email is new.</td></tr>
+        <tr><td>−</td><td><b>His</b> number isn't 5-6. It's 5-9. <span class="hint">(model: we practice negatives in Session 5)</span></td></tr>
+        <tr><td>?</td><td>What's <b>her</b> number? What's <b>his</b> last name? What's <b>their</b> number?</td></tr>
+      </table></div>
+      <div><button class="btn" id="esBtn" aria-expanded="false" aria-controls="esBox">🇲🇽 Ver explicación en español</button></div>
+      <div class="es-box" id="esBox" hidden>
+        <p><b>¿Qué es?</b> Palabras de dueño (adjetivos posesivos): <i>his</i> = su (de él), <i>her</i> = su (de ella), <i>their</i> = su (de ellos / ellas). Ya conoces <i>my</i> y <i>your</i> (Sesión 2).</p>
+        <p><b>¿Cómo se usa?</b> Van antes de la cosa: <i>his number</i>, <i>her name</i>, <i>their email</i>. Nunca cambian: <i>her numbers</i> (no “hers numbers”).</p>
+        <p><b>¿Para qué?</b> En español “su” sirve para todo; en inglés depende del <b>dueño</b>, no de la cosa. Si el dueño es hombre → <i>his</i>; mujer → <i>her</i>; dos o más personas → <i>their</i>.</p>
+        <p><b>Pregunta:</b> <i>What's her number?</i> · <i>What's his last name?</i> (What's = What is).</p>
+        <p><b>Números de teléfono:</b> 0 se dice <i>zero</i> u <i>oh</i>; 55 = <i>fifty-five</i> o <i>double five</i>. Cuidado: thir<b>TEEN</b> (13) vs <b>THIR</b>ty (30).</p>
+      </div>
+    </div>
+    <div class="block">
+      <div class="bt"><span class="tag">Practice A · Mechanical</span><h3>his, her or their?</h3><span class="score" id="scA"></span></div>
+      <div class="mc" id="mcA"></div>
+    </div>
+    <div class="block">
+      <div class="bt"><span class="tag">Practice B · GRM-15</span><h3>Tic-Tac-Toe — say it right, take the square</h3><span class="score" id="tScore"></span></div>
+      <div class="card tint"><p style="font-weight:700">1. Choose a square. &nbsp;2. Say a correct sentence with his / her / their. &nbsp;3. Three in a row wins.</p></div>
+      <div class="tttw">
+        <div class="ttt" id="ttt"></div>
+        <div class="tpanel">
+          <div class="turn" id="tTurn"><span class="X on">Team X</span><span class="O">Team O</span></div>
+          <div class="pr2" id="tPr"><small>CHOOSE A SQUARE</small>—</div>
+          <div class="mdl key" id="tMdl">Teacher: the model answer appears here.</div>
+          <div class="row"><button class="btn sm" id="tYes" disabled>✓ Correct sentence</button><button class="btn sm" id="tNo2" disabled>✗ Wrong — other team</button><button class="btn sm" id="tRe">New game</button></div>
+          <div class="closeout" id="tOut" hidden style="background:#fff;color:var(--navy)"></div>
+        </div>
+      </div>
+    </div>
+    <div class="block">
+      <div class="bt"><span class="tag">Watch out</span><h3>Mistakes Spanish speakers make</h3></div>
+      <div class="errs">
+        <div class="err"><s>Tom? Her name is Tom.</s><b>His name is Tom.</b><span class="hint">The owner is a man → his.</span></div>
+        <div class="err"><s>What's she number?</s><b>What's her number?</b><span class="hint">she = the person · her = the owner</span></div>
+        <div class="err"><s>They number is 461…</s><b>Their number is 461…</b><span class="hint">they → their (same sound as “there”)</span></div>
+      </div>
+    </div>
+    <details class="tn"><summary>Teacher notes · §3 Grammar</summary><div class="layers">
+      <div class="ly"><h4>Pedagógica</h4><ul><li>Explicación ≤5 min: chat → mapa de dueños → tabla. Pregunta clave: “¿Quién es el dueño?”. Práctica A mecánica (≤1/3 del bloque).</li><li>Tic-Tac-Toe (3-3-3): “Choose a square. Say a correct sentence. Three in a row wins.” Cada casilla trae foto + un dato; el equipo dice la oración completa y tú validas. Error de his/her = casilla para nadie y turno al otro equipo. 1:1: el alumno es X, tú eres O y te equivocas a propósito una vez para que te corrija.</li><li>Límite: sin posesivo ’s (no “Tom's number”). Números hasta 100.</li></ul></div>
+      <div class="ly"><h4>Engagement</h4><ul><li>Cierre en voz alta: “Team __ wins with the line ___.”</li><li>Casilla de Beto (70 años) y la de Sara &amp; Lupe generan risa y “their”.</li></ul></div>
+      <div class="ly"><h4>Crecimiento</h4><ul><li>“Next session: Are you married? — questions and negatives with be.”</li><li>Registra qué equipo confunde his/her: es el error n.º 1 del hispanohablante (en español “su” no marca género).</li></ul></div>
+    </div></details>
+  </div>
+</section>
+
+<!-- §4 READING -->
+<section class="sec" id="s4" style="--c:#E5A100;--ct:var(--sun-t)" data-name="Reading" data-min="25–30">
+  <div class="shead"><div class="snum"><span class="n">4</span><div><h2>Reading · The note on the fridge</h2><div class="sub">25–30 min · Read real numbers · find the data</div></div></div>
+    <div class="meta"><span class="chip">Real-life text</span><span class="chip dark">≤80 words</span></div></div>
+  <div class="sbody">
+    <div class="fridge">
+      <img src="img/b1s04_fridge.jpg" alt="A blue fridge door full of colorful magnets">
+      <div class="fwrap"><div class="fnote" aria-label="Handwritten note: home numbers">
+        <h4>Home numbers</h4>
+        <ul>
+          <li><span>Plumber: Pablo Díaz</span><span>461 118 20 13</span></li>
+          <li><span>Pizza Roma</span><span>461 215 17 17</span></li>
+          <li><span>Dr. Ruiz — her office</span><span>461 300 12 90</span></li>
+          <li><span>Grandma &amp; Grandpa — their number</span><span>461 612 40 14</span></li>
+          <li><span>Tía Lupe — cell</span><span>461 505 30 30</span></li>
+          <li class="em"><span>Emergency!</span><span>911</span></li>
+        </ul>
+      </div></div>
+    </div>
+    <div class="block">
+      <div class="bt"><span class="tag">Read &amp; answer</span><h3>Say the answer, then click</h3><span class="score" id="scR"></span></div>
+      <div class="mc" id="mcR" style="grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr))"></div>
+    </div>
+    <details class="tn"><summary>Teacher notes · §4 Reading</summary><div class="layers">
+      <div class="ly"><h4>Pedagógica</h4><ul><li>Lectura 1 (40 s): ¿cuántos números? ¿cuál es para una emergencia? Lectura 2: las 6 preguntas; el alumno dice el número completo en voz alta, por pares, antes de hacer clic.</li><li>Trampas a propósito: 13 vs 30, 40 14 vs 14 40, 17 17 (double seventeen).</li><li>“Plumber”, “office”, “Grandma” = reconocimiento; no son léxico meta.</li></ul></div>
+      <div class="ly"><h4>Engagement</h4><ul><li>Enlaza con la pregunta 7 del speaking: “Whose number is on your fridge?” — el plomero, la pizza, un imán.</li></ul></div>
+      <div class="ly"><h4>Crecimiento</h4><ul><li>911 es el número de emergencias en México y en EE. UU.: dato útil para la pregunta 5.</li></ul></div>
+    </div></details>
+  </div>
+</section>
+
+<!-- §5 LISTENING -->
+<section class="sec" id="s5" style="--c:var(--pink);--ct:var(--pink-t)" data-name="Listening" data-min="30–36">
+  <div class="shead"><div class="snum"><span class="n">5</span><div><h2>Listening · New contacts after class</h2><div class="sub">30–36 min · Global → order it → teens or tens?</div></div></div>
+    <div class="meta"><span class="chip">British + US English</span><span class="chip dark">LIS-15 Order It</span></div></div>
+  <div class="sbody">
+    <div class="player">
+      <img src="img/b1s04_exchange.jpg" alt="Two people share a phone number on a phone">
+      <div class="pp">
+        <div class="kick" style="color:var(--sun)">Lucy &amp; Dan · after class</div>
+        <p style="font-size:20px;font-weight:700">Lucy and Dan save the numbers of new classmates.</p>
+        <div class="phases" id="phases"><button class="phase" aria-pressed="true" data-p="1">1 · Global</button><button class="phase" aria-pressed="false" data-p="2">2 · Order it</button><button class="phase" aria-pressed="false" data-p="3">3 · Read &amp; shadow</button></div>
+        <div class="row"><button class="play" id="lPlay">▶ Play the conversation</button><button class="btn sm" id="lStop" style="background:transparent;color:#fff;border-color:rgba(255,255,255,.4)">■ Stop</button></div>
+        <p class="hint" style="color:#C9CEE0" id="ttsNote">Plays the ElevenLabs MP3s from audio/ when they exist; otherwise the browser voice.</p>
+      </div>
+    </div>
+    <div class="block" data-ph="1">
+      <div class="bt"><span class="tag">Phase 1 · Global</span><h3>What do Lucy and Dan organize?</h3><span class="score" id="scG"></span></div>
+      <div class="mc" id="mcG"></div>
+    </div>
+    <div class="block" data-ph="2">
+      <div class="bt"><span class="tag">Phase 2 · LIS-15</span><h3>Order the cards: what do you hear first, second…?</h3><span class="score" id="oScore"></span></div>
+      <p class="hint">Tap the cards in the order of the audio. Tap again to undo.</p>
+      <div class="ocards" id="ocards"></div>
+      <div class="row"><button class="btn main" id="oCheck">Check the order</button><button class="btn" id="oRe">Reset</button></div>
+      <div class="closeout" id="oOut" hidden></div>
+    </div>
+    <div class="block" data-ph="3">
+      <div class="bt"><span class="tag">Phase 3</span><h3>Read, listen and shadow</h3><span class="rec">[PARA GRABAR]</span></div>
+      <div class="script" id="script"></div>
+      <p class="hint key">Voces: LUCY — mujer, inglés británico, lenta · DAN — hombre, inglés EE. UU., lento. “Maria's” aparece una vez y se autocorrige a “her”: solo recepción.</p>
+    </div>
+    <div class="block">
+      <div class="bt"><span class="tag">Part 2 · Pronunciation</span><h3>Teens or tens? Listen and tap</h3><span class="score" id="teScore"></span></div>
+      <div class="stressbox"><div><small>TEENS · stress at the END</small>thir<u>TEEN</u> · four<u>TEEN</u></div><div><small>TENS · stress at the START</small><u>THIR</u>ty · <u>FOR</u>ty</div></div>
+      <div class="teens" id="teens"></div>
+      <div class="closeout" id="teOut" hidden></div>
+    </div>
+    <details class="tn"><summary>Teacher notes · §5 Listening</summary><div class="layers">
+      <div class="ly"><h4>Pedagógica</h4><ul><li>3 fases: (1) una escucha sin texto → pregunta global. (2) segunda escucha → ordenan 4 tarjetas (Maria → thirteen → Tom &amp; Jen → Webb). (3) lectura + shadowing de las líneas de Dan con números.</li><li>Guion palabra por palabra, [PARA GRABAR]: LUCY (británica) y DAN (EE. UU.). Si el MP3 no existe, suena la voz del navegador.</li><li>“Maria's number” aparece UNA vez y Lucy se corrige: “No — what's her number?”. Solo reconocimiento; no se produce ’s en este nivel.</li><li>Parte 2 (2 min): 7 pares teen/ten. Primero escuchan, luego lo dicen exagerando el acento.</li></ul></div>
+      <div class="ly"><h4>Engagement</h4><ul><li>Pregunta: “Lucy asks ‘Thirteen or thirty?’ — ¿cuándo te pasó a ti con un número?”</li><li>Cierre en voz alta: “Correct order: ___.” y “__ of 7 teens and tens.”</li></ul></div>
+      <div class="ly"><h4>Crecimiento</h4><ul><li>“Thirteen or thirty?” es un chunk de reparación: lo usarán en la misión (§7).</li></ul></div>
+    </div></details>
+  </div>
+</section>
+
+<!-- §6 SPEAKING -->
+<section class="sec" id="s6" style="--c:var(--coral);--ct:var(--coral-t)" data-name="Speaking" data-min="36–47">
+  <div class="shead"><div class="snum"><span class="n">6</span><div><h2>Speaking · The information gap</h2><div class="sub">36–47 min · You have half · ask · don't show</div></div></div>
+    <div class="meta"><span class="chip">Breakout rooms</span><span class="chip dark">B18-08 The Information Gap · INTEGRATION</span></div></div>
+  <div class="sbody">
+    <div class="card tint"><p style="font-weight:700">1. You have half of the contact list. &nbsp;2. Ask — don't show your screen. &nbsp;3. Complete the list, then decide.</p>
+      <p class="hint" data-m="group">Group: pairs in breakout rooms. Student A opens list A; Student B opens list B. 6 minutes.</p>
+      <p class="hint" data-m="one">1:1: the student opens list A; the teacher has list B (on paper or a second screen). Then change.</p></div>
+    <div class="block">
+      <div class="bt"><span class="tag">Neighbors · WhatsApp list</span><h3>Choose your list</h3></div>
+      <div class="row"><div class="roles" id="roles"><button data-r="A" aria-pressed="false">Student A</button><button data-r="B" aria-pressed="false">Student B</button></div><div class="timer" id="tGap" data-sec="360"><output>06:00</output><button class="btn main sm" data-a="go">Start</button><button class="btn sm" data-a="re">Reset</button></div></div>
+      <div class="gap" id="gap"><p class="hint">Choose Student A or Student B.</p></div>
+      <div class="row"><button class="btn main" id="gCheck">Check my list</button><span class="score" id="gScore"></span></div>
+      <div class="help"><span>What's her number?</span><span>What's his last name?</span><span>What's their number?</span><span>How do you spell it?</span><span>Thirteen or thirty?</span><span>Let me check.</span></div>
+      <div class="decide"><b class="nun" style="font-size:20px">Decide: the kitchen has a water problem. Who do you call?</b><div class="opts" id="gDec"></div><div class="fb" id="gDecFb" style="font-weight:700"></div></div>
+      <div class="closeout" id="gOut" hidden></div>
+    </div>
+    <div class="block">
+      <div class="bt"><span class="tag">Between rounds</span><h3>8 questions · always 2 follow-ups</h3></div>
+      <div class="deck">
+        <img id="qImg" src="img/b1s04_hero.jpg" alt="">
+        <div class="dq">
+          <div class="row" style="justify-content:space-between"><span class="qn" id="qN">QUESTION 1 OF 8</span><div class="dots" id="dots"></div></div>
+          <div class="qt" id="qT"></div>
+          <div class="fu" id="qF"></div>
+          <div class="row"><button class="btn" id="qS">🔊 Listen</button><button class="btn" id="qP">← Back</button><button class="btn" id="qX" style="background:#fff;color:var(--coral-d);border-color:#fff">Next question →</button></div>
+        </div>
+      </div>
+    </div>
+    <details class="tn"><summary>Teacher notes · §6 Speaking</summary><div class="layers">
+      <div class="ly"><h4>Pedagógica</h4><ul><li>DINÁMICA DE INTEGRACIÓN (B18-08, reglas 3-3-3). Integra S02 (spelling) + S03 (he/she/they) + S04 (his/her/their + números). A y B tienen 6 huecos distintos; solo preguntan: “What's her number?”, “How do you spell his last name?”. Prohibido mostrar pantalla.</li><li>Puntaje: 1 punto por dato correcto (máx. 6 por alumno) + bonus si deciden bien a quién llamar (Rafa Gil, el plomero: “His number is…”).</li><li>Preguntas del deck (entre rondas o si una pareja termina antes): nunca una palabra sola; siempre 1 follow-up. Q7 trae “Whose…?” — solo lo preguntas tú.</li></ul></div>
+      <div class="ly"><h4>Engagement</h4><ul><li>Cierre en voz alta: “__ pairs have the complete information.”</li><li>Q3 (nombre chistoso de un contacto) y Q7 (el imán del refri) dan anécdotas reales.</li></ul></div>
+      <div class="ly"><h4>Crecimiento</h4><ul><li>Anota 2 aciertos y 3 errores repetidos para §8 (típicos: his/her cruzados, “they number”, 13/30, dígitos sueltos en vez de pares).</li></ul></div>
+    </div></details>
+  </div>
+</section>
+
+<!-- §7 MISSION -->
+<section class="sec" id="s7" style="--c:var(--teal);--ct:var(--teal-t)" data-name="Mission" data-min="47–55">
+  <div class="shead"><div class="snum"><span class="n">7</span><div><h2>Mission · New group chat</h2><div class="sub">47–55 min · 5 contacts · 100% correct</div></div></div>
+    <div class="meta"><span class="chip">Real-life task</span><span class="chip dark">Evidence</span></div></div>
+  <div class="sbody">
+    <div class="mission"><img src="img/b1s04_groupchat.jpg" alt=""><div class="mt">
+      <div class="kick">Your mission</div>
+      <h3>Create the group chat “Básico 1 · Class”.</h3>
+      <p style="font-size:18px">Student A has 5 new classmates — don't show the cards! Say each person: “This is Diego. His last name is Ramos. His number is…”. Student B writes the directory in the phone. Use the repair phrases. Then check and create the group.</p>
+      <p data-m="group" style="font-weight:700">Group: pairs in breakout rooms. A opens the cards; B fills the phone. Round 2: change roles with 2 cards.</p>
+      <p data-m="one" style="font-weight:700">1:1: the student is A; the teacher writes. Then change: the teacher dictates 2 people fast — the student repairs.</p>
+    </div></div>
+    <div class="block">
+      <div class="bt"><span class="tag">Student A</span><h3>Five new classmates</h3><span class="hint">Tap to open · don't show!</span></div>
+      <div class="mcards" id="mcards"></div>
+    </div>
+    <div class="gchat">
+      <div class="gphone">
+        <div class="gh2"><img src="img/b1s04_groupchat.jpg" alt=""><span><b>New group · Básico 1 · Class</b><small>Student B: add 5 contacts</small></span></div>
+        <div class="gb" id="gform"></div>
+        <div class="row" style="padding:0 12px 12px;background:#EEF7F5"><button class="btn main" id="mCheck">Create group</button><button class="btn" id="mRe">Clear</button></div>
+      </div>
+      <div class="block">
+        <div class="bt"><span class="tag">Evidence · repair phrases</span><h3>Tap each time you use one</h3></div>
+        <div class="repair" id="repair"></div>
+      </div>
+    </div>
+    <div class="card tint"><div class="row" style="justify-content:space-between"><span class="stat">Contacts 100% correct <b id="mN">0</b> / 5</span><span class="stat">Repair phrases <b id="rpN">0</b></span></div><div class="bar" style="margin-top:10px"><i id="mBar" style="background:var(--teal)"></i></div><p class="hint" style="margin-top:8px">Success: 5 contacts 100% correct, using repair phrases when necessary. Evidence: the directory.</p></div>
+    <div class="closeout" id="mOut" hidden></div>
+    <details class="tn"><summary>Teacher notes · §7 Mission</summary><div class="layers">
+      <div class="ly"><h4>Pedagógica</h4><ul><li>Ronda 1 (5 min): A presenta 5 tarjetas (nombre + apellido + número); B escribe y confirma con “That's right?”. Ronda 2 (2 min): cambian con 2 tarjetas.</li><li>Evidencia: directorio de B comparado con las tarjetas (botón “Create group”) + conteo de frases de reparación. En grupo: copien el directorio final en el documento compartido de la clase.</li><li>No interrumpas: el feedback va en §8.</li></ul></div>
+      <div class="ly"><h4>Engagement</h4><ul><li>Anuncia: “__ of 5 contacts 100% correct. Group created!”</li><li>Si B termina con 5/5 sin reparar nunca, pide a A que dicte el último número más rápido.</li></ul></div>
+      <div class="ly"><h4>Crecimiento</h4><ul><li>“Session 5: Are you married? — questions people ask at a party.”</li><li>Registra en el portal: contactos correctos y frases de reparación.</li></ul></div>
+    </div></details>
+  </div>
+</section>
+
+<!-- §8 WRAP-UP -->
+<section class="sec" id="s8" style="--c:var(--navy);--ct:#E6E9F2" data-name="Wrap-up" data-min="55–60">
+  <div class="shead"><div class="snum"><span class="n">8</span><div><h2>Wrap-up · Better numbers</h2><div class="sub">55–60 min · Feedback · 2nd try · Exit quiz</div></div></div>
+    <div class="meta"><span class="chip">Success → Upgrade → Repair → Next use</span></div></div>
+  <div class="sbody">
+    <div class="sur">
+      <div class="card"><h4>✓ Success</h4><textarea id="fS" aria-label="Success">Clear “What's her number?”
+Numbers in pairs: fifty-eight, thirteen</textarea></div>
+      <div class="card"><h4>↑ Upgrade</h4><textarea id="fU" aria-label="Upgrade">“Five, eight, one, three.” → “fifty-eight, thirteen”</textarea></div>
+      <div class="card"><h4>✎ Repair</h4><textarea id="fR" aria-label="Repair">“Her name is Tom.” → “His name is Tom.”
+“They number” → “Their number”</textarea></div>
+      <div class="card"><h4>↻ 2nd try</h4><p class="hint">Dictate one contact again — with the upgrades. Same person, better English.</p></div>
+    </div>
+    <div class="block"><div class="bt"><span class="tag">Exit quiz</span><h3>60 seconds · 5 questions</h3><span class="score" id="scQ"></span></div><div class="mc" id="mcQ"></div></div>
+    <div class="block"><div class="bt"><span class="tag">Say it out loud</span><h3>Today I can…</h3></div>
+      <div class="selfev" id="selfev"></div></div>
+    <div class="block"><div class="bt"><span class="tag">Homework · Dictate 3 numbers</span><h3>Dictate 3 real numbers to someone at home · write 4 sentences</h3><span class="hint" id="cardSaved"></span></div>
+      <div class="mycard">
+        <div class="fld"><label for="hw1">Contact 1 · His / Her number is…</label><input id="hw1" autocomplete="off"></div>
+        <div class="fld"><label for="hw2">Contact 2 · His / Her number is…</label><input id="hw2" autocomplete="off"></div>
+        <div class="fld"><label for="hw3">Contact 3 · His / Her last name is…</label><input id="hw3" autocomplete="off"></div>
+        <div class="fld"><label for="hw4">Two people · Their number is…</label><input id="hw4" autocomplete="off"></div>
+      </div></div>
+    <div class="badge"><div class="medal">04</div><div><div class="kick">Session complete</div><h3 style="font-size:26px;font-weight:900">You can exchange and check phone numbers.</h3><p style="opacity:.9">Homework: dictate 3 real numbers in English and write 4 sentences. Next: <b>Session 5 · Are You Married? Questions People Ask</b></p><div class="row" style="margin-top:10px"><button class="btn" id="doneBtn" style="background:var(--sun);border-color:var(--sun);color:var(--navy)">Mark session as complete</button><a class="btn" href="edition1.html" style="text-decoration:none;color:var(--navy)">Back to Básico 1</a></div></div></div>
+    <details class="tn"><summary>Teacher notes · §8 Wrap-up</summary><div class="layers">
+      <div class="ly"><h4>Pedagógica</h4><ul><li>Máximo 2 aciertos y 3 correcciones de alto valor (his/her cruzados, they → their, 13/30). Segundo intento: el alumno dicta un contacto otra vez, por pares.</li><li>Exit quiz en voz alta: el alumno dice la respuesta antes de hacer clic.</li></ul></div>
+      <div class="ly"><h4>Engagement</h4><ul><li>Compara con el “antes” de §1: “Minute 3: ‘four, six, one…’. Minute 55: ‘Her number is four-six-one… fifty-eight, thirteen.’”</li></ul></div>
+      <div class="ly"><h4>Crecimiento</h4><ul><li>Las frases de tarea se guardan en este navegador. Al iniciar S5, dos alumnos dictan un número de memoria (reciclaje).</li><li>Registra: récord de Picture Flash, línea ganadora del gato, datos correctos del information gap y contactos de la misión.</li></ul></div>
+    </div></details>
+  </div>
+</section>
+
+</main>
+<footer>Gabriel Turner · Your Business Coach · Básico 1 · Session 04 of 32 · v2.0 · Photos: Unsplash — Brooke Cagle, Carl Tronders, Tahamie Farooqui, Vitaly Gariev, Walls.io, James Orr, Joseph Gonzalez, Jake Nackos, Štefan Štefančík, Vicky Hladynets, Maria Lupan, Joey Overton · Contact app, cards and board: original GT illustrations</footer>
+<script>
+(function(){
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const st={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
+const fmt=s=>String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');
+const SPK='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4z"/></svg>';
+const esc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const shuf=a=>{const b=a.slice();for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]]}return b};
+const norm=s=>String(s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').trim().toLowerCase().replace(/\s+/g,' ');
+const digits=s=>String(s||'').replace(/\D/g,'');
+
+/* ---- clip registry: id → [voice, text on screen, text for the voice] ---- */
+const CL={"s04_wu_01":["C","Your phone has 400 contacts. Who is Juan Taller? Who is Ana Gym?","Your phone has four hundred contacts. Who is Juan Taller? Who is Ana Gym?"],
+"s04_wu_02":["N","His name is Juan. His number is 461 118 30 40.","His name is Juan. His number is four-six-one, one-one-eight, thirty, forty."],
+"s04_wu_03":["N","Her name is Ana. Her number is 461 505 50 15.","Her name is Ana. Her number is four-six-one, five-oh-five, fifty, fifteen."],
+"s04_wu_04":["N","Her name is Rosa. Her number is 461 219 44 70.","Her name is Rosa. Her number is four-six-one, two-one-nine, forty-four, seventy."],
+"s04_vocab_01":["N","phone number","phone number"],
+"s04_vocab_02":["N","cell phone","cell phone"],
+"s04_vocab_03":["N","zero / oh","zero. oh."],
+"s04_vocab_04":["N","double (55)","double. double five."],
+"s04_vocab_05":["N","contact","contact"],
+"s04_vocab_06":["N","numbers 0–20","zero, one, two, three… twenty."],
+"s04_vocab_07":["N","20, 30… 100","twenty, thirty… one hundred."],
+"s04_vocab_08":["N","teens vs. tens (13 / 30)","thirteen. thirty."],
+"s04_vocab_09":["N","What's his / her number?","What's his number? What's her number?"],
+"s04_vocab_10":["N","Let me check.","Let me check."],
+"s04_vocabex_01":["N","What's your phone number?","What's your phone number?"],
+"s04_vocabex_02":["N","My cell phone is new.","My cell phone is new."],
+"s04_vocabex_03":["N","505 = five-oh-five or five-zero-five.","Five-oh-five. Or five-zero-five."],
+"s04_vocabex_04":["N","55 = fifty-five or double five.","Fifty-five. Or double five."],
+"s04_vocabex_05":["N","Ana is a new contact.","Ana is a new contact."],
+"s04_vocabex_06":["N","Eleven, twelve, thirteen, fourteen, fifteen.","Eleven, twelve, thirteen, fourteen, fifteen."],
+"s04_vocabex_07":["N","Twenty, thirty, forty, fifty… one hundred.","Twenty, thirty, forty, fifty… one hundred."],
+"s04_vocabex_08":["N","Thirteen or thirty? — Thirteen.","Thirteen or thirty? Thirteen."],
+"s04_vocabex_09":["N","What's his number? — It's 461 118 30 40.","What's his number? It's four-six-one, one-one-eight, thirty, forty."],
+"s04_vocabex_10":["N","His last name? Let me check… It's Webb.","His last name? Let me check. It's Webb."],
+"s04_pron_01":["N","thirteen","thirteen"],"s04_pron_02":["N","thirty","thirty"],"s04_pron_03":["N","fourteen","fourteen"],"s04_pron_04":["N","forty","forty"],
+"s04_pron_05":["N","fifteen","fifteen"],"s04_pron_06":["N","fifty","fifty"],"s04_pron_07":["N","sixteen","sixteen"],"s04_pron_08":["N","sixty","sixty"],
+"s04_pron_09":["N","seventeen","seventeen"],"s04_pron_10":["N","seventy","seventy"],"s04_pron_11":["N","eighteen","eighteen"],"s04_pron_12":["N","eighty","eighty"],
+"s04_pron_13":["N","nineteen","nineteen"],"s04_pron_14":["N","ninety","ninety"],"s04_pron_15":["N","one hundred","one hundred"],"s04_pron_16":["N","zero","zero"],
+"s04_flash_01":["N","It's thirteen.","It's thirteen."],"s04_flash_02":["N","It's thirty.","It's thirty."],
+"s04_flash_03":["N","Her number is seventeen, forty.","Her number is seventeen, forty."],"s04_flash_04":["N","It's forty.","It's forty."],
+"s04_flash_05":["N","It's fourteen.","It's fourteen."],"s04_flash_06":["N","His number is sixty-one, thirteen.","His number is sixty-one, thirteen."],
+"s04_flash_07":["N","It's fifty-five. Double five.","It's fifty-five. Double five."],"s04_flash_08":["N","It's zero.","It's zero."],
+"s04_flash_09":["N","Their number is ninety, nineteen.","Their number is ninety, nineteen."],"s04_flash_10":["N","It's one hundred.","It's one hundred."],
+"s04_flash_11":["N","His number is eighty, eighteen.","His number is eighty, eighteen."],"s04_flash_12":["N","It's sixteen.","It's sixteen."],
+"s04_gram_01":["N","My number is 461 234 56 78.","My number is four-six-one, two-three-four, fifty-six, seventy-eight."],
+"s04_gram_02":["N","What's your number?","What's your number?"],
+"s04_gram_03":["N","Your email is new.","Your email is new."],
+"s04_gram_04":["N","What's your email?","What's your email?"],
+"s04_gram_05":["N","His name is Diego.","His name is Diego."],
+"s04_gram_06":["N","What's his number?","What's his number?"],
+"s04_gram_07":["N","Her number is 461 234 58 13.","Her number is four-six-one, two-three-four, fifty-eight, thirteen."],
+"s04_gram_08":["N","What's her last name?","What's her last name?"],
+"s04_gram_09":["N","Their number is 461 612 55 13.","Their number is four-six-one, six-one-two, double five, thirteen."],
+"s04_gram_10":["N","What's their number?","What's their number?"],
+"s04_ttt_01":["N","His name is Diego.","His name is Diego."],
+"s04_ttt_02":["N","Her last name is Lopez.","Her last name is Lopez."],
+"s04_ttt_03":["N","Their email is rios.sisters@mail.com.","Their email is rios dot sisters at mail dot com."],
+"s04_ttt_04":["N","His number is 461 118 30 40.","His number is four-six-one, one-one-eight, thirty, forty."],
+"s04_ttt_05":["N","Her email is ana.gym@mail.com.","Her email is ana dot gym at mail dot com."],
+"s04_ttt_06":["N","His phone is old.","His phone is old."],
+"s04_ttt_07":["N","His last name is Webb.","His last name is Webb."],
+"s04_ttt_08":["N","Her cell phone is new.","Her cell phone is new."],
+"s04_ttt_09":["N","Her number is 461 219 44 70.","Her number is four-six-one, two-one-nine, forty-four, seventy."],
+"s04_listen_01":["L","Dan, what's Maria's number? No — what's her number?","Dan, what's Maria's number? No — what's her number?"],
+"s04_listen_02":["D","Her number is four-six-one, two-three-four, fifty-eight, thirteen.","Her number is four-six-one, two-three-four, fifty-eight, thirteen."],
+"s04_listen_03":["L","Thirteen or thirty?","Thirteen or thirty?"],
+"s04_listen_04":["D","Thirteen. And Tom and Jen? Their number is the same. It's home.","Thirteen. And Tom and Jen? Their number is the same. It's home."],
+"s04_listen_05":["L","OK. And his last name?","OK. And his last name?"],
+"s04_listen_06":["D","His last name is Webb. W-E-double B.","His last name is Webb. W-E-double B."],
+"s04_listen_07":["L","Thanks!","Thanks!"],
+"s04_q_01":["C","How many contacts are in your phone?","How many contacts are in your phone?"],
+"s04_q_02":["C","Who is your number one contact?","Who is your number one contact?"],
+"s04_q_03":["C","What's a funny contact name in your phone?","What's a funny contact name in your phone?"],
+"s04_q_04":["C","Is your number easy?","Is your number easy?"],
+"s04_q_05":["C","What's the emergency number in Mexico?","What's the emergency number in Mexico?"],
+"s04_q_06":["C","Is your favorite number 7?","Is your favorite number seven?"],
+"s04_q_07":["C","Whose number is on your fridge?","Whose number is on your fridge?"],
+"s04_q_08":["C","Is the number of your best friend in your head?","Is the number of your best friend in your head?"],
+"s04_mis_01":["N","This is Diego Ramos. His number is 461 233 19 90.","This is Diego Ramos. His number is four-six-one, two-three-three, nineteen, ninety."],
+"s04_mis_02":["N","This is Nadia Fuentes. Her number is 461 140 14 40.","This is Nadia Fuentes. Her number is four-six-one, one-four-oh, fourteen, forty."],
+"s04_mis_03":["N","This is Alberto Cruz. His number is 461 505 70 17.","This is Alberto Cruz. His number is four-six-one, five-oh-five, seventy, seventeen."],
+"s04_mis_04":["N","Sara and Lupe Ríos are sisters. Their number is 461 612 55 13.","Sara and Lupe Ríos are sisters. Their number is four-six-one, six-one-two, double five, thirteen."],
+"s04_mis_05":["N","This is Tom Webb. His number is 461 330 13 19.","This is Tom Webb. His number is four-six-one, three-three-oh, thirteen, nineteen."]};
+const AUDIO=Object.fromEntries(Object.entries(CL).map(([id,v])=>[v[1],id]));
+
+/* ---- speech: ElevenLabs MP3 first, browser voice as fallback ---- */
+const TTS='speechSynthesis' in window;let voices=[];
+function loadV(){try{voices=speechSynthesis.getVoices().filter(v=>/^en/i.test(v.lang))}catch(e){}}
+if(TTS){loadV();try{speechSynthesis.onvoiceschanged=loadV}catch(e){}}
+function pick(pref){return voices.find(v=>pref.test(v.name+' '+v.lang))||voices[0]}
+const VO={N:{re:/US|United States/i,pitch:1.1},C:{re:/US|United States/i,pitch:.8},L:{re:/GB|United Kingdom|British/i,pitch:1.15},D:{re:/US|United States/i,pitch:.85}};
+let curA=null;function stopAll(){try{if(curA){curA.pause();curA=null}speechSynthesis.cancel()}catch(e){}}
+const __HAVE=new Set([]);function clip(id){if(!__HAVE.has(id))return Promise.reject(0);return new Promise((res,rej)=>{const a=new Audio('audio/'+id+'.mp3');curA=a;a.onended=res;a.onerror=rej;a.play().catch(rej)})}
+function tts(t,who='N'){return new Promise(res=>{if(!TTS)return res();try{const u=new SpeechSynthesisUtterance(t);u.lang=who==='L'?'en-GB':'en-US';u.rate=.85;u.pitch=VO[who].pitch;const v=pick(VO[who].re);if(v)u.voice=v;u.onend=res;u.onerror=res;speechSynthesis.speak(u)}catch(e){res()}})}
+function sayId(id,keep){if(!keep)stopAll();const c=CL[id];return clip(id).catch(()=>tts(c[2],c[0]))}
+function say(t){const id=AUDIO[t];if(id)return sayId(id);stopAll();return tts(t)}
+if(!TTS){$('#ttsNote').textContent='This browser has no voice. Read the words aloud or play the recorded MP3s.'}
+
+/* ---- modes ---- */
+function setView(student){document.body.classList.toggle('student',student);$('#tgStudent').setAttribute('aria-pressed',student);$('#tgTeacher').setAttribute('aria-pressed',!student)}
+$('#tgStudent').onclick=()=>setView(true);$('#tgTeacher').onclick=()=>setView(false);
+function setMode(m){$$('[data-m]').forEach(e=>e.hidden=e.dataset.m!==m);$('#tgGroup').setAttribute('aria-pressed',m==='group');$('#tgOne').setAttribute('aria-pressed',m==='one');st.set('gt-mode',m)}
+$('#tgGroup').onclick=()=>setMode('group');$('#tgOne').onclick=()=>setMode('one');
+
+/* ---- XP + nav ---- */
+let xp=0;const done=new Set();
+function addXP(n,key){if(key){if(done.has(key))return;done.add(key)}xp+=n;$('#xp').textContent=xp+' XP'}
+const secs=$$('.sec');const steps=$('#steps');
+secs.forEach((s,i)=>{const a=document.createElement('a');a.href='#'+s.id;a.innerHTML=`<b>${i+1}</b>${s.dataset.name}`;a.style.setProperty('--c',getComputedStyle(s).getPropertyValue('--c'));steps.appendChild(a)});
+const links=[...steps.children];
+function onScroll(){let cur=0;secs.forEach((s,i)=>{if(s.getBoundingClientRect().top<200)cur=i});links.forEach((a,i)=>a.classList.toggle('on',i===cur));$('#pbar').style.width=((cur+1)/secs.length*100)+'%';const on=links[cur];if(on&&steps.scrollWidth>steps.clientWidth){steps.scrollLeft=on.offsetLeft-40}}
+addEventListener('scroll',onScroll,{passive:true});onScroll();
+function markDone(i){links[i]&&links[i].classList.add('done')}
+
+/* ---- class clock ---- */
+let cs=0,cId=null;$('#clock').onclick=()=>{if(cId){clearInterval(cId);cId=null}else cId=setInterval(()=>{cs++;$('#clock').textContent=fmt(cs)},1000)};
+
+/* ---- timers ---- */
+function timer(el,onEnd){const tot=+el.dataset.sec;let left=tot,id=null;const o=el.querySelector('output'),g=el.querySelector('[data-a=go]');
+ const draw=()=>{o.textContent=fmt(left);el.classList.toggle('end',left===0)};const stop=()=>{clearInterval(id);id=null;g.textContent='Start'};
+ g.onclick=()=>{if(id){stop();return}if(!left)left=tot;g.textContent='Pause';id=setInterval(()=>{left--;draw();if(left<=0){stop();onEnd&&onEnd()}},1000)};
+ el.querySelector('[data-a=re]').onclick=()=>{stop();left=tot;draw()};return{reset(){stop();left=tot;draw()},stop}}
+
+/* ---- MC engine ---- */
+function mc(box,items,scoreEl,xpKey,sec){let right=0,answered=0;
+ items.forEach((it,i)=>{const d=document.createElement('div');d.className='mcq';d.innerHTML=`<div class="q"><span class="n">${i+1}</span>${it.q}</div><div class="opts"></div><div class="fb" aria-live="polite"></div>`;
+  const os=d.querySelector('.opts'),fb=d.querySelector('.fb');let locked=false;
+  it.o.forEach((t,k)=>{const b=document.createElement('button');b.className='opt';b.textContent=t;b.onclick=()=>{if(locked)return;
+    if(k===it.a){b.classList.add('ok');locked=true;answered++;if(!d.dataset.miss)right++;fb.className='fb ok';fb.textContent='✓ '+(it.ok||'Correct!');addXP(10);
+      if(answered===items.length){scoreEl.textContent=`${right} / ${items.length} first try`;addXP(0,xpKey);markDone(sec)}}
+    else{b.classList.add('no');d.dataset.miss=1;fb.className='fb no';fb.textContent='✗ '+(it.no||'Try again.')}};os.appendChild(b)});box.appendChild(d)})}
+
+/* ===== §1 warm-up: contact app ===== */
+$('#wuSay').innerHTML=SPK;$('#wuSay').onclick=()=>sayId('s04_wu_01');
+const CT=[["A"],["Abuela","#5733CC"],["Ana Gym","#FF3D7F","b1s04_gym.jpg","s04_wu_03","Her name is <em>Ana</em>. She's my gym coach.","Her number is 461 505 50 15."],["D"],["Dr. Ruiz","#12B5A6"],["J"],["Jefa ⭐","#16213E"],["Juan Taller","#FF5A36","b1s04_mechanic.jpg","s04_wu_02","His name is <em>Juan</em>. The car place — “taller”!","His number is 461 118 30 40."],["L"],["Lalo Tacos","#E5A100"],["M"],["Mamá","#FF3D7F"],["P"],["Pizza Roma","#D93D1C"],["R"],["Rosa Vecina","#12B5A6","b1s04_p5.jpg","s04_wu_04","Her name is <em>Rosa</em>. She's my neighbor — “vecina”.","Her number is 461 219 44 70."]];
+CT.forEach(c=>{if(c.length===1){const d=document.createElement('div');d.className='crow lt';d.textContent=c[0];$('#clist').appendChild(d);return}
+ const b=document.createElement('button');b.className='crow';const ini=c[0].split(' ').map(x=>x[0]).join('').slice(0,2);
+ b.innerHTML=`<span class="av" style="background:${c[1]}">${esc(ini)}</span><span><b>${esc(c[0])}</b><small>${c[2]?'Who is it?':'mobile'}</small></span>${c[2]?'<span class="qx">?</span>':''}`;
+ b.onclick=()=>{$$('#clist .crow').forEach(x=>x.setAttribute('aria-pressed','false'));b.setAttribute('aria-pressed','true');
+  if(c[2]){$('#rv').innerHTML=`<img src="img/${c[2]}" alt="${esc(c[0])}"><div class="rt"><div class="kick">${esc(c[0])}</div><div class="big">${c[4]}</div><div class="big num" style="font-size:22px">${c[5].replace(/(His|Her)/,'<em>$1</em>')}</div><button class="btn sm" style="justify-self:start;background:var(--coral);border-color:var(--coral);color:#fff">🔊 Listen</button></div>`;
+   $('#rv button').onclick=()=>sayId(c[3]);sayId(c[3]);addXP(3,'ct'+c[0]);if(['Ana Gym','Juan Taller','Rosa Vecina'].every(n=>done.has('ct'+n)))markDone(0)}
+  else{$('#rv').innerHTML=`<div class="ph0">Who is “${esc(c[0])}”?<br><span style="font-size:17px;color:var(--sun)">Guess: “He's… / She's…”</span></div>`}};
+ $('#clist').appendChild(b)});
+const V3=[["Nickname: ‘Juan Taller’."],["Both."],["Full name: ‘Juan Luna Pérez’."]];const v3=[0,0,0];
+V3.forEach(([t],i)=>{const b=document.createElement('button');b.innerHTML=`<b>0</b>${t}`;b.onclick=()=>{v3[i]++;b.querySelector('b').textContent=v3[i];const tot=v3.reduce((a,c)=>a+c,0),mx=Math.max(...v3);const w=V3.filter((_,k)=>v3[k]===mx).map(x=>x[0]);
+ $('#v3Res').textContent=w.length>1?`It's a tie. Why?`:`The class says: “${w[0]}” — ${mx} of ${tot}.`;addXP(2,'v3')};$('#vote3').appendChild(b)});
+
+/* ===== §2 flips ===== */
+const V=[["s04_vocab_01","s04_vocabex_01","número de teléfono","📞"],["s04_vocab_02","s04_vocabex_02","celular","📱"],["s04_vocab_03","s04_vocabex_03","cero (en teléfonos: “oh”)","0"],["s04_vocab_04","s04_vocabex_04","doble","55"],["s04_vocab_05","s04_vocabex_05","contacto","👤"],["s04_vocab_06","s04_vocabex_06","números del 0 al 20","0–20"],["s04_vocab_07","s04_vocabex_07","20, 30… 100","×10"],["s04_vocab_08","s04_vocabex_08","13 vs. 30 — escucha el acento","13/30"],["s04_vocab_09","s04_vocabex_09","¿Cuál es su número? (de él / de ella)","?"],["s04_vocab_10","s04_vocabex_10","Déjame revisar.","🔎"]];
+const FC=['#FF5A36','#12B5A6','#5733CC','#FF3D7F','#E5A100','#16213E','#0A7F75','#D93D1C','#5A3FE0','#C2185B'];let flipped=0;
+V.forEach(([w,ex,es,ic],i)=>{const f=document.createElement('div');f.className='flip';f.style.setProperty('--fc',FC[i]);f.tabIndex=0;f.setAttribute('role','button');f.setAttribute('aria-label','Flip card: '+CL[w][1]);
+ f.innerHTML=`<div class="in"><div class="f"><span class="num">${String(i+1).padStart(2,'0')} · ${esc(ic)}</span><div class="w">${esc(CL[w][1])}</div><div class="fb"><span class="tap">Tap to flip</span><button class="say" aria-label="Listen">${SPK}</button></div></div><div class="b"><span class="es">${esc(es)}</span><div class="ex">“${esc(CL[ex][1])}”</div><button class="say" style="background:${FC[i]}" aria-label="Listen to the example">${SPK}</button></div></div>`;
+ const flip=()=>{f.classList.toggle('on');if(!f.dataset.seen){f.dataset.seen=1;flipped++;$('#flipCount').textContent=flipped+' / 10 flipped';addXP(3)}};
+ f.addEventListener('click',e=>{if(e.target.closest('.say'))return;flip()});f.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();flip()}});
+ const b=f.querySelectorAll('.say');b[0].onclick=e=>{e.stopPropagation();sayId(w)};b[1].onclick=e=>{e.stopPropagation();sayId(ex)};$('#flips').appendChild(f)});
+
+/* ===== §2 match numbers ↔ words ===== */
+const MP=[["13","thirteen","s04_pron_01"],["30","thirty","s04_pron_02"],["14","fourteen","s04_pron_03"],["40","forty","s04_pron_04"],["15","fifteen","s04_pron_05"],["50","fifty","s04_pron_06"],["0","zero","s04_pron_16"],["100","one hundred","s04_pron_15"]];
+let mSel=null,mOk=0;
+function mBtn(t,k,dig){const b=document.createElement('button');b.className='mi'+(dig?' dig':'');b.textContent=t;b.dataset.k=k;b.dataset.side=dig?'L':'R';return b}
+shuf(MP).forEach(([n,,],k)=>{const b=mBtn(n,MP.findIndex(x=>x[0]===n),true);$('#mL').appendChild(b)});
+shuf(MP).forEach(([,w],k)=>{const b=mBtn(w,MP.findIndex(x=>x[1]===w),false);$('#mR').appendChild(b)});
+$$('.match .mi').forEach(b=>b.onclick=()=>{if(b.classList.contains('ok'))return;
+ if(!mSel||mSel.dataset.side===b.dataset.side){$$('.match .mi.sel').forEach(x=>x.classList.remove('sel'));mSel=b;b.classList.add('sel');return}
+ if(mSel.dataset.k===b.dataset.k){[mSel,b].forEach(x=>{x.classList.remove('sel');x.classList.add('ok')});mOk++;sayId(MP[+b.dataset.k][2]);addXP(3);$('#mScore').textContent=`${mOk} / ${MP.length}`;if(mOk===MP.length)addXP(10,'match')}
+ else{const a=mSel;[a,b].forEach(x=>{x.classList.remove('sel');x.classList.add('bad');setTimeout(()=>x.classList.remove('bad'),400)})}mSel=null});
+
+/* ===== §2 VOC-13 Picture Flash ===== */
+const FL=[{n:"13",id:"s04_flash_01"},{n:"30",id:"s04_flash_02"},{img:"b1s04_p2.jpg",t:"17 40",id:"s04_flash_03"},{n:"40",id:"s04_flash_04"},{n:"14",id:"s04_flash_05"},{img:"b1s04_p1.jpg",t:"61 13",id:"s04_flash_06"},{n:"55",id:"s04_flash_07"},{img:"b1s04_keypad.jpg",t:"0",id:"s04_flash_08"},{img:"b1s04_pair.jpg",t:"90 19",id:"s04_flash_09"},{n:"100",id:"s04_flash_10"},{img:"b1s04_p6.jpg",t:"80 18",id:"s04_flash_11"},{n:"16",id:"s04_flash_12"}];
+const FBG=['#FF5A36','#12B5A6','#5733CC','#FF3D7F','#E5A100','#0A7F75'];
+let fOrder=shuf(FL.map((_,i)=>i)),fi=-1,fPts=0,fN=0,fLeft=180,fClock=null,fShowT=null,fAnsT=null,fOpen=false;
+function fEndClock(){clearInterval(fClock);fClock=null;const o=$('#fOut');o.hidden=false;o.textContent=`${fPts} sentences in 3 minutes. That is your record today.`;markDone(1);addXP(15,'flash')}
+function fCover(msg){$('#fst').querySelectorAll('img,.fn,.tagn').forEach(x=>x.remove());$('#fcov').hidden=false;$('#fcov').innerHTML=msg}
+function fAnswerWindow(){let s=5;const c=$('#fcnt');c.hidden=false;c.textContent='SAY IT · '+s;fAnsT=setInterval(()=>{s--;c.textContent=s>0?'SAY IT · '+s:'TIME';if(s<=0){clearInterval(fAnsT)}},1000)}
+$('#fGo').onclick=()=>{if(fOpen)return;if(!fClock&&fLeft>0){fClock=setInterval(()=>{fLeft--;$('#fT').textContent=Math.floor(fLeft/60)+':'+String(fLeft%60).padStart(2,'0');if(fLeft<=0)fEndClock()},1000)}
+ if(fLeft<=0)return;fi=(fi+1)%FL.length;if(fi===0&&fN)fOrder=shuf(fOrder);const it=FL[fOrder[fi]];const stg=$('#fst');$('#fcov').hidden=true;stg.querySelectorAll('img,.fn,.tagn').forEach(x=>x.remove());
+ stg.style.background=FBG[fN%FBG.length];
+ if(it.img){const im=document.createElement('img');im.src='img/'+it.img;im.alt='';stg.prepend(im);const tg=document.createElement('span');tg.className='tagn';tg.textContent='📞 '+it.t;stg.appendChild(tg)}
+ else{const n=document.createElement('span');n.className='fn';n.textContent=it.n;stg.appendChild(n)}
+ fOpen=true;$('#fModel').innerHTML='<span class="hint" style="color:#C9CEE0">Look… 3 seconds.</span>';$('#fcnt').hidden=false;$('#fcnt').textContent='LOOK · 3';let s=3;
+ fShowT=setInterval(()=>{s--;$('#fcnt').textContent='LOOK · '+s;if(s<=0){clearInterval(fShowT);fCover('<span><small>NOW</small>Say a full sentence!</span>');fAnswerWindow();$('#fOk').disabled=false;$('#fNo').disabled=false}},1000)};
+function fResolve(ok){if(!fOpen)return;clearInterval(fAnsT);clearInterval(fShowT);fOpen=false;$('#fOk').disabled=true;$('#fNo').disabled=true;$('#fcnt').hidden=true;
+ const it=FL[fOrder[fi]];fN++;if(ok){fPts++;addXP(4)}$('#fPts').textContent=fPts;$('#fN').textContent=fN;
+ $('#fModel').innerHTML=`${ok?'✓':'✗'} ${esc(CL[it.id][1])}`;sayId(it.id);fCover(`<span><small>${ok?'FULL SENTENCE · +1':'NO POINT · one word or wrong'}</small>Next: press “Flash!”</span>`)}
+$('#fOk').onclick=()=>fResolve(true);$('#fNo').onclick=()=>fResolve(false);
+
+/* ===== §3 grammar ===== */
+$('#hlBtn').onclick=()=>{const on=!$('#disc').classList.contains('show-hl');$('#disc').classList.toggle('show-hl',on);$('#hlBtn').setAttribute('aria-pressed',on);$('#hlBtn').textContent=on?'Hide the key words':'Show the key words'};
+$('#esBtn').onclick=()=>{const open=$('#esBox').hidden;$('#esBox').hidden=!open;$('#esBtn').setAttribute('aria-expanded',open);$('#esBtn').textContent=open?'🇲🇽 Ocultar explicación en español':'🇲🇽 Ver explicación en español'};
+const OW=[{p:"I",es:"yo",w:"my",ph:"ME",s:"s04_gram_01",q:"s04_gram_02"},{p:"you",es:"tú / usted",w:"your",ph:"YOU",s:"s04_gram_03",q:"s04_gram_04"},{p:"he · Diego",es:"él",w:"his",img:"b1s04_p1.jpg",s:"s04_gram_05",q:"s04_gram_06"},{p:"she · Maria",es:"ella",w:"her",img:"b1s04_p2.jpg",s:"s04_gram_07",q:"s04_gram_08"},{p:"they · Sara & Lupe",es:"ellas",w:"their",img:"b1s04_pair.jpg",two:1,s:"s04_gram_09",q:"s04_gram_10"}];let owI=2;
+$('#owSs').innerHTML=SPK;$('#owQs').innerHTML=SPK;
+OW.forEach((o,i)=>{const b=document.createElement('button');b.className='ow';b.innerHTML=`<span class="ph${o.two?' two':''}">${o.img?`<img src="img/${o.img}" alt="">`:o.ph}</span><b class="nun">${esc(o.p)}</b><span class="sub">${o.es}</span><span class="arrow">owner ↓</span><em class="${o.w}">${o.w}</em>`;
+ b.onclick=()=>{owI=i;drawOW();sayId(o.s);addXP(1,'ow'+i)};$('#own').appendChild(b)});
+function hl(t,w){const W=w[0].toUpperCase()+w.slice(1);return esc(t).replace(new RegExp('\\b('+W+'|'+w+')\\b'),'<em>$1</em>')}
+function drawOW(){const o=OW[owI];[...$('#own').children].forEach((b,i)=>b.setAttribute('aria-pressed',i===owI));$('#owS').innerHTML=hl(CL[o.s][1],o.w);$('#owQ').innerHTML=hl(CL[o.q][1],o.w)}
+drawOW();$('#owSs').onclick=()=>sayId(OW[owI].s);$('#owQs').onclick=()=>sayId(OW[owI].q);
+mc($('#mcA'),[{q:"Tom is my classmate. ___ number is 461 300 12 90.",o:["His","Her","Their"],a:0,ok:"Tom = a man → his."},{q:"Maria? ___ last name is Lopez.",o:["His","Her","Their"],a:1},{q:"Sara and Lupe are sisters. ___ number is the same.",o:["Her","Their","They"],a:1,ok:"Two people → their."},{q:"Nadia is new. What's ___ email?",o:["his","she","her"],a:2},{q:"Mr. Cruz is 70. ___ cell phone is old.",o:["His","Her","He"],a:0},{q:"Tom and Jen: ___ home number is 461 219 44 70.",o:["Their","His","They"],a:0},{q:"Thirteen = ?",o:["13","30","31"],a:0,ok:"thirTEEN = 13."},{q:"Write 40:",o:["fourty","forty","fourteen"],a:1,ok:"forty — no “u”!"}],$('#scA'),'mcA',2);
+
+/* GRM-15 Tic-Tac-Toe */
+const TT=[{img:"b1s04_p1.jpg",n:"Diego",d:"name: Diego",id:"s04_ttt_01"},{img:"b1s04_p2.jpg",n:"Maria",d:"last name: Lopez",id:"s04_ttt_02"},{img:"b1s04_pair.jpg",n:"Sara & Lupe",d:"email: rios.sisters@mail.com",id:"s04_ttt_03"},{img:"b1s04_mechanic.jpg",n:"Juan · taller",d:"461 118 30 40",id:"s04_ttt_04"},{img:"b1s04_gym.jpg",n:"Ana · gym",d:"email: ana.gym@mail.com",id:"s04_ttt_05"},{img:"b1s04_p6.jpg",n:"Beto · 70",d:"phone: old",id:"s04_ttt_06"},{img:"b1s04_p4.jpg",n:"Tom",d:"last name: Webb",id:"s04_ttt_07"},{img:"b1s04_p3.jpg",n:"Nadia",d:"cell phone: new",id:"s04_ttt_08"},{img:"b1s04_p5.jpg",n:"Rosa",d:"461 219 44 70",id:"s04_ttt_09"}];
+const LINES=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+let board=Array(9).fill(''),tTurn='X',tSel=-1,tOver=false;const tWins={X:0,O:0};
+function drawT(){const g=$('#ttt');g.innerHTML='';TT.forEach((t,i)=>{const b=document.createElement('button');b.className='sq'+(board[i]?' '+board[i]:'');b.setAttribute('aria-pressed',i===tSel);b.setAttribute('aria-label',`${t.n}, ${t.d}`+(board[i]?`, taken by team ${board[i]}`:''));
+ b.innerHTML=`<img src="img/${t.img}" alt=""><span class="lb"><b>${esc(t.n)}</b>${esc(t.d)}</span>${board[i]?`<span class="mk">${board[i]}</span>`:''}`;
+ b.onclick=()=>{if(tOver||board[i])return;tSel=i;drawT();$('#tPr').innerHTML=`<small>TEAM ${tTurn} · SQUARE ${i+1}</small>${esc(t.n)} — ${esc(t.d)}`;$('#tMdl').textContent='Model: '+CL[t.id][1];$('#tYes').disabled=false;$('#tNo2').disabled=false};g.appendChild(b)});
+ [...$('#tTurn').children].forEach(s=>s.classList.toggle('on',s.classList.contains(tTurn)))}
+function tNext(){tSel=-1;tTurn=tTurn==='X'?'O':'X';$('#tYes').disabled=true;$('#tNo2').disabled=true;$('#tPr').innerHTML='<small>CHOOSE A SQUARE</small>—';drawT()}
+$('#tYes').onclick=()=>{if(tSel<0)return;const t=TT[tSel];board[tSel]=tTurn;sayId(t.id);addXP(4);const w=LINES.find(l=>l.every(k=>board[k]===tTurn));
+ if(w){tOver=true;tWins[tTurn]++;drawT();w.forEach(k=>$('#ttt').children[k].classList.add('win'));const o=$('#tOut');o.hidden=false;o.textContent=`Team ${tTurn} wins with the line ${w.map(k=>TT[k].n).join(' · ')}.`;$('#tScore').textContent=`X ${tWins.X} · O ${tWins.O}`;markDone(2);addXP(15,'ttt');$('#tYes').disabled=true;$('#tNo2').disabled=true;return}
+ if(board.every(Boolean)){tOver=true;const o=$('#tOut');o.hidden=false;o.textContent='Full board — no line. It\'s a tie!';markDone(2)}tNext()};
+$('#tNo2').onclick=()=>{if(tSel<0)return;tNext()};
+$('#tRe').onclick=()=>{board=Array(9).fill('');tOver=false;$('#tOut').hidden=true;tTurn=tTurn==='X'?'O':'X';tNext()};
+drawT();
+
+/* ===== §4 reading ===== */
+mc($('#mcR'),[{q:"The plumber: what's his name?",o:["Pablo Díaz","Pizza Roma","Dr. Ruiz"],a:0},{q:"What's his number?",o:["461 118 20 13","461 118 20 30","461 118 13 20"],a:0,ok:"twenty, thirTEEN."},{q:"Dr. Ruiz is a woman. What's her office number?",o:["461 300 12 90","461 300 12 19","461 215 17 17"],a:0},{q:"Grandma and Grandpa: what's their number?",o:["461 612 14 40","461 612 40 14","461 612 40 40"],a:1,ok:"forty, fourteen."},{q:"Pizza Roma: the last numbers are…",o:["seventeen, seventy","seventeen, seventeen","seventy, seventy"],a:1,ok:"Double seventeen: 17 17."},{q:"Tía Lupe: her number is 461 505 13 13. True or false?",o:["True","False — it's thirty, thirty."],a:1}],$('#scR'),'mcR',3);
+
+/* ===== §5 listening ===== */
+const LS=["s04_listen_01","s04_listen_02","s04_listen_03","s04_listen_04","s04_listen_05","s04_listen_06","s04_listen_07"];
+const WHO={L:"LUCY",D:"DAN"};let lRun=0;
+$('#script').innerHTML=LS.map(id=>`<p><b>${WHO[CL[id][0]]}:</b> ${esc(CL[id][1])} <button class="say" style="width:30px;height:30px;background:var(--pink);vertical-align:middle" data-id="${id}" aria-label="Listen to this line">${SPK}</button></p>`).join('');
+$$('#script .say').forEach(b=>b.onclick=()=>sayId(b.dataset.id));
+async function playDialog(){stopAll();const my=++lRun;for(const id of LS){if(my!==lRun)return;await sayId(id,true);await new Promise(r=>setTimeout(r,350))}}
+$('#lPlay').onclick=()=>{playDialog();addXP(2,'lplay')};$('#lStop').onclick=()=>{lRun++;stopAll()};
+function setPh(p){$$('#phases .phase').forEach(b=>b.setAttribute('aria-pressed',b.dataset.p===String(p)));$$('[data-ph]').forEach(e=>e.hidden=+e.dataset.ph>p)}
+$$('#phases .phase').forEach(b=>b.onclick=()=>setPh(+b.dataset.p));setPh(1);
+mc($('#mcG'),[{q:"What do Lucy and Dan organize?",o:["a contact list","a party","a trip"],a:0},{q:"Tom and Jen: their number is…",o:["new","the same — it's home","thirty"],a:1}],$('#scG'),'mcG',4);
+const OC=[{k:"Maria",h:`<img src="img/b1s04_p2.jpg" alt="Maria">`},{k:"thirteen",h:`<span class="bign">13</span>`},{k:"Tom & Jen",h:`<span class="two"><img src="img/b1s04_p4.jpg" alt="Tom"><img src="img/b1s04_p3.jpg" alt="Jen"></span>`},{k:"Webb",h:`<span class="spell">W-E-B-B</span>`}];
+const OKEY=["Maria","thirteen","Tom & Jen","Webb"];let oSeq=[];const oShown=shuf(OC);
+function drawO(){const g=$('#ocards');g.innerHTML='';oShown.forEach(c=>{const b=document.createElement('button');b.className='oc';const p=oSeq.indexOf(c.k);b.innerHTML=`<span class="oi">${c.h}</span><b>${esc(c.k)}</b>${p>=0?`<span class="pos">${p+1}</span>`:''}`;b.setAttribute('aria-label',`${c.k}${p>=0?', position '+(p+1):''}`);
+ b.onclick=()=>{const k=oSeq.indexOf(c.k);if(k>=0)oSeq.splice(k,1);else if(oSeq.length<4)oSeq.push(c.k);$('#oOut').hidden=true;drawO()};g.appendChild(b)})}
+drawO();
+$('#oCheck').onclick=()=>{if(oSeq.length<4){$('#oScore').textContent='Order all 4 cards.';return}let ok=0;[...$('#ocards').children].forEach((b,i)=>{const k=oShown[i].k;const good=oSeq.indexOf(k)===OKEY.indexOf(k);b.classList.toggle('ok',good);b.classList.toggle('no',!good);if(good)ok++});
+ $('#oScore').textContent=`${ok} / 4`;const o=$('#oOut');o.hidden=false;o.textContent=`Correct order: ${OKEY.join(' → ')}.`;if(ok===4){addXP(15,'order')}markDone(4)};
+$('#oRe').onclick=()=>{oSeq=[];$('#oOut').hidden=true;$('#oScore').textContent='';drawO()};
+const TE=[[13,30,0],[14,40,1],[15,50,0],[16,60,1],[17,70,1],[18,80,0],[19,90,1]];const W2={13:"thirteen",30:"thirty",14:"fourteen",40:"forty",15:"fifteen",50:"fifty",16:"sixteen",60:"sixty",17:"seventeen",70:"seventy",18:"eighteen",80:"eighty",19:"nineteen",90:"ninety"};
+const PID=Object.fromEntries(Object.entries(CL).filter(([k])=>k.startsWith('s04_pron_')).map(([k,v])=>[v[1],k]));
+function stressHtml(w){return w.endsWith('teen')?esc(w.slice(0,-4))+'<u>teen</u>':'<u>'+esc(w.replace(/ty$/,''))+'</u>ty'}
+let teR=0,teN=0;
+TE.forEach(([a,b,t],i)=>{const target=t?b:a;const d=document.createElement('div');d.className='tn2';d.innerHTML=`<div class="top2"><b>${i+1}</b><button class="say" style="background:var(--pink)" aria-label="Listen to number ${i+1}">${SPK}</button></div><div class="ch2"></div>`;
+ d.querySelector('.say').onclick=()=>sayId(PID[W2[target]]);let locked=false;
+ [a,b].forEach(n=>{const x=document.createElement('button');x.innerHTML=`<b>${n}</b><small>${stressHtml(W2[n])}</small>`;x.setAttribute('aria-label',`${n}, ${W2[n]}`);x.onclick=()=>{if(locked)return;if(n===target){locked=true;x.classList.add('ok');teN++;if(!d.dataset.miss)teR++;addXP(3);$('#teScore').textContent=`${teR} / ${TE.length} first try`;if(teN===TE.length){const o=$('#teOut');o.hidden=false;o.textContent=`${teR} of ${TE.length} teens and tens. ${teR===TE.length?'Perfect ears!':'Listen for the strong part.'}`;markDone(4)}}else{x.classList.add('no');d.dataset.miss=1;setTimeout(()=>x.classList.remove('no'),500)}};d.querySelector('.ch2').appendChild(x)});
+ $('#teens').appendChild(d)});
+
+/* ===== §6 B18-08 information gap ===== */
+const GP=[{f:"Carmen",l:"Vega",n:"461 220 13 50",note:"neighbor · apt 3",c:"#FF3D7F",A:"n",B:"l"},{f:"Óscar",l:"Núñez",n:"461 118 40 14",note:"neighbor · apt 14",c:"#5733CC",A:"l",B:"n"},{f:"Nora",l:"Kim",n:"461 309 15 50",note:"neighbor · apt 30",c:"#12B5A6",A:"n",B:"l"},{f:"Hugo & Iván",l:"Soto",n:"461 770 30 13",note:"brothers · apt 5",c:"#E5A100",A:"l",B:"n"},{f:"Rafa",l:"Gil",n:"461 404 19 90",note:"plumber 🔧",c:"#16213E",A:"n",B:"l"},{f:"Lety",l:"Mora",n:"461 612 16 60",note:"neighbor · apt 16",c:"#FF5A36",A:"l",B:"n"}];
+let role=null;
+function drawGap(){const g=$('#gap');if(!role){g.innerHTML='<p class="hint">Choose Student A or Student B.</p>';return}
+ g.innerHTML=`<div class="grow hd"><span></span><span>First name</span><span>Last name</span><span>Number</span></div>`+GP.map((p,i)=>{const miss=p[role];const ini=p.f.split(' ')[0][0]+p.l[0];
+  const lv=miss==='l'?`<input data-i="${i}" data-f="l" aria-label="${esc(p.f)}: last name" placeholder="Ask: What's ${p.f.includes('&')?'their':(['Óscar','Rafa','Hugo'].includes(p.f)?'his':'her')} last name?" spellcheck="false">`:`<span class="gv">${esc(p.l)}</span>`;
+  const nv=miss==='n'?`<input data-i="${i}" data-f="n" aria-label="${esc(p.f)}: number" placeholder="Ask: What's ${p.f.includes('&')?'their':(['Óscar','Rafa','Hugo'].includes(p.f)?'his':'her')} number?" inputmode="numeric">`:`<span class="gv num">${esc(p.n)}</span>`;
+  return `<div class="grow"><span class="av" style="background:${p.c}">${esc(ini)}</span><span class="gv">${esc(p.f)}<small>${esc(p.note)}</small></span>${lv.replace('<input','<input class="gv"')}${nv.replace('<input','<input class="gv"')}</div>`}).join('');
+ $('#gScore').textContent=''}
+$$('#roles button').forEach(b=>b.onclick=()=>{role=b.dataset.r;$$('#roles button').forEach(x=>x.setAttribute('aria-pressed',x===b));drawGap()});
+drawGap();timer($('#tGap'));
+$('#gCheck').onclick=()=>{if(!role)return;let ok=0;const ins=$$('#gap input');ins.forEach(x=>{const p=GP[+x.dataset.i];const good=x.dataset.f==='l'?norm(x.value)===norm(p.l):digits(x.value)===digits(p.n);x.classList.toggle('ok',good);x.classList.toggle('no',!good);if(good)ok++});
+ $('#gScore').textContent=`${ok} / ${ins.length} correct`;if(ok===ins.length){addXP(20,'gap'+role);const o=$('#gOut');o.hidden=false;o.textContent=`Student ${role} has the complete information: ${ok} of ${ins.length}.`;markDone(5)}};
+[["Carmen Vega",0],["Rafa Gil",1],["Hugo & Iván Soto",0]].forEach(([t,g])=>{const b=document.createElement('button');b.className='opt';b.textContent=t;b.onclick=()=>{const fb=$('#gDecFb');if(g){b.classList.add('ok');fb.style.color='#7CF0A8';fb.textContent='✓ Yes! He\'s the plumber. Say it: “His name is Rafa Gil. His number is 461 404 19 90.” Bonus point!';addXP(10,'dec')}else{b.classList.add('no');fb.style.color='#FF9B9B';fb.textContent='✗ Check the list: who is the plumber?'}};$('#gDec').appendChild(b)});
+const Q=[["How many contacts are in your phone?","A lot?","Many from work?","b1s04_hero.jpg"],["Who is your number one contact?","Is he or she family?","What's his or her name?","b1s04_p5.jpg"],["What's a funny contact name in your phone?","Who is it?","Is it a secret name?","b1s04_mechanic.jpg"],["Is your number easy?","Double numbers?","Is it new?","b1s04_keypad.jpg"],["What's the emergency number in Mexico?","And in the USA?","Is it easy to remember?","b1s04_exchange.jpg"],["Is your favorite number 7?","What's your favorite number?","Is it lucky?","b1s04_pair.jpg"],["Whose number is on your fridge?","A plumber? A pizza place?","Is the number real or a magnet?","b1s04_fridge.jpg"],["Is the number of your best friend in your head?","And the number of your mother?","How many numbers are in your head?","b1s04_groupchat.jpg"]];
+let qi=0;Q.forEach((_,i)=>{const d=document.createElement('button');d.setAttribute('aria-label','Question '+(i+1));d.onclick=()=>{qi=i;drawQ()};$('#dots').appendChild(d)});
+function drawQ(){const q=Q[qi];$('#qN').textContent=`QUESTION ${qi+1} OF 8`;$('#qT').textContent=q[0];$('#qF').innerHTML=`<span>${esc(q[1])}</span><span>${esc(q[2])}</span>`;$('#qImg').src='img/'+q[3];[...$('#dots').children].forEach((d,i)=>d.setAttribute('aria-current',i===qi));$('#qP').disabled=qi===0;$('#qX').textContent=qi===7?'Done ✓':'Next question →';if(qi===7)markDone(5)}
+$('#qS').onclick=()=>sayId('s04_q_0'+(qi+1));$('#qP').onclick=()=>{if(qi>0){qi--;drawQ()}};$('#qX').onclick=()=>{if(qi<7){qi++;drawQ()}};drawQ();
+
+/* ===== §7 mission: new group chat ===== */
+const MB=[{f:"Diego",l:"Ramos",n:"461 233 19 90",img:"b1s04_p1.jpg",id:"s04_mis_01"},{f:"Nadia",l:"Fuentes",n:"461 140 14 40",img:"b1s04_p3.jpg",id:"s04_mis_02"},{f:"Alberto “Beto”",l:"Cruz",n:"461 505 70 17",img:"b1s04_p6.jpg",id:"s04_mis_03"},{f:"Sara & Lupe",l:"Ríos",n:"461 612 55 13",img:"b1s04_pair.jpg",id:"s04_mis_04"},{f:"Tom",l:"Webb",n:"461 330 13 19",img:"b1s04_p4.jpg",id:"s04_mis_05"}];
+const mopen=new Set();
+function drawMC(){const g=$('#mcards');g.innerHTML='';MB.forEach((m,i)=>{const b=document.createElement('button');b.className='mcard';const o=mopen.has(i);
+ b.innerHTML=`<span class="mi2"><img src="img/${m.img}" alt="${o?esc(m.f+' '+m.l):'Classmate '+(i+1)}">${o?'':`<span class="cov"><span>CLASSMATE ${i+1}<small>Student A: tap to open</small></span></span>`}</span>`+(o?`<dl><dt>Name</dt><dd>${esc(m.f)}</dd><dt>Last name</dt><dd>${esc(m.l)}</dd><dt>Cell</dt><dd class="num">${esc(m.n)}</dd></dl>`:'');
+ b.setAttribute('aria-label',(o?'Close':'Open')+' card '+(i+1));b.onclick=()=>{if(mopen.has(i))mopen.delete(i);else{mopen.add(i);sayId(m.id)}drawMC()};g.appendChild(b)})}
+drawMC();
+MB.forEach((m,i)=>{const r=document.createElement('div');r.className='mrow';r.innerHTML=`<span class="k">${i+1}</span><input aria-label="Contact ${i+1}: first and last name" placeholder="Name + last name" spellcheck="false"><input aria-label="Contact ${i+1}: number" placeholder="Number" inputmode="numeric">`;$('#gform').appendChild(r)});
+$('#mCheck').onclick=()=>{let full=0;[...$('#gform').children].forEach((r,i)=>{const [a,b]=r.querySelectorAll('input'),m=MB[i];const fn=norm(m.f.replace(/[“”]/g,'').replace(/ beto/i,''));const nv=norm(a.value.replace(/[“”"]/g,''));
+  const okN=nv===norm(fn+' '+m.l)||nv===norm(m.f.replace(/[“”]/g,'')+' '+m.l)||(i===2&&(nv==='beto cruz'||nv==='alberto cruz'))||(i===3&&nv==='sara and lupe rios');const okP=digits(b.value)===digits(m.n);
+  a.classList.toggle('ok',okN);a.classList.toggle('no',!okN);b.classList.toggle('ok',okP);b.classList.toggle('no',!okP);if(okN&&okP)full++});
+ $('#mN').textContent=full;$('#mBar').style.width=full/5*100+'%';const o=$('#mOut');o.hidden=false;o.textContent=full===5?'5 of 5 contacts 100% correct. Group created!':`${full} of 5 contacts 100% correct. Ask again: “What's his number? How do you spell it? Thirteen or thirty?”`;if(full===5){addXP(30,'mission');markDone(6)}};
+$('#mRe').onclick=()=>{$$('#gform input').forEach(x=>{x.value='';x.classList.remove('ok','no')});$('#mN').textContent=0;$('#mBar').style.width='0';$('#mOut').hidden=true};
+const RP=["How do you spell it?","Again, please.","Thirteen or thirty?","Let me check.","That's right?"];const rpc=RP.map(()=>0);
+RP.forEach((t,i)=>{const d=document.createElement('div');d.className='rp';d.innerHTML=`<span>${esc(t)}</span><span class="ctl"><button aria-label="Remove one: ${esc(t)}">−</button><output>0</output><button aria-label="Add one: ${esc(t)}">＋</button></span>`;
+ const [m,p]=d.querySelectorAll('button');const upd=()=>{d.querySelector('output').textContent=rpc[i];$('#rpN').textContent=rpc.reduce((a,c)=>a+c,0)};
+ p.onclick=()=>{rpc[i]++;upd();addXP(2)};m.onclick=()=>{if(rpc[i]>0){rpc[i]--;upd()}};$('#repair').appendChild(d)});
+
+/* ===== §8 wrap ===== */
+mc($('#mcQ'),[{q:"Tom is my friend. ___ number is new.",o:["His","Her","Their"],a:0},{q:"30 =",o:["thirteen","thirty"],a:1},{q:"Sara and Lupe: ___ email is rios.sisters@mail.com.",o:["her","their","they"],a:1},{q:"A woman: “What's ___ number?”",o:["his","she","her"],a:2},{q:"55 in a phone number:",o:["fifty-five","double five","Both are OK."],a:2}],$('#scQ'),'mcQ',7);
+["I say numbers from 0 to 100.","I hear 13 vs. 30.","I say his / her / their + number.","I ask: What's her number? How do you spell his name?","I use “Let me check.” and “Thirteen or thirty?”"].forEach(t=>{const b=document.createElement('button');b.textContent=t;b.setAttribute('aria-pressed','false');b.onclick=()=>b.setAttribute('aria-pressed',b.getAttribute('aria-pressed')!=='true');$('#selfev').appendChild(b)});
+const HW=['hw1','hw2','hw3','hw4'];let saved={};try{saved=JSON.parse(st.get('gt01-s04-hw')||'{}')}catch(e){}
+HW.forEach(id=>{const el=$('#'+id);if(saved[id])el.value=saved[id];el.addEventListener('input',()=>{saved[id]=el.value;st.set('gt01-s04-hw',JSON.stringify(saved));$('#cardSaved').textContent='Saved in this browser ✓'})});
+function showDone(){$('#doneBtn').textContent='✓ Session complete';$('#doneBtn').disabled=true}
+if(st.get('gt01-s04-done'))showDone();
+$('#doneBtn').onclick=()=>{st.set('gt01-s04-done','1');addXP(50,'done');markDone(7);showDone()};
+setMode(st.get('gt-mode')||'group');
+})();
+</script>
+<script>
+/* GT premium layer · runs after the session's own script */
+(function(){
+/* GT progress model: XP, rank, streak, badges. Pure functions over localStorage. Shared by the portal and the sessions. */
+var GTG=(function(){
+ var pad=function(n){return String(n).padStart(2,'0')};
+ var RANKS=[[0,'Starter'],[600,'Explorer'],[1800,'Speaker'],[3600,'Storyteller'],[5600,'Specialist'],[7600,'Master']];
+ var QUIZ=[8,16,24,32];
+ function make(LV,BLOCKS){
+  var get=function(k){try{return localStorage.getItem(k)}catch(e){return null}};
+  var set=function(k,v){try{localStorage.setItem(k,v)}catch(e){}};
+  var xp=function(n){return +get(LV+'-s'+pad(n)+'-xp')||0};
+  var done=function(n){return !!get(LV+'-s'+pad(n)+'-done')};
+  function days(){try{return JSON.parse(get(LV+'-days')||'[]')}catch(e){return []}}
+  function today(){var d=new Date();return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())}
+  function touch(){var a=days(),t=today();if(a.indexOf(t)<0){a.push(t);a=a.slice(-90);set(LV+'-days',JSON.stringify(a))}}
+  function streak(){var a=days().slice().sort(),set1={};a.forEach(function(x){set1[x]=1});var d=new Date(),n=0;
+   function key(dt){return dt.getFullYear()+'-'+pad(dt.getMonth()+1)+'-'+pad(dt.getDate())}
+   if(!set1[key(d)])d.setDate(d.getDate()-1);
+   while(set1[key(d)]){n++;d.setDate(d.getDate()-1)}return n}
+  function state(){
+   var total=0,dn=0,perBlock=[0,0,0,0],quiz=0;
+   for(var n=1;n<=32;n++){total+=xp(n);if(done(n)){dn++;perBlock[Math.floor((n-1)/8)]++;if(QUIZ.indexOf(n)>=0)quiz++}}
+   var ri=0;for(var i=0;i<RANKS.length;i++)if(total>=RANKS[i][0])ri=i;
+   var next=RANKS[ri+1]||null;
+   var st=streak();
+   var badges=[
+    {id:'first',name:'First step',desc:'Complete Session 1',ok:done(1)}
+   ].concat(BLOCKS.map(function(b,i){return {id:'b'+(i+1),name:b+' cleared',desc:'Complete all 8 sessions of Block '+(i+1),ok:perBlock[i]===8}}))
+    .concat([
+      {id:'quiz',name:'Checkpoint keeper',desc:'Complete all 4 quiz sessions',ok:quiz===4},
+     {id:'streak',name:'3-day rhythm',desc:'Study on 3 days in a row',ok:st>=3},
+     {id:'level',name:'Level complete',desc:'Complete all 32 sessions',ok:dn===32}]);
+   return {total:total,done:dn,perBlock:perBlock,quiz:quiz,rank:RANKS[ri][1],rankIdx:ri,rankFloor:RANKS[ri][0],next:next,streak:st,badges:badges};
+  }
+  return {get:get,set:set,xp:xp,done:done,touch:touch,state:state,today:today,RANKS:RANKS};
+ }
+ return {make:make,RANKS:RANKS,pad:pad};
+})();
+
+try{
+var TITLES=["The First 30 Seconds","Spell It Right","Where in the World?","The Contact List","Are You Married? Questions People Ask","What Do You Do? The Job Guessing Game","Sorry, Can You Repeat That?","Review Quiz 1 + Checkpoint: First Conversation","Who’s in the Photo?","What’s in Your Bag?","Lost and Found","Find Someone Who: The Class Directory","Photos vs. Reality: Renting a Place","Where Are My Keys?","A Store on Every Corner?","Review Quiz 2 + Checkpoint: People, Things, Places","What Time Is It There?","Save the Date","The 6 A.M. Club","Sign Me Up: The Gym Front Desk","She Works at Night","Open 24/7?","Let’s Meet Up!","Review Quiz 3 + Checkpoint: Time and Routine","Check-In, Please","How Much Is It? Tips, Prices and Coffee","Follow the Signs","Final Mission: First Day in Vancouver","This Is My Friend…","Honest Profile","Pass the Message","Final Quiz + Two Performances"],LV='gt01',BASE='Básico 1';
+var m=(document.title.match(/ S(\d\d) /)||[]);var n=+m[1];if(!n)return;
+var $=function(s,r){return (r||document).querySelector(s)},$$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
+var pad=function(k){return String(k).padStart(2,'0')};
+var store={get:function(k){try{return localStorage.getItem(k)}catch(e){return null}},set:function(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
+
+/* colour helpers: choose readable ink on any accent */
+function lum(hex){var h=(hex||'').trim();var r=/^#([0-9a-f]{6})$/i.exec(h);if(!r){r=/^#([0-9a-f]{3})$/i.exec(h);if(!r)return null;h='#'+r[1].split('').map(function(c){return c+c}).join('');r=/^#([0-9a-f]{6})$/i.exec(h)}
+  var v=parseInt(r[1],16),c=[v>>16&255,v>>8&255,v&255].map(function(x){x/=255;return x<=.03928?x/12.92:Math.pow((x+.055)/1.055,2.4)});return .2126*c[0]+.7152*c[1]+.0722*c[2]}
+function ink(el,prop){var v=getComputedStyle(el).getPropertyValue(prop);var L=lum(v);if(L!==null&&L>.24)el.setAttribute('data-ink','dark')}
+$$('.sec').forEach(function(s){ink(s,'--c')});
+$$('.flip').forEach(function(f){ink(f,'--fc')});
+$$('.deck').forEach(function(d){var s=d.closest('.sec');if(s&&s.getAttribute('data-ink'))d.setAttribute('data-ink','dark')});
+
+/* top bar: two labelled segmented controls */
+var tg=$('.toggles');
+if(tg){[['tgTeacher','tgStudent','Teacher or student view'],['tgGroup','tgOne','Group or one-to-one']].forEach(function(p){
+  var a=document.getElementById(p[0]),b=document.getElementById(p[1]);if(!a||!b)return;
+  var seg=document.createElement('div');seg.className='seg';seg.setAttribute('role','group');seg.setAttribute('aria-label',p[2]);tg.appendChild(seg);seg.appendChild(a);seg.appendChild(b)})}
+var ts=document.getElementById('tgStudent'),tt=document.getElementById('tgTeacher');
+if(ts&&tt){ts.addEventListener('click',function(){store.set(LV+'-view','student')});tt.addEventListener('click',function(){store.set(LV+'-view','teacher')});
+  if(store.get(LV+'-view')==='student')ts.click()}
+$$('.brand a').forEach(function(a){a.setAttribute('href','edition1.html')});
+$$('a[href="./"]').forEach(function(a){a.setAttribute('href','edition1.html')});
+
+/* hero: session number watermark + previous / next */
+var hw=$('.hero .wrap');
+if(hw){hw.setAttribute('data-n',pad(n));
+  var c=document.createElement('nav');c.className='crumbs';c.setAttribute('aria-label','Session navigation');
+  var prev=n>1?'<a href="e1s'+pad(n-1)+'.html" title="'+TITLES[n-2].replace(/"/g,'&quot;')+'">‹ Session '+(n-1)+'</a>':'<a href="#" aria-disabled="true" tabindex="-1">‹ Start</a>';
+  var next=n<32?'<a href="e1s'+pad(n+1)+'.html" title="'+TITLES[n].replace(/"/g,'&quot;')+'">Session '+(n+1)+' ›</a>':'<a href="#" aria-disabled="true" tabindex="-1">Final session</a>';
+  c.innerHTML='<a href="edition1.html">← All sessions</a><span class="sp"></span>'+prev+next;hw.insertBefore(c,hw.firstChild)}
+
+/* sticky nav: minutes under each stage, readable ink, clock state */
+var secs=$$('.sec'),links=$$('#steps a');
+links.forEach(function(a,i){var s=secs[i];if(!s)return;var mn=s.getAttribute('data-min');if(mn){var sm=document.createElement('small');sm.textContent=mn.replace('–','–')+'′';a.appendChild(sm)}
+  if(s.getAttribute('data-ink'))a.setAttribute('data-ink','dark');a.setAttribute('aria-label','Go to stage '+(i+1)+': '+s.getAttribute('data-name'))});
+var ck=document.getElementById('clock');if(ck){ck.addEventListener('click',function(){ck.classList.toggle('run')});ck.setAttribute('aria-label','Class clock: start or pause')}
+
+/* end of session: previous / next cards, completion state */
+var main=document.querySelector('main');
+if(main){var nav=document.createElement('nav');nav.className='seqnav wrap';nav.setAttribute('aria-label','Previous and next session');
+  var esc=function(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;')};
+  var p=n>1?'<a class="sq prev" href="e1s'+pad(n-1)+'.html"><small>‹ Previous · Session '+(n-1)+'</small><b>'+esc(TITLES[n-2])+'</b></a>':'<a class="sq prev" href="edition1.html"><small>‹ Portal</small><b>All 32 sessions</b></a>';
+  var x=n<32?'<a class="sq next" href="e1s'+pad(n+1)+'.html"><small>Next · Session '+(n+1)+' ›</small><b>'+esc(TITLES[n])+'</b></a>':'<a class="sq next" href="edition1.html"><small>Level complete ›</small><b>Back to Básico 1</b></a>';
+  nav.innerHTML=p+x;main.parentNode.insertBefore(nav,main.nextSibling)}
+var syncDone=function(){document.body.classList.toggle('is-done',!!store.get(LV+'-s'+pad(n)+'-done'))};
+syncDone();var db=document.getElementById('doneBtn');if(db)db.addEventListener('click',function(){setTimeout(syncDone,0)});
+
+/* footer: tidy photo credits */
+var ft=document.querySelector('footer');
+if(ft){var t=ft.textContent,i=t.indexOf('Photos:');if(i>0){var head=t.slice(0,i).replace(/[\s·]+$/,''),cr=t.slice(i);ft.innerHTML='<div>'+head.replace(/&/g,'&amp;')+'</div><details><summary>Photo credits</summary><p>'+cr.replace(/&/g,'&amp;')+'</p></details>'}}
+
+
+
+/* ---- level identity in the top bar ---- */
+(function(){var bs=$('.brand small');if(bs){bs.textContent='Básico 1 · A1.1 · Edition 1';bs.setAttribute('title','GT English Path · '+BASE)}})();
+
+/* ---- quiz sessions: show Parts A–D under the stage bar ---- */
+(function(){
+ var sec=null;secs.forEach(function(s){if(/^quiz/i.test(s.getAttribute('data-name')||''))sec=s});if(!sec)return;
+ var tags=$$('.tag',sec).filter(function(t){return /^Part [A-D]\b/.test(t.textContent.trim())});if(tags.length<3)return;
+ var mm=(sec.getAttribute('data-min')||'').match(/(\d+)\D+(\d+)/);var a=mm?+mm[1]:0,b=mm?+mm[2]:0,per=(b-a)/tags.length;
+ var bar=document.createElement('div');bar.className='substeps';bar.setAttribute('role','navigation');bar.setAttribute('aria-label','Quiz parts');
+ var blocks=[];
+ tags.forEach(function(t,i){var blk=t.closest('.block')||t.parentElement;if(!blk.id)blk.id='part-'+'abcd'.charAt(i);blocks.push(blk);
+  var l=document.createElement('a');l.href='#'+blk.id;
+  var label=t.textContent.trim().replace(/^Part /,'');
+  l.innerHTML='<b>'+label.replace(/\s*·\s*/,' · ')+'</b>'+(per?'<small>'+Math.round(a+i*per)+'–'+Math.round(a+(i+1)*per)+'′</small>':'');bar.appendChild(l)});
+ var wrap=$('.nav .wrap');if(wrap)wrap.appendChild(bar);
+ function spy(){var cur=-1;blocks.forEach(function(blk,i){if(blk.getBoundingClientRect().top<230)cur=i});var inQuiz=sec.getBoundingClientRect().top<230&&sec.getBoundingClientRect().bottom>230;
+  bar.classList.toggle('show',inQuiz);[].slice.call(bar.children).forEach(function(l,i){l.classList.toggle('on',i===cur)})}
+ addEventListener('scroll',spy,{passive:true});spy();
+})();
+
+/* ---- progress, XP and rewards (restrained: no confetti, no sounds) ---- */
+(function(){
+ var BLOCKS=["Explore","Develop","Activate","Demonstrate"];
+ var G=GTG.make(LV,BLOCKS);G.touch();
+ var xpEl=document.getElementById('xp');
+ var key=LV+'-s'+pad(n)+'-xp';
+ var before=G.state();
+ function cur(){return xpEl?(parseInt(xpEl.textContent,10)||0):0}
+ function save(){var v=Math.max(+G.get(key)||0,cur());G.set(key,String(v))}
+ var layer=document.createElement('div');layer.className='gt-toasts';layer.setAttribute('aria-live','polite');document.body.appendChild(layer);
+ function toast(t,s){var d=document.createElement('div');d.className='gt-toast';d.innerHTML='<b>'+t+'</b>'+(s?'<small>'+s+'</small>':'');layer.appendChild(d);requestAnimationFrame(function(){d.classList.add('in')});setTimeout(function(){d.classList.remove('in');setTimeout(function(){d.remove()},320)},2800)}
+ function floatXP(d){if(!xpEl)return;var r=xpEl.getBoundingClientRect();if(!r.width)return;var s=document.createElement('span');s.className='xp-float';s.textContent='+'+d+' XP';s.style.left=(r.left+r.width/2)+'px';s.style.top=r.top+'px';document.body.appendChild(s);setTimeout(function(){s.remove()},1100)}
+ var last=cur();
+ if(xpEl){new MutationObserver(function(){var c=cur();if(c>last)floatXP(c-last);last=c;save()}).observe(xpEl,{childList:true,characterData:true,subtree:true})}
+ var stepsEl=document.getElementById('steps'),seen={};
+ if(stepsEl){new MutationObserver(function(){[].slice.call(stepsEl.children).forEach(function(a,i){if(a.classList.contains('done')&&!seen[i]){seen[i]=1;var nm=(secs[i]&&secs[i].getAttribute('data-name'))||'';toast('Stage '+(i+1)+' complete',nm)}})}).observe(stepsEl,{subtree:true,attributes:true,attributeFilter:['class']})}
+ var badge=document.querySelector('.badge'),db=document.getElementById('doneBtn');
+ function renderReward(S){
+  var host=badge&&badge.querySelector(':scope > div:last-child');if(!host)return;var old=host.querySelector('.reward');if(old)old.remove();
+  var x=+G.get(key)||0,blk=Math.floor((n-1)/8);
+  var d=document.createElement('div');d.className='reward';d.setAttribute('role','status');
+  d.innerHTML='<div class="rw"><span class="l">Session XP</span><b>'+x+'</b></div><div class="rw"><span class="l">Rank</span><b>'+S.rank+'</b>'+(S.next?'<small>'+(S.next[0]-S.total)+' XP to '+S.next[1]+'</small>':'<small>Top rank</small>')+'</div><div class="rw"><span class="l">'+BLOCKS[blk]+'</span><b>'+S.perBlock[blk]+' / 8</b><small>sessions done</small></div>';
+  var rowEl=host.querySelector('.row');if(rowEl)host.insertBefore(d,rowEl);else host.appendChild(d)}
+ function celebrate(){save();G.touch();var S=G.state();renderReward(S);
+  var nb=S.badges.filter(function(b,i){return b.ok&&!before.badges[i].ok});
+  nb.forEach(function(b,i){setTimeout(function(){toast('Badge unlocked',b.name)},500+i*900)});
+  if(S.rankIdx>before.rankIdx)setTimeout(function(){toast('New rank',S.rank)},300);
+  before=S}
+ if(db)db.addEventListener('click',function(){setTimeout(celebrate,60)});
+ if(G.done(n))renderReward(G.state());
+ save();
+})();
+
+/* runtime contrast guard: light text on a mid-tone solid fill becomes navy when navy reads better */
+(function(){
+ var NAVY=[22,33,62];
+ function parse(c){var m=(c||'').match(/[0-9.]+/g);if(!m||m.length<3)return null;return {r:+m[0],g:+m[1],b:+m[2],a:m[3]===undefined?1:+m[3]}}
+ function L(o){var v=[o.r,o.g,o.b].map(function(x){x/=255;return x<=.03928?x/12.92:Math.pow((x+.055)/1.055,2.4)});return .2126*v[0]+.7152*v[1]+.0722*v[2]}
+ function ratio(a,b){var x=L(a),y=L(b);return (Math.max(x,y)+.05)/(Math.min(x,y)+.05)}
+ function bgOf(el){while(el&&el.nodeType===1){var cs=getComputedStyle(el);if(cs.backgroundImage!=='none')return null;var p=parse(cs.backgroundColor);if(p&&p.a>.95)return p;el=el.parentElement}return {r:255,g:255,b:255,a:1}}
+ function pass(){
+  var fixed=document.querySelectorAll('[data-gtfix]');for(var i=0;i<fixed.length;i++){fixed[i].style.removeProperty('color');fixed[i].removeAttribute('data-gtfix')}
+  var els=document.body.querySelectorAll('*');
+  for(var k=0;k<els.length;k++){var e=els[k];var tn=e.tagName;if(tn==='SCRIPT'||tn==='STYLE'||tn==='SVG'||tn==='IMG')continue;
+   var own=false;for(var c=e.firstChild;c;c=c.nextSibling){if(c.nodeType===3&&c.textContent.trim().length>1){own=true;break}}if(!own)continue;
+   if(e.offsetWidth<2||e.offsetHeight<2)continue;
+   var cs=getComputedStyle(e);var fg=parse(cs.color);if(!fg||fg.a<.99)continue;var bg=bgOf(e);if(!bg)continue;
+   var big=parseFloat(cs.fontSize)>=24||(parseFloat(cs.fontSize)>=18.66&&+cs.fontWeight>=700);var need=big?3:4.5;
+   var r=ratio(fg,bg);if(r>=need||r<1.6)continue;
+   if(L(fg)>L(bg)){ /* light text on a fill: switch to navy when it reads better */
+    var rn=ratio({r:NAVY[0],g:NAVY[1],b:NAVY[2]},bg);if(rn>r&&rn>=need){e.style.setProperty('color','#16213E','important');e.setAttribute('data-gtfix','1')}
+   }else{ var fixedOne=false; /* coloured text on a light fill: deepen the same hue until it passes */
+    for(var t2=.12;t2<=.7;t2+=.08){var m2={r:fg.r*(1-t2)+NAVY[0]*t2,g:fg.g*(1-t2)+NAVY[1]*t2,b:fg.b*(1-t2)+NAVY[2]*t2};
+     if(ratio(m2,bg)>=need){e.style.setProperty('color','rgb('+Math.round(m2.r)+','+Math.round(m2.g)+','+Math.round(m2.b)+')','important');e.setAttribute('data-gtfix','1');fixedOne=true;break}}
+    if(!fixedOne&&ratio({r:255,g:255,b:255},bg)>=need){e.style.setProperty('color','#fff','important');e.setAttribute('data-gtfix','1')}
+   }}
+ }
+ var t=null;function later(){clearTimeout(t);t=setTimeout(pass,160)}
+ document.addEventListener('click',later,true);document.addEventListener('input',later,true);
+ setTimeout(pass,60);setTimeout(pass,700);window.addEventListener('load',function(){setTimeout(pass,120)});
+})();
+
+}catch(e){try{console.warn('premium layer',e)}catch(_){}}
+})();
+
+</script>
+</body>
+</html>

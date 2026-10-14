@@ -1,0 +1,1172 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Intermedio 2 · S05 · The Missing Invoice</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap">
+<style>
+:root{
+  --navy:#16213E; --navy2:#22305A; --cream:#F4F7FF; --paper:#FFFFFF; --ink:#1B1B2F; --mut:#5E6275; --line:#DCE4F8;
+  --lvl:#6B4DF0; --lvl-d:#3F2BB0; --lvl-t:#ECE7FF;
+  --sun:#FFC233; --sun-t:#FFF3D1; --teal:#0A7F75; --teal-t:#DCF2EF; --pink:#C71F5E; --pink-t:#FBE3EC; --grm:#C2410C; --grm-t:#FFEDE0;
+  --ok:#15A34A; --ok-t:#E3F7EA; --err:#E5484D; --err-t:#FDE8E8;
+  --r:18px; --r-sm:12px; --sh:0 6px 22px rgba(27,27,47,.08); --sh-lg:0 18px 44px rgba(27,27,47,.16);
+  color-scheme:light;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+[hidden]{display:none!important}
+html{scroll-behavior:smooth;scroll-padding-top:150px}
+body{background:var(--cream);color:var(--ink);font-family:"DM Sans","Segoe UI",system-ui,sans-serif;font-size:17px;line-height:1.55;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4,.nun{font-family:Nunito,"Segoe UI",system-ui,sans-serif;letter-spacing:-.01em;line-height:1.15;text-wrap:balance}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+button:focus-visible,a:focus-visible,textarea:focus-visible,input:focus-visible{outline:3px solid var(--lvl);outline-offset:2px}
+img{max-width:100%;display:block}
+.wrap{max-width:1100px;margin:0 auto;padding-inline:16px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+/* ---------- top bar ---------- */
+.topbar{background:var(--navy);color:#fff}
+.topbar .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding-block:10px}
+.brand{display:flex;align-items:center;gap:10px;font-family:Nunito;font-weight:900;font-size:14px;letter-spacing:.08em}
+.brand i{width:10px;height:10px;border-radius:50%;background:var(--lvl);box-shadow:0 0 0 4px rgba(107,77,240,.35)}
+.brand a{color:#fff;text-decoration:none}
+.brand small{font-family:"DM Sans";font-weight:500;letter-spacing:0;opacity:.7;font-size:13px}
+.toggles{display:flex;gap:8px;flex-wrap:wrap}
+.tg{border:1.5px solid rgba(255,255,255,.3);color:#fff;border-radius:99px;padding:6px 14px;font-size:13px;font-weight:700}
+.tg[aria-pressed="true"]{background:var(--sun);border-color:var(--sun);color:var(--navy)}
+
+/* ---------- hero ---------- */
+.hero{position:relative;background:var(--navy);color:#fff;overflow:hidden}
+.hero .bg{position:absolute;inset:0;background:url(img/i2s01_hero.jpg) center/cover}
+.hero .bg::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(28,18,78,.97) 0%,rgba(28,18,78,.87) 45%,rgba(28,18,78,.28) 100%)}
+.hero .wrap{position:relative;padding-block:44px 40px}
+.kick{font-family:Nunito;font-weight:900;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--sun)}
+.hero h1{font-size:clamp(40px,6.5vw,72px);font-weight:900;margin:8px 0 10px;max-width:16ch}
+.hero h1 span{color:var(--lvl);text-shadow:0 0 0 transparent}
+.hero p.obj{max-width:56ch;font-size:18px;opacity:.94}
+.pills{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.pill{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.28);border-radius:99px;padding:5px 13px;font-size:14px;font-weight:700}
+.pill.sun{background:var(--sun);border-color:var(--sun);color:var(--navy)}
+.coach{display:inline-flex;align-items:center;gap:12px;margin-top:20px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);border-radius:99px;padding:6px 18px 6px 6px}
+.coach .cav{width:44px;height:44px;border-radius:50%;background:var(--lvl);display:grid;place-items:center;font-family:Nunito;font-weight:900;font-size:16px;letter-spacing:.02em}
+.coach b{display:block;font-family:Nunito;font-weight:900;font-size:17px;line-height:1.1}
+.coach small{font-size:13px;color:var(--sun);font-weight:700;letter-spacing:.04em}
+
+/* ---------- sticky nav ---------- */
+.nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:40;background:rgba(244,247,255,.96);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.nav .wrap{padding-block:10px 8px}
+.prog{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+.bar{flex:1;height:10px;background:#E4E9F9;border-radius:99px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--lvl),var(--sun));border-radius:99px;transition:width .4s}
+.xp{font-family:Nunito;font-weight:900;font-size:15px;color:var(--lvl-d);white-space:nowrap}
+.clock{font-family:Nunito;font-weight:900;font-size:15px;background:var(--navy);color:#fff;border-radius:99px;padding:5px 12px;font-variant-numeric:tabular-nums}
+.steps{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}
+.steps::-webkit-scrollbar{display:none}
+.steps a{flex:1 0 auto;text-decoration:none;color:var(--mut);background:#EAF0FB;border-radius:10px;padding:8px 12px;font-weight:700;font-size:14px;white-space:nowrap;text-align:center;border:1.5px solid transparent}
+.steps a b{font-family:Nunito;margin-right:4px}
+.steps a.on{background:var(--c,var(--lvl));color:#fff}
+.steps a.done{border-color:var(--ok);color:var(--ok)}
+.steps a.done.on{color:#fff}
+
+/* ---------- sections ---------- */
+main{padding-block:26px 80px}
+.sec{background:var(--paper);border-radius:24px;box-shadow:var(--sh);margin-bottom:26px;overflow:hidden;border-top:8px solid var(--c)}
+.shead{display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between;padding:22px 26px 6px}
+.snum{display:flex;align-items:center;gap:14px}
+.snum .n{width:54px;height:54px;border-radius:16px;background:var(--c);color:#fff;display:grid;place-items:center;font-family:Nunito;font-weight:900;font-size:22px;flex:none}
+.snum h2{font-size:clamp(26px,3.4vw,36px);font-weight:900}
+.snum .sub{font-size:14px;color:var(--mut);font-weight:500}
+.meta{display:flex;gap:8px;flex-wrap:wrap}
+.chip{border-radius:99px;padding:5px 12px;font-size:13px;font-weight:700;background:var(--ct);color:var(--ink)}
+.chip.dark{background:var(--navy);color:#fff}
+.sbody{padding:14px 26px 28px;display:grid;gap:22px}
+.block{display:grid;gap:12px}
+.bt{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.bt h3{font-size:22px;font-weight:900}
+.bt .tag{font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--c)}
+.hint{color:var(--mut);font-size:15px}
+.card{background:var(--paper);border:1.5px solid var(--line);border-radius:var(--r);padding:18px}
+.tint{background:var(--ct);border-color:transparent}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+@media (max-width:820px){.g2,.g3{grid-template-columns:1fr}}
+.btn{border-radius:99px;padding:10px 18px;font-weight:700;font-size:15px;background:var(--paper);border:1.5px solid var(--line)}
+.btn.main{background:var(--c,var(--lvl));border-color:var(--c,var(--lvl));color:#fff}
+.btn.dark{background:var(--navy);border-color:var(--navy);color:#fff}
+.btn.sm{padding:6px 12px;font-size:14px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.say{width:40px;height:40px;border-radius:50%;background:var(--c,var(--lvl));color:#fff;display:inline-grid;place-items:center;flex:none;font-size:16px}
+.say svg{width:18px;height:18px;fill:#fff}
+
+/* teacher notes */
+.tn{border-radius:var(--r);background:#FFFBEA;border:1.5px dashed #E9C46A}
+.tn summary{list-style:none;padding:12px 16px;font-weight:800;font-family:Nunito;cursor:pointer;display:flex;justify-content:space-between;color:#7A5A00}
+.tn summary::-webkit-details-marker{display:none}
+.tn summary::after{content:"＋";font-weight:900}
+.tn[open] summary::after{content:"－"}
+.tn .layers{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;padding:0 16px 16px}
+@media (max-width:820px){.tn .layers{grid-template-columns:1fr}}
+.tn .ly{background:#fff;border-radius:12px;padding:12px 14px;font-size:15px}
+.tn .ly h4{font-size:13px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px}
+.tn .ly:nth-child(1) h4{color:var(--grm)} .tn .ly:nth-child(2) h4{color:var(--lvl-d)} .tn .ly:nth-child(3) h4{color:var(--teal)}
+.tn ul{padding-left:18px} .tn li{margin-bottom:4px}
+body.student .tn, body.student .key{display:none!important}
+
+/* ---------- §1 warm-up ---------- */
+.scene{display:grid;grid-template-columns:1.1fr 1fr;border-radius:var(--r);overflow:hidden;background:var(--navy);color:#fff}
+@media (max-width:820px){.scene{grid-template-columns:1fr}}
+.scene img{height:100%;min-height:260px;object-fit:cover}
+.scene .txt{padding:26px;display:grid;gap:12px;align-content:center}
+.bubble{background:#fff;color:var(--ink);border-radius:18px 18px 18px 4px;padding:12px 16px;font-size:20px;font-weight:700;max-width:28ch;position:relative}
+.bubble.me{background:var(--lvl);color:#fff;border-radius:18px 18px 4px 18px;justify-self:end}
+.poll{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+@media (max-width:900px){.poll{grid-template-columns:repeat(3,1fr)}}
+@media (max-width:520px){.poll{grid-template-columns:repeat(2,1fr)}}
+.pc{border-radius:var(--r);overflow:hidden;background:var(--paper);border:2px solid var(--line);display:grid;transition:transform .15s,border-color .15s}
+.pc .em{aspect-ratio:4/3;display:grid;place-items:center;font-size:40px;background:var(--pc-bg,var(--ct))}
+.pc .pb{padding:10px 12px;display:grid;gap:8px}
+.pc .nm{font-family:Nunito;font-weight:900;font-size:16px;line-height:1.15;min-height:2.3em}
+.pc .vt{display:flex;align-items:center;justify-content:space-between}
+.pc .vt button{width:34px;height:34px;border-radius:50%;background:var(--ct);font-weight:900;font-size:18px}
+.pc .vt output{font-family:Nunito;font-weight:900;font-size:22px;font-variant-numeric:tabular-nums}
+.pc .pbar{height:8px;border-radius:99px;background:#EDF1FB;overflow:hidden}
+.pc .pbar i{display:block;height:100%;width:0;background:var(--c);transition:width .3s}
+.pc.win{border-color:var(--c);transform:translateY(-3px)}
+.result{font-family:Nunito;font-weight:900;font-size:20px}
+.fq{display:grid;gap:8px}
+.fq div{background:var(--ct);border-radius:12px;padding:10px 14px;font-weight:700}
+.fq div span{color:var(--mut);font-weight:500}
+
+/* ---------- §2 vocab ---------- */
+.flips{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+@media (max-width:900px){.flips{grid-template-columns:repeat(3,1fr)}}
+@media (max-width:520px){.flips{grid-template-columns:repeat(2,1fr)}}
+.flip{perspective:900px;height:170px}
+.flip .in{position:relative;width:100%;height:100%;transition:transform .5s;transform-style:preserve-3d}
+.flip.on .in{transform:rotateY(180deg)}
+.flip .f,.flip .b{position:absolute;inset:0;border-radius:var(--r);backface-visibility:hidden;padding:14px;display:grid;align-content:space-between}
+.flip .f{background:var(--fc);color:#fff}
+.flip .b{background:#fff;border:2px solid var(--fc);transform:rotateY(180deg)}
+.flip .num{font-family:Nunito;font-weight:900;font-size:13px;opacity:.8}
+.flip .w{font-family:Nunito;font-weight:900;font-size:19px;line-height:1.15}
+.flip .es{font-weight:700;color:var(--mut);font-size:14px}
+.flip .ex{font-size:14px}
+.flip .fb{display:flex;justify-content:space-between;align-items:end}
+.flip .fb .say{background:rgba(255,255,255,.25)}
+.flip .tap{font-size:12px;font-weight:700;opacity:.85}
+.flip .seen{position:absolute;top:10px;right:10px;background:var(--ok);color:#fff;border-radius:99px;font-size:11px;font-weight:800;padding:2px 8px}
+.match{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.match .col{display:grid;gap:10px}
+.mi{border:2px solid var(--line);background:#fff;border-radius:14px;padding:12px 14px;font-weight:700;text-align:left;transition:.15s}
+.mi.sel{border-color:var(--c);background:var(--ct)}
+.mi.ok{border-color:var(--ok);background:var(--ok-t);color:var(--ok);cursor:default}
+.mi.bad{border-color:var(--err);background:var(--err-t);animation:shake .3s}
+@keyframes shake{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+.board{display:flex;flex-wrap:wrap;gap:10px}
+.dw{border-radius:12px;padding:10px 14px;font-family:Nunito;font-weight:900;font-size:17px;background:var(--navy);color:#fff}
+.dw[aria-pressed="true"]{background:#E4E9F9;color:#9FA9C2;text-decoration:line-through}
+.timer{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.timer output{font-family:Nunito;font-weight:900;font-size:34px;font-variant-numeric:tabular-nums;min-width:4.5ch}
+.timer.end output{color:var(--err)}
+.closeout{background:var(--navy);color:#fff;border-radius:14px;padding:12px 16px;font-family:Nunito;font-weight:900;font-size:19px}
+.stat{font-family:Nunito;font-weight:900}
+.stat b{color:var(--c);font-size:26px}
+
+/* ---------- §3 grammar ---------- */
+.disc{display:grid;grid-template-columns:1fr 1.2fr;gap:0;border-radius:var(--r);overflow:hidden;border:1.5px solid var(--line)}
+@media (max-width:820px){.disc{grid-template-columns:1fr}}
+.disc img{height:100%;min-height:240px;object-fit:cover}
+.disc .chat{padding:20px;display:grid;gap:10px;align-content:center;background:var(--grm-t)}
+.disc .chat p{background:#fff;border-radius:14px;padding:10px 14px;font-size:18px;font-weight:500;max-width:34ch}
+.disc .chat p:nth-child(even){justify-self:end;background:var(--grm);color:#fff}
+mark.hl{background:transparent;color:inherit;border-radius:4px;transition:.2s}
+.show-hl mark.hl{background:var(--sun);color:var(--ink);padding:0 3px;font-weight:800}
+.tool{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media (max-width:820px){.tool{grid-template-columns:1fr}}
+.tool .card h4{font-size:14px;letter-spacing:.08em;text-transform:uppercase;color:var(--grm);margin-bottom:6px}
+.tool .big{font-family:Nunito;font-weight:900;font-size:24px}
+.tool .big em{font-style:normal;color:var(--grm)}
+.forms{border-radius:var(--r);overflow:hidden;border:1.5px solid var(--line)}
+.forms table{width:100%;border-collapse:collapse;font-size:16px}
+.forms th{background:var(--grm);color:#fff;font-family:Nunito;text-align:left;padding:10px 14px}
+.forms td{padding:10px 14px;border-top:1px solid var(--line);background:#fff}
+.forms td:first-child{font-family:Nunito;font-weight:900;font-size:22px;color:var(--grm);width:56px;text-align:center}
+.forms b{color:var(--grm)}
+.es-box{background:#fff;border:2px dashed var(--grm);border-radius:var(--r);padding:16px 18px;display:grid;gap:8px}
+.answerbox{background:var(--navy);color:#fff;border-radius:var(--r);padding:16px 18px;font-family:Nunito;font-weight:900;font-size:19px;display:flex;align-items:center;gap:12px}
+.answerbox .tagi{background:var(--sun);color:var(--navy);border-radius:8px;padding:3px 10px;font-size:12px;letter-spacing:.06em}
+.mc{display:grid;gap:12px}
+.mcq{background:#fff;border:1.5px solid var(--line);border-radius:14px;padding:14px 16px;display:grid;gap:10px}
+.mcq .q{font-weight:700;font-size:18px}
+.mcq .q .n{font-family:Nunito;font-weight:900;color:var(--c);margin-right:6px}
+.opts{display:flex;gap:8px;flex-wrap:wrap}
+.opt{border:2px solid var(--line);border-radius:99px;padding:7px 16px;font-weight:700;background:#fff}
+.opt:hover{border-color:var(--c)}
+.opt.ok{background:var(--ok);border-color:var(--ok);color:#fff}
+.opt.no{background:var(--err-t);border-color:var(--err);color:var(--err)}
+.mcq .fb{font-size:15px;font-weight:700}
+.mcq .fb.ok{color:var(--ok)} .mcq .fb.no{color:var(--err)}
+.score{font-family:Nunito;font-weight:900;font-size:18px}
+.builder .dst,.builder .src{display:flex;flex-wrap:wrap;gap:8px;min-height:56px;padding:10px;border-radius:14px}
+.builder .dst{border:2.5px dashed var(--c);background:var(--ct)}
+.wchip{background:#fff;border:2px solid var(--line);border-radius:12px;padding:8px 14px;font-family:Nunito;font-weight:900;font-size:18px;box-shadow:0 3px 0 var(--line)}
+.dst .wchip{border-color:var(--c);box-shadow:0 3px 0 var(--c)}
+.errs{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media (max-width:820px){.errs{grid-template-columns:1fr}}
+.err{border-radius:14px;padding:14px;background:#fff;border:1.5px solid var(--line);display:grid;gap:4px}
+.err s{color:var(--err);font-weight:700}
+.err b{color:var(--ok)}
+
+/* ---------- §4 reading ---------- */
+.phone{max-width:420px;margin:0 auto;background:#fff;border-radius:34px;border:10px solid var(--navy);box-shadow:var(--sh-lg);overflow:hidden}
+.phone .ph{background:var(--teal);color:#fff;padding:14px 16px;display:flex;align-items:center;gap:10px}
+.phone .ph b{font-family:Nunito;font-weight:900}
+.phone .ph small{display:block;opacity:.9;font-size:12px}
+.phone .ms{background:#EFE9E1;padding:14px 12px;display:grid;gap:10px}
+.msg{display:grid;grid-template-columns:36px 1fr;gap:8px;align-items:start}
+.msg img,.msg .av{width:36px;height:36px;border-radius:50%;object-fit:cover}
+.msg .av{color:#fff;display:grid;place-items:center;font-family:Nunito;font-weight:900}
+.msg .bb{background:#fff;border-radius:4px 14px 14px 14px;padding:8px 12px;font-size:16px}
+.msg .bb .who{font-family:Nunito;font-weight:900;font-size:13px;color:var(--teal)}
+
+/* ---------- §5 listening ---------- */
+.player{display:grid;grid-template-columns:260px 1fr;gap:0;border-radius:var(--r);overflow:hidden;background:var(--navy);color:#fff}
+@media (max-width:820px){.player{grid-template-columns:1fr}}
+.player img{height:100%;min-height:200px;object-fit:cover}
+.player .pp{padding:22px;display:grid;gap:12px;align-content:center}
+.predict{display:grid;gap:10px}
+.pbet{background:#fff;border:1.5px solid var(--line);border-radius:14px;padding:12px 14px;display:grid;gap:8px}
+.pbet .st{font-weight:700;font-size:16px}
+.pbet .row2{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.tf{display:flex;gap:6px}
+.tf button{border:2px solid var(--line);border-radius:99px;padding:5px 14px;font-weight:800;font-size:13px}
+.tf button[aria-pressed="true"].t{background:var(--ok);border-color:var(--ok);color:#fff}
+.tf button[aria-pressed="true"].f{background:var(--err);border-color:var(--err);color:#fff}
+.pts{display:flex;align-items:center;gap:8px}
+.pts button{width:28px;height:28px;border-radius:50%;background:var(--pink-t);color:var(--pink);font-weight:900}
+.pts output{font-family:Nunito;font-weight:900;min-width:2ch;text-align:center}
+.pbet.rev.right{border-color:var(--ok);background:var(--ok-t)}
+.pbet.rev.wrong{border-color:var(--err);background:var(--err-t)}
+.play{background:var(--pink);color:#fff;border-radius:99px;padding:12px 22px;font-family:Nunito;font-weight:900;font-size:18px;display:inline-flex;gap:10px;align-items:center}
+.script{background:#fff;border-radius:var(--r);border:1.5px solid var(--line);padding:16px 18px;font-size:17px;display:grid;gap:6px}
+.script p b{color:var(--pink);font-family:Nunito}
+.rec{display:inline-block;background:var(--navy);color:#fff;font-size:11px;font-weight:800;letter-spacing:.1em;padding:3px 8px;border-radius:4px}
+.pron{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media (max-width:820px){.pron{grid-template-columns:1fr 1fr}}
+.pr{background:var(--pink-t);border-radius:14px;padding:14px;display:grid;gap:8px;justify-items:start}
+.pr .w{font-family:Nunito;font-weight:900;font-size:21px}
+.pr .ipa{color:var(--mut);font-size:14px}
+
+/* ---------- §6 speaking ---------- */
+.rounds{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media (max-width:820px){.rounds{grid-template-columns:1fr}}
+.rd{border-radius:var(--r);overflow:hidden;border:2.5px solid var(--line);background:#fff;text-align:left;display:grid}
+.rd img{aspect-ratio:16/10;object-fit:cover;width:100%}
+.rd .initcard{aspect-ratio:16/10;width:100%;display:grid;place-items:center;font-family:Nunito;font-weight:900;font-size:44px;color:#fff}
+.rd .rb{padding:14px;display:grid;gap:6px}
+.rd h4{font-size:20px;font-weight:900}
+.rd .who{font-size:14px;font-weight:700;color:var(--lvl-d)}
+.rd ul{padding-left:18px;font-size:15px}
+.rd[aria-pressed="true"]{border-color:var(--c);box-shadow:0 0 0 4px var(--ct)}
+.deck{display:grid;grid-template-columns:1fr 1.3fr;border-radius:var(--r);overflow:hidden;background:var(--c);color:#fff}
+@media (max-width:820px){.deck{grid-template-columns:1fr}}
+.deck img{height:100%;min-height:260px;object-fit:cover}
+.deck .dq{padding:26px;display:grid;gap:14px;align-content:center}
+.deck .qn{font-family:Nunito;font-weight:900;letter-spacing:.12em;font-size:13px;opacity:.9}
+.deck .qt{font-family:Nunito;font-weight:900;font-size:clamp(26px,3.4vw,40px);line-height:1.1}
+.deck .fu{display:grid;gap:6px;font-size:18px;font-weight:500}
+.deck .fu span::before{content:"→ ";font-weight:900;color:var(--sun)}
+.deck .row .btn{background:rgba(255,255,255,.18);border-color:rgba(255,255,255,.35);color:#fff}
+.dots{display:flex;gap:6px}
+.dots button{width:11px;height:11px;border-radius:50%;background:rgba(255,255,255,.35)}
+.dots button[aria-current="true"]{background:#fff}
+.help{display:flex;flex-wrap:wrap;gap:8px}
+.help span{background:var(--navy);color:#fff;border-radius:99px;padding:6px 14px;font-weight:700;font-size:15px}
+
+/* ---------- §7 mission ---------- */
+.mission{position:relative;border-radius:var(--r);overflow:hidden;color:#fff;background:var(--navy)}
+.mission img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.32}
+.mission .mt{position:relative;padding:28px;display:grid;gap:10px;max-width:70ch}
+.mission h3{font-size:30px;font-weight:900}
+.guest{background:#fff;border-radius:var(--r);border:1.5px solid var(--line);overflow:hidden;display:grid}
+.guest .gh{display:flex;gap:12px;align-items:center;padding:14px;background:var(--ct)}
+.guest .gh img{width:72px;height:72px;border-radius:50%;object-fit:cover;border:3px solid #fff}
+.guest .gh .initcircle{width:72px;height:72px;border-radius:50%;display:grid;place-items:center;font-family:Nunito;font-weight:900;color:#fff;border:3px solid #fff;flex:none;font-size:26px}
+.guest h4{font-size:20px;font-weight:900}
+.guest .gh small{color:var(--mut);font-weight:700}
+.guest .line{padding:10px 14px 0;font-style:italic;color:var(--mut);font-size:15px}
+.moves{display:grid;gap:8px;padding:14px}
+.mv{display:flex;align-items:center;gap:10px;border:1.5px solid var(--line);border-radius:12px;padding:9px 12px;font-weight:700;font-size:15px;text-align:left;background:#fff}
+.mv i{width:22px;height:22px;border-radius:7px;border:2px solid var(--line);display:grid;place-items:center;flex:none;font-style:normal;color:#fff;font-size:13px}
+.mv[aria-pressed="true"]{background:var(--ok-t);border-color:var(--ok)}
+.mv[aria-pressed="true"] i{background:var(--ok);border-color:var(--ok)}
+
+/* ---------- §8 wrap ---------- */
+.sur{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media (max-width:900px){.sur{grid-template-columns:1fr 1fr}}
+@media (max-width:520px){.sur{grid-template-columns:1fr}}
+.sur .card h4{font-size:18px;font-weight:900;margin-bottom:6px}
+.sur .card:nth-child(1){border-top:5px solid var(--ok)} .sur .card:nth-child(2){border-top:5px solid var(--sun)} .sur .card:nth-child(3){border-top:5px solid var(--err)} .sur .card:nth-child(4){border-top:5px solid var(--grm)}
+textarea{width:100%;min-height:92px;border:1.5px solid var(--line);border-radius:12px;padding:10px 12px;font:inherit;font-size:15px;resize:vertical;background:#fff;color:var(--ink)}
+.selfev{display:flex;flex-wrap:wrap;gap:8px}
+.selfev button{border:2px solid var(--line);border-radius:99px;padding:8px 14px;font-weight:700;background:#fff}
+.selfev button[aria-pressed="true"]{background:var(--navy);border-color:var(--navy);color:#fff}
+.badge{display:flex;gap:18px;align-items:center;background:linear-gradient(120deg,var(--navy),var(--navy2));color:#fff;border-radius:var(--r);padding:22px}
+.badge .medal{width:84px;height:84px;border-radius:50%;background:var(--sun);color:var(--navy);display:grid;place-items:center;font-family:Nunito;font-weight:900;font-size:28px;flex:none;border:6px solid rgba(255,255,255,.3)}
+footer{color:var(--mut);font-size:13px;text-align:center;padding:10px 16px 40px}
+/* ---------- Intermedio 2 · additions ---------- */
+.sec[data-dur]{scroll-margin-top:150px}
+.card-session{border-radius:var(--r);background:#FFFBEA;border:1.5px dashed #E9C46A;margin-bottom:22px}
+.card-session summary{list-style:none;padding:12px 16px;font-weight:800;font-family:Nunito;cursor:pointer;display:flex;justify-content:space-between;color:#7A5A00}
+.card-session summary::-webkit-details-marker{display:none}
+.card-session summary::after{content:"＋";font-weight:900}
+.card-session[open] summary::after{content:"－"}
+.card-session .cs{padding:0 16px 16px;display:grid;gap:12px;font-size:15px}
+.card-session table{width:100%;border-collapse:collapse;font-size:14px;background:#fff;border-radius:12px;overflow:hidden}
+.card-session th,.card-session td{padding:7px 10px;border-top:1px solid var(--line);text-align:left;vertical-align:top}
+.card-session th{background:var(--navy);color:#fff;font-family:Nunito}
+.card-session .tot{font-family:Nunito;font-weight:900;font-size:17px}
+body.student .card-session{display:none!important}
+.anote{font-size:13px;font-weight:700;color:var(--mut)}
+.anote.warn{color:#9A5B00}
+.hero .bg{background-position:center 30%}
+
+/* annoyance meter */
+.meter{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+@media (max-width:900px){.meter{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:420px){.meter{grid-template-columns:1fr}}
+.mt-card{border-radius:var(--r);overflow:hidden;background:#fff;border:2px solid var(--line);display:grid;grid-template-rows:auto 1fr;transition:.15s}
+.mt-card img{aspect-ratio:4/3;width:100%;object-fit:cover}
+.mt-card .mb{padding:10px 12px 12px;display:grid;gap:8px;align-content:start}
+.mt-card .nm{font-family:Nunito;font-weight:900;font-size:16px;line-height:1.15;min-height:3.4em}
+.mt-card input[type=range]{width:100%;accent-color:var(--lvl);height:28px}
+.mt-card .val{display:flex;justify-content:space-between;font-family:Nunito;font-weight:900;font-size:13px;color:var(--mut)}
+.mt-card .val output{color:var(--lvl-d);font-size:22px}
+.mt-card.win{border-color:var(--lvl);box-shadow:0 0 0 4px var(--lvl-t);transform:translateY(-3px)}
+.hook{background:var(--navy);color:#fff;border-radius:var(--r);padding:16px 20px;display:grid;gap:6px}
+.hook b{color:var(--sun);font-family:Nunito;letter-spacing:.08em;font-size:12px}
+.hook p{font-size:19px;font-weight:700}
+.side{display:flex;gap:10px;flex-wrap:wrap}
+.side span{background:var(--lvl-t);color:var(--lvl-d);border-radius:99px;padding:6px 14px;font-weight:800}
+
+/* wager board */
+.wg{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+@media (max-width:760px){.wg{grid-template-columns:1fr}}
+.wgi{border:2px solid var(--line);border-radius:var(--r);background:#fff;padding:14px;display:grid;gap:10px;transition:.15s}
+.wgi .top2{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.wgi .no{font-family:Nunito;font-weight:900;font-size:13px;color:var(--mut)}
+.wgi .wd{font-family:Nunito;font-weight:900;font-size:24px;line-height:1.1}
+.bets{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.bets .lab{font-weight:800;font-size:13px;color:var(--mut);margin-right:2px}
+.bets button{width:40px;height:40px;border-radius:12px;border:2px solid var(--line);font-family:Nunito;font-weight:900;font-size:18px;background:#fff}
+.bets button[aria-pressed="true"]{background:var(--teal);border-color:var(--teal);color:#fff}
+.bets button:disabled{opacity:.55;cursor:default}
+.judge{display:flex;gap:8px;flex-wrap:wrap}
+.judge .btn{font-weight:800}
+.judge .y{border-color:var(--ok);color:var(--ok)} .judge .n{border-color:var(--err);color:var(--err)}
+.reveal{background:var(--teal-t);border-radius:12px;padding:10px 12px;font-size:15px;display:grid;gap:4px}
+.reveal b{font-family:Nunito}
+.wgi.won{border-color:var(--ok);background:var(--ok-t)}
+.wgi.lost{border-color:var(--err);background:var(--err-t)}
+.bank{display:flex;gap:18px;flex-wrap:wrap;align-items:center}
+.bank .stat b{color:var(--teal);font-size:30px}
+.hearbtn{display:inline-flex;align-items:center;gap:8px;border:1.5px solid var(--line);border-radius:99px;padding:5px 12px;font-weight:700;font-size:14px;background:#fff}
+.hearbtn svg{width:16px;height:16px;fill:currentColor}
+
+/* grammar notifications */
+.notifs{padding:20px;display:grid;gap:12px;align-content:center;background:var(--grm-t)}
+.notif{background:#fff;border-radius:16px;padding:12px 14px;box-shadow:0 4px 14px rgba(27,27,47,.1);display:grid;grid-template-columns:40px 1fr;gap:10px;align-items:start}
+.notif .ic{width:40px;height:40px;border-radius:11px;display:grid;place-items:center;font-size:20px;color:#fff}
+.notif .nt{font-family:Nunito;font-weight:900;font-size:13px;letter-spacing:.04em;color:var(--mut);display:flex;justify-content:space-between;gap:8px}
+.notif p{font-size:18px;line-height:1.35}
+.tool .card h4{color:var(--grm)}
+.tool .big em{color:var(--grm)}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chips span{background:var(--grm-t);color:var(--grm);border-radius:99px;padding:5px 12px;font-weight:800;font-size:15px}
+.g12{display:grid;gap:14px}
+.g12i{border:2px solid var(--line);border-radius:var(--r);background:#fff;padding:14px 16px;display:grid;gap:10px}
+.g12i .sit{font-weight:700;font-size:17px}
+.g12i .sit .n{font-family:Nunito;font-weight:900;color:var(--grm);margin-right:6px}
+.frames{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+@media (max-width:820px){.frames{grid-template-columns:1fr}}
+.fr{border:2px solid var(--line);border-radius:14px;padding:12px 14px;text-align:left;font-family:Nunito;font-weight:900;font-size:17px;background:#fff;line-height:1.25}
+.fr small{display:block;font-family:"DM Sans";font-weight:700;font-size:12px;color:var(--mut);letter-spacing:.08em;margin-bottom:4px}
+.fr[aria-pressed="true"]{border-color:var(--grm);background:var(--grm-t)}
+.reasons{display:grid;gap:8px}
+.reasons .tagh{font-weight:800;font-size:14px;color:var(--grm)}
+.rs{border:2px solid var(--line);border-radius:12px;padding:9px 14px;text-align:left;font-weight:700;font-size:15px;background:#fff}
+.rs[aria-pressed="true"]{border-color:var(--grm);background:var(--grm-t)}
+.g12i.right{border-color:var(--ok);background:var(--ok-t)}
+.g12i.wrong{border-color:var(--err);background:var(--err-t)}
+.g12i .vd{font-weight:700;font-size:15px}
+.g12i.right .vd{color:var(--ok)} .g12i.wrong .vd{color:var(--err)}
+.speak3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media (max-width:820px){.speak3{grid-template-columns:1fr}}
+.speak3 .card b{font-family:Nunito;color:var(--grm)}
+
+/* reading notifications */
+.phone .ph{background:var(--lvl)}
+.nstack{background:#EFE9E1;padding:14px 12px;display:grid;gap:12px}
+.nc{background:#fff;border-radius:16px;padding:12px 14px;display:grid;gap:4px;font-size:16px;box-shadow:0 3px 10px rgba(27,27,47,.08)}
+.nc .src{display:flex;justify-content:space-between;font-family:Nunito;font-weight:900;font-size:12px;letter-spacing:.06em;color:var(--mut)}
+.nc .ttl{font-family:Nunito;font-weight:900;font-size:17px}
+
+/* two versions */
+.vers{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media (max-width:820px){.vers{grid-template-columns:1fr}}
+.ver{border-radius:var(--r);border:2px solid var(--line);background:#fff;padding:16px;display:grid;gap:10px;justify-items:start}
+.ver .who{font-family:Nunito;font-weight:900;font-size:20px}
+.ver .who small{font-family:"DM Sans";font-weight:700;color:var(--mut);font-size:13px;display:block}
+.ver.a{border-top:6px solid var(--pink)} .ver.b{border-top:6px solid var(--teal)}
+.official{background:#fff;border:2px dashed var(--navy);border-radius:var(--r);padding:12px 16px;display:grid;gap:4px}
+.official b{font-family:Nunito}
+
+/* speaking roulette */
+.rnd{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media (max-width:820px){.rnd{grid-template-columns:1fr}}
+.rnd button{border:2.5px solid var(--line);border-radius:var(--r);background:#fff;padding:14px;text-align:left;display:grid;gap:4px}
+.rnd button[aria-pressed="true"]{border-color:var(--lvl);box-shadow:0 0 0 4px var(--lvl-t);background:var(--lvl-t)}
+.rnd .rk{font-family:Nunito;font-weight:900;font-size:12px;letter-spacing:.12em;color:var(--lvl-d)}
+.rnd h4{font-size:20px;font-weight:900}
+.rnd .rm{font-size:14px;color:var(--mut)}
+.deck .dq .qt{font-size:clamp(24px,3.2vw,36px)}
+.deck .scn{font-family:Nunito;font-weight:900;font-size:13px;letter-spacing:.1em;opacity:.9}
+.height{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.height button{border:2px solid var(--line);border-radius:99px;padding:8px 14px;font-weight:800;background:#fff}
+.height button[aria-pressed="true"]{background:var(--ok);border-color:var(--ok);color:#fff}
+
+/* mission */
+.gap2{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:14px}
+@media (max-width:640px){.gap2{grid-template-columns:1fr}}
+.gcard{border-radius:14px;padding:12px 14px;display:grid;gap:6px;font-size:15px}
+.gcard.pl{background:var(--lvl-t);border:1.5px solid var(--lvl)}
+.gcard.nw{background:var(--sun-t);border:1.5px solid #E5A100}
+.gcard h5{font-family:Nunito;font-weight:900;font-size:13px;letter-spacing:.1em}
+.gcard ul{padding-left:18px}
+.gcard.hid ul,.gcard.hid .hideme{display:none}
+.gcard .cover{display:none;font-weight:700;color:var(--mut)}
+.gcard.hid .cover{display:block}
+.guest .gh h4{font-size:20px}
+.spend{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+/* ===== S05 · The Missing Invoice — own design: the invoice route (metro line) ===== */
+:root{--ink2:#0F3D3A;--chalk:#1E4D43;--chalk2:#173A33;--wood:#8B5E34;--amber:#B7791F;--amber-t:#FFF1D6;--blue:#2457C5;--blue-t:#E3ECFF;--stamp:#B42318}
+.hero .bg{background:url(img/i2s05_hero.jpg) center 35%/cover}
+.hero .bg::after{background:linear-gradient(90deg,rgba(28,18,78,.96) 0%,rgba(28,18,78,.86) 48%,rgba(28,18,78,.35) 100%)}
+.hero h1 span{color:var(--sun)}
+/* route strip in hero */
+.route{display:flex;align-items:flex-start;margin-top:22px;max-width:640px}
+.route .rsx{flex:1 1 0;position:relative;text-align:center;font-family:Nunito;font-weight:900;font-size:12px;letter-spacing:.04em;color:#fff;min-width:0}
+.route .rsx::before{content:"";position:absolute;top:11px;left:-50%;width:100%;height:4px;background:rgba(255,255,255,.35)}
+.route .rsx:first-child::before{display:none}
+.route .rsx i{display:block;width:26px;height:26px;border-radius:50%;margin:0 auto 6px;background:var(--navy);border:4px solid #fff;position:relative;z-index:1}
+.route .rsx.x i{background:var(--stamp);border-color:#fff;animation:pulse 1.8s infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(180,35,24,.6)}50%{box-shadow:0 0 0 9px rgba(180,35,24,0)}}
+.route .rsx.x{color:#FFD0CB}
+/* generic track (metro line) */
+.trk{display:flex;align-items:flex-start;width:100%}
+.trk .st{flex:1 1 0;min-width:0;position:relative;text-align:center;padding:0 2px;font-family:Nunito;font-weight:800;font-size:12.5px;line-height:1.15;color:var(--mut)}
+.trk .st::before{content:"";position:absolute;top:15px;left:-50%;width:100%;height:5px;background:#CBD5EC;z-index:0}
+.trk .st:first-child::before{display:none}
+.trk .st .dot{display:grid;place-items:center;width:32px;height:32px;margin:0 auto 6px;border-radius:50%;background:#fff;border:3px solid #CBD5EC;position:relative;z-index:1;font-size:15px;font-weight:900;color:#fff;transition:.15s}
+.trk .st.done::before{background:var(--ok)}
+.trk .st.done .dot{background:var(--ok);border-color:var(--ok)}
+.trk .st.done .dot::after{content:"✓"}
+.trk .st.stuck .dot{background:var(--stamp);border-color:var(--stamp);animation:pulse 1.8s infinite}
+.trk .st.stuck .dot::after{content:"✗"}
+.trk .st.stuck{color:var(--stamp)}
+.trk .st.unk .dot{border-style:dashed;color:var(--mut)}
+.trk .st.unk .dot::after{content:"?"}
+.trk button.st{cursor:pointer;background:none}
+.trk button.st:hover .dot{border-color:var(--lvl)}
+.trk .st small{display:block;font-weight:600;font-size:11.5px;color:var(--mut);margin-top:2px}
+@media (max-width:480px){.trk .st{font-size:11px}.trk .st .dot{width:28px;height:28px}.trk .st::before{top:13px}}
+/* §1 radar */
+.pins{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:12px}
+.pin{background:#fff;border:2px solid var(--line);border-radius:var(--r);padding:14px 12px;display:grid;gap:10px;align-content:start;transition:.15s}
+.pin .t{font-family:Nunito;font-weight:900;font-size:17px;line-height:1.15;min-height:2.3em}
+.pin.on{border-color:var(--stamp);box-shadow:0 0 0 4px #FDE4E1}
+.pin .sayline{font-size:13px;font-weight:700;color:var(--stamp);min-height:1.3em}
+.heat{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;align-items:end;height:120px}
+.heat div{background:var(--blue-t);border-radius:10px 10px 0 0;position:relative;min-height:6px;transition:height .25s;display:flex;justify-content:center}
+.heat div b{position:absolute;top:-24px;font-family:Nunito;font-weight:900;color:var(--blue)}
+.heat div.top{background:var(--stamp)}
+.heatl{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;font-family:Nunito;font-weight:800;font-size:13px;text-align:center;color:var(--mut)}
+/* §2 vocab: learn + chalkboard */
+.vl{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px}
+.vc{background:#fff;border:2px solid var(--line);border-left:8px solid var(--c);border-radius:14px;padding:10px 12px;display:grid;gap:3px;align-content:start}
+.vc .w{font-family:Nunito;font-weight:900;font-size:21px;display:flex;justify-content:space-between;align-items:center;gap:6px}
+.vc .d{font-size:14px;color:var(--mut)}
+.vc .e{font-size:15px;font-weight:700}
+.chalk{background:var(--chalk);color:#fff;border-radius:18px;border:12px solid var(--wood);padding:18px 16px;display:grid;gap:14px;box-shadow:inset 0 0 40px rgba(0,0,0,.35),var(--sh)}
+.chalk h4{font-family:Nunito;font-weight:900;letter-spacing:.14em;font-size:13px;color:#F7E8A4;text-transform:uppercase}
+.dead{display:flex;flex-wrap:wrap;gap:10px}
+.dwd{font-family:Nunito;font-weight:900;font-size:24px;color:#fff;border:2px dashed rgba(255,255,255,.55);border-radius:12px;padding:6px 16px;background:rgba(255,255,255,.05);transition:.4s;letter-spacing:.02em}
+.dwd:hover{background:rgba(255,255,255,.14)}
+.dwd[aria-pressed="true"]{opacity:.16;text-decoration:line-through;filter:blur(1.4px);border-style:solid;transform:scale(.94)}
+.ghosts .dwd{font-size:16px;color:#F7E8A4;border-color:rgba(247,232,164,.45)}
+.chalk .tmr{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.chalk .timer output{color:#F7E8A4}
+.chalk .timer.end output{color:#FF9C92}
+.chalk .btn{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.4);color:#fff}
+.chalk .prompt{background:rgba(255,255,255,.1);border-radius:14px;padding:12px 16px;font-size:18px;font-weight:700;min-height:3.2em;display:flex;align-items:center}
+.chalk .closeout{background:#F7E8A4;color:#1E3A33}
+/* §3 grammar */
+.logp{border-radius:var(--r);overflow:hidden;border:1.5px solid var(--line);display:grid;grid-template-columns:1fr 1.15fr;background:#fff}
+@media (max-width:820px){.logp{grid-template-columns:1fr}}
+.logp img{height:100%;min-height:230px;object-fit:cover;width:100%}
+.logl{padding:14px 18px;display:grid;gap:6px;align-content:center;background:var(--grm-t)}
+.logl .ln{background:#fff;border-radius:10px;padding:8px 12px;font-size:17px;border-left:6px solid var(--grm);display:flex;gap:10px;align-items:baseline}
+.logl .ln small{font-family:Nunito;font-weight:900;color:var(--grm);min-width:5.4em;font-size:12.5px;letter-spacing:.04em}
+.bld{display:grid;gap:12px;background:#fff;border:2px dashed var(--grm);border-radius:var(--r);padding:16px}
+.bld .grp{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.bld .grp .lab{font-family:Nunito;font-weight:900;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--grm);min-width:6.5em}
+.bld .ch{border:2px solid var(--line);border-radius:99px;padding:5px 14px;font-weight:700;background:#fff;font-size:15px}
+.bld .ch[aria-pressed="true"]{background:var(--grm);border-color:var(--grm);color:#fff}
+.bld .out{background:var(--navy);color:#fff;border-radius:14px;padding:12px 16px;font-family:Nunito;font-weight:900;font-size:clamp(20px,3.4vw,28px);display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.bld .out em{font-style:normal;color:var(--sun)}
+.stamps{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+@media (max-width:620px){.stamps{grid-template-columns:1fr}}
+.stp{border:3px solid var(--grm);border-radius:12px;padding:10px 12px;color:var(--grm);transform:rotate(-1.2deg);background:#fff}
+.stp b{font-family:Nunito;font-weight:900;font-size:13px;letter-spacing:.12em;display:block}
+.stp span{font-size:18px;font-weight:700;color:var(--ink)}
+.rev{display:grid;gap:10px}
+.rv{background:#fff;border:2px solid var(--line);border-radius:var(--r);padding:14px 16px;display:grid;gap:10px}
+.rv .ans{font-family:Nunito;font-weight:900;font-size:21px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.rv .ans .tg2{background:var(--grm);color:#fff;border-radius:8px;padding:2px 10px;font-size:12px;letter-spacing:.1em}
+.rv .ctx{font-size:14px;color:var(--mut)}
+.rv .model{background:var(--grm-t);border-radius:12px;padding:10px 14px;font-weight:700}
+.rv .model small{display:block;font-size:12px;color:var(--grm);letter-spacing:.08em;text-transform:uppercase;font-family:Nunito;font-weight:900}
+.rv.won{border-color:var(--ok);background:var(--ok-t)} .rv.lost{border-color:var(--err);background:var(--err-t)}
+.dmark{display:flex;gap:10px;align-items:center;flex-wrap:wrap;background:var(--navy);color:#fff;border-radius:14px;padding:10px 16px;font-family:Nunito;font-weight:900}
+.dmark b{color:var(--sun);font-size:24px}
+/* §4 reading */
+.rd3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+@media (max-width:980px){.rd3{grid-template-columns:1fr}}
+.doc{background:#fff;border:1.5px solid var(--line);border-radius:6px;box-shadow:0 8px 20px rgba(27,27,47,.1);display:grid;align-content:start;overflow:hidden}
+.doc .hd{background:var(--blue);color:#fff;padding:8px 14px;font-family:Nunito;font-weight:900;font-size:13px;letter-spacing:.06em;display:flex;justify-content:space-between;gap:8px}
+.doc:nth-child(2) .hd{background:var(--teal)} .doc:nth-child(3) .hd{background:var(--amber)}
+.doc .bd{padding:14px 16px;font-size:16.5px;line-height:1.5;display:grid;gap:8px;background:repeating-linear-gradient(transparent 0 26px,#EEF2FB 26px 27px)}
+.doc .bd p{margin:0}
+.doc .qa{padding:12px 14px 14px;display:grid;gap:10px;border-top:2px dashed var(--line);background:#FAFBFF}
+.doc .qa h5{font-family:Nunito;font-weight:900;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--mut)}
+.rdhead{border-radius:var(--r);overflow:hidden;position:relative;min-height:130px;background:var(--navy)}
+.rdhead img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.55}
+.rdhead div{position:relative;padding:20px 22px;color:#fff;font-family:Nunito;font-weight:900;font-size:22px;max-width:36ch}
+.rdhead small{display:block;font-size:13px;font-weight:700;color:var(--sun);letter-spacing:.1em;text-transform:uppercase}
+/* §5 accent roulette */
+.vcs{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media (max-width:820px){.vcs{grid-template-columns:1fr}}
+.vcard{background:var(--navy);color:#fff;border-radius:var(--r);padding:16px;display:grid;gap:10px;position:relative}
+.vcard h4{font-size:22px;font-weight:900}
+.vcard .acc{font-family:Nunito;font-weight:900;font-size:13px;letter-spacing:.1em;color:var(--sun);min-height:1.2em}
+.wave{display:flex;gap:3px;align-items:center;height:34px}
+.wave i{display:block;width:5px;border-radius:3px;background:rgba(255,255,255,.5)}
+.vcard.playing .wave i{background:var(--sun);animation:wv .8s infinite ease-in-out}
+@keyframes wv{0%,100%{transform:scaleY(.5)}50%{transform:scaleY(1.15)}}
+.vcard .btn{justify-self:start}
+.rank{display:grid;gap:8px}
+.rk{display:grid;grid-template-columns:44px 1fr auto;gap:10px;align-items:center;background:#fff;border:2px solid var(--line);border-radius:14px;padding:8px 12px}
+.rk .pos{font-family:Nunito;font-weight:900;font-size:22px;color:var(--pink);text-align:center}
+.rk .nm{font-family:Nunito;font-weight:900;font-size:18px}
+.rk .why{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
+.rk .why button{border:1.5px solid var(--line);border-radius:99px;padding:2px 10px;font-size:13px;font-weight:700;background:#fff}
+.rk .why button[aria-pressed="true"]{background:var(--pink);border-color:var(--pink);color:#fff}
+.rk .mv2{display:grid;gap:4px}
+.rk .mv2 button{width:34px;height:26px;border-radius:8px;border:1.5px solid var(--line);font-weight:900;background:#fff}
+.rk .mv2 button:hover{border-color:var(--pink)}
+.mini{display:grid;gap:8px;grid-template-columns:1fr 1fr}
+@media (max-width:700px){.mini{grid-template-columns:1fr}}
+.mini .card h4{font-family:Nunito;font-weight:900;font-size:15px;margin-bottom:8px}
+/* §6 conversation map */
+.cmap{position:relative;display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:6px 0}
+.cmap svg.lk{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1}
+.cmap .core{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:3;background:var(--navy);color:#fff;border-radius:50%;width:clamp(96px,22vw,150px);height:clamp(96px,22vw,150px);display:grid;place-items:center;text-align:center;font-family:Nunito;font-weight:900;font-size:clamp(12px,2.4vw,17px);line-height:1.15;padding:10px;border:5px solid var(--sun);box-shadow:var(--sh-lg)}
+.br{position:relative;z-index:2;border-radius:var(--r);padding:16px 14px;background:#fff;border:3px solid var(--bc);display:grid;gap:4px;text-align:left;min-height:118px;align-content:center;transition:.15s}
+.br b{font-family:Nunito;font-weight:900;font-size:clamp(16px,3.6vw,21px);color:var(--bc)}
+.br span{font-size:13px;color:var(--mut);font-weight:700}
+.br .cnt{font-family:Nunito;font-weight:900;color:var(--ink)}
+.br[aria-pressed="true"]{background:var(--bc);color:#fff}
+.br[aria-pressed="true"] b,.br[aria-pressed="true"] span,.br[aria-pressed="true"] .cnt{color:#fff}
+.br.vis{box-shadow:0 0 0 5px color-mix(in srgb,var(--bc) 25%,transparent)}
+.br.vis::after{content:"✓ visited";position:absolute;top:8px;right:12px;font-family:Nunito;font-weight:900;font-size:12px;color:var(--ok)}
+.br[aria-pressed="true"].vis::after{color:#fff}
+.br:nth-of-type(1){padding-right:clamp(50px,11vw,80px)} .br:nth-of-type(3){padding-right:clamp(50px,11vw,80px)}
+.br:nth-of-type(2){padding-left:clamp(50px,11vw,80px)} .br:nth-of-type(4){padding-left:clamp(50px,11vw,80px)}
+.qpanel{border-radius:var(--r);border:3px solid var(--bc,var(--line));background:#fff;padding:16px;display:grid;gap:10px}
+.qpanel h4{font-size:20px;color:var(--bc)}
+.qi{background:var(--cream);border-radius:12px;padding:10px 14px;display:grid;gap:6px}
+.qi .q{font-weight:700;font-size:17px}
+.qi .q i{font-style:normal;font-family:Nunito;font-weight:900;color:var(--bc);margin-right:6px}
+.qi .fu{display:flex;gap:6px;flex-wrap:wrap}
+.qi .fu span{background:#fff;border:1.5px solid var(--line);border-radius:99px;padding:2px 12px;font-size:14px;font-weight:700;color:var(--mut)}
+.qi .fu span::before{content:"↳ "}
+.sent{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.sent .dots2{display:flex;gap:6px}
+.sent .dots2 i{width:18px;height:18px;border-radius:50%;border:3px solid var(--bc);background:#fff}
+.sent .dots2 i.on{background:var(--bc)}
+.cnrow{display:flex;gap:10px;flex-wrap:wrap;align-items:center;background:var(--amber-t);border-radius:14px;padding:10px 14px}
+.cnrow select{font:inherit;font-weight:700;border:2px solid var(--line);border-radius:10px;padding:6px 8px;background:#fff;max-width:100%}
+/* §7 mission: case files */
+.mhd{border-radius:var(--r);overflow:hidden;position:relative;min-height:150px;background:var(--navy);color:#fff}
+.mhd img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.5}
+.mhd div{position:relative;padding:20px 22px;display:grid;gap:6px;max-width:60ch}
+.mhd h3{font-size:26px;font-weight:900}
+.cfile{border:2px solid var(--line);border-radius:var(--r);background:#fff;overflow:hidden}
+.cfile .top{display:flex;gap:12px;align-items:center;padding:12px 16px;background:var(--cc);color:#fff}
+.cfile .top h4{font-size:20px}
+.cfile .top small{font-family:Nunito;font-weight:900;letter-spacing:.1em;opacity:.9}
+.cfile .bodyc{padding:14px 16px;display:grid;gap:12px}
+.cfile .known{font-size:15px;background:var(--cream);border-radius:10px;padding:8px 12px}
+.cfile .detail{background:var(--amber-t);border-radius:12px;padding:10px 14px;font-size:15px;display:grid;gap:4px}
+.cfile .detail.hid > *{display:none}
+.cfile .detail.hid::before{content:"Hidden: the clerk (B) opens this card only to answer your questions.";font-weight:700;color:var(--amber)}
+.cfile .detail .ok2{color:var(--ok);font-weight:800}.cfile .detail .no2{color:var(--stamp);font-weight:800}
+.mvbar{height:12px;background:#E4E9F9;border-radius:99px;overflow:hidden}
+.mvbar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--lvl),var(--sun));transition:width .3s}
+/* §8 */
+.sumrow{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media (max-width:900px){.sumrow{grid-template-columns:1fr 1fr}}
+@media (max-width:480px){.sumrow{grid-template-columns:1fr}}
+.sumrow .card b{font-family:Nunito;font-size:30px;color:var(--lvl-d)}
+.sumrow .card span{display:block;font-weight:700}
+html,body{overflow-x:hidden}
+
+.sbody{grid-template-columns:minmax(0,1fr)}.sbody>*{min-width:0}
+.trk .st{overflow-wrap:break-word}
+
+.bld .out .hearbtn{color:var(--ink)}
+
+</style>
+</head>
+<body>
+
+<div class="topbar"><div class="wrap">
+  <div class="brand"><i></i><a href="./">GABRIEL TURNER · YOUR BUSINESS COACH</a><small>Intermedio 2 · B1.2</small></div>
+  <div class="toggles">
+    <button class="tg" id="tgTeacher" aria-pressed="true">Teacher view</button>
+    <button class="tg" id="tgStudent" aria-pressed="false">Student view</button>
+    <button class="tg" id="tgGroup" aria-pressed="true">Group</button>
+    <button class="tg" id="tgOne" aria-pressed="false">1:1</button>
+  </div>
+</div></div>
+
+<header class="hero">
+  <div class="bg" role="img" aria-label="A calculator, a pen and a pile of invoices and paper receipts on a dark wooden desk"></div>
+  <div class="wrap">
+    <div class="kick">Intermedio 2 · Block 1 · CHANGE · Session 5 of 32</div>
+    <h1>The Missing <span>Invoice</span></h1>
+    <p class="obj">By the end of this class you can say what happened to an invoice or a document — what was sent, what was received, what wasn’t approved — and what the next step is, in English, without reading.</p>
+    <div class="pills"><span class="pill sun">60 min · live online</span><span class="pill">8 stations</span><span class="pill">was sent · was approved</span><span class="pill">Speaking first</span></div>
+    <div class="route" aria-label="The invoice route: Created, Sent, Received, Approved, Paid. The invoice is stuck before Received."><div class="rsx"><i></i>Created</div><div class="rsx"><i></i>Sent</div><div class="rsx x"><i></i>Received?</div><div class="rsx"><i></i>Approved</div><div class="rsx"><i></i>Paid</div></div>
+    <div class="coach"><span class="cav">GT</span><span><b>Gabriel Turner</b><small>Your Business Coach</small></span></div>
+  </div>
+</header>
+
+<nav class="nav" aria-label="Session stages"><div class="wrap">
+  <div class="prog"><div class="bar"><i id="pbar"></i></div><span class="xp" id="xp">0 XP</span><button class="clock" id="clock" title="Start / pause class clock">00:00</button></div>
+  <div class="steps" id="steps"></div>
+</div></nav>
+
+<main class="wrap" id="main">
+
+<details class="card-session"><summary>Teacher · Session card (Ficha de Sesión)</summary><div class="cs">
+  <table>
+    <tr><th>Campo</th><th>Valor</th></tr>
+    <tr><td>Nivel / MCER</td><td>Intermedio 2 · GT English Path Nivel 08 · B1.2 · modo Interacción (+ Mediación ligera: explicar el estado de un trámite a otra persona)</td></tr>
+    <tr><td>Bloque</td><td>1 · CHANGE · sesión 5 de 32 · contexto Trabajo (con vida diaria ≈50/50)</td></tr>
+    <tr><td>Objetivo</td><td>Explicar qué le pasó a una factura o trámite: qué se envió, recibió, aprobó o canceló, qué no se hizo, y el siguiente paso.</td></tr>
+    <tr><td>Punto de lengua (uno)</td><td>Pasiva en pasado, solo formas frecuentes y fijas: <i>was sent / was approved / was cancelled / was delayed / was received / was paid / was signed</i> (+ <i>wasn’t / weren’t</i> y la pregunta <i>Was it…?</i>). Sin agente complejo, sin pasiva completa en otros tiempos.</td></tr>
+    <tr><td>Léxico nuevo (11)</td><td>invoice · approve · receive · payment · attach · receipt · sign · cancel · due date · amount · forward</td></tr>
+    <tr><td>Léxico reciclado</td><td>S01: update · send an update · delay(ed) · status · pending · confirm · booking · reschedule · at the last minute · cause a delay (≥70 % reaparece en S05). S02: supplier · shipment · purchase order (ghost words). S03–S04 sin ficha al momento de producir.</td></tr>
+    <tr><td>Dinámicas (4 familias)</td><td>VOC-04 Dead Words on the Board (ELIMINACIÓN) · GRM-10 Reverse Engineering (OCULTAMIENTO, etapa Meaningful) · B18-09 Conversation Map (COLECCIÓN) · LIS-08 Accent Roulette (RANKING)</td></tr>
+    <tr><td>Riesgo / temperatura</td><td>Seguro · Mild (papeleo cotidiano; el “sistema”, no “tu jefe”).</td></tr>
+    <tr><td>Disagreement hook</td><td>“A missing invoice is always somebody’s mistake” vs “It’s usually the system, not a person”.</td></tr>
+    <tr><td>Límites</td><td>Sin present perfect continuous, 2º/3º condicional, reported questions, pasiva completa (ni “has been sent”, ni “will be sent”), relative clauses complejas, have got.</td></tr>
+    <tr><td>Evidencia</td><td>Misión “The Case File”: 3 casos × 4 movimientos (12), éxito ≥ 10/12 sin leer; cada caso con ≥2 pasivas afirmativas y ≥1 negativa.</td></tr>
+  </table>
+  <div id="timeTable"></div>
+</div></details>
+
+<!-- §1 WARM-UP -->
+<section class="sec" id="s1" style="--c:var(--lvl);--ct:var(--lvl-t)" data-name="Warm-up" data-min="0–4" data-dur="4">
+  <div class="shead"><div class="snum"><span class="n">1</span><div><h2>Warm-up · Where Does It Get Stuck?</h2><div class="sub">Station 1 · 0–4 min · Activate, no correction</div></div></div>
+    <div class="meta"><span class="chip">Route pins</span><span class="chip dark">Speaking from minute 1</span></div></div>
+  <div class="sbody">
+    <div class="scene">
+      <img src="img/i2s05_desk.jpg" alt="A woman at an office desk looks at a paper document on a clipboard, with a laptop in front of her">
+      <div class="txt">
+        <div class="kick">Scenario · Monday, 9:15 · Accounts desk</div>
+        <div class="bubble">Where is my invoice? I sent it last week.</div>
+        <div class="bubble me">…?</div>
+        <p style="font-size:19px;font-weight:700">Papers travel. Sometimes they stop. Where?</p>
+      </div>
+    </div>
+    <div class="hook"><b>TWO SIDES</b><p>“A missing invoice is always somebody’s mistake.” — “It’s usually the system, not a person.”</p>
+      <div class="side"><span>Which side are you on?</span><span>Why?</span></div></div>
+    <div class="block">
+      <div class="bt"><span class="tag">Route pins</span><h3>Tap the station where each one usually gets stuck for you</h3><span class="hint" id="pnCount">0 / 5 pinned</span></div>
+      <div class="pins" id="pins"></div>
+      <div class="card tint" style="display:grid;gap:8px"><div class="result" id="pnRes">Pin the five. Then tell your partner about ONE real case.</div>
+        <div class="heat" id="heat" aria-hidden="true" hidden></div><div class="heatl" id="heatl" aria-hidden="true" hidden><span>Asked</span><span>Sent</span><span>Received</span><span>Approved</span><span>Done</span></div></div>
+      <div class="fq"><div>What got stuck the last time? <span>— Where did it stop?</span></div><div>Was it a person or the system? <span>— How do you know?</span></div></div>
+    </div>
+    <details class="tn"><summary>Teacher notes · §1 Warm-up</summary><div class="layers">
+      <div class="ly"><h4>Pedagógica</h4><ul><li>Activación, NO gramática. Acepta cualquier forma (“they sent it”, “it was sent”). Si alguien dice “was sent” solo, anótalo como línea base para §3.</li><li>La burbuja “I sent it last week” es activa a propósito: en §3 comparan activa vs pasiva.</li><li>Cada pin: 1 oración al compañero (“It usually stops at Approved.”). Máx. 1 razón en el desacuerdo (sin debate; es nivel B1.2).</li></ul></div>
+      <div class="ly"><h4>Engagement</h4><ul><li>Pregunta anécdota: “¿Cuál es el trámite que más tiempo te ha quitado, y en qué paso se atoró?”</li><li>El histograma se llena con sus clics: cierra con “Most stuck station: ___”.</li></ul></div>
+      <div class="ly"><h4>Crecimiento</h4><ul><li>“Today you learn to explain exactly where a paper stopped — in 20 seconds, in English. Your suppliers and your bank will hear the difference.”</li><li>Línea base: ¿usa léxico de S01 (status, pending, update) sin ayuda? Anótalo.</li></ul></div>
+    </div></details>
+  </div>
+</section>
+
+<!-- §2 VOCABULARY -->
+<section class="sec" id="s2" style="--c:#1E6B52;--ct:#DDF2E8" data-name="Vocabulary" data-min="4–12" data-dur="8">
+  <div class="shead"><div class="snum"><span class="n">2</span><div><h2>Vocabulary · Dead Words on the Board</h2><div class="sub">Station 2 · 4–12 min · Learn it · Say it · Erase it</div></div></div>
+    <div class="meta"><span class="chip">11 new words</span><span class="chip dark">VOC-04 · ELIMINACIÓN</span></div></div>
+  <div class="sbody">
+    <div class="block">
+      <div class="bt"><span class="tag">Step A · 3 min</span><h3>Meet the words — listen, then say each one</h3></div>
+      <div class="vl" id="vl"></div><div class="anote" id="anoteV" hidden></div>
+    </div>
+    <div class="block">
+      <div class="bt"><span class="tag">Step B · 5 min</span><h3>Erase the board before the clock runs out</h3></div>
+      <div class="card tint"><p style="font-weight:700"><span data-m="group">1. Every word on the board is “dead” until somebody USES it correctly, out loud, in a real sentence. &nbsp;2. A partner (or the teacher) taps the word to erase it. &nbsp;3. The whole team wins together: empty board before the timer ends.</span><span data-m="one" hidden>1. Every word is “dead” until you USE it correctly, out loud, in a real sentence. &nbsp;2. The teacher taps the word to erase it — or brings it back to life if the sentence was wrong. &nbsp;3. You against the clock: empty board before the timer ends.</span></p></div>
+      <div class="chalk">
+        <div><h4>The board · 11 dead words</h4><div class="dead" id="dead"></div></div>
+        <div class="ghosts"><h4>Ghost words from Sessions 1–2 · bonus if you use them too</h4><div class="dead" id="ghost"></div></div>
+        <div class="prompt" id="prompt">Prompt 1 — …</div>
+        <div class="tmr"><div class="timer" id="tD" data-sec="300"><output>05:00</output><button class="btn sm" data-a="go">Start</button><button class="btn sm" data-a="re">Reset</button></div><button class="btn sm" id="pNext">Next prompt →</button><span class="stat" id="dStat">0 / 11 erased</span></div>
+        <div class="closeout" id="dClose" aria-live="polite">Say it out loud: “We erased 0 of 11 words. The last dead word was ___.”</div>
+      </div>
+    </div>
+    <details class="tn"><summary>Teacher notes · §2 Vocabulary</summary><div class="layers">
+      <div class="ly"><h4>Pedagógica</h4><ul><li>Paso A (3 min): ▶ cada palabra, el alumno repite en voz alta y dice si ya la conoce. No traduzcas; usa el ejemplo.</li><li>Paso B (5 min): el pizarrón es colectivo; solo se borra una palabra cuando se usa correctamente HABLANDO (no al leer la tarjeta). El punto es por producir lengua, nunca por rapidez. Si la oración está mal, no se borra: el compañero la mejora y vuelve a intentar.</li><li>Pasa los prompts cuando el alumno se quede sin ideas. Ghost words: recicla S01 (update, status, pending, delay, confirm) y S02 (supplier, shipment, purchase order); borrarlas es bonus, no meta.</li><li>Cierre declarado en voz alta: “We erased __ of 11 words. The last dead word was ___.” Es la dinámica segura para grupos con jefes y subordinados: nadie compite contra su jefe.</li></ul></div>
+      <div class="ly"><h4>Engagement</h4><ul><li>Group: el equipo contra el reloj. 1:1: tú juegas de “revisor”; puedes resucitar una palabra mal usada con una ceja levantada.</li><li>“Most dead word at the end: which one was the hardest to use?” — suele ser <i>forward</i> o <i>due date</i>.</li></ul></div>
+      <div class="ly"><h4>Crecimiento</h4><ul><li>Estas 11 palabras son el 80 % del correo diario entre proveedor y cliente: “Add them to your next real email this week.”</li><li>Progreso visible: cuántas ghost words de S01 salen sin ayuda (señal de retención).</li></ul></div>
+    </div></details>
+  </div>
+</section>
+
+<!-- §3 GRAMMAR -->
+<section class="sec" id="s3" style="--c:var(--grm);--ct:var(--grm-t)" data-name="Grammar" data-min="12–24" data-dur="12">
+  <div class="shead"><div class="snum"><span class="n">3</span><div><h2>Language · What Happened to It?</h2><div class="sub">Station 3 · 12–24 min · Discover 2 · Tool 3 · Practice 2 · GRM-10 3 · Use 2</div></div></div>
+    <div class="meta"><span class="chip">was / were + participle</span><span class="chip dark">GRM-10 · OCULTAMIENTO</span></div></div>
+  <div class="sbody">
+    <div class="block">
+      <div class="bt"><span class="tag">Discover · 2 min</span><h3>Read the invoice history. Who is the star of each line?</h3></div>
+      <div class="logp" id="disc">
+        <img src="img/i2s05_meeting.jpg" alt="Two people look at printed forms on a grey office table; a pen and a phone are next to the papers">
+        <div class="logl">
+          <div class="ln"><small>MON 9:00</small><span>The invoice <mark class="hl">was sent</mark> to the client.</span></div>
+          <div class="ln"><small>TUE 10:30</small><span>Our manager <b>approved</b> it. → It <mark class="hl">was approved</mark>.</span></div>
+          <div class="ln"><small>WED 8:00</small><span>Two payments <mark class="hl">were cancelled</mark>.</span></div>
+          <div class="ln"><small>THU 11:00</small><span>The new invoice <mark class="hl">wasn’t received</mark>.</span></div>
+          <div class="ln"><small>FRI 9:30</small><span><mark class="hl">Was</mark> the payment <mark class="hl">approved</mark>?</span></div>
+        </div>
+      </div>
+      <div class="row"><button class="btn main" id="hlBtn" aria-pressed="false">Show the key words</button><span class="hint">Which words are always the same? Which word changes — was or were? Do we need to say WHO did it?</span><span class="key hint">(Respuesta: was/were + participio; was con singular, were con plural; el protagonista es el documento — el agente no importa o no se conoce.)</span></div>
+    </div>
+    <div class="block">
+      <div class="bt"><span class="tag">Tool · 3 min</span><h3>The past passive for process steps</h3></div>
+      <div class="tool">
+        <div class="card"><h4>What it is</h4><p><b>The document is the star.</b> We say what happened to it. We don’t say who did it — it is not important, or nobody knows.</p><p class="big" style="margin-top:6px">The invoice <em>was sent</em>.</p></div>
+        <div class="card"><h4>How it works</h4><p><em style="font-style:normal;font-weight:800;color:var(--grm)">was / were + past participle</em>. One thing → <b>was</b>. Two or more → <b>were</b>. Regular: approved, cancelled, delayed, received, signed. Irregular: <b>sent, paid</b>.</p></div>
+        <div class="card"><h4>When we use it</h4><p>For steps of a process and for status: the invoice was sent, received, approved, paid. Today: only these frequent forms, in short sentences.</p></div>
+      </div>
+      <div class="stamps"><div class="stp"><b>✓ STATEMENT</b><span>The invoice was sent.</span></div><div class="stp"><b>✗ NEGATIVE</b><span>The invoice wasn’t received.</span></div><div class="stp"><b>? QUESTION</b><span>Was the invoice approved?</span></div></div>
+      <div class="bld" id="bld">
+        <div class="grp"><span class="lab">Subject</span><span id="bS"></span></div>
+        <div class="grp"><span class="lab">Verb</span><span id="bV"></span></div>
+        <div class="grp"><span class="lab">Form</span><span id="bF"></span></div>
+        <div class="out"><span id="bOut" aria-live="polite">—</span><button class="hearbtn" id="bHear" aria-label="Hear the sentence"></button></div>
+      </div>
+      <div class="bt"><span class="tag">Say it</span><h3>Weak “was / were”, strong participle</h3></div>
+      <div class="pron" id="pron"></div><div class="anote" id="anoteP" hidden></div>
+    </div>
+    <div class="block">
+      <div class="bt"><span class="tag">Practice A · mechanical · 2 min</span><h3>Choose the correct form</h3><span class="score" id="scA"></span></div>
+      <div class="mc" id="mcA"></div>
+    </div>
+    <div class="block">
+      <div class="bt"><span class="tag">GRM-10 · Meaningful · 3 min</span><h3>Reverse Engineering — you get the answer, you build the question</h3><span class="hint">Say your question out loud first. Then open the model.</span></div>
+      <div class="card tint"><p style="font-weight:700">1. Read the answer. &nbsp;2. Say the question that creates it — alive, not just possible. &nbsp;3. Open the model and judge: does your question work? A living question = correct form + natural English.</p></div>
+      <div class="rev" id="rev"></div>
+      <div class="dmark"><span>Living questions:</span><b id="rvPts">0</b><span>/ 6</span></div>
+      <div class="closeout" id="rvOut" aria-live="polite">Say it out loud: “We built __ of 6 living questions. The trickiest was ___.”</div>
+    </div>
+    <div class="block">
+      <div class="bt"><span class="tag">Use · communicative · 2 min</span><h3>Tell the story of this invoice — no notes</h3></div>
+      <div class="card"><div class="trk" id="useTrk" style="margin-bottom:6px"></div>
+        <p class="hint">Look at the route for 10 seconds. Then say 4 sentences to your partner: two things that <b>were</b> done, one that <b>wasn’t</b>, and the next step. Partner: ask one <b>Was it…?</b> question.</p></div>
+    </div>
+    <details class="tn"><summary>Teacher notes · §3 Grammar</summary><div class="layers">
+      <div class="ly"><h4>Pedagógica</h4><ul><li>Tiempos: Discover 2 + Tool 3 = 5 min de explicación tuya (tope). Práctica A (mecánica) 2 min = menos de 1/3 del bloque. GRM-10 3 min (Meaningful). Uso comunicativo 2 min.</li><li>Discover: NO expliques antes. Muestra las 5 líneas; pregunta “Who is the star?”. Clave: el documento. Contrasta línea 2 (activa → pasiva).</li><li>Alcance estricto: solo was/were + participio frecuente (sent, approved, cancelled, delayed, received, paid, signed). Si preguntan “by whom?”, responde “we don’t say it today”. Nada de “has been sent” ni “will be sent”.</li><li>GRM-10: la pregunta cuenta si es VIVA (forma correcta y natural). Modelos aceptables: “When was it sent?” · “What was cancelled? / How many…?” · “Was it received?” · “Why was it delayed?” · “Who approved it?” (activa: aquí sí pedimos el agente) · “When was it paid?”. Cierre declarado: “We built __ of 6 living questions. The trickiest was ___.”</li><li>Pronunciación: “was” débil /wəz/; el acento cae en el participio.</li></ul></div>
+      <div class="ly"><h4>Engagement</h4><ul><li>El constructor funciona como máquina de tragamonedas: pide a un alumno que elija sujeto y participio “malévolo” y lo digan antes de pulsar.</li><li>Group: cada quien dice su pregunta en el chat antes de abrir el modelo.</li></ul></div>
+      <div class="ly"><h4>Crecimiento</h4><ul><li>“This one structure lets you talk about any process without blaming anyone. That is why it is the language of professional emails.”</li><li>Evidencia de progreso: ¿puede formar “Was it…?” solo, sin modelo? Marca 0–6 en GRM-10 y compáralo en S09 (pasiva presente).</li></ul></div>
+    </div></details>
+  </div>
+</section>
+
+<!-- §4 READING -->
+<section class="sec" id="s4" style="--c:var(--blue);--ct:var(--blue-t)" data-name="Reading" data-min="24–27" data-dur="3">
+  <div class="shead"><div class="snum"><span class="n">4</span><div><h2>Reading · Three Messages</h2><div class="sub">Station 4 · 24–27 min · Find the step that is NOT done</div></div></div>
+    <div class="meta"><span class="chip">3 short texts</span><span class="chip dark">Work + daily life</span></div></div>
+  <div class="sbody">
+    <div class="rdhead"><img src="img/i2s05_ledger.jpg" alt="Open accounting ledger pages with columns, a gold pen and a small bowl of paper clips on a grey table"><div><small>Read, then tap the station</small>Each message has a route. One step is not done. Which one?</div></div>
+    <div class="rd3" id="rd3"></div>
+    <details class="tn"><summary>Teacher notes · §4 Reading</summary><div class="layers">
+      <div class="ly"><h4>Pedagógica</h4><ul><li>3 min en total: lectura silenciosa ≈1 min por texto con la tarea de tocar la estación. Cada tarjeta ≤ 60 palabras (verificado).</li><li>Respuestas: Mensaje 1 → Approved (no se aprobó); Mensaje 2 → Receipt attached (el recibo no está adjunto); Mensaje 3 → Received (el dinero no se recibió). Preguntas: 1) the amount was wrong · 2) because of a problem with the payment · 3) sign the form and send it back.</li><li>Pide que digan la respuesta con “was / wasn’t” antes de tocar.</li></ul></div>
+      <div class="ly"><h4>Engagement</h4><ul><li>“Which message would worry you most? Why?”</li></ul></div>
+      <div class="ly"><h4>Crecimiento</h4><ul><li>Son modelos reales de correos: “Next time you receive one like this, you will not need a translator.”</li></ul></div>
+    </div></details>
+  </div>
+</section>
+
+<!-- §5 LISTENING -->
+<section class="sec" id="s5" style="--c:var(--pink);--ct:var(--pink-t)" data-name="Listening" data-min="27–34" data-dur="7">
+  <div class="shead"><div class="snum"><span class="n">5</span><div><h2>Listening · Accent Roulette</h2><div class="sub">Station 5 · 27–34 min · One voicemail, three voices</div></div></div>
+    <div class="meta"><span class="chip">Same text · 3 accents</span><span class="chip dark">LIS-08 · RANKING</span></div></div>
+  <div class="sbody">
+    <div class="card tint"><p style="font-weight:700">Scenario: a voicemail from <b>Sam</b>, from the accounts team of a supplier. You hear the SAME message three times — from three different voices. Same words. Different accents.</p></div>
+    <div class="vcs" id="vcs"></div><div class="anote" id="anoteL" hidden></div>
+    <div class="block">
+      <div class="bt"><span class="tag">Step 1 · 1.5 min</span><h3>Gist and details (listen to any voice)</h3><span class="score" id="scL"></span></div>
+      <div class="mc" id="mcL"></div>
+      <div class="card"><div class="bt"><h3 style="font-size:18px">Where are the two invoices on the route?</h3></div><div class="mini"><div class="card"><h4>Invoice 4072</h4><div class="trk" id="trk72"></div></div><div class="card"><h4>Invoice 4073</h4><div class="trk" id="trk73"></div></div></div><p class="hint" style="margin-top:6px">Tap the LAST station that was done. <span class="key">(Clave: 4072 → Sent; 4073 → Paid.)</span> <span id="trkFb" class="hint" aria-live="polite"></span></p></div>
+    </div>
+    <div class="block">
+      <div class="bt"><span class="tag">Step 2 · 3.5 min</span><h3>Rank the voices: easiest → hardest — and say WHAT was hard</h3></div>
+      <div class="rank" id="rank"></div>
+      <div class="row"><button class="btn main" id="rkReveal">Reveal the accents</button><button class="btn" id="txBtn" aria-expanded="false">Show the transcript</button><span class="hint" id="rkOut" aria-live="polite"></span></div>
+      <div class="script" id="tx" hidden><span class="rec">[PARA GRABAR]</span><p><b>Sam:</b> Hello, this is Sam from the accounts team at Norte Supplies. I’m calling about your invoice, number four zero seven two. It was sent on the third of March, but it was not received. The email was delayed, maybe because the file was too big. Your other invoice, number four zero seven three, was received on Monday. It was approved yesterday, and it was paid this morning. The first one has a second problem. The amount on the invoice is one thousand two hundred dollars, but the order was one thousand four hundred dollars. Please attach a new invoice with the right amount and send it today. The due date is the fifteenth, so we have time. If you have a question, call me back or send me an update. Thank you.</p></div>
+      <div class="closeout" id="lisClose">Say it out loud: “Voice __ was the easiest. Voice __ was the hardest because of the ___.”</div>
+    </div>
+    <details class="tn"><summary>Teacher notes · §5 Listening (guion y clave)</summary><div class="layers">
+      <div class="ly"><h4>Pedagógica</h4><ul><li><b>[PARA GRABAR]</b> Guion literal: 132 palabras, un hablante (Sam, Accounts), tres versiones del MISMO texto. Voz 1 = inglés brasileño (L08-S05-listening-001-sambr) · Voz 2 = inglés de EE. UU. (…002-samus, nativo) · Voz 3 = inglés indio (…003-samin). Velocidad: ritmo natural medio, ≈150 palabras/min.</li><li>Clave: problema = la factura 4072 no se recibió y el monto está mal · 4072: sent on the 3rd of March, NOT received (email delayed) · 4073: received Monday, approved yesterday, paid this morning · amount: invoice $1,200 vs order $1,400 · due date: the fifteenth · acción: attach a new invoice with the right amount and send it today.</li><li>Pasivas en el audio: was sent · was not received · was delayed · was received · was approved · was paid. Léxico: invoice, attach, amount, due date, update/send an update, delayed.</li><li>Ranking: pide DOS cosas: el orden y QUÉ costó (speed / vowels / rhythm / word endings). No hay respuesta única: se valida con evidencia (“I missed ‘due date’ in voice 3”). Dato para el maestro: voz 1, vocales extra al final de palabra y sílabas llenas; voz 2, sílabas débiles y enlaces (“was sent” → /wəzsent/); voz 3, ritmo por sílaba y /t/ /d/ retrofleja.</li></ul></div>
+      <div class="ly"><h4>Engagement</h4><ul><li>No reveles los acentos hasta que ordenen. Después: “¿Con cuál acento tratas tú de verdad en la planta?” Ese es el punto de la dinámica.</li><li>1:1: el alumno ordena solo y defiende con una cita del audio; en grupo se vota y se busca consenso.</li></ul></div>
+      <div class="ly"><h4>Crecimiento</h4><ul><li>“Your clients will not speak like the audio of a course. Training your ear with three voices is training for the real call.”</li><li>Progreso: el alumno nombra el rasgo que le costó. Repite LIS-08 en S11 y S22 y compara qué rasgo ya no le cuesta.</li></ul></div>
+    </div></details>
+  </div>
+</section>
+
+<!-- §6 SPEAKING -->
+<section class="sec" id="s6" style="--c:var(--teal);--ct:var(--teal-t)" data-name="Speaking" data-min="34–46" data-dur="12">
+  <div class="shead"><div class="snum"><span class="n">6</span><div><h2>Speaking · The Conversation Map</h2><div class="sub">Station 6 · 34–46 min · Choose a branch · Talk · Change branch · Connect</div></div></div>
+    <div class="meta"><span class="chip">14 questions</span><span class="chip dark">B18-09 · COLECCIÓN</span></div></div>
+  <div class="sbody">
+    <div class="card tint"><p style="font-weight:700"><span data-m="group">1. Choose a branch of the map. &nbsp;2. Talk with your partner about it — at least 3 sentences — then change branch. &nbsp;3. Connect two branches. The map is a guide, not a script: don’t read the questions aloud.</span><span data-m="one" hidden>1. Choose a branch. &nbsp;2. Talk with the teacher — at least 3 sentences — then change branch. &nbsp;3. Connect two branches. The map is a guide, not a script: don’t read the questions aloud.</span></p></div>
+    <div class="cmap" id="cmap"><svg class="lk" id="lk" aria-hidden="true"></svg><div class="core">A document is missing</div></div>
+    <div class="qpanel" id="qpanel"><p class="hint">Tap a branch to open its questions.</p></div>
+    <div class="cnrow"><b>Connect two branches:</b><select id="cnA" aria-label="First branch"></select><span>+</span><select id="cnB" aria-label="Second branch"></select><button class="btn sm main" id="cnBtn">Connect them</button><span class="hint" id="cnOut" aria-live="polite">Visit two branches first.</span></div>
+    <div class="dmark"><span>Branches visited:</span><b id="brN">0</b><span>/ 4 · connections:</span><b id="cnN">0</b></div>
+    <div class="closeout" id="brClose" aria-live="polite">Say it out loud: “We visited __ branches.”</div>
+    <div class="row"><div class="timer" id="tM" data-sec="120"><output>02:00</output><button class="btn sm" data-a="go">Start</button><button class="btn sm" data-a="re">Reset</button></div><span class="hint">Use the timer for each branch (2 min). 4 branches × 2 min + setup and closing = 12 min.</span></div>
+    <details class="tn"><summary>Teacher notes · §6 Speaking</summary><div class="layers">
+      <div class="ly"><h4>Pedagógica</h4><ul><li>Mecánica fiel a B18-09: mapa con tema central y 4 ramas; el alumno elige una rama, habla, cambia a otra y al final conecta dos ramas. Puntaje: 1 punto por rama visitada con 3 oraciones (usa “+ sentence” para contarlas). Cierre: “We visited __ branches.” Guardrail: el mapa es guía visual, no guion que se lee.</li><li>14 preguntas; 10 llevan 2 follow-ups. Tiempos: setup 1 + 4 ramas × 2 min + conexión 2 + cierre 1 = 12.</li><li>Conexión: el alumno dice una frase puente (“The system is slow, so the invoice was delayed.”). Sin debate.</li><li>Corrección: solo tras cada rama, máximo 2 errores de alto valor (was/were, participio irregular: sent, paid).</li></ul></div>
+      <div class="ly"><h4>Engagement</h4><ul><li>Group: breakouts de 2; cada pareja elige una rama distinta y al regresar cuentan “the best story”. 1:1: tú respondes también una pregunta por rama (modelo).</li><li>Si un alumno evita el trabajo, empuja la rama Daily life (recibos y reservas): sin presión jerárquica.</li></ul></div>
+      <div class="ly"><h4>Crecimiento</h4><ul><li>“You just spoke for 8 minutes about paperwork. In Session 1 you needed a script for 2.” (Comparar con la grabación de S01 si existe.)</li><li>Venta/mejora: las ramas con más sentencias señalan qué módulo reforzar (personas → S11, pasos → S10).</li></ul></div>
+    </div></details>
+  </div>
+</section>
+
+<!-- §7 MISSION -->
+<section class="sec" id="s7" style="--c:#B7791F;--ct:#FFF1D6" data-name="Mission" data-min="46–54" data-dur="8">
+  <div class="shead"><div class="snum"><span class="n">7</span><div><h2>Mission · The Case File</h2><div class="sub">Station 7 · 46–54 min · Evidence: explain what happened to it</div></div></div>
+    <div class="meta"><span class="chip">3 cases × 4 moves = 12</span><span class="chip dark">Need ≥ 10 without reading</span></div></div>
+  <div class="sbody">
+    <div class="mhd"><img src="img/i2s05_meeting.jpg" alt="Hands resting on a printed form on an office table"><div><div class="kick">Mission</div><h3>Call the clerk. Find out where it stopped. Explain it.</h3><p><span data-m="group">Work in pairs. A = caller (you see the route only). B = clerk (you open the hidden card). Then swap for the next case.</span><span data-m="one" hidden>The teacher is the clerk and opens the hidden card. You are the caller: you see only the route.</span></p></div></div>
+    <div class="card tint"><b>The 4 moves in every case:</b> ① Status now — what is it and where is it stuck? ② Two steps that <b>were</b> done. ③ One step that <b>wasn’t</b> done. ④ Next step + “I’ll send an update.” &nbsp;Ask the clerk at least one <b>Was it…?</b> question.</div>
+    <div id="cases" style="display:grid;gap:16px"></div>
+    <div class="block"><div class="bt"><span class="tag">Evidence</span><h3>Moves completed</h3><span class="stat"><b id="mvN">0</b> / 12</span></div><div class="mvbar"><i id="mvBar"></i></div><div class="row"><button class="btn sm" id="mvRe">Reset moves</button><span class="hint" id="mvOut" aria-live="polite">Goal: 10 of 12 without reading.</span></div></div>
+    <div class="row"><div class="timer" id="tC" data-sec="120"><output>02:00</output><button class="btn sm" data-a="go">Start</button><button class="btn sm" data-a="re">Reset</button></div><span class="hint">2 minutes per case: 1 min prep in silence + 1 min talk. Then swap.</span></div>
+    <details class="tn"><summary>Teacher notes · §7 Mission</summary><div class="layers">
+      <div class="ly"><h4>Pedagógica</h4><ul><li>Evidencia observable: 3 casos × 4 movimientos = 12; éxito ≥ 10 sin leer. Cada caso exige ≥2 pasivas afirmativas, ≥1 negativa y ≥1 pregunta “Was it…?” hecha al empleado.</li><li>Casos: 1) factura de proveedor (trabajo): Created Mon · Sent Tue · Received Wed · Approved ✗ (monto equivocado) · Paid ✗. 2) reembolso en línea (vida diaria): Asked · Approved · Sent ✓ · Received ✗ · Receipt attached ✗. 3) formulario escolar: Sent ✓ · Received ✓ · Signed ✗ · Paid ✓ · Confirmed ✗.</li><li>Giro obligatorio: el empleado dice “Sorry, it was cancelled at the last minute” en un caso (a elección) y el alumno responde con una pregunta y un siguiente paso.</li><li>Después: éxito → mejora → reparación → 2º intento del caso 1.</li></ul></div>
+      <div class="ly"><h4>Engagement</h4><ul><li>Toma el rol del empleado difícil: respuestas cortas, “I don’t know, the system doesn’t say.” El alumno tiene que reformular.</li></ul></div>
+      <div class="ly"><h4>Crecimiento</h4><ul><li>“This call is real: it is the call you make to a supplier or to a bank. You now have the full script in English.”</li><li>Guarda el marcador de 12 para comparar en la Misión de S12 (The Information Gap).</li></ul></div>
+    </div></details>
+  </div>
+</section>
+
+<!-- §8 WRAP-UP -->
+<section class="sec" id="s8" style="--c:var(--lvl-d);--ct:var(--lvl-t)" data-name="Wrap-up" data-min="54–60" data-dur="6">
+  <div class="shead"><div class="snum"><span class="n">8</span><div><h2>Wrap-up · Case Closed</h2><div class="sub">Station 8 · 54–60 min · Quiz · Say it · Can-do</div></div></div>
+    <div class="meta"><span class="chip">5 questions</span><span class="chip dark">Declare it out loud</span></div></div>
+  <div class="sbody">
+    <div class="block"><div class="bt"><span class="tag">Exit quiz</span><h3>60 seconds · say the answer before you click</h3><span class="score" id="scQ"></span></div><div class="mc" id="mcQ"></div></div>
+    <div class="block"><div class="bt"><span class="tag">Today’s numbers</span><h3>Say them out loud</h3></div>
+      <div class="sumrow"><div class="card"><b id="sumW">0</b><span>words erased on the board (of 11)</span></div><div class="card"><b id="sumG">0</b><span>living questions (of 6)</span></div><div class="card"><b id="sumB">0</b><span>branches visited (of 4) · moves: <b id="sumM" style="font-size:inherit">0</b>/12</span></div><div class="card"><b id="sumA" style="font-size:20px">—</b><span>what made the hardest voice hard</span></div></div></div>
+    <div class="block"><div class="bt"><span class="tag">Can-do</span><h3>I can…</h3></div><div class="selfev" id="selfev"></div></div>
+    <div class="badge"><div class="medal">05</div><div><div class="kick">Session complete</div><h3 style="font-size:26px;font-weight:900">You can say what happened to an invoice — and what comes next.</h3><p style="opacity:.9">Homework: choose ONE real document, order or booking from your life. Write 4 lines: two things that <b>were</b> done, one that <b>wasn’t</b>, and the next step. Bring it to Session 6. Next: <b>Session 6 · What If It Rains?</b></p><div class="row" style="margin-top:10px"><button class="btn" id="doneBtn" style="background:var(--sun);border-color:var(--sun);color:var(--navy)">Mark session as complete</button><a class="btn" href="./" style="text-decoration:none;color:var(--navy)">Back to Intermedio 2</a></div></div></div>
+    <details class="tn"><summary>Teacher notes · §8 Wrap-up</summary><div class="layers">
+      <div class="ly"><h4>Pedagógica</h4><ul><li>Quiz: respuesta en voz alta ANTES del clic. Respuestas: was sent · weren’t received · Was it approved? · was paid · due date.</li><li>Cada dinámica se cierra declarando el resultado en voz alta (pizarrón, preguntas vivas, ramas, ranking). Las tarjetas “Today’s numbers” se llenan solas; léelas con el alumno.</li><li>Máx. 2 aciertos y 3 correcciones de alto valor (was/were, participios irregulares, “Was it…?”).</li><li>Registra en la bitácora: palabras borradas (de 11), preguntas vivas (de 6), ramas (de 4), movimientos de la Misión (de 12), qué rasgo del acento costó más.</li></ul></div>
+      <div class="ly"><h4>Engagement</h4><ul><li>“Minute 1: you pinned where papers get stuck. Minute 58: you explained exactly what happened to one.”</li></ul></div>
+      <div class="ly"><h4>Crecimiento</h4><ul><li>Tarea de 4 líneas = materia prima de S06. ≥70 % del léxico regresa en S07 (Pending, Approved, Done) y S09 (pasiva presente); el punto de lengua vuelve en S09, S13 y Checkpoint 2 (S16).</li><li>Venta: “With the 3 accents and the 12-move mission, you are ready for real supplier calls. Next block goes deeper: process steps and people.”</li></ul></div>
+    </div></details>
+  </div>
+</section>
+
+</main>
+<footer>Gabriel Turner · Your Business Coach · Intermedio 2 · Session 05 of 32 · v1.0 · Photos: FIN, Olena Kholina, Vitaly Gariev, NORTHFOLK on Unsplash</footer>
+
+<script>
+(function(){
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const st={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
+const fmt=s=>String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');
+const SPK='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4z"/></svg>';
+const DATA={"VOC": [["invoice", "a document that asks for payment", "Please send me the invoice."], ["approve", "say yes officially to something", "My boss approved the invoice."], ["receive", "get something that someone sends you", "I received your email on Monday."], ["payment", "money that you pay", "We made the payment yesterday."], ["attach", "add a file to an email", "Please attach the invoice."], ["receipt", "a paper or email that shows you paid", "Keep the receipt for the refund."], ["sign", "write your name on a document", "Please sign the form here."], ["cancel", "decide that something will not happen", "They cancelled the order."], ["due date", "the last day to pay or to finish", "The due date is the fifteenth."], ["amount", "how much money", "The amount is wrong."], ["forward", "send a message you received to another person", "Can you forward me the email?"]], "PRON": [["It was sent on Monday.", "“was” is weak /wəz/ · stress SENT and MON-day"], ["It wasn’t received.", "wasn’t = /ˈwʌznt/ · stress re-CEIVED"], ["Was it approved?", "rising ↗ · “Was it” links: /wəzɪt/"], ["Two invoices were cancelled.", "“were” is weak /wər/ · stress IN-voices, CAN-celled"]], "LIS": "Hello, this is Sam from the accounts team at Norte Supplies. I’m calling about your invoice, number four zero seven two. It was sent on the third of March, but it was not received. The email was delayed, maybe because the file was too big. Your other invoice, number four zero seven three, was received on Monday. It was approved yesterday, and it was paid this morning. The first one has a second problem. The amount on the invoice is one thousand two hundred dollars, but the order was one thousand four hundred dollars. Please attach a new invoice with the right amount and send it today. The due date is the fifteenth, so we have time. If you have a question, call me back or send me an update. Thank you.", "F": {"vocab": ["L08-S05-vocab-001-narrator.mp3", "L08-S05-vocab-002-narrator.mp3", "L08-S05-vocab-003-narrator.mp3", "L08-S05-vocab-004-narrator.mp3", "L08-S05-vocab-005-narrator.mp3", "L08-S05-vocab-006-narrator.mp3", "L08-S05-vocab-007-narrator.mp3", "L08-S05-vocab-008-narrator.mp3", "L08-S05-vocab-009-narrator.mp3", "L08-S05-vocab-010-narrator.mp3", "L08-S05-vocab-011-narrator.mp3"], "pron": ["L08-S05-pron-001-narrator.mp3", "L08-S05-pron-002-narrator.mp3", "L08-S05-pron-003-narrator.mp3", "L08-S05-pron-004-narrator.mp3"], "lis": ["L08-S05-listening-001-sambr.mp3", "L08-S05-listening-002-samus.mp3", "L08-S05-listening-003-samin.mp3"]}};
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+
+/* ---- speech + audio files (mp3 first, browser voice as fallback) ---- */
+const TTS='speechSynthesis' in window; let voices=[];
+function loadV(){try{voices=speechSynthesis.getVoices().filter(v=>/^en/i.test(v.lang))}catch(e){}}
+if(TTS){loadV();try{speechSynthesis.onvoiceschanged=loadV}catch(e){}}
+function pick(pref){return voices.find(v=>pref.test(v.name+' '+v.lang))||voices[0]}
+function say(t,opt={}){if(!TTS)return false;try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang=opt.lang||'en-US';u.rate=opt.rate||.88;const v=opt.voice||pick(/US|United States/i);if(v)u.voice=v;speechSynthesis.speak(u);return true}catch(e){return false}}
+function note(msg,warn){$$('.anote').forEach(n=>{n.hidden=false;n.textContent=msg;n.classList.toggle('warn',!!warn)})}
+let cur=null;
+function clip(file,text,opt){
+ try{if(cur){cur.pause();cur=null}}catch(e){}
+ let used=false;const fb=()=>{if(used)return;used=true;if(say(text,opt))note('Audio file not available yet — using your browser’s voice. (Audio no disponible)',true);else note('Audio no disponible: read the text aloud.',true)};
+ try{const a=new Audio('audio/'+file);cur=a;a.addEventListener('error',fb);const p=a.play();if(p&&p.catch)p.catch(fb)}catch(e){fb()}}
+function stopAll(){try{if(cur){cur.pause();cur=null}}catch(e){}try{speechSynthesis.cancel()}catch(e){}$$('.vcard.playing').forEach(c=>c.classList.remove('playing'))}
+
+/* ---- modes ---- */
+function setView(student){document.body.classList.toggle('student',student);$('#tgStudent').setAttribute('aria-pressed',student);$('#tgTeacher').setAttribute('aria-pressed',!student)}
+$('#tgStudent').onclick=()=>setView(true);$('#tgTeacher').onclick=()=>setView(false);
+function setMode(m){$$('[data-m]').forEach(e=>e.hidden=e.dataset.m!==m);$('#tgGroup').setAttribute('aria-pressed',m==='group');$('#tgOne').setAttribute('aria-pressed',m==='one');st.set('gt08-mode',m);render1()}
+let render1=()=>{};
+$('#tgGroup').onclick=()=>setMode('group');$('#tgOne').onclick=()=>setMode('one');
+
+/* ---- XP + nav ---- */
+let xp=0;const done=new Set();
+function addXP(n,key){if(key){if(done.has(key))return;done.add(key)}xp+=n;$('#xp').textContent=xp+' XP'}
+const secs=$$('.sec');const steps=$('#steps');
+secs.forEach((s,i)=>{const a=document.createElement('a');a.href='#'+s.id;a.innerHTML=`<b>${i+1}</b>${s.dataset.name}`;a.style.setProperty('--c',getComputedStyle(s).getPropertyValue('--c'));steps.appendChild(a)});
+const links=[...steps.children];
+function onScroll(){let c=0;secs.forEach((s,i)=>{if(s.getBoundingClientRect().top<200)c=i});links.forEach((a,i)=>a.classList.toggle('on',i===c));$('#pbar').style.width=((c+1)/secs.length*100)+'%';const on=links[c];if(on&&steps.scrollWidth>steps.clientWidth){steps.scrollLeft=on.offsetLeft-40}}
+addEventListener('scroll',onScroll,{passive:true});onScroll();
+function markDone(i){links[i]&&links[i].classList.add('done')}
+(function(){let tot=0,rows='';secs.forEach((s,i)=>{const d=+s.dataset.dur;tot+=d;rows+=`<tr><td>${i+1}</td><td>${s.dataset.name}</td><td>${s.dataset.min}</td><td>${d} min</td></tr>`});
+ $('#timeTable').innerHTML=`<table><tr><th>#</th><th>Stage</th><th>Minutes</th><th>Duration</th></tr>${rows}</table><p class="tot" id="timeTot" data-total="${tot}">Total: ${tot} min ${tot===60?'✓':'✗ (must be 60)'}</p>`})();
+let cs=0,cId=null;$('#clock').onclick=()=>{if(cId){clearInterval(cId);cId=null}else cId=setInterval(()=>{cs++;$('#clock').textContent=fmt(cs)},1000)};
+function timer(el,onEnd){const tot=+el.dataset.sec;let left=tot,id=null;const o=el.querySelector('output'),g=el.querySelector('[data-a=go]');
+ const draw=()=>{o.textContent=fmt(left);el.classList.toggle('end',left===0)};const stop=()=>{clearInterval(id);id=null;g.textContent='Start'};
+ g.onclick=()=>{if(id){stop();return}if(!left)left=tot;g.textContent='Pause';id=setInterval(()=>{left--;draw();if(left<=0){stop();onEnd&&onEnd()}},1000)};
+ el.querySelector('[data-a=re]').onclick=()=>{stop();left=tot;draw()};return{stop}}
+function mc(box,items,scoreEl,xpKey,sec){let right=0,answered=0;
+ items.forEach((it,i)=>{const d=document.createElement('div');d.className='mcq';d.innerHTML=`<div class="q"><span class="n">${i+1}</span>${it.q}</div><div class="opts"></div><div class="fb" aria-live="polite"></div>`;
+  const os=d.querySelector('.opts'),fb=d.querySelector('.fb');let locked=false;
+  it.o.forEach((t,k)=>{const b=document.createElement('button');b.className='opt';b.textContent=t;b.onclick=()=>{if(locked)return;
+    if(k===it.a){b.classList.add('ok');locked=true;answered++;if(!d.dataset.miss)right++;fb.className='fb ok';fb.textContent='✓ '+(it.ok||'Correct!');addXP(10);
+      if(answered===items.length){scoreEl.textContent=`${right} / ${items.length} first try`;addXP(0,xpKey);if(sec!=null)markDone(sec)}}
+    else{b.classList.add('no');d.dataset.miss=1;fb.className='fb no';fb.textContent='✗ '+(it.no||'Try again.')}};os.appendChild(b)});box.appendChild(d)})}
+
+/* ---- route track (metro line) ---- */
+function track(host,labels,states,opt={}){host.innerHTML='';host.classList.add('trk');
+ labels.forEach((l,i)=>{const e=document.createElement(opt.click?'button':'div');e.className='st '+(states[i]||'todo');
+  e.innerHTML=`<span class="dot"></span>${esc(l)}${opt.sub&&opt.sub[i]?`<small>${esc(opt.sub[i])}</small>`:''}`;
+  if(opt.click){e.type='button';e.setAttribute('aria-label',`${l}: ${states[i]==='done'?'done':states[i]==='stuck'?'not done':states[i]==='unk'?'unknown':'not marked'}`);e.onclick=()=>opt.click(i)}
+  host.appendChild(e)})}
+
+/* ===== §1 route pins ===== */
+const ST5=["Asked","Sent","Received","Approved","Done"];
+const PIN=["A parcel from an online shop","A hotel booking","A refund","An invoice at work","A document at the city office"];
+const pc=PIN.map(()=>-1);
+function drawPins(){const cnt=ST5.map(()=>0);pc.forEach(v=>{if(v>=0)cnt[v]++});const mx=Math.max(...cnt),n=pc.filter(v=>v>=0).length;
+ $('#pnCount').textContent=n+' / 5 pinned';$('#heat').hidden=$('#heatl').hidden=!n;
+ $('#heat').innerHTML=cnt.map(c=>`<div class="${mx>0&&c===mx?'top':''}" style="height:${mx?Math.max(6,c/mx*100):6}%">${c?`<b>${c}</b>`:''}</div>`).join('');
+ if(n){const w=ST5.filter((_,i)=>cnt[i]===mx);$('#pnRes').textContent=n<5?`So far: it gets stuck at “${w[0]}”. Keep pinning.`:(w.length>1?`A tie: ${w.join(' / ')}. Which one is worse? Why?`:`Most stuck station: “${w[0]}” (${mx} of 5). Tell your partner about ONE real case.`);if(n===5){addXP(10,'pins');markDone(0)}}}
+PIN.forEach((name,i)=>{const c=document.createElement('div');c.className='pin';c.innerHTML=`<div class="t">${name}</div><div class="trkh"></div><div class="sayline" aria-live="polite"></div>`;
+ const host=c.querySelector('.trkh'),sl=c.querySelector('.sayline');
+ const rd=()=>{const v=pc[i];track(host,ST5,ST5.map((_,j)=>v<0?'todo':j<v?'done':j===v?'stuck':'todo'),{click:j=>{pc[i]=pc[i]===j?-1:j;c.classList.toggle('on',pc[i]>=0);sl.textContent=pc[i]>=0?`It usually stops at “${ST5[pc[i]]}”.`:'';addXP(2,'pin'+i);rd();drawPins()}})};
+ rd();$('#pins').appendChild(c)});drawPins();
+
+/* ===== §2 vocabulary: learn + Dead Words ===== */
+const V=DATA.VOC,F=DATA.F;const COL=['#1E6B52','#2457C5','#C71F5E','#B7791F','#6B4DF0','#0A7F75'];
+V.forEach(([w,d,e],i)=>{const c=document.createElement('div');c.className='vc';c.style.setProperty('--c',COL[i%COL.length]);
+ c.innerHTML=`<div class="w">${w}${`<button class="hearbtn" aria-label="Hear: ${w}. ${esc(e)}">${SPK}<span>hear</span></button>`}</div><div class="d">${d}</div><div class="e">“${e}”</div>`;
+ c.querySelector('button').onclick=()=>clip(F.vocab[i],w+'. '+e);$('#vl').appendChild(c)});
+$('#anoteV').hidden=true;
+let erased=0,lastDead='',ghostN=0;
+const dClose=()=>{const left=V.length-erased;$('#dStat').textContent=`${erased} / ${V.length} erased`;
+ $('#dClose').textContent=erased===V.length?`Empty board! “We erased all ${V.length} words. The last dead word was ${lastDead}.”`:`Say it out loud: “We erased ${erased} of ${V.length} words. The last dead word was ${lastDead||'___'}.”`;$('#sumW').textContent=erased;if(erased===V.length){addXP(20,'board');markDone(1);tD.stop()}};
+V.forEach(([w],i)=>{const b=document.createElement('button');b.className='dwd';b.textContent=w;b.setAttribute('aria-pressed','false');b.setAttribute('aria-label',`Dead word: ${w}. Tap to erase it after it is used correctly in a spoken sentence.`);
+ b.onclick=()=>{const on=b.getAttribute('aria-pressed')!=='true';b.setAttribute('aria-pressed',on);if(on){erased++;lastDead=w;addXP(5,'dw'+i)}else{erased--;if(lastDead===w)lastDead=''}dClose()};$('#dead').appendChild(b)});
+["update","status","pending","delay","confirm","supplier","shipment","purchase order"].forEach(w=>{const b=document.createElement('button');b.className='dwd';b.textContent=w;b.setAttribute('aria-pressed','false');
+ b.onclick=()=>{const on=b.getAttribute('aria-pressed')!=='true';b.setAttribute('aria-pressed',on);ghostN+=on?1:-1;if(on)addXP(2,'gh'+w)};$('#ghost').appendChild(b)});
+const PROMPTS=["Your supplier writes: “We haven’t received your invoice.” What do you answer?","You lost the receipt for something you bought. Explain it to the shop assistant.","Your manager asks: “What’s the status of the payment?” Answer.","A hotel says your booking was cancelled. What do you say and ask?","You need a colleague to approve and sign a form today. Ask for it.","Explain how an invoice travels in a company you know — from created to paid."];
+let pi=0;const drawP=()=>$('#prompt').textContent=`Prompt ${pi+1}/6 — ${PROMPTS[pi]}`;drawP();$('#pNext').onclick=()=>{pi=(pi+1)%PROMPTS.length;drawP()};
+const tD=timer($('#tD'),()=>{const left=V.filter((_,i)=>$$('#dead .dwd')[i].getAttribute('aria-pressed')!=='true');$('#dClose').textContent=left.length?`Time’s up. “We erased ${erased} of ${V.length} words. ${left.length} words are still alive: ${left.join(', ')}.”`:'Empty board!'});
+
+/* ===== §3 language ===== */
+$('#hlBtn').onclick=()=>{const on=!$('#disc').classList.contains('show-hl');$('#disc').classList.toggle('show-hl',on);$('#hlBtn').setAttribute('aria-pressed',on);$('#hlBtn').textContent=on?'Hide the key words':'Show the key words'};
+/* sentence builder */
+const SUBJ=[["the invoice",0],["the payment",0],["the receipt",0],["the invoices",1],["two payments",1],["the forms",1]];
+const PP=["sent","approved","cancelled","delayed","received","paid","signed"];
+const FORMS=["✓ statement","✗ negative","? question"];
+let bs=0,bv=0,bf=0;
+const cap=s=>s[0].toUpperCase()+s.slice(1);
+function grp(host,items,get,set){host.innerHTML='';items.forEach((t,i)=>{const b=document.createElement('button');b.className='ch';b.textContent=Array.isArray(t)?t[0]:t;b.setAttribute('aria-pressed',get()===i);b.onclick=()=>{set(i);[...host.children].forEach((x,k)=>x.setAttribute('aria-pressed',k===i));bout()};host.appendChild(b)})}
+let bText='';
+function bout(){const [s,pl]=SUBJ[bs],be=pl?'were':'was',pp=PP[bv];
+ bText=bf===0?`${cap(s)} ${be} ${pp}.`:bf===1?`${cap(s)} ${be}n’t ${pp}.`:`${cap(be)} ${s} ${pp}?`;
+ const html=bf===0?`${cap(s)} <em>${be} ${pp}</em>.`:bf===1?`${cap(s)} <em>${be}n’t ${pp}</em>.`:`<em>${cap(be)}</em> ${s} <em>${pp}</em>?`;$('#bOut').innerHTML=html;addXP(1,'bld'+bs+bv+bf)}
+grp($('#bS'),SUBJ,()=>bs,i=>bs=i);grp($('#bV'),PP,()=>bv,i=>bv=i);grp($('#bF'),FORMS,()=>bf,i=>bf=i);
+$('#bHear').innerHTML=SPK+'<span>hear</span>';$('#bHear').onclick=()=>{if(!say(bText))note('Audio no disponible: read the sentence aloud.',true)};
+bout();
+/* pronunciation cards */
+DATA.PRON.forEach(([t,tip],i)=>{const d=document.createElement('div');d.className='pr';d.innerHTML=`<div class="w">${t}</div><div class="ipa">${tip}</div><button class="hearbtn" aria-label="Hear: ${esc(t)}">${SPK}<span>hear</span></button>`;d.querySelector('button').onclick=()=>clip(F.pron[i],t);$('#pron').appendChild(d)});$('#anoteP').hidden=true;
+mc($('#mcA'),[
+ {q:"The invoice ___ yesterday.",o:["was send","was sent","were sent"],a:1,ok:"send → sent (irregular)."},
+ {q:"Two payments ___ cancelled.",o:["was","were","are"],a:1,ok:"Plural → were."},
+ {q:"The email ___ received.",o:["wasn’t","weren’t","didn’t"],a:0},
+ {q:"___ the invoice approved on Tuesday?",o:["Was","Were","Did"],a:0,ok:"Question: Was + subject + participle."},
+ {q:"The receipts ___ attached to the email.",o:["was","were","did"],a:1},
+ {q:"The payment ___ on Friday.",o:["was paid","was payed","was pay"],a:0,ok:"pay → paid (irregular)."}],$('#scA'),'mcA',2);
+/* GRM-10 */
+const RV=[
+ {a:"It was sent on Monday.",c:"You ask about an invoice. Which question creates this answer?",m:"When was it sent?"},
+ {a:"Two invoices were cancelled.",c:"Think: what or how many?",m:"What was cancelled? / How many invoices were cancelled?"},
+ {a:"No, it wasn’t received.",c:"It’s a yes/no question.",m:"Was it received?"},
+ {a:"It was delayed because of a system problem.",c:"The question asks for the reason.",m:"Why was it delayed?"},
+ {a:"The finance manager approved it.",c:"Careful: this answer says WHO. Which question form?",m:"Who approved it? (active — we ask for the person)"},
+ {a:"It was paid on the fifteenth.",c:"The question asks for the day.",m:"When was it paid?"}];
+let rvP=0,rvJ=0,rvTricky='';
+RV.forEach((r,i)=>{const d=document.createElement('div');d.className='rv';
+ d.innerHTML=`<div class="ans"><span class="tg2">ANSWER ${i+1}</span>“${r.a}”</div><div class="ctx">${r.c}</div><div><button class="btn sm main" data-a="op">Open the model</button></div><div class="model" hidden><small>Model question</small>${r.m}</div><div class="row" hidden><button class="btn sm" data-j="1">✓ My question works</button><button class="btn sm" data-j="0">✗ Not yet</button></div>`;
+ const model=d.querySelector('.model'),jr=d.querySelector('.row'),op=d.querySelector('[data-a=op]');let jd=false;
+ op.onclick=()=>{model.hidden=false;jr.hidden=false;op.hidden=true};
+ jr.querySelectorAll('button').forEach(b=>b.onclick=()=>{if(jd)return;jd=true;const ok=b.dataset.j==='1';rvJ++;if(ok){rvP++;addXP(8)}else if(!rvTricky)rvTricky=`answer ${i+1}`;d.classList.add(ok?'won':'lost');jr.hidden=true;
+  $('#rvPts').textContent=rvP;$('#sumG').textContent=rvP;
+  if(rvJ===RV.length){$('#rvOut').textContent=`Say it out loud: “We built ${rvP} of 6 living questions. The trickiest was ${rvTricky||'none — all six'}.”`;addXP(15,'g10');markDone(2)}});
+ $('#rev').appendChild(d)});
+track($('#useTrk'),["Created","Sent","Received","Approved","Paid"],['done','done','stuck','todo','todo'],{sub:["Mon","Tue","— not received","",""]});
+
+/* ===== §4 reading ===== */
+const DOCS=[
+ {hd:["EMAIL","Accounts → Marta"],p:["Subject: Invoice 4072","Hi Marta, your invoice was received on Monday, but it wasn’t approved. The amount was wrong. Please attach a new invoice. The due date is still the fifteenth, so send me an update today. Thanks, Sam"],
+  lab:["Sent","Received","Approved","Paid"],stuck:2,q:"What was wrong with the invoice?",o:["The due date","The amount","The email address"],a:1},
+ {hd:["MESSAGE","Hotel → Omar"],p:["Hi Omar, your booking was cancelled on Friday because of a problem with the payment. A new booking was made, and a new confirmation was sent to your email. The receipt wasn’t attached, so please check the status. The booking is pending until you confirm."],
+  lab:["Booking made","Payment checked","Email sent","Receipt attached"],stuck:3,q:"Why was the first booking cancelled?",o:["A problem with the payment","The hotel was closed","The date was wrong"],a:0},
+ {hd:["NOTICE","Online shop → customer"],p:["Dear customer, your refund was approved on Tuesday. The money was sent to your bank on Wednesday, but it wasn’t received yet. A receipt was attached to this email. Please sign the form and send it back. If the refund is still pending on Friday, call us."],
+  lab:["Approved","Sent to bank","Received"],stuck:2,q:"What does the customer need to do?",o:["Call the shop today","Sign the form and send it back","Attach a receipt"],a:1}];
+let rdOk=0;
+DOCS.forEach((dc,i)=>{const d=document.createElement('article');d.className='doc';
+ d.innerHTML=`<div class="hd"><span>${dc.hd[0]}</span><span>${dc.hd[1]}</span></div><div class="bd">${dc.p.map(t=>`<p>${t}</p>`).join('')}</div><div class="qa"><h5>1 · Tap the first step that is NOT done</h5><div class="tk"></div><div class="fb" aria-live="polite" style="font-weight:700;font-size:14px;min-height:1.2em"></div><h5>2 · ${dc.q}</h5><div class="opts"></div><div class="fb2" aria-live="polite" style="font-weight:700;font-size:14px"></div></div>`;
+ const host=d.querySelector('.tk'),fb=d.querySelector('.fb');let solved=false,q2=false;
+ const check=()=>{if(solved&&q2){rdOk++;if(rdOk===DOCS.length){addXP(10,'rd');markDone(3)}}};
+ const rd=(sel)=>{track(host,dc.lab,dc.lab.map((_,j)=>solved?(j<dc.stuck?'done':j===dc.stuck?'stuck':'todo'):'todo'),{click:j=>{if(solved)return;if(j===dc.stuck){solved=true;fb.style.color='var(--ok)';fb.textContent='✓ Yes. Say it: “It wasn’t …”';addXP(5);rd();check()}else{fb.style.color='var(--err)';fb.textContent='✗ Not that one. Read again.'}}})};rd();
+ const os=d.querySelector('.opts');dc.o.forEach((t,k)=>{const b=document.createElement('button');b.className='opt';b.textContent=t;b.onclick=()=>{if(q2)return;if(k===dc.a){q2=true;b.classList.add('ok');d.querySelector('.fb2').textContent='✓ Correct';d.querySelector('.fb2').style.color='var(--ok)';addXP(5);check()}else{b.classList.add('no')}};os.appendChild(b)});
+ $('#rd3').appendChild(d)});
+
+/* ===== §5 accent roulette ===== */
+const VC=[{n:"Voice 1",acc:"Brazilian English"},{n:"Voice 2",acc:"US English (native)"},{n:"Voice 3",acc:"Indian English"}];
+const vcEls=[];
+VC.forEach((v,i)=>{const c=document.createElement('div');c.className='vcard';
+ c.innerHTML=`<h4>${v.n}</h4><div class="acc">Accent: ?</div><div class="wave" aria-hidden="true">${Array.from({length:22},(_,k)=>`<i style="height:${8+((k*7)%23)}px;animation-delay:${(k%6)*.1}s"></i>`).join('')}</div><button class="btn sm" data-a="pl" style="background:var(--sun);border-color:var(--sun);color:var(--navy)">▶ Play ${v.n}</button>`;
+ c.querySelector('button').onclick=()=>{stopAll();c.classList.add('playing');clip(F.lis[i],DATA.LIS,{rate:[.82,.88,.8][i],voice:i===0?pick(/Portuguese|BR/i)||pick(/US/i):i===2?pick(/India|en-IN/i)||pick(/GB/i):pick(/US/i)});setTimeout(()=>c.classList.remove('playing'),9000)};
+ $('#vcs').appendChild(c);vcEls.push(c)});$('#anoteL').hidden=true;
+mc($('#mcL'),[
+ {q:"Why does Sam call?",o:["Invoice 4072 was not received and its amount is wrong","Invoice 4073 was cancelled","Sam wants to pay today"],a:0},
+ {q:"When was invoice 4072 sent?",o:["On the third of March","On Monday","Yesterday"],a:0},
+ {q:"Invoice 4073: what happened to it?",o:["It was cancelled","It was received, approved and paid","It was delayed"],a:1},
+ {q:"What does Sam ask for?",o:["A new invoice with the right amount","A receipt","A signed form"],a:0}],$('#scL'),'mcL',null);
+const L5=["Created","Sent","Received","Approved","Paid"];let trkOk=0;
+[['#trk72',1],['#trk73',4]].forEach(([id,ans])=>{let s=false;const rd=()=>track($(id),L5,L5.map((_,j)=>s?(j<=ans?'done':'todo'):'todo'),{click:j=>{if(s)return;if(j===ans){s=true;trkOk++;$('#trkFb').textContent=trkOk===2?'✓ Both correct.':'✓ Correct.';addXP(5);rd()}else $('#trkFb').textContent='✗ Listen again: which step was the LAST one done?'}});rd()});
+/* ranking */
+let order=[0,1,2];const why=[new Set(),new Set(),new Set()];const WH=["speed","vowels","rhythm","word endings","nothing hard"];let revealed=false;
+function drawRank(){const box=$('#rank');box.innerHTML='';order.forEach((vi,pos)=>{const r=document.createElement('div');r.className='rk';
+ r.innerHTML=`<div class="pos">${pos+1}</div><div><div class="nm">${VC[vi].n}${revealed?` · <span style="color:var(--pink)">${VC[vi].acc}</span>`:''}</div><div class="why" role="group" aria-label="What was hard in ${VC[vi].n}">${WH.map(w=>`<button aria-pressed="${why[vi].has(w)}" data-w="${w}">${w}</button>`).join('')}</div></div><div class="mv2"><button aria-label="Move up" data-d="-1">▲</button><button aria-label="Move down" data-d="1">▼</button></div>`;
+ r.querySelectorAll('.mv2 button').forEach(b=>b.onclick=()=>{const d=+b.dataset.d,np=pos+d;if(np<0||np>2)return;[order[pos],order[np]]=[order[np],order[pos]];addXP(2,'rk');drawRank();rkClose()});
+ r.querySelectorAll('.why button').forEach(b=>b.onclick=()=>{const w=b.dataset.w;why[vi].has(w)?why[vi].delete(w):why[vi].add(w);addXP(3,'why'+vi+w);drawRank();rkClose()});
+ box.appendChild(r)});vcEls.forEach((c,i)=>c.querySelector('.acc').textContent=revealed?'Accent: '+VC[i].acc:'Accent: ?');}
+function rkClose(){const e=order[0]+1,h=order[2],hw=[...why[h]].filter(x=>x!=='nothing hard');$('#lisClose').textContent=`Say it out loud: “Voice ${e} was the easiest. Voice ${h+1} was the hardest${hw.length?' because of the '+hw.join(' and the '):' because of the ___'}.”`;$('#sumA').textContent=hw.length?hw.join(', '):'—'}
+drawRank();
+$('#rkReveal').onclick=()=>{revealed=true;drawRank();$('#rkOut').textContent='Which accent do YOU hear most at work?';addXP(10,'lis8');markDone(4)};
+$('#txBtn').onclick=()=>{const h=$('#tx').hidden;$('#tx').hidden=!h;$('#txBtn').setAttribute('aria-expanded',h);$('#txBtn').textContent=h?'Hide the transcript':'Show the transcript'};
+
+/* ===== §6 conversation map ===== */
+const BR=[
+ {n:"What went missing?",s:"Things at work",c:"#C71F5E",q:[
+  ["What document or payment was late the last time you waited for something at work?",["When was it sent?","What was the status after a week?"]],
+  ["What was delayed or cancelled at work this month?",["What caused the delay?","What did you do?"]],
+  ["How do you check the status of an invoice or a request?"]]},
+ {n:"The steps",s:"How it travels",c:"#0A7F75",q:[
+  ["What happens to an invoice in your company, step by step?",["Who approves it?","How long does the payment take?"]],
+  ["Was something changed at the last minute this month?"],
+  ["Where do you attach documents: in an email, in a system or on paper?",["Why?","What was the last document you attached?"]]]},
+ {n:"The people",s:"Who handles it",c:"#C2410C",q:[
+  ["Who sends the invoices? Who approves them?",["Is the process clear to everybody?","What was the last mistake in the process?"]],
+  ["Who do you ask when something is pending? What do you say?",["Do they answer fast?","What do you do if nobody answers?"]],
+  ["Tell me about someone who solved a paperwork problem fast."]]},
+ {n:"Daily life",s:"Receipts, bookings, parcels",c:"#6B4DF0",q:[
+  ["Tell me about a receipt you couldn’t find.",["What was it for?","What did you do?"]],
+  ["Was a booking or an appointment cancelled on you? What happened?",["When was it cancelled?","What was the next step?"]],
+  ["Think of a parcel or a refund. Was it received? How long did you wait?",["Did you ask for an update?","What was the status each day?"]],
+  ["Which paperwork do you dislike the most? Why?"],
+  ["Do you sign documents on paper or online? Which is better for you?",["Why?","Was a document ever lost?"]]]}];
+const bst=BR.map(()=>({n:0,vis:false}));let act=-1,links2=[],qnum=0;
+const brEls=[];
+BR.forEach((b,i)=>{const e=document.createElement('button');e.className='br';e.style.setProperty('--bc',b.c);e.setAttribute('aria-pressed','false');e.innerHTML=`<b>${b.n}</b><span>${b.s}</span><span class="cnt">0 / 3 sentences</span>`;e.onclick=()=>openBr(i);$('#cmap').appendChild(e);brEls.push(e)});
+BR.forEach(b=>b.q.forEach(q=>{q.num=++qnum}));
+function openBr(i){act=i;const b=BR[i],p=$('#qpanel');p.style.setProperty('--bc',b.c);
+ p.innerHTML=`<h4>${b.n}</h4>${b.q.map(q=>`<div class="qi"><div class="q"><i>${q.num}</i>${q[0]}</div>${q[1]?`<div class="fu">${q[1].map(f=>`<span>${f}</span>`).join('')}</div>`:''}</div>`).join('')}<div class="sent"><b>Sentences you said:</b><span class="dots2">${[0,1,2].map(k=>`<i class="${k<bst[i].n?'on':''}"></i>`).join('')}</span><button class="btn sm main" id="sentP">+ sentence</button><button class="btn sm" id="sentM">− sentence</button></div>`;
+ $('#sentP').onclick=()=>{if(bst[i].n<3){bst[i].n++;addXP(3);upd();openBr(i)}};$('#sentM').onclick=()=>{if(bst[i].n>0){bst[i].n--;upd();openBr(i)}};upd()}
+function upd(){let v=0;BR.forEach((b,i)=>{bst[i].vis=bst[i].n>=3;if(bst[i].vis)v++;const e=brEls[i];e.classList.toggle('vis',bst[i].vis);e.setAttribute('aria-pressed',i===act);e.querySelector('.cnt').textContent=`${bst[i].n} / 3 sentences`});
+ $('#brN').textContent=v;$('#cnN').textContent=links2.length;$('#brClose').textContent=`Say it out loud: “We visited ${v===0?'__':v} branch${v===1?'':'es'}.”`;$('#sumB').textContent=v;
+ if(v===4){addXP(20,'map');markDone(5)}
+ const vis=BR.map((b,i)=>i).filter(i=>bst[i].vis);[$('#cnA'),$('#cnB')].forEach((s,k)=>{const pv=s.value;s.innerHTML=vis.map(i=>`<option value="${i}">${BR[i].n}</option>`).join('');if(vis.length>1){s.value=pv&&vis.includes(+pv)?pv:vis[Math.min(k,vis.length-1)]}});
+ if(vis.length>1&&$('#cnA').value===$('#cnB').value){$('#cnB').value=String(vis.find(i=>String(i)!==$('#cnA').value))}
+ $('#cnBtn').disabled=vis.length<2;if(vis.length<2)$('#cnOut').textContent='Visit two branches first.';drawLinks()}
+$('#cnBtn').onclick=()=>{const a=+$('#cnA').value,b=+$('#cnB').value;if(a===b){$('#cnOut').textContent='Choose two DIFFERENT branches.';return}const key=[a,b].sort().join('-');if(links2.includes(key)){$('#cnOut').textContent='Already connected. Try another pair.';return}links2.push(key);addXP(10,'cn'+key);$('#cnOut').textContent=`Linked: ${BR[a].n} + ${BR[b].n}. Say one bridge sentence that uses both.`;upd()};
+function drawLinks(){const svg=$('#lk'),box=$('#cmap').getBoundingClientRect();svg.setAttribute('viewBox',`0 0 ${box.width} ${box.height}`);
+ svg.innerHTML=links2.map(k=>{const [a,b]=k.split('-').map(Number);const ra=brEls[a].getBoundingClientRect(),rb=brEls[b].getBoundingClientRect();const x1=ra.left+ra.width/2-box.left,y1=ra.top+ra.height/2-box.top,x2=rb.left+rb.width/2-box.left,y2=rb.top+rb.height/2-box.top;return `<path d="M${x1} ${y1} Q ${(x1+x2)/2+ (y1===y2?0:30)} ${(y1+y2)/2+(y1===y2?30:0)} ${x2} ${y2}" fill="none" stroke="#B7791F" stroke-width="6" stroke-dasharray="2 10" stroke-linecap="round"/>`}).join('')}
+addEventListener('resize',drawLinks);upd();
+timer($('#tM'));
+
+/* ===== §7 mission ===== */
+const CASES=[
+ {t:"Supplier invoice",tag:"WORK",c:"#2457C5",init:"W",lab:["Created","Sent","Received","Approved","Paid"],
+  known:"You are the supplier. Invoice 5018 for $2,300. Your client says: “We can’t find it.”",
+  det:[["Created on Monday",1],["Sent on Tuesday",1],["Received on Wednesday",1],["Approved — the amount was wrong",0],["Paid — still pending",0]]},
+ {t:"Online refund",tag:"DAILY LIFE",c:"#0A7F75",init:"R",lab:["Asked","Approved","Sent","Received","Receipt attached"],
+  known:"You returned a jacket two weeks ago. The money is not in your account.",
+  det:[["Asked on the 2nd",1],["Approved on the 4th",1],["Sent to your bank on the 5th",1],["Received — not yet",0],["Receipt attached — no, the email was delayed",0]]},
+ {t:"School form",tag:"DAILY LIFE",c:"#C71F5E",init:"S",lab:["Sent","Received","Signed","Paid","Confirmed"],
+  known:"You sent the registration form for your child’s course. Nobody has confirmed it.",
+  det:[["Sent on Monday",1],["Received on Tuesday",1],["Signed — no, nobody signed it",0],["Paid on Wednesday",1],["Confirmed — pending",0]]}];
+const MVS=["① Status now: where is it stuck?","② Two steps that WERE done","③ One step that WASN’T done","④ Next step + “I’ll send an update”"];
+CASES.forEach((cs,gi)=>{const d=document.createElement('div');d.className='cfile';d.style.setProperty('--cc',cs.c);
+ d.innerHTML=`<div class="top"><div class="initcircle" style="width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.25);display:grid;place-items:center;font-family:Nunito;font-weight:900">${cs.init}</div><div><small>CASE ${gi+1} · ${cs.tag}</small><h4>${cs.t}</h4></div></div>
+ <div class="bodyc"><div class="known"><b>Caller card (A):</b> ${cs.known}</div><div><b>Route</b> — tap each station as the clerk tells you: ✓ done · ✗ not done · ? unknown</div><div class="trkc"></div>
+ <div class="detail hid"><b>Clerk card (B):</b>${cs.det.map(([t,ok])=>`<span class="${ok?'ok2':'no2'}">${ok?'✓':'✗'} ${t}</span>`).join('')}</div><div><button class="btn sm" data-a="tg" aria-expanded="false">Show clerk card B</button></div>
+ <div class="moves">${MVS.map(m=>`<button class="mv" aria-pressed="false"><i>✓</i>${m}</button>`).join('')}</div></div>`;
+ const stt=cs.lab.map(()=>'unk'),host=d.querySelector('.trkc');const cyc={unk:'done',done:'stuck',stuck:'unk',todo:'done'};
+ const rd=()=>track(host,cs.lab,stt,{click:j=>{stt[j]=cyc[stt[j]];addXP(1);rd()}});rd();
+ const g=d.querySelector('.detail'),tg=d.querySelector('[data-a=tg]');tg.onclick=()=>{const hid=g.classList.toggle('hid');tg.textContent=hid?'Show clerk card B':'Hide clerk card B';tg.setAttribute('aria-expanded',!hid)};
+ $('#cases').appendChild(d)});
+function drawMv(){const n=$$('.mv[aria-pressed=true]').length;$('#mvN').textContent=n;$('#mvBar').style.width=n/12*100+'%';$('#sumM').textContent=n;$('#mvOut').textContent=n>=10?`Mission complete: ${n} of 12 moves without reading.`:'Goal: 10 of 12 without reading.';if(n>=10){addXP(30,'mission');markDone(6)}}
+$$('.mv').forEach(b=>b.onclick=()=>{b.setAttribute('aria-pressed',b.getAttribute('aria-pressed')!=='true');drawMv()});
+$('#mvRe').onclick=()=>{$$('.mv').forEach(b=>b.setAttribute('aria-pressed','false'));drawMv()};
+timer($('#tC'));
+
+/* ===== §8 wrap ===== */
+mc($('#mcQ'),[
+ {q:"The invoice ___ on Monday.",o:["was sent","were sent","sent was"],a:0},
+ {q:"The two emails ___ received.",o:["wasn’t","weren’t","didn’t"],a:1},
+ {q:"Which question is correct?",o:["Was it approved?","Was approved it?","Did it approved?"],a:0},
+ {q:"The payment ___ this morning.",o:["was paid","was payed","were paid"],a:0},
+ {q:"The last day to pay is the ___.",o:["receipt","due date","amount"],a:1}],$('#scQ'),'mcQ',7);
+["I say what was sent, received or approved.","I say what wasn’t done.","I ask a Was it…? question.","I give the next step."].forEach(t=>{const b=document.createElement('button');b.textContent=t;b.setAttribute('aria-pressed','false');b.onclick=()=>b.setAttribute('aria-pressed',b.getAttribute('aria-pressed')!=='true');$('#selfev').appendChild(b)});
+function showDone(){$('#doneBtn').textContent='✓ Session complete';$('#doneBtn').disabled=true}
+if(st.get('gt08-s05-done'))showDone();
+$('#doneBtn').onclick=()=>{st.set('gt08-s05-done','1');addXP(50,'done');markDone(7);showDone()};
+setMode(st.get('gt08-mode')||'group');
+})();
+
+</script>
+</body>
+</html>

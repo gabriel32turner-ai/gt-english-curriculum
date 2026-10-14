@@ -1,0 +1,1127 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Intermedio 2 · S17 · What Went Wrong?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap">
+<style>
+:root{
+  --navy:#16213E; --navy2:#22305A; --cream:#F4F7FF; --paper:#FFFFFF; --ink:#1B1B2F; --mut:#5E6275; --line:#DCE4F8;
+  --lvl:#6B4DF0; --lvl-d:#3F2BB0; --lvl-t:#ECE7FF;
+  --sun:#FFC233; --sun-t:#FFF3D1; --teal:#0A7F75; --teal-t:#DCF2EF; --pink:#C71F5E; --pink-t:#FBE3EC; --grm:#C2410C; --grm-t:#FFEDE0;
+  --ok:#15A34A; --ok-t:#E3F7EA; --err:#E5484D; --err-t:#FDE8E8;
+  --r:18px; --r-sm:12px; --sh:0 6px 22px rgba(27,27,47,.08); --sh-lg:0 18px 44px rgba(27,27,47,.16);
+  color-scheme:light;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+[hidden]{display:none!important}
+html{scroll-behavior:smooth;scroll-padding-top:150px}
+body{background:var(--cream);color:var(--ink);font-family:"DM Sans","Segoe UI",system-ui,sans-serif;font-size:17px;line-height:1.55;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4,.nun{font-family:Nunito,"Segoe UI",system-ui,sans-serif;letter-spacing:-.01em;line-height:1.15;text-wrap:balance}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+button:focus-visible,a:focus-visible,textarea:focus-visible,input:focus-visible{outline:3px solid var(--lvl);outline-offset:2px}
+img{max-width:100%;display:block}
+.wrap{max-width:1100px;margin:0 auto;padding-inline:16px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+/* ---------- top bar ---------- */
+.topbar{background:var(--navy);color:#fff}
+.topbar .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding-block:10px}
+.brand{display:flex;align-items:center;gap:10px;font-family:Nunito;font-weight:900;font-size:14px;letter-spacing:.08em}
+.brand i{width:10px;height:10px;border-radius:50%;background:var(--lvl);box-shadow:0 0 0 4px rgba(107,77,240,.35)}
+.brand a{color:#fff;text-decoration:none}
+.brand small{font-family:"DM Sans";font-weight:500;letter-spacing:0;opacity:.7;font-size:13px}
+.toggles{display:flex;gap:8px;flex-wrap:wrap}
+.tg{border:1.5px solid rgba(255,255,255,.3);color:#fff;border-radius:99px;padding:6px 14px;font-size:13px;font-weight:700}
+.tg[aria-pressed="true"]{background:var(--sun);border-color:var(--sun);color:var(--navy)}
+
+/* ---------- hero ---------- */
+.hero{position:relative;background:var(--navy);color:#fff;overflow:hidden}
+.hero .bg{position:absolute;inset:0;background:url(img/i2s01_hero.jpg) center/cover}
+.hero .bg::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(28,18,78,.97) 0%,rgba(28,18,78,.87) 45%,rgba(28,18,78,.28) 100%)}
+.hero .wrap{position:relative;padding-block:44px 40px}
+.kick{font-family:Nunito;font-weight:900;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--sun)}
+.hero h1{font-size:clamp(40px,6.5vw,72px);font-weight:900;margin:8px 0 10px;max-width:16ch}
+.hero h1 span{color:var(--lvl);text-shadow:0 0 0 transparent}
+.hero p.obj{max-width:56ch;font-size:18px;opacity:.94}
+.pills{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.pill{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.28);border-radius:99px;padding:5px 13px;font-size:14px;font-weight:700}
+.pill.sun{background:var(--sun);border-color:var(--sun);color:var(--navy)}
+.coach{display:inline-flex;align-items:center;gap:12px;margin-top:20px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);border-radius:99px;padding:6px 18px 6px 6px}
+.coach .cav{width:44px;height:44px;border-radius:50%;background:var(--lvl);display:grid;place-items:center;font-family:Nunito;font-weight:900;font-size:16px;letter-spacing:.02em}
+.coach b{display:block;font-family:Nunito;font-weight:900;font-size:17px;line-height:1.1}
+.coach small{font-size:13px;color:var(--sun);font-weight:700;letter-spacing:.04em}
+
+/* ---------- sticky nav ---------- */
+.nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:40;background:rgba(244,247,255,.96);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.nav .wrap{padding-block:10px 8px}
+.prog{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+.bar{flex:1;height:10px;background:#E4E9F9;border-radius:99px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--lvl),var(--sun));border-radius:99px;transition:width .4s}
+.xp{font-family:Nunito;font-weight:900;font-size:15px;color:var(--lvl-d);white-space:nowrap}
+.clock{font-family:Nunito;font-weight:900;font-size:15px;background:var(--navy);color:#fff;border-radius:99px;padding:5px 12px;font-variant-numeric:tabular-nums}
+.steps{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}
+.steps::-webkit-scrollbar{display:none}
+.steps a{flex:1 0 auto;text-decoration:none;color:var(--mut);background:#EAF0FB;border-radius:10px;padding:8px 12px;font-weight:700;font-size:14px;white-space:nowrap;text-align:center;border:1.5px solid transparent}
+.steps a b{font-family:Nunito;margin-right:4px}
+.steps a.on{background:var(--c,var(--lvl));color:#fff}
+.steps a.done{border-color:var(--ok);color:var(--ok)}
+.steps a.done.on{color:#fff}
+
+/* ---------- sections ---------- */
+main{padding-block:26px 80px}
+.sec{background:var(--paper);border-radius:24px;box-shadow:var(--sh);margin-bottom:26px;overflow:hidden;border-top:8px solid var(--c)}
+.shead{display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between;padding:22px 26px 6px}
+.snum{display:flex;align-items:center;gap:14px}
+.snum .n{width:54px;height:54px;border-radius:16px;background:var(--c);color:#fff;display:grid;place-items:center;font-family:Nunito;font-weight:900;font-size:22px;flex:none}
+.snum h2{font-size:clamp(26px,3.4vw,36px);font-weight:900}
+.snum .sub{font-size:14px;color:var(--mut);font-weight:500}
+.meta{display:flex;gap:8px;flex-wrap:wrap}
+.chip{border-radius:99px;padding:5px 12px;font-size:13px;font-weight:700;background:var(--ct);color:var(--ink)}
+.chip.dark{background:var(--navy);color:#fff}
+.sbody{padding:14px 26px 28px;display:grid;gap:22px}
+.block{display:grid;gap:12px}
+.bt{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.bt h3{font-size:22px;font-weight:900}
+.bt .tag{font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--c)}
+.hint{color:var(--mut);font-size:15px}
+.card{background:var(--paper);border:1.5px solid var(--line);border-radius:var(--r);padding:18px}
+.tint{background:var(--ct);border-color:transparent}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+@media (max-width:820px){.g2,.g3{grid-template-columns:1fr}}
+.btn{border-radius:99px;padding:10px 18px;font-weight:700;font-size:15px;background:var(--paper);border:1.5px solid var(--line)}
+.btn.main{background:var(--c,var(--lvl));border-color:var(--c,var(--lvl));color:#fff}
+.btn.dark{background:var(--navy);border-color:var(--navy);color:#fff}
+.btn.sm{padding:6px 12px;font-size:14px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.say{width:40px;height:40px;border-radius:50%;background:var(--c,var(--lvl));color:#fff;display:inline-grid;place-items:center;flex:none;font-size:16px}
+.say svg{width:18px;height:18px;fill:#fff}
+
+/* teacher notes */
+.tn{border-radius:var(--r);background:#FFFBEA;border:1.5px dashed #E9C46A}
+.tn summary{list-style:none;padding:12px 16px;font-weight:800;font-family:Nunito;cursor:pointer;display:flex;justify-content:space-between;color:#7A5A00}
+.tn summary::-webkit-details-marker{display:none}
+.tn summary::after{content:"＋";font-weight:900}
+.tn[open] summary::after{content:"－"}
+.tn .layers{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;padding:0 16px 16px}
+@media (max-width:820px){.tn .layers{grid-template-columns:1fr}}
+.tn .ly{background:#fff;border-radius:12px;padding:12px 14px;font-size:15px}
+.tn .ly h4{font-size:13px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px}
+.tn .ly:nth-child(1) h4{color:var(--grm)} .tn .ly:nth-child(2) h4{color:var(--lvl-d)} .tn .ly:nth-child(3) h4{color:var(--teal)}
+.tn ul{padding-left:18px} .tn li{margin-bottom:4px}
+body.student .tn, body.student .key{display:none!important}
+
+/* ---------- §1 warm-up ---------- */
+.scene{display:grid;grid-template-columns:1.1fr 1fr;border-radius:var(--r);overflow:hidden;background:var(--navy);color:#fff}
+@media (max-width:820px){.scene{grid-template-columns:1fr}}
+.scene img{height:100%;min-height:260px;object-fit:cover}
+.scene .txt{padding:26px;display:grid;gap:12px;align-content:center}
+.bubble{background:#fff;color:var(--ink);border-radius:18px 18px 18px 4px;padding:12px 16px;font-size:20px;font-weight:700;max-width:28ch;position:relative}
+.bubble.me{background:var(--lvl);color:#fff;border-radius:18px 18px 4px 18px;justify-self:end}
+.poll{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+@media (max-width:900px){.poll{grid-template-columns:repeat(3,1fr)}}
+@media (max-width:520px){.poll{grid-template-columns:repeat(2,1fr)}}
+.pc{border-radius:var(--r);overflow:hidden;background:var(--paper);border:2px solid var(--line);display:grid;transition:transform .15s,border-color .15s}
+.pc .em{aspect-ratio:4/3;display:grid;place-items:center;font-size:40px;background:var(--pc-bg,var(--ct))}
+.pc .pb{padding:10px 12px;display:grid;gap:8px}
+.pc .nm{font-family:Nunito;font-weight:900;font-size:16px;line-height:1.15;min-height:2.3em}
+.pc .vt{display:flex;align-items:center;justify-content:space-between}
+.pc .vt button{width:34px;height:34px;border-radius:50%;background:var(--ct);font-weight:900;font-size:18px}
+.pc .vt output{font-family:Nunito;font-weight:900;font-size:22px;font-variant-numeric:tabular-nums}
+.pc .pbar{height:8px;border-radius:99px;background:#EDF1FB;overflow:hidden}
+.pc .pbar i{display:block;height:100%;width:0;background:var(--c);transition:width .3s}
+.pc.win{border-color:var(--c);transform:translateY(-3px)}
+.result{font-family:Nunito;font-weight:900;font-size:20px}
+.fq{display:grid;gap:8px}
+.fq div{background:var(--ct);border-radius:12px;padding:10px 14px;font-weight:700}
+.fq div span{color:var(--mut);font-weight:500}
+
+/* ---------- §2 vocab ---------- */
+.flips{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+@media (max-width:900px){.flips{grid-template-columns:repeat(3,1fr)}}
+@media (max-width:520px){.flips{grid-template-columns:repeat(2,1fr)}}
+.flip{perspective:900px;height:170px}
+.flip .in{position:relative;width:100%;height:100%;transition:transform .5s;transform-style:preserve-3d}
+.flip.on .in{transform:rotateY(180deg)}
+.flip .f,.flip .b{position:absolute;inset:0;border-radius:var(--r);backface-visibility:hidden;padding:14px;display:grid;align-content:space-between}
+.flip .f{background:var(--fc);color:#fff}
+.flip .b{background:#fff;border:2px solid var(--fc);transform:rotateY(180deg)}
+.flip .num{font-family:Nunito;font-weight:900;font-size:13px;opacity:.8}
+.flip .w{font-family:Nunito;font-weight:900;font-size:19px;line-height:1.15}
+.flip .es{font-weight:700;color:var(--mut);font-size:14px}
+.flip .ex{font-size:14px}
+.flip .fb{display:flex;justify-content:space-between;align-items:end}
+.flip .fb .say{background:rgba(255,255,255,.25)}
+.flip .tap{font-size:12px;font-weight:700;opacity:.85}
+.flip .seen{position:absolute;top:10px;right:10px;background:var(--ok);color:#fff;border-radius:99px;font-size:11px;font-weight:800;padding:2px 8px}
+.match{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.match .col{display:grid;gap:10px}
+.mi{border:2px solid var(--line);background:#fff;border-radius:14px;padding:12px 14px;font-weight:700;text-align:left;transition:.15s}
+.mi.sel{border-color:var(--c);background:var(--ct)}
+.mi.ok{border-color:var(--ok);background:var(--ok-t);color:var(--ok);cursor:default}
+.mi.bad{border-color:var(--err);background:var(--err-t);animation:shake .3s}
+@keyframes shake{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+.board{display:flex;flex-wrap:wrap;gap:10px}
+.dw{border-radius:12px;padding:10px 14px;font-family:Nunito;font-weight:900;font-size:17px;background:var(--navy);color:#fff}
+.dw[aria-pressed="true"]{background:#E4E9F9;color:#9FA9C2;text-decoration:line-through}
+.timer{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.timer output{font-family:Nunito;font-weight:900;font-size:34px;font-variant-numeric:tabular-nums;min-width:4.5ch}
+.timer.end output{color:var(--err)}
+.closeout{background:var(--navy);color:#fff;border-radius:14px;padding:12px 16px;font-family:Nunito;font-weight:900;font-size:19px}
+.stat{font-family:Nunito;font-weight:900}
+.stat b{color:var(--c);font-size:26px}
+
+/* ---------- §3 grammar ---------- */
+.disc{display:grid;grid-template-columns:1fr 1.2fr;gap:0;border-radius:var(--r);overflow:hidden;border:1.5px solid var(--line)}
+@media (max-width:820px){.disc{grid-template-columns:1fr}}
+.disc img{height:100%;min-height:240px;object-fit:cover}
+.disc .chat{padding:20px;display:grid;gap:10px;align-content:center;background:var(--grm-t)}
+.disc .chat p{background:#fff;border-radius:14px;padding:10px 14px;font-size:18px;font-weight:500;max-width:34ch}
+.disc .chat p:nth-child(even){justify-self:end;background:var(--grm);color:#fff}
+mark.hl{background:transparent;color:inherit;border-radius:4px;transition:.2s}
+.show-hl mark.hl{background:var(--sun);color:var(--ink);padding:0 3px;font-weight:800}
+.tool{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media (max-width:820px){.tool{grid-template-columns:1fr}}
+.tool .card h4{font-size:14px;letter-spacing:.08em;text-transform:uppercase;color:var(--grm);margin-bottom:6px}
+.tool .big{font-family:Nunito;font-weight:900;font-size:24px}
+.tool .big em{font-style:normal;color:var(--grm)}
+.forms{border-radius:var(--r);overflow:hidden;border:1.5px solid var(--line)}
+.forms table{width:100%;border-collapse:collapse;font-size:16px}
+.forms th{background:var(--grm);color:#fff;font-family:Nunito;text-align:left;padding:10px 14px}
+.forms td{padding:10px 14px;border-top:1px solid var(--line);background:#fff}
+.forms td:first-child{font-family:Nunito;font-weight:900;font-size:22px;color:var(--grm);width:56px;text-align:center}
+.forms b{color:var(--grm)}
+.es-box{background:#fff;border:2px dashed var(--grm);border-radius:var(--r);padding:16px 18px;display:grid;gap:8px}
+.answerbox{background:var(--navy);color:#fff;border-radius:var(--r);padding:16px 18px;font-family:Nunito;font-weight:900;font-size:19px;display:flex;align-items:center;gap:12px}
+.answerbox .tagi{background:var(--sun);color:var(--navy);border-radius:8px;padding:3px 10px;font-size:12px;letter-spacing:.06em}
+.mc{display:grid;gap:12px}
+.mcq{background:#fff;border:1.5px solid var(--line);border-radius:14px;padding:14px 16px;display:grid;gap:10px}
+.mcq .q{font-weight:700;font-size:18px}
+.mcq .q .n{font-family:Nunito;font-weight:900;color:var(--c);margin-right:6px}
+.opts{display:flex;gap:8px;flex-wrap:wrap}
+.opt{border:2px solid var(--line);border-radius:99px;padding:7px 16px;font-weight:700;background:#fff}
+.opt:hover{border-color:var(--c)}
+.opt.ok{background:var(--ok);border-color:var(--ok);color:#fff}
+.opt.no{background:var(--err-t);border-color:var(--err);color:var(--err)}
+.mcq .fb{font-size:15px;font-weight:700}
+.mcq .fb.ok{color:var(--ok)} .mcq .fb.no{color:var(--err)}
+.score{font-family:Nunito;font-weight:900;font-size:18px}
+.builder .dst,.builder .src{display:flex;flex-wrap:wrap;gap:8px;min-height:56px;padding:10px;border-radius:14px}
+.builder .dst{border:2.5px dashed var(--c);background:var(--ct)}
+.wchip{background:#fff;border:2px solid var(--line);border-radius:12px;padding:8px 14px;font-family:Nunito;font-weight:900;font-size:18px;box-shadow:0 3px 0 var(--line)}
+.dst .wchip{border-color:var(--c);box-shadow:0 3px 0 var(--c)}
+.errs{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media (max-width:820px){.errs{grid-template-columns:1fr}}
+.err{border-radius:14px;padding:14px;background:#fff;border:1.5px solid var(--line);display:grid;gap:4px}
+.err s{color:var(--err);font-weight:700}
+.err b{color:var(--ok)}
+
+/* ---------- §4 reading ---------- */
+.phone{max-width:420px;margin:0 auto;background:#fff;border-radius:34px;border:10px solid var(--navy);box-shadow:var(--sh-lg);overflow:hidden}
+.phone .ph{background:var(--teal);color:#fff;padding:14px 16px;display:flex;align-items:center;gap:10px}
+.phone .ph b{font-family:Nunito;font-weight:900}
+.phone .ph small{display:block;opacity:.9;font-size:12px}
+.phone .ms{background:#EFE9E1;padding:14px 12px;display:grid;gap:10px}
+.msg{display:grid;grid-template-columns:36px 1fr;gap:8px;align-items:start}
+.msg img,.msg .av{width:36px;height:36px;border-radius:50%;object-fit:cover}
+.msg .av{color:#fff;display:grid;place-items:center;font-family:Nunito;font-weight:900}
+.msg .bb{background:#fff;border-radius:4px 14px 14px 14px;padding:8px 12px;font-size:16px}
+.msg .bb .who{font-family:Nunito;font-weight:900;font-size:13px;color:var(--teal)}
+
+/* ---------- §5 listening ---------- */
+.player{display:grid;grid-template-columns:260px 1fr;gap:0;border-radius:var(--r);overflow:hidden;background:var(--navy);color:#fff}
+@media (max-width:820px){.player{grid-template-columns:1fr}}
+.player img{height:100%;min-height:200px;object-fit:cover}
+.player .pp{padding:22px;display:grid;gap:12px;align-content:center}
+.predict{display:grid;gap:10px}
+.pbet{background:#fff;border:1.5px solid var(--line);border-radius:14px;padding:12px 14px;display:grid;gap:8px}
+.pbet .st{font-weight:700;font-size:16px}
+.pbet .row2{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.tf{display:flex;gap:6px}
+.tf button{border:2px solid var(--line);border-radius:99px;padding:5px 14px;font-weight:800;font-size:13px}
+.tf button[aria-pressed="true"].t{background:var(--ok);border-color:var(--ok);color:#fff}
+.tf button[aria-pressed="true"].f{background:var(--err);border-color:var(--err);color:#fff}
+.pts{display:flex;align-items:center;gap:8px}
+.pts button{width:28px;height:28px;border-radius:50%;background:var(--pink-t);color:var(--pink);font-weight:900}
+.pts output{font-family:Nunito;font-weight:900;min-width:2ch;text-align:center}
+.pbet.rev.right{border-color:var(--ok);background:var(--ok-t)}
+.pbet.rev.wrong{border-color:var(--err);background:var(--err-t)}
+.play{background:var(--pink);color:#fff;border-radius:99px;padding:12px 22px;font-family:Nunito;font-weight:900;font-size:18px;display:inline-flex;gap:10px;align-items:center}
+.script{background:#fff;border-radius:var(--r);border:1.5px solid var(--line);padding:16px 18px;font-size:17px;display:grid;gap:6px}
+.script p b{color:var(--pink);font-family:Nunito}
+.rec{display:inline-block;background:var(--navy);color:#fff;font-size:11px;font-weight:800;letter-spacing:.1em;padding:3px 8px;border-radius:4px}
+.pron{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media (max-width:820px){.pron{grid-template-columns:1fr 1fr}}
+.pr{background:var(--pink-t);border-radius:14px;padding:14px;display:grid;gap:8px;justify-items:start}
+.pr .w{font-family:Nunito;font-weight:900;font-size:21px}
+.pr .ipa{color:var(--mut);font-size:14px}
+
+/* ---------- §6 speaking ---------- */
+.rounds{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media (max-width:820px){.rounds{grid-template-columns:1fr}}
+.rd{border-radius:var(--r);overflow:hidden;border:2.5px solid var(--line);background:#fff;text-align:left;display:grid}
+.rd img{aspect-ratio:16/10;object-fit:cover;width:100%}
+.rd .initcard{aspect-ratio:16/10;width:100%;display:grid;place-items:center;font-family:Nunito;font-weight:900;font-size:44px;color:#fff}
+.rd .rb{padding:14px;display:grid;gap:6px}
+.rd h4{font-size:20px;font-weight:900}
+.rd .who{font-size:14px;font-weight:700;color:var(--lvl-d)}
+.rd ul{padding-left:18px;font-size:15px}
+.rd[aria-pressed="true"]{border-color:var(--c);box-shadow:0 0 0 4px var(--ct)}
+.deck{display:grid;grid-template-columns:1fr 1.3fr;border-radius:var(--r);overflow:hidden;background:var(--c);color:#fff}
+@media (max-width:820px){.deck{grid-template-columns:1fr}}
+.deck img{height:100%;min-height:260px;object-fit:cover}
+.deck .dq{padding:26px;display:grid;gap:14px;align-content:center}
+.deck .qn{font-family:Nunito;font-weight:900;letter-spacing:.12em;font-size:13px;opacity:.9}
+.deck .qt{font-family:Nunito;font-weight:900;font-size:clamp(26px,3.4vw,40px);line-height:1.1}
+.deck .fu{display:grid;gap:6px;font-size:18px;font-weight:500}
+.deck .fu span::before{content:"→ ";font-weight:900;color:var(--sun)}
+.deck .row .btn{background:rgba(255,255,255,.18);border-color:rgba(255,255,255,.35);color:#fff}
+.dots{display:flex;gap:6px}
+.dots button{width:11px;height:11px;border-radius:50%;background:rgba(255,255,255,.35)}
+.dots button[aria-current="true"]{background:#fff}
+.help{display:flex;flex-wrap:wrap;gap:8px}
+.help span{background:var(--navy);color:#fff;border-radius:99px;padding:6px 14px;font-weight:700;font-size:15px}
+
+/* ---------- §7 mission ---------- */
+.mission{position:relative;border-radius:var(--r);overflow:hidden;color:#fff;background:var(--navy)}
+.mission img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.32}
+.mission .mt{position:relative;padding:28px;display:grid;gap:10px;max-width:70ch}
+.mission h3{font-size:30px;font-weight:900}
+.guest{background:#fff;border-radius:var(--r);border:1.5px solid var(--line);overflow:hidden;display:grid}
+.guest .gh{display:flex;gap:12px;align-items:center;padding:14px;background:var(--ct)}
+.guest .gh img{width:72px;height:72px;border-radius:50%;object-fit:cover;border:3px solid #fff}
+.guest .gh .initcircle{width:72px;height:72px;border-radius:50%;display:grid;place-items:center;font-family:Nunito;font-weight:900;color:#fff;border:3px solid #fff;flex:none;font-size:26px}
+.guest h4{font-size:20px;font-weight:900}
+.guest .gh small{color:var(--mut);font-weight:700}
+.guest .line{padding:10px 14px 0;font-style:italic;color:var(--mut);font-size:15px}
+.moves{display:grid;gap:8px;padding:14px}
+.mv{display:flex;align-items:center;gap:10px;border:1.5px solid var(--line);border-radius:12px;padding:9px 12px;font-weight:700;font-size:15px;text-align:left;background:#fff}
+.mv i{width:22px;height:22px;border-radius:7px;border:2px solid var(--line);display:grid;place-items:center;flex:none;font-style:normal;color:#fff;font-size:13px}
+.mv[aria-pressed="true"]{background:var(--ok-t);border-color:var(--ok)}
+.mv[aria-pressed="true"] i{background:var(--ok);border-color:var(--ok)}
+
+/* ---------- §8 wrap ---------- */
+.sur{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media (max-width:900px){.sur{grid-template-columns:1fr 1fr}}
+@media (max-width:520px){.sur{grid-template-columns:1fr}}
+.sur .card h4{font-size:18px;font-weight:900;margin-bottom:6px}
+.sur .card:nth-child(1){border-top:5px solid var(--ok)} .sur .card:nth-child(2){border-top:5px solid var(--sun)} .sur .card:nth-child(3){border-top:5px solid var(--err)} .sur .card:nth-child(4){border-top:5px solid var(--grm)}
+textarea{width:100%;min-height:92px;border:1.5px solid var(--line);border-radius:12px;padding:10px 12px;font:inherit;font-size:15px;resize:vertical;background:#fff;color:var(--ink)}
+.selfev{display:flex;flex-wrap:wrap;gap:8px}
+.selfev button{border:2px solid var(--line);border-radius:99px;padding:8px 14px;font-weight:700;background:#fff}
+.selfev button[aria-pressed="true"]{background:var(--navy);border-color:var(--navy);color:#fff}
+.badge{display:flex;gap:18px;align-items:center;background:linear-gradient(120deg,var(--navy),var(--navy2));color:#fff;border-radius:var(--r);padding:22px}
+.badge .medal{width:84px;height:84px;border-radius:50%;background:var(--sun);color:var(--navy);display:grid;place-items:center;font-family:Nunito;font-weight:900;font-size:28px;flex:none;border:6px solid rgba(255,255,255,.3)}
+footer{color:var(--mut);font-size:13px;text-align:center;padding:10px 16px 40px}
+/* ---------- Intermedio 2 · additions ---------- */
+.sec[data-dur]{scroll-margin-top:150px}
+.card-session{border-radius:var(--r);background:#FFFBEA;border:1.5px dashed #E9C46A;margin-bottom:22px}
+.card-session summary{list-style:none;padding:12px 16px;font-weight:800;font-family:Nunito;cursor:pointer;display:flex;justify-content:space-between;color:#7A5A00}
+.card-session summary::-webkit-details-marker{display:none}
+.card-session summary::after{content:"＋";font-weight:900}
+.card-session[open] summary::after{content:"－"}
+.card-session .cs{padding:0 16px 16px;display:grid;gap:12px;font-size:15px}
+.card-session table{width:100%;border-collapse:collapse;font-size:14px;background:#fff;border-radius:12px;overflow:hidden}
+.card-session th,.card-session td{padding:7px 10px;border-top:1px solid var(--line);text-align:left;vertical-align:top}
+.card-session th{background:var(--navy);color:#fff;font-family:Nunito}
+.card-session .tot{font-family:Nunito;font-weight:900;font-size:17px}
+body.student .card-session{display:none!important}
+.anote{font-size:13px;font-weight:700;color:var(--mut)}
+.anote.warn{color:#9A5B00}
+.hero .bg{background-position:center 30%}
+
+:root{--blue:#1D6FD6;--blue-t:#E1EEFF;--tk:#F2A900;--tk-t:#FFF1C9;--tk-d:#7A5200;--rs:#C71F5E;--rs-t:#FBE3EC}
+.hearbtn{display:inline-flex;align-items:center;gap:8px;border:1.5px solid var(--line);border-radius:99px;padding:5px 12px;font-weight:700;font-size:14px;background:#fff}
+.hearbtn svg{width:16px;height:16px;fill:currentColor}
+.hook{background:var(--navy);color:#fff;border-radius:var(--r);padding:16px 20px;display:grid;gap:6px}
+.hook b{color:var(--sun);font-family:Nunito;letter-spacing:.08em;font-size:12px}
+.hook p{font-size:19px;font-weight:700}
+.rec{display:inline-block;background:var(--navy);color:#fff;font-size:11px;font-weight:800;letter-spacing:.1em;padding:3px 8px;border-radius:4px}
+
+/* ===== S17 · What Went Wrong? · Control Room (s17- prefix) ===== */
+:root{--s17-g:#2F9E44;--s17-gt:#E3F6E8;--s17-a:#F59F00;--s17-at:#FFF1CC;--s17-r:#D9363E;--s17-rt:#FDE6E7;--s17-ink:#241B12;--blk3:#B8860B;--blk3t:#FFF3D1}
+.hero .bg{background-image:url(img/i2s01_closed.jpg);background-position:center 38%}
+.hero .bg::after{background:linear-gradient(90deg,rgba(40,16,24,.96) 0%,rgba(40,18,40,.86) 45%,rgba(28,18,78,.25) 100%)}
+.s17-lights{display:flex;gap:10px;margin-top:18px}
+.s17-lights i{width:26px;height:26px;border-radius:50%;display:block;box-shadow:0 0 0 4px rgba(255,255,255,.18),0 0 18px currentColor}
+.s17-lights i:nth-child(1){background:var(--s17-r);color:var(--s17-r)}.s17-lights i:nth-child(2){background:var(--s17-a);color:var(--s17-a)}.s17-lights i:nth-child(3){background:var(--s17-g);color:var(--s17-g)}
+.s17-today{margin-top:18px;max-width:640px;background:rgba(255,255,255,.96);color:var(--ink);border-radius:var(--r);padding:12px 16px;border-left:8px solid var(--s17-r);display:grid;gap:2px}
+.s17-today b{font-family:Nunito;font-weight:900;font-size:12px;letter-spacing:.12em;color:var(--lvl-d)}
+.s17-today p{font-size:16px;font-weight:700}
+.s17-rescue{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.s17-rescue b{font-family:Nunito;font-size:12px;letter-spacing:.1em;color:var(--mut)}
+.s17-rescue span{background:var(--navy);color:#fff;border-radius:99px;padding:6px 14px;font-weight:700;font-size:15px}
+.s17-score{display:inline-flex;gap:8px;align-items:baseline;font-family:Nunito;font-weight:900;background:var(--navy);color:#fff;border-radius:99px;padding:5px 14px}
+.s17-score b{color:var(--sun);font-size:22px;font-variant-numeric:tabular-nums}
+.s17-steps{display:flex;flex-wrap:wrap;gap:8px}
+.s17-steps span{background:var(--ct);border-radius:99px;padding:4px 12px;font-weight:800;font-size:13px}
+.s17-fb{font-size:15px;font-weight:700;background:var(--sun-t);border-radius:12px;padding:8px 12px;color:var(--ink)}
+.s17-chk{display:flex;flex-wrap:wrap;gap:8px}
+/* §1 control room */
+.s17-board{border-radius:var(--r);background:linear-gradient(135deg,#1B1B2F,#2B2145);color:#fff;padding:18px;display:grid;gap:14px}
+.s17-lamps{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media (max-width:600px){.s17-lamps{grid-template-columns:repeat(2,1fr)}}
+.s17-lamp{background:rgba(255,255,255,.07);border:2px solid rgba(255,255,255,.18);border-radius:16px;padding:12px;display:grid;justify-items:center;gap:8px;color:#fff;text-align:center}
+.s17-lamp .bulb{width:46px;height:46px;border-radius:50%;background:var(--s17-g);box-shadow:0 0 0 5px rgba(255,255,255,.12),0 0 20px var(--s17-g);transition:.2s}
+.s17-lamp .nm{font-family:Nunito;font-weight:900;font-size:17px}
+.s17-lamp.red .bulb{background:var(--s17-r);box-shadow:0 0 0 5px rgba(255,255,255,.12),0 0 24px var(--s17-r)}
+.s17-lamp.red{border-color:var(--s17-r)}
+.s17-lamp.logged .bulb{background:var(--s17-a);box-shadow:0 0 0 5px rgba(255,255,255,.12),0 0 24px var(--s17-a)}
+.s17-lamp.logged{border-color:var(--s17-a)}
+.s17-lamp.logged .nm::after{content:" ✓"}
+.s17-say{border-radius:14px;background:rgba(255,255,255,.1);padding:14px 16px;display:grid;gap:8px;min-height:90px}
+.s17-say .tl{font-family:Nunito;font-weight:900;font-size:12px;letter-spacing:.12em;color:var(--sun)}
+.s17-say .md{font-family:Nunito;font-weight:900;font-size:21px}
+.s17-say .ask{font-size:17px;opacity:.95}
+.s17-say .s17-rescue span{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.35)}
+.s17-board .btn{background:rgba(255,255,255,.16);border-color:rgba(255,255,255,.4);color:#fff}
+.s17-board .btn.sun{background:var(--sun);border-color:var(--sun);color:var(--navy)}
+/* §2 word hunt */
+.s17-cards{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media (max-width:860px){.s17-cards{grid-template-columns:1fr}}
+.s17-card{border-radius:var(--r);border:2.5px solid var(--line);background:#fff;padding:14px;display:grid;gap:10px}
+.s17-card h4{font-family:Nunito;font-weight:900;font-size:20px;display:flex;justify-content:space-between;gap:8px;align-items:center}
+.s17-card h4 small{font-family:"DM Sans";font-weight:700;font-size:13px;color:var(--mut)}
+.s17-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.s17-tile{min-height:78px;border-radius:14px;border:2px solid var(--line);background:var(--teal-t);font-family:Nunito;font-weight:900;font-size:16px;line-height:1.15;padding:8px;display:grid;place-items:center;text-align:center;position:relative;transition:.15s}
+.s17-tile.new{border-color:var(--teal)}
+.s17-tile[aria-pressed="true"]{background:var(--teal);color:#fff;border-color:var(--teal)}
+.s17-tile[aria-pressed="true"]::after{content:"✓";position:absolute;top:4px;right:8px;font-size:15px}
+.s17-tile.inline{background:var(--sun);color:var(--navy);border-color:var(--sun)}
+.s17-prompt{border-radius:var(--r);background:linear-gradient(135deg,#0A7F75,#064E48);color:#fff;padding:16px 18px;display:grid;gap:10px}
+.s17-prompt .lab{font-family:Nunito;font-weight:900;font-size:12px;letter-spacing:.12em;color:var(--sun)}
+.s17-prompt .q{font-family:Nunito;font-weight:900;font-size:22px;line-height:1.2}
+.s17-prompt .btn{background:rgba(255,255,255,.16);border-color:rgba(255,255,255,.4);color:#fff}
+.s17-models{display:grid;gap:8px}
+.s17-models .row{background:var(--teal-t);border-radius:12px;padding:8px 12px;justify-content:space-between;flex-wrap:nowrap}
+.s17-models .row span{font-weight:700;font-size:16px}
+/* §3 grammar */
+.s17-tools{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media (max-width:860px){.s17-tools{grid-template-columns:1fr}}
+.s17-tool{background:#fff;border:2px solid var(--line);border-top:8px solid var(--grm);border-radius:var(--r);padding:12px 14px;display:grid;gap:6px;align-content:start}
+.s17-tool h4{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--grm)}
+.s17-tool .big{font-family:Nunito;font-weight:900;font-size:19px;line-height:1.25}
+.s17-tool .big em{font-style:normal;color:var(--grm)}
+.s17-tool .ex{font-size:14px;color:var(--mut)}
+.s17-tool .btn[aria-pressed="true"]{background:var(--ok);border-color:var(--ok);color:#fff}
+.s17-dc{display:grid;gap:14px}
+.s17-sc{border:2px solid var(--line);border-radius:var(--r);padding:14px;display:grid;gap:10px;background:#fff}
+.s17-sc .ask{font-weight:800;font-size:18px}
+.s17-sc .ask i{font-style:normal;background:var(--grm-t);color:var(--grm);border-radius:99px;font-size:12px;padding:2px 10px;margin-right:6px;font-weight:900}
+.s17-msg{border:2px solid var(--line);border-radius:18px 18px 18px 4px;padding:10px 14px;background:#F6F8FF;text-align:left;font-size:17px;display:flex;gap:10px;align-items:flex-start}
+.s17-msg b{font-family:Nunito;font-weight:900;width:28px;height:28px;border-radius:50%;background:var(--grm-t);color:var(--grm);display:grid;place-items:center;flex:none;font-size:15px}
+.s17-msg[aria-pressed="true"]{border-color:var(--grm);background:var(--grm-t)}
+.s17-msg[aria-pressed="true"] b{background:var(--grm);color:#fff}
+.s17-msg.best{border-color:var(--ok);background:var(--ok-t)}
+.s17-fix{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media (max-width:860px){.s17-fix{grid-template-columns:1fr}}
+.s17-fx{border-radius:var(--r);border:2px dashed var(--grm);background:#fff;padding:12px 14px;display:grid;gap:8px;align-content:start}
+.s17-fx small{font-family:Nunito;font-weight:900;letter-spacing:.1em;color:var(--mut);font-size:11px}
+.s17-fx .t{font-size:18px;font-weight:700}
+.s17-fx.fixed{border-style:solid;border-color:var(--ok);background:var(--ok-t)}
+.s17-fx.fixed .t{text-decoration:line-through;color:var(--mut)}
+.s17-fx .ok2{font-weight:800;color:var(--ok);font-size:17px}
+.s17-liar{border-radius:var(--r);background:linear-gradient(135deg,#3A1F2B,#1B1B2F);color:#fff;padding:18px;display:grid;gap:14px}
+.s17-liar h4{font-family:Nunito;font-weight:900;font-size:24px}
+.s17-slots{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media (max-width:720px){.s17-slots{grid-template-columns:1fr}}
+.s17-slot{background:rgba(255,255,255,.08);border:2px solid rgba(255,255,255,.2);border-radius:16px;padding:12px;display:grid;gap:8px;text-align:left;color:#fff}
+.s17-slot .num{width:38px;height:38px;border-radius:50%;background:var(--sun);color:var(--navy);font-family:Nunito;font-weight:900;font-size:20px;display:grid;place-items:center}
+.s17-slot .pt{font-family:Nunito;font-weight:900;font-size:18px}
+.s17-slot .hn{font-size:14px;opacity:.88}
+.s17-slot.lie{border-color:var(--s17-r);background:rgba(217,54,62,.28)}
+.s17-slot.true{border-color:var(--s17-g)}
+.s17-liar .btn{background:rgba(255,255,255,.16);border-color:rgba(255,255,255,.4);color:#fff}
+.s17-liar .btn.sun{background:var(--sun);border-color:var(--sun);color:var(--navy)}
+.s17-liar .btn[aria-pressed="true"]{background:var(--ok);border-color:var(--ok)}
+.s17-qm{background:#fff;color:var(--ink);border-radius:14px;padding:14px 16px;font-family:Nunito;font-weight:900;font-size:22px;min-height:68px}
+.s17-res{border-radius:14px;background:rgba(255,255,255,.14);padding:12px 14px;font-family:Nunito;font-weight:900;font-size:19px}
+/* §4 reading */
+.s17-reads{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (max-width:860px){.s17-reads{grid-template-columns:1fr}}
+.s17-rd{border-radius:var(--r);overflow:hidden;border:2px solid var(--line);background:#fff;display:grid;align-content:start}
+.s17-rd .ph2{height:120px;background-size:cover}
+.s17-rd .rh{display:flex;gap:10px;align-items:center;padding:10px 14px;background:var(--blue);color:#fff;font-family:Nunito;font-weight:900}
+.s17-rd .rh i{font-style:normal;width:30px;height:30px;border-radius:50%;background:#fff;color:var(--blue);display:grid;place-items:center}
+.s17-rd p.tx{padding:14px;font-size:18px}
+.s17-hl mark.cn{background:var(--sun);font-weight:800;border-radius:4px;padding:0 3px;color:var(--ink)}
+.s17-rd mark{background:transparent;color:inherit}
+.s17-rd .pickrow{padding:0 14px 14px;display:grid;gap:8px}
+.s17-pk{border:2px solid var(--line);border-radius:12px;padding:8px 12px;text-align:left;font-weight:700;background:#fff}
+.s17-pk[aria-pressed="true"]{border-color:var(--blue);background:var(--blue-t)}
+/* §5 listening */
+.s17-duo{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (max-width:820px){.s17-duo{grid-template-columns:1fr}}
+.s17-sp{border-radius:var(--r);overflow:hidden;background:var(--navy);color:#fff;display:grid}
+.s17-sp .vh{display:flex;gap:12px;align-items:center;padding:12px 16px;background:var(--vc)}
+.s17-sp .vh .ic{width:46px;height:46px;border-radius:50%;background:#fff;color:var(--vc);display:grid;place-items:center;font-family:Nunito;font-weight:900;font-size:20px;flex:none}
+.s17-sp .vh small{display:block;opacity:.92;font-size:13px}
+.s17-sp .vb{padding:12px 14px;display:grid;gap:8px}
+.s17-turn{display:flex;gap:10px;align-items:center;background:rgba(255,255,255,.1);border-radius:12px;padding:6px 10px}
+.s17-turn .who{font-family:Nunito;font-weight:900;min-width:60px;color:var(--sun)}
+.s17-turn .hearbtn{margin-left:auto;color:var(--ink)}
+.s17-scale{border-radius:var(--r);background:linear-gradient(180deg,#FFF7DB,#fff);border:2px solid #E9C46A;padding:14px;display:grid;gap:12px}
+.s17-beamwrap{position:relative;height:250px;overflow:hidden}
+.s17-beam{position:absolute;left:14%;right:14%;top:50px;height:10px;border-radius:99px;background:var(--navy);transform:rotate(var(--t,0deg));transform-origin:50% 50%;transition:transform .5s}
+.s17-pan{position:absolute;top:8px;width:120px;text-align:center;font-family:Nunito;font-weight:900;transform:rotate(calc(-1 * var(--t,0deg)));transform-origin:50% 0;transition:transform .5s;padding-top:70px}
+.s17-pan::before{content:"";position:absolute;left:50%;top:0;width:3px;height:70px;background:#7A5A00;margin-left:-1px}
+.s17-pan.l{left:-60px}.s17-pan.r{right:-60px}
+.s17-pan span{display:block;background:var(--c1);color:#fff;border-radius:12px;padding:8px;font-size:18px}
+.s17-pan small{display:block;color:var(--mut);margin-top:2px}
+.s17-post{position:absolute;left:50%;top:52px;width:8px;height:150px;margin-left:-4px;background:#7A5A00;border-radius:4px}
+.s17-quotes{display:grid;gap:8px}
+.s17-q{border:2px solid var(--line);background:#fff;border-radius:12px;padding:8px 12px;text-align:left;font-weight:700;display:flex;gap:10px;align-items:center}
+.s17-q em{font-style:normal;font-family:Nunito;font-weight:900;font-size:12px;letter-spacing:.06em;border-radius:99px;padding:2px 10px;color:#fff;flex:none}
+.s17-q[aria-pressed="true"]{border-color:var(--navy);background:#EFEAFF}
+.s17-decide{display:flex;flex-wrap:wrap;gap:8px}
+.s17-decide button{border:2px solid var(--line);border-radius:99px;padding:8px 16px;font-weight:800;background:#fff}
+.s17-decide button[aria-pressed="true"]{background:var(--pink);border-color:var(--pink);color:#fff}
+.s17-log{border-radius:var(--r);background:#FFF7DB;border:3px solid #E9C46A;padding:14px 18px;display:grid;gap:6px;font-size:17px}
+.s17-log h4{font-family:Nunito;font-weight:900;letter-spacing:.1em;font-size:14px;color:#7A5A00}
+.s17-logrows{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
+.s17-logrows div{background:#fff;border-radius:10px;padding:8px 10px;font-weight:700;font-size:15px}
+.s17-logrows small{display:block;color:var(--mut);font-size:12px;letter-spacing:.06em}
+.s17-diffs{display:grid;gap:10px}
+.s17-diff{border:2px solid var(--line);border-radius:14px;background:#fff;padding:10px 14px;display:grid;gap:6px}
+.s17-diff .a{color:var(--s17-r);font-weight:700}.s17-diff .b{color:var(--ok);font-weight:800}
+.s17-diff .btn[aria-pressed="true"]{background:var(--ok);border-color:var(--ok);color:#fff}
+/* §6 speaking */
+.s17-pics{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media (max-width:760px){.s17-pics{grid-template-columns:1fr}}
+.s17-pic{border-radius:var(--r);overflow:hidden;border:3px solid var(--line);background:#fff;text-align:left;display:grid}
+.s17-pic .im{aspect-ratio:16/10;background-size:cover;background-position:center}
+.s17-pic .pb{padding:10px 12px;display:grid;gap:6px}
+.s17-pic h4{font-family:Nunito;font-weight:900;font-size:19px}
+.s17-pic .wd{display:flex;flex-wrap:wrap;gap:6px}
+.s17-pic .wd span{background:var(--lvl-t);color:var(--lvl-d);border-radius:99px;padding:2px 10px;font-weight:800;font-size:13px}
+.s17-pic[aria-pressed="true"]{border-color:var(--lvl);box-shadow:0 0 0 4px var(--lvl-t)}
+.s17-story{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+@media (max-width:700px){.s17-story{grid-template-columns:1fr 1fr}}
+.s17-story div{border-radius:12px;padding:10px;background:var(--lvl-t);font-weight:800;font-size:14px;text-align:center;border-bottom:5px solid var(--lvl)}
+.s17-story div b{display:block;font-family:Nunito;font-size:18px;color:var(--lvl-d)}
+.s17-story div.tw{background:var(--s17-at);border-color:var(--s17-a)}
+.s17-rtabs{display:flex;flex-wrap:wrap;gap:8px}
+.s17-rtabs button{border:2px solid var(--line);border-radius:99px;padding:7px 14px;font-weight:800;background:#fff}
+.s17-rtabs button[aria-pressed="true"]{background:var(--lvl);border-color:var(--lvl);color:#fff}
+.s17-stage{border-radius:var(--r);background:var(--navy);color:#fff;padding:18px;display:grid;gap:14px}
+.s17-stage h4{font-family:Nunito;font-weight:900;font-size:26px}
+.s17-stage .btn{background:rgba(255,255,255,.16);border-color:rgba(255,255,255,.4);color:#fff}
+.s17-stage .btn.sun{background:var(--sun);border-color:var(--sun);color:var(--navy)}
+.s17-stage .btn[aria-pressed="true"]{background:var(--ok);border-color:var(--ok)}
+.s17-stage .timer output{color:#fff}
+.s17-stage .s17-rescue span{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.35)}
+.s17-stage .mv{color:var(--ink)}
+.s17-twist{background:var(--sun);color:var(--navy);border-radius:14px;padding:12px 16px;font-weight:800;font-size:19px}
+.s17-q2{display:grid;grid-template-columns:1fr 1.3fr;border-radius:var(--r);overflow:hidden;background:var(--c);color:#fff}
+@media (max-width:820px){.s17-q2{grid-template-columns:1fr}}
+.s17-q2 .qi{min-height:220px;background-size:cover;background-position:center}
+.s17-q2 .dq{padding:24px;display:grid;gap:12px;align-content:center}
+.s17-q2 .qn{font-family:Nunito;font-weight:900;letter-spacing:.12em;font-size:13px;opacity:.9}
+.s17-q2 .qt{font-family:Nunito;font-weight:900;font-size:clamp(24px,3.2vw,36px);line-height:1.12}
+.s17-q2 .fu{display:grid;gap:4px;font-size:18px}
+.s17-q2 .fu span::before{content:"→ ";font-weight:900;color:var(--sun)}
+.s17-q2 .btn{background:rgba(255,255,255,.18);border-color:rgba(255,255,255,.35);color:#fff}
+/* §7 mission */
+.s17-mhero{position:relative;border-radius:var(--r);overflow:hidden;color:#fff;background:var(--navy)}
+.s17-mhero .im{position:absolute;inset:0;background-size:cover;background-position:center;opacity:.32}
+.s17-mhero .mt{position:relative;padding:26px;display:grid;gap:10px;max-width:70ch}
+.s17-mhero h3{font-size:30px;font-weight:900}
+.s17-cases{display:grid;gap:14px}
+.s17-case{background:#fff;border:2px solid var(--line);border-radius:var(--r);overflow:hidden;display:grid;position:relative}
+.s17-case .gh{display:flex;gap:12px;align-items:center;padding:12px 14px;background:var(--ct);padding-right:130px}
+.s17-case .ic{width:56px;height:56px;border-radius:50%;display:grid;place-items:center;font-family:Nunito;font-weight:900;font-size:22px;color:#fff;background:var(--c);border:3px solid #fff;flex:none}
+.s17-case .gh small{color:var(--mut);font-weight:700}
+.s17-stamp{position:absolute;right:12px;top:14px;border:4px solid var(--s17-r);color:var(--s17-r);font-family:Nunito;font-weight:900;font-size:18px;letter-spacing:.1em;padding:2px 10px;border-radius:8px;transform:rotate(-8deg);opacity:.85}
+.s17-case.upd .s17-stamp{border-color:var(--ok);color:var(--ok)}
+.s17-facts{display:flex;flex-wrap:wrap;gap:8px;padding:12px 14px 0}
+.s17-facts span{background:var(--ct);border-radius:99px;padding:4px 12px;font-weight:700;font-size:14px}
+.s17-case .cl{padding:10px 14px 0;display:grid;gap:8px}
+.s17-case .cl .clq{background:var(--pink);color:#fff;border-radius:12px;padding:8px 12px;font-weight:800}
+.s17-mvs{display:grid;gap:6px;padding:12px 14px 14px}
+.s17-t2{border-radius:var(--r);background:var(--navy);color:#fff;padding:18px;display:grid;gap:12px}
+.s17-t2 .btn{background:rgba(255,255,255,.16);border-color:rgba(255,255,255,.4);color:#fff}
+.s17-t2 .btn[aria-pressed="true"]{background:var(--ok);border-color:var(--ok)}
+.s17-t2 .timer output{color:#fff}
+.s17-nohelp .s17-rescue,.s17-nohelp .s17-facts{display:none}
+.s17-newcase{background:var(--sun);color:var(--navy);border-radius:14px;padding:12px 16px;font-weight:800;font-size:17px}
+/* §8 wrap */
+.s17-itfix{display:grid;gap:10px}
+.s17-itfix .it{border:2px solid var(--line);border-radius:14px;padding:10px 14px;background:#fff;display:grid;gap:8px}
+.s17-itfix .it .t{font-size:18px;font-weight:700}
+.s17-itfix .it.fixed{border-color:var(--ok);background:var(--ok-t)}
+.s17-can{display:grid;gap:8px}
+.s17-can .res{border-radius:var(--r);background:var(--navy);color:#fff;padding:14px 18px;font-family:Nunito;font-weight:900;font-size:19px}
+body.student .rec{display:none!important}
+</style>
+</head>
+<body>
+
+<div class="topbar"><div class="wrap">
+  <div class="brand"><i></i><a href="./">GABRIEL TURNER · YOUR BUSINESS COACH</a><small>Intermedio 2 · B1.2</small></div>
+  <div class="toggles">
+    <button class="tg" id="tgTeacher" aria-pressed="true">Teacher view</button>
+    <button class="tg" id="tgStudent" aria-pressed="false">Student view</button>
+    <button class="tg" id="tgGroup" aria-pressed="true">Group</button>
+    <button class="tg" id="tgOne" aria-pressed="false">1:1</button>
+  </div>
+</div></div>
+
+<header class="hero">
+  <div class="bg" role="img" aria-label="A hanging sign that says CLOSED in a dark shop window"></div>
+  <div class="wrap">
+    <div class="kick">Intermedio 2 · Block 3 · PROBLEM · Session 17 of 32</div>
+    <h1>What Went <span>Wrong?</span></h1>
+    <p class="obj">A delivery is late. A report has the wrong numbers. A trip changes at the last minute. Today you learn to say what went wrong in a clear way, so the other person can act. You speak first. You decide. You tell the story.</p>
+    <div class="pills"><span class="pill sun">60 min · live online</span><span class="pill">8 stages</span><span class="pill">Work and daily life</span><span class="pill">Speaking first</span></div>
+    <div class="s17-lights" aria-hidden="true"><i></i><i></i><i></i></div>
+    <div class="s17-today"><b>TODAY'S MISSION</b><p>Tell someone what went wrong: the main issue, what happened, the good news and the next step. Under one minute, without reading.</p></div>
+    <div class="coach"><span class="cav">GT</span><span><b>Gabriel Turner</b><small>Your Business Coach</small></span></div>
+  </div>
+</header>
+
+<nav class="nav" aria-label="Session stages"><div class="wrap">
+  <div class="prog"><div class="bar"><i id="pbar"></i></div><span class="xp" id="xp">0 XP</span><button class="clock" id="clock" title="Start / pause class clock">00:00</button></div>
+  <div class="steps" id="steps"></div>
+</div></nav>
+
+<main class="wrap" id="main">
+
+<details class="card-session"><summary>Teacher · Session card (Ficha de Sesión)</summary><div class="cs">
+  <table>
+    <tr><th>Campo</th><th>Valor</th></tr>
+    <tr><td>Nivel / MCER</td><td>Intermedio 2 · GT English Path Nivel 08 · B1.2 · online (grupo / 1:1) · modo Interacción (explicar un problema ya ocurrido) · 60 min · SINGLE_TOPIC</td></tr>
+    <tr><td>Bloque / riesgo / temperatura</td><td>Bloque 3 PROBLEM · sesión 17 de 32 · riesgo <b>Seguro</b> · temperatura <b>Engaging</b> · contexto T con un caso de vida diaria en cada bloque (≈50/50). Marco “el sistema / el proveedor”, nunca “tu jefe”.</td></tr>
+    <tr><td>Objetivo medible</td><td>Enmarcar un problema pasado en 4 movimientos (asunto principal · qué pasó · buena noticia · siguiente paso) en menos de un minuto y sin leer.</td></tr>
+    <tr><td>Disagreement hook</td><td>“Cuando algo sale mal, ¿hay que decir primero la mala noticia o la buena?” (la sesión enseña: primero el asunto principal, luego lo bueno, luego el paso siguiente).</td></tr>
+    <tr><td>Punto de lengua (uno)</td><td>Enmarcar un problema: <i>The main issue was/is… · The good news is…</i> + past simple para contar qué pasó. Límites duros respetados: sin PP continuous, 2º/3er condicional, reported questions, pasiva completa, relativas complejas, procesos técnicos extensos, debate/negociación, have got, <i>because of / due to</i> (es S19), <i>who can help</i> (es S18).</td></tr>
+    <tr><td>Léxico (12; 9 reciclados = 75 %)</td><td>RECICLADOS (9): delay (S1, S14) · missing (S12, S13) · pending (S5–S16) · supplier (S2, S5) · request (S13, S14) · department (S13, S16) · follow up (S11–S14) · reason (S14) · confirm (S5, S16) + status y wait como apoyo. NUEVOS (3): issue · mistake · the good news is. Collocations: the main issue · make a mistake · cause a delay · a missing document · a pending request · call the supplier · ask the department · confirm the status · wait for an answer · the reason is.</td></tr>
+    <tr><td>Dinámicas (4 familias)</td><td>VOC-05 Collocation Bingo (COLECCIÓN; 2ª vez, tras S10; escalation_note: el cartón se marca solo cuando OTRA persona dice la frase dentro de una historia, y el cartón lleno es comodín en Take 2) · GRM-08 The Liar’s Past (IMPOSTOR; 1ª vez; etapa Comunicativa; tres historias en pasado, una inventada; el grupo interroga en past simple) · B18-10 Story Builder: Picture + Twist (ESCALADA; 1ª vez; foto + giro + recuento con menos apoyo) · LIS-10 Who’s Right? (RANKING; 1ª vez; el alumno arbitra y defiende con dos citas).</td></tr>
+    <tr><td>Sustituciones ADN 8-oct</td><td>Cero reactivos con hueco. Práctica controlada = “Decide y dilo” (3 mensajes por caso) + “Repáralo antes de enviarlo” (3 mensajes, oral). Lectura = “Lee para decidir” (1 pregunta de idea general). Listening = arbitrar: la comprensión se muestra eligiendo con dos citas y pasando el recado; sin preguntas de detalle. Cierre sin quiz: Quick repair + Final take 60 s sin apoyos + can-do. Frases de rescate visibles en Speaking, Mission y Take 2.</td></tr>
+    <tr><td>Evidencia</td><td>Bingo: ≥1 línea · Liar: ≥1 ronda con “The main issue was…” · Story Builder: 9 movimientos de lengua · Mission: 15 movimientos (éxito ≥12) · Take 2 sin apoyos 60–75 s con giro · Final take 60 s.</td></tr>
+    <tr><td>Minutos de habla del alumno (diseño)</td><td>≈ 33 de 60 (warm-up 3, vocabulario 5, grammar 6, listening 2, speaking 9, misión 6, cierre 2).</td></tr>
+    <tr><td>Audio</td><td>16 clips (7 vocab, 6 listening —Dev, inglés de India, no nativo, y Emma, EE. UU.—, 3 pronunciación). Estado: scripts listos, audio pendiente. Mientras tanto la página usa la voz del navegador con aviso visible.</td></tr>
+    <tr><td>Fotos</td><td>Sin fotos nuevas (Unsplash devuelve 403 en el contenedor y no hay navegador en esta corrida). Se reutilizan i2s01_closed (hero), i2s02_boxes, i2s03_board, i2s01_traffic (tarjetas de historia), i2s05_desk, i2s02_phone (lecturas), i2s09_sew (misión) y i2s05_meeting (preguntas) con otro encuadre; créditos no reverificados. Visual propio: sala de control con lámparas, báscula de evidencias y sellos de caso en CSS.</td></tr>
+  </table>
+  <div id="timeTable"></div>
+</div></details>
+
+<!-- §1 WARM-UP -->
+<section class="sec" id="s1" style="--c:var(--lvl);--ct:var(--lvl-t)" data-name="Warm-up" data-min="0–4" data-dur="4">
+  <div class="shead"><div class="snum"><span class="n">1</span><div><h2>Warm-up · The Control Room</h2><div class="sub">0–4 min · six green lights · turn one red and say what happened</div></div></div>
+    <div class="meta"><span class="chip">Your own day</span><span class="chip dark">One sentence per light</span></div></div>
+  <div class="sbody">
+    <div class="block"><div class="bt"><span class="tag">Tap a light</span><h3>Something went wrong…</h3><span class="s17-score">Lights logged <b id="wuN">0</b> / 6</span></div>
+      <p class="hint">All lights are green. Tap one. It turns red. Read the model. Then say ONE sentence about something that really went wrong for you. Use the past. Tap “I said it”.</p>
+      <div class="s17-board">
+        <div class="s17-lamps" id="lamps" role="group" aria-label="Control room lights"></div>
+        <div class="s17-say" id="wuSay" aria-live="polite"><div class="tl">LIGHT</div><div class="md">Tap a light to start.</div></div>
+        <div class="row"><button class="btn sun" id="wuSaid" disabled>I said it</button><span class="hint" id="wuHint" style="color:#D8DFF5"></span></div>
+      </div></div>
+    <div class="block"><div class="bt"><span class="tag">Speak</span><h3>Quick questions</h3></div>
+      <div class="fq"><div>1 · What went wrong in your day yesterday? <span>→ What was the main issue? → What was the good news?</span></div>
+      <div>2 · Who solved your last problem? <span>→ Why that person? → What did that person do first?</span></div></div></div>
+    <details class="tn"><summary>Teacher notes · §1 Warm-up</summary><div class="layers">
+      <div class="ly"><h4>Pedagógica</h4><ul><li>Arranque del Bloque 3 PROBLEM: el alumno cuenta algo que le salió mal con una oración en pasado simple (no se corrige todavía; anota qué verbos irregulares evita). Modelos de 8–11 palabras con los verbos arrived, started, did not come, stopped, paid, sent. El foco del día (“main issue / good news”) aparece primero solo como pregunta de seguimiento en las preguntas rápidas.</li><li>Recicla S11 (who) en la pregunta 2 y S14 (reason/wait) en los modelos sin anunciarlo.</li></ul></div>
+      <div class="ly"><h4>Engagement</h4><ul><li>Frase del coach: “Hoy hablamos de lo que sale mal, pero con una regla: decirlo de forma que la otra persona pueda hacer algo. Cuando todos los focos estén en amarillo, ya registraste seis problemas reales.”</li><li>Grupo: cada persona enciende un foco distinto y la siguiente lo hace. 1:1: tú enciendes uno primero con una historia tuya breve; el alumno sigue.</li></ul></div>
+      <div class="ly"><h4>Crecimiento</h4><ul><li>Gancho comercial: el Bloque 3 entrena justo lo que el alumno hace cuando algo falla en la planta o en la casa: explicar, pedir ayuda y dar el siguiente paso. Al final del bloque (S24) se muestra su “antes y ahora” con esta misma pregunta.</li><li>Evidencia hoy: ≥4 de 6 focos registrados con una oración propia en pasado.</li></ul></div>
+    </div></details>
+  </div>
+</section>
+
+<!-- §2 VOCABULARY -->
+<section class="sec" id="s2" style="--c:var(--teal);--ct:var(--teal-t)" data-name="Vocabulary" data-min="4–12" data-dur="8">
+  <div class="shead"><div class="snum"><span class="n">2</span><div><h2>Vocabulary · The Word Hunt</h2><div class="sub">4–12 min · tell a story · your partner hunts the words</div></div></div>
+    <div class="meta"><span class="chip">12 phrases</span><span class="chip dark">A square is marked only when the OTHER person says it</span></div></div>
+  <div class="sbody">
+    <div class="block"><div class="bt"><span class="tag">How to play</span><h3>Tell it. Hunt it.</h3></div>
+      <div class="s17-steps"><span>1 · Tap “New story question”. One person answers for 30 seconds.</span><span>2 · The other person listens and taps a square when they HEAR the phrase in a full sentence.</span><span>3 · Swap. One line = 1 point. Full card = joker for Take 2.</span></div>
+      <p class="hint" data-m="group">Group: work in pairs. Card A tells, Card B hunts. Then swap cards.</p>
+      <p class="hint" data-m="one" hidden>1:1: you tell the story and your coach hunts on Card A. Then your coach tells a story and you hunt on Card B.</p></div>
+    <div class="s17-prompt"><div class="lab">STORY QUESTION <span id="bqN">0</span> OF 6</div><div class="q" id="bq">Press “New story question”.</div>
+      <div class="s17-rescue"><b style="color:#D8DFF5">HELP</b><span>Last week… </span><span>The main issue was…</span><span>The good news is…</span></div>
+      <div class="row"><button class="btn" id="bqNew">New story question</button></div></div>
+    <div class="s17-cards" id="bingo"></div>
+    <div class="row"><span class="s17-score">Marked <b id="bMk">0</b> / 18</span><span class="s17-score">Lines <b id="bLn">0</b></span><span class="s17-score">Full cards <b id="bFull">0</b></span></div>
+    <div class="block"><div class="bt"><span class="tag">Listen and repeat</span><h3>Models for the hunt</h3></div>
+      <div class="s17-models" id="vModels"></div><p class="anote" hidden></p></div>
+    <div class="closeout" id="bClose">Say it: “We marked 0 squares and 0 lines.”</div>
+    <details class="tn"><summary>Teacher notes · §2 Vocabulary</summary><div class="layers">
+      <div class="ly"><h4>Pedagógica</h4><ul><li><b>VOC-05 Collocation Bingo (COLECCIÓN).</b> Dos cartones 3×3 con 9 de 12 colocaciones. El cuadro se marca solo cuando la OTRA persona dice la frase dentro de una oración completa (obliga a escuchar y a producir). Puntaje: una línea (fila, columna o diagonal) = 1 punto; cartón lleno = comodín para Take 2 (mostrar las pistas). No se premia rapidez: se premia que la frase suene dentro de una historia. escalation_note (2ª vez tras S10): ahora el cartón se juega con preguntas de historia y no con tarjetas sueltas.</li><li>Léxico (12): <b>reciclados (9, 75 %)</b> delay · missing · pending · supplier · request · department · follow up · reason · confirm (con status y wait como apoyo) — <b>nuevos (3)</b> issue · mistake · the good news is. Collocations en tarjeta: the main issue · make a mistake · the good news is · cause a delay · a missing document · a pending request · call the supplier · follow up · the reason is · confirm the status · ask the department · wait for an answer.</li><li>Errores a escuchar: “make a mistake” dicho como “do a mistake”; “the main issue are”; “the good new”.</li></ul></div>
+      <div class="ly"><h4>Engagement</h4><ul><li>“Tu pareja caza tus frases. Mientras más natural cuentes la historia, más cuadros se marcan.” Si alguien marca un cuadro sin oír la frase completa, se desmarca con una sonrisa.</li><li>1:1: dices una historia con 2 frases a propósito mal (“do a mistake”) y dejas que el alumno la corrija antes de marcar.</li></ul></div>
+      <div class="ly"><h4>Crecimiento</h4><ul><li>Cada alumno sale con 12 frases de “reportar un problema”. Venta: mini-taller “Problem Phrases for Work” (colocaciones reales de proveedores, citas y trámites).</li><li>Evidencia hoy: ≥1 línea y ≥6 oraciones propias con colocaciones del cartón.</li></ul></div>
+    </div></details>
+  </div>
+</section>
+
+<!-- §3 GRAMMAR -->
+<section class="sec" id="s3" style="--c:var(--grm);--ct:var(--grm-t)" data-name="Grammar" data-min="12–24" data-dur="12">
+  <div class="shead"><div class="snum"><span class="n">3</span><div><h2>Grammar · Frame the Problem</h2><div class="sub">12–24 min · notice → decide and say → repair → three bad days</div></div></div>
+    <div class="meta"><span class="chip">notice 2</span><span class="chip">decide 3</span><span class="chip">repair 2</span><span class="chip">play 5</span></div></div>
+  <div class="sbody">
+    <div class="block"><div class="bt"><span class="tag">Notice · 2 min</span><h3>Three tools for a problem</h3><span class="s17-score">Tools said <b id="tlN">0</b> / 3</span></div>
+      <p class="hint">Read a tool. Say a NEW example about a delivery, a meeting or a trip. Tap “I said one”.</p>
+      <div class="s17-tools" id="tools"></div></div>
+    <div class="block"><div class="bt"><span class="tag">Decide and say · 3 min</span><h3>Which message do you send?</h3><span class="s17-score">Messages said <b id="dcN">0</b> / 3</span></div>
+      <p class="hint">Three real messages for each person. Decide which one helps the listener act. Tap it. Say it out loud, then say it again with your own detail.</p>
+      <div class="s17-dc" id="dc"></div></div>
+    <div class="block"><div class="bt"><span class="tag">Repair it before you send it · 2 min</span><h3>Fix each message out loud</h3><span class="s17-score">Fixed <b id="fxN">0</b> / 3</span></div>
+      <p class="hint">These messages have a typical mistake. Say the fixed message out loud. Then tap “I fixed it” to see a model.</p>
+      <div class="s17-fix" id="fix"></div></div>
+    <div class="block"><div class="bt"><span class="tag">Play · 5 min</span><h3>Three Bad Days</h3></div>
+      <div class="s17-steps"><span>1 · Tell three short stories in the past. Two are true. One is invented.</span><span>2 · The listeners ask questions. You answer with “The main issue was…”.</span><span>3 · They guess the invented one.</span></div>
+      <div class="s17-liar" id="liar">
+        <h4>Round <span id="lrN">1</span> · Teller: secretly choose your invented story</h4>
+        <div class="s17-slots" id="slots"></div>
+        <div class="s17-rescue"><b style="color:#D8DFF5">HELP</b><span>Last year, … </span><span>The main issue was…</span><span>The good news was…</span><span>I … but …</span></div>
+        <div id="lq" hidden><div class="s17-qm" id="qm">Press “Next question”.</div>
+          <div class="row" style="margin-top:10px"><button class="btn sun" id="qNextL">Next question</button><span class="s17-score">Questions <b id="qCnt">0</b> / 4</span></div></div>
+        <div id="lg" hidden><div class="bt" style="margin:0"><span class="tag" style="color:var(--sun)">Guess</span><h4 style="font-size:20px">Which story was invented?</h4></div>
+          <div class="row" id="guess"></div></div>
+        <div class="row" id="lTeach" hidden><button class="btn" id="uTeller" aria-pressed="false">The teller said “The main issue was…”</button><button class="btn" id="uGood" aria-pressed="false">The teller said “The good news was…”</button></div>
+        <div class="s17-res" id="lRes" hidden></div>
+        <div class="row"><button class="btn" id="lNew">New round · swap teller</button><span class="s17-score">Teller <b id="pT">0</b></span><span class="s17-score">Hunters <b id="pH">0</b></span></div>
+      </div>
+      <div class="closeout" id="lClose">Say it: “After 0 rounds, the tellers have 0 points and the hunters have 0 points.”</div></div>
+    <details class="tn"><summary>Teacher notes · §3 Grammar</summary><div class="layers">
+      <div class="ly"><h4>Pedagógica</h4><ul><li>Explicación ≤2 min (Notice): (1) <i>The main issue was/is…</i> nombra el problema (was si ya pasó, is si sigue); (2) <i>The good news is…</i> da lo positivo después; (3) el pasado simple cuenta qué pasó (<i>sent, arrived, did not receive</i>). Sin lengua nueva fuera de este bloque. Orden recomendado: asunto principal → qué pasó → buena noticia → siguiente paso.</li><li><b>Decide y dilo (Meaningful):</b> 3 casos (jefe, cliente, amigo) con 3 mensajes completos. Sugeridos: caso 1 A (nombra asunto + buena noticia + paso) · caso 2 B (disculpa sin culpar al cliente + buena noticia + fecha) · caso 3 A (razón + buena noticia + petición). Cualquier elección vale si el alumno dice por qué con because. Mecánica del bloque: <b>repáralo antes de enviarlo</b> (2 min = 17 % del bloque; tope 1/3). Errores sembrados: 1 verbo sin pasado tras sujeto (“the supplier send”) y mezcla is/was · 2 “did not + pasado” (“did not lost”) · 3 “have” por “had” en pasado.</li><li><b>GRM-08 The Liar’s Past (IMPOSTOR, etapa Comunicativa).</b> Tres historias en pasado (entrega · reunión o plan · teléfono o computadora), una inventada. El grupo hace ≥4 preguntas en pasado simple (When…? Who…? What was the main issue? What was the good news? How long…?). El narrador gana 2 puntos si sobrevive; los cazadores 1 si lo atrapan; +1 por cada uso real de “The main issue was…” o “The good news was…” (marcadores). Punto por lengua producida, nunca por velocidad. Cierre declarado en voz alta.</li></ul></div>
+      <div class="ly"><h4>Engagement</h4><ul><li>“La mentira es el pretexto; el pasado simple es lo que se practica.” Pide al narrador que no sonría y a los cazadores que busquen dónde falta el dato concreto (hora, nombre, quién ayudó).</li><li>Grupo: breakouts de 3, un narrador por ronda. 1:1: el alumno es narrador primero; tú interrogas con preguntas cortas y cambian roles.</li></ul></div>
+      <div class="ly"><h4>Crecimiento</h4><ul><li>Gancho: “un mensaje sobre un problema que empieza con la solución (‘the good news is…’) baja la tensión del cliente.” Se vende como taller “Bad News, Clear Message”.</li><li>Evidencia hoy: 3 herramientas dichas · 3 mensajes decididos y dichos · 3 reparaciones orales · ≥1 ronda con la frase de marco.</li></ul></div>
+    </div></details>
+  </div>
+</section>
+
+<!-- §4 READING -->
+<section class="sec" id="s4" style="--c:var(--blue);--ct:var(--blue-t)" data-name="Reading" data-min="24–27" data-dur="3">
+  <div class="shead"><div class="snum"><span class="n">4</span><div><h2>Reading · Read to Decide</h2><div class="sub">24–27 min · two short messages · what do you do?</div></div></div>
+    <div class="meta"><span class="chip">2 short messages</span><span class="chip dark">1 big idea</span></div></div>
+  <div class="sbody">
+    <div class="s17-reads" id="reads"></div>
+    <div class="row"><button class="btn main" id="cnBtn" aria-pressed="false">Show the key phrases</button><span class="hint">Then choose what you do and say it with “because”.</span></div>
+    <div class="block"><div class="bt"><span class="tag">Big idea</span><h3>What do both messages do?</h3></div>
+      <div class="selfev" id="bigIdea"></div><p class="hint" id="bigFb" aria-live="polite"></p></div>
+    <details class="tn"><summary>Teacher notes · §4 Reading</summary><div class="layers">
+      <div class="ly"><h4>Pedagógica</h4><ul><li>Dos tarjetas (≤60 palabras; se cuentan en la verificación): chat de bodega (T) y aviso de un vecino (vida diaria). Muestran el modelo “asunto principal + buena noticia + siguiente paso”. Sin preguntas de detalle: la comprensión se demuestra decidiendo qué haces y diciéndolo con because. Una sola pregunta de idea general (clave: “They name a problem and give good news”).</li><li>Toda opción es defendible con razón; la débil (“Do nothing”) se discute con un hecho del texto.</li></ul></div>
+      <div class="ly"><h4>Engagement</h4><ul><li>“Esto es lo que recibes en el teléfono cuando algo falló: decides, y luego lo explicas.” Pide a una segunda persona que elija otra opción con otra razón.</li></ul></div>
+      <div class="ly"><h4>Crecimiento</h4><ul><li>Tarea opcional: traer un mensaje real (borrado de datos) donde alguien reporta un problema y decir qué parte falta (¿buena noticia?, ¿siguiente paso?). Insumo para S19 (causas).</li></ul></div>
+    </div></details>
+  </div>
+</section>
+
+<!-- §5 LISTENING -->
+<section class="sec" id="s5" style="--c:var(--pink);--ct:var(--pink-t)" data-name="Listening" data-min="27–34" data-dur="7">
+  <div class="shead"><div class="snum"><span class="n">5</span><div><h2>Listening · Who Is Right?</h2><div class="sub">27–34 min · two coworkers disagree → you decide → pass it on</div></div></div>
+    <div class="meta"><span class="chip">2 speakers</span><span class="chip dark">You are the referee</span></div></div>
+  <div class="sbody">
+    <p class="hint" style="font-size:17px">Order 4418 arrived three days late. Dev works in the warehouse. Emma works in purchasing. They do not agree about the main issue. You are the referee.</p>
+    <div class="s17-duo" id="duo"></div>
+    <div class="row"><button class="btn main" id="playA">▶ Play the conversation</button><button class="btn" id="stopAll">■ Stop</button><span class="rec">[PARA GRABAR]</span><p class="anote" id="ttsNote" hidden></p></div>
+    <div class="block"><div class="bt"><span class="tag">Big idea</span><h3>What are they talking about?</h3></div>
+      <div class="selfev" id="lBig"></div><p class="hint" id="lBigFb" aria-live="polite"></p></div>
+    <div class="block"><div class="bt"><span class="tag">Referee · weigh the evidence</span><h3>Who is more right about the main issue?</h3></div>
+      <div class="s17-decide" id="decide"></div>
+      <div class="s17-scale"><div class="s17-beamwrap"><div class="s17-post"></div><div class="s17-beam" id="beam"><div class="s17-pan l" style="--c1:#C2410C"><span>Dev</span><small id="wL">0</small></div><div class="s17-pan r" style="--c1:#0A7F75"><span>Emma</span><small id="wR">0</small></div></div></div>
+        <p class="hint">Tap the quotes that help you decide. Then say your verdict with TWO quotes.</p>
+        <div class="s17-quotes" id="quotes"></div></div>
+      <div class="s17-rescue"><b>HELP</b><span>I think … is more right because…</span><span>Dev says … but Emma says …</span></div>
+      <div class="row"><button class="btn main" id="verdictBtn">I said my verdict with two quotes</button></div></div>
+    <div class="block"><div class="bt"><span class="tag">Pass it on · 40 seconds</span><h3>Report to the manager</h3><span class="s17-score" id="lisScore">0 / 3 moves</span></div>
+      <div class="s17-rescue"><b>HELP</b><span>The main issue was…</span><span>The good news is…</span><span>The next step is…</span></div>
+      <div class="moves" id="pass"></div>
+      <div class="timer" id="lTimer" data-sec="40"><output>00:40</output><button class="btn main" data-a="go">Start</button><button class="btn" data-a="re">Reset</button></div>
+      <div class="row"><button class="btn dark" id="chkBtn">Check with the order log</button></div></div>
+    <div id="official" hidden>
+      <div class="s17-log"><h4>ORDER LOG · ORDER 4418</h4>
+        <div class="s17-logrows"><div><small>REQUEST RECEIVED</small>Monday, 3:15 p.m.</div><div><small>SUPPLIER CUTOFF</small>12:00 noon</div><div><small>SHIPPED</small>Wednesday</div><div><small>ARRIVED</small>Friday</div><div><small>SUPPLIER FOLLOW-UP</small>No calls</div></div></div>
+      <div class="block" style="margin-top:14px"><div class="bt"><span class="tag">Say the link</span><h3>Connect what you heard with the log</h3></div>
+        <p class="hint">Say: “The log says … so … is right about … .” Then tap the card.</p>
+        <div class="s17-diffs" id="diffs"></div></div>
+      <div class="block" style="margin-top:14px"><div class="bt"><span class="tag">Script</span><h3>What they said</h3></div><div class="script" id="scr"></div></div>
+    </div>
+    <div class="block"><div class="bt"><span class="tag">Pronunciation lab</span><h3>Listen · repeat · say it your way</h3></div><div class="pron" id="pron"></div></div>
+    <details class="tn"><summary>Teacher notes · §5 Listening</summary><div class="layers">
+      <div class="ly"><h4>Pedagógica</h4><ul><li><b>LIS-10 Who’s Right? (RANKING).</b> Guion palabra por palabra, <span id="lisWc">__</span> palabras, 2 hablantes: <b>Dev</b> (supervisor de almacén, inglés de India, no nativo, ritmo natural) y <b>Emma</b> (compras, inglés de EE. UU., nativa, ritmo natural). Escenario: reunión de lunes sobre el pedido 4418 que llegó tres días tarde. [PARA GRABAR]</li><li>Postura de Dev: el proveedor es el problema (prometió martes, llegó viernes; nadie le explicó la regla del mediodía; el proveedor no hizo seguimiento el miércoles). Postura de Emma: la solicitud se envió tarde (3:15 p. m. del lunes, regla de las 12:00 escrita en un correo). Ambos tienen parte de razón: Emma pesa más sobre el asunto principal (tiene hora y regla), Dev pesa sobre el seguimiento. Lo que se evalúa es la defensa con dos citas, no “acertar” un lado.</li><li>La báscula se inclina según las citas que toque el alumno; la bitácora del pedido se muestra después de pasar el recado para comparar. Cero preguntas de detalle con opciones. Una pregunta de idea general (clave: “A late order”).</li><li>Reaparecen: main issue, good news, supplier, request, pending, reason, follow up, department, mistake (sin repetir la oración). Acento no nativo (Dev): cumple la regla de 1 de cada 3. Sin caricatura al grabar.</li></ul></div>
+      <div class="ly"><h4>Engagement</h4><ul><li>“No te pido el detalle: te pido una decisión y dos razones.” Si el alumno cambia de lado al ver el registro, celébralo: es el mismo músculo de revisar hechos antes de culpar.</li><li>Grupo: votan en el chat y defienden en parejas. 1:1: tú defiendes el lado contrario y el alumno responde con una cita.</li></ul></div>
+      <div class="ly"><h4>Crecimiento</h4><ul><li>Es la habilidad de arbitrar entre dos versiones y reportar con hechos, base del taller de mediación para oficinas y plantas.</li><li>Evidencia hoy: veredicto con 2 citas + recado de 40 s + enlace con la bitácora.</li></ul></div>
+    </div></details>
+  </div>
+</section>
+
+<!-- §6 SPEAKING -->
+<section class="sec" id="s6" style="--c:var(--lvl);--ct:var(--lvl-t)" data-name="Speaking" data-min="34–46" data-dur="12">
+  <div class="shead"><div class="snum"><span class="n">6</span><div><h2>Speaking · Picture, Problem, Twist</h2><div class="sub">34–46 min · build a story, survive a twist, tell it again</div></div></div>
+    <div class="meta"><span class="chip">Story 8 min</span><span class="chip dark">Questions 4 min</span></div></div>
+  <div class="sbody">
+    <div class="block"><div class="bt"><span class="tag">Pick a picture</span><h3>Where does your story start?</h3><span class="s17-score">Language moves <b id="mvN">0</b> / 9</span></div>
+      <div class="s17-pics" id="pics" role="group" aria-label="Picture cards"></div>
+      <div class="s17-story"><div><b>1</b>Beginning</div><div><b>2</b>Problem</div><div><b>3</b>Action</div><div class="tw"><b>★</b>Twist</div></div>
+      <p class="hint" data-m="group">Group: one person starts. The next person adds the twist. Then swap.</p>
+      <p class="hint" data-m="one" hidden>1:1: you build the story. Your coach spins the twist and asks one follow-up question.</p></div>
+    <div class="s17-rtabs" id="rtabs" role="group" aria-label="Rounds"></div>
+    <div class="s17-stage" id="rstage"></div>
+    <div class="block"><div class="bt"><span class="tag">Now serving</span><h3>Questions about things that went wrong</h3></div>
+      <div class="s17-q2" style="--c:var(--lvl)"><div class="qi" style="background-image:url(img/i2s05_meeting.jpg);background-position:center 55%"></div><div class="dq">
+        <div class="qn" id="qn">QUESTION 1 OF 14</div><div class="qt" id="qt"></div><div class="fu" id="qfu"></div>
+        <div class="row"><button class="btn" id="qPrev">← Back</button><button class="btn" id="qNext">Next question →</button></div></div></div></div>
+    <details class="tn"><summary>Teacher notes · §6 Speaking</summary><div class="layers">
+      <div class="ly"><h4>Pedagógica</h4><ul><li><b>B18-10 Story Builder: Picture + Twist (ESCALADA).</b> R1 (3 min): foto + 4 palabras → inicio, problema y acción con “The main issue was…” y First/Then (3 movimientos). R2 (3 min): giro (se sortea; debe complicar, no volver absurda la historia) → el alumno reacciona en pasado, resuelve y da “The good news is/was…” y un final (3 movimientos). R3 (2 min): recuento de la historia completa con menos apoyo (se ocultan las ayudas) (3 movimientos). 9 movimientos de lengua; el punto se gana por producir lengua, nunca por velocidad. Cierre declarado: “In round 3 I made N of 9 language moves.”</li><li>Banco de 14 preguntas (11 con 2 follow-ups ★): mezcla trabajo y vida; reciclan S11 (who), S13 (responsible), S14 (reason, wait, follow up). Corrección selectiva: máx. 2 aciertos y 3 correcciones al final de cada ronda; solo errores de pasado simple que confunden qué pasó o cuándo.</li><li>Temperatura Engaging: las preguntas 3 y 12 hablan de errores de otras personas o aprendizaje, no de tu jefe.</li></ul></div>
+      <div class="ly"><h4>Engagement</h4><ul><li>“Ronda 1 es tu historia. Ronda 2 es la vida: algo cambia. Ronda 3 es tu versión limpia, sin mirar.” Frases de rescate visibles en R1 y R2; en R3 se ocultan con un botón si el alumno quiere.</li></ul></div>
+      <div class="ly"><h4>Crecimiento</h4><ul><li>Graba (con permiso) R1 y R3 de la misma historia: la diferencia (más orden, más pasado simple correcto, buena noticia) es la evidencia más fácil de mostrar a quien paga. Línea base para S24 (Checkpoint 3).</li></ul></div>
+    </div></details>
+  </div>
+</section>
+
+<!-- §7 MISSION -->
+<section class="sec" id="s7" style="--c:var(--teal);--ct:var(--teal-t)" data-name="Mission" data-min="46–54" data-dur="8">
+  <div class="shead"><div class="snum"><span class="n">7</span><div><h2>Mission · The Incident Update</h2><div class="sub">46–54 min · three cases · then once more with no help</div></div></div>
+    <div class="meta"><span class="chip">Moves <b id="m17N">0</b> / 15</span><span class="chip dark">Success: 12 or more</span></div></div>
+  <div class="sbody">
+    <div class="s17-mhero"><div class="im" style="background-image:url(img/i2s09_sew.jpg)"></div><div class="mt"><div class="kick">Your mission</div><h3>Something went wrong. Give the update.</h3>
+      <p>Three people need an update right now. You know the facts. Name the main issue, say what happened, give the good news and the next step, and answer one question. Success: 12 of 15 moves, without reading.</p></div></div>
+    <div id="mHelp"><div class="s17-rescue"><b>HELP</b><span>The main issue was…</span><span>First… Then… (past)</span><span>The good news is…</span><span>The next step is… · I recommend…</span></div></div>
+    <div class="s17-cases" id="cases"></div>
+    <div class="row"><button class="btn dark" id="noHelp" aria-pressed="false">Hide the help</button><div class="timer" id="mTimer" data-sec="90"><output>01:30</output><button class="btn main" data-a="go">Start 90 s</button><button class="btn" data-a="re">Reset</button></div></div>
+    <div class="s17-t2" id="take2">
+      <div class="kick">TAKE 2 · NEW INCIDENT · NO SUPPORTS</div>
+      <div class="s17-newcase" id="t2Case">Press “New incident and twist”.</div>
+      <div class="row"><button class="btn" id="t2New">New incident and twist</button></div>
+      <div class="timer" id="t2Timer" data-sec="75"><output>01:15</output><button class="btn" data-a="go">Start 75 s</button><button class="btn" data-a="re">Reset</button></div>
+      <div class="s17-chk" id="t2Chk"></div>
+    </div>
+    <div class="closeout" id="mOut">Say it: “I gave 0 updates. I made 0 of 15 moves.”</div>
+    <details class="tn"><summary>Teacher notes · §7 Mission</summary><div class="layers">
+      <div class="ly"><h4>Pedagógica</h4><ul><li>Producto de evidencia: <b>el Incident Update</b>. 3 casos × 5 movimientos = 15; éxito ≥12/15 sin leer. Casos con datos ficticios en pantalla (para no obligar a inventar): piezas equivocadas en bodega (T), el autobús escolar que no llegó (vida), el reporte con cifras del mes anterior (T). Cada caso trae una pregunta de aclaración que haces tú o el compañero.</li><li>Movimientos: 1 asunto principal (<i>The main issue was…</i>) · 2 qué pasó, dos hechos en pasado · 3 la buena noticia · 4 responder la aclaración · 5 siguiente paso (<i>The next step is… / I recommend…</i>). Cada caso termina con un sello “UPDATED” cuando suma 4 de 5. Take 2 (dos tomas): incidente nuevo + giro (el cliente llama · cambia la fecha · desaparece la buena noticia · el oyente tiene prisa) sin apoyos 60–75 s. Casillas de evidencia: asunto principal · qué pasó en pasado · buena noticia · siguiente paso · sin leer. El comodín del cartón lleno (§2) permite mostrar las pistas una vez.</li><li>Reaparecen: issue, mistake, delay, missing, pending, supplier, request, department, follow up, reason.</li></ul></div>
+      <div class="ly"><h4>Engagement</h4><ul><li>“Es exactamente el mensaje que alguien espera de ti cuando algo falla: corto, claro y con una salida.” Si el alumno lee, no cuenta el movimiento; pídele que lo diga de nuevo mirando a la cámara.</li><li>Grupo: pares que rotan; quien escucha hace la aclaración. 1:1: tú haces la aclaración con una duda real.</li></ul></div>
+      <div class="ly"><h4>Crecimiento</h4><ul><li>La Take 2 es la evidencia entregable al responsable o a RH: “reporta un problema nuevo ante un cambio, sin apoyos”. Anota duración y casillas; se acumula para el reporte de S24.</li></ul></div>
+    </div></details>
+  </div>
+</section>
+
+<!-- §8 WRAP-UP -->
+<section class="sec" id="s8" style="--c:var(--navy);--ct:#E6E9F2" data-name="Wrap-up" data-min="54–60" data-dur="6">
+  <div class="shead"><div class="snum"><span class="n">8</span><div><h2>Wrap-up · Say It Clearly</h2><div class="sub">54–60 min · repair · final take · your can-do</div></div></div>
+    <div class="meta"><span class="chip">Repair → Final take → Can-do</span></div></div>
+  <div class="sbody">
+    <div class="block"><div class="bt"><span class="tag">Quick repair · 1.5 min</span><h3>Fix the message out loud</h3><span class="score" id="scQ"></span></div>
+      <div class="s17-itfix" id="itfix"></div></div>
+    <div class="block"><div class="bt"><span class="tag">Final take · no help</span><h3>One new question. One minute.</h3></div>
+      <div class="hook"><b>YOUR MANAGER ASKS</b><p id="finalQ">Press the button.</p></div>
+      <div class="row"><button class="btn main" id="finalBtn">New question</button></div>
+      <div class="timer" id="fTimer" data-sec="60"><output>01:00</output><button class="btn main" data-a="go">Start</button><button class="btn" data-a="re">Reset</button></div>
+      <div class="s17-chk" id="fChk"></div></div>
+    <div class="block"><div class="bt"><span class="tag">Your can-do</span><h3>Today I can… (tick, then say it)</h3><span class="s17-score">Abilities <b id="repN">0</b> / 5</span></div>
+      <div class="s17-can"><div class="s17-chk" id="canChk"></div>
+        <div class="res" id="repRes">Tick what you can do. Your result appears here.</div></div>
+      <div class="closeout" id="wrapOut">Say it: “Today I can say what went wrong. The main issue was … The good news is … .”</div></div>
+    <div class="badge"><div class="medal">17</div><div><div class="kick">Session complete</div><h3 style="font-size:26px;font-weight:900">You can say what went wrong, clearly.</h3><p style="opacity:.9">Homework: this week, report ONE real problem to a real person (message or voice note). Say the main issue, what happened, the good news and the next step. Next: <b>Session 18 · Who Can Help Us?</b></p>
+      <div class="row" style="margin-top:12px"><button class="btn main" id="doneBtn" style="background:var(--sun);border-color:var(--sun);color:var(--navy)">Mark session complete</button></div></div></div>
+    <details class="tn"><summary>Teacher notes · §8 Wrap-up</summary><div class="layers">
+      <div class="ly"><h4>Pedagógica</h4><ul><li>Sin quiz ni huecos (ADN). Cierre en tres tiempos: <b>Quick repair</b> (3 mensajes dichos en voz alta: “did not sent”, “it was” sobrante, “we find” por “found”) · <b>Final take</b> 60 s sin apoyos con una pregunta nueva del “jefe” (evidencia individual) · <b>can-do</b> de 5 habilidades con resultado autoevaluado (guarda localStorage gt08-s17-can). Close_out declarado en voz alta (barra oscura). Máx. 2 aciertos y 3 correcciones de alto valor.</li><li>Léxico para reciclar en S18+: issue · mistake · the main issue · the good news is · delay · missing · pending · supplier · request · department · follow up · reason · confirm · wait. Frases modelo: “The main issue was the wrong address. The good news is that the truck arrives tomorrow.” / “The supplier did not send the invoice, so the request is still pending.”</li></ul></div>
+      <div class="ly"><h4>Engagement</h4><ul><li>“Hoy no corregimos la gramática: arreglamos mensajes para que alguien pueda actuar.” Pide al alumno que lea su close_out a una persona real esta semana.</li></ul></div>
+      <div class="ly"><h4>Crecimiento</h4><ul><li>Puente a S18 (Who Can Help Us?): ya sabes decir qué falló; ahora aprendes a pedir ayuda con claridad. Evidencia de la sesión: veredicto con 2 citas, Incident Update 15 movimientos, Take 2 y Final take. Venta: taller “Bad News, Clear Message” para equipos de operaciones, compras y atención a clientes.</li></ul></div>
+    </div></details>
+  </div>
+</section>
+
+</main>
+<footer>Gabriel Turner · Your Business Coach · Intermedio 2 · Session 17 of 32 · v1.0 · Photos (reused from sessions 1, 2, 3, 5, 9; Unsplash contributors, file-to-photographer match not re-verified)</footer>
+
+<script>
+(function(){
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const st={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
+const fmt=s=>String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');
+const SPK='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4z"/></svg>';
+
+
+/* ---- speech + audio files (mp3 first, browser voice as fallback) ---- */
+const TTS='speechSynthesis' in window; let voices=[];
+function loadV(){try{voices=speechSynthesis.getVoices().filter(v=>/^en/i.test(v.lang))}catch(e){}}
+if(TTS){loadV();try{speechSynthesis.onvoiceschanged=loadV}catch(e){}}
+function pick(pref){return voices.find(v=>pref.test(v.name+' '+v.lang))||voices[0]}
+function say(t,opt={}){if(!TTS)return false;try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='en-US';u.rate=opt.rate||.85;const v=opt.voice||pick(/US|United States/i);if(v)u.voice=v;if(opt.onend)u.onend=opt.onend;speechSynthesis.speak(u);return true}catch(e){return false}}
+function voiceFor(who){const a=pick(/female|Zira|Samantha|Jenny|Aria|US/i);if(who==='A')return a;return voices.find(v=>/GB|India|UK|en-IN/i.test(v.name+' '+v.lang)&&v!==a)||voices.find(v=>v!==a)||a}
+function note(msg,warn){const tn=$('#ttsNote');if(tn)tn.textContent=msg;$$('.anote').forEach(n=>{n.hidden=false;n.textContent=msg;n.classList.toggle('warn',!!warn)})}
+let cur=null;
+function clip(file,text,opt,cb){ /* plays audio/<file>; if missing -> browser voice + visible notice */
+ try{if(cur){cur.pause();cur=null}}catch(e){}
+ let used=false;const fb=()=>{if(used)return;used=true;if(say(text,Object.assign({},opt||{},{onend:cb})))note('Audio file not available yet — using your browser’s voice. (Audio no disponible)',true);else{note('Audio no disponible: read the text aloud.',true);if(cb)setTimeout(cb,600)}};
+ try{const a=new Audio('audio/'+file);cur=a;a.addEventListener('error',fb);a.addEventListener('ended',()=>{if(cb)cb()});const p=a.play();if(p&&p.catch)p.catch(fb)}catch(e){fb()}}
+function stopAll(){try{if(cur){cur.pause();cur=null}}catch(e){}try{speechSynthesis.cancel()}catch(e){}}
+
+/* ---- modes ---- */
+function setView(student){document.body.classList.toggle('student',student);$('#tgStudent').setAttribute('aria-pressed',student);$('#tgTeacher').setAttribute('aria-pressed',!student)}
+$('#tgStudent').onclick=()=>setView(true);$('#tgTeacher').onclick=()=>setView(false);
+function setMode(m){$$('[data-m]').forEach(e=>e.hidden=e.dataset.m!==m);$('#tgGroup').setAttribute('aria-pressed',m==='group');$('#tgOne').setAttribute('aria-pressed',m==='one');st.set('gt08-mode',m)}
+$('#tgGroup').onclick=()=>setMode('group');$('#tgOne').onclick=()=>setMode('one');setMode(st.get('gt08-mode')||'group');
+
+/* ---- XP + nav ---- */
+let xp=0;const done=new Set();
+function addXP(n,key){if(key){if(done.has(key))return;done.add(key)}xp+=n;$('#xp').textContent=xp+' XP'}
+const secs=$$('.sec');const steps=$('#steps');
+secs.forEach((s,i)=>{const a=document.createElement('a');a.href='#'+s.id;a.innerHTML=`<b>${i+1}</b>${s.dataset.name}`;a.style.setProperty('--c',getComputedStyle(s).getPropertyValue('--c'));steps.appendChild(a)});
+const links=[...steps.children];
+function onScroll(){let c=0;secs.forEach((s,i)=>{if(s.getBoundingClientRect().top<200)c=i});links.forEach((a,i)=>a.classList.toggle('on',i===c));$('#pbar').style.width=((c+1)/secs.length*100)+'%';const on=links[c];if(on&&steps.scrollWidth>steps.clientWidth){steps.scrollLeft=on.offsetLeft-40}}
+addEventListener('scroll',onScroll,{passive:true});onScroll();
+function markDone(i){links[i]&&links[i].classList.add('done')}
+
+/* ---- time table (sum must be 60) ---- */
+(function(){let tot=0,rows='';secs.forEach((s,i)=>{const d=+s.dataset.dur;tot+=d;rows+=`<tr><td>${i+1}</td><td>${s.dataset.name}</td><td>${s.dataset.min}</td><td>${d} min</td></tr>`});
+ $('#timeTable').innerHTML=`<table><tr><th>#</th><th>Stage</th><th>Minutes</th><th>Duration</th></tr>${rows}</table><p class="tot" id="timeTot" data-total="${tot}">Total: ${tot} min ${tot===60?'✓':'✗ (must be 60)'}</p>`})();
+
+/* ---- class clock ---- */
+let cs=0,cId=null;$('#clock').onclick=()=>{if(cId){clearInterval(cId);cId=null}else cId=setInterval(()=>{cs++;$('#clock').textContent=fmt(cs)},1000)};
+
+/* ---- timers ---- */
+function timer(el,onEnd){const tot=+el.dataset.sec;let left=tot,id=null;const o=el.querySelector('output'),g=el.querySelector('[data-a=go]');
+ const draw=()=>{o.textContent=fmt(left);el.classList.toggle('end',left===0)};const stop=()=>{clearInterval(id);id=null;g.textContent='Start'};
+ g.onclick=()=>{if(id){stop();return}if(!left)left=tot;g.textContent='Pause';id=setInterval(()=>{left--;draw();if(left<=0){stop();onEnd&&onEnd()}},1000)};
+ el.querySelector('[data-a=re]').onclick=()=>{stop();left=tot;draw()};return{reset(){stop();left=tot;draw()},used(){return tot-left},stop,add(s){left+=s;draw()}}}
+
+/* ---- MC engine ---- */
+function mc(box,items,scoreEl,xpKey,sec){let right=0,answered=0;
+ items.forEach((it,i)=>{const d=document.createElement('div');d.className='mcq';d.innerHTML=`<div class="q"><span class="n">${i+1}</span>${it.q}</div><div class="opts"></div><div class="fb" aria-live="polite"></div>`;
+  const os=d.querySelector('.opts'),fb=d.querySelector('.fb');let locked=false;
+  it.o.forEach((t,k)=>{const b=document.createElement('button');b.className='opt';b.textContent=t;b.onclick=()=>{if(locked)return;
+    if(k===it.a){b.classList.add('ok');locked=true;answered++;if(!d.dataset.miss)right++;fb.className='fb ok';fb.textContent='✓ '+(it.ok||'Correct!');addXP(10);
+      if(answered===items.length){scoreEl.textContent=`${right} / ${items.length} first try`;addXP(0,xpKey);markDone(sec)}}
+    else{b.classList.add('no');d.dataset.miss=1;fb.className='fb no';fb.textContent='✗ '+(it.no||'Try again.')}};os.appendChild(b)});box.appendChild(d)})}
+const shuf=a=>{const b=a.slice();for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]]}return b};
+
+
+/* ===================== S17 · What Went Wrong? ===================== */
+const CLIPS=[{"id": "L08-S17-vocab-001-narrator", "speaker": "Narrator", "text": "The main issue is the delay.", "note": "vocab", "chars": 28}, {"id": "L08-S17-vocab-002-narrator", "speaker": "Narrator", "text": "I made a mistake in the report.", "note": "vocab", "chars": 31}, {"id": "L08-S17-vocab-003-narrator", "speaker": "Narrator", "text": "The good news is that we found the missing document.", "note": "vocab", "chars": 52}, {"id": "L08-S17-vocab-004-narrator", "speaker": "Narrator", "text": "The supplier caused a delay, so the request is still pending.", "note": "vocab", "chars": 61}, {"id": "L08-S17-vocab-005-narrator", "speaker": "Narrator", "text": "Please follow up with the department today.", "note": "vocab", "chars": 43}, {"id": "L08-S17-vocab-006-narrator", "speaker": "Narrator", "text": "The reason is simple: nobody confirmed the status.", "note": "vocab", "chars": 50}, {"id": "L08-S17-vocab-007-narrator", "speaker": "Narrator", "text": "We waited for an answer all morning.", "note": "vocab", "chars": 36}, {"id": "L08-S17-listening-001-dev", "speaker": "Dev (Indian English, non-native)", "text": "Okay, the main issue is the supplier. They promised the parts for Tuesday, and the truck arrived on Friday.", "note": "listening", "chars": 107}, {"id": "L08-S17-listening-002-emma", "speaker": "Emma (US English, native)", "text": "Wait. The supplier promised Tuesday for orders before noon. We sent our request at three fifteen on Monday, so it was late.", "note": "listening", "chars": 123}, {"id": "L08-S17-listening-003-dev", "speaker": "Dev (Indian English, non-native)", "text": "But nobody told me about noon. On the phone, they only said the order was pending. They never gave a reason.", "note": "listening", "chars": 108}, {"id": "L08-S17-listening-004-emma", "speaker": "Emma (US English, native)", "text": "I wrote the rule in my email last week. The good news is that the parts were correct, and the supplier did not charge us extra.", "note": "listening", "chars": 127}, {"id": "L08-S17-listening-005-dev", "speaker": "Dev (Indian English, non-native)", "text": "Maybe. But I called them on Wednesday, and nobody answered. They did not follow up.", "note": "listening", "chars": 83}, {"id": "L08-S17-listening-006-emma", "speaker": "Emma (US English, native)", "text": "Yes, that part is fair. I think the problem has two sides. Let us ask the department for a clear process.", "note": "listening", "chars": 105}, {"id": "L08-S17-pron-001-narrator", "speaker": "Narrator", "text": "The main issue was the wrong address.", "note": "pron", "chars": 37}, {"id": "L08-S17-pron-002-narrator", "speaker": "Narrator", "text": "The good news is we found the box.", "note": "pron", "chars": 34}, {"id": "L08-S17-pron-003-narrator", "speaker": "Narrator", "text": "I made a mistake, but I fixed it.", "note": "pron", "chars": 33}];
+const clipOf=id=>CLIPS.find(c=>c.id===id);
+const cf=(sec,n)=>CLIPS.find(c=>c.id.startsWith('L08-S17-'+sec+'-'+String(n).padStart(3,'0')+'-'));
+const mk=(tag,cls,html)=>{const e=document.createElement(tag);if(cls)e.className=cls;if(html!=null)e.innerHTML=html;return e};
+const curMode=()=>st.get('gt08-mode')||'group';
+const applyMode=()=>$$('[data-m]').forEach(e=>e.hidden=e.dataset.m!==curMode());
+const hearBtn=(label,fn)=>{const b=mk('button','hearbtn',`${SPK}<span>hear</span>`);b.setAttribute('aria-label','Hear: '+label);b.onclick=e=>{e.stopPropagation();fn()};return b};
+const toggleBtn=(b,fn)=>{b.setAttribute('aria-pressed','false');b.onclick=()=>{const on=b.getAttribute('aria-pressed')!=='true';b.setAttribute('aria-pressed',on);fn&&fn(on)}};
+const playClip=(c,opt,cb)=>clip(c.id+'.mp3',c.text,opt,cb);
+const wc=t=>t.trim().split(/\s+/).length;
+const lisWords=CLIPS.filter(c=>c.id.includes('-listening-')).reduce((a,c)=>a+wc(c.text),0);
+const lw=$('#lisWc');if(lw)lw.textContent=lisWords;
+
+/* ===== §1 Warm-up · The Control Room ===== */
+(function(){
+ const LP=[
+  {n:'Delivery',m:'The package arrived late, and one box was broken.',a:'Say your sentence about a delivery that went wrong.'},
+  {n:'Meeting',m:'The meeting started at ten, but half of the team was missing.',a:'Say your sentence about a meeting or a class that went wrong.'},
+  {n:'Trip',m:'The bus did not come, so we waited for an hour.',a:'Say your sentence about a trip or a plan that went wrong.'},
+  {n:'Phone',m:'My phone stopped working, and I lost the message.',a:'Say your sentence about a phone or a computer that went wrong.'},
+  {n:'Bill',m:'I paid the bill on Monday, but the payment was still pending.',a:'Say your sentence about a bill or a payment that went wrong.'},
+  {n:'Report',m:'I sent the report, but the last page was missing.',a:'Say your sentence about a document or a report that went wrong.'}];
+ const box=$('#lamps');let sel=-1,logged=new Set();
+ const cells=LP.map((l,i)=>{const b=mk('button','s17-lamp',`<span class="bulb"></span><span class="nm">${l.n}</span>`);b.setAttribute('aria-label','Light: '+l.n);
+  b.onclick=()=>{sel=i;cells.forEach((c,j)=>{if(!logged.has(j))c.classList.toggle('red',j===i)});
+   $('#wuSay').innerHTML=`<div class="tl">LIGHT · ${l.n.toUpperCase()}</div><div class="md">${l.m}</div><div class="ask">${l.a} Use the past.</div><div class="s17-rescue"><span>Last week, …</span><span>… but …</span><span>… so …</span></div>`;
+   $('#wuSaid').disabled=logged.has(i);$('#wuHint').textContent=logged.has(i)?'✓ Logged':''};
+  box.appendChild(b);return b});
+ $('#wuSaid').onclick=()=>{if(sel<0||logged.has(sel))return;logged.add(sel);cells[sel].classList.remove('red');cells[sel].classList.add('logged');$('#wuN').textContent=logged.size;$('#wuSaid').disabled=true;$('#wuHint').textContent='✓ Logged';addXP(3,'wu'+sel);if(logged.size>=4)markDone(0)};
+})();
+
+/* ===== §2 Vocabulary · The Word Hunt ===== */
+(function(){
+ const POOL=[{w:'the main issue',n:1},{w:'make a mistake',n:1},{w:'the good news is',n:1},{w:'cause a delay'},{w:'a missing document'},{w:'a pending request'},{w:'call the supplier'},{w:'follow up'},{w:'the reason is'},{w:'confirm the status'},{w:'ask the department'},{w:'wait for an answer'}];
+ const CARDS=[[0,3,5,2,7,10,1,8,4],[2,0,6,9,11,1,5,3,7]];
+ const PR=['Tell your partner about an order or a package that arrived late or wrong.','Tell your partner about a meeting or a class that did not go as planned.','Tell your partner about a request or a form that stayed pending.','Tell your partner about a time when something was missing.','Tell your partner about a mistake that you saw at work or at home. What was the reason?','Tell your partner about a problem that you solved with a phone call.'];
+ let qi=-1;$('#bqNew').onclick=()=>{qi=(qi+1)%PR.length;$('#bq').textContent=PR[qi];$('#bqN').textContent=qi+1;addXP(1,'bq'+qi)};
+ const grid=$('#bingo');const marks=[new Set(),new Set()];const linesDone=[new Set(),new Set()];
+ const LINES=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+ function upd(){let m=marks[0].size+marks[1].size,ln=0,full=0;marks.forEach((s,c)=>{LINES.forEach((L,i)=>{if(L.every(x=>s.has(x))){ln++}});if(s.size===9)full++});
+  $('#bMk').textContent=m;$('#bLn').textContent=ln;$('#bFull').textContent=full;
+  $('#bClose').textContent=`Say it: “We marked ${m} square${m===1?'':'s'} and ${ln} line${ln===1?'':'s'}.${full?' We have '+full+' full card'+(full>1?'s':'')+': a joker for Take 2.':''}”`;
+  if(ln>=1)markDone(1);window._s17joker=full>0}
+ CARDS.forEach((idx,c)=>{const card=mk('div','s17-card',`<h4>Card ${'AB'[c]} <small>${c?'Listen and mark when Card A tells':'Listen and mark when Card B tells'}</small></h4>`);
+  const g=mk('div','s17-grid','');idx.forEach((pi,k)=>{const p=POOL[pi];const t=mk('button','s17-tile'+(p.n?' new':''),p.w);t.setAttribute('aria-pressed','false');t.setAttribute('aria-label','Square: '+p.w);
+   t.onclick=()=>{const on=t.getAttribute('aria-pressed')!=='true';t.setAttribute('aria-pressed',on);if(on){marks[c].add(k);addXP(2,'bg'+c+k)}else marks[c].delete(k);upd()};g.appendChild(t)});
+  card.appendChild(g);grid.appendChild(card)});
+ const mod=$('#vModels');for(let n=1;n<=7;n++){const c=cf('vocab',n);const r=mk('div','row',`<span>${c.text}</span>`);r.appendChild(hearBtn(c.text,()=>playClip(c)));mod.appendChild(r)}
+ upd();
+})();
+
+/* ===== §3 Grammar ===== */
+(function(){
+ const TL=[
+  {h:'Name the problem',b:'<em>The main issue was</em> the delay. · <em>The main issue is</em> the missing form.',ex:'Was = finished. Is = still a problem now.'},
+  {h:'Say the good news',b:'<em>The good news is</em> (that) the parts are correct.',ex:'First the main issue. Then one good thing.'},
+  {h:'Tell what happened',b:'The supplier <em>sent</em> the wrong boxes. We <em>did not</em> <em>receive</em> the invoice.',ex:'Not: “sended”. After did not: the base verb.'}];
+ const tl=$('#tools');let tn=0;
+ TL.forEach((t,i)=>{const d=mk('div','s17-tool',`<h4>${t.h}</h4><div class="big">${t.b}</div><div class="ex">${t.ex}</div>`);const b=mk('button','btn sm','I said one');toggleBtn(b,on=>{if(on){tn++;addXP(2,'tl'+i)}else tn--;$('#tlN').textContent=tn});d.appendChild(b);tl.appendChild(d)});
+ /* decide and say */
+ const SC=[
+  {tag:'MANAGER',ask:'Your manager asks: “What happened with the shipment?”',m:['The main issue was the wrong address. The good news is that the truck is still near our city, so it arrives tomorrow.','There was a problem, and it is very bad, and everybody is upset, and I do not know what to do.','The truck went to a wrong city on Monday. Maybe somebody made a mistake. I do not know.'],best:0,why:'A names the main issue, gives good news and a next date. B is vague. C gives facts but no good news and no next step.'},
+  {tag:'CLIENT',ask:'A client is angry because the order is late. You write to the client.',m:['Sorry! We made a mistake. It is late.','The main issue was a mistake in our request. The good news is that your parts left today, and they arrive on Friday.','It is your problem because the address was wrong on the form.'],best:1,why:'B says the issue, the good news and a date. A has no plan. C blames the client.'},
+  {tag:'FRIEND',ask:'Your friend waits at a restaurant because you are late.',m:['The main issue was the traffic. The good news is that I am five minutes away. Please order a coffee.','Traffic. Late. Sorry. Sorry. Sorry.','I was at home, and then I forgot my keys, and then my phone, and then the bus left, and then…'],best:0,why:'A is short, clear and gives the next step. B has no information. C is too long.'}];
+ let said=0;const dc=$('#dc');
+ SC.forEach((s,si)=>{const sc=mk('div','s17-sc',`<div class="ask"><i>${s.tag}</i>${s.ask}</div>`);const btns=s.m.map((t,i)=>{const b=mk('button','s17-msg',`<b>${'ABC'[i]}</b><span>${t}</span>`);b.setAttribute('aria-pressed','false');return b});
+  let fin=false,pick=-1;const sd=mk('button','btn main','I said my message out loud');sd.hidden=true;const fb=mk('div','s17-fb','');fb.hidden=true;
+  btns.forEach((b,i)=>{b.onclick=()=>{if(fin)return;pick=i;btns.forEach((x,j)=>x.setAttribute('aria-pressed',j===i));sd.hidden=false};sc.appendChild(b)});
+  sd.onclick=()=>{if(fin||pick<0)return;fin=true;sd.disabled=true;said++;$('#dcN').textContent=said;addXP(6);btns[s.best].classList.add('best');fb.hidden=false;fb.textContent='Suggested: '+'ABC'[s.best]+'. '+s.why+' Any choice is fine if you can say why with “because”.';if(said===3)markDone(2)};
+  sc.appendChild(sd);sc.appendChild(fb);dc.appendChild(sc)});
+ /* repair */
+ const FX=[['The main issue is the supplier send the wrong boxes yesterday.','The main issue was that the supplier sent the wrong boxes yesterday.'],['The good news is we did not lost the invoice.','The good news is we did not lose the invoice.'],['Yesterday we have a problem with the report.','Yesterday we had a problem with the report.']];
+ let fx=0;const fb2=$('#fix');
+ FX.forEach(([bad,ok],i)=>{const d=mk('div','s17-fx',`<small>MESSAGE ${i+1} · BEFORE YOU SEND IT</small><div class="t">${bad}</div>`);const b=mk('button','btn main','I fixed it');const m=mk('div','ok2','');m.hidden=true;
+  b.onclick=()=>{if(d.classList.contains('fixed'))return;d.classList.add('fixed');b.hidden=true;m.hidden=false;m.textContent='✓ '+ok;fx++;$('#fxN').textContent=fx;addXP(4);if(fx===3)markDone(2)};d.appendChild(b);d.appendChild(m);fb2.appendChild(d)});
+ /* three bad days */
+ const STORIES=[['A delivery','Something went wrong with an order or a package.'],['A meeting or a plan','Something went wrong with a meeting, a class or a plan.'],['A phone or a computer','Something went wrong with a phone, an app or a computer.']];
+ const QS=['When did it happen?','Who was there?','What was the main issue?','What did you do first?','Who helped you?','What was the good news?','How long did it take to fix?','What did you say to the other person?'];
+ let lie=-1,qn=0,qk=-1,round=0,ptT=0,ptH=0,rev=false,tSaid=false,gSaid=false;
+ const slots=$('#slots');
+ const slotEls=STORIES.map((s,i)=>{const e=mk('div','s17-slot',`<span class="num">${i+1}</span><span class="pt">${s[0]}</span><span class="hn">${s[1]} Tell it in the past.</span>`);const b=mk('button','btn sun sm','This one is invented (secret)');b.onclick=()=>{if(lie>=0)return;lie=i;slotEls.forEach(x=>{x.b.disabled=true;x.b.textContent='🔒 Locked'});$('#lq').hidden=false;$('#lTeach').hidden=false;$('#lrN').textContent=round+1;$('#qm').textContent='Listeners: ask the teller. Press “Next question”.'};e.appendChild(b);slots.appendChild(e);return{e,b}});
+ const gs=$('#guess');STORIES.forEach((s,i)=>{const b=mk('button','btn sun',`Story ${i+1}`);b.onclick=()=>{if(rev||lie<0)return;rev=true;const caught=i===lie;
+   slotEls.forEach((x,j)=>x.e.classList.add(j===lie?'lie':'true'));
+   if(caught)ptH+=1;else ptT+=2;round++;
+   $('#lRes').hidden=false;$('#lRes').textContent=caught?`Caught! Story ${lie+1} was invented. Hunters +1.`:`Survived! Story ${lie+1} was invented. Teller +2.`;
+   $('#pT').textContent=ptT;$('#pH').textContent=ptH;addXP(5,'lg'+round);markDone(2);
+   $('#lClose').textContent=`Say it: “After ${round} round${round===1?'':'s'}, the tellers have ${ptT} points and the hunters have ${ptH} points.”`};gs.appendChild(b)});
+ $('#qNextL').onclick=()=>{qk=(qk+1)%QS.length;$('#qm').textContent=QS[qk];qn=Math.min(4,qn+1);$('#qCnt').textContent=qn;if(qn>=4)$('#lg').hidden=false};
+ toggleBtn($('#uTeller'),on=>{ptT+=on?1:-1;$('#pT').textContent=ptT;if(on)addXP(3,'ut'+round)});
+ toggleBtn($('#uGood'),on=>{ptT+=on?1:-1;$('#pT').textContent=ptT;if(on)addXP(3,'ug'+round)});
+ $('#lNew').onclick=()=>{lie=-1;qn=0;rev=false;$('#qCnt').textContent=0;$('#lq').hidden=true;$('#lg').hidden=true;$('#lTeach').hidden=true;$('#lRes').hidden=true;$('#uTeller').setAttribute('aria-pressed','false');$('#uGood').setAttribute('aria-pressed','false');slotEls.forEach(x=>{x.e.classList.remove('lie','true');x.b.disabled=false;x.b.textContent='This one is invented (secret)'});$('#lrN').textContent=round+1};
+})();
+
+/* ===== §4 Reading ===== */
+(function(){
+ const R=[
+  {nm:'Rosa · Warehouse chat',ini:'R',img:'img/i2s05_desk.jpg',tx:'Hi team, quick update. <mark class="cn">The main issue was</mark> the delivery: two boxes were missing on Tuesday. <mark class="cn">The good news is</mark> that the invoice was correct. I called the supplier, and they promised a new shipment for Thursday. <mark class="cn">Please confirm</mark> if the line can wait.',who:'You are the line supervisor. What do you do?',pk:['Tell the team and plan for Thursday','Ask for a faster shipment','Do nothing'],hint:'The new shipment is promised for Thursday.'},
+  {nm:'Mr. Lee · Building message',ini:'L',img:'img/i2s02_phone.jpg',tx:'Hello Ana, last night the water stopped in our building. <mark class="cn">The main issue was</mark> a broken pipe on the third floor. <mark class="cn">The good news is</mark> that a plumber fixed it this morning, and the water is back. <mark class="cn">Please tell me</mark> if your kitchen still has a problem.',who:'You are Ana. What do you do?',pk:['Check my kitchen and answer him','Call the plumber','Do nothing'],hint:'Mr. Lee asks about your kitchen.'}];
+ const box=$('#reads');let sd=0;
+ R.forEach((r,i)=>{const c=mk('div','s17-rd',`<div class="ph2" style="background-image:url(${r.img});background-position:center ${i?'60%':'40%'}"></div><div class="rh"><i>${r.ini}</i>${r.nm}</div><p class="tx">${r.tx}</p>`);
+  const pr=mk('div','pickrow','');pr.appendChild(mk('div','hint',r.who+' Choose, then say it: “I … because …”'));
+  const said=mk('button','btn main','I said it');said.disabled=true;const fb=mk('div','s17-fb','');fb.hidden=true;
+  const bs=r.pk.map((t,j)=>{const b=mk('button','s17-pk',t);b.setAttribute('aria-pressed','false');b.onclick=()=>{bs.forEach((x,k)=>x.setAttribute('aria-pressed',k===j));said.disabled=false};pr.appendChild(b);return b});
+  said.onclick=()=>{said.disabled=true;said.textContent='✓ Said it';addXP(5,'rd'+i);fb.hidden=false;fb.textContent='Did you give a reason with “because”? Useful fact: '+r.hint;sd++;if(sd===2)markDone(3)};
+  pr.appendChild(said);pr.appendChild(fb);c.appendChild(pr);box.appendChild(c)});
+ toggleBtn($('#cnBtn'),on=>{box.classList.toggle('s17-hl',on);$('#cnBtn').textContent=on?'Hide the key phrases':'Show the key phrases'});
+ const big=$('#bigIdea');['They name a problem and give good news','They ask for money','They cancel a plan'].forEach((t,i)=>{const b=mk('button','',t);b.setAttribute('aria-pressed','false');b.onclick=()=>{big.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed','false'));b.setAttribute('aria-pressed','true');
+  if(i===0){$('#bigFb').textContent='✓ Yes — both messages say the main issue, the good news and what to do next.';addXP(5,'big')}else $('#bigFb').textContent='Look again: how does each message start?'};big.appendChild(b)});
+})();
+
+/* ===== §5 Listening · Who Is Right? ===== */
+(function(){
+ const V=[{who:'Dev',acc:'Warehouse · Indian English · non-native',vc:'#C2410C',ic:'D',ids:['listening-001-dev','listening-003-dev','listening-005-dev']},
+          {who:'Emma',acc:'Purchasing · US English · native',vc:'#0A7F75',ic:'E',ids:['listening-002-emma','listening-004-emma','listening-006-emma']}];
+ const byId=id=>CLIPS.find(c=>c.id==='L08-S17-'+id);
+ const vb=$('#duo');
+ V.forEach(v=>{const el=mk('div','s17-sp',`<div class="vh" style="--vc:${v.vc}"><span class="ic">${v.ic}</span><div><b style="font-family:Nunito;font-size:20px">${v.who}</b><small>${v.acc}</small></div></div>`);
+  const b=mk('div','vb','');v.ids.forEach((id,i)=>{const c=byId(id);const r=mk('div','s17-turn',`<span class="who">${v.who}</span><span>Turn ${i+1}</span>`);r.appendChild(hearBtn(v.who+' turn '+(i+1),()=>playClip(c,{rate:.92})));b.appendChild(r)});el.appendChild(b);vb.appendChild(el)});
+ const seq=['listening-001-dev','listening-002-emma','listening-003-dev','listening-004-emma','listening-005-dev','listening-006-emma'].map(byId);
+ let chain=0;function playFrom(i,tok){if(tok!==chain||i>=seq.length)return;const c=seq[i];let called=false;const go=()=>{if(called)return;called=true;setTimeout(()=>playFrom(i+1,tok),500)};playClip(c,{rate:.92},go);setTimeout(go,Math.max(3000,c.text.length*95))}
+ $('#playA').onclick=()=>{chain++;playFrom(0,chain);addXP(2,'play')};$('#stopAll').onclick=()=>{chain++;stopAll()};
+ const lb=$('#lBig');['A late order','A new job','A broken phone'].forEach((t,i)=>{const b=mk('button','',t);b.setAttribute('aria-pressed','false');b.onclick=()=>{lb.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed','false'));b.setAttribute('aria-pressed','true');if(i===0){$('#lBigFb').textContent='✓ Yes — they talk about why the order arrived late.';addXP(5,'lbig')}else $('#lBigFb').textContent='Listen again: what arrived three days late?'};lb.appendChild(b)});
+ const dc=$('#decide');['I trust Dev more','I trust Emma more'].forEach((t,i)=>{const b=mk('button','',t);b.setAttribute('aria-pressed','false');b.onclick=()=>{dc.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed','false'));b.setAttribute('aria-pressed','true');addXP(3,'dec')};dc.appendChild(b)});
+ /* scale */
+ const QU=[{w:'D',t:'They promised the parts for Tuesday.'},{w:'E',t:'We sent our request at three fifteen on Monday.'},{w:'D',t:'Nobody told me about noon.'},{w:'E',t:'I wrote the rule in my email last week.'},{w:'D',t:'I called them on Wednesday, and nobody answered.'},{w:'E',t:'The supplier promised Tuesday for orders before noon.'}];
+ const wt={D:0,E:0};const qb=$('#quotes');
+ function tilt(){const d=Math.max(-10,Math.min(10,(wt.E-wt.D)*4));$('#beam').style.setProperty('--t',d+'deg');$('#wL').textContent=wt.D;$('#wR').textContent=wt.E}
+ QU.forEach(q=>{const b=mk('button','s17-q',`<em style="background:${q.w==='D'?'#C2410C':'#0A7F75'}">${q.w==='D'?'DEV':'EMMA'}</em><span>${q.t}</span>`);b.setAttribute('aria-pressed','false');b.onclick=()=>{const on=b.getAttribute('aria-pressed')!=='true';b.setAttribute('aria-pressed',on);wt[q.w]+=on?1:-1;tilt();if(on)addXP(1,'qq'+q.t)};qb.appendChild(b)});
+ $('#verdictBtn').onclick=()=>{$('#verdictBtn').textContent='✓ Said it';$('#verdictBtn').disabled=true;addXP(6,'verd')};
+ let said=0;const pass=$('#pass');
+ ['I name the main issue: “The main issue was…”','I say the good news: “The good news is…”','I say the next step: “The next step is…”'].forEach((t,i)=>{const b=mk('button','mv',`<i>✓</i><span>${t}</span>`);b.setAttribute('aria-pressed','false');b.onclick=()=>{const on=b.getAttribute('aria-pressed')!=='true';b.setAttribute('aria-pressed',on);said+=on?1:-1;if(on)addXP(3,'pm'+i);$('#lisScore').textContent=said+' / 3 moves'};pass.appendChild(b)});
+ timer($('#lTimer'),()=>addXP(5,'lt'));
+ const DF=[['The request time','Emma: we sent it at three fifteen','The log says: request received Monday, 3:15 p.m.'],['The cutoff','Emma: the rule was noon','The log says: supplier cutoff, 12:00 noon'],['The follow-up','Dev: nobody answered','The log says: supplier follow-up, no calls']];
+ $('#chkBtn').onclick=()=>{$('#official').hidden=false;const df=$('#diffs');if(!df.children.length){
+  DF.forEach(([a,b,c])=>{const d=mk('div','s17-diff',`<div><b>${a}</b></div><div class="a">${b}</div><div class="b">${c}</div>`);const bt=mk('button','btn sm','I said the link');toggleBtn(bt,on=>{if(on)addXP(3,'df'+a)});d.appendChild(bt);df.appendChild(d)});
+  $('#scr').innerHTML=seq.map(c=>`<p><b>${c.speaker.split(' ')[0]}:</b> ${c.text}</p>`).join('');addXP(5,'chk');markDone(4)}};
+ const pr=$('#pron');for(let n=1;n<=3;n++){const c=cf('pron',n);const d=mk('div','pr',`<div class="w">${c.text}</div>`);d.appendChild(hearBtn(c.text,()=>playClip(c)));const b=mk('button','btn sm','I said it');toggleBtn(b,on=>{if(on)addXP(2,'pr'+n)});d.appendChild(b);pr.appendChild(d)}
+})();
+
+/* ===== §6 Speaking · Picture, Problem, Twist ===== */
+(function(){
+ const PIC=[{t:'Delivery day',img:'img/i2s02_boxes.jpg',w:['box','Tuesday','wrong','supplier']},{t:'The Monday meeting',img:'img/i2s03_board.jpg',w:['plan','missing','Friday','team']},{t:'The late client',img:'img/i2s01_traffic.jpg',w:['car','late','client','phone']}];
+ const TW=['The client calls and changes the date.','The person in charge is not there today.','Your phone battery dies.','A second box is missing too.','The manager asks for a new plan by noon.','It starts to rain, and the road is closed.'];
+ let cp=0,ti=0,twist='';const pc=$('#pics');
+ PIC.forEach((o,i)=>{const b=mk('button','s17-pic',`<div class="im" style="background-image:url(${o.img})"></div><div class="pb"><h4>${o.t}</h4><div class="wd">${o.w.map(x=>`<span>${x}</span>`).join('')}</div></div>`);b.setAttribute('aria-pressed',i===0);b.onclick=()=>{cp=i;[...pc.children].forEach((x,j)=>x.setAttribute('aria-pressed',j===i))};pc.appendChild(b)});
+ const RD=[
+  {t:'Round 1 · 3 minutes · beginning, problem, action',sec:180,rs:['Last Tuesday, …','The main issue was …','First, … Then, …'],mv:['I told the beginning in the past','I said “The main issue was…”','I said an action with First / Then']},
+  {t:'Round 2 · 3 minutes · the twist',sec:180,tw:1,rs:['Then …','The good news is / was …','In the end, …'],mv:['I reacted to the twist in the past','I said the good news','I gave an ending']},
+  {t:'Round 3 · 2 minutes · tell it again with less help',sec:120,rs:['The main issue was …','The good news is …'],mv:['I told the whole story without reading','I used the main issue and the good news','I used then / after that / finally']}];
+ const done=RD.map(r=>r.mv.map(()=>false));let cr=0,mvN=0;
+ const tabs=$('#rtabs'),stage=$('#rstage');
+ RD.forEach((r,i)=>{const b=mk('button','','Round '+(i+1));b.setAttribute('aria-pressed',i===0);b.onclick=()=>{cr=i;[...tabs.children].forEach((x,j)=>x.setAttribute('aria-pressed',j===i));draw()};tabs.appendChild(b)});
+ function draw(){const r=RD[cr];const tid='rt'+cr;const p=PIC[cp];
+  stage.innerHTML=`<h4>${p.t} · ${p.w.join(' · ')}</h4><div class="kick" style="color:var(--sun)">${r.t}</div><div class="s17-rescue" id="rsc"><b style="color:#D8DFF5">HELP</b>${r.rs.map(x=>`<span>${x}</span>`).join('')}</div>
+   ${r.tw?`<div class="s17-twist" id="twist">${twist||'Press “Spin the twist”.'}</div><div class="row"><button class="btn sun" id="spin">Spin the twist</button></div>`:''}
+   <div class="timer" id="${tid}" data-sec="${r.sec}"><output>${fmt(r.sec)}</output><button class="btn sun" data-a="go">Start</button><button class="btn" data-a="re">Reset</button></div>
+   <div class="moves" style="padding:0">${r.mv.map((t,k)=>`<button class="mv" data-k="${k}" aria-pressed="${done[cr][k]}"><i>✓</i><span>${t}</span></button>`).join('')}</div>
+   ${cr===2?'<div class="row"><button class="btn" id="hideH" aria-pressed="false">Hide the help</button></div>':''}`;
+  timer($('#'+tid),()=>addXP(4,'rtm'+cr));
+  stage.querySelectorAll('.mv').forEach(b=>b.onclick=()=>{const k=+b.dataset.k;done[cr][k]=!done[cr][k];b.setAttribute('aria-pressed',done[cr][k]);mvN+=done[cr][k]?1:-1;$('#mvN').textContent=mvN;if(done[cr][k])addXP(3);if(mvN>=5)markDone(5)});
+  const sp=$('#spin');if(sp)sp.onclick=()=>{twist=TW[ti%TW.length];ti++;$('#twist').textContent='Twist: '+twist;addXP(2,'sp'+ti)};
+  const hh=$('#hideH');if(hh)hh.onclick=()=>{const on=hh.getAttribute('aria-pressed')!=='true';hh.setAttribute('aria-pressed',on);$('#rsc').style.display=on?'none':'flex';hh.textContent=on?'Show the help':'Hide the help'}}
+ draw();
+ const Q=[
+  ['What went wrong in your day yesterday?','What was the main issue?','What was the good news?'],
+  ['Tell me about a delivery that arrived late or wrong.','What was missing?','Who did you call?'],
+  ['What is a mistake that people often make in a new job?'],
+  ['Who is the person who solved your last problem?','What did that person do first?','Was it fast?'],
+  ['What was the reason for your last delay?','Did you wait?','What did you do next?'],
+  ['What is a good place to relax after a bad day?'],
+  ['Tell me about a meeting that went wrong.','What was the main issue?','What was the good news?'],
+  ['What was the last request that stayed pending for a long time?','Who approved it?','How did you follow up?'],
+  ['What is the best option when your phone breaks?'],
+  ['When did you miss something important, like a bus, a class or a call?','What happened?','What did you do next?'],
+  ['What step in a process often goes wrong at work or at home?','Why?','What is the good news?'],
+  ['What mistake taught you something? What did you learn?'],
+  ['Tell me about a trip or a plan that changed at the last minute.','What was the main issue?','What was the good news?'],
+  ['Tell me about a problem that had a happy ending.','What went wrong first?','What did you do?']];
+ let qi=0;function dq(){const q=Q[qi];$('#qn').textContent=`QUESTION ${qi+1} OF ${Q.length}`;$('#qt').textContent=q[0];$('#qfu').innerHTML=q.slice(1).map(x=>`<span>${x}</span>`).join('')}
+ $('#qNext').onclick=()=>{qi=(qi+1)%Q.length;dq();addXP(1,'qq'+qi)};$('#qPrev').onclick=()=>{qi=(qi+Q.length-1)%Q.length;dq()};dq();
+})();
+
+/* ===== §7 Mission ===== */
+(function(){
+ const CASES=[
+  {ini:'P',nm:'Pedro',tag:'WORK',ti:'Wrong parts at the warehouse',facts:['Order 5120','Supplier sent size B, not size A','The line stopped for two hours on Tuesday','Spare parts in stock','New delivery on Thursday'],cl:'Do we lose the whole day?'},
+  {ini:'C',nm:'Carla',tag:'LIFE',ti:'The school bus did not come',facts:['The bus did not come at seven','Nobody sent a message to the parents','The trip started at nine thirty','The museum waited for the group','The teacher called the bus company'],cl:'Will the museum let the group in?'},
+  {ini:'M',nm:'Marta',tag:'WORK',ti:'The wrong numbers in the report',facts:['Monthly report','She sent last month’s numbers','The manager saw the mistake before the meeting','Marta fixed the file in twenty minutes','The meeting started on time'],cl:'Who has the right file now?'}];
+ const MV=['I name the main issue: “The main issue was…”','I say what happened: two facts in the past','I give the good news: “The good news is…”','I answer the clarification question','I give the next step: “The next step is…” or “I recommend…”'];
+ const cs=$('#cases');let mv=0;const per=[0,0,0];const els=[];
+ const upd=()=>{$('#m17N').textContent=mv;const h=per.filter(x=>x>=4).length;$('#mOut').textContent=`Say it: “I gave ${h} update${h===1?'':'s'}. I made ${mv} of 15 moves.”`;per.forEach((x,i)=>{const s=els[i].querySelector('.s17-stamp');els[i].classList.toggle('upd',x>=4);s.textContent=x>=4?'UPDATED':'OPEN'});if(mv>=12)markDone(6)};
+ CASES.forEach((c,ci)=>{const el=mk('div','s17-case',`<span class="s17-stamp">OPEN</span><div class="gh"><span class="ic">${c.ini}</span><div><h4 style="font-size:20px;font-weight:900">${c.nm} · ${c.ti}</h4><small>${c.tag} · case ${ci+1} of 3 · facts you can use</small></div></div><div class="s17-facts">${c.facts.map(f=>`<span>${f}</span>`).join('')}</div>`);
+  const cl=mk('div','cl','');const b0=mk('button','btn sm','Ask the clarification question');const q0=mk('div','clq','');q0.hidden=true;q0.textContent='“'+c.cl+'”';b0.onclick=()=>{q0.hidden=false;b0.hidden=true};cl.appendChild(b0);cl.appendChild(q0);el.appendChild(cl);
+  const m=mk('div','s17-mvs','');MV.forEach((t,i)=>{const b=mk('button','mv',`<i>✓</i><span>${t}</span>`);b.setAttribute('aria-pressed','false');b.onclick=()=>{const on=b.getAttribute('aria-pressed')!=='true';b.setAttribute('aria-pressed',on);mv+=on?1:-1;per[ci]+=on?1:-1;if(on)addXP(3);upd()};m.appendChild(b)});
+  el.appendChild(m);cs.appendChild(el);els.push(el)});
+ toggleBtn($('#noHelp'),on=>{$('#mHelp').hidden=on;$('#cases').classList.toggle('s17-nohelp',on);$('#noHelp').textContent=on?'Show the help':'Hide the help'});
+ timer($('#mTimer'),()=>addXP(5,'mt'));
+ const INC=['A package arrived broken','A meeting started without the main person','A payment stayed pending','A class was cancelled at the last minute'];
+ const TWS=['The client calls and changes the date.','The good news disappears: the spare part is also missing.','Your listener is in a hurry. Say it in three sentences.','The person in charge is on vacation.'];
+ let ti=0;$('#t2New').onclick=()=>{$('#t2Case').innerHTML=`<b>Incident:</b> ${INC[ti%INC.length]} · <b>Twist:</b> ${TWS[ti%TWS.length]}${window._s17joker?' · <b>Joker:</b> you may open the help once.':''}`;ti++;addXP(2,'t2n'+ti)};
+ timer($('#t2Timer'),()=>addXP(5,'t2t'));
+ ['Main issue','What happened (past)','Good news','Next step','I did not read'].forEach((t,i)=>{const b=mk('button','btn',t);toggleBtn(b,on=>{if(on)addXP(4,'t2c'+i)});$('#t2Chk').appendChild(b)});
+ upd();
+})();
+
+/* ===== §8 Wrap-up ===== */
+(function(){
+ const F=[['The supplier did not sent the invoice.','The supplier did not send the invoice.'],['The main issue it was the delay.','The main issue was the delay.'],['The good news is that we find the missing box.','The good news is that we found the missing box.']];
+ let n=0;const fx=$('#itfix');
+ F.forEach(([bad,ok])=>{const d=mk('div','it',`<div class="t">${bad}</div>`);const b=mk('button','btn main','I fixed it out loud');const m=mk('div','','');m.hidden=true;m.style.fontWeight='800';m.style.color='var(--ok)';
+  b.onclick=()=>{if(d.classList.contains('fixed'))return;d.classList.add('fixed');b.hidden=true;m.hidden=false;m.textContent='✓ '+ok;n++;$('#scQ').textContent=n+' / 3 repaired';addXP(5)};d.appendChild(b);d.appendChild(m);fx.appendChild(d)});
+ const FQ=['Your manager asks: “What went wrong with the delivery?”','Your manager asks: “Why is the report late?”','Your manager asks: “What happened at the meeting?”','Your manager asks: “What is the problem with the order?”','Your manager asks: “Why did the client call us?”'];
+ let fi=-1;$('#finalBtn').onclick=()=>{fi=(fi+1)%FQ.length;$('#finalQ').textContent=FQ[fi];addXP(2,'fq'+fi)};
+ timer($('#fTimer'),()=>addXP(5,'ft'));
+ ['Main issue','What happened (past)','Good news','Next step','I did not read'].forEach((t,i)=>{const b=mk('button','btn',t);toggleBtn(b,on=>{if(on)addXP(3,'fc'+i)});$('#fChk').appendChild(b)});
+ const AB=['I can name the main issue','I can say what happened in the past','I can give the good news','I can give a next step','I can answer a question about the problem'];
+ const ticks=new Set();
+ AB.forEach((t,i)=>{const b=mk('button','btn',t);b.setAttribute('aria-pressed','false');b.onclick=()=>{if(ticks.has(i))ticks.delete(i);else{ticks.add(i);addXP(2,'cn'+i)}b.setAttribute('aria-pressed',ticks.has(i));draw()};$('#canChk').appendChild(b)});
+ function draw(){const t=ticks.size;$('#repN').textContent=t;let msg='Tick what you can do. Your result appears here.';
+  if(t>0){const low=AB.filter((_,i)=>!ticks.has(i)).map(x=>x.replace('I can ',''));msg=t>=4?'Ready for Session 18. You can '+AB.filter((_,i)=>ticks.has(i)).slice(0,3).map(x=>x.replace('I can ','')).join(', ')+' … and more.':'Practice before Session 18: '+low.slice(0,3).join(', ')+'.'}
+  $('#repRes').textContent=msg;st.set('gt08-s17-can',JSON.stringify({t:t,ticks:[...ticks],d:new Date().toISOString().slice(0,10)}));$('#wrapOut').textContent=`Say it: “Today I can say what went wrong. I ticked ${t} of 5.”`;if(t>=3)markDone(7)}
+ function showDone(){$('#doneBtn').textContent='✓ Session complete';$('#doneBtn').disabled=true}
+ if(st.get('gt08-s17-done'))showDone();
+ $('#doneBtn').onclick=()=>{st.set('gt08-s17-done','1');addXP(50,'done');markDone(7);showDone()};
+})();
+$('#tgGroup').addEventListener('click',applyMode);$('#tgOne').addEventListener('click',applyMode);
+applyMode();
+
+})();
+</script>
+</body>
+</html>

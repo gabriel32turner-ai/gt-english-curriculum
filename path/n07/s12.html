@@ -1,0 +1,839 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Intermedio 1 · S12 · Hackathon Weekend: The Information Gap</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap">
+<style>
+
+:root{
+  --navy:#16213E; --navy2:#22305A; --cream:#F3FAF6; --paper:#FFFFFF; --ink:#1B1B2F; --mut:#5E6275; --line:#D5EBDF;
+  --pri:#087F57; --pri-d:#05563B; --pri-t:#E1F6EC;
+  --sun:#FFC233; --sun-t:#FFF3D1; --teal:#0E7490; --teal-t:#DDF1F6; --pink:#C71F5E; --pink-t:#FBE3EC; --violet:#6B4DF0; --violet-t:#ECE7FF;
+  --ok:#15A34A; --ok-t:#E3F7EA; --err:#E5484D; --err-t:#FDE8E8;
+  --r:18px; --r-sm:12px; --sh:0 6px 22px rgba(27,27,47,.08); --sh-lg:0 18px 44px rgba(27,27,47,.16);
+  color-scheme:light;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+[hidden]{display:none!important}
+html{scroll-behavior:smooth;scroll-padding-top:150px}
+body{background:var(--cream);color:var(--ink);font-family:"DM Sans","Segoe UI",system-ui,sans-serif;font-size:17px;line-height:1.55;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4,.nun{font-family:Nunito,"Segoe UI",system-ui,sans-serif;letter-spacing:-.01em;line-height:1.15;text-wrap:balance}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+button:focus-visible,a:focus-visible,textarea:focus-visible,input:focus-visible{outline:3px solid var(--violet);outline-offset:2px}
+img{max-width:100%;display:block}
+.wrap{max-width:1100px;margin:0 auto;padding-inline:16px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+/* ---------- top bar ---------- */
+.topbar{background:var(--navy);color:#fff}
+.topbar .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding-block:10px}
+.brand{display:flex;align-items:center;gap:10px;font-family:Nunito,"Segoe UI",system-ui,sans-serif;font-weight:900;font-size:14px;letter-spacing:.08em}
+.brand i{width:10px;height:10px;border-radius:50%;background:var(--pri);box-shadow:0 0 0 4px rgba(8,127,87,.35)}
+.brand a{color:#fff;text-decoration:none}
+.brand small{font-family:"DM Sans","Segoe UI",system-ui,sans-serif;font-weight:500;letter-spacing:0;opacity:.7;font-size:13px}
+.toggles{display:flex;gap:8px;flex-wrap:wrap}
+.tg{border:1.5px solid rgba(255,255,255,.3);color:#fff;border-radius:99px;padding:6px 14px;font-size:13px;font-weight:700}
+.tg[aria-pressed="true"]{background:var(--sun);border-color:var(--sun);color:var(--navy)}
+
+/* ---------- hero ---------- */
+.hero{position:relative;background:var(--navy);color:#fff;overflow:hidden}
+.hero .bg{position:absolute;inset:0;background:url(img/l07s01_hero.jpg) center/cover}
+.hero .bg::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(15,30,70,.97) 0%,rgba(15,30,70,.87) 45%,rgba(15,30,70,.28) 100%)}
+.hero .wrap{position:relative;padding-block:44px 40px}
+.kick{font-family:Nunito,"Segoe UI",system-ui,sans-serif;font-weight:900;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--sun)}
+.hero h1{font-size:clamp(40px,6.5vw,72px);font-weight:900;margin:8px 0 10px;max-width:16ch}
+.hero h1 span{color:#4ADE9F;text-shadow:0 0 0 transparent}
+.hero p.obj{max-width:56ch;font-size:18px;opacity:.94}
+.pills{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.pill{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.28);border-radius:99px;padding:5px 13px;font-size:14px;font-weight:700}
+.pill.sun{background:var(--sun);border-color:var(--sun);color:var(--navy)}
+.coach{display:inline-flex;align-items:center;gap:12px;margin-top:20px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);border-radius:99px;padding:6px 18px 6px 6px}
+.coach .cav{width:44px;height:44px;border-radius:50%;background:var(--pri);display:grid;place-items:center;font-family:Nunito,"Segoe UI",system-ui,sans-serif;font-weight:900;font-size:16px;letter-spacing:.02em}
+.coach b{display:block;font-family:Nunito,"Segoe UI",system-ui,sans-serif;font-weight:900;font-size:17px;line-height:1.1}
+.coach small{font-size:13px;color:var(--sun);font-weight:700;letter-spacing:.04em}
+
+/* ---------- sticky nav ---------- */
+.nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:40;background:rgba(243,250,246,.96);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.nav .wrap{padding-block:10px 8px}
+.prog{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+.bar{flex:1;height:10px;background:#DCEFE5;border-radius:99px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--pri),var(--sun));border-radius:99px;transition:width .4s}
+.xp{font-family:Nunito,"Segoe UI",system-ui,sans-serif;font-weight:900;font-size:15px;color:var(--pri-d);white-space:nowrap}
+.clock{font-family:Nunito,"Segoe UI",system-ui,sans-serif;font-weight:900;font-size:15px;background:var(--navy);color:#fff;border-radius:99px;padding:5px 12px;font-variant-numeric:tabular-nums}
+.steps{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}
+.steps::-webkit-scrollbar{display:none}
+.steps a{flex:1 0 auto;text-decoration:none;color:var(--mut);background:#E4F3EB;border-radius:10px;padding:8px 12px;font-weight:700;font-size:14px;white-space:nowrap;text-align:center;border:1.5px solid transparent}
+.steps a b{font-family:Nunito,"Segoe UI",system-ui,sans-serif;margin-right:4px}
+.steps a.on{background:var(--c,var(--pri));color:#fff}
+.steps a.done{border-color:var(--ok);color:var(--ok)}
+.steps a.done.on{color:#fff}
+
+/* ---------- sections ---------- */
+main{padding-block:26px 80px}
+.sec{background:var(--paper);border-radius:24px;box-shadow:var(--sh);margin-bottom:26px;overflow:hidden;border-top:8px solid var(--c)}
+.shead{display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between;padding:22px 26px 6px}
+.snum{display:flex;align-items:center;gap:14px}
+.snum .n{width:54px;height:54px;border-radius:16px;background:var(--c);color:#fff;display:grid;place-items:center;font-family:Nunito,"Segoe UI",system-ui,sans-serif;font-weight:900;font-size:22px;flex:none}
+.snum h2{font-size:clamp(26px,3.4vw,36px);font-weight:900}
+.snum .sub{font-size:14px;color:var(--mut);font-weight:500}
+.meta{display:flex;gap:8px;flex-wrap:wrap}
+.chip{border-radius:99px;padding:5px 12px;font-size:13px;font-weight:700;background:var(--ct);color:var(--ink)}
+.chip.dark{background:var(--navy);color:#fff}
+.sbody{padding:14px 26px 28px;display:grid;gap:22px}
+.block{display:grid;gap:12px}
+.bt{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.bt h3{font-size:22px;font-weight:900}
+.bt .tag{font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--c)}
+.hint{color:var(--mut);font-size:15px}
+.card{background:var(--paper);border:1.5px solid var(--line);border-radius:var(--r);padding:18px}
+.tint{background:var(--ct);border-color:transparent}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+@media (max-width:820px){.g2,.g3{grid-template-columns:1fr}}
+.btn{border-radius:99px;padding:10px 18px;font-weight:700;font-size:15px;background:var(--paper);border:1.5px solid var(--line)}
+.btn.main{background:var(--c,var(--pri));border-color:var(--c,var(--pri));color:#fff}
+.btn.dark{background:var(--navy);border-color:var(--navy);color:#fff}
+.btn.sm{padding:6px 12px;font-size:14px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.say{width:40px;height:40px;border-radius:50%;background:var(--c,var(--pri));color:#fff;display:inline-grid;place-items:center;flex:none;font-size:16px}
+.say svg{width:18px;height:18px;fill:#fff}
+
+/* teacher notes */
+.tn{border-radius:var(--r);background:#FFFBEA;border:1.5px dashed #E9C46A}
+.tn summary{list-style:none;padding:12px 16px;font-weight:800;font-family:Nunito,"Segoe UI",system-ui,sans-serif;cursor:pointer;display:flex;justify-content:space-between;color:#7A5A00}
+.tn summary::-webkit-details-marker{display:none}
+.tn summary::after{content:"＋";font-weight:900}
+.tn[open] summary::after{content:"－"}
+.tn .layers{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;padding:0 16px 16px}
+@media (max-width:820px){.tn .layers{grid-template-columns:1fr}}
+.tn .ly{background:#fff;border-radius:12px;padding:12px 14px;font-size:15px}
+.tn .ly h4{font-size:13px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px}
+.tn .ly:nth-child(1) h4{color:var(--violet)} .tn .ly:nth-child(2) h4{color:var(--pri-d)} .tn .ly:nth-child(3) h4{color:var(--teal)}
+.tn ul{padding-left:18px} .tn li{margin-bottom:4px}
+body.student .tn, body.student .key{display:none!important}
+
+/* ---------- §1 warm-up ---------- */
+.scene{display:grid;grid-template-columns:1.1fr 1fr;border-radius:var(--r);overflow:hidden;background:var(--navy);color:#fff}
+@media (max-width:820px){.scene{grid-template-columns:1fr}}
+.scene img{height:100%;min-height:260px;object-fit:cover}
+.scene .txt{padding:26px;display:grid;gap:12px;align-content:center}
+.bubble{background:#fff;color:var(--ink);border-radius:18px 18px 18px 4px;padding:12px 16px;font-size:20px;font-weight:700;max-width:28ch;position:relative}
+.bubble.me{background:var(--pri);color:#fff;border-radius:18px 18px 4px 18px;justify-self:end}
+.poll{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+@media (max-width:900px){.poll{grid-template-columns:repeat(3,1fr)}}
+@media (max-width:520px){.poll{grid-template-columns:repeat(2,1fr)}}
+.pc{border-radius:var(--r);overflow:hidden;background:var(--paper);border:2px solid var(--line);display:grid;transition:transform .15s,border-color .15s}
+.pc .em{aspect-ratio:4/3;display:grid;place-items:center;font-size:40px;background:var(--pc-bg,var(--ct))}
+.pc .pb{padding:10px 12px;display:grid;gap:8px}
+.pc .nm{font-family:Nunito,"Segoe UI",system-ui,sans-serif;font-weight:900;font-size:16px;line-height:1.15;min-height:2.3em}
+.pc .vt{display:flex;align-items:center;justify-content:space-between}
+.pc .vt button{width:34px;height:34px;border-radius:50%;background:var(--ct);font-weight:900;font-size:18px}
+.pc .vt output{font-family:Nunito,"Segoe UI",system-ui,sans-serif;font-weight:900;font-size:22px;font-variant-numeric:tabular-nums}
+.pc .pbar{height:8px;border-radius:99px;background:#EDF1FB;overflow:hidden}
+.pc .pbar i{display:block;height:100%;width:0;background:var(--c);transition:width .3s}
+.pc.win{border-color:var(--c);transform:translateY(-3px)}
+.result{font-family:Nunito,"Segoe UI",system-ui,sans-serif;font-weight:900;font-size:20px}
+.fq{display:grid;gap:8px}
+.fq div{background:var(--ct);border-radius:12px;padding:10px 14px;font-weight:700}
+.fq div span{color:var(--mut);font-weight:500}
+
+/* ---------- §2 vocab ---------- */
+.flips{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+@media (max-width:900px){.flips{grid-template-columns:repeat(3,1fr)}}
+@media (max-width:520px){.flips{grid-template-columns:repeat(2,1fr)}}
+.flip{perspective:900px;height:170px}
+.flip .in{position:relative;width:100%;height:100%;transition:transform .5s;transform-style:preserve-3d}
+.flip.on .in{transform:rotateY(180deg)}
+.flip .f,.flip .b{position:absolute;inset:0;border-radius:var(--r);backface-visibility:hidden;padding:14px;display:grid;align-content:space-between}
+.flip .f{background:var(--fc);color:#fff}
+.flip .b{background:#fff;border:2px solid var(--fc);transform:rotateY(180deg)}
+.flip .num{font-family:Nunito,"Segoe UI",system-ui,sans-serif;font-weight:900;font-size:13px;opacity:.8}
+.flip .w{font-family:Nunito,"Segoe UI",system-ui,sans-serif;font-weight:900;font-size:19px;line-height:1.15}
+.flip .es{font-weight:700;color:var(--mut);font-size:14px}
+.flip .ex{font-size:14px}
+.flip .fb{display:flex;justify-content:space-between;align-items:end}
+.flip .fb .say{background:rgba(255,255,255,.25)}
+.flip .tap{font-size:12px;font-weight:700;opacity:.85}
+.flip .seen{position:absolute;top:10px;right:10px;background:var(--ok);color:#fff;border-radius:99px;font-size:11px;font-weight:800;padding:2px 8px}
+.match{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.match .col{display:grid;gap:10px}
+.mi{border:2px solid var(--line);background:#fff;border-radius:14px;padding:12px 14px;font-weight:700;text-align:left;transition:.15s}
+.mi.sel{border-color:var(--c);background:var(--ct)}
+.mi.ok{border-color:var(--ok);background:var(--ok-t);color:var(--ok);cursor:default}
+.mi.bad{border-color:var(--err);background:var(--err-t);animation:shake .3s}
+@keyframes shake{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+.board{display:flex;flex-wrap:wrap;gap:10px}
+.dw{border-radius:12px;padding:10px 14px;font-family:Nunito,"Segoe UI",system-ui,sans-serif;font-weight:900;font-size:17px;background:var(--navy);color:#fff}
+.dw[aria-pressed="true"]{background:#E4E9F9;color:#9FA9C2;text-decoration:line-through}
+.timer{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.timer output{font-family:Nunito,"Segoe UI",system-ui,sans-serif;font-weight:900;font-size:34px;font-variant-numeric:tabular-nums;min-width:4.5ch}
+.timer.end output{color:var(--err)}
+.closeout{background:var(--navy);color:#fff;border-radius:14px;padding:12px 16px;font-family:Nunito,"Segoe UI",system-ui,sans-serif;font-weight:900;font-size:19px}
+.stat{font-family:Nunito,"Segoe UI",system-ui,sans-serif;font-weight:900}
+.stat b{color:var(--c);font-size:26px}
+
+/* ---------- §3 grammar ---------- */
+.disc{display:grid;grid-template-columns:1fr 1.2fr;gap:0;border-radius:var(--r);overflow:hidden;border:1.5px solid var(--line)}
+@media (max-width:820px){.disc{grid-template-columns:1fr}}
+.disc img{height:100%;min-height:240px;object-fit:cover}
+.disc .chat{padding:20px;display:grid;gap:10px;align-content:center;background:var(--violet-t)}
+.disc .chat p{background:#fff;border-radius:14px;padding:10px 14px;font-size:18px;font-weight:500;max-width:34ch}
+.disc .chat p:nth-child(even){justify-self:end;background:var(--violet);color:#fff}
+mark.hl{background:transparent;color:inherit;border-radius:4px;transition:.2s}
+.show-hl mark.hl{background:var(--sun);color:var(--ink);padding:0 3px;font-weight:800}
+.tool{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media (max-width:820px){.tool{grid-template-columns:1fr}}
+.tool .card h4{font-size:14px;letter-spacing:.08em;text-transform:uppercase;color:var(--violet);margin-bottom:6px}
+.tool .big{font-family:Nunito,"Segoe UI",system-ui,sans-serif;font-weight:900;font-size:24px}
+.tool .big em{font-style:normal;color:var(--violet)}
+.forms{border-radius:var(--r);overflow:hidden;border:1.5px solid var(--line)}
+.forms table{width:100%;border-collapse:collapse;font-size:16px}
+.forms th{background:var(--violet);color:#fff;font-family:Nunito,"Segoe UI",system-ui,sans-serif;text-align:left;padding:10px 14px}
+.forms td{padding:10px 14px;border-top:1px solid var(--line);background:#fff}
+.forms td:first-child{font-family:Nunito,"Segoe UI",system-ui,sans-serif;font-weight:900;font-size:22px;color:var(--violet);width:56px;text-align:center}
+.forms b{color:var(--violet)}
+.es-box{background:#fff;border:2px dashed var(--violet);border-radius:var(--r);padding:16px 18px;display:grid;gap:8px}
+.answerbox{background:var(--navy);color:#fff;border-radius:var(--r);padding:16px 18px;font-family:Nunito,"Segoe UI",system-ui,sans-serif;font-weight:900;font-size:19px;display:flex;align-items:center;gap:12px}
+.answerbox .tagi{background:var(--sun);color:var(--navy);border-radius:8px;padding:3px 10px;font-size:12px;letter-spacing:.06em}
+.mc{display:grid;gap:12px}
+.mcq{background:#fff;border:1.5px solid var(--line);border-radius:14px;padding:14px 16px;display:grid;gap:10px}
+.mcq .q{font-weight:700;font-size:18px}
+.mcq .q .n{font-family:Nunito,"Segoe UI",system-ui,sans-serif;font-weight:900;color:var(--c);margin-right:6px}
+.opts{display:flex;gap:8px;flex-wrap:wrap}
+.opt{border:2px solid var(--line);border-radius:99px;padding:7px 16px;font-weight:700;background:#fff}
+.opt:hover{border-color:var(--c)}
+.opt.ok{background:var(--ok);border-color:var(--ok);color:#fff}
+.opt.no{background:var(--err-t);border-color:var(--err);color:var(--err)}
+.mcq .fb{font-size:15px;font-weight:700}
+.mcq .fb.ok{color:var(--ok)} .mcq .fb.no{color:var(--err)}
+.score{font-family:Nunito,"Segoe UI",system-ui,sans-serif;font-weight:900;font-size:18px}
+.builder .dst,.builder .src{display:flex;flex-wrap:wrap;gap:8px;min-height:56px;padding:10px;border-radius:14px}
+.builder .dst{border:2.5px dashed var(--c);background:var(--ct)}
+.wchip{background:#fff;border:2px solid var(--line);border-radius:12px;padding:8px 14px;font-family:Nunito,"Segoe UI",system-ui,sans-serif;font-weight:900;font-size:18px;box-shadow:0 3px 0 var(--line)}
+.dst .wchip{border-color:var(--c);box-shadow:0 3px 0 var(--c)}
+.errs{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media (max-width:820px){.errs{grid-template-columns:1fr}}
+.err{border-radius:14px;padding:14px;background:#fff;border:1.5px solid var(--line);display:grid;gap:4px}
+.err s{color:var(--err);font-weight:700}
+.err b{color:var(--ok)}
+
+/* ---------- §4 reading ---------- */
+.phone{max-width:420px;margin:0 auto;background:#fff;border-radius:34px;border:10px solid var(--navy);box-shadow:var(--sh-lg);overflow:hidden}
+.phone .ph{background:var(--teal);color:#fff;padding:14px 16px;display:flex;align-items:center;gap:10px}
+.phone .ph b{font-family:Nunito,"Segoe UI",system-ui,sans-serif;font-weight:900}
+.phone .ph small{display:block;opacity:.9;font-size:12px}
+.phone .ms{background:#EFE9E1;padding:14px 12px;display:grid;gap:10px}
+.msg{display:grid;grid-template-columns:36px 1fr;gap:8px;align-items:start}
+.msg img,.msg .av{width:36px;height:36px;border-radius:50%;object-fit:cover}
+.msg .av{color:#fff;display:grid;place-items:center;font-family:Nunito,"Segoe UI",system-ui,sans-serif;font-weight:900}
+.msg .bb{background:#fff;border-radius:4px 14px 14px 14px;padding:8px 12px;font-size:16px}
+.msg .bb .who{font-family:Nunito,"Segoe UI",system-ui,sans-serif;font-weight:900;font-size:13px;color:var(--teal)}
+
+/* ---------- §5 listening ---------- */
+.player{display:grid;grid-template-columns:260px 1fr;gap:0;border-radius:var(--r);overflow:hidden;background:var(--navy);color:#fff}
+@media (max-width:820px){.player{grid-template-columns:1fr}}
+.player img{height:100%;min-height:200px;object-fit:cover}
+.player .pp{padding:22px;display:grid;gap:12px;align-content:center}
+.predict{display:grid;gap:10px}
+.pbet{background:#fff;border:1.5px solid var(--line);border-radius:14px;padding:12px 14px;display:grid;gap:8px}
+.pbet .st{font-weight:700;font-size:16px}
+.pbet .row2{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.tf{display:flex;gap:6px}
+.tf button{border:2px solid var(--line);border-radius:99px;padding:5px 14px;font-weight:800;font-size:13px}
+.tf button[aria-pressed="true"].t{background:var(--ok);border-color:var(--ok);color:#fff}
+.tf button[aria-pressed="true"].f{background:var(--err);border-color:var(--err);color:#fff}
+.pts{display:flex;align-items:center;gap:8px}
+.pts button{width:28px;height:28px;border-radius:50%;background:var(--pink-t);color:var(--pink);font-weight:900}
+.pts output{font-family:Nunito,"Segoe UI",system-ui,sans-serif;font-weight:900;min-width:2ch;text-align:center}
+.pbet.rev.right{border-color:var(--ok);background:var(--ok-t)}
+.pbet.rev.wrong{border-color:var(--err);background:var(--err-t)}
+.play{background:var(--pink);color:#fff;border-radius:99px;padding:12px 22px;font-family:Nunito,"Segoe UI",system-ui,sans-serif;font-weight:900;font-size:18px;display:inline-flex;gap:10px;align-items:center}
+.script{background:#fff;border-radius:var(--r);border:1.5px solid var(--line);padding:16px 18px;font-size:17px;display:grid;gap:6px}
+.script p b{color:var(--pink);font-family:Nunito,"Segoe UI",system-ui,sans-serif}
+.rec{display:inline-block;background:var(--navy);color:#fff;font-size:11px;font-weight:800;letter-spacing:.1em;padding:3px 8px;border-radius:4px}
+.pron{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media (max-width:820px){.pron{grid-template-columns:1fr 1fr}}
+.pr{background:var(--pink-t);border-radius:14px;padding:14px;display:grid;gap:8px;justify-items:start}
+.pr .w{font-family:Nunito,"Segoe UI",system-ui,sans-serif;font-weight:900;font-size:21px}
+.pr .ipa{color:var(--mut);font-size:14px}
+
+/* ---------- §6 speaking ---------- */
+.rounds{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media (max-width:820px){.rounds{grid-template-columns:1fr}}
+.rd{border-radius:var(--r);overflow:hidden;border:2.5px solid var(--line);background:#fff;text-align:left;display:grid}
+.rd img{aspect-ratio:16/10;object-fit:cover;width:100%}
+.rd .initcard{aspect-ratio:16/10;width:100%;display:grid;place-items:center;font-family:Nunito,"Segoe UI",system-ui,sans-serif;font-weight:900;font-size:44px;color:#fff}
+.rd .rb{padding:14px;display:grid;gap:6px}
+.rd h4{font-size:20px;font-weight:900}
+.rd .who{font-size:14px;font-weight:700;color:var(--pri-d)}
+.rd ul{padding-left:18px;font-size:15px}
+.rd[aria-pressed="true"]{border-color:var(--c);box-shadow:0 0 0 4px var(--ct)}
+.deck{display:grid;grid-template-columns:1fr 1.3fr;border-radius:var(--r);overflow:hidden;background:var(--c);color:#fff}
+@media (max-width:820px){.deck{grid-template-columns:1fr}}
+.deck img{height:100%;min-height:260px;object-fit:cover}
+.deck .dq{padding:26px;display:grid;gap:14px;align-content:center}
+.deck .qn{font-family:Nunito,"Segoe UI",system-ui,sans-serif;font-weight:900;letter-spacing:.12em;font-size:13px;opacity:.9}
+.deck .qt{font-family:Nunito,"Segoe UI",system-ui,sans-serif;font-weight:900;font-size:clamp(26px,3.4vw,40px);line-height:1.1}
+.deck .fu{display:grid;gap:6px;font-size:18px;font-weight:500}
+.deck .fu span::before{content:"→ ";font-weight:900;color:var(--sun)}
+.deck .row .btn{background:rgba(255,255,255,.18);border-color:rgba(255,255,255,.35);color:#fff}
+.dots{display:flex;gap:6px}
+.dots button{width:11px;height:11px;border-radius:50%;background:rgba(255,255,255,.35)}
+.dots button[aria-current="true"]{background:#fff}
+.help{display:flex;flex-wrap:wrap;gap:8px}
+.help span{background:var(--navy);color:#fff;border-radius:99px;padding:6px 14px;font-weight:700;font-size:15px}
+
+/* ---------- §7 mission ---------- */
+.mission{position:relative;border-radius:var(--r);overflow:hidden;color:#fff;background:var(--navy)}
+.mission img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.32}
+.mission .mt{position:relative;padding:28px;display:grid;gap:10px;max-width:70ch}
+.mission h3{font-size:30px;font-weight:900}
+.guest{background:#fff;border-radius:var(--r);border:1.5px solid var(--line);overflow:hidden;display:grid}
+.guest .gh{display:flex;gap:12px;align-items:center;padding:14px;background:var(--ct)}
+.guest .gh img{width:72px;height:72px;border-radius:50%;object-fit:cover;border:3px solid #fff}
+.guest .gh .initcircle{width:72px;height:72px;border-radius:50%;display:grid;place-items:center;font-family:Nunito,"Segoe UI",system-ui,sans-serif;font-weight:900;color:#fff;border:3px solid #fff;flex:none;font-size:26px}
+.guest h4{font-size:20px;font-weight:900}
+.guest .gh small{color:var(--mut);font-weight:700}
+.guest .line{padding:10px 14px 0;font-style:italic;color:var(--mut);font-size:15px}
+.moves{display:grid;gap:8px;padding:14px}
+.mv{display:flex;align-items:center;gap:10px;border:1.5px solid var(--line);border-radius:12px;padding:9px 12px;font-weight:700;font-size:15px;text-align:left;background:#fff}
+.mv i{width:22px;height:22px;border-radius:7px;border:2px solid var(--line);display:grid;place-items:center;flex:none;font-style:normal;color:#fff;font-size:13px}
+.mv[aria-pressed="true"]{background:var(--ok-t);border-color:var(--ok)}
+.mv[aria-pressed="true"] i{background:var(--ok);border-color:var(--ok)}
+
+/* ---------- §8 wrap ---------- */
+.sur{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media (max-width:900px){.sur{grid-template-columns:1fr 1fr}}
+@media (max-width:520px){.sur{grid-template-columns:1fr}}
+.sur .card h4{font-size:18px;font-weight:900;margin-bottom:6px}
+.sur .card:nth-child(1){border-top:5px solid var(--ok)} .sur .card:nth-child(2){border-top:5px solid var(--sun)} .sur .card:nth-child(3){border-top:5px solid var(--err)} .sur .card:nth-child(4){border-top:5px solid var(--violet)}
+textarea{width:100%;min-height:92px;border:1.5px solid var(--line);border-radius:12px;padding:10px 12px;font:inherit;font-size:15px;resize:vertical;background:#fff;color:var(--ink)}
+.selfev{display:flex;flex-wrap:wrap;gap:8px}
+.selfev button{border:2px solid var(--line);border-radius:99px;padding:8px 14px;font-weight:700;background:#fff}
+.selfev button[aria-pressed="true"]{background:var(--navy);border-color:var(--navy);color:#fff}
+.badge{display:flex;gap:18px;align-items:center;background:linear-gradient(120deg,var(--navy),var(--navy2));color:#fff;border-radius:var(--r);padding:22px}
+.badge .medal{width:84px;height:84px;border-radius:50%;background:var(--sun);color:var(--navy);display:grid;place-items:center;font-family:Nunito,"Segoe UI",system-ui,sans-serif;font-weight:900;font-size:28px;flex:none;border:6px solid rgba(255,255,255,.3)}
+footer{color:var(--mut);font-size:13px;text-align:center;padding:10px 16px 40px}
+footer a{color:var(--mut)}
+
+/* ================= Intermedio 1 · componentes nuevos ================= */
+.lockwrap{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:18px;align-items:stretch}
+@media(max-width:820px){.lockwrap{grid-template-columns:1fr}}
+.lockpic{position:relative;border-radius:var(--r);overflow:hidden;min-height:260px;box-shadow:var(--sh)}
+.lockpic img{width:100%;height:100%;object-fit:cover;object-position:50% 18%;position:absolute;inset:0}
+.lockpic .cap{position:absolute;left:0;right:0;bottom:0;padding:18px;color:#fff;background:linear-gradient(0deg,rgba(5,30,22,.92),rgba(5,30,22,0))}
+.lockpic .cap b{font-family:Nunito,"Segoe UI",system-ui,sans-serif;font-weight:900;font-size:22px;display:block;line-height:1.15}
+.phoneL{background:linear-gradient(160deg,#0B2B22,#16213E);border-radius:28px;padding:16px 14px 18px;box-shadow:var(--sh-lg);color:#fff}
+.phoneL .clk{text-align:center;font-family:Nunito,"Segoe UI",system-ui,sans-serif;font-weight:900;font-size:46px;line-height:1;letter-spacing:-.02em}
+.phoneL .clk small{display:block;font-family:"DM Sans","Segoe UI",system-ui,sans-serif;font-weight:500;font-size:13px;opacity:.7;margin-top:4px;letter-spacing:0}
+.nts{display:grid;gap:8px;margin-top:12px}
+.nt{position:relative;display:grid;grid-template-columns:44px 1fr auto;gap:10px;align-items:center;text-align:left;background:rgba(255,255,255,.94);color:var(--ink);border-radius:16px;padding:10px 12px;border:2.5px solid transparent;width:100%;transition:transform .15s,border-color .15s}
+.nt:hover{transform:translateY(-2px)}
+.nt .ic{width:44px;height:44px;border-radius:12px;background:var(--pri-t);display:grid;place-items:center;font-size:23px;overflow:hidden}
+.nt .ic img{width:100%;height:100%;object-fit:cover}
+.nt .tx b{display:block;font-family:Nunito,"Segoe UI",system-ui,sans-serif;font-weight:900;font-size:14px;color:var(--pri-d)}
+.nt .tx span{display:block;font-size:15px;line-height:1.3}
+.nt .tm{font-size:12px;color:var(--mut);font-weight:700}
+.nt .ord{position:absolute;right:-6px;top:-8px;width:28px;height:28px;border-radius:50%;background:var(--sun);color:var(--navy);font-family:Nunito,"Segoe UI",system-ui,sans-serif;font-weight:900;display:none;place-items:center;border:2px solid #fff}
+.nt[aria-pressed="true"]{border-color:var(--sun)}
+.nt[aria-pressed="true"] .ord{display:grid}
+.nt .inf{grid-column:1/-1;display:none;flex-wrap:wrap;gap:6px;padding-top:4px}
+.nt[aria-pressed="true"] .inf{display:flex}
+.inf i{font-style:normal;background:var(--pri);color:#fff;border-radius:99px;padding:3px 10px;font-size:13px;font-weight:700}
+.inf i.act{background:var(--sun);color:var(--navy)}
+
+/* sell (VOC-10) */
+.sellgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+@media(max-width:700px){.sellgrid{grid-template-columns:1fr}}
+.sell{background:#fff;border:1.5px solid var(--line);border-radius:var(--r);padding:14px;display:grid;gap:10px;box-shadow:var(--sh)}
+.sell .ctx{font-weight:700;font-size:16px}
+.sell .ctx small{display:block;color:var(--pri-d);font-family:Nunito,"Segoe UI",system-ui,sans-serif;font-weight:900;letter-spacing:.1em;font-size:12px;margin-bottom:2px}
+.sell .vs{display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:center}
+.sell .vs b{text-align:center;color:var(--mut);font-family:Nunito,"Segoe UI",system-ui,sans-serif}
+.sell .pick{border:2px solid var(--line);border-radius:12px;padding:10px;font-family:Nunito,"Segoe UI",system-ui,sans-serif;font-weight:900;font-size:18px;background:var(--cream)}
+.sell .pick[aria-pressed="true"]{background:var(--pri);border-color:var(--pri);color:#fff}
+.sell .pick.good{background:var(--ok);border-color:var(--ok);color:#fff}
+.sell .pick.bad{background:var(--err-t);border-color:var(--err);color:var(--err)}
+.sell .why{background:var(--sun-t);border-radius:10px;padding:8px 10px;font-size:15px}
+.sell .stem{font-style:italic;color:var(--mut);font-size:15px}
+.sell .tm{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+
+/* auction (GRM-03) */
+.bank{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:10px}
+.bank .coin{font-family:Nunito,"Segoe UI",system-ui,sans-serif;font-weight:900;font-size:26px;color:var(--pri-d);background:var(--sun);border-radius:99px;padding:4px 18px}
+.auc{display:grid;gap:10px}
+.lot{display:grid;grid-template-columns:34px 1fr auto;gap:12px;align-items:center;background:#fff;border:1.5px solid var(--line);border-radius:14px;padding:10px 12px}
+@media(max-width:700px){.lot{grid-template-columns:30px 1fr}.lot .ctl{grid-column:1/-1}}
+.lot .no{width:34px;height:34px;border-radius:50%;background:var(--navy);color:#fff;display:grid;place-items:center;font-family:Nunito,"Segoe UI",system-ui,sans-serif;font-weight:900}
+.lot .s{font-size:18px;font-weight:700}
+.lot .ctl{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.lot .ctl button{border:2px solid var(--line);background:var(--cream);border-radius:99px;padding:5px 12px;font-weight:800;font-size:14px}
+.lot .ctl button[aria-pressed="true"]{background:var(--pri);color:#fff;border-color:var(--pri)}
+.lot .ctl .say-fix[aria-pressed="true"]{background:var(--sun);color:var(--navy);border-color:var(--sun)}
+.lot .res{grid-column:2/-1;font-size:15px;font-weight:700}
+.lot.rg{border-color:var(--ok);background:var(--ok-t)}
+.lot.rw{border-color:var(--err);background:var(--err-t)}
+.lot.rp{background:#F4F4F8}
+.bidv{font-family:Nunito,"Segoe UI",system-ui,sans-serif;font-weight:900;min-width:20px;text-align:center}
+
+/* versions (LIS-03) */
+.vers{display:grid;gap:8px}
+.vrow{display:grid;grid-template-columns:1.1fr 1fr 1fr 1.3fr;gap:8px;align-items:center;background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:8px 10px}
+@media(max-width:700px){.vrow{grid-template-columns:1fr 1fr}.vrow .lab{grid-column:1/-1}}
+.vrow.head{background:transparent;border:0;font-family:Nunito,"Segoe UI",system-ui,sans-serif;font-weight:900;font-size:13px;letter-spacing:.08em;color:var(--mut)}
+.vrow .lab{font-weight:800}
+.vrow .val{font-size:15px;color:var(--mut)}
+.vrow .val span{display:none}
+.vers.rev .val span{display:inline;color:var(--ink);font-weight:800}
+.vrow .jd{display:flex;gap:6px}
+.vrow .jd button{flex:1;border:2px solid var(--line);background:var(--cream);border-radius:10px;padding:6px 4px;font-weight:800;font-size:14px}
+.vrow .jd button[aria-pressed="true"]{background:var(--violet);border-color:var(--violet);color:#fff}
+.vrow.ok{border-color:var(--ok);background:var(--ok-t)}
+.vrow.no{border-color:var(--err);background:var(--err-t)}
+.voices{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:700px){.voices{grid-template-columns:1fr}}
+.voice{background:#fff;border-radius:var(--r);border:1.5px solid var(--line);box-shadow:var(--sh);overflow:hidden}
+.voice .vh{display:flex;gap:12px;align-items:center;padding:12px 14px;background:var(--pink-t)}
+.voice .vh .cav{width:46px;height:46px;border-radius:50%;background:var(--pink);color:#fff;display:grid;place-items:center;font-family:Nunito,"Segoe UI",system-ui,sans-serif;font-weight:900;font-size:20px}
+.voice.r .vh{background:var(--teal-t)}
+.voice.r .vh .cav{background:var(--teal)}
+.voice .vh small{display:block;color:var(--mut);font-size:13px}
+.voice .vb{padding:12px 14px;display:grid;gap:10px}
+.wave{display:flex;gap:3px;align-items:center;height:34px}
+.wave i{display:block;width:5px;border-radius:3px;background:var(--pink);opacity:.5}
+.voice.r .wave i{background:var(--teal)}
+.voice.playing .wave i{opacity:1;animation:wv .8s infinite ease-in-out}
+@keyframes wv{50%{transform:scaleY(.4)}}
+.astat{font-size:13px;color:var(--mut)}
+.astat.miss{color:#9A5B00;font-weight:700}
+
+/* rank (SPK-10) */
+.rk{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:760px){.rk{grid-template-columns:1fr}}
+.rkcol h4{font-family:Nunito,"Segoe UI",system-ui,sans-serif;font-weight:900;margin-bottom:8px}
+.rkl{display:grid;gap:7px}
+.rki{display:grid;grid-template-columns:30px 1fr auto;gap:8px;align-items:center;background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:8px 10px}
+.rki .pos{width:28px;height:28px;border-radius:50%;background:var(--navy);color:#fff;display:grid;place-items:center;font-family:Nunito,"Segoe UI",system-ui,sans-serif;font-weight:900;font-size:14px}
+.rki .nm{font-size:15px;line-height:1.25}
+.rki .nm b{font-family:Nunito,"Segoe UI",system-ui,sans-serif}
+.rki .mv2{display:flex;gap:4px}
+.rki .mv2 button{width:30px;height:30px;border-radius:8px;border:1.5px solid var(--line);background:var(--cream);font-weight:900}
+.rki .mv2 button:disabled{opacity:.3;cursor:default}
+.stem2{background:var(--sun-t);border-radius:12px;padding:10px 14px;font-weight:700;margin-top:10px}
+
+/* mission sets */
+.tabs{display:flex;gap:8px;margin-bottom:10px}
+.tabs button{border:2px solid var(--line);background:#fff;border-radius:99px;padding:8px 18px;font-family:Nunito,"Segoe UI",system-ui,sans-serif;font-weight:900}
+.tabs button[aria-pressed="true"]{background:var(--teal);border-color:var(--teal);color:#fff}
+.mset{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+@media(max-width:760px){.mset{grid-template-columns:1fr}}
+.mcard{background:#fff;border:1.5px solid var(--line);border-radius:var(--r);padding:12px;display:grid;gap:8px;box-shadow:var(--sh)}
+.mcard .mh{display:flex;gap:10px;align-items:center;font-family:Nunito,"Segoe UI",system-ui,sans-serif;font-weight:900}
+.mcard .mh .ic{width:38px;height:38px;border-radius:10px;background:var(--teal-t);display:grid;place-items:center;font-size:20px}
+.mcard .secret{background:var(--navy);color:#fff;border-radius:12px;padding:10px 12px;font-size:16px;line-height:1.35}
+.mcard .secret[hidden]{display:none}
+.mcard .rv{justify-self:start}
+.mcard .tip{font-size:14px;color:var(--mut)}
+.mcard .moves{display:grid;gap:6px}
+.privacy{background:var(--err-t);border:1.5px dashed var(--err);border-radius:12px;padding:8px 12px;font-weight:700;font-size:15px}
+
+/* ficha docente */
+.ficha{background:#fff;border:2px dashed var(--pri);border-radius:var(--r);padding:0;margin:0 0 22px}
+.ficha summary{cursor:pointer;padding:14px 18px;font-family:Nunito,"Segoe UI",system-ui,sans-serif;font-weight:900;color:var(--pri-d);list-style:none}
+.ficha summary::-webkit-details-marker{display:none}
+.ficha summary::after{content:"+";float:right;font-size:22px}
+.ficha[open] summary::after{content:"–"}
+.ficha .fg{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;padding:0 18px 18px}
+@media(max-width:760px){.ficha .fg{grid-template-columns:1fr}}
+.ficha .fi{background:var(--pri-t);border-radius:12px;padding:10px 12px;font-size:15px}
+.ficha .fi b{display:block;font-family:Nunito,"Segoe UI",system-ui,sans-serif;font-size:12px;letter-spacing:.1em;color:var(--pri-d);text-transform:uppercase;margin-bottom:2px}
+.ficha table{width:100%;border-collapse:collapse;font-size:15px}
+.ficha td,.ficha th{padding:4px 6px;border-bottom:1px solid var(--line);text-align:left}
+body.student .ficha{display:none}
+.toast{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);background:var(--navy);color:#fff;border-radius:99px;padding:8px 16px;font-size:14px;font-weight:700;z-index:90;opacity:0;pointer-events:none;transition:opacity .25s;max-width:92vw;text-align:center}
+.toast.on{opacity:.96}
+.hl2{background:var(--sun-t);padding:0 4px;border-radius:4px}
+.chatL{display:grid;gap:8px}
+.cfoot{font-size:13px;color:var(--mut)}
+.sec .sbody>.fq{margin-top:4px}
+
+.banner{position:relative;border-radius:var(--r);overflow:hidden;height:150px;box-shadow:var(--sh);margin:0}
+.banner img{width:100%;height:100%;object-fit:cover;object-position:center 30%}
+.banner figcaption{position:absolute;left:0;right:0;bottom:0;padding:26px 16px 10px;color:#fff;font-family:Nunito,"Segoe UI",system-ui,sans-serif;font-weight:900;font-size:18px;background:linear-gradient(0deg,rgba(5,30,22,.88),rgba(5,30,22,0))}
+
+/* ---------- hero colorido (split) ---------- */
+.hero.hsplit .bg{background:radial-gradient(circle at 82% 42%,var(--g1) 0,var(--g2) 40%,#16213E 82%)}
+.hero.hsplit .bg::after{display:none}
+.hero.hsplit .wrap{display:grid;grid-template-columns:1.25fr 1fr;gap:30px;align-items:center}
+.hero.hsplit h1{max-width:13ch}
+.hero.hsplit h1 span{color:var(--sun)}
+.hphoto{position:relative;justify-self:center;max-width:420px;width:100%}
+.hphoto img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:26px;border:6px solid #fff;box-shadow:var(--sh-lg);transform:rotate(2.2deg);display:block;background:#fff}
+.hnote{position:absolute;background:#fff;color:var(--ink);border-radius:12px;padding:8px 12px;font-family:Nunito,"Segoe UI",system-ui,sans-serif;font-weight:900;font-size:14px;box-shadow:var(--sh-lg);line-height:1.2}
+.hnote small{display:block;font:600 12px "DM Sans",system-ui,sans-serif;color:var(--mut)}
+.hnote.a{left:-16px;top:12px;border-left:6px solid var(--pink);transform:rotate(-4deg)}
+.hnote.b{right:-8px;bottom:14px;border-left:6px solid var(--pri);transform:rotate(3deg)}
+.hkey{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.tagk{border-radius:99px;padding:5px 13px;font-size:13px;font-weight:800;color:#fff;background:#444}
+.tagk.safe{background:var(--ok)}.tagk.trust{background:var(--teal)}.tagk.hier{background:var(--err)}
+.tagk.t-mild{background:var(--sun);color:var(--navy)}.tagk.t-eng{background:var(--violet)}.tagk.t-spy{background:var(--err)}
+.tagk.kind{background:var(--pink)}
+@media (max-width:820px){.hero.hsplit .wrap{grid-template-columns:1fr}.hphoto{max-width:340px}.hnote.a{left:-4px}.hnote.b{right:-4px}}
+/* ===== S12 ===== */
+.k12alerts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin:6px 0 14px}@media(max-width:800px){.k12alerts{grid-template-columns:1fr}}
+.k12al{background:linear-gradient(160deg,#16213E,#2A3FBF);color:#fff;border-radius:22px;padding:12px 14px 14px;display:grid;gap:10px;box-shadow:0 12px 26px rgba(22,33,62,.3);align-content:start;border:3px solid transparent}
+.k12al.solved{border-color:#4ADE9F}
+.k12ah{display:flex;gap:8px;align-items:center;font-size:12px;letter-spacing:.1em}.k12ah small{margin-left:auto;opacity:.75}.k12dot{width:10px;height:10px;border-radius:50%;background:#FFC233;box-shadow:0 0 0 4px rgba(255,194,51,.3)}
+.k12am{display:grid;grid-template-columns:96px 1fr;gap:10px;align-items:start;background:rgba(255,255,255,.12);border-radius:14px;padding:8px}
+.k12am img{width:96px;height:96px;object-fit:cover;border-radius:10px}.k12ab{display:grid;gap:6px}.k12ai{font-family:Nunito,sans-serif;font-weight:900;font-size:19px}
+.k12flip{border:2px solid #FFC233;color:#FFC233;border-radius:99px;padding:4px 10px;font-weight:800;background:transparent;justify-self:start;font-size:13px}
+.k12ba{display:flex;flex-wrap:wrap;gap:6px}.k12b,.k12n{border-radius:8px;padding:4px 10px;font-size:12px;font-weight:800}.k12b{background:#FF8A8A;color:#16213E;text-decoration:none}.k12n{background:#4ADE9F;color:#16213E}.k12b b,.k12n b{font-size:15px}
+.k12aq{font-weight:800}.k12ao{display:grid;gap:6px}.k12ao button{background:#fff;color:var(--ink);border-radius:10px;padding:8px 12px;text-align:left;font-weight:800;border:2px solid #fff}
+.k12ao button.ok{background:var(--ok-t);border-color:var(--ok)}.k12ao button.no{background:var(--err-t);border-color:var(--err);opacity:.7}
+.k12af{font-weight:800}.k12ax{background:rgba(255,255,255,.14);border-radius:10px;padding:8px}.k12al .btn,.k12al .say{border-color:#fff}
+.k12walls{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin:12px 0}@media(max-width:900px){.k12walls{grid-template-columns:repeat(3,minmax(0,1fr))}}@media(max-width:480px){.k12walls{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.k12w{background:#fff;border:2px solid var(--teal);border-radius:14px;overflow:hidden;box-shadow:var(--sh);align-self:start}
+.k12wf{width:100%;padding:12px;display:grid;gap:2px;text-align:left;background:var(--teal-t)}.k12wf b{font-family:Nunito,sans-serif;font-weight:900;font-size:18px;color:var(--teal)}.k12wf small{color:var(--mut);font-size:12px}
+.k12w.on .k12wf{background:var(--teal)}.k12w.on .k12wf b,.k12w.on .k12wf small{color:#fff}
+.k12wb{padding:10px 12px;display:grid;gap:6px}.k12wes{font-weight:900;font-family:Nunito,sans-serif}.k12wex{font-size:14px;font-style:italic}
+.k12lots{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:8px}@media(max-width:1000px){.k12lots{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:640px){.k12lots{grid-template-columns:1fr}}
+.k12lot{background:repeating-linear-gradient(135deg,#7A1F3D 0 14px,#8C2748 14px 28px);color:#fff;border-radius:var(--r);padding:14px 16px;display:grid;gap:8px;box-shadow:var(--sh);align-content:start;border:3px solid #FFC233}
+.k12lot .n{background:#FFC233;color:#16213E}.k12lh{display:flex;gap:8px;align-items:center}.k12lh small{letter-spacing:.14em;font-weight:900;opacity:.9}
+.k12lw{font-family:Nunito,sans-serif;font-weight:900;font-size:30px;color:#FFC233;line-height:1}.k12lc{font-weight:700;background:rgba(0,0,0,.22);border-radius:10px;padding:8px 10px}
+.k12bid{display:flex;flex-wrap:wrap;gap:6px}.k12bid button{background:#FFC233;color:#16213E;border-radius:99px;padding:7px 12px;font-weight:900;border:3px solid #FFC233}.k12bid button.pick{background:#fff;border-color:#fff}.k12bid button:disabled:not(.pick){opacity:.4}
+.k12lf{font-weight:900}.k12lx{background:rgba(255,255,255,.14);border-radius:10px;padding:8px 10px;display:grid;gap:6px}.k12lot .btn,.k12lot .say{border-color:#fff}
+.k12lot.won{border-color:#4ADE9F}.k12lot.lost{border-color:#FF8A8A;filter:saturate(.7)}
+.k12rou{display:grid;grid-template-columns:280px 1fr;gap:18px;align-items:center;margin:10px 0}@media(max-width:700px){.k12rou{grid-template-columns:1fr}}
+.k12wheelbox{position:relative;width:260px;height:260px;margin:0 auto}.k12ptr{position:absolute;top:-16px;left:50%;transform:translateX(-50%);font-size:30px;color:#16213E;z-index:2;line-height:1}
+.k12wheel{position:relative;width:260px;height:260px;border-radius:50%;border:8px solid #16213E;box-shadow:var(--sh)}
+.k12wheel span{position:absolute;left:50%;top:50%;width:92px;margin-left:-46px;margin-top:-18px;text-align:center;font-weight:900;font-size:11px;line-height:1.1;color:#16213E}
+.k12card{background:#fff;border:3px solid var(--violet);border-radius:var(--r);padding:14px 16px;display:grid;gap:8px}.k12cs{font-family:Nunito,sans-serif;font-weight:900;font-size:22px;color:var(--violet)}
+.k12cd{font-weight:900;font-size:18px;background:var(--violet-t);border-radius:10px;padding:8px 12px}.k12cf{font-weight:700;font-style:italic;min-height:22px}.k12clock{font-family:Nunito,sans-serif;font-weight:900;font-size:30px;color:#C0392B;min-height:36px}.k12cm{font-weight:700}
+.k12txt{background:#fff;border:3px solid #2A3FBF;border-radius:var(--r);padding:12px 16px;margin:12px 0;box-shadow:var(--sh)}.k12txh{font-weight:900;font-family:Nunito,sans-serif;margin-bottom:6px}
+.k12txt ul{list-style:none;display:grid;gap:4px;padding:0}.k12txt li{display:flex;justify-content:space-between;gap:10px;border-bottom:1px dashed var(--line);padding:3px 0}
+.k12play{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:12px 0}.k12lines{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px}
+.k12ln{display:flex;gap:8px;align-items:center;background:#fff;border:2px solid var(--pink);border-radius:99px;padding:4px 12px 4px 4px;font-size:13px}.k12ln.d{border-color:var(--navy)}.k12ln i{font-style:normal;font-weight:700}
+.k12who{width:28px;height:28px;border-radius:50%;background:var(--pink);color:#fff;display:grid;place-items:center;font-weight:900}.k12ln.d .k12who{background:var(--navy)}
+.k12claims{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:10px 0}@media(max-width:700px){.k12claims{grid-template-columns:1fr}}
+.k12cl{position:relative;text-align:left;background:#fff;border:3px solid var(--line);border-radius:12px;padding:12px 14px 12px 70px;font-weight:800;min-height:56px}
+.k12stamp{position:absolute;left:8px;top:50%;transform:translateY(-50%) rotate(-10deg);border:3px solid #C0392B;color:#C0392B;border-radius:6px;padding:1px 8px;font-weight:900;opacity:.25}
+.k12cl[aria-pressed=true]{border-color:#C0392B;background:#FFF1EE}.k12cl[aria-pressed=true] .k12stamp{opacity:1}.k12cl.right{border-color:var(--ok);background:var(--ok-t)}.k12cl.right .k12stamp{color:var(--ok);border-color:var(--ok)}.k12cl.wrong{border-color:var(--err);background:var(--err-t)}
+.k12fix{background:var(--pink-t);border-radius:var(--r);padding:12px 14px;margin-top:10px;display:grid;gap:8px}.k12fr{display:grid;gap:6px;border-bottom:1px dashed var(--line);padding-bottom:6px}
+.k12roles,#k12roles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-bottom:10px}@media(max-width:900px){#k12roles{grid-template-columns:1fr}}
+.k12role{background:#fff;border:3px solid #D98E00;border-radius:var(--r);padding:12px 14px;display:grid;gap:8px;align-content:start}.k12roh{display:grid;gap:2px}
+.k12sec{background:var(--sun-t);border-radius:12px;padding:8px 10px;overflow-x:auto}.k12sec table{border-collapse:collapse;width:100%;font-size:13px}.k12sec th{text-align:left;padding:3px 6px}.k12sec td{padding:3px 6px;font-weight:700}.k12sec tr.mine td{background:#FFE9A8}
+.k12board{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:10px 0}@media(max-width:900px){.k12board{grid-template-columns:1fr}}
+.k12day{background:#fff;border:3px solid #2A3FBF;border-radius:var(--r);padding:10px;display:grid;gap:8px;align-content:start}.k12dh{font-family:Nunito,sans-serif;font-weight:900;letter-spacing:.14em;color:#fff;background:#2A3FBF;border-radius:8px;padding:4px 10px}
+.k12slot{display:grid;gap:4px;border-left:6px solid #3DB8FF;background:#EEF6FF;border-radius:10px;padding:8px 10px}.k12slot select{width:100%;border:2px solid var(--line);border-radius:8px;padding:6px;font:inherit}
+.k12slot.rowok{background:var(--ok-t);border-left-color:var(--ok)}.k12slot.rowno{background:var(--err-t);border-left-color:var(--err)}
+.k12twist{display:grid;gap:10px;margin-bottom:10px}.k12tw{background:linear-gradient(160deg,#16213E,#2A3FBF);color:#fff;border-radius:18px;padding:12px 14px;display:grid;gap:8px;max-width:560px}.k12twh{font-size:12px;letter-spacing:.1em;opacity:.8}.k12tw p{font-weight:800;font-size:18px}.k12tw .btn,.k12tw .say{border-color:#fff}
+.k12ledger{background:var(--sun-t);border-radius:var(--r);padding:12px 14px;display:grid;gap:8px}.k12lg{display:flex;gap:8px;align-items:center;font-weight:800}
+.k12form{display:grid;gap:8px;max-width:640px}.k12form label{display:grid;gap:4px;font-weight:800}
+.bin{flex:1;min-width:160px;border:2px solid var(--line);border-radius:10px;padding:8px 12px;font:inherit}
+</style>
+</head>
+<body>
+<div class="topbar"><div class="wrap">
+  <div class="brand"><i></i><a href="./">GABRIEL TURNER · YOUR BUSINESS COACH</a><small>Intermedio 1 · B1.1</small></div>
+  <div class="toggles"><button class="tg" id="tgTeacher" aria-pressed="true">Teacher view</button><button class="tg" id="tgStudent" aria-pressed="false">Student view</button><button class="tg" id="tgGroup" aria-pressed="true">Group</button><button class="tg" id="tgOne" aria-pressed="false">1:1</button></div>
+</div></div>
+<header class="hero hsplit" style="--g1:#3DB8FF;--g2:#2A3FBF"><div class="bg" role="img" aria-label="Colour background"></div>
+  <div class="wrap"><div><div class="kick">Intermedio 1 · Block 2 · Clarify · Session 12 of 32</div><h1>Hackathon Weekend: <span>The Information Gap</span></h1><p class="obj">By the end of this class you can say what has changed (The … has changed. They have moved … to …), ask Has the … changed?, and complete an agenda with a partner.</p><div class="pills"><span class="pill sun">60 min · live online</span><span class="pill">6 stages</span><span class="pill">Block 2 · Clarify</span><span class="pill">has changed · have moved</span></div>
+  <div class="hkey"><span class="tagk safe">Riesgo: Seguro</span><span class="tagk t-eng">Temperatura: Engaging</span><span class="tagk kind">Clarify</span></div>
+  <div class="coach"><span class="cav">GT</span><span><b>Gabriel Turner</b><small>Your Business Coach</small></span></div></div>
+  <div class="hphoto"><img src="img/l07s12_hero.jpg" alt="Five colleagues laughing together around a laptop in a modern meeting room" style="object-position:50% 35%"><div class="hnote a">YOUR HALF<small>agenda part A</small></div><div class="hnote b">THEIR HALF<small>agenda part B</small></div></div></div></header>
+<nav class="nav" aria-label="Session stages"><div class="wrap"><div class="prog"><div class="bar"><i id="pbar"></i></div><span class="xp" id="xp">0 XP</span><button class="clock" id="clock" title="Start / pause class clock">00:00</button></div><div class="steps" id="steps"></div></div></nav>
+<main class="wrap" id="main">
+<details class="ficha" id="ficha"><summary>Ficha de sesión · S12 · solo docente</summary><div class="fg"><div class="fi"><b>Tier · modo MCER</b>Tier 07 — Advanced Practitioner — Intermedio 1 (PDF: B1.1→B1.2) · modo principal: Interacción (Block 2 · Clarify)</div><div class="fi"><b>Tema · riesgo corporativo · temperatura</b>Hackathon Weekend: The Information Gap · <b style="display:inline">Seguro</b> · Engaging</div><div class="fi"><b>Línea del desacuerdo</b>Unos dicen: «hay que mantener el horario original»; otros dicen: «conviene reordenarlo cuando cambia algo».</div><div class="fi"><b>Relevancia para el perfil</b>Cambios de horario, sala y plazo son diarios en planta y oficina; el alumno debe pasar y confirmar qué cambió. Evento ficticio (hackathon de 48 horas) y voluntarios ficticios: sin jefe ni subordinado.</div><div class="fi"><b>Objetivo funcional</b>Decir y preguntar qué cambió en una agenda (hora o sala), confirmar el dato y completar una agenda con información repartida.</div><div class="fi"><b>Punto de lengua (uno solo)</b>The … has changed / They have moved … to … (present perfect de uso frecuente para cambios; solo changed y moved). Se reciclan Just to confirm, …, right? (S9) y Who/When de S11.</div><div class="fi"><b>Límite de nivel (veto)</b>have/has + changed / moved en afirmativo, negativo (hasn't / haven't) y pregunta (Has…? Have they…?). Sin present perfect continuous, sin passive voice, sin preguntas reportadas, sin condicionales, sin negociación extensa.</div><div class="fi"><b>Léxico (≤12)</b>agenda · schedule · session · keynote · break · room · start time · ends at · moved · changed (10)</div><div class="fi"><b>Dinámicas (ID · familia)</b>VOC-02 Word Auction (SUBASTA) · GRM-07 Roulette Drill (CONTRARRELOJ) · SPK-IG The Information Gap (temario) (OCULTAMIENTO) · LIS-01 Spot the Lie (IMPOSTOR)</div><div class="fi"><b>Filtros de nivel B1</b>Tarjetas ≤ 60 palabras (máx. real ≈25) · 30 s de preparación en silencio y luego sin notas · listening de 120–200 palabras con hablante indio · nada vetado.</div><div class="fi"><b>Reglas 3-3-3 · puntaje · cierre</b>Cada dinámica se explica en ≤3 frases, ≤3 reglas, ≤3 min · el punto se gana por producir lengua, no por rapidez · cada juego termina con el resultado dicho en voz alta.</div><div class="fi"><b>Misión</b>Information Gap: ambos jugadores tienen la agenda impresa del hackathon (8 sesiones). A conoce la información ACTUAL de las filas 1–4; B la de las filas 5–8. Preguntan «Has the … changed?», responden «It has changed. They have moved it to…» o «It hasn't changed.», confirman y completan la agenda final (hora + sala).</div><div class="fi"><b>Criterio de éxito</b>8 de 8 filas correctas (hora + sala) · cada cambio dicho con has/have changed o moved · ≥7 de 10 movimientos · ≥1 palabra comprada usada en la misión.</div><div class="fi"><b>Evidencia observable</b>Alertas resueltas y dichas · palabras compradas y usadas · giros de la ruleta dichos con racha · mentiras cazadas y corregidas · filas de la agenda completas · movimientos del role-play.</div><div class="fi"><b>Contribuye al objetivo final</b>Comprender una actualización → identificar la información importante → comunicarla → aclarar un dato → confirmar responsable y plazo (foco: qué cambió).</div><div class="fi"><b>teach_this_url</b>sin URL</div><div class="fi"><b>Preguntas</b>12 · todas con 2 follow-ups (≥6 exigido)</div><div class="fi" style="grid-column:1/-1"><b>Tiempos (suman 60 min)</b><table><tr><th>§</th><th>Bloque</th><th>Min</th></tr><tr><td>1</td><td>Warm-up · Push alerts</td><td>4</td></tr><tr><td>2</td><td>Vocabulary · Word Auction</td><td>7</td></tr><tr><td>3</td><td>Grammar · has changed / have moved · Roulette Drill</td><td>11</td></tr><tr><td>4</td><td>Listening · Spot the Lie</td><td>8</td></tr><tr><td>5</td><td>Speaking · Information Gap 12 · twist + auction 4 · 12 preguntas 6</td><td>22</td></tr><tr><td>6</td><td>Wrap-up · change alert + exit</td><td>8</td></tr><tr><td></td><td><b>Total</b></td><td><b>60</b></td></tr></table></div></div></details><section class="sec" id="s1" style="--c:var(--pri);--ct:var(--pri-t)" data-name="Warm-up" data-min="0–4"><div class="shead"><div class="snum"><span class="n">1</span><div><h2>Warm-up · Push alerts</h2><div class="sub">0–4 min · Flip the alert · choose the right sentence · say it</div></div></div><div class="meta"><span class="chip">Fictional hackathon · 48 hours</span><span class="chip dark">Speaking from minute 1</span></div></div><div class="sbody">
+<div class="k12alerts" id="k12warm"></div>
+<div class="card tint"><div class="result" id="k12wres">Flip each alert, choose the correct sentence, then say it out loud.</div></div>
+<div class="fq"><div>What has changed in your week? <span>— Why?</span></div><div>How do you hear about changes? <span>— Is it fast?</span></div></div><details class="tn"><summary>Teacher notes · §1 Warm-up</summary><div class="layers"><div class="ly"><h4>Pedagógica</h4><ul><li>Cuatro alertas de teléfono del hackathon ficticio. El alumno voltea la tarjeta (antes → ahora), elige la oración correcta entre tres y la dice antes de oír el modelo. Sin explicación previa: tú modelas «has changed / have moved» al responder.</li><li>Repaso activo de S11: «Who is responsible…?» y «It is due by…» cuando el alumno dude. Máx. 4 min; 30 s en silencio y luego habla sin leer.</li><li>Grupo: cada quien toma una alerta distinta. 1:1: pide una segunda versión con otro dato.</li></ul></div><div class="ly"><h4>Engagement</h4><ul><li>Pregunta real: «¿Qué ha cambiado esta semana en tu agenda?»</li><li>Cierra en voz alta: «Today I can say what has changed.»</li></ul></div><div class="ly"><h4>Crecimiento</h4><ul><li>«In 56 minutes you will complete a real agenda with a partner.»</li><li>Anota quién usó «has/have» sin ayuda: reciclarlo en §3.</li></ul></div></div></details></div></section>
+<section class="sec" id="s2" style="--c:var(--teal);--ct:var(--teal-t)" data-name="Vocabulary" data-min="4–11"><div class="shead"><div class="snum"><span class="n">2</span><div><h2>Vocabulary · 10 words for a hackathon</h2><div class="sub">4–11 min · Word wall → Word Auction</div></div></div><div class="meta"><span class="chip">Flip cards</span><span class="chip dark">VOC-02 · SUBASTA</span></div></div><div class="sbody">
+<figure class="banner"><img src="img/l07s12_hero.jpg" alt="Five colleagues laughing together around a laptop in a modern meeting room" style="object-position:center 30%"><figcaption>Ten words. Then buy the words you will use.</figcaption></figure>
+<div class="k12walls" id="k12wall"></div>
+<div class="block"><div class="bt"><span class="tag">Word Auction · 5 min</span><h3>Bid · win the word · say a sentence · use it in the mission</h3><span class="stat">Points <b id="k12pts">100</b> · Lots <b id="k12ln">0</b> / 6</span></div>
+<div class="card tint"><p style="font-weight:700">1. You have 100 points. &nbsp;2. Read the lot and bid 10, 20, 30 or 40 (or pass). &nbsp;3. If your bid beats the rival, the word is yours: say a sentence now. &nbsp;4. Use it in §5: used = double back, not used = lost.</p></div>
+<div class="k12lots" id="k12lots"></div><div class="closeout" id="k12aOut" hidden></div></div><details class="tn"><summary>Teacher notes · §2 Vocabulary</summary><div class="layers"><div class="ly"><h4>Pedagógica</h4><ul><li><b>Word Auction (SUBASTA):</b> el catálogo pide ≥4 personas. <b>Adaptación declarada:</b> los postores rivales los simula la página (apuesta máxima oculta por lote), así sirve en grupo y en 1:1. Cada lote muestra definición en inglés; el alumno puja, y si gana DEBE decir una oración con la palabra (el punto de XP viene de producir lengua, no de pujar más rápido).</li><li>La palabra comprada hay que usarla en la misión de §5: usada devuelve el doble de lo pagado; no usada se pierde. El ajuste se hace al final de §5.</li><li>Primero el muro (≈2 min): toca, oye y repite 2 veces. Pronunciación: <i>agenda</i> /əˈdʒendə/, <i>schedule</i> /ˈskedʒuːl/ (EE. UU.), <i>keynote</i> /ˈkiːnoʊt/, <i>session</i> /ˈseʃən/.</li><li>Léxico del día: 10 elementos (tope B1 10–12); ≥70% reaparece en el listening y la agenda de §5. Cierra en voz alta: «We finished the auction with __ points.»</li></ul></div><div class="ly"><h4>Engagement</h4><ul><li>Pregunta: «¿Qué palabra compras siempre primero?» (la que más usas).</li><li>Rotación: VOC-02 aparece por primera vez en el curso.</li></ul></div><div class="ly"><h4>Crecimiento</h4><ul><li>Estas palabras reaparecen en la agenda de §5.</li><li>Anota qué lote fue ‘muy caro’ para el alumno: son sus palabras más débiles.</li></ul></div></div></details></div></section>
+<section class="sec" id="s3" style="--c:var(--violet);--ct:var(--violet-t)" data-name="Grammar" data-min="11–22"><div class="shead"><div class="snum"><span class="n">3</span><div><h2>Grammar · what has changed · what they have moved</h2><div class="sub">11–22 min · Recap → practice A → Roulette Drill</div></div></div><div class="meta"><span class="chip">has changed · have moved</span><span class="chip dark">GRM-07 · CONTRARRELOJ</span></div></div><div class="sbody">
+<div class="block"><div class="bt"><span class="tag">Recap · 3 min</span><h3>Changed · moved · not changed · ask</h3></div>
+<div class="tool">
+<div class="card"><h4>1 · Something is different</h4><div class="big"><em>The keynote has changed.</em></div><p class="hint">The + thing + has changed.</p></div>
+<div class="card"><h4>2 · Say what moved</h4><div class="big"><em>They have moved lunch</em> to one.</div><p class="hint">They have moved + thing + to + new time or place.</p></div>
+<div class="card"><h4>3 · Nothing changed · ask</h4><div class="big"><em>It hasn't changed.</em> <em>Has</em> it <em>changed?</em></div><p class="hint">hasn't / haven't · Has…? Have they…?</p></div></div>
+<div class="forms"><table><tr><th>Form</th><th>Example</th></tr>
+<tr><td><b>+</b> has changed</td><td>The room <b>has changed</b>.</td></tr>
+<tr><td><b>+</b> have moved … to</td><td>They <b>have moved</b> the demos <b>to</b> two.</td></tr>
+<tr><td><b>−</b> hasn't / haven't</td><td>The agenda <b>hasn't changed</b>. They <b>haven't moved</b> lunch.</td></tr>
+<tr><td><b>?</b> Has…? / Have…?</td><td><b>Has</b> the room <b>changed</b>? <b>Have</b> they <b>moved</b> lunch?</td></tr></table></div>
+<div><button class="btn" id="esBtn" aria-expanded="false" aria-controls="esBox">🇲🇽 Ver explicación en español</button></div>
+<div class="es-box" id="esBox" hidden>
+<p><b>¿Qué es?</b> Con <i>has / have + changed / moved</i> decimos que algo es distinto AHORA: no importa cuándo cambió, importa que el cambio cuenta hoy.</p>
+<p><b>¿Cómo se usa?</b> Una cosa → <i>has changed</i> (The room has changed). Ellos → <i>have moved</i> (They have moved lunch to one). Negativo: <i>hasn't / haven't</i>. Pregunta: <i>Has the room changed? Have they moved lunch?</i></p>
+<p><b>¿Para qué hoy?</b> Para pasar un cambio de hora, sala o plan, y para preguntar si algo cambió antes de ir.</p>
+<p><b>Cuidado:</b> no se dice «The room have changed» ni «They has moved». Después de <i>have/has</i> va <i>changed / moved</i>, no <i>change / move</i>. Hoy solo practicamos estos dos verbos.</p></div></div>
+<div class="block builder"><div class="bt"><span class="tag">Practice A · mecánica · 2 min</span><h3>Choose the correct form</h3><span class="score" id="scA"></span></div><div class="mc" id="mcA"></div></div>
+<div class="block"><div class="bt"><span class="tag">Roulette Drill · 6 min</span><h3>Spin · read the card · say it in 15 seconds</h3><span class="stat">Spins <b id="k12sn">0</b> / 12 · Streak <b id="k12st">0</b> · Best <b id="k12sb">0</b></span></div>
+<div class="card tint"><p style="font-weight:700">1. Spin the wheel. &nbsp;2. Read the card and say the sentence in 15 seconds. &nbsp;3. Your partner marks ✓ or ✗. &nbsp;4. The first four spins show a frame; after that, only the data.</p></div>
+<div class="k12rou"><div class="k12wheelbox"><div class="k12ptr" aria-hidden="true">▼</div><div class="k12wheel" id="k12wheel" aria-hidden="true"></div></div>
+<div class="k12card" id="k12card"><p class="k12cs" id="k12cs">Press SPIN</p><p class="k12cd" id="k12cd">The wheel chooses the sentence type and the data.</p><p class="k12cf" id="k12cf"></p><div class="k12clock" id="k12clock" aria-live="off"></div>
+<div class="row"><button class="btn main" id="k12Spin">🎡 SPIN</button><button class="btn sm" id="k12Show" disabled>Show model</button><button class="say" id="k12Say" disabled aria-label="Listen to the model"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4z"/></svg></button></div>
+<div class="row"><button class="btn sm main" id="k12Ok" disabled>✓ Said it right</button><button class="btn sm" id="k12No" disabled>✗ Missed</button></div><p class="k12cm" id="k12cm" aria-live="polite"></p></div></div>
+<div class="closeout" id="k12rOut" hidden></div></div><details class="tn"><summary>Teacher notes · §3 Grammar</summary><div class="layers"><div class="ly"><h4>Pedagógica</h4><ul><li>UN solo punto de lengua: <i>The … has changed / They have moved … to …</i> (present perfect de uso frecuente; solo <i>changed</i> y <i>moved</i>). Explicación docente ≤5 min (el Recap está en pantalla). Práctica A mecánica (2 min) = ≤1/3 del bloque; la ruleta pasa de mecánica (4 giros con marco) a meaningful (8 giros solo con datos).</li><li><b>Roulette Drill (CONTRARRELOJ):</b> la ruleta define el tipo de oración (afirmar, negar o preguntar; changed o moved) y la tarjeta da los datos. 15 s por giro; el compañero marca ✓/✗; la racha cuenta giros seguidos sin caerse. El punto se gana por producir la oración, no por ir rápido: una oración incorrecta no suma aunque sea veloz.</li><li>Datos de otro evento (Startup Day) a propósito: no adelantan la agenda de §5.</li><li>Límite de nivel: sin present perfect continuous, sin passive, sin reported questions. Errores previstos: «have changed» con sujeto singular, «They has moved», «have change / have move», «moved to at».</li><li>Cierre en voz alta: «We did __ spins and our best streak was __.»</li></ul></div><div class="ly"><h4>Engagement</h4><ul><li>«Has changed describe un cambio que importa ahora, no cuándo ocurrió.»</li><li>Cierra en voz alta: «Our best streak was __.»</li></ul></div><div class="ly"><h4>Crecimiento</h4><ul><li>La ruleta prepara el reflejo para la agenda de §5.</li><li>Anota los 3 errores más repetidos: serán material de S13.</li></ul></div></div></details></div></section>
+<section class="sec" id="s4" style="--c:var(--pink);--ct:var(--pink-t)" data-name="Listening" data-min="22–30"><div class="shead"><div class="snum"><span class="n">4</span><div><h2>Listening · Spot the Lie</h2><div class="sub">22–30 min · One call · catch three lies</div></div></div><div class="meta"><span class="chip">Compare call vs text</span><span class="chip dark">LIS-01 Spot the Lie · IMPOSTOR</span></div></div><div class="sbody">
+<div class="player"><img src="img/l07s12_wifi.jpg" alt="Hands typing on a laptop next to another open laptop" style="object-position:center"><div class="pp"><p style="font-size:18px;font-weight:700">Ravi, the organizer, calls Dani, a volunteer. He is tired: three details in the call do not match his text. Listen and catch the three lies.</p>
+<p class="hint" style="color:#F3D6E2">Final audio: MP3 recorded with ElevenLabs.</p></div></div>
+<div class="k12txt"><div class="k12txh">📱 Ravi's text · the CONFIRMED plan</div><ul id="k12txt"></ul></div>
+<div class="k12call" id="k12call"></div>
+<div class="block"><div class="bt"><span class="tag">Spot the Lie · 5 min</span><h3>Which three details in the call are lies?</h3><span class="stat">Lies caught <b id="k12ln2">0</b> / 3</span></div>
+<div class="k12claims" id="k12claims"></div><div class="row"><button class="btn main" id="k12Chk">Check my lies</button></div><div class="closeout" id="k12lOut" hidden></div>
+<div class="k12fix" id="k12fix" hidden><h4>Say what the text says</h4><div id="k12fixl"></div></div></div>
+<div class="block"><div class="bt"><span class="tag">Task 2 · details</span><h3>What did you understand?</h3><span class="score" id="scL"></span></div><div class="mc" id="mcL"></div></div>
+<div class="block"><div class="row"><button class="btn" id="scrBtn" aria-expanded="false">Show the script</button><span class="rec">[PARA GRABAR]</span></div><div class="script" id="script" hidden></div></div><details class="tn"><summary>Teacher notes · §4 Listening</summary><div class="layers"><div class="ly"><h4>Pedagógica</h4><ul><li><b>Spot the Lie (IMPOSTOR):</b> una llamada (guion de 131 palabras, rango B1 120–200) con DOS hablantes: Ravi (organizador, <b>inglés indio</b>, hablante no nativo) y Dani (voz narradora, US). Marca <b>[PARA GRABAR]</b>: sin MP3 suena la voz del navegador (Ravi con voz en-IN si el equipo la tiene).</li><li>Ciclo: (1) leen el texto confirmado de Ravi; (2) escuchan la llamada completa; (3) marcan los 3 datos que no coinciden (los datos falsos se verifican con el texto en pantalla); (4) dicen la corrección: «The text says…»; (5) Task 2 con la hoja de respuestas.</li><li><b>Answer key:</b> mentiras = registration desk 5:30 (texto: 5:00) · pizza delivery en la puerta de ENFRENTE (texto: la de ATRÁS) · parking Lot D (texto: Lot B). Verdad: briefing en Room E a las 4:30 · la mesa de playeras no cambió.</li><li>Cumple: ≥3 elementos de léxico (agenda/plan · room · session · break · moved · changed) y la forma central ≥2 veces (has changed ×3, have moved ×3, has not changed ×1). Estructuras dentro de los Límites.</li></ul></div><div class="ly"><h4>Engagement</h4><ul><li>Pregunta: «¿Alguna vez te dieron un dato equivocado por teléfono? ¿Qué pasó?»</li><li>Cierra en voz alta: «We caught __ of 3 lies.»</li></ul></div><div class="ly"><h4>Crecimiento</h4><ul><li>Una voz con acento indio: acento real de trabajo internacional (≥1 de 3 guiones del curso con acento no nativo).</li><li>Anota qué número o lugar costó más oír (¿thirty vs thirteen?).</li></ul></div></div></details></div></section>
+<section class="sec" id="s5" style="--c:#D98E00;--ct:var(--sun-t)" data-name="Speaking" data-min="30–52"><div class="shead"><div class="snum"><span class="n">5</span><div><h2>Speaking · The Information Gap</h2><div class="sub">30–52 min · Two halves · one agenda · twist · 12 questions</div></div></div><div class="meta"><span class="chip">Ask · answer · confirm</span><span class="chip dark">SPK-IG The Information Gap · OCULTAMIENTO</span></div></div><div class="sbody">
+<div class="mission"><img src="img/l07s12_board.jpg" alt="Two colleagues planning at a whiteboard" style="object-position:center 50%"><div class="mt"><div class="kick">Your mission</div>
+<h3>Complete the final agenda: eight sessions, eight times, eight rooms.</h3>
+<p style="font-size:18px"><b>Say:</b> Has the … changed? · It has changed. They have moved it to… · It hasn't changed. · Just to confirm, …, right? &nbsp;<b>Decide:</b> fill the agenda and say it out loud.</p>
+<p data-m="group" style="font-weight:700">Group: pairs (A and B). Each one knows the latest info for four rows. Groups of 4: two agendas.</p>
+<p data-m="one" style="font-weight:700">1:1: you are Player A, the teacher is Player B.</p></div></div>
+<div class="block"><div class="bt"><span class="tag">Information gap · 12 min</span><h3>You both have the printed agenda · each of you knows half of the changes</h3><span class="stat">Rows done <b id="k12pn">0</b> / 8</span></div>
+<div class="k12roles" id="k12roles"></div>
+<div class="k12board" id="k12board"></div>
+<div class="row"><button class="btn main" id="k12Plan">Check our agenda</button></div><div class="closeout" id="k12pOut" hidden></div>
+<div class="row"><span class="stat">Moves <b id="mvN">0</b> / 10</span><div class="bar" style="max-width:240px"><i id="mvBar" style="width:0"></i></div></div>
+<div class="moves" id="k12mv"></div><div class="row"><button class="btn main" id="mvDone">Announce my result</button></div><div class="closeout" id="mvOut" hidden></div></div>
+<div class="help"><span>Has the … changed?</span><span>Yes, it has changed. They have moved it to…</span><span>No, it hasn't changed.</span><span>Just to confirm, … right?</span><span>Do you mean…?</span></div>
+<div class="block"><div class="bt"><span class="tag">Twist + auction · 4 min</span><h3>A new alert arrives · settle your words</h3></div>
+<div class="k12twist"><button class="btn main" id="k12Tw">📲 Incoming alert</button><div class="k12tw" id="k12tw" hidden><div class="k12twh">HACKATHON · ORGANIZER · now</div><p id="k12twt"></p><div class="row"><button class="say" id="k12TwSay" aria-label="Listen to the alert"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4z"/></svg></button><button class="btn sm main" id="k12TwOk">I passed the update on and confirmed it ✓</button></div></div></div>
+<div class="k12ledger"><h4>Word Auction · settlement</h4><p class="hint">Tick the words you bought and really used in the mission. Used = you get double the price back. Not used = lost.</p><div id="k12led"></div><div class="row"><button class="btn main" id="k12Settle">Settle the auction</button></div><div class="closeout" id="k12sOut" hidden></div></div></div>
+<div class="block"><div class="bt"><span class="tag">Step C · 6 min</span><h3>12 questions · always 2 follow-ups</h3></div>
+<div class="deck"><img id="qImg" src="img/l07s12_white.jpg" alt="A hand drawing on a glass whiteboard with an orange marker"><div class="dq"><div class="row" style="justify-content:space-between"><span class="qn" id="qN">QUESTION 1 OF 12</span><div class="dots" id="dots"></div></div><div class="qt" id="qT"></div><div class="fu" id="qF"></div>
+<div class="row"><button class="btn" id="qP">← Back</button><button class="btn" id="qX" style="background:#fff;color:var(--pri-d);border-color:#fff">Next question →</button></div></div></div></div><details class="tn"><summary>Teacher notes · §5 Speaking</summary><div class="layers"><div class="ly"><h4>Pedagógica</h4><ul><li><b>The Information Gap (temario · OCULTAMIENTO):</b> ambos jugadores tienen la agenda IMPRESA (8 sesiones); A conoce la información ACTUAL de las filas 1–4 y B la de las filas 5–8. Se pulsa «Reveal my rows» solo para mirar la propia mitad; el compañero pregunta «Has the … changed?» y el otro responde con «It has changed. They have moved it to…» o «It hasn't changed.». Confirman con «Just to confirm, …, right?» (reciclaje de S9). Tú escuchas y anotas errores sin nombres. En 1:1 tomas el rol B.</li><li>Cada jugador suma 5 movimientos (10 en total; éxito ≥7). Verdad de la agenda final: keynote Fri 6:00 pm Main hall · team formation Fri 7:00 pm Room D · dinner Fri 9:00 pm Cafeteria · sprint Fri 10:00 pm Lab 1 · mentor Sat 11:00 am Room C · lunch Sat 1:00 pm Cafeteria · demos Sun 2:00 pm Room A · awards Sun 5:00 pm Main hall.</li><li><b>Twist (2 min):</b> llega una alerta nueva; el alumno la pasa y la confirma. <b>Subasta:</b> se liquida aquí (usada = doble de lo pagado, no usada = perdida). El resultado se dice en voz alta.</li><li>Preguntas (6 min): elige 4–5 de las 12; todas con 2 follow-ups. Setup ≤2 min.</li></ul></div><div class="ly"><h4>Engagement</h4><ul><li>Anuncia el resultado: «We completed __ of 8 rows. We found __ of 10 moves. We finished the auction with __ points. Mission complete!»</li><li>Pide que digan la agenda completa sin leer: «The keynote hasn't changed. They have moved team formation to Room D…»</li></ul></div><div class="ly"><h4>Crecimiento</h4><ul><li>S13 convierte un chat caótico en un plan: «So, the plan is…».</li><li>Registra: filas completas, movimientos, palabras usadas y errores.</li></ul></div></div></details></div></section>
+<section class="sec" id="s6" style="--c:var(--navy);--ct:#E6E9F2" data-name="Wrap-up" data-min="52–60"><div class="shead"><div class="snum"><span class="n">6</span><div><h2>Wrap-up · Better the second time</h2><div class="sub">52–60 min · Change alert · Exit quiz · Self-check</div></div></div><div class="meta"><span class="chip">Success → Upgrade → Repair → Next use</span></div></div><div class="sbody"><div class="block"><div class="bt"><span class="tag">Closing · write your change alert</span><h3>Write the alert — then say it</h3><span class="stat">Said <b id="k12uN">0</b></span></div>
+<div class="k12form"><label>The <input id="k12a" class="bin" placeholder="a thing (the meeting)" aria-label="The thing"> has changed.</label><label>They have moved it to <input id="k12b" class="bin" placeholder="a new time or place" aria-label="New time or place"></label><label>Just to confirm, <input id="k12c" class="bin" placeholder="the new plan" aria-label="Confirm"> , right?</label>
+<div class="row"><button class="btn sm main" id="k12Say2">I said my alert ✓</button><span class="hint" id="k12uHint">Fill the three lines and say them out loud.</span></div></div></div><div class="sur">
+  <div class="card"><h4>✓ Success</h4><textarea id="fS" aria-label="Success">A final agenda completed
+Changes said with has / have</textarea></div>
+  <div class="card"><h4>↑ Upgrade</h4><textarea id="fU" aria-label="Upgrade">“The room have changed.” → “The room has changed.”</textarea></div>
+  <div class="card"><h4>✎ Repair</h4><textarea id="fR" aria-label="Repair">“They moved have lunch.” → “They have moved lunch.”</textarea></div>
+  <div class="card"><h4>↻ Next use</h4><p class="hint">Pass on one real change in one message today.</p></div></div>
+<div class="block"><div class="bt"><span class="tag">Exit quiz</span><h3>60 seconds · 5 questions</h3><span class="score" id="scQ"></span></div><div class="mc" id="mcQ"></div></div>
+<div class="block"><div class="bt"><span class="tag">Say it out loud</span><h3>Today I can…</h3></div><div class="selfev" id="selfev"></div></div>
+<figure class="banner"><img src="img/l07s12_win.jpg" alt="Two colleagues giving each other a high five at a shared desk"><figcaption>What has changed? What did they move?</figcaption></figure>
+<div class="badge"><div class="medal">12</div><div><div class="kick">Session complete</div><h3 style="font-size:26px;font-weight:900">You can say what has changed — and what they have moved.</h3><p style="opacity:.9">Homework: send ONE real change alert (what has changed, what they have moved, new time or place) to someone. Next: <b>Session 13</b>.</p><div class="row" style="margin-top:10px"><button class="btn" id="doneBtn" style="background:var(--sun);border-color:var(--sun);color:var(--navy)">Mark session as complete</button><a class="btn" href="./" style="text-decoration:none;color:var(--navy)">Back to Intermedio 1</a></div></div></div><details class="tn"><summary>Teacher notes · §6 Wrap-up</summary><div class="layers"><div class="ly"><h4>Pedagógica</h4><ul><li>Máx. 2 aciertos y 3 correcciones de alto valor (usa los errores anotados). La alerta propia cierra con tres líneas dichas en voz alta.</li><li>Tarea: una alerta real enviada por mensaje. Se revisa al inicio de S13.</li></ul></div><div class="ly"><h4>Engagement</h4><ul><li>Declaración final: «Today I can say what has changed and what they have moved.»</li><li>Compara con §1: «Minute 1: you chose a sentence. Minute 58: you completed a real agenda.»</li></ul></div><div class="ly"><h4>Crecimiento</h4><ul><li>Registra: alertas, puntos de subasta, racha de ruleta, mentiras cazadas, filas de la agenda y movimientos.</li><li>«Next session: Session 13.»</li></ul></div></div></details></div></section>
+</main>
+<footer>Gabriel Turner · Your Business Coach · Intermedio 1 · Session 12 of 32 · v1.0 · Photos: Unsplash (Cherrydeck, Kvalifik, Paper Textures, Priscilla Du Preez 🇨🇦, Scott Graham, ThisisEngineering, Vitaly Gariev, freestocks)</footer>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+const D={"key": "s12", "alerts": [{"img": "l07s12_laptop.jpg", "alt": "Two people reviewing notes next to an open laptop", "app": "HACKATHON · TEAM CHAT", "item": "the pizza dinner", "before": "7:00 pm", "after": "8:00 pm", "ok": "They have moved the pizza dinner to eight.", "bad": ["They has moved the pizza dinner to eight.", "They moved have the pizza dinner to eight."], "clip": "L07-S12-warmup-001-narrator"}, {"img": "l07s12_sticky.jpg", "alt": "Two sticky notes, one yellow and one green, on a white surface", "app": "HACKATHON · ROOM BOT", "item": "the mentor session", "before": "Room C", "after": "Room D", "ok": "The mentor session has changed. They have moved it to Room D.", "bad": ["The mentor session have changed. They have moved it to Room D.", "The mentor session has change. They has moved it to Room D."], "clip": "L07-S12-warmup-002-narrator"}, {"img": "l07s12_board.jpg", "alt": "Two colleagues planning at a whiteboard", "app": "HACKATHON · ORGANIZER", "item": "the final demos", "before": "3:00 pm", "after": "2:00 pm", "ok": "They have moved the final demos to two.", "bad": ["They have move the final demos to two.", "They are moved the final demos to two."], "clip": "L07-S12-warmup-003-narrator"}, {"img": "l07s12_coffee.jpg", "alt": "Hands holding two grey coffee cups on a white table", "app": "HACKATHON · ORGANIZER", "item": "the coffee break", "before": "10:30 am", "after": "10:30 am", "ok": "The coffee break hasn't changed.", "bad": ["The coffee break haven't changed.", "The coffee break not has changed."], "clip": "L07-S12-warmup-004-narrator"}], "voc": [["agenda", "programa · orden del día", "The agenda has changed."], ["schedule", "horario · calendario", "The schedule for Saturday is full."], ["session", "sesión · bloque de un evento", "The mentor session is in Room C."], ["keynote", "charla principal · conferencia de apertura", "The keynote starts at six."], ["break", "descanso · pausa", "The dinner break is short."], ["room", "sala · salón", "The room has changed."], ["start time", "hora de inicio", "The start time is nine."], ["ends at", "termina a las", "The session ends at eleven."], ["moved", "movido · cambiado de hora o lugar", "They have moved the lunch to one."], ["changed", "cambiado · distinto ahora", "The room has changed."]], "vocClips": [["L07-S12-vocab-001-narrator", "L07-S12-vocab-011-narrator"], ["L07-S12-vocab-002-narrator", "L07-S12-vocab-012-narrator"], ["L07-S12-vocab-003-narrator", "L07-S12-vocab-013-narrator"], ["L07-S12-vocab-004-narrator", "L07-S12-vocab-014-narrator"], ["L07-S12-vocab-005-narrator", "L07-S12-vocab-015-narrator"], ["L07-S12-vocab-006-narrator", "L07-S12-vocab-016-narrator"], ["L07-S12-vocab-007-narrator", "L07-S12-vocab-017-narrator"], ["L07-S12-vocab-008-narrator", "L07-S12-vocab-018-narrator"], ["L07-S12-vocab-009-narrator", "L07-S12-vocab-019-narrator"], ["L07-S12-vocab-010-narrator", "L07-S12-vocab-020-narrator"]], "lots": [{"w": "keynote", "c": "The main talk at the start of an event.", "rival": 20, "ex": "The keynote starts at six on Friday.", "es": "charla principal", "clip": "L07-S12-vocab-021-narrator"}, {"w": "session", "c": "One part of an event, for example a talk or a workshop.", "rival": 30, "ex": "The mentor session is at ten.", "es": "sesión", "clip": "L07-S12-vocab-022-narrator"}, {"w": "break", "c": "A short time to rest, eat or drink between two parts of an event.", "rival": 10, "ex": "The dinner break is at eight.", "es": "descanso", "clip": "L07-S12-vocab-023-narrator"}, {"w": "room", "c": "A place inside a building: Room A, Room B, Room C.", "rival": 25, "ex": "The team formation is in Room B.", "es": "sala", "clip": "L07-S12-vocab-024-narrator"}, {"w": "start time", "c": "The time when something begins.", "rival": 15, "ex": "What is the start time for the demos?", "es": "hora de inicio", "clip": "L07-S12-vocab-025-narrator"}, {"w": "ends at", "c": "It finishes at this time.", "rival": 35, "ex": "The coding sprint ends at midnight.", "es": "termina a las", "clip": "L07-S12-vocab-026-narrator"}], "practiceA": [{"q": "“The keynote ___ changed.”", "o": ["has", "have", "is"], "a": 0, "ok": "The keynote has changed. (one thing = has)"}, {"q": "“They ___ moved the lunch to one.”", "o": ["have", "has", "are"], "a": 0, "ok": "They have moved the lunch. (they = have)"}, {"q": "Choose the correct question:", "o": ["Has the room changed?", "Have the room changed?", "Does the room changed?"], "a": 0, "ok": "Has + thing + changed?"}, {"q": "Nothing is different now. “The agenda ___ changed.”", "o": ["hasn't", "haven't", "doesn't"], "a": 0, "ok": "The agenda hasn't changed."}, {"q": "Which sentence says the time is different now?", "o": ["They have moved the keynote to seven.", "They moved have the keynote to seven.", "They are moved the keynote seven."], "a": 0, "ok": "They have moved + thing + to + new time."}], "sectors": ["✔ has / have changed", "✔ have moved", "✖ hasn't changed", "✖ haven't moved", "? Has … changed?", "? Have they moved…?"], "cards": [{"s": 0, "d": "PANEL · Room 2 → Room 4", "frame": "The ___ has changed.", "m": "The panel room has changed.", "clip": "L07-S12-grammar-001-narrator"}, {"s": 0, "d": "WORKSHOP · 10:00 → 10:30", "frame": "The ___ has changed.", "m": "The workshop start time has changed.", "clip": "L07-S12-grammar-002-narrator"}, {"s": 1, "d": "WELCOME TALK · 9:00 → 9:30", "frame": "They have moved ___ to ___.", "m": "They have moved the welcome talk to nine thirty.", "clip": "L07-S12-grammar-003-narrator"}, {"s": 1, "d": "LUNCH · Room 1 → the garden", "frame": "They have moved ___ to ___.", "m": "They have moved lunch to the garden.", "clip": "L07-S12-grammar-004-narrator"}, {"s": 2, "d": "COFFEE BREAK · no change", "frame": "The ___ hasn't changed.", "m": "The coffee break hasn't changed.", "clip": "L07-S12-grammar-005-narrator"}, {"s": 2, "d": "NETWORKING HOUR · no change", "frame": "The ___ hasn't changed.", "m": "The networking hour hasn't changed.", "clip": "L07-S12-grammar-006-narrator"}, {"s": 3, "d": "PANEL · still at 2:00", "frame": "They haven't moved ___.", "m": "They haven't moved the panel.", "clip": "L07-S12-grammar-007-narrator"}, {"s": 3, "d": "WORKSHOP · still in Room 3", "frame": "They haven't moved ___.", "m": "They haven't moved the workshop.", "clip": "L07-S12-grammar-008-narrator"}, {"s": 4, "d": "ASK about the LUNCH TIME", "frame": "Has the ___ changed?", "m": "Has the lunch time changed?", "clip": "L07-S12-grammar-009-narrator"}, {"s": 4, "d": "ASK about the WELCOME TALK", "frame": "Has the ___ changed?", "m": "Has the welcome talk changed?", "clip": "L07-S12-grammar-010-narrator"}, {"s": 5, "d": "ASK about the WORKSHOP room", "frame": "Have they moved ___?", "m": "Have they moved the workshop?", "clip": "L07-S12-grammar-011-narrator"}, {"s": 5, "d": "ASK about the NETWORKING HOUR", "frame": "Have they moved ___?", "m": "Have they moved the networking hour?", "clip": "L07-S12-grammar-012-narrator"}], "call": [{"n": "Ravi", "spk": "rahul", "t": "Hello, Dani. This is Ravi from the hackathon team. I am calling about the volunteer plan.", "clip": "L07-S12-listening-001-rahul"}, {"n": "Dani", "spk": "narrator", "t": "Hi, Ravi. I have your text. The plan has changed, right?", "clip": "L07-S12-listening-002-narrator"}, {"n": "Ravi", "spk": "rahul", "t": "Yes, a little. First, the volunteer briefing has changed. They have moved it to Room E. It starts at four thirty.", "clip": "L07-S12-listening-003-rahul"}, {"n": "Dani", "spk": "narrator", "t": "Room E, four thirty. OK.", "clip": "L07-S12-listening-004-narrator"}, {"n": "Ravi", "spk": "rahul", "t": "Second, the registration desk. It opens at five thirty on Friday.", "clip": "L07-S12-listening-005-rahul"}, {"n": "Dani", "spk": "narrator", "t": "Five thirty. Got it.", "clip": "L07-S12-listening-006-narrator"}, {"n": "Ravi", "spk": "rahul", "t": "The pizza delivery has changed too. They have moved the delivery to the front door.", "clip": "L07-S12-listening-007-rahul"}, {"n": "Dani", "spk": "narrator", "t": "The front door. OK.", "clip": "L07-S12-listening-008-narrator"}, {"n": "Ravi", "spk": "rahul", "t": "And parking has changed. They have moved the volunteer parking to Lot D. The T-shirt table has not changed.", "clip": "L07-S12-listening-009-rahul"}, {"n": "Dani", "spk": "narrator", "t": "Lot D. I will tell the other volunteers.", "clip": "L07-S12-listening-010-narrator"}, {"n": "Ravi", "spk": "rahul", "t": "Thank you, Dani. Please check my text again tonight, and tell me if anything looks wrong.", "clip": "L07-S12-listening-011-rahul"}], "callAll": ["L07-S12-listening-001-rahul", "L07-S12-listening-002-narrator", "L07-S12-listening-003-rahul", "L07-S12-listening-004-narrator", "L07-S12-listening-005-rahul", "L07-S12-listening-006-narrator", "L07-S12-listening-007-rahul", "L07-S12-listening-008-narrator", "L07-S12-listening-009-rahul", "L07-S12-listening-010-narrator", "L07-S12-listening-011-rahul"], "textmsg": [["Volunteer briefing", "Room E · 4:30 pm"], ["Registration desk", "opens at 5:00 pm"], ["Pizza delivery", "7:30 pm · back door"], ["Parking", "Lot B"], ["T-shirt table", "no change"]], "claims": [{"t": "Briefing → Room E, 4:30 pm", "lie": false, "fix": ""}, {"t": "Registration desk opens at 5:30 pm", "lie": true, "fix": "The text says the registration desk opens at five."}, {"t": "Pizza delivery → the front door", "lie": true, "fix": "The text says the pizza delivery is at the back door."}, {"t": "Parking → Lot D", "lie": true, "fix": "The text says the parking is Lot B."}, {"t": "The T-shirt table hasn't changed", "lie": false, "fix": ""}], "corrClips": ["L07-S12-listening-012-narrator", "L07-S12-listening-013-narrator", "L07-S12-listening-014-narrator"], "lisQ": [{"q": "Why does Ravi call Dani?", "o": ["To tell her about changes in the volunteer plan", "To ask for pizza", "To cancel the hackathon"], "a": 0, "ok": "“I am calling about the volunteer plan.”"}, {"q": "Where is the volunteer briefing now?", "o": ["Room E", "Lot B", "The back door"], "a": 0, "ok": "“They have moved it to Room E.”"}, {"q": "Which item has NOT changed?", "o": ["The T-shirt table", "The parking", "The pizza delivery"], "a": 0, "ok": "“The T-shirt table has not changed.”"}, {"q": "What does Ravi ask Dani to do tonight?", "o": ["Check his text again", "Call the volunteers", "Move the parking"], "a": 0, "ok": "“Please check my text again tonight.”"}], "scriptMarked": "[phone beep] RAVI: Hello, Dani. This is Ravi from the hackathon team. I am calling about the volunteer plan. DANI: Hi, Ravi. I have your text. The plan has changed, right? RAVI: [pause] Yes, a little. First, the volunteer briefing has changed. They have moved it to Room E. It starts at four thirty. DANI: Room E, four thirty. OK. RAVI: Second, the registration desk. It opens at five thirty on Friday. DANI: Five thirty. Got it. RAVI: The pizza delivery has changed too. They have moved the delivery to the front door. DANI: The front door. OK. RAVI: And parking has changed. They have moved the volunteer parking to Lot D. The T-shirt table has not changed. DANI: [pause] Lot D. I will tell the other volunteers. RAVI: Thank you, Dani. Please check my text again tonight, and tell me if anything looks wrong. [phone beep]", "ag": [["Opening keynote", "Fri", "6:00 pm", "Main hall", "6:00 pm", "Main hall"], ["Team formation", "Fri", "7:00 pm", "Room B", "7:00 pm", "Room D"], ["Dinner break", "Fri", "8:30 pm", "Cafeteria", "9:00 pm", "Cafeteria"], ["Coding sprint", "Fri", "10:00 pm", "Lab 1", "10:00 pm", "Lab 1"], ["Mentor session", "Sat", "10:00 am", "Room C", "11:00 am", "Room C"], ["Lunch break", "Sat", "1:00 pm", "Cafeteria", "1:00 pm", "Cafeteria"], ["Final demos", "Sun", "3:00 pm", "Main hall", "2:00 pm", "Room A"], ["Awards ceremony", "Sun", "5:00 pm", "Main hall", "5:00 pm", "Main hall"]], "timesOpt": ["6:00 pm", "7:00 pm", "8:30 pm", "9:00 pm", "10:00 pm", "10:00 am", "11:00 am", "1:00 pm", "2:00 pm", "3:00 pm", "5:00 pm"], "roomsOpt": ["Main hall", "Room A", "Room B", "Room C", "Room D", "Cafeteria", "Lab 1"], "roles": [{"p": "A", "t": "Player A · you know the LATEST info for rows 1–4", "rows": [0, 1, 2, 3]}, {"p": "B", "t": "Player B · you know the LATEST info for rows 5–8", "rows": [4, 5, 6, 7]}], "moves": ["Has the … changed?", "It has changed. / It hasn't changed.", "They have moved … to …", "Just to confirm, …, right?", "I asked a follow-up (When? Where?)"], "twist": "The awards ceremony has changed. They have moved it to Sunday at five thirty.", "twistClip": "L07-S12-speaking-001-narrator", "questions": [["What is something in your week that has changed recently?", "Why did it change?", "Was it better or worse?"], ["Has your work schedule changed this month?", "Who told you?", "Did you like the change?"], ["Tell me about a day when a plan changed at the last minute.", "What did you do?", "Who was affected?"], ["Is it better to keep the original plan or to reorder it when something changes?", "Why?", "When is a change good?"], ["How do you hear about changes: a message, an email or a person?", "Which is best?", "Which one do you miss?"], ["Have you ever been to a long event, like a hackathon or a festival?", "What was the schedule?", "What changed?"], ["Who tells you when the schedule changes at work or at home?", "Is it fast?", "What do you do next?"], ["What is the first thing you check when a schedule changes?", "Why?", "What is the last thing you check?"], ["Which session of a long event do you never miss?", "Why?", "Which one do you skip?"], ["What time does your day start and end?", "Has that changed this year?", "What would you like to keep the same?"], ["Is a room change or a time change worse for you?", "Why?", "How do you tell other people?"], ["What change has helped you this year?", "Why?", "What has not changed?"]], "exit": [{"q": "Which sentence is correct?", "o": ["The keynote has changed.", "The keynote have changed.", "The keynote is changed has."], "a": 0}, {"q": "They have moved lunch ___ one.", "o": ["to", "at to", "by"], "a": 0}, {"q": "Choose the correct question:", "o": ["Has the room changed?", "Have the room changed?", "Do the room changed?"], "a": 0}, {"q": "Nothing is different. “The agenda ___ changed.”", "o": ["hasn't", "haven't", "isn't"], "a": 0}, {"q": "A keynote is…", "o": ["the main talk at the start of an event", "a short break to eat", "the time when something ends"], "a": 0}], "selfev": ["I can say The … has changed.", "I can say They have moved … to …", "I can ask Has the … changed? and answer it.", "I can explain agenda / session / keynote / break / room.", "I can complete an agenda with a partner who knows the other half."], "clips": [{"id": "L07-S12-warmup-001-narrator", "file": "L07-S12-warmup-001-narrator.mp3", "spk": "narrator", "tts": "They have moved the pizza dinner to eight."}, {"id": "L07-S12-warmup-002-narrator", "file": "L07-S12-warmup-002-narrator.mp3", "spk": "narrator", "tts": "The mentor session has changed. They have moved it to Room D."}, {"id": "L07-S12-warmup-003-narrator", "file": "L07-S12-warmup-003-narrator.mp3", "spk": "narrator", "tts": "They have moved the final demos to two."}, {"id": "L07-S12-warmup-004-narrator", "file": "L07-S12-warmup-004-narrator.mp3", "spk": "narrator", "tts": "The coffee break hasn't changed."}, {"id": "L07-S12-vocab-001-narrator", "file": "L07-S12-vocab-001-narrator.mp3", "spk": "narrator", "tts": "agenda"}, {"id": "L07-S12-vocab-002-narrator", "file": "L07-S12-vocab-002-narrator.mp3", "spk": "narrator", "tts": "schedule"}, {"id": "L07-S12-vocab-003-narrator", "file": "L07-S12-vocab-003-narrator.mp3", "spk": "narrator", "tts": "session"}, {"id": "L07-S12-vocab-004-narrator", "file": "L07-S12-vocab-004-narrator.mp3", "spk": "narrator", "tts": "keynote"}, {"id": "L07-S12-vocab-005-narrator", "file": "L07-S12-vocab-005-narrator.mp3", "spk": "narrator", "tts": "break"}, {"id": "L07-S12-vocab-006-narrator", "file": "L07-S12-vocab-006-narrator.mp3", "spk": "narrator", "tts": "room"}, {"id": "L07-S12-vocab-007-narrator", "file": "L07-S12-vocab-007-narrator.mp3", "spk": "narrator", "tts": "start time"}, {"id": "L07-S12-vocab-008-narrator", "file": "L07-S12-vocab-008-narrator.mp3", "spk": "narrator", "tts": "ends at"}, {"id": "L07-S12-vocab-009-narrator", "file": "L07-S12-vocab-009-narrator.mp3", "spk": "narrator", "tts": "moved"}, {"id": "L07-S12-vocab-010-narrator", "file": "L07-S12-vocab-010-narrator.mp3", "spk": "narrator", "tts": "changed"}, {"id": "L07-S12-vocab-011-narrator", "file": "L07-S12-vocab-011-narrator.mp3", "spk": "narrator", "tts": "The agenda has changed."}, {"id": "L07-S12-vocab-012-narrator", "file": "L07-S12-vocab-012-narrator.mp3", "spk": "narrator", "tts": "The schedule for Saturday is full."}, {"id": "L07-S12-vocab-013-narrator", "file": "L07-S12-vocab-013-narrator.mp3", "spk": "narrator", "tts": "The mentor session is in Room C."}, {"id": "L07-S12-vocab-014-narrator", "file": "L07-S12-vocab-014-narrator.mp3", "spk": "narrator", "tts": "The keynote starts at six."}, {"id": "L07-S12-vocab-015-narrator", "file": "L07-S12-vocab-015-narrator.mp3", "spk": "narrator", "tts": "The dinner break is short."}, {"id": "L07-S12-vocab-016-narrator", "file": "L07-S12-vocab-016-narrator.mp3", "spk": "narrator", "tts": "The room has changed."}, {"id": "L07-S12-vocab-017-narrator", "file": "L07-S12-vocab-017-narrator.mp3", "spk": "narrator", "tts": "The start time is nine."}, {"id": "L07-S12-vocab-018-narrator", "file": "L07-S12-vocab-018-narrator.mp3", "spk": "narrator", "tts": "The session ends at eleven."}, {"id": "L07-S12-vocab-019-narrator", "file": "L07-S12-vocab-019-narrator.mp3", "spk": "narrator", "tts": "They have moved the lunch to one."}, {"id": "L07-S12-vocab-020-narrator", "file": "L07-S12-vocab-020-narrator.mp3", "spk": "narrator", "tts": "The room has changed."}, {"id": "L07-S12-vocab-021-narrator", "file": "L07-S12-vocab-021-narrator.mp3", "spk": "narrator", "tts": "The keynote starts at six on Friday."}, {"id": "L07-S12-vocab-022-narrator", "file": "L07-S12-vocab-022-narrator.mp3", "spk": "narrator", "tts": "The mentor session is at ten."}, {"id": "L07-S12-vocab-023-narrator", "file": "L07-S12-vocab-023-narrator.mp3", "spk": "narrator", "tts": "The dinner break is at eight."}, {"id": "L07-S12-vocab-024-narrator", "file": "L07-S12-vocab-024-narrator.mp3", "spk": "narrator", "tts": "The team formation is in Room B."}, {"id": "L07-S12-vocab-025-narrator", "file": "L07-S12-vocab-025-narrator.mp3", "spk": "narrator", "tts": "What is the start time for the demos?"}, {"id": "L07-S12-vocab-026-narrator", "file": "L07-S12-vocab-026-narrator.mp3", "spk": "narrator", "tts": "The coding sprint ends at midnight."}, {"id": "L07-S12-grammar-001-narrator", "file": "L07-S12-grammar-001-narrator.mp3", "spk": "narrator", "tts": "The panel room has changed."}, {"id": "L07-S12-grammar-002-narrator", "file": "L07-S12-grammar-002-narrator.mp3", "spk": "narrator", "tts": "The workshop start time has changed."}, {"id": "L07-S12-grammar-003-narrator", "file": "L07-S12-grammar-003-narrator.mp3", "spk": "narrator", "tts": "They have moved the welcome talk to nine thirty."}, {"id": "L07-S12-grammar-004-narrator", "file": "L07-S12-grammar-004-narrator.mp3", "spk": "narrator", "tts": "They have moved lunch to the garden."}, {"id": "L07-S12-grammar-005-narrator", "file": "L07-S12-grammar-005-narrator.mp3", "spk": "narrator", "tts": "The coffee break hasn't changed."}, {"id": "L07-S12-grammar-006-narrator", "file": "L07-S12-grammar-006-narrator.mp3", "spk": "narrator", "tts": "The networking hour hasn't changed."}, {"id": "L07-S12-grammar-007-narrator", "file": "L07-S12-grammar-007-narrator.mp3", "spk": "narrator", "tts": "They haven't moved the panel."}, {"id": "L07-S12-grammar-008-narrator", "file": "L07-S12-grammar-008-narrator.mp3", "spk": "narrator", "tts": "They haven't moved the workshop."}, {"id": "L07-S12-grammar-009-narrator", "file": "L07-S12-grammar-009-narrator.mp3", "spk": "narrator", "tts": "Has the lunch time changed?"}, {"id": "L07-S12-grammar-010-narrator", "file": "L07-S12-grammar-010-narrator.mp3", "spk": "narrator", "tts": "Has the welcome talk changed?"}, {"id": "L07-S12-grammar-011-narrator", "file": "L07-S12-grammar-011-narrator.mp3", "spk": "narrator", "tts": "Have they moved the workshop?"}, {"id": "L07-S12-grammar-012-narrator", "file": "L07-S12-grammar-012-narrator.mp3", "spk": "narrator", "tts": "Have they moved the networking hour?"}, {"id": "L07-S12-listening-001-rahul", "file": "L07-S12-listening-001-rahul.mp3", "spk": "rahul", "tts": "Hello, Dani. This is Ravi from the hackathon team. I am calling about the volunteer plan."}, {"id": "L07-S12-listening-002-narrator", "file": "L07-S12-listening-002-narrator.mp3", "spk": "narrator", "tts": "Hi, Ravi. I have your text. The plan has changed, right?"}, {"id": "L07-S12-listening-003-rahul", "file": "L07-S12-listening-003-rahul.mp3", "spk": "rahul", "tts": "Yes, a little. First, the volunteer briefing has changed. They have moved it to Room E. It starts at four thirty."}, {"id": "L07-S12-listening-004-narrator", "file": "L07-S12-listening-004-narrator.mp3", "spk": "narrator", "tts": "Room E, four thirty. OK."}, {"id": "L07-S12-listening-005-rahul", "file": "L07-S12-listening-005-rahul.mp3", "spk": "rahul", "tts": "Second, the registration desk. It opens at five thirty on Friday."}, {"id": "L07-S12-listening-006-narrator", "file": "L07-S12-listening-006-narrator.mp3", "spk": "narrator", "tts": "Five thirty. Got it."}, {"id": "L07-S12-listening-007-rahul", "file": "L07-S12-listening-007-rahul.mp3", "spk": "rahul", "tts": "The pizza delivery has changed too. They have moved the delivery to the front door."}, {"id": "L07-S12-listening-008-narrator", "file": "L07-S12-listening-008-narrator.mp3", "spk": "narrator", "tts": "The front door. OK."}, {"id": "L07-S12-listening-009-rahul", "file": "L07-S12-listening-009-rahul.mp3", "spk": "rahul", "tts": "And parking has changed. They have moved the volunteer parking to Lot D. The T-shirt table has not changed."}, {"id": "L07-S12-listening-010-narrator", "file": "L07-S12-listening-010-narrator.mp3", "spk": "narrator", "tts": "Lot D. I will tell the other volunteers."}, {"id": "L07-S12-listening-011-rahul", "file": "L07-S12-listening-011-rahul.mp3", "spk": "rahul", "tts": "Thank you, Dani. Please check my text again tonight, and tell me if anything looks wrong."}, {"id": "L07-S12-listening-012-narrator", "file": "L07-S12-listening-012-narrator.mp3", "spk": "narrator", "tts": "The text says the registration desk opens at five."}, {"id": "L07-S12-listening-013-narrator", "file": "L07-S12-listening-013-narrator.mp3", "spk": "narrator", "tts": "The text says the pizza delivery is at the back door."}, {"id": "L07-S12-listening-014-narrator", "file": "L07-S12-listening-014-narrator.mp3", "spk": "narrator", "tts": "The text says the parking is Lot B."}, {"id": "L07-S12-speaking-001-narrator", "file": "L07-S12-speaking-001-narrator.mp3", "spk": "narrator", "tts": "The awards ceremony has changed. They have moved it to Sunday at five thirty."}]};
+(function(){
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const st={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
+const fmt=s=>String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');
+const SPK='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4z"/></svg>';
+const shuf=a=>{const b=a.slice();for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]]}return b};
+const esc=t=>String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+/* ---- toast ---- */
+let toastT=null;
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('on'),2600)}
+
+/* ---- audio: MP3 primero, voz del navegador como respaldo ---- */
+const CL={};D.clips.forEach(c=>CL[c.id]=c);
+const TTS='speechSynthesis' in window;let voices=[];
+function loadV(){try{voices=speechSynthesis.getVoices().filter(v=>/^en/i.test(v.lang))}catch(e){}}
+if(TTS){loadV();try{speechSynthesis.onvoiceschanged=loadV}catch(e){}}
+function pickV(re){return voices.find(v=>re.test(v.name+' '+v.lang))||voices[0]}
+let curAudio=null,missNoted=false;
+function stopAll(){try{if(TTS)speechSynthesis.cancel()}catch(e){}if(curAudio){try{curAudio.pause()}catch(e){}curAudio=null}$$('.voice.playing').forEach(v=>v.classList.remove('playing'))}
+function sayT(text,spk,onEnd){if(!TTS){toast('This browser has no voice. Read it aloud yourself.');onEnd&&onEnd();return}
+ try{const u=new SpeechSynthesisUtterance(text);u.lang='en-US';u.rate=spk==='emma'||spk==='rahul'?.9:.85;
+  let v;if(spk==='rahul'){v=pickV(/en[-_]IN|India/i);u.lang='en-IN'}else if(spk==='emma'){v=pickV(/en[-_]CA|Canada|female|Samantha|Zira|Jenny|Aria/i);u.lang='en-CA'}else if(spk==='coach'){v=pickV(/male|David|Guy|Daniel|Alex|en[-_]US/i)}else v=pickV(/female|Zira|Samantha|Jenny|Aria|en[-_]US/i);
+  if(v){u.voice=v;u.lang=v.lang}u.onend=()=>onEnd&&onEnd();u.onerror=()=>onEnd&&onEnd();speechSynthesis.speak(u)}catch(e){onEnd&&onEnd()}}
+function play(id,onEnd,onFallback){const c=CL[id];if(!c)return;stopAll();let fell=false;
+ const fb=()=>{if(fell)return;fell=true;if(!missNoted){missNoted=true;toast('Audio no disponible aún (MP3 pendiente) · usando la voz del navegador')}onFallback&&onFallback();sayT(c.tts,c.spk,onEnd)};
+ try{const a=new Audio('audio/'+c.file);curAudio=a;a.addEventListener('error',fb);a.addEventListener('ended',()=>onEnd&&onEnd());const p=a.play();if(p&&p.catch)p.catch(fb)}catch(e){fb()}}
+function chain(ids,done){let i=0;const nx=()=>{if(i>=ids.length){done&&done();return}play(ids[i++],nx)};nx()}
+
+/* ---- modes ---- */
+function setView(student){document.body.classList.toggle('student',student);$('#tgStudent').setAttribute('aria-pressed',student);$('#tgTeacher').setAttribute('aria-pressed',!student)}
+$('#tgStudent').onclick=()=>setView(true);$('#tgTeacher').onclick=()=>setView(false);
+function setMode(m){$$('[data-m]').forEach(e=>e.hidden=e.dataset.m!==m);$('#tgGroup').setAttribute('aria-pressed',m==='group');$('#tgOne').setAttribute('aria-pressed',m==='one');st.set('gt07-mode',m)}
+$('#tgGroup').onclick=()=>setMode('group');$('#tgOne').onclick=()=>setMode('one');setMode(st.get('gt07-mode')||'group');
+
+/* ---- XP + nav ---- */
+let xp=0;const done=new Set();
+function addXP(n,key){if(key){if(done.has(key))return;done.add(key)}xp+=n;$('#xp').textContent=xp+' XP'}
+const secs=$$('.sec');const steps=$('#steps');
+secs.forEach((s,i)=>{const a=document.createElement('a');a.href='#'+s.id;a.innerHTML=`<b>${i+1}</b>${s.dataset.name}`;a.style.setProperty('--c',getComputedStyle(s).getPropertyValue('--c'));steps.appendChild(a)});
+const links=[...steps.children];
+function onScroll(){let cur=0;secs.forEach((s,i)=>{if(s.getBoundingClientRect().top<200)cur=i});links.forEach((a,i)=>a.classList.toggle('on',i===cur));$('#pbar').style.width=((cur+1)/secs.length*100)+'%';const on=links[cur];if(on&&steps.scrollWidth>steps.clientWidth){steps.scrollLeft=on.offsetLeft-40}}
+addEventListener('scroll',onScroll,{passive:true});onScroll();
+function markDone(i){links[i]&&links[i].classList.add('done')}
+
+/* ---- class clock ---- */
+let cs=0,cId=null;$('#clock').onclick=()=>{if(cId){clearInterval(cId);cId=null}else cId=setInterval(()=>{cs++;$('#clock').textContent=fmt(cs)},1000)};
+
+/* ---- timers ---- */
+function timer(el,onEnd){const tot=+el.dataset.sec;let left=tot,id=null;const o=el.querySelector('output'),g=el.querySelector('[data-a=go]');
+ const draw=()=>{o.textContent=fmt(left);el.classList.toggle('end',left===0)};const stop=()=>{clearInterval(id);id=null;g.textContent='Start'};
+ g.onclick=()=>{if(id){stop();return}if(!left)left=tot;g.textContent='Pause';id=setInterval(()=>{left--;draw();if(left<=0){stop();onEnd&&onEnd()}},1000)};
+ el.querySelector('[data-a=re]').onclick=()=>{stop();left=tot;draw()};return{reset(){stop();left=tot;draw()},used(){return tot-left},stop}}
+const TIMER_HTML=s=>`<div class="timer" data-sec="${s}"><output>${fmt(s)}</output><button class="btn main sm" data-a="go">Start</button><button class="btn sm" data-a="re">Reset</button></div>`;
+
+/* ---- MC engine ---- */
+function mc(box,items,scoreEl,xpKey,sec){let right=0,answered=0;
+ items.forEach((it,i)=>{const d=document.createElement('div');d.className='mcq';d.innerHTML=`<div class="q"><span class="n">${i+1}</span>${esc(it.q)}</div><div class="opts"></div><div class="fb" aria-live="polite"></div>`;
+  const os=d.querySelector('.opts'),fb=d.querySelector('.fb');let locked=false;
+  it.o.forEach((t,k)=>{const b=document.createElement('button');b.className='opt';b.textContent=t;b.onclick=()=>{if(locked)return;
+    if(k===it.a){b.classList.add('ok');locked=true;answered++;if(!d.dataset.miss)right++;fb.className='fb ok';fb.textContent='✓ '+(it.ok||'Correct!');addXP(10);
+      if(answered===items.length){scoreEl.textContent=`${right} / ${items.length} first try`;addXP(0,xpKey);if(sec!=null)markDone(sec)}}
+    else{b.classList.add('no');d.dataset.miss=1;fb.className='fb no';fb.textContent='✗ '+(it.no||'Try again.')}};os.appendChild(b)});box.appendChild(d)})}
+
+
+/* ===== generic builders (S2+) ===== */
+function makeVoices(box,defs){defs.forEach(d=>{const v=document.createElement('div');v.className='voice'+(d.cls||'');
+ const bars=Array.from({length:28},(_,i)=>`<i style="height:${8+Math.abs(Math.sin(i*1.7+(d.seed||0))*22)}px;animation-delay:${(i%7)*.08}s"></i>`).join('');
+ v.innerHTML=`<div class="vh"><span class="cav">${d.ini}</span><div><b class="nun" style="font-size:20px">${esc(d.name)}</b><small>${esc(d.sub)}</small></div></div><div class="vb"><div class="wave" aria-hidden="true">${bars}</div><div class="row"><button class="play" data-a="p">▶ Play</button><button class="btn sm" data-a="s">■ Stop</button></div><div class="astat" aria-live="polite">Audio: MP3 · ElevenLabs</div></div>`;
+ const stat=v.querySelector('.astat');
+ v.querySelector('[data-a=p]').onclick=()=>{play(d.clip,()=>v.classList.remove('playing'),()=>{stat.textContent='Audio MP3 pendiente · usando la voz del navegador';stat.classList.add('miss')});v.classList.add('playing');d.onplay&&d.onplay()};
+ v.querySelector('[data-a=s]').onclick=()=>stopAll();box.appendChild(v)})}
+function makeDeck(secIdx,total){let qi=0;const NQ=D.questions.length;
+ D.questions.forEach((_,i)=>{const d=document.createElement('button');d.setAttribute('aria-label','Question '+(i+1));d.onclick=()=>{qi=i;drawQ()};$('#dots').appendChild(d)});
+ function drawQ(){const q=D.questions[qi];$('#qN').textContent=`QUESTION ${qi+1} OF ${NQ}`;$('#qT').textContent=q[0];$('#qF').innerHTML=`<span>${esc(q[1])}</span><span>${esc(q[2])}</span>`;[...$('#dots').children].forEach((d,i)=>d.setAttribute('aria-current',i===qi));$('#qP').disabled=qi===0;$('#qX').textContent=qi===NQ-1?'Done ✓':'Next question →';if(qi>=(total||6)&&secIdx!=null)markDone(secIdx);D.onQ&&D.onQ(qi)}
+ $('#qP').onclick=()=>{if(qi>0){qi--;drawQ()}};$('#qX').onclick=()=>{if(qi<NQ-1){qi++;drawQ()}};drawQ();return{get i(){return qi},go(i){qi=i;drawQ()}}}
+function makePron(box,color,secIdx){D.pron.forEach(([t,sc,tip],i)=>{const d=document.createElement('div');d.className='pr';d.innerHTML=`<span class="w">${esc(sc)}</span><span class="ipa">${esc(tip)}</span><button class="say" style="background:${color}" aria-label="Listen: ${esc(t)}">${SPK}</button>`;d.querySelector('.say').onclick=()=>play(D.pronClips[i]);box.appendChild(d)})}
+function makeWrap(secIdx){mc($('#mcQ'),D.exit,$('#scQ'),'mcQ',secIdx);
+ D.selfev.forEach(t=>{const b=document.createElement('button');b.textContent=t;b.setAttribute('aria-pressed','false');b.onclick=()=>b.setAttribute('aria-pressed',b.getAttribute('aria-pressed')!=='true');$('#selfev').appendChild(b)});
+ const K='gt07-'+D.key+'-done';const showDone=()=>{$('#doneBtn').textContent='✓ Session complete';$('#doneBtn').disabled=true};if(st.get(K))showDone();
+ $('#doneBtn').onclick=()=>{st.set(K,'1');addXP(50,'done');markDone(secIdx);showDone()}}
+function sayChip(t){return `<span class="say-chip">${esc(t)}</span>`}
+
+/* ===== S12 · Hackathon Weekend: The Information Gap ===== */
+/* §1 push alerts */
+let aDone=0;
+D.alerts.forEach((a,i)=>{const d=document.createElement('div');d.className='k12al';
+ const opts=shuf([a.ok,...a.bad].map((t,k)=>[t,k]));
+ d.innerHTML=`<div class="k12ah"><span class="k12dot"></span><b>${esc(a.app)}</b><small>now</small></div>
+ <div class="k12am"><img src="img/${esc(a.img)}" alt="${esc(a.alt)}" loading="lazy"><div class="k12ab"><div class="k12ai">${esc(a.item)}</div>
+ <button class="k12flip" aria-expanded="false">⟲ Flip: before → now</button><div class="k12ba" hidden><span class="k12b">BEFORE <b>${esc(a.before)}</b></span><span class="k12n">NOW <b>${esc(a.after)}</b></span></div></div></div>
+ <p class="k12aq">Which sentence is correct?</p><div class="k12ao">${opts.map(([t,k])=>`<button data-k="${k}">${esc(t)}</button>`).join('')}</div><p class="k12af" aria-live="polite"></p>
+ <div class="k12ax" hidden><div class="row"><button class="say" data-a="m" aria-label="Listen to the model">${SPK}</button><button class="btn sm main" data-a="s">I said it with my own words ✓</button></div></div>`;
+ const fl=d.querySelector('.k12flip'),ba=d.querySelector('.k12ba');
+ fl.onclick=()=>{const o=ba.hidden;ba.hidden=!o;fl.setAttribute('aria-expanded',o);d.classList.toggle('flipped',o)};
+ let done=false;
+ d.querySelectorAll('.k12ao button').forEach(b=>b.onclick=()=>{if(done)return;
+  if(+b.dataset.k===0){done=true;b.classList.add('ok');d.classList.add('solved');d.querySelectorAll('.k12ao button').forEach(z=>z.disabled=true);d.querySelector('.k12af').textContent='✓ Yes.';
+   d.querySelector('.k12ax').hidden=false;addXP(3,'wn'+i);aDone++;$('#k12wres').textContent=`${aDone} of ${D.alerts.length} alerts solved. Now say YOUR sentence about each one.`;if(aDone>=3)markDone(0)}
+  else{b.classList.add('no');b.disabled=true;d.querySelector('.k12af').textContent='✗ Check have / has and the verb form.'}});
+ d.querySelector('[data-a=m]').onclick=()=>play(a.clip);
+ d.querySelector('[data-a=s]').onclick=e=>{e.target.disabled=true;e.target.textContent='✓ said';addXP(3,'ws'+i)};
+ $('#k12warm').appendChild(d)});
+
+/* §2 word wall + auction */
+D.voc.forEach(([w,es,ex],i)=>{const c=document.createElement('div');c.className='k12w';
+ c.innerHTML=`<button class="k12wf" aria-expanded="false"><b>${esc(w)}</b><small>tap</small></button><div class="k12wb" hidden><p class="k12wes">${esc(es)}</p><p class="k12wex">“${esc(ex)}”</p><div class="row"><button class="say" data-a="w" aria-label="Listen to the word">${SPK}</button><button class="say" data-a="x" aria-label="Listen to the example" style="background:var(--pink)">${SPK}</button></div></div>`;
+ const f=c.querySelector('.k12wf'),b=c.querySelector('.k12wb');
+ f.onclick=()=>{const o=b.hidden;b.hidden=!o;f.setAttribute('aria-expanded',o);c.classList.toggle('on',o);if(o)addXP(1,'v'+i)};
+ c.querySelector('[data-a=w]').onclick=()=>play(D.vocClips[i][0]);c.querySelector('[data-a=x]').onclick=()=>play(D.vocClips[i][1]);$('#k12wall').appendChild(c)});
+let pts=100,lotsDone=0,said=0;const bought={};
+D.lots.forEach((l,i)=>{const d=document.createElement('div');d.className='k12lot';
+ d.innerHTML=`<div class="k12lh"><span class="n">${i+1}</span><small>LOT ${i+1}</small></div><p class="k12lw">${esc(l.w)}</p><p class="k12lc">${esc(l.c)}</p>
+ <div class="k12bid" role="group" aria-label="Your bid">${[10,20,30,40,0].map(n=>`<button data-b="${n}">${n?('Bid '+n):'Pass'}</button>`).join('')}</div><p class="k12lf" aria-live="polite"></p>
+ <div class="k12lx" hidden><p class="k12lm"></p><div class="row"><button class="say" aria-label="Listen to the example">${SPK}</button><button class="btn sm main" data-a="t">I said MY sentence ✓</button></div></div>`;
+ const upd=()=>d.querySelectorAll('.k12bid button').forEach(b=>{if(!d.dataset.done&&+b.dataset.b>pts)b.disabled=true});upd();d._upd=upd;
+ d.querySelectorAll('.k12bid button').forEach(b=>b.onclick=()=>{if(d.dataset.done)return;const bid=+b.dataset.b;d.dataset.done=1;
+  d.querySelectorAll('.k12bid button').forEach(z=>{z.disabled=true;z.classList.toggle('pick',z===b)});lotsDone++;$('#k12ln').textContent=lotsDone;
+  const f=d.querySelector('.k12lf'),x=d.querySelector('.k12lx');
+  if(bid>l.rival){pts-=bid;d.classList.add('won');f.textContent=`✓ Sold to you for ${bid}. The rival stopped at ${l.rival}.`;bought[l.w]={cost:bid,used:false};x.hidden=false;x.querySelector('.k12lm').innerHTML=`<b>${esc(l.w)}</b> · ${esc(l.es)} — <i>“${esc(l.ex)}”</i> Say YOUR sentence. Then use it in §5.`}
+  else{d.classList.add('lost');f.textContent=bid?`✗ The rival bid ${l.rival}. The word is gone.`:`You passed. The rival took it at ${l.rival}.`}
+  $('#k12pts').textContent=pts;$$('.k12lot').forEach(z=>z._upd&&z._upd());
+  if(lotsDone===D.lots.length){const o=$('#k12aOut');o.hidden=false;o.textContent=`The auction is over. You have ${pts} points and ${Object.keys(bought).length} words. Use them in §5 to get double back!`;buildLedger()}});
+ d.querySelector('.say').onclick=()=>play(l.clip);
+ d.querySelector('[data-a=t]').onclick=e=>{e.target.disabled=true;e.target.textContent='✓ said';addXP(5,'lt'+i);said++;if(lotsDone===D.lots.length&&said>=Object.keys(bought).length)markDone(1)};
+ $('#k12lots').appendChild(d)});
+
+/* §3 grammar */
+$('#esBtn').onclick=()=>{const open=$('#esBox').hidden;$('#esBox').hidden=!open;$('#esBtn').setAttribute('aria-expanded',open);$('#esBtn').textContent=open?'🇲🇽 Ocultar explicación en español':'🇲🇽 Ver explicación en español'};
+mc($('#mcA'),D.practiceA,$('#scA'),'mcA',null);
+/* roulette */
+const COLS=['#FF7A59','#FFC233','#4ADE9F','#3DB8FF','#8B6CF6','#FF5C8A'];
+$('#k12wheel').style.background=`conic-gradient(${COLS.map((c,i)=>`${c} ${i*60}deg ${(i+1)*60}deg`).join(',')})`;
+$('#k12wheel').innerHTML=D.sectors.map((s,i)=>`<span style="transform:rotate(${i*60+30}deg) translateY(-86px)">${esc(s)}</span>`).join('');
+let spins=0,streak=0,best=0,cur=null,tId=null,ok12=0;const pool=shuf(D.cards.map((_,i)=>i));
+const stopClock=()=>{if(tId){clearInterval(tId);tId=null}};
+function resetBtns(on){$('#k12Show').disabled=!on;$('#k12Say').disabled=!on;$('#k12Ok').disabled=!on;$('#k12No').disabled=!on}
+$('#k12Spin').onclick=()=>{if(spins>=12||$('#k12Spin').dataset.busy)return;$('#k12Spin').dataset.busy=1;stopClock();resetBtns(false);$('#k12cm').textContent='';
+ cur=D.cards[pool[spins]];
+ const w=$('#k12wheel');w.style.transition='transform 1.2s cubic-bezier(.2,.8,.2,1)';
+ w.style.transform=`rotate(${-(cur.s*60+30)-1440*(spins+1)}deg)`;
+ setTimeout(()=>{delete $('#k12Spin').dataset.busy;$('#k12cs').textContent=D.sectors[cur.s];$('#k12cd').textContent=cur.d;
+  $('#k12cf').textContent=spins<4?cur.frame:'(no frame — use the data only)';let left=15;const ck=$('#k12clock');ck.textContent='15';
+  tId=setInterval(()=>{left--;ck.textContent=String(Math.max(left,0));if(left<=0){stopClock();ck.textContent='Time!'}},1000);resetBtns(true);$('#k12Spin').disabled=true},1250)};
+$('#k12Show').onclick=()=>{$('#k12cm').innerHTML=`<b>Model:</b> ${esc(cur.m)}`};
+$('#k12Say').onclick=()=>{if(cur)play(cur.clip)};
+const afterMark=good=>{stopClock();resetBtns(false);spins++;$('#k12sn').textContent=spins;
+ if(good){streak++;ok12++;best=Math.max(best,streak);addXP(4,'rl'+spins)}else streak=0;
+ $('#k12st').textContent=streak;$('#k12sb').textContent=best;$('#k12cm').innerHTML=`<b>Model:</b> ${esc(cur.m)}`;
+ if(spins>=8)markDone(2);
+ if(spins>=12){const o=$('#k12rOut');o.hidden=false;o.textContent=`We did 12 spins, said ${ok12} right and our best streak was ${best}. Say it out loud!`;$('#k12Spin').disabled=true}else $('#k12Spin').disabled=false};
+$('#k12Ok').onclick=()=>afterMark(true);$('#k12No').onclick=()=>afterMark(false);
+
+/* §4 listening */
+$('#k12txt').innerHTML=D.textmsg.map(([a,b])=>`<li><b>${esc(a)}</b><span>${esc(b)}</span></li>`).join('');
+$('#k12call').innerHTML=`<div class="k12play"><button class="play" id="k12PlayAll">▶ Play the whole call</button><button class="btn sm" id="k12Stop">■ Stop</button><span class="astat">Audio: MP3 · ElevenLabs</span></div><div class="k12lines" id="k12lines"></div>`;
+$('#k12PlayAll').onclick=()=>{chain(D.callAll,()=>{});toast('Compare what Ravi says with his text.')};$('#k12Stop').onclick=()=>stopAll();
+D.call.forEach((l,i)=>{const d=document.createElement('div');d.className='k12ln '+(l.spk==='rahul'?'e':'d');d.innerHTML=`<span class="k12who">${l.n.slice(0,1)}</span><button class="say" aria-label="Listen to line ${i+1}" style="background:${l.spk==='rahul'?'var(--pink)':'var(--navy)'}">${SPK}</button><i>${l.n} · line ${i+1}</i>`;d.querySelector('.say').onclick=()=>play(l.clip);$('#k12lines').appendChild(d)});
+D.claims.forEach((c,i)=>{const b=document.createElement('button');b.className='k12cl';b.setAttribute('aria-pressed','false');b.dataset.i=i;
+ b.innerHTML=`<span class="k12stamp">LIE</span><span>${esc(c.t)}</span>`;b.onclick=()=>{b.setAttribute('aria-pressed',b.getAttribute('aria-pressed')!=='true')};$('#k12claims').appendChild(b)});
+let lieFix=0;
+$('#k12Chk').onclick=()=>{let hit=0,wrong=0;D.claims.forEach((c,i)=>{const b=$$('.k12cl')[i],on=b.getAttribute('aria-pressed')==='true';b.classList.toggle('right',on&&c.lie);b.classList.toggle('wrong',on&&!c.lie);if(on&&c.lie)hit++;if(on&&!c.lie)wrong++});
+ $('#k12ln2').textContent=hit;const o=$('#k12lOut');o.hidden=false;
+ if(hit===3&&wrong===0){o.textContent='You caught all 3 lies! Now say what the text says.';addXP(12,'lies');markDone(3);
+  const f=$('#k12fix');f.hidden=false;if(!$('#k12fixl').children.length){let k=0;D.claims.forEach(c=>{if(!c.lie)return;const r=document.createElement('div');r.className='k12fr';const ci=k++;
+   r.innerHTML=`<p>“${esc(c.fix)}”</p><div class="row"><button class="say" aria-label="Listen to the correction">${SPK}</button><button class="btn sm main" data-a="s">I said it ✓</button></div>`;
+   r.querySelector('.say').onclick=()=>play(D.corrClips[ci]);r.querySelector('[data-a=s]').onclick=e=>{e.target.disabled=true;e.target.textContent='✓ said';addXP(4,'fx'+ci);lieFix++};$('#k12fixl').appendChild(r)})}}
+ else o.textContent=`${hit} of 3 lies caught${wrong?' and '+wrong+' true detail(s) marked by mistake':''}. Compare each detail with Ravi's text and listen again.`};
+mc($('#mcL'),D.lisQ,$('#scL'),'mcL',3);
+$('#script').innerHTML=`<p>${esc(D.scriptMarked)}</p>`;
+$('#scrBtn').onclick=()=>{const o=$('#script').hidden;$('#script').hidden=!o;$('#scrBtn').setAttribute('aria-expanded',o);$('#scrBtn').textContent=o?'Hide the script':'Show the script'};
+
+/* §5 information gap */
+D.roles.forEach(r=>{const d=document.createElement('div');d.className='k12role';
+ d.innerHTML=`<div class="k12roh"><span class="kick">PLAYER ${r.p}</span><b>${esc(r.t)}</b></div><button class="btn sm rv" aria-expanded="false">👁 Reveal my half</button><div class="k12sec" hidden><table><tr><th>#</th><th>Session</th><th>Printed</th><th>LATEST</th></tr>${D.ag.map((x,i)=>{const mine=r.rows.includes(i);return `<tr class="${mine?'mine':''}"><td>${i+1}</td><td>${esc(x[0])}</td><td>${esc(x[1])} ${esc(x[2])} · ${esc(x[3])}</td><td>${mine?`<b>${esc(x[4])} · ${esc(x[5])}</b>`:'?'}</td></tr>`}).join('')}</table></div>`;
+ const rv=d.querySelector('.rv'),s=d.querySelector('.k12sec');rv.onclick=()=>{const o=s.hidden;s.hidden=!o;rv.setAttribute('aria-expanded',o);rv.textContent=o?'🙈 Hide my half':'👁 Reveal my half'};$('#k12roles').appendChild(d)});
+const DAYS={Fri:'FRIDAY',Sat:'SATURDAY',Sun:'SUNDAY'};
+$('#k12board').innerHTML=['Fri','Sat','Sun'].map(dy=>`<div class="k12day"><div class="k12dh">${DAYS[dy]}</div>${D.ag.map((x,i)=>x[1]!==dy?'':`<div class="k12slot" data-i="${i}"><b>${i+1} · ${esc(x[0])}</b><select aria-label="Start time for ${esc(x[0])}"><option value="">start time…</option>${D.timesOpt.map(t=>`<option>${t}</option>`).join('')}</select><select aria-label="Room for ${esc(x[0])}"><option value="">room…</option>${D.roomsOpt.map(t=>`<option>${t}</option>`).join('')}</select></div>`).join('')}</div>`).join('');
+$('#k12Plan').onclick=()=>{let ok=0;$$('.k12slot').forEach(tr=>{const i=+tr.dataset.i,s=tr.querySelectorAll('select');const good=s[0].value===D.ag[i][4]&&s[1].value===D.ag[i][5];tr.classList.toggle('rowok',good);tr.classList.toggle('rowno',!good&&!!(s[0].value||s[1].value));if(good)ok++});
+ $('#k12pn').textContent=ok;const o=$('#k12pOut');o.hidden=false;o.textContent=ok===8?'Agenda complete: 8 sessions, 8 times, 8 rooms. Now say the agenda out loud without reading!':`${ok} of 8 rows are right. Ask your partner again: “Has the … changed?”`;addXP(ok*3,'plan');if(ok===8)markDone(4)};
+$('#k12mv').innerHTML=D.moves.map(m=>`<button class="mv" aria-pressed="false"><i>✓</i>${esc(m)}</button>`).join('')+D.moves.map(m=>`<button class="mv" aria-pressed="false"><i>✓</i>${esc(m)}</button>`).join('');
+function drawMv(){const n=$$('.mv[aria-pressed=true]').length;$('#mvN').textContent=n;$('#mvBar').style.width=n/10*100+'%'}
+$$('.mv').forEach(b=>b.onclick=()=>{b.setAttribute('aria-pressed',b.getAttribute('aria-pressed')!=='true');drawMv();addXP(1)});
+$('#mvDone').onclick=()=>{const n=$$('.mv[aria-pressed=true]').length;const o=$('#mvOut');o.hidden=false;o.textContent=n>=7?`We found ${n} of 10 moves. Mission complete! Say it out loud.`:`We found ${n} of 10 moves. Which one is missing: ask, answer, move, confirm or a follow-up?`;addXP(n*3,'mv');markDone(4)};
+/* twist + ledger */
+$('#k12Tw').onclick=()=>{$('#k12tw').hidden=false;$('#k12twt').textContent=D.twist;$('#k12Tw').disabled=true;toast('New alert!')};
+$('#k12TwSay').onclick=()=>play(D.twistClip);$('#k12TwOk').onclick=e=>{e.target.disabled=true;e.target.textContent='✓ passed on';addXP(6,'tw')};
+function buildLedger(){const box=$('#k12led');box.innerHTML='';const ws=Object.keys(bought);
+ if(!ws.length){box.innerHTML='<p class="hint">You did not buy any word. Your points stay as they are.</p>';return}
+ ws.forEach(w=>{const l=document.createElement('label');l.className='k12lg';l.innerHTML=`<input type="checkbox" data-w="${esc(w)}"> <b>${esc(w)}</b> <small>paid ${bought[w].cost}</small>`;box.appendChild(l)})}
+buildLedger();
+$('#k12Settle').onclick=()=>{let back=0,lost=0;Object.keys(bought).forEach(w=>{const cb=document.querySelector(`#k12led input[data-w="${w.replace(/"/g,'')}"]`);if(cb&&cb.checked){back+=bought[w].cost*2;bought[w].used=true}else lost+=bought[w].cost});
+ const fin=pts+back;const o=$('#k12sOut');o.hidden=false;o.textContent=`We finished the auction with ${fin} points. Words used: ${back/2?Object.keys(bought).filter(w=>bought[w].used).join(', '):'none'}. Say it out loud!`;addXP(8,'settle')};
+makeDeck(4,6);
+
+/* §6 change alert + wrap */
+let uN=0;
+$('#k12Say2').onclick=()=>{const a=$('#k12a').value.trim(),b=$('#k12b').value.trim(),c=$('#k12c').value.trim();
+ if(!a||!b||!c){$('#k12uHint').textContent='Fill the three lines first.';return}
+ uN++;$('#k12uN').textContent=uN;$('#k12uHint').innerHTML=`Say it: <b>“The ${esc(a)} has changed. They have moved it to ${esc(b)}. Just to confirm, ${esc(c)}, right?”</b>`;addXP(10,'ou'+uN)};
+makeWrap(5);
+
+})();
+
+</script>
+</body>
+</html>

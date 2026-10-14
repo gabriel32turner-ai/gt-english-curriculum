@@ -1,0 +1,1309 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Intermedio 2 · S07 · Pending, Approved, Done</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap">
+<style>
+:root{
+  --navy:#16213E; --navy2:#22305A; --cream:#F4F7FF; --paper:#FFFFFF; --ink:#1B1B2F; --mut:#5E6275; --line:#DCE4F8;
+  --lvl:#6B4DF0; --lvl-d:#3F2BB0; --lvl-t:#ECE7FF;
+  --sun:#FFC233; --sun-t:#FFF3D1; --teal:#0A7F75; --teal-t:#DCF2EF; --pink:#C71F5E; --pink-t:#FBE3EC; --grm:#C2410C; --grm-t:#FFEDE0;
+  --ok:#15A34A; --ok-t:#E3F7EA; --err:#E5484D; --err-t:#FDE8E8;
+  --r:18px; --r-sm:12px; --sh:0 6px 22px rgba(27,27,47,.08); --sh-lg:0 18px 44px rgba(27,27,47,.16);
+  color-scheme:light;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+[hidden]{display:none!important}
+html{scroll-behavior:smooth;scroll-padding-top:150px}
+body{background:var(--cream);color:var(--ink);font-family:"DM Sans","Segoe UI",system-ui,sans-serif;font-size:17px;line-height:1.55;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4,.nun{font-family:Nunito,"Segoe UI",system-ui,sans-serif;letter-spacing:-.01em;line-height:1.15;text-wrap:balance}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+button:focus-visible,a:focus-visible,textarea:focus-visible,input:focus-visible{outline:3px solid var(--lvl);outline-offset:2px}
+img{max-width:100%;display:block}
+.wrap{max-width:1100px;margin:0 auto;padding-inline:16px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+/* ---------- top bar ---------- */
+.topbar{background:var(--navy);color:#fff}
+.topbar .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding-block:10px}
+.brand{display:flex;align-items:center;gap:10px;font-family:Nunito;font-weight:900;font-size:14px;letter-spacing:.08em}
+.brand i{width:10px;height:10px;border-radius:50%;background:var(--lvl);box-shadow:0 0 0 4px rgba(107,77,240,.35)}
+.brand a{color:#fff;text-decoration:none}
+.brand small{font-family:"DM Sans";font-weight:500;letter-spacing:0;opacity:.7;font-size:13px}
+.toggles{display:flex;gap:8px;flex-wrap:wrap}
+.tg{border:1.5px solid rgba(255,255,255,.3);color:#fff;border-radius:99px;padding:6px 14px;font-size:13px;font-weight:700}
+.tg[aria-pressed="true"]{background:var(--sun);border-color:var(--sun);color:var(--navy)}
+
+/* ---------- hero ---------- */
+.hero{position:relative;background:var(--navy);color:#fff;overflow:hidden}
+.hero .bg{position:absolute;inset:0;background:url(img/i2s01_hero.jpg) center/cover}
+.hero .bg::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(28,18,78,.97) 0%,rgba(28,18,78,.87) 45%,rgba(28,18,78,.28) 100%)}
+.hero .wrap{position:relative;padding-block:44px 40px}
+.kick{font-family:Nunito;font-weight:900;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--sun)}
+.hero h1{font-size:clamp(40px,6.5vw,72px);font-weight:900;margin:8px 0 10px;max-width:16ch}
+.hero h1 span{color:var(--lvl);text-shadow:0 0 0 transparent}
+.hero p.obj{max-width:56ch;font-size:18px;opacity:.94}
+.pills{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.pill{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.28);border-radius:99px;padding:5px 13px;font-size:14px;font-weight:700}
+.pill.sun{background:var(--sun);border-color:var(--sun);color:var(--navy)}
+.coach{display:inline-flex;align-items:center;gap:12px;margin-top:20px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);border-radius:99px;padding:6px 18px 6px 6px}
+.coach .cav{width:44px;height:44px;border-radius:50%;background:var(--lvl);display:grid;place-items:center;font-family:Nunito;font-weight:900;font-size:16px;letter-spacing:.02em}
+.coach b{display:block;font-family:Nunito;font-weight:900;font-size:17px;line-height:1.1}
+.coach small{font-size:13px;color:var(--sun);font-weight:700;letter-spacing:.04em}
+
+/* ---------- sticky nav ---------- */
+.nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:40;background:rgba(244,247,255,.96);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.nav .wrap{padding-block:10px 8px}
+.prog{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+.bar{flex:1;height:10px;background:#E4E9F9;border-radius:99px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--lvl),var(--sun));border-radius:99px;transition:width .4s}
+.xp{font-family:Nunito;font-weight:900;font-size:15px;color:var(--lvl-d);white-space:nowrap}
+.clock{font-family:Nunito;font-weight:900;font-size:15px;background:var(--navy);color:#fff;border-radius:99px;padding:5px 12px;font-variant-numeric:tabular-nums}
+.steps{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}
+.steps::-webkit-scrollbar{display:none}
+.steps a{flex:1 0 auto;text-decoration:none;color:var(--mut);background:#EAF0FB;border-radius:10px;padding:8px 12px;font-weight:700;font-size:14px;white-space:nowrap;text-align:center;border:1.5px solid transparent}
+.steps a b{font-family:Nunito;margin-right:4px}
+.steps a.on{background:var(--c,var(--lvl));color:#fff}
+.steps a.done{border-color:var(--ok);color:var(--ok)}
+.steps a.done.on{color:#fff}
+
+/* ---------- sections ---------- */
+main{padding-block:26px 80px}
+.sec{background:var(--paper);border-radius:24px;box-shadow:var(--sh);margin-bottom:26px;overflow:hidden;border-top:8px solid var(--c)}
+.shead{display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between;padding:22px 26px 6px}
+.snum{display:flex;align-items:center;gap:14px}
+.snum .n{width:54px;height:54px;border-radius:16px;background:var(--c);color:#fff;display:grid;place-items:center;font-family:Nunito;font-weight:900;font-size:22px;flex:none}
+.snum h2{font-size:clamp(26px,3.4vw,36px);font-weight:900}
+.snum .sub{font-size:14px;color:var(--mut);font-weight:500}
+.meta{display:flex;gap:8px;flex-wrap:wrap}
+.chip{border-radius:99px;padding:5px 12px;font-size:13px;font-weight:700;background:var(--ct);color:var(--ink)}
+.chip.dark{background:var(--navy);color:#fff}
+.sbody{padding:14px 26px 28px;display:grid;gap:22px}
+.block{display:grid;gap:12px}
+.bt{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.bt h3{font-size:22px;font-weight:900}
+.bt .tag{font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--c)}
+.hint{color:var(--mut);font-size:15px}
+.card{background:var(--paper);border:1.5px solid var(--line);border-radius:var(--r);padding:18px}
+.tint{background:var(--ct);border-color:transparent}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+@media (max-width:820px){.g2,.g3{grid-template-columns:1fr}}
+.btn{border-radius:99px;padding:10px 18px;font-weight:700;font-size:15px;background:var(--paper);border:1.5px solid var(--line)}
+.btn.main{background:var(--c,var(--lvl));border-color:var(--c,var(--lvl));color:#fff}
+.btn.dark{background:var(--navy);border-color:var(--navy);color:#fff}
+.btn.sm{padding:6px 12px;font-size:14px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.say{width:40px;height:40px;border-radius:50%;background:var(--c,var(--lvl));color:#fff;display:inline-grid;place-items:center;flex:none;font-size:16px}
+.say svg{width:18px;height:18px;fill:#fff}
+
+/* teacher notes */
+.tn{border-radius:var(--r);background:#FFFBEA;border:1.5px dashed #E9C46A}
+.tn summary{list-style:none;padding:12px 16px;font-weight:800;font-family:Nunito;cursor:pointer;display:flex;justify-content:space-between;color:#7A5A00}
+.tn summary::-webkit-details-marker{display:none}
+.tn summary::after{content:"＋";font-weight:900}
+.tn[open] summary::after{content:"－"}
+.tn .layers{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;padding:0 16px 16px}
+@media (max-width:820px){.tn .layers{grid-template-columns:1fr}}
+.tn .ly{background:#fff;border-radius:12px;padding:12px 14px;font-size:15px}
+.tn .ly h4{font-size:13px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px}
+.tn .ly:nth-child(1) h4{color:var(--grm)} .tn .ly:nth-child(2) h4{color:var(--lvl-d)} .tn .ly:nth-child(3) h4{color:var(--teal)}
+.tn ul{padding-left:18px} .tn li{margin-bottom:4px}
+body.student .tn, body.student .key{display:none!important}
+
+/* ---------- §1 warm-up ---------- */
+.scene{display:grid;grid-template-columns:1.1fr 1fr;border-radius:var(--r);overflow:hidden;background:var(--navy);color:#fff}
+@media (max-width:820px){.scene{grid-template-columns:1fr}}
+.scene img{height:100%;min-height:260px;object-fit:cover}
+.scene .txt{padding:26px;display:grid;gap:12px;align-content:center}
+.bubble{background:#fff;color:var(--ink);border-radius:18px 18px 18px 4px;padding:12px 16px;font-size:20px;font-weight:700;max-width:28ch;position:relative}
+.bubble.me{background:var(--lvl);color:#fff;border-radius:18px 18px 4px 18px;justify-self:end}
+.poll{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+@media (max-width:900px){.poll{grid-template-columns:repeat(3,1fr)}}
+@media (max-width:520px){.poll{grid-template-columns:repeat(2,1fr)}}
+.pc{border-radius:var(--r);overflow:hidden;background:var(--paper);border:2px solid var(--line);display:grid;transition:transform .15s,border-color .15s}
+.pc .em{aspect-ratio:4/3;display:grid;place-items:center;font-size:40px;background:var(--pc-bg,var(--ct))}
+.pc .pb{padding:10px 12px;display:grid;gap:8px}
+.pc .nm{font-family:Nunito;font-weight:900;font-size:16px;line-height:1.15;min-height:2.3em}
+.pc .vt{display:flex;align-items:center;justify-content:space-between}
+.pc .vt button{width:34px;height:34px;border-radius:50%;background:var(--ct);font-weight:900;font-size:18px}
+.pc .vt output{font-family:Nunito;font-weight:900;font-size:22px;font-variant-numeric:tabular-nums}
+.pc .pbar{height:8px;border-radius:99px;background:#EDF1FB;overflow:hidden}
+.pc .pbar i{display:block;height:100%;width:0;background:var(--c);transition:width .3s}
+.pc.win{border-color:var(--c);transform:translateY(-3px)}
+.result{font-family:Nunito;font-weight:900;font-size:20px}
+.fq{display:grid;gap:8px}
+.fq div{background:var(--ct);border-radius:12px;padding:10px 14px;font-weight:700}
+.fq div span{color:var(--mut);font-weight:500}
+
+/* ---------- §2 vocab ---------- */
+.flips{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+@media (max-width:900px){.flips{grid-template-columns:repeat(3,1fr)}}
+@media (max-width:520px){.flips{grid-template-columns:repeat(2,1fr)}}
+.flip{perspective:900px;height:170px}
+.flip .in{position:relative;width:100%;height:100%;transition:transform .5s;transform-style:preserve-3d}
+.flip.on .in{transform:rotateY(180deg)}
+.flip .f,.flip .b{position:absolute;inset:0;border-radius:var(--r);backface-visibility:hidden;padding:14px;display:grid;align-content:space-between}
+.flip .f{background:var(--fc);color:#fff}
+.flip .b{background:#fff;border:2px solid var(--fc);transform:rotateY(180deg)}
+.flip .num{font-family:Nunito;font-weight:900;font-size:13px;opacity:.8}
+.flip .w{font-family:Nunito;font-weight:900;font-size:19px;line-height:1.15}
+.flip .es{font-weight:700;color:var(--mut);font-size:14px}
+.flip .ex{font-size:14px}
+.flip .fb{display:flex;justify-content:space-between;align-items:end}
+.flip .fb .say{background:rgba(255,255,255,.25)}
+.flip .tap{font-size:12px;font-weight:700;opacity:.85}
+.flip .seen{position:absolute;top:10px;right:10px;background:var(--ok);color:#fff;border-radius:99px;font-size:11px;font-weight:800;padding:2px 8px}
+.match{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.match .col{display:grid;gap:10px}
+.mi{border:2px solid var(--line);background:#fff;border-radius:14px;padding:12px 14px;font-weight:700;text-align:left;transition:.15s}
+.mi.sel{border-color:var(--c);background:var(--ct)}
+.mi.ok{border-color:var(--ok);background:var(--ok-t);color:var(--ok);cursor:default}
+.mi.bad{border-color:var(--err);background:var(--err-t);animation:shake .3s}
+@keyframes shake{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+.board{display:flex;flex-wrap:wrap;gap:10px}
+.dw{border-radius:12px;padding:10px 14px;font-family:Nunito;font-weight:900;font-size:17px;background:var(--navy);color:#fff}
+.dw[aria-pressed="true"]{background:#E4E9F9;color:#9FA9C2;text-decoration:line-through}
+.timer{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.timer output{font-family:Nunito;font-weight:900;font-size:34px;font-variant-numeric:tabular-nums;min-width:4.5ch}
+.timer.end output{color:var(--err)}
+.closeout{background:var(--navy);color:#fff;border-radius:14px;padding:12px 16px;font-family:Nunito;font-weight:900;font-size:19px}
+.stat{font-family:Nunito;font-weight:900}
+.stat b{color:var(--c);font-size:26px}
+
+/* ---------- §3 grammar ---------- */
+.disc{display:grid;grid-template-columns:1fr 1.2fr;gap:0;border-radius:var(--r);overflow:hidden;border:1.5px solid var(--line)}
+@media (max-width:820px){.disc{grid-template-columns:1fr}}
+.disc img{height:100%;min-height:240px;object-fit:cover}
+.disc .chat{padding:20px;display:grid;gap:10px;align-content:center;background:var(--grm-t)}
+.disc .chat p{background:#fff;border-radius:14px;padding:10px 14px;font-size:18px;font-weight:500;max-width:34ch}
+.disc .chat p:nth-child(even){justify-self:end;background:var(--grm);color:#fff}
+mark.hl{background:transparent;color:inherit;border-radius:4px;transition:.2s}
+.show-hl mark.hl{background:var(--sun);color:var(--ink);padding:0 3px;font-weight:800}
+.tool{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media (max-width:820px){.tool{grid-template-columns:1fr}}
+.tool .card h4{font-size:14px;letter-spacing:.08em;text-transform:uppercase;color:var(--grm);margin-bottom:6px}
+.tool .big{font-family:Nunito;font-weight:900;font-size:24px}
+.tool .big em{font-style:normal;color:var(--grm)}
+.forms{border-radius:var(--r);overflow:hidden;border:1.5px solid var(--line)}
+.forms table{width:100%;border-collapse:collapse;font-size:16px}
+.forms th{background:var(--grm);color:#fff;font-family:Nunito;text-align:left;padding:10px 14px}
+.forms td{padding:10px 14px;border-top:1px solid var(--line);background:#fff}
+.forms td:first-child{font-family:Nunito;font-weight:900;font-size:22px;color:var(--grm);width:56px;text-align:center}
+.forms b{color:var(--grm)}
+.es-box{background:#fff;border:2px dashed var(--grm);border-radius:var(--r);padding:16px 18px;display:grid;gap:8px}
+.answerbox{background:var(--navy);color:#fff;border-radius:var(--r);padding:16px 18px;font-family:Nunito;font-weight:900;font-size:19px;display:flex;align-items:center;gap:12px}
+.answerbox .tagi{background:var(--sun);color:var(--navy);border-radius:8px;padding:3px 10px;font-size:12px;letter-spacing:.06em}
+.mc{display:grid;gap:12px}
+.mcq{background:#fff;border:1.5px solid var(--line);border-radius:14px;padding:14px 16px;display:grid;gap:10px}
+.mcq .q{font-weight:700;font-size:18px}
+.mcq .q .n{font-family:Nunito;font-weight:900;color:var(--c);margin-right:6px}
+.opts{display:flex;gap:8px;flex-wrap:wrap}
+.opt{border:2px solid var(--line);border-radius:99px;padding:7px 16px;font-weight:700;background:#fff}
+.opt:hover{border-color:var(--c)}
+.opt.ok{background:var(--ok);border-color:var(--ok);color:#fff}
+.opt.no{background:var(--err-t);border-color:var(--err);color:var(--err)}
+.mcq .fb{font-size:15px;font-weight:700}
+.mcq .fb.ok{color:var(--ok)} .mcq .fb.no{color:var(--err)}
+.score{font-family:Nunito;font-weight:900;font-size:18px}
+.builder .dst,.builder .src{display:flex;flex-wrap:wrap;gap:8px;min-height:56px;padding:10px;border-radius:14px}
+.builder .dst{border:2.5px dashed var(--c);background:var(--ct)}
+.wchip{background:#fff;border:2px solid var(--line);border-radius:12px;padding:8px 14px;font-family:Nunito;font-weight:900;font-size:18px;box-shadow:0 3px 0 var(--line)}
+.dst .wchip{border-color:var(--c);box-shadow:0 3px 0 var(--c)}
+.errs{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media (max-width:820px){.errs{grid-template-columns:1fr}}
+.err{border-radius:14px;padding:14px;background:#fff;border:1.5px solid var(--line);display:grid;gap:4px}
+.err s{color:var(--err);font-weight:700}
+.err b{color:var(--ok)}
+
+/* ---------- §4 reading ---------- */
+.phone{max-width:420px;margin:0 auto;background:#fff;border-radius:34px;border:10px solid var(--navy);box-shadow:var(--sh-lg);overflow:hidden}
+.phone .ph{background:var(--teal);color:#fff;padding:14px 16px;display:flex;align-items:center;gap:10px}
+.phone .ph b{font-family:Nunito;font-weight:900}
+.phone .ph small{display:block;opacity:.9;font-size:12px}
+.phone .ms{background:#EFE9E1;padding:14px 12px;display:grid;gap:10px}
+.msg{display:grid;grid-template-columns:36px 1fr;gap:8px;align-items:start}
+.msg img,.msg .av{width:36px;height:36px;border-radius:50%;object-fit:cover}
+.msg .av{color:#fff;display:grid;place-items:center;font-family:Nunito;font-weight:900}
+.msg .bb{background:#fff;border-radius:4px 14px 14px 14px;padding:8px 12px;font-size:16px}
+.msg .bb .who{font-family:Nunito;font-weight:900;font-size:13px;color:var(--teal)}
+
+/* ---------- §5 listening ---------- */
+.player{display:grid;grid-template-columns:260px 1fr;gap:0;border-radius:var(--r);overflow:hidden;background:var(--navy);color:#fff}
+@media (max-width:820px){.player{grid-template-columns:1fr}}
+.player img{height:100%;min-height:200px;object-fit:cover}
+.player .pp{padding:22px;display:grid;gap:12px;align-content:center}
+.predict{display:grid;gap:10px}
+.pbet{background:#fff;border:1.5px solid var(--line);border-radius:14px;padding:12px 14px;display:grid;gap:8px}
+.pbet .st{font-weight:700;font-size:16px}
+.pbet .row2{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.tf{display:flex;gap:6px}
+.tf button{border:2px solid var(--line);border-radius:99px;padding:5px 14px;font-weight:800;font-size:13px}
+.tf button[aria-pressed="true"].t{background:var(--ok);border-color:var(--ok);color:#fff}
+.tf button[aria-pressed="true"].f{background:var(--err);border-color:var(--err);color:#fff}
+.pts{display:flex;align-items:center;gap:8px}
+.pts button{width:28px;height:28px;border-radius:50%;background:var(--pink-t);color:var(--pink);font-weight:900}
+.pts output{font-family:Nunito;font-weight:900;min-width:2ch;text-align:center}
+.pbet.rev.right{border-color:var(--ok);background:var(--ok-t)}
+.pbet.rev.wrong{border-color:var(--err);background:var(--err-t)}
+.play{background:var(--pink);color:#fff;border-radius:99px;padding:12px 22px;font-family:Nunito;font-weight:900;font-size:18px;display:inline-flex;gap:10px;align-items:center}
+.script{background:#fff;border-radius:var(--r);border:1.5px solid var(--line);padding:16px 18px;font-size:17px;display:grid;gap:6px}
+.script p b{color:var(--pink);font-family:Nunito}
+.rec{display:inline-block;background:var(--navy);color:#fff;font-size:11px;font-weight:800;letter-spacing:.1em;padding:3px 8px;border-radius:4px}
+.pron{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media (max-width:820px){.pron{grid-template-columns:1fr 1fr}}
+.pr{background:var(--pink-t);border-radius:14px;padding:14px;display:grid;gap:8px;justify-items:start}
+.pr .w{font-family:Nunito;font-weight:900;font-size:21px}
+.pr .ipa{color:var(--mut);font-size:14px}
+
+/* ---------- §6 speaking ---------- */
+.rounds{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media (max-width:820px){.rounds{grid-template-columns:1fr}}
+.rd{border-radius:var(--r);overflow:hidden;border:2.5px solid var(--line);background:#fff;text-align:left;display:grid}
+.rd img{aspect-ratio:16/10;object-fit:cover;width:100%}
+.rd .initcard{aspect-ratio:16/10;width:100%;display:grid;place-items:center;font-family:Nunito;font-weight:900;font-size:44px;color:#fff}
+.rd .rb{padding:14px;display:grid;gap:6px}
+.rd h4{font-size:20px;font-weight:900}
+.rd .who{font-size:14px;font-weight:700;color:var(--lvl-d)}
+.rd ul{padding-left:18px;font-size:15px}
+.rd[aria-pressed="true"]{border-color:var(--c);box-shadow:0 0 0 4px var(--ct)}
+.deck{display:grid;grid-template-columns:1fr 1.3fr;border-radius:var(--r);overflow:hidden;background:var(--c);color:#fff}
+@media (max-width:820px){.deck{grid-template-columns:1fr}}
+.deck img{height:100%;min-height:260px;object-fit:cover}
+.deck .dq{padding:26px;display:grid;gap:14px;align-content:center}
+.deck .qn{font-family:Nunito;font-weight:900;letter-spacing:.12em;font-size:13px;opacity:.9}
+.deck .qt{font-family:Nunito;font-weight:900;font-size:clamp(26px,3.4vw,40px);line-height:1.1}
+.deck .fu{display:grid;gap:6px;font-size:18px;font-weight:500}
+.deck .fu span::before{content:"→ ";font-weight:900;color:var(--sun)}
+.deck .row .btn{background:rgba(255,255,255,.18);border-color:rgba(255,255,255,.35);color:#fff}
+.dots{display:flex;gap:6px}
+.dots button{width:11px;height:11px;border-radius:50%;background:rgba(255,255,255,.35)}
+.dots button[aria-current="true"]{background:#fff}
+.help{display:flex;flex-wrap:wrap;gap:8px}
+.help span{background:var(--navy);color:#fff;border-radius:99px;padding:6px 14px;font-weight:700;font-size:15px}
+
+/* ---------- §7 mission ---------- */
+.mission{position:relative;border-radius:var(--r);overflow:hidden;color:#fff;background:var(--navy)}
+.mission img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.32}
+.mission .mt{position:relative;padding:28px;display:grid;gap:10px;max-width:70ch}
+.mission h3{font-size:30px;font-weight:900}
+.guest{background:#fff;border-radius:var(--r);border:1.5px solid var(--line);overflow:hidden;display:grid}
+.guest .gh{display:flex;gap:12px;align-items:center;padding:14px;background:var(--ct)}
+.guest .gh img{width:72px;height:72px;border-radius:50%;object-fit:cover;border:3px solid #fff}
+.guest .gh .initcircle{width:72px;height:72px;border-radius:50%;display:grid;place-items:center;font-family:Nunito;font-weight:900;color:#fff;border:3px solid #fff;flex:none;font-size:26px}
+.guest h4{font-size:20px;font-weight:900}
+.guest .gh small{color:var(--mut);font-weight:700}
+.guest .line{padding:10px 14px 0;font-style:italic;color:var(--mut);font-size:15px}
+.moves{display:grid;gap:8px;padding:14px}
+.mv{display:flex;align-items:center;gap:10px;border:1.5px solid var(--line);border-radius:12px;padding:9px 12px;font-weight:700;font-size:15px;text-align:left;background:#fff}
+.mv i{width:22px;height:22px;border-radius:7px;border:2px solid var(--line);display:grid;place-items:center;flex:none;font-style:normal;color:#fff;font-size:13px}
+.mv[aria-pressed="true"]{background:var(--ok-t);border-color:var(--ok)}
+.mv[aria-pressed="true"] i{background:var(--ok);border-color:var(--ok)}
+
+/* ---------- §8 wrap ---------- */
+.sur{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media (max-width:900px){.sur{grid-template-columns:1fr 1fr}}
+@media (max-width:520px){.sur{grid-template-columns:1fr}}
+.sur .card h4{font-size:18px;font-weight:900;margin-bottom:6px}
+.sur .card:nth-child(1){border-top:5px solid var(--ok)} .sur .card:nth-child(2){border-top:5px solid var(--sun)} .sur .card:nth-child(3){border-top:5px solid var(--err)} .sur .card:nth-child(4){border-top:5px solid var(--grm)}
+textarea{width:100%;min-height:92px;border:1.5px solid var(--line);border-radius:12px;padding:10px 12px;font:inherit;font-size:15px;resize:vertical;background:#fff;color:var(--ink)}
+.selfev{display:flex;flex-wrap:wrap;gap:8px}
+.selfev button{border:2px solid var(--line);border-radius:99px;padding:8px 14px;font-weight:700;background:#fff}
+.selfev button[aria-pressed="true"]{background:var(--navy);border-color:var(--navy);color:#fff}
+.badge{display:flex;gap:18px;align-items:center;background:linear-gradient(120deg,var(--navy),var(--navy2));color:#fff;border-radius:var(--r);padding:22px}
+.badge .medal{width:84px;height:84px;border-radius:50%;background:var(--sun);color:var(--navy);display:grid;place-items:center;font-family:Nunito;font-weight:900;font-size:28px;flex:none;border:6px solid rgba(255,255,255,.3)}
+footer{color:var(--mut);font-size:13px;text-align:center;padding:10px 16px 40px}
+/* ---------- Intermedio 2 · additions ---------- */
+.sec[data-dur]{scroll-margin-top:150px}
+.card-session{border-radius:var(--r);background:#FFFBEA;border:1.5px dashed #E9C46A;margin-bottom:22px}
+.card-session summary{list-style:none;padding:12px 16px;font-weight:800;font-family:Nunito;cursor:pointer;display:flex;justify-content:space-between;color:#7A5A00}
+.card-session summary::-webkit-details-marker{display:none}
+.card-session summary::after{content:"＋";font-weight:900}
+.card-session[open] summary::after{content:"－"}
+.card-session .cs{padding:0 16px 16px;display:grid;gap:12px;font-size:15px}
+.card-session table{width:100%;border-collapse:collapse;font-size:14px;background:#fff;border-radius:12px;overflow:hidden}
+.card-session th,.card-session td{padding:7px 10px;border-top:1px solid var(--line);text-align:left;vertical-align:top}
+.card-session th{background:var(--navy);color:#fff;font-family:Nunito}
+.card-session .tot{font-family:Nunito;font-weight:900;font-size:17px}
+body.student .card-session{display:none!important}
+.anote{font-size:13px;font-weight:700;color:var(--mut)}
+.anote.warn{color:#9A5B00}
+.hero .bg{background-position:center 30%}
+
+/* annoyance meter */
+.meter{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+@media (max-width:900px){.meter{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:420px){.meter{grid-template-columns:1fr}}
+.mt-card{border-radius:var(--r);overflow:hidden;background:#fff;border:2px solid var(--line);display:grid;grid-template-rows:auto 1fr;transition:.15s}
+.mt-card img{aspect-ratio:4/3;width:100%;object-fit:cover}
+.mt-card .mb{padding:10px 12px 12px;display:grid;gap:8px;align-content:start}
+.mt-card .nm{font-family:Nunito;font-weight:900;font-size:16px;line-height:1.15;min-height:3.4em}
+.mt-card input[type=range]{width:100%;accent-color:var(--lvl);height:28px}
+.mt-card .val{display:flex;justify-content:space-between;font-family:Nunito;font-weight:900;font-size:13px;color:var(--mut)}
+.mt-card .val output{color:var(--lvl-d);font-size:22px}
+.mt-card.win{border-color:var(--lvl);box-shadow:0 0 0 4px var(--lvl-t);transform:translateY(-3px)}
+.hook{background:var(--navy);color:#fff;border-radius:var(--r);padding:16px 20px;display:grid;gap:6px}
+.hook b{color:var(--sun);font-family:Nunito;letter-spacing:.08em;font-size:12px}
+.hook p{font-size:19px;font-weight:700}
+.side{display:flex;gap:10px;flex-wrap:wrap}
+.side span{background:var(--lvl-t);color:var(--lvl-d);border-radius:99px;padding:6px 14px;font-weight:800}
+
+/* wager board */
+.wg{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+@media (max-width:760px){.wg{grid-template-columns:1fr}}
+.wgi{border:2px solid var(--line);border-radius:var(--r);background:#fff;padding:14px;display:grid;gap:10px;transition:.15s}
+.wgi .top2{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.wgi .no{font-family:Nunito;font-weight:900;font-size:13px;color:var(--mut)}
+.wgi .wd{font-family:Nunito;font-weight:900;font-size:24px;line-height:1.1}
+.bets{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.bets .lab{font-weight:800;font-size:13px;color:var(--mut);margin-right:2px}
+.bets button{width:40px;height:40px;border-radius:12px;border:2px solid var(--line);font-family:Nunito;font-weight:900;font-size:18px;background:#fff}
+.bets button[aria-pressed="true"]{background:var(--teal);border-color:var(--teal);color:#fff}
+.bets button:disabled{opacity:.55;cursor:default}
+.judge{display:flex;gap:8px;flex-wrap:wrap}
+.judge .btn{font-weight:800}
+.judge .y{border-color:var(--ok);color:var(--ok)} .judge .n{border-color:var(--err);color:var(--err)}
+.reveal{background:var(--teal-t);border-radius:12px;padding:10px 12px;font-size:15px;display:grid;gap:4px}
+.reveal b{font-family:Nunito}
+.wgi.won{border-color:var(--ok);background:var(--ok-t)}
+.wgi.lost{border-color:var(--err);background:var(--err-t)}
+.bank{display:flex;gap:18px;flex-wrap:wrap;align-items:center}
+.bank .stat b{color:var(--teal);font-size:30px}
+.hearbtn{display:inline-flex;align-items:center;gap:8px;border:1.5px solid var(--line);border-radius:99px;padding:5px 12px;font-weight:700;font-size:14px;background:#fff}
+.hearbtn svg{width:16px;height:16px;fill:currentColor}
+
+/* grammar notifications */
+.notifs{padding:20px;display:grid;gap:12px;align-content:center;background:var(--grm-t)}
+.notif{background:#fff;border-radius:16px;padding:12px 14px;box-shadow:0 4px 14px rgba(27,27,47,.1);display:grid;grid-template-columns:40px 1fr;gap:10px;align-items:start}
+.notif .ic{width:40px;height:40px;border-radius:11px;display:grid;place-items:center;font-size:20px;color:#fff}
+.notif .nt{font-family:Nunito;font-weight:900;font-size:13px;letter-spacing:.04em;color:var(--mut);display:flex;justify-content:space-between;gap:8px}
+.notif p{font-size:18px;line-height:1.35}
+.tool .card h4{color:var(--grm)}
+.tool .big em{color:var(--grm)}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chips span{background:var(--grm-t);color:var(--grm);border-radius:99px;padding:5px 12px;font-weight:800;font-size:15px}
+.g12{display:grid;gap:14px}
+.g12i{border:2px solid var(--line);border-radius:var(--r);background:#fff;padding:14px 16px;display:grid;gap:10px}
+.g12i .sit{font-weight:700;font-size:17px}
+.g12i .sit .n{font-family:Nunito;font-weight:900;color:var(--grm);margin-right:6px}
+.frames{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+@media (max-width:820px){.frames{grid-template-columns:1fr}}
+.fr{border:2px solid var(--line);border-radius:14px;padding:12px 14px;text-align:left;font-family:Nunito;font-weight:900;font-size:17px;background:#fff;line-height:1.25}
+.fr small{display:block;font-family:"DM Sans";font-weight:700;font-size:12px;color:var(--mut);letter-spacing:.08em;margin-bottom:4px}
+.fr[aria-pressed="true"]{border-color:var(--grm);background:var(--grm-t)}
+.reasons{display:grid;gap:8px}
+.reasons .tagh{font-weight:800;font-size:14px;color:var(--grm)}
+.rs{border:2px solid var(--line);border-radius:12px;padding:9px 14px;text-align:left;font-weight:700;font-size:15px;background:#fff}
+.rs[aria-pressed="true"]{border-color:var(--grm);background:var(--grm-t)}
+.g12i.right{border-color:var(--ok);background:var(--ok-t)}
+.g12i.wrong{border-color:var(--err);background:var(--err-t)}
+.g12i .vd{font-weight:700;font-size:15px}
+.g12i.right .vd{color:var(--ok)} .g12i.wrong .vd{color:var(--err)}
+.speak3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media (max-width:820px){.speak3{grid-template-columns:1fr}}
+.speak3 .card b{font-family:Nunito;color:var(--grm)}
+
+/* reading notifications */
+.phone .ph{background:var(--lvl)}
+.nstack{background:#EFE9E1;padding:14px 12px;display:grid;gap:12px}
+.nc{background:#fff;border-radius:16px;padding:12px 14px;display:grid;gap:4px;font-size:16px;box-shadow:0 3px 10px rgba(27,27,47,.08)}
+.nc .src{display:flex;justify-content:space-between;font-family:Nunito;font-weight:900;font-size:12px;letter-spacing:.06em;color:var(--mut)}
+.nc .ttl{font-family:Nunito;font-weight:900;font-size:17px}
+
+/* two versions */
+.vers{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media (max-width:820px){.vers{grid-template-columns:1fr}}
+.ver{border-radius:var(--r);border:2px solid var(--line);background:#fff;padding:16px;display:grid;gap:10px;justify-items:start}
+.ver .who{font-family:Nunito;font-weight:900;font-size:20px}
+.ver .who small{font-family:"DM Sans";font-weight:700;color:var(--mut);font-size:13px;display:block}
+.ver.a{border-top:6px solid var(--pink)} .ver.b{border-top:6px solid var(--teal)}
+.official{background:#fff;border:2px dashed var(--navy);border-radius:var(--r);padding:12px 16px;display:grid;gap:4px}
+.official b{font-family:Nunito}
+
+/* speaking roulette */
+.rnd{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media (max-width:820px){.rnd{grid-template-columns:1fr}}
+.rnd button{border:2.5px solid var(--line);border-radius:var(--r);background:#fff;padding:14px;text-align:left;display:grid;gap:4px}
+.rnd button[aria-pressed="true"]{border-color:var(--lvl);box-shadow:0 0 0 4px var(--lvl-t);background:var(--lvl-t)}
+.rnd .rk{font-family:Nunito;font-weight:900;font-size:12px;letter-spacing:.12em;color:var(--lvl-d)}
+.rnd h4{font-size:20px;font-weight:900}
+.rnd .rm{font-size:14px;color:var(--mut)}
+.deck .dq .qt{font-size:clamp(24px,3.2vw,36px)}
+.deck .scn{font-family:Nunito;font-weight:900;font-size:13px;letter-spacing:.1em;opacity:.9}
+.height{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.height button{border:2px solid var(--line);border-radius:99px;padding:8px 14px;font-weight:800;background:#fff}
+.height button[aria-pressed="true"]{background:var(--ok);border-color:var(--ok);color:#fff}
+
+/* mission */
+.gap2{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:14px}
+@media (max-width:640px){.gap2{grid-template-columns:1fr}}
+.gcard{border-radius:14px;padding:12px 14px;display:grid;gap:6px;font-size:15px}
+.gcard.pl{background:var(--lvl-t);border:1.5px solid var(--lvl)}
+.gcard.nw{background:var(--sun-t);border:1.5px solid #E5A100}
+.gcard h5{font-family:Nunito;font-weight:900;font-size:13px;letter-spacing:.1em}
+.gcard ul{padding-left:18px}
+.gcard.hid ul,.gcard.hid .hideme{display:none}
+.gcard .cover{display:none;font-weight:700;color:var(--mut)}
+.gcard.hid .cover{display:block}
+.guest .gh h4{font-size:20px}
+.spend{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+/* ===== S07 · Pending, Approved, Done — own design (prefix s07-) ===== */
+:root{--pend:#B45309;--pend-t:#FEF3C7;--appr:#6B4DF0;--appr-t:#ECE7FF;--done:#15803D;--done-t:#DCFCE7;--inkred:#B42318;--paper2:#FBF7EE}
+.hero .bg{background:url(img/i2s07_hero.jpg) center 45%/cover}
+.hero .bg::after{background:linear-gradient(100deg,rgba(40,20,70,.95) 0%,rgba(63,43,176,.82) 50%,rgba(40,20,70,.2) 100%)}
+.hero h1 span{color:#FFC233}
+.hero .wrap{z-index:1}
+.s07-deco{position:absolute;right:4%;top:50%;transform:translateY(-50%);display:grid;gap:14px;z-index:1;pointer-events:none}
+.s07-deco span{font-family:Nunito;font-weight:900;font-size:26px;letter-spacing:.14em;padding:8px 20px;border:4px solid;border-radius:10px;background:rgba(255,255,255,.06);backdrop-filter:blur(2px)}
+.s07-deco .p{color:#FCD34D;transform:rotate(-6deg)}.s07-deco .a{color:#C4B5FD;transform:rotate(4deg);margin-left:26px}.s07-deco .d{color:#86EFAC;transform:rotate(-3deg)}
+@media (max-width:900px){.s07-deco{display:none}}
+
+/* kanban */
+.s07-tray{display:flex;flex-wrap:wrap;gap:10px;min-height:64px;padding:10px;border-radius:var(--r);background:repeating-linear-gradient(45deg,#fff 0 12px,#FAF6EA 12px 24px);border:2px dashed #E3D3A2}
+.s07-tray:empty::before{content:"All items sorted ✓";font-weight:800;color:var(--done);align-self:center}
+.s07-board{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media (max-width:760px){.s07-board{grid-template-columns:1fr}}
+.s07-col{border-radius:var(--r);background:var(--ct2,#F6F2E7);border:2px solid var(--cc);overflow:hidden;min-height:150px;display:grid;grid-template-rows:auto 1fr}
+.s07-col.p{--cc:#E9B949;--ct2:#FFF8E1;--ch:#B45309}.s07-col.a{--cc:#A996F7;--ct2:#F4F0FF;--ch:#5B3CE0}.s07-col.d{--cc:#6FCB91;--ct2:#EAF9EF;--ch:#15803D}
+.s07-col h4{display:flex;align-items:center;gap:8px;padding:9px 14px;background:var(--ch);color:#fff;font-size:17px}
+.s07-col h4 i{width:12px;height:12px;border-radius:50%;background:#fff;opacity:.9}
+.s07-col h4 small{margin-left:auto;font-family:"DM Sans";font-weight:500;font-size:12px;opacity:.85}
+.s07-col .cb{padding:10px;display:grid;gap:8px;align-content:start}
+.s07-col .cb:empty::before{content:"empty";color:#A9A18A;font-weight:700;font-size:14px;text-align:center;padding:14px}
+.s07-kc{background:#fff;border-radius:12px;border:1.5px solid var(--line);box-shadow:0 2px 0 rgba(27,27,47,.06);padding:9px 11px;display:grid;gap:6px;position:relative;cursor:grab;transition:box-shadow .15s}
+.s07-kc.drag{opacity:.4}
+.s07-kc .lb{font-family:Nunito;font-weight:900;font-size:16px;line-height:1.15}
+.s07-kc .ty{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--mut)}
+.s07-kc .sendto{display:flex;gap:5px}
+.s07-kc .sendto button{flex:1;border-radius:8px;font-family:Nunito;font-weight:900;font-size:12px;padding:5px 2px;border:1.5px solid var(--line);background:#fff;min-height:30px}
+.s07-kc .sendto button.p{color:#B45309;border-color:#E9B949}.s07-kc .sendto button.a{color:#5B3CE0;border-color:#A996F7}.s07-kc .sendto button.d{color:#15803D;border-color:#6FCB91}
+.s07-kc .sendto button.on{background:currentColor}
+.s07-kc .sendto button.on span{color:#fff}
+.s07-kc .flag{justify-self:start;font-size:11px;font-weight:900;letter-spacing:.06em;text-transform:uppercase;border-radius:6px;padding:2px 8px;color:#fff;background:var(--inkred);transform:rotate(-2deg)}
+.s07-kc .flag.hold{background:#475569}.s07-kc .flag.prog{background:#0369A1}
+.s07-board.ro .s07-kc{cursor:default}
+@keyframes s07-pop{0%{transform:scale(.92)}60%{transform:scale(1.04)}100%{transform:scale(1)}}
+.s07-kc.pop{animation:s07-pop .35s}
+
+/* wager */
+.s07-wg{display:grid;grid-template-columns:1.5fr 1fr;gap:16px;align-items:start}
+@media (max-width:900px){.s07-wg{grid-template-columns:1fr}}
+.s07-doc{position:relative;border-radius:var(--r);background:var(--paper2);border:2px solid #E7DFC8;overflow:hidden;display:grid;grid-template-columns:150px 1fr;min-height:300px;box-shadow:var(--sh)}
+@media (max-width:560px){.s07-doc{grid-template-columns:1fr}.s07-doc .seal{height:130px;width:100%}}
+.s07-doc .seal{height:100%;width:150px;object-fit:cover}
+.s07-doc .dbody{padding:16px 18px;display:grid;gap:12px;align-content:start;position:relative}
+.s07-doc .dtop{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.s07-doc .no{font-family:Nunito;font-weight:900;font-size:13px;color:var(--mut);letter-spacing:.08em}
+.s07-doc .w{font-family:Nunito;font-weight:900;font-size:clamp(34px,5vw,50px);color:var(--ink);line-height:1;border-bottom:3px double #CDBF98;padding-bottom:6px}
+.s07-doc .bets{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.s07-doc .bets .lab{font-weight:800;font-size:13px;color:var(--mut)}
+.s07-doc .bets button{width:auto;height:auto;min-width:64px;padding:6px 12px 6px 8px;display:flex;align-items:center;gap:4px;border-radius:12px;border:2px solid #D8CBA6;font-family:Nunito;font-weight:900;font-size:20px;background:#fff;color:var(--ink)}
+.s07-doc .bets button svg{width:16px;height:22px;fill:#1B2547}
+.s07-doc .bets button[aria-pressed="true"]{background:#1B2547;border-color:#1B2547;color:#fff}
+.s07-doc .bets button[aria-pressed="true"] svg{fill:#fff}
+.s07-doc .bets button:disabled{opacity:.5}
+.s07-doc .judge{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.s07-doc .judge .say-it{font-weight:800;color:var(--inkred);flex-basis:100%}
+.s07-doc .judge .btn{font-weight:900}
+.s07-doc .judge .y{border-color:var(--done);color:var(--done)}.s07-doc .judge .n{border-color:var(--inkred);color:var(--inkred)}
+.s07-doc .reveal{background:#fff;border:1.5px solid #E7DFC8;border-radius:12px;padding:10px 12px;font-size:16px;display:grid;gap:6px}
+.s07-doc .reveal b{font-family:Nunito}
+.s07-doc .hearbtn{justify-self:start}
+.s07-stampfx{position:absolute;right:12px;top:78px;font-family:Nunito;font-weight:900;font-size:22px;letter-spacing:.1em;border:5px solid;border-radius:10px;padding:4px 14px;opacity:0;pointer-events:none;transform:rotate(-12deg) scale(2)}
+.s07-stampfx.ok{color:var(--done);border-color:var(--done)}.s07-stampfx.no{color:var(--inkred);border-color:var(--inkred)}
+.s07-stampfx.go{animation:s07-stamp .6s forwards}
+@keyframes s07-stamp{0%{opacity:0;transform:rotate(-12deg) scale(2.2)}55%{opacity:1;transform:rotate(-12deg) scale(.95)}100%{opacity:.9;transform:rotate(-12deg) scale(1)}}
+.s07-ledger{border-radius:var(--r);background:#fff;border:2px solid var(--line);padding:14px;display:grid;gap:10px}
+.s07-ledger h4{font-size:16px}
+.s07-ledger .lg{display:grid;grid-template-columns:repeat(2,1fr);gap:6px}
+.s07-ledger .lg span{font-size:13px;font-weight:800;border-radius:8px;padding:5px 8px;background:#F3F1EA;color:#8B8570;display:flex;justify-content:space-between;gap:4px}
+.s07-ledger .lg span.ok{background:var(--done-t);color:var(--done)}.s07-ledger .lg span.no{background:#FDE8E8;color:var(--inkred)}.s07-ledger .lg span.cur{outline:2px solid var(--lvl)}
+.s07-ledger .bank{display:flex;flex-wrap:wrap;gap:8px 16px}
+.s07-ledger .bank .stat b{color:var(--inkred);font-size:26px}
+
+/* machine */
+.s07-machine{display:grid;gap:10px}
+.s07-mr{display:grid;grid-template-columns:150px auto 1fr;gap:12px;align-items:center;background:#fff;border:1.5px solid var(--line);border-radius:14px;padding:10px 14px}
+@media (max-width:760px){.s07-mr{grid-template-columns:1fr}}
+.s07-mr .it{font-family:Nunito;font-weight:900;font-size:17px;line-height:1.1}
+.s07-mr .it small{display:block;font-family:"DM Sans";font-weight:700;font-size:12px;color:var(--mut)}
+.s07-mr .sw{display:flex;gap:6px;flex-wrap:wrap}
+.s07-mr .sw button{border-radius:99px;border:2px solid var(--line);padding:6px 12px;font-family:Nunito;font-weight:900;font-size:14px;background:#fff;min-height:36px}
+.s07-mr .sw button[data-s="y"][aria-pressed="true"]{background:var(--done);border-color:var(--done);color:#fff}
+.s07-mr .sw button[data-s="n"][aria-pressed="true"]{background:var(--inkred);border-color:var(--inkred);color:#fff}
+.s07-mr .sw button[data-s="s"][aria-pressed="true"]{background:var(--grm);border-color:var(--grm);color:#fff}
+.s07-mr .sw button[data-s="q"][aria-pressed="true"]{background:var(--lvl);border-color:var(--lvl);color:#fff}
+.s07-mr .out{font-size:19px;font-weight:700;min-height:2.4em;display:flex;align-items:center}
+.s07-mr .out em{font-style:normal;color:#9A9680;font-weight:500}
+.s07-mr .out mark{background:transparent;color:inherit}
+#mach.show-hl .out mark{background:#FFE27A;border-radius:6px;padding:0 4px}
+.s07-tool{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+@media (max-width:760px){.s07-tool{grid-template-columns:1fr}}
+.s07-tool .tl{border-radius:14px;padding:12px 14px;display:grid;gap:4px;border-left:8px solid var(--tc)}
+.s07-tool .tl.y{--tc:var(--done);background:var(--done-t)}.s07-tool .tl.n{--tc:var(--inkred);background:#FDECEA}.s07-tool .tl.s{--tc:var(--grm);background:var(--grm-t)}.s07-tool .tl.q{--tc:var(--lvl);background:var(--lvl-t)}
+.s07-tool .tl b{font-family:Nunito;font-size:17px}
+.s07-tool .tl em{font-style:normal;font-weight:700;background:#fff;border-radius:8px;padding:3px 10px;justify-self:start}
+.s07-pp{display:inline-block;background:var(--grm-t);color:var(--grm);font-weight:800;border-radius:99px;padding:2px 12px;margin:2px 4px 2px 0}
+.s07-pp.irr{background:#1B2547;color:#fff}
+
+/* bounty */
+.s07-bounty{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media (max-width:900px){.s07-bounty{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:560px){.s07-bounty{grid-template-columns:1fr}}
+.s07-bt{position:relative;background:#FFF9E8;border:2px dashed #C9A24A;border-radius:14px;padding:12px 14px 12px;display:grid;gap:8px;align-content:start;overflow:hidden}
+.s07-bt .wanted{font-family:Nunito;font-weight:900;font-size:12px;letter-spacing:.2em;color:#8A6410}
+.s07-bt .er{font-size:18px;font-weight:700;color:var(--inkred);text-decoration:underline wavy #E5484D 1px;text-underline-offset:4px}
+.s07-bt .mdl{font-size:15px;font-weight:700;color:var(--done);background:var(--done-t);border-radius:8px;padding:4px 8px}
+.s07-bt .acts{display:flex;gap:6px;flex-wrap:wrap}
+.s07-bt.gone{background:#EEF2EF;border-style:solid;border-color:#9FD2B2}
+.s07-bt.gone .er{text-decoration:line-through;color:#8B9A90}
+.s07-bt .elim{position:absolute;right:8px;top:10px;font-family:Nunito;font-weight:900;font-size:15px;color:var(--done);border:3px solid var(--done);border-radius:8px;padding:0 8px;transform:rotate(8deg);display:none}
+.s07-bt.gone .elim{display:block}
+.s07-add{display:grid;gap:6px}
+.s07-add input,.s07-clinic input{border:2px solid var(--line);border-radius:12px;padding:9px 12px;font:inherit;flex:1 1 200px;min-width:0;background:#fff}
+
+/* reading */
+.s07-notices{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media (max-width:900px){.s07-notices{grid-template-columns:1fr}}
+.s07-nt{display:grid;grid-template-rows:auto 1fr auto;border-radius:16px;overflow:hidden;border:2px solid var(--line);background:#fff}
+.s07-nt .txt{padding:14px 16px;font-size:16px;display:grid;gap:6px;align-content:start}
+.s07-nt .hd{font-family:Nunito;font-weight:900;font-size:12px;letter-spacing:.1em;text-transform:uppercase;padding:8px 14px;background:#E6EEF2;color:#0B4F6C;display:flex;justify-content:space-between}
+.s07-nt.app{background:#1B2547;border-color:#1B2547;color:#E7ECFF}.s07-nt.app .hd{background:#2B3A7A;color:#BFD0FF}.s07-nt.app .sortbar{background:#121A38}
+.s07-nt.note{background:#FFF59B;border-color:#E3D54C;transform:rotate(-.6deg)}.s07-nt.note .hd{background:#F2E552;color:#6B5D00}.s07-nt.note .sortbar{background:#FBEF7A}
+.s07-nt .sortbar{padding:10px 12px;display:grid;gap:6px;background:#F3F8FA}
+.s07-nt .sortbar span{font-size:12px;font-weight:800;opacity:.8}
+.s07-nt .sortbar div{display:flex;gap:6px}
+.s07-nt .sortbar button{flex:1;border-radius:10px;border:2px solid var(--line);background:#fff;color:var(--ink);font-family:Nunito;font-weight:900;font-size:14px;padding:6px 2px;min-height:38px}
+.s07-nt.good .sortbar button.pick{background:var(--done);border-color:var(--done);color:#fff}
+.s07-nt.bad .sortbar button.pick{background:var(--err-t);border-color:var(--err);color:var(--err)}
+
+/* listening */
+.s07-calls{display:grid;gap:10px}
+.s07-call{display:flex;gap:10px;align-items:center}
+.s07-call.joy{flex-direction:row-reverse}
+.s07-call .av{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;font-family:Nunito;font-weight:900;color:#fff;background:#1B2547;flex:none}
+.s07-call.joy .av{background:var(--pink)}
+.s07-call .pb{display:flex;align-items:center;gap:10px;border:2px solid var(--line);border-radius:99px;padding:6px 16px 6px 8px;background:#fff;font-weight:800}
+.s07-call .pb svg{width:30px;height:30px;padding:7px;border-radius:50%;background:var(--pink);fill:#fff}
+.s07-call .pb small{color:var(--mut);font-weight:600}
+.s07-gaps{display:grid;gap:8px}
+.s07-gl{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:start;background:#fff;border:1.5px solid var(--line);border-radius:14px;padding:10px 14px;font-size:18px;line-height:2}
+.s07-gl .who{font-family:Nunito;font-weight:900;font-size:12px;letter-spacing:.08em;color:#fff;background:#1B2547;border-radius:6px;padding:2px 8px;margin-top:6px}
+.s07-gl.joy .who{background:var(--pink)}
+.s07-gap{display:inline-block;min-width:130px;border:2px dashed var(--pink);border-radius:10px;padding:0 10px;line-height:1.6;vertical-align:middle;background:var(--pink-t);color:var(--pink);font-weight:800;min-height:34px;text-align:center}
+.s07-gap.arm{outline:3px solid var(--lvl)}
+.s07-gap.ok{border-style:solid;border-color:var(--done);background:var(--done-t);color:var(--done)}
+.s07-gap.shake{animation:s07-sh .3s}
+@keyframes s07-sh{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.s07-chips{display:flex;flex-wrap:wrap;gap:8px;padding:12px;border-radius:14px;background:#F6F2E7;border:2px dashed #D8CBA6}
+.s07-chip{border-radius:10px;border:2px solid #1B2547;background:#fff;font-weight:800;padding:6px 12px;min-height:38px}
+.s07-chip[aria-pressed="true"]{background:#1B2547;color:#fff}
+.s07-chip:disabled{opacity:.3}
+.s07-bag{border-radius:14px;background:var(--pink-t);padding:12px 14px;display:grid;gap:8px}
+.s07-bag h4{color:var(--pink);font-size:16px}
+.s07-bag .bagrow{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+@media (max-width:700px){.s07-bag .bagrow{grid-template-columns:repeat(2,1fr)}}
+.s07-bag .bagrow span{border:2px dashed #E7A9C0;border-radius:10px;min-height:38px;font-size:13px;font-weight:800;display:grid;place-items:center;text-align:center;padding:2px 6px;color:#C79BAF;line-height:1.1}
+.s07-bag .bagrow span.on{border:2px solid var(--pink);background:#fff;color:var(--pink)}
+.s07-use{display:flex;flex-wrap:wrap;gap:8px}
+.s07-use button{border-radius:12px;border:2px solid var(--pink);background:#fff;color:var(--pink);font-weight:800;padding:8px 14px;min-height:42px}
+.s07-use button[aria-pressed="true"]{background:var(--pink);color:#fff}
+.s07-use button:disabled{opacity:.35}
+
+/* speaking */
+.s07-ticket{display:grid;grid-template-columns:130px 1fr auto;border-radius:var(--r);overflow:hidden;background:#fff;border:2px solid var(--lvl);min-height:150px}
+@media (max-width:700px){.s07-ticket{grid-template-columns:90px 1fr}.s07-ticket .tnav{grid-column:1/-1;flex-direction:row!important;padding:0 14px 12px!important}}
+.s07-ticket .stub{background:var(--lvl);color:#fff;display:grid;place-items:center;align-content:center;gap:0;padding:10px;border-right:4px dotted #fff;text-align:center}
+.s07-ticket .stub small{font-size:11px;font-weight:800;letter-spacing:.14em}
+.s07-ticket .stub b{font-family:Nunito;font-weight:900;font-size:50px;line-height:1}
+.s07-ticket .stub span{font-size:12px;opacity:.85}
+.s07-ticket .tbody{padding:14px 18px;display:grid;gap:8px;align-content:center}
+.s07-ticket .tag2{font-size:12px;font-weight:800;letter-spacing:.1em;color:var(--lvl);text-transform:uppercase}
+.s07-ticket .tq{font-family:Nunito;font-weight:900;font-size:clamp(20px,2.6vw,26px);line-height:1.2}
+.s07-ticket .tf{display:grid;gap:4px}.s07-ticket .tf span{background:var(--lvl-t);border-radius:10px;padding:5px 12px;font-weight:700;font-size:15px}
+.s07-ticket .tnav{display:flex;flex-direction:column;gap:8px;padding:14px;justify-content:center}
+.s07-dots{display:flex;gap:5px;flex-wrap:wrap}
+.s07-dots button{width:22px;height:22px;border-radius:50%;background:#DCD6F5;border:0;font-size:0}
+.s07-dots button[aria-current="true"]{background:var(--lvl);transform:scale(1.25)}
+.s07-dots button.seen{background:#9C86F5}
+.s07-clinic{display:grid;gap:14px}
+.s07-clinic .cl-top{display:flex;gap:10px;flex-wrap:wrap;justify-content:space-between;align-items:center}
+.s07-clinic .cases,.s07-clinic .rounds{display:flex;gap:6px;flex-wrap:wrap}
+.s07-clinic .cases button,.s07-clinic .rounds button{border-radius:99px;border:2px solid var(--line);background:#fff;font-weight:800;padding:7px 14px;font-size:14px;min-height:38px}
+.s07-clinic button[aria-pressed="true"],.s07-clinic button[aria-selected="true"]{background:var(--lvl);border-color:var(--lvl);color:#fff}
+.s07-clinic .cl-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media (max-width:820px){.s07-clinic .cl-grid{grid-template-columns:1fr}}
+.cl-card{border-radius:var(--r);padding:14px 16px;display:grid;gap:10px;align-content:start}
+.cl-card h5{font-family:Nunito;font-weight:900;font-size:12px;letter-spacing:.14em}
+.cl-card.patient{background:#1B2547;color:#fff}.cl-card.patient h5{color:#FFC233}
+.cl-card.advisor{background:var(--lvl-t)}.cl-card.advisor h5{color:var(--lvl-d)}
+.cl-card .cover{border:2px dashed rgba(255,255,255,.4);border-radius:12px;padding:16px;display:grid;gap:10px;justify-items:start;font-weight:700;background:repeating-linear-gradient(45deg,rgba(255,255,255,.06) 0 10px,transparent 10px 20px)}
+.cl-card .facts{display:grid;gap:6px}
+.cl-card .facts h6{font-family:Nunito;font-size:20px;font-weight:900;color:#FFC233}
+.cl-card .facts p{background:rgba(255,255,255,.12);border-radius:10px;padding:6px 12px;font-weight:600;font-size:16px}
+.cl-card.patient .btn{color:var(--ink)}
+.cl-card .tr{display:grid;gap:4px;font-weight:700;font-size:14px}
+.cl-card .pips{display:flex;gap:6px;flex-wrap:wrap}
+.cl-card .pips button{width:40px;height:40px;border-radius:50%;border:2px solid var(--lvl);background:#fff;color:var(--lvl);font-family:Nunito;font-weight:900}
+.cl-card .pips button[aria-pressed="true"]{background:var(--lvl);color:#fff}
+.cl-card .chipsrow{display:flex;flex-wrap:wrap;gap:6px;font-size:13px;align-items:center;font-weight:800}
+.cl-card .chipsrow i{font-style:normal;background:#fff;border-radius:99px;padding:3px 10px;font-weight:700}
+.cl-card .score2{font-family:Nunito;font-weight:900;font-size:20px;color:var(--lvl-d)}
+.cl-out{display:grid;gap:8px}
+
+/* mission */
+.s07-sign{display:grid;grid-template-columns:200px 1fr;border-radius:var(--r);overflow:hidden;background:#111827;color:#fff;align-items:stretch}
+@media (max-width:640px){.s07-sign{grid-template-columns:1fr}.s07-sign img{height:150px;width:100%}}
+.s07-sign img{height:100%;object-fit:cover;width:200px}
+.s07-sign .stxt{padding:16px 20px;font-size:17px;align-self:center}
+.s07-sign b{color:#FFC233;font-family:Nunito}
+.s07-tabs{display:flex;gap:8px;flex-wrap:wrap}
+.s07-tabs button{border-radius:99px;border:2px solid var(--done);color:var(--done);font-family:Nunito;font-weight:900;padding:8px 16px;background:#fff;min-height:40px}
+.s07-tabs button[aria-selected="true"]{background:var(--done);color:#fff}
+.s07-moves{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+@media (max-width:900px){.s07-moves{grid-template-columns:1fr}}
+.s07-mv{border-radius:12px;border:2px solid var(--line);background:#fff;padding:10px 12px;text-align:left;font-weight:700;font-size:15px;display:grid;gap:2px;position:relative;min-height:70px}
+.s07-mv b{font-family:Nunito;font-size:12px;letter-spacing:.1em;color:var(--done)}
+.s07-mv[aria-pressed="true"]{background:var(--done-t);border-color:var(--done)}
+.s07-mv[aria-pressed="true"]::after{content:"✓";position:absolute;right:10px;top:8px;color:var(--done);font-weight:900;font-size:20px}
+.bar2{height:12px;border-radius:99px;background:#DDE9E1;overflow:hidden}.bar2 i{display:block;height:100%;width:0;background:var(--done);transition:width .3s}
+.s07-stampbig{display:inline-block;font-family:Nunito;font-weight:900;font-size:22px;letter-spacing:.1em;color:var(--done);border:4px solid var(--done);border-radius:10px;padding:2px 14px;transform:rotate(-6deg)}
+#msModelBox p{margin-bottom:6px}
+
+/* wrap */
+.s07-cando{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+@media (max-width:640px){.s07-cando{grid-template-columns:1fr}}
+.s07-cd{display:flex;align-items:center;gap:12px;border-radius:14px;border:2px solid var(--line);background:#fff;padding:12px 14px;font-weight:700;text-align:left;min-height:64px}
+.s07-cd .st{width:54px;height:54px;border-radius:50%;border:3px dashed #B9B4A0;flex:none;display:grid;place-items:center;font-family:Nunito;font-weight:900;font-size:9px;letter-spacing:.05em;color:transparent}
+.s07-cd[aria-pressed="true"]{border-color:var(--done);background:var(--done-t)}
+.s07-cd[aria-pressed="true"] .st{border:3px solid var(--done);color:var(--done);transform:rotate(-10deg)}
+@media (max-width:560px){.s07-stampfx{top:34px;right:6px;font-size:15px;border-width:3px}.s07-doc .w{font-size:32px}}
+
+</style>
+</head>
+<body>
+
+<div class="topbar"><div class="wrap">
+  <div class="brand"><i></i><a href="./">GABRIEL TURNER · YOUR BUSINESS COACH</a><small>Intermedio 2 · B1.2</small></div>
+  <div class="toggles">
+    <button class="tg" id="tgTeacher" aria-pressed="true">Teacher view</button>
+    <button class="tg" id="tgStudent" aria-pressed="false">Student view</button>
+    <button class="tg" id="tgGroup" aria-pressed="true">Group</button>
+    <button class="tg" id="tgOne" aria-pressed="false">1:1</button>
+  </div>
+</div></div>
+
+<header class="hero">
+  <div class="bg" role="img" aria-label="A wooden office stamp resting on an open book of official documents"></div>
+  <div class="s07-deco" aria-hidden="true"><span class="p">PENDING</span><span class="a">APPROVED</span><span class="d">DONE</span></div>
+  <div class="wrap">
+    <div class="kick">Intermedio 2 · Block 1 · CHANGE · Session 7 of 32</div>
+    <h1>Pending, Approved, <span>Done</span></h1>
+    <p class="obj">By the end of this class you can give the status of a request, an order or a form: what has been approved, what hasn’t been done yet and what still needs to be done — in English, without reading.</p>
+    <div class="pills"><span class="pill sun">60 min · live online</span><span class="pill">8 stages</span><span class="pill">Work + daily paperwork</span><span class="pill">Speaking first</span></div>
+    <div class="coach"><span class="cav">GT</span><span><b>Gabriel Turner</b><small>Your Business Coach</small></span></div>
+  </div>
+</header>
+
+<nav class="nav" aria-label="Session stages"><div class="wrap">
+  <div class="prog"><div class="bar"><i id="pbar"></i></div><span class="xp" id="xp">0 XP</span><button class="clock" id="clock" title="Start / pause class clock">00:00</button></div>
+  <div class="steps" id="steps"></div>
+</div></nav>
+
+<main class="wrap" id="main">
+
+<details class="card-session"><summary>Teacher · Session card (Ficha de Sesión)</summary><div class="cs">
+  <table>
+    <tr><th>Campo</th><th>Valor</th></tr>
+    <tr><td>Nivel / MCER</td><td>Intermedio 2 · GT English Path Nivel 08 · B1.2 · modo Interacción (+ Mediación ligera)</td></tr>
+    <tr><td>Objetivo</td><td>Dar el estatus de una solicitud, pedido, formulario o trámite: qué ya está aprobado/hecho, qué falta todavía y qué hay que hacer.</td></tr>
+    <tr><td>Punto de lengua (uno)</td><td>Estatus con participio: <i>has been confirmed · hasn’t been … yet · still needs to be …</i> + pregunta <i>Has it been … yet?</i> Uso fijo de estatus (recicla yet/already de S02 y pasiva frecuente de S05).</td></tr>
+    <tr><td>Límite</td><td>Sin pasiva libre (sin “by + agente”, sin otros tiempos), sin present perfect continuous, sin 2º/3º condicional, sin reported questions, sin <i>have got</i>.</td></tr>
+    <tr><td>Léxico nuevo (11)</td><td>approval · request · submit · fill out · sign off · in progress · on hold · overdue · complete · reject · follow up</td></tr>
+    <tr><td>Reciclaje (≥8)</td><td>S01 update, status, pending, confirm, delay, send an update · S02 purchase order, yet, shipment · S03 budget, deadline · S05 invoice, payment, receipt, attach, approve, sign · S06 make sure</td></tr>
+    <tr><td>Dinámicas (4 familias)</td><td>VOC-03 Confidence Wager (APUESTA → “Stamp Wager”) · GRM-04 The Correction Bounty (ELIMINACIÓN, etapa Comunicativa → cierre) · B18-04 Advice Clinic (OCULTAMIENTO) · LIS-09 Gapped Chunks (COLECCIÓN)</td></tr>
+    <tr><td>Riesgo / temperatura</td><td>Seguro · Engaging (trámites y aprobaciones; nada personal ni polémico)</td></tr>
+    <tr><td>Disagreement hook</td><td>“Every request should be approved fast.” vs “Slow approvals protect us from mistakes.”</td></tr>
+    <tr><td>Evidencia</td><td>Misión: 3 tableros × 5 movimientos (15) con ≥1 pregunta Has/Have … been … yet? por tablero; éxito ≥12/15 sin leer.</td></tr>
+  </table>
+  <div id="timeTable"></div>
+</div></details>
+
+<!-- §1 WARM-UP -->
+<section class="sec" id="s1" style="--c:var(--pend);--ct:var(--pend-t)" data-name="Warm-up" data-min="0–4" data-dur="4">
+  <div class="shead"><div class="snum"><span class="n">1</span><div><h2>Warm-up · Your Week Board</h2><div class="sub">0–4 min · Sort, then speak · no correction</div></div></div>
+    <div class="meta"><span class="chip">Kanban board</span><span class="chip dark">Speaking from minute 1</span></div></div>
+  <div class="sbody">
+    <div class="hook"><b>TWO SIDES</b><p>“Every request should be approved fast.” — “Slow approvals protect us from mistakes.”</p>
+      <div class="side"><span>Which side are you on?</span><span>Why? One reason.</span></div></div>
+    <div class="block">
+      <div class="bt"><span class="tag">Board</span><h3>Where is each item in YOUR life right now? Send it to a column.</h3><span class="hint" id="wbCount">0 / 6 sorted</span></div>
+      <div class="s07-tray" id="wbTray" aria-label="Unsorted items"></div>
+      <div class="s07-board" id="wb">
+        <div class="s07-col p" data-col="p"><h4><i></i>Pending<small>waiting</small></h4><div class="cb"></div></div>
+        <div class="s07-col a" data-col="a"><h4><i></i>Approved<small>yes, go ahead</small></h4><div class="cb"></div></div>
+        <div class="s07-col d" data-col="d"><h4><i></i>Done<small>finished</small></h4><div class="cb"></div></div>
+      </div>
+      <div class="card tint"><div class="result" id="wbRes">Sort the six items. Then tell your partner about the column with most cards.</div></div>
+      <div class="fq"><div>What are you waiting for right now? <span>— Who decides?</span></div><div>Which item is the most important this week? <span>— Why?</span></div></div>
+      <div data-m="group"><p class="hint">Group: compare boards with a partner for 40 seconds. Same column, different column?</p></div>
+      <div data-m="one" hidden><p class="hint">1:1: your coach sorts the same six cards too. Find one card in a different column and ask why.</p></div>
+    </div>
+    <details class="tn"><summary>Teacher notes · §1 Warm-up</summary><div class="layers">
+      <div class="ly"><h4>Pedagógica</h4><ul><li>Activación, no gramática: acepta cualquier forma (“is pending”, “it’s done”, “waiting”). Reciclaje visible: pending, request, purchase order, payment, budget.</li><li>Lanza el desacuerdo (“fast” vs “protect”) con UNA razón por persona; sin debate formal (límite del nivel).</li><li>Modelo mínimo para decir en voz alta: “My vacation request is pending.” / “My bill is done.” Anota quién usa espontáneamente “has been …” (línea base para §3).</li><li>Máx. 4 min. Todas las tarjetas son trámites seguros, sin finanzas personales.</li></ul></div>
+      <div class="ly"><h4>Engagement</h4><ul><li>“Everyone has a board: work, family, paperwork. Today you learn to read it out loud.”</li><li>Pregunta anécdota: “¿Cuál fue el trámite que más tardó en aprobarse?”</li></ul></div>
+      <div class="ly"><h4>Crecimiento</h4><ul><li>“In 55 minutes you will give a status update in 60 seconds — the kind a manager asks for every week.”</li><li>Guarda su tablero real: es la materia prima de la tarea final.</li></ul></div>
+    </div></details>
+  </div>
+</section>
+
+<!-- §2 VOCABULARY -->
+<section class="sec" id="s2" style="--c:#B42318;--ct:#FDECEA" data-name="Vocabulary" data-min="4–12" data-dur="8">
+  <div class="shead"><div class="snum"><span class="n">2</span><div><h2>Vocabulary · The Stamp Wager</h2><div class="sub">4–12 min · Bet the ink · Say it · Get stamped</div></div></div>
+    <div class="meta"><span class="chip">11 chunks</span><span class="chip dark">VOC-03 · APUESTA</span></div></div>
+  <div class="sbody">
+    <div class="block">
+      <div class="bt"><span class="tag">Step A · 6 min</span><h3>Bet ink BEFORE you see the meaning</h3><span class="hint" id="swCount">0 / 11 stamped</span></div>
+      <div class="card tint"><p style="font-weight:700">1. Read the word. Bet 1, 2 or 3 drops of ink that you can use it in your OWN sentence. &nbsp;2. Think 20 seconds, then say it — no notes. &nbsp;3. <span data-m="group">Your partner</span><span data-m="one" hidden>Your coach</span> stamps your sentence: <b>APPROVED</b> = you win your ink, <b>REJECTED</b> = you lose it. Then the meaning appears.</p></div>
+      <div class="s07-wg">
+        <div class="s07-doc" id="swDoc">
+          <img class="seal" src="img/i2s07_seal.jpg" alt="A hand pressing a metal seal onto a sheet of paper">
+          <div class="dbody">
+            <div class="dtop"><span class="no" id="swNo">WORD 01 / 11</span><button class="hearbtn" id="swHear" aria-label="Hear the word"></button></div>
+            <div class="w" id="swWord">—</div>
+            <div class="bets" id="swBets" role="group" aria-label="Your bet"><span class="lab">Bet ink:</span>
+              <button data-b="1" aria-pressed="false" aria-label="1 drop"><svg viewBox="0 0 24 32"><path d="M12 2c4 6 8 10 8 16a8 8 0 0 1-16 0c0-6 4-10 8-16z"/></svg>1</button>
+              <button data-b="2" aria-pressed="false" aria-label="2 drops"><svg viewBox="0 0 24 32"><path d="M12 2c4 6 8 10 8 16a8 8 0 0 1-16 0c0-6 4-10 8-16z"/></svg>2</button>
+              <button data-b="3" aria-pressed="false" aria-label="3 drops"><svg viewBox="0 0 24 32"><path d="M12 2c4 6 8 10 8 16a8 8 0 0 1-16 0c0-6 4-10 8-16z"/></svg>3</button></div>
+            <div class="judge" id="swJudge" hidden><span class="say-it">Say your own sentence now.</span><button class="btn sm y" data-j="1">Stamp APPROVED</button><button class="btn sm n" data-j="0">Stamp REJECTED</button></div>
+            <div class="reveal" id="swRev" hidden><span><b>Meaning:</b> <i id="swDef"></i></span><span><b>Example:</b> “<i id="swEx"></i>”</span><button class="hearbtn" id="swHearEx" aria-label="Hear the example"></button><button class="btn sm main" id="swNext" style="justify-self:start">Next word →</button></div>
+            <div class="s07-stampfx" id="swFx" aria-hidden="true"></div>
+          </div>
+        </div>
+        <div class="s07-ledger"><h4>Ink ledger</h4><div class="lg" id="swLedger"></div>
+          <div class="bank"><span class="stat">Ink bank <b id="swBank">0</b></span><span class="stat">Best bet <b id="swBest">—</b></span><span class="stat">Class record <b id="swRec">—</b></span></div></div>
+      </div>
+      <div class="closeout" id="swOut" hidden></div>
+      <p class="anote" hidden></p>
+      <div data-m="group"><p class="hint">Group: the judge rotates. Nobody judges their own sentence.</p></div>
+      <div data-m="one" hidden><p class="hint">1:1: the coach judges. If REJECTED, the coach says a model sentence and you repeat it once.</p></div>
+    </div>
+    <div class="block">
+      <div class="bt"><span class="tag">Step B · 2 min</span><h3>Use the words: choose the best chunk</h3><span class="score" id="scV"></span></div>
+      <div class="mc" id="mcV"></div>
+    </div>
+    <details class="tn"><summary>Teacher notes · §2 Vocabulary</summary><div class="layers">
+      <div class="ly"><h4>Pedagógica</h4><ul><li>VOC-03 fiel: apuesta ANTES de ver el significado; la oración debe ser del alumno (no el ejemplo); gana o pierde lo apostado. Puntos por producir lengua, nunca por rapidez.</li><li>Variante S07 (≠ S01): una palabra a la vez como documento que se sella, tinta 1–3, bolsa de tinta; léxico de trámites (approval, sign off, on hold…).</li><li>Si hay miedo al error público: apuesta en silencio y el juez rota. Cierre en voz alta: “The ink bank is __. My best bet was __.”</li><li>Respuestas de §B: in progress · approval · overdue · fill out · on hold · follow up.</li></ul></div>
+      <div class="ly"><h4>Engagement</h4><ul><li>“Bet big on the words you will really use at work this month.”</li><li>El sello rojo gusta: deja que el juez haga el gesto de sellar.</li></ul></div>
+      <div class="ly"><h4>Crecimiento</h4><ul><li>Léxico de trámites = vocabulario vendible: lo piden en correos, ERP y citas.</li><li>≥70 % regresa en S08 (Checkpoint), S13, S18 y S22 (follow up); anota las palabras con apuesta 3 fallida para repasarlas.</li></ul></div>
+    </div></details>
+  </div>
+</section>
+
+<!-- §3 GRAMMAR -->
+<section class="sec" id="s3" style="--c:var(--grm);--ct:var(--grm-t)" data-name="Grammar" data-min="12–24" data-dur="12">
+  <div class="shead"><div class="snum"><span class="n">3</span><div><h2>Grammar · The Status Machine</h2><div class="sub">12–24 min · Discover 2 · Tool 3 · Drill 2 · Use 2 · Bounty 3</div></div></div>
+    <div class="meta"><span class="chip">Status chunks</span><span class="chip dark">GRM-04 · ELIMINACIÓN</span></div></div>
+  <div class="sbody">
+    <div class="block">
+      <div class="bt"><span class="tag">Discover · 2 min</span><h3>Press a button. What changes in the sentence?</h3></div>
+      <div class="s07-machine" id="mach"></div>
+      <div class="card tint"><div class="result" id="machRes">Try all three buttons on every row. What stays the same? What changes?</div></div>
+      <p class="hint">Hint: look at the three words in the middle of every sentence. <button class="btn sm" id="hlBtn" aria-pressed="false">Show the key words</button></p>
+    </div>
+    <div class="block">
+      <div class="bt"><span class="tag">Tool · 3 min</span><h3>Four status chunks</h3></div>
+      <div class="s07-tool">
+        <div class="tl y"><b>✓ has / have been + participle</b><p>It is true now. Use it for the status today.</p><em>The request has been approved.</em><em>The documents have been signed.</em></div>
+        <div class="tl n"><b>✗ hasn’t / haven’t been + participle + yet</b><p>It is not done at this moment. “Yet” goes at the end.</p><em>The form hasn’t been completed yet.</em></div>
+        <div class="tl s"><b>! still needs / need to be + participle</b><p>It is the next action. Someone must do it.</p><em>The invoice still needs to be sent.</em></div>
+        <div class="tl q"><b>? Has / Have + thing + been + participle + yet?</b><p>Ask for the status. Answer: Yes, it has. / No, not yet.</p><em>Has the payment been made yet?</em></div>
+      </div>
+      <div class="card"><p><b>Participles:</b> <span class="s07-pp">approved</span><span class="s07-pp">confirmed</span><span class="s07-pp">signed</span><span class="s07-pp">completed</span><span class="s07-pp irr">sent</span><span class="s07-pp irr">made</span><span class="s07-pp irr">done</span></p>
+      <p style="margin-top:8px"><b>When or now?</b> “It <u>was approved</u> on Monday.” says WHEN (you know this from S5). “It <u>has been approved</u>.” says the STATUS now. Today we use only the status chunks.</p></div>
+    </div>
+    <div class="block">
+      <div class="bt"><span class="tag">Drill · 2 min</span><h3>Choose the correct chunk</h3><span class="score" id="scA"></span></div>
+      <div class="mc" id="mcA"></div>
+    </div>
+    <div class="block">
+      <div class="bt"><span class="tag">Use · 2 min</span><h3>Board talk: 3 cards, 3 chunks</h3></div>
+      <div class="card tint"><p style="font-weight:700">Go back to your Week Board (stage 1). Pick three cards. Tell your partner about each card with a different chunk: <i>has been …</i> · <i>hasn’t been … yet</i> · <i>still needs to be …</i> — no notes. <span class="hint">The coach listens and secretly writes down the errors (no names).</span></p>
+      <div class="timer" id="tU" data-sec="120" style="margin-top:10px"><output>02:00</output><button class="btn sm main" data-a="go">Start</button><button class="btn sm" data-a="re">Reset</button></div></div>
+    </div>
+    <div class="block">
+      <div class="bt"><span class="tag">GRM-04 · 3 min</span><h3>The Correction Bounty</h3><span class="hint" id="bnCount">0 / 6 eliminated</span></div>
+      <div class="card tint"><p style="font-weight:700">Rules: 1. These errors were heard in class (nobody’s name is on them). 2. Read the error. SAY the repair out loud — then press “Repaired”. 3. Each repair eliminates the error and earns 1 bounty point.</p></div>
+      <div class="s07-bounty" id="bn"></div>
+      <div class="s07-add" data-m="group"><label for="bnIn"><b>Coach:</b> add an error you heard today (no names)</label><div class="row"><input id="bnIn" type="text" placeholder="Type the error exactly as you heard it" maxlength="90"><input id="bnFix" type="text" placeholder="Correct version (optional)" maxlength="90"><button class="btn sm main" id="bnAdd">Add to the board</button></div></div>
+      <div class="s07-add" data-m="one" hidden><label for="bnIn2"><b>Coach:</b> add an error from the 1:1 talk (no names)</label><div class="row"><input id="bnIn2" type="text" placeholder="Error as you heard it" maxlength="90"><input id="bnFix2" type="text" placeholder="Correct version (optional)" maxlength="90"><button class="btn sm main" id="bnAdd2">Add to the board</button></div></div>
+      <div class="closeout" id="bnOut" hidden></div>
+    </div>
+    <details class="tn"><summary>Teacher notes · §3 Grammar</summary><div class="layers">
+      <div class="ly"><h4>Pedagógica</h4><ul><li>Un solo punto de lengua: estatus con participio como uso FIJO (has been …, hasn’t been … yet, still needs to be …). NO enseñes pasiva libre: nada de “by + agente” ni otros tiempos. Explicación total ≤5 min (Discover 2 + Tool 3).</li><li>Mecánica (Drill, 2 min) ≤ 1/3 del bloque. Etapas: mecánica → meaningful (Machine) → comunicativa (Board talk) → cierre GRM-04.</li><li>GRM-04 fiel: anota errores del punto durante Board talk SIN nombres; el grupo los repara al final; punto por reparación correcta. Cierre en voz alta: “We eliminated __ of __ errors.”</li><li>Errores típicos precargados: falta de “been”, “has/have” plural, participio (sended), “yet” al inicio, “was been”. Respuestas: hasn’t been completed yet · has been sent · Has the request been approved yet? · have been signed · still needs to be sent · has been confirmed.</li></ul></div>
+      <div class="ly"><h4>Engagement</h4><ul><li>“The machine never lies: ✓ = has been, ✗ = hasn’t been … yet, ! = still needs to be.”</li><li>El Bounty se juega contra los errores, no contra personas: ideal para grupo con jefes y subordinados.</li></ul></div>
+      <div class="ly"><h4>Crecimiento</h4><ul><li>“These three chunks are the whole language of a weekly status meeting.”</li><li>Guarda tus errores anónimos: son el primer diagnóstico real para la venta de refuerzo. Regresa en S08, S15 y S21.</li></ul></div>
+    </div></details>
+  </div>
+</section>
+
+<!-- §4 READING -->
+<section class="sec" id="s4" style="--c:var(--teal);--ct:var(--teal-t)" data-name="Reading" data-min="24–27" data-dur="3">
+  <div class="shead"><div class="snum"><span class="n">4</span><div><h2>Reading · Three Notices, Three Columns</h2><div class="sub">24–27 min · Read · Sort · Check</div></div></div>
+    <div class="meta"><span class="chip">3 short texts</span></div></div>
+  <div class="sbody">
+    <div class="block">
+      <div class="bt"><span class="tag">Read and sort</span><h3>Where does each notice go: Pending, Approved or Done?</h3><span class="score" id="scS"></span></div>
+      <div class="s07-notices" id="notices"></div>
+    </div>
+    <div class="block"><div class="bt"><span class="tag">Check</span><h3>Three quick questions</h3><span class="score" id="scR"></span></div><div class="mc" id="mcR"></div></div>
+    <details class="tn"><summary>Teacher notes · §4 Reading</summary><div class="layers">
+      <div class="ly"><h4>Pedagógica</h4><ul><li>Tres textos ≤60 palabras (correo de oficina, nota de pedido, nota escolar) con el punto de lengua en contexto y reciclaje: payment, receipt, purchase order, budget, invoice, attach, confirm, shipment.</li><li>Clave: A Pending (pago sin confirmar, cita on hold) · B Approved (aprobado; envío y factura faltan) · C Done (todo completo).</li><li>Preguntas: Her payment hasn’t been confirmed yet · The invoice still needs to be attached · False.</li><li>Tiempo corto (3 min): lectura silenciosa 1 min, clasificación 1 min, preguntas 1 min.</li></ul></div>
+      <div class="ly"><h4>Engagement</h4><ul><li>“These are real kinds of messages. Which one have you received this year?”</li></ul></div>
+      <div class="ly"><h4>Crecimiento</h4><ul><li>Pide que lean la tarjeta A en voz alta como si fueran el empleado de la oficina: puente a la Misión.</li></ul></div>
+    </div></details>
+  </div>
+</section>
+
+<!-- §5 LISTENING -->
+<section class="sec" id="s5" style="--c:var(--pink);--ct:var(--pink-t)" data-name="Listening" data-min="27–34" data-dur="7">
+  <div class="shead"><div class="snum"><span class="n">5</span><div><h2>Listening · Gapped Chunks</h2><div class="sub">27–34 min · Listen · Collect the chunks · Use two</div></div></div>
+    <div class="meta"><span class="chip">Tom (US) + Joy (Filipino English)</span><span class="chip dark">LIS-09 · COLECCIÓN</span></div></div>
+  <div class="sbody">
+    <div class="block">
+      <div class="bt"><span class="tag">Listen 1 · 2 min</span><h3>A phone call about three things. Press each message.</h3></div>
+      <div class="s07-calls" id="calls"></div>
+      <div class="row"><button class="btn sm" id="stopBtn">■ Stop</button></div>
+      <p class="anote" hidden></p>
+      <div class="mc" id="mcL1"></div><span class="score" id="scL1"></span>
+    </div>
+    <div class="block">
+      <div class="bt"><span class="tag">Listen 2 · 3 min</span><h3>Collect the chunks: fill every gap with a chip</h3><span class="hint" id="gcCount">0 / 8 collected</span></div>
+      <div class="card tint"><p style="font-weight:700">Gaps are ONLY in the status chunks. Press a chip, then press a gap (or the other way round). Wrong chips bounce back. Each right chip goes into your Chunk Bag.</p></div>
+      <div class="s07-gaps" id="gaps"></div>
+      <div class="s07-chips" id="chips" aria-label="Chunk chips"></div>
+      <div class="s07-bag"><h4>My Chunk Bag</h4><div class="bagrow" id="bag"></div></div>
+    </div>
+    <div class="block">
+      <div class="bt"><span class="tag">Detail</span><h3>Three detail questions</h3><span class="score" id="scL2"></span></div>
+      <div class="mc" id="mcL2"></div>
+    </div>
+    <div class="block">
+      <div class="bt"><span class="tag">Use two · 2 min</span><h3>Take two chunks from your bag. Say two true sentences about YOUR life.</h3><span class="hint" id="useCount">0 / 2 chosen</span></div>
+      <div class="s07-use" id="useBag"></div>
+      <div class="closeout" id="useOut" hidden></div>
+      <div class="row"><button class="btn sm" id="scrBtn" aria-expanded="false">Show the script</button></div>
+      <div class="card" id="script" hidden></div>
+    </div>
+    <details class="tn"><summary>Teacher notes · §5 Listening [PARA GRABAR]</summary><div class="layers">
+      <div class="ly"><h4>Pedagógica</h4><ul><li>LIS-09 fiel: huecos SOLO en chunks funcionales (no en sustantivos); luego usan 2 chunks hablando. Guion literal (163 palabras, 2 hablantes) en el botón “Show the script”. Acentos: Tom = inglés de EE. UU.; Joy = inglés filipino (no nativo, ritmo lento).</li><li>Clave global: la llamada es sobre el estatus de tres cosas (vacaciones, pedido de guantes, formulario de estacionamiento).</li><li>Clave de huecos: 1 Has it been approved yet? · 2 has been approved · 3 have been confirmed · 4 hasn’t been signed yet · 5 still needs to be completed · 6 still needs to be attached · 7 isn’t overdue yet · 8 has been sent. Distractores: “was been approved”, “still needs to be attach”.</li><li>Detalle: purchase order on hold · completar y adjuntar recibo · Friday.</li><li>Estado de audio: scripts listos, audio pendiente. Mientras tanto suena la voz del navegador con aviso visible.</li></ul></div>
+      <div class="ly"><h4>Engagement</h4><ul><li>Antes de cada clip: “What will she say? Approved or not?” — 5 segundos de predicción.</li><li>Pide que pongan el chunk de la Bolsa en una oración sobre su semana real.</li></ul></div>
+      <div class="ly"><h4>Crecimiento</h4><ul><li>Joy es el acento real de muchas oficinas administrativas y de proveedores: “Your ear is now ready for it.”</li><li>LIS-09 vuelve en S18 y S27 con chunks de petición y responsabilidad.</li></ul></div>
+    </div></details>
+  </div>
+</section>
+
+<!-- §6 SPEAKING -->
+<section class="sec" id="s6" style="--c:var(--lvl);--ct:var(--lvl-t)" data-name="Speaking" data-min="34–46" data-dur="12">
+  <div class="shead"><div class="snum"><span class="n">6</span><div><h2>Speaking · The Advice Clinic</h2><div class="sub">34–46 min · Waiting room 3 · Clinic 8 · Close 1</div></div></div>
+    <div class="meta"><span class="chip">14 questions</span><span class="chip dark">B18-04 · OCULTAMIENTO</span></div></div>
+  <div class="sbody">
+    <div class="block">
+      <div class="bt"><span class="tag">Waiting room · 3 min</span><h3>Take a number. Answer the ticket.</h3></div>
+      <div class="s07-ticket">
+        <div class="stub"><small>NOW SERVING</small><b id="tkNo">01</b><span id="tkOf">of 14</span></div>
+        <div class="tbody"><div class="tag2" id="tkTag"></div><div class="tq" id="tkQ"></div><div class="tf" id="tkF"></div></div>
+        <div class="tnav"><button class="btn sm" id="tkP">← Back</button><button class="btn sm main" id="tkN">Next ticket →</button></div>
+      </div>
+      <div class="s07-dots" id="tkDots"></div>
+    </div>
+    <div class="block">
+      <div class="bt"><span class="tag">Clinic · 8 min · 2 rounds × 4</span><h3>One patient. One advisor. A hidden problem card.</h3></div>
+      <div class="card tint"><p style="font-weight:700">1. The PATIENT opens a problem card (the advisor does not see it). &nbsp;2. The ADVISOR asks at least 5 questions before advising — at least 2 with <i>Has / Have … been … yet?</i> &nbsp;3. Then the advisor gives 3 solutions, each with a reason: <i>I think you should … because …</i> Switch roles in round 2.</p></div>
+      <div class="s07-clinic">
+        <div class="cl-top">
+          <div class="cases" id="clCases" role="tablist" aria-label="Problem cards"></div>
+          <div class="rounds" id="clRounds"><button data-r="1" aria-pressed="true">Round 1</button><button data-r="2" aria-pressed="false">Round 2 · switch roles</button></div>
+        </div>
+        <div class="cl-grid">
+          <div class="cl-card patient">
+            <h5>PATIENT ONLY · problem card</h5>
+            <div class="cover" id="clCover"><p>The advisor looks away. Press the button to open the card.</p><button class="btn main" id="clOpen" aria-expanded="false">Open my card</button></div>
+            <div class="facts" id="clFacts" hidden></div>
+            <button class="btn sm" id="clHide" hidden>Hide the card again</button>
+            <div data-m="one" hidden><p class="hint">1:1: in round 1 you are the patient and the coach advises. In round 2 the coach is the patient with another card.</p></div>
+          </div>
+          <div class="cl-card advisor">
+            <h5>ADVISOR · tracker</h5>
+            <div class="tr"><span>Questions asked (5 needed)</span><div class="pips" id="clQ"></div></div>
+            <div class="tr"><span>With Has / Have … been … yet? (2 needed)</span><div class="pips two" id="clS"></div></div>
+            <div class="tr"><span>Solutions with a reason (3 needed)</span><div class="pips" id="clA"></div></div>
+            <div class="chipsrow"><span>Use:</span><i>Has it been … yet?</i><i>What still needs to be …?</i><i>When is the deadline?</i><i>One option is to … because …</i><i>I think you should … because …</i></div>
+            <div class="score2" id="clScore">Round points: 0</div>
+          </div>
+        </div>
+        <div class="cl-out">
+          <label for="clBest"><b>Close-out.</b> Say it out loud: “The best solution is <u>___</u> because <u>___</u>.”</label>
+          <div class="row"><input id="clBest" type="text" placeholder="The best solution is … because …" maxlength="120"><button class="btn sm main" id="clDone">Declare it</button></div>
+          <div class="closeout" id="clOut" hidden></div>
+        </div>
+      </div>
+    </div>
+    <details class="tn"><summary>Teacher notes · §6 Speaking</summary><div class="layers">
+      <div class="ly"><h4>Pedagógica</h4><ul><li>B18-04 fiel (OCULTAMIENTO): el paciente tiene una tarjeta oculta; el asesor hace ≥5 preguntas ANTES de aconsejar y propone 3 soluciones con razón; se cambian los roles; cierre: “The best solution is ___ because ___.” Puntos por pregunta y por solución con razón, nunca por rapidez.</li><li>Problemas concretos y poco personales (guardrail del banco): objetivo = hablar, no dar terapia. Un solo punto de lengua: exige que el asesor use ≥2 preguntas Has/Have … been … yet? y el paciente conteste con hasn’t been … yet / still needs to be.</li><li>Consejo = should + because (recicla S03/Intermedio 1); no introduzcas condicionales.</li><li>Waiting Room: 14 preguntas, 8 con 2 follow-ups. Usa 3 min, no todas. Modo 1:1: tú eres el asesor en la ronda 1 y el paciente (otra tarjeta) en la ronda 2.</li></ul></div>
+      <div class="ly"><h4>Engagement</h4><ul><li>Dramatiza la sala de espera: “Number 7, please.” Cambia de voz para ser el paciente impaciente.</li><li>Pregunta de cierre: “Which solution would you really follow?”</li></ul></div>
+      <div class="ly"><h4>Crecimiento</h4><ul><li>Esta es la conversación que hacen sus supervisores: preguntar antes de recomendar. Dilo así: “You just did a mini case review in English.”</li><li>Anota cuántas preguntas con yet usó solo; la meta en S08 es ≥3 sin apoyo.</li></ul></div>
+    </div></details>
+  </div>
+</section>
+
+<!-- §7 MISSION -->
+<section class="sec" id="s7" style="--c:var(--done);--ct:var(--done-t)" data-name="Mission" data-min="46–54" data-dur="8">
+  <div class="shead"><div class="snum"><span class="n">7</span><div><h2>Mission · The Board Briefing</h2><div class="sub">46–54 min · Read the board · Brief your partner · Sign off</div></div></div>
+    <div class="meta"><span class="chip">3 boards × 5 moves</span><span class="chip dark">Evidence</span></div></div>
+  <div class="sbody">
+    <div class="block">
+      <div class="bt"><span class="tag">Your mission</span><h3>Give a 60-second status briefing of each board — without reading sentences.</h3></div>
+      <div class="s07-sign">
+        <img src="img/i2s07_pen.jpg" alt="A pen on paper next to an official round stamp and signature">
+        <div class="stxt"><b>The rule.</b> The cards show only labels. You build the sentences. Each board needs 5 moves. Success: at least 12 of 15 moves, speaking, no reading. Then sign off.</div>
+      </div>
+      <div class="s07-tabs" id="msTabs" role="tablist"></div>
+      <div class="s07-board ro" id="msBoard"></div>
+      <div class="s07-moves" id="msMoves"></div>
+      <div class="bar2"><i id="mvBar"></i></div>
+      <div class="row"><span class="stat">Moves <b id="mvN">0</b> / 15</span><button class="btn sm" id="mvRe">Reset moves</button><button class="btn sm" id="msModel" aria-expanded="false">Show a model after speaking</button></div>
+      <div class="card" id="msModelBox" hidden></div>
+      <div class="row"><button class="btn main" id="signBtn">Sign off the mission</button><span class="hint" id="signNote">Sign when you reach 12 moves.</span></div>
+      <div data-m="group"><p class="hint">Group: brief a partner. The partner asks one extra question: <i>Has … been … yet?</i> Then swap with the next board.</p></div>
+      <div data-m="one" hidden><p class="hint">1:1: brief your coach. The coach plays the manager and interrupts once per board with a question.</p></div>
+    </div>
+    <details class="tn"><summary>Teacher notes · §7 Mission</summary><div class="layers">
+      <div class="ly"><h4>Pedagógica</h4><ul><li>Producto de evidencia: el alumno explica una situación de estatus completa (3 tableros: mudanza, evento de equipo, equipo nuevo). 5 movimientos: (1) qué ya está hecho/aprobado · (2) hasn’t been … yet · (3) still needs to be … · (4) problema (overdue u on hold) y por qué · (5) pregunta Has/Have … been … yet? + siguiente paso (I will follow up…).</li><li>Éxito: ≥12/15, sin leer. Marca cada movimiento en el checklist solo si lo produjo con la estructura correcta. El modelo se muestra DESPUÉS de hablar.</li><li>≈50/50: caso 1 vida diaria, casos 2 y 3 trabajo. Reciclaje esperado: pending, confirm, update, budget, invoice, payment, receipt, purchase order, make sure, follow up.</li></ul></div>
+      <div class="ly"><h4>Engagement</h4><ul><li>La firma final es simbólica: “Your briefing is approved.” Pídelo con calma, sin confeti.</li><li>Si el alumno llega a 15/15, pídele el briefing de su tablero real de §1.</li></ul></div>
+      <div class="ly"><h4>Crecimiento</h4><ul><li>“This is what a team lead says on Monday morning.” Evidencia guardable: movimientos logrados + errores reparados.</li><li>Compáralo con S01: ya no “has changed”, ahora el estatus completo. Alimenta el Checkpoint 1 (S08).</li></ul></div>
+    </div></details>
+  </div>
+</section>
+
+<!-- §8 WRAP-UP -->
+<section class="sec" id="s8" style="--c:var(--navy);--ct:#E6E9F2" data-name="Wrap-up" data-min="54–60" data-dur="6">
+  <div class="shead"><div class="snum"><span class="n">8</span><div><h2>Wrap-up · Final Approval</h2><div class="sub">54–60 min · Exit quiz · Can-do stamps · Declare it</div></div></div>
+    <div class="meta"><span class="chip">Quiz → Stamps → Close-out</span></div></div>
+  <div class="sbody">
+    <div class="block"><div class="bt"><span class="tag">Exit quiz</span><h3>60 seconds · 5 questions — say the answer before you click</h3><span class="score" id="scQ"></span></div><div class="mc" id="mcQ"></div></div>
+    <div class="block"><div class="bt"><span class="tag">Can-do</span><h3>Stamp what you can do now</h3></div>
+      <div class="s07-cando" id="cando"></div></div>
+    <div class="block"><div class="bt"><span class="tag">Close-out</span><h3>Say your result out loud</h3></div>
+      <button class="btn main" id="coBtn" style="justify-self:start">Build my close-out</button>
+      <div class="closeout" id="coOut" hidden></div></div>
+    <div class="badge"><div class="medal">07</div><div><div class="kick">Session complete</div><h3 style="font-size:26px;font-weight:900">You can give a status: approved, pending, done — and what comes next.</h3><p style="opacity:.9">Homework: write 4 lines about a REAL pending item (what has been approved · what hasn’t been done yet · what still needs to be done · your next step) and bring it to Session 8. Next: <b>Session 8 · Checkpoint 1: What Changed and What’s Next?</b></p><div class="row" style="margin-top:10px"><button class="btn" id="doneBtn" style="background:var(--sun);border-color:var(--sun);color:var(--navy)">Mark session as complete</button><a class="btn" href="./" style="text-decoration:none;color:var(--navy)">Back to Intermedio 2</a></div></div></div>
+    <details class="tn"><summary>Teacher notes · §8 Wrap-up</summary><div class="layers">
+      <div class="ly"><h4>Pedagógica</h4><ul><li>Quiz en voz alta ANTES del clic. Respuestas: hasn’t been approved · have been · sent · on hold · Has the form been completed yet?</li><li>Close-out declarado en voz alta con los números reales (movimientos, errores reparados, tinta). Corrige máximo 2 errores de alto valor y registra el nivel en la bitácora.</li></ul></div>
+      <div class="ly"><h4>Engagement</h4><ul><li>“Minute 1 you sorted a board. Minute 58 you briefed a manager.” Cierra con una sola línea de felicitación concreta.</li></ul></div>
+      <div class="ly"><h4>Crecimiento</h4><ul><li>La tarea de 4 líneas es el primer ejercicio del Checkpoint 1 (S08: cambio → estatus → detalle → siguiente paso).</li><li>Si el alumno trabaja en compras, calidad o RH: ofrece una versión con su flujo real de aprobaciones.</li></ul></div>
+    </div></details>
+  </div>
+</section>
+
+</main>
+<footer>Gabriel Turner · Your Business Coach · Intermedio 2 · Session 07 of 32 · v1.0 · Photos: Markus Spiske, Stephen Goldberg, Scott Blake on Unsplash</footer>
+
+<script>
+(function(){
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const st={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
+const fmt=s=>String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');
+const SPK='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4z"/></svg>';
+const KEY='gt08-s01';
+const DATA={"VOC": [["approval", "official permission to go ahead", "We are waiting for approval from my manager."], ["request", "a formal question asking for something", "I sent a request for two days off."], ["submit", "to send a form or document so people can check it", "Please submit the form before Friday."], ["fill out", "to write your information on a form", "You need to fill out this form first."], ["sign off", "to give final approval, usually with a signature", "My manager has to sign off on the budget."], ["in progress", "started, but not finished", "My visa request is in progress."], ["on hold", "stopped for now; nothing moves until something changes", "The order is on hold until the payment arrives."], ["overdue", "late; the deadline has already passed", "The invoice is overdue. It was due last Friday."], ["complete", "to finish all the parts", "Please complete all the fields."], ["reject", "to say no to a request", "They rejected my request because the form was incomplete."], ["follow up", "to contact someone again to ask about progress", "I will follow up with the bank tomorrow."]], "LIS": [["001", "tom", "Tom", "US English", "Hi Joy, it's Tom. I'm calling about the status of three things. First, my vacation request for next month. [[1|Has it been approved yet?]]"], ["002", "joy", "Joy", "Filipino English", "Hi Tom! Good news. Your vacation request [[2|has been approved]], and your dates [[3|have been confirmed]]. The twelfth to the sixteenth, right? But the purchase order for the safety gloves [[4|hasn't been signed yet]]. It's on hold because the budget number is missing."], ["003", "tom", "Tom", "US English", "I see. I will follow up with Mr. Cruz today. And what about my parking form? I submitted it on Monday."], ["004", "joy", "Joy", "Filipino English", "Let me check. Okay, the parking form is in progress. It [[5|still needs to be completed]], and your payment receipt [[6|still needs to be attached]]. Don't worry, it [[7|isn't overdue yet]]. The deadline is Friday."], ["005", "tom", "Tom", "US English", "Great. Has the invoice for the gloves been sent to Finance?"], ["006", "joy", "Joy", "Filipino English", "Yes, it [[8|has been sent]]. But Finance can't pay anything before Mr. Cruz signs the order. Please make sure he signs today. I will send you an update tomorrow."]], "DIST": ["was been approved", "still needs to be attach"]};
+
+/* ---- speech + audio files (mp3 first, browser voice as fallback) ---- */
+const TTS='speechSynthesis' in window; let voices=[];
+function loadV(){try{voices=speechSynthesis.getVoices().filter(v=>/^en/i.test(v.lang))}catch(e){}}
+if(TTS){loadV();try{speechSynthesis.onvoiceschanged=loadV}catch(e){}}
+function pick(pref){return voices.find(v=>pref.test(v.name+' '+v.lang))||voices[0]}
+function say(t,opt={}){if(!TTS)return false;try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='en-US';u.rate=opt.rate||.85;const v=opt.voice||pick(/US|United States/i);if(v)u.voice=v;speechSynthesis.speak(u);return true}catch(e){return false}}
+function voiceFor(who){const a=pick(/female|Zira|Samantha|Jenny|Aria|US/i);if(who==='A')return a;return voices.find(v=>/GB|India|UK|en-IN/i.test(v.name+' '+v.lang)&&v!==a)||voices.find(v=>v!==a)||a}
+function note(msg,warn){const tn=$('#ttsNote');if(tn)tn.textContent=msg;$$('.anote').forEach(n=>{n.hidden=false;n.textContent=msg;n.classList.toggle('warn',!!warn)})}
+let cur=null;
+function clip(file,text,opt){ /* plays audio/<file>; if missing -> browser voice + visible notice */
+ try{if(cur){cur.pause();cur=null}}catch(e){}
+ let used=false;const fb=()=>{if(used)return;used=true;if(say(text,opt))note('Audio file not available yet — using your browser’s voice. (Audio no disponible)',true);else note('Audio no disponible: read the text aloud.',true)};
+ try{const a=new Audio('audio/'+file);cur=a;a.addEventListener('error',fb);const p=a.play();if(p&&p.catch)p.catch(fb)}catch(e){fb()}}
+function stopAll(){try{if(cur){cur.pause();cur=null}}catch(e){}try{speechSynthesis.cancel()}catch(e){}}
+
+/* ---- modes ---- */
+function setView(student){document.body.classList.toggle('student',student);$('#tgStudent').setAttribute('aria-pressed',student);$('#tgTeacher').setAttribute('aria-pressed',!student)}
+$('#tgStudent').onclick=()=>setView(true);$('#tgTeacher').onclick=()=>setView(false);
+function setMode(m){$$('[data-m]').forEach(e=>e.hidden=e.dataset.m!==m);$('#tgGroup').setAttribute('aria-pressed',m==='group');$('#tgOne').setAttribute('aria-pressed',m==='one');st.set('gt08-mode',m)}
+$('#tgGroup').onclick=()=>setMode('group');$('#tgOne').onclick=()=>setMode('one');setMode(st.get('gt08-mode')||'group');
+
+/* ---- XP + nav ---- */
+let xp=0;const done=new Set();
+function addXP(n,key){if(key){if(done.has(key))return;done.add(key)}xp+=n;$('#xp').textContent=xp+' XP'}
+const secs=$$('.sec');const steps=$('#steps');
+secs.forEach((s,i)=>{const a=document.createElement('a');a.href='#'+s.id;a.innerHTML=`<b>${i+1}</b>${s.dataset.name}`;a.style.setProperty('--c',getComputedStyle(s).getPropertyValue('--c'));steps.appendChild(a)});
+const links=[...steps.children];
+function onScroll(){let c=0;secs.forEach((s,i)=>{if(s.getBoundingClientRect().top<200)c=i});links.forEach((a,i)=>a.classList.toggle('on',i===c));$('#pbar').style.width=((c+1)/secs.length*100)+'%';const on=links[c];if(on&&steps.scrollWidth>steps.clientWidth){steps.scrollLeft=on.offsetLeft-40}}
+addEventListener('scroll',onScroll,{passive:true});onScroll();
+function markDone(i){links[i]&&links[i].classList.add('done')}
+
+/* ---- time table (sum must be 60) ---- */
+(function(){let tot=0,rows='';secs.forEach((s,i)=>{const d=+s.dataset.dur;tot+=d;rows+=`<tr><td>${i+1}</td><td>${s.dataset.name}</td><td>${s.dataset.min}</td><td>${d} min</td></tr>`});
+ $('#timeTable').innerHTML=`<table><tr><th>#</th><th>Stage</th><th>Minutes</th><th>Duration</th></tr>${rows}</table><p class="tot" id="timeTot" data-total="${tot}">Total: ${tot} min ${tot===60?'✓':'✗ (must be 60)'}</p>`})();
+
+/* ---- class clock ---- */
+let cs=0,cId=null;$('#clock').onclick=()=>{if(cId){clearInterval(cId);cId=null}else cId=setInterval(()=>{cs++;$('#clock').textContent=fmt(cs)},1000)};
+
+/* ---- timers ---- */
+function timer(el,onEnd){const tot=+el.dataset.sec;let left=tot,id=null;const o=el.querySelector('output'),g=el.querySelector('[data-a=go]');
+ const draw=()=>{o.textContent=fmt(left);el.classList.toggle('end',left===0)};const stop=()=>{clearInterval(id);id=null;g.textContent='Start'};
+ g.onclick=()=>{if(id){stop();return}if(!left)left=tot;g.textContent='Pause';id=setInterval(()=>{left--;draw();if(left<=0){stop();onEnd&&onEnd()}},1000)};
+ el.querySelector('[data-a=re]').onclick=()=>{stop();left=tot;draw()};return{reset(){stop();left=tot;draw()},used(){return tot-left},stop,add(s){left+=s;draw()}}}
+
+/* ---- MC engine ---- */
+function mc(box,items,scoreEl,xpKey,sec){let right=0,answered=0;
+ items.forEach((it,i)=>{const d=document.createElement('div');d.className='mcq';d.innerHTML=`<div class="q"><span class="n">${i+1}</span>${it.q}</div><div class="opts"></div><div class="fb" aria-live="polite"></div>`;
+  const os=d.querySelector('.opts'),fb=d.querySelector('.fb');let locked=false;
+  it.o.forEach((t,k)=>{const b=document.createElement('button');b.className='opt';b.textContent=t;b.onclick=()=>{if(locked)return;
+    if(k===it.a){b.classList.add('ok');locked=true;answered++;if(!d.dataset.miss)right++;fb.className='fb ok';fb.textContent='✓ '+(it.ok||'Correct!');addXP(10);
+      if(answered===items.length){scoreEl.textContent=`${right} / ${items.length} first try`;addXP(0,xpKey);markDone(sec)}}
+    else{b.classList.add('no');d.dataset.miss=1;fb.className='fb no';fb.textContent='✗ '+(it.no||'Try again.')}};os.appendChild(b)});box.appendChild(d)})}
+const shuf=a=>{const b=a.slice();for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]]}return b};
+
+/* ================= S07 ================= */
+const KEY7='gt08-s07';
+const cap=s=>s.charAt(0).toUpperCase()+s.slice(1);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+/* ---- kanban helpers (FLIP animation) ---- */
+const COLN={p:'Pending',a:'Approved',d:'Done'};
+function moveTo(card,dest){
+ const r0=card.getBoundingClientRect();dest.appendChild(card);const r1=card.getBoundingClientRect();
+ if(!matchMedia('(prefers-reduced-motion:reduce)').matches&&r0.width){card.style.transition='none';card.style.transform=`translate(${r0.left-r1.left}px,${r0.top-r1.top}px)`;
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{card.style.transition='transform .38s cubic-bezier(.2,.8,.2,1)';card.style.transform='';}));
+  setTimeout(()=>{card.style.transition=''},500)}
+ card.classList.remove('pop');void card.offsetWidth;card.classList.add('pop')}
+function mkCard(c,ro){const d=document.createElement('div');d.className='s07-kc';d.dataset.id=c.id;
+ d.innerHTML=`<div class="ty">${c.ty||''}</div><div class="lb">${c.t}</div>${c.flag?`<span class="flag ${c.flag[0]}">${c.flag[1]}</span>`:''}`;
+ if(!ro){d.draggable=true;const s=document.createElement('div');s.className='sendto';s.innerHTML=['p','a','d'].map(k=>`<button class="${k}" data-to="${k}" aria-label="Send ${c.t} to ${COLN[k]}"><span>${COLN[k]}</span></button>`).join('');d.appendChild(s)}
+ return d}
+
+/* ===== §1 Week Board ===== */
+const WB=[["Vacation request","WORK"],["School enrollment form","LIFE"],["Purchase order for new gloves","WORK"],["Electricity bill payment","LIFE"],["Expense report","WORK"],["Car insurance renewal","LIFE"]];
+const wbEl=$('#wb'),tray=$('#wbTray');let dragEl=null;
+function wbCount(){const cols={p:0,a:0,d:0};['p','a','d'].forEach(k=>cols[k]=wbEl.querySelector(`[data-col=${k}] .cb`).children.length);
+ const n=cols.p+cols.a+cols.d;$('#wbCount').textContent=n+' / 6 sorted';
+ $$('#wb .s07-kc, #wbTray .s07-kc').forEach(c=>{const col=c.parentElement.closest('.s07-col');const k=col?col.dataset.col:null;c.querySelectorAll('.sendto button').forEach(b=>b.classList.toggle('on',b.dataset.to===k))});
+ if(n===6){const mx=Object.entries(cols).sort((a,b)=>b[1]-a[1])[0];$('#wbRes').textContent=`Your board: ${cols.p} pending · ${cols.a} approved · ${cols.d} done. Most cards are in “${COLN[mx[0]]}”. Tell your partner why.`;addXP(15,'wb');markDone(0)}
+ else $('#wbRes').textContent=n?`${n} sorted. ${6-n} to go.`:'Sort the six items. Then tell your partner about the column with most cards.'}
+WB.forEach(([t,ty],i)=>{const c=mkCard({id:'w'+i,t,ty},false);tray.appendChild(c)});
+function sendTo(card,k){moveTo(card,wbEl.querySelector(`[data-col=${k}] .cb`));addXP(2,'wbm'+card.dataset.id);wbCount()}
+document.addEventListener('click',e=>{const b=e.target.closest('.sendto button');if(!b)return;const card=b.closest('.s07-kc');if(!card||!card.closest('#wb,#wbTray'))return;sendTo(card,b.dataset.to)});
+document.addEventListener('dragstart',e=>{const c=e.target.closest&&e.target.closest('#wb .s07-kc,#wbTray .s07-kc');if(c){dragEl=c;c.classList.add('drag');try{e.dataTransfer.setData('text/plain',c.dataset.id)}catch(x){}}});
+document.addEventListener('dragend',()=>{if(dragEl)dragEl.classList.remove('drag');dragEl=null});
+$$('#wb .s07-col').forEach(col=>{col.addEventListener('dragover',e=>e.preventDefault());col.addEventListener('drop',e=>{e.preventDefault();if(dragEl)sendTo(dragEl,col.dataset.col)})});
+const sideBtns=$$('.hook .side span');
+
+/* ===== §2 Stamp Wager (VOC-03) ===== */
+const V=DATA.VOC;let swI=0,swBank=0,swJudged=0,swBest=null;const swRes=V.map(()=>null);let bet=0;
+let swRec=+st.get('gt08-s07-wrec')||0;if(swRec)$('#swRec').textContent=swRec;
+const nnn=i=>String(i+1).padStart(3,'0');
+$('#swHear').innerHTML=SPK+'<span>word</span>';$('#swHearEx').innerHTML=SPK+'<span>example</span>';
+$('#swLedger').innerHTML=V.map((v,i)=>`<span data-i="${i}">${String(i+1).padStart(2,'0')} ${v[0]}<b></b></span>`).join('');
+function swShow(i){swI=i;const [w,d,e]=V[i];bet=0;$('#swNo').textContent=`WORD ${String(i+1).padStart(2,'0')} / ${V.length}`;$('#swWord').textContent=w;
+ $$('#swBets button').forEach(b=>{b.disabled=!!swRes[i];b.setAttribute('aria-pressed','false')});$('#swJudge').hidden=true;
+ const done=swRes[i]!==null;$('#swRev').hidden=!done;$('#swDef').textContent=d;$('#swEx').textContent=e;
+ $('#swFx').className='s07-stampfx';$('#swFx').textContent='';
+ if(done){$('#swFx').textContent=swRes[i].ok?'APPROVED':'REJECTED';$('#swFx').className='s07-stampfx go '+(swRes[i].ok?'ok':'no')}
+ $$('#swLedger span').forEach((s,k)=>s.classList.toggle('cur',k===i));
+ $('#swNext').textContent=i===V.length-1?'Finish ✓':'Next word →';$('#swNext').hidden=!done||i===V.length-1&&swJudged<V.length}
+$$('#swBets button').forEach(b=>b.onclick=()=>{if(swRes[swI]!==null)return;bet=+b.dataset.b;$$('#swBets button').forEach(x=>x.setAttribute('aria-pressed',x===b));$('#swJudge').hidden=false});
+$$('#swJudge [data-j]').forEach(b=>b.onclick=()=>{if(swRes[swI]!==null||!bet)return;const ok=b.dataset.j==='1';const pts=ok?bet:-bet;swRes[swI]={ok,pts};swBank+=pts;swJudged++;
+ $$('#swBets button').forEach(x=>x.disabled=true);$('#swJudge').hidden=true;$('#swRev').hidden=false;
+ const fx=$('#swFx');fx.textContent=ok?'APPROVED':'REJECTED';fx.className='s07-stampfx '+(ok?'ok':'no');void fx.offsetWidth;fx.classList.add('go');
+ const sp=$(`#swLedger span[data-i="${swI}"]`);sp.classList.add(ok?'ok':'no');sp.querySelector('b').textContent=(pts>0?'+':'')+pts;
+ if(!swBest||pts>swBest.pts)swBest={w:V[swI][0],pts};$('#swBank').textContent=swBank;$('#swBest').textContent=swBest.pts>0?`${swBest.w} (+${swBest.pts})`:'—';$('#swCount').textContent=swJudged+' / 11 stamped';addXP(ok?5:1);
+ $('#swNext').hidden=false;
+ if(swJudged===V.length){const o=$('#swOut');o.hidden=false;o.textContent=`The ink bank is ${swBank}.${swBest&&swBest.pts>0?` My best bet was “${swBest.w}”.`:''}`;
+  if(swBank>swRec){swRec=swBank;st.set('gt08-s07-wrec',swBank);$('#swRec').textContent=swBank;o.textContent+=' New class record!'}addXP(15,'wager');markDone(1);$('#swNext').hidden=true}});
+$('#swNext').onclick=()=>{if(swI<V.length-1)swShow(swI+1)};
+$('#swHear').onclick=()=>say(V[swI][0]);$('#swHearEx').onclick=()=>clip(`L08-S07-vocab-${nnn(swI)}-narrator.mp3`,V[swI][0]+'. '+V[swI][2]);
+swShow(0);
+mc($('#mcV'),[
+ {q:"My visa request is ___. It started last week, but it isn’t finished.",o:["in progress","overdue","rejected"],a:0},
+ {q:"I’m waiting for ___ from my manager. I can’t start without it.",o:["approval","a follow up","a request form"],a:0},
+ {q:"The payment is ___. It was due last Friday.",o:["on hold","overdue","in progress"],a:1},
+ {q:"Please ___ the form and send it back today.",o:["fill out","sign off","reject"],a:0},
+ {q:"The order is ___ until the payment arrives. Nothing moves.",o:["overdue","on hold","completed"],a:1,ok:"on hold = stopped for now."},
+ {q:"They haven’t answered. I will ___ with them tomorrow.",o:["submit","reject","follow up"],a:2}],$('#scV'),'mcV',1);
+
+/* ===== §3 Status Machine ===== */
+const MR=[["The form","completed",0],["The payment","made",0],["The request","approved",0],["The invoice","sent",0],["The documents","signed",1],["The appointment","confirmed",0]];
+const SL={y:"✓ done",n:"✗ not yet",s:"! needed",q:"? ask"};const seen=new Set();
+function mSent(np,pp,pl,s){const hv=pl?'have':'has',hn=pl?'haven’t':'hasn’t',nd=pl?'need':'needs';
+ if(s==='y')return `${np} <mark>${hv} been</mark> ${pp}.`;
+ if(s==='n')return `${np} <mark>${hn} been</mark> ${pp} <mark>yet</mark>.`;
+ if(s==='s')return `${np} <mark>still ${nd} to be</mark> ${pp}.`;
+ return `<mark>${cap(hv)}</mark> ${np.toLowerCase()} <mark>been</mark> ${pp} <mark>yet</mark>?`}
+MR.forEach(([np,pp,pl],i)=>{const d=document.createElement('div');d.className='s07-mr';
+ d.innerHTML=`<div class="it">${np}<small>${pp}</small></div><div class="sw" role="group" aria-label="Status of ${np}">${['y','n','s','q'].map(k=>`<button data-s="${k}" aria-pressed="false">${SL[k]}</button>`).join('')}</div><div class="out" aria-live="polite"><em>press a button →</em></div>`;
+ const out=d.querySelector('.out');d.querySelectorAll('.sw button').forEach(b=>b.onclick=()=>{d.querySelectorAll('.sw button').forEach(x=>x.setAttribute('aria-pressed',x===b));out.innerHTML='<span>'+mSent(np,pp,pl,b.dataset.s)+'</span>';seen.add(i+b.dataset.s);addXP(1,'mr'+i+b.dataset.s);
+  if(seen.size>=12&&!$('#mach').dataset.ok){$('#mach').dataset.ok=1;$('#machRes').textContent='Pattern found: has/have + BEEN + participle. “Yet” goes at the end. “Still needs to be” = the next action.';addXP(10,'mach')}});
+ $('#mach').appendChild(d)});
+$('#hlBtn').onclick=()=>{const on=!$('#mach').classList.contains('show-hl');$('#mach').classList.toggle('show-hl',on);$('#hlBtn').setAttribute('aria-pressed',on);$('#hlBtn').textContent=on?'Hide the key words':'Show the key words'};
+mc($('#mcA'),[
+ {q:"The request ___ yet. We are still waiting.",o:["hasn’t been approved","hasn’t approved","wasn’t been approved"],a:0,ok:"hasn’t been + participle + yet."},
+ {q:"The documents ___ signed. You can send them.",o:["has been","have been","are been"],a:1,ok:"documents = plural → have been."},
+ {q:"The invoice still needs to be ___.",o:["send","sent","sended"],a:1,ok:"send → sent (irregular)."},
+ {q:"___ the payment been made yet?",o:["Has","Have","Did"],a:0},
+ {q:"The contract ___ signed. Please do it today.",o:["still needs to be","still need to be","still needs to"],a:0}],$('#scA'),'mcA',2);
+const tU=timer($('#tU'));
+/* GRM-04 Correction Bounty */
+let bnTot=0,bnEl=0;
+const BN0=[["The form has not completed yet.","The form hasn’t been completed yet."],["The payment has been send.","The payment has been sent."],["Has been approved the request yet?","Has the request been approved yet?"],["The documents has been signed.","The documents have been signed."],["The invoice still needs to sent.","The invoice still needs to be sent."],["It was been confirmed.","It has been confirmed."]];
+function bnUp(){$('#bnCount').textContent=`${bnEl} / ${bnTot} eliminated`;if(bnEl>=1){const o=$('#bnOut');o.hidden=false;o.textContent=`We eliminated ${bnEl} of ${bnTot} errors. Bounty points: ${bnEl}.`}}
+function addBn(err,fix){const d=document.createElement('div');d.className='s07-bt';bnTot++;
+ d.innerHTML=`<span class="wanted">WANTED · ERROR ${String(bnTot).padStart(2,'0')}</span><div class="er"></div><div class="mdl" hidden></div><div class="acts"><button class="btn sm" data-a="mdl">${fix?'Show model':'Say the repair'}</button><button class="btn sm main" data-a="fix" style="--c:var(--done)">Repaired ✓ +1</button></div><span class="elim">ELIMINATED</span>`;
+ d.querySelector('.er').textContent=err;const m=d.querySelector('.mdl');if(fix)m.textContent='✓ '+fix;
+ d.querySelector('[data-a=mdl]').onclick=()=>{if(fix)m.hidden=!m.hidden};
+ d.querySelector('[data-a=fix]').onclick=()=>{if(d.classList.contains('gone'))return;d.classList.add('gone');bnEl++;if(fix)m.hidden=false;d.querySelector('.acts').hidden=true;addXP(8);bnUp();if(bnEl===bnTot){addXP(15,'bn');markDone(2)}};
+ $('#bn').appendChild(d);bnUp()}
+BN0.forEach(([e,f])=>addBn(e,f));
+function bnAddFrom(a,b){const e=a.value.trim();if(!e)return;addBn(e,b.value.trim());a.value='';b.value=''}
+$('#bnAdd').onclick=()=>bnAddFrom($('#bnIn'),$('#bnFix'));$('#bnAdd2').onclick=()=>bnAddFrom($('#bnIn2'),$('#bnFix2'));
+
+/* ===== §4 Reading ===== */
+const NT=[
+ {c:'',h:['EMAIL','City Office'],t:"<b>Subject: ID renewal</b><br>Dear Ms. Reyes, your request has been received and your photo has been approved. But your payment hasn’t been confirmed yet, so your appointment is on hold. Please send your receipt today and we will update your status.",a:'p'},
+ {c:'app',h:['APP','Order tracker'],t:"<b>Purchase order 4471 · Status: approved</b><br>The order has been signed and the budget has been confirmed. The shipment hasn’t been sent yet. The invoice still needs to be attached. Supplier update: tomorrow.",a:'a'},
+ {c:'note',h:['NOTE','School office'],t:"Thank you, Mrs. Lara! The trip form has been signed, the fee has been paid and your daughter’s place has been confirmed. Everything is complete. You don’t need to follow up. See you on Monday!",a:'d'}];
+let sortOk=0;
+NT.forEach((n,i)=>{const d=document.createElement('div');d.className='s07-nt '+n.c;
+ d.innerHTML=`<div class="hd"><span>${n.h[0]}</span><span>${n.h[1]}</span></div><div class="txt">${n.t}</div><div class="sortbar"><span>Where does it go?</span><div>${['p','a','d'].map(k=>`<button data-k="${k}">${COLN[k]}</button>`).join('')}</div></div>`;
+ let ok=false;d.querySelectorAll('.sortbar button').forEach(b=>b.onclick=()=>{if(ok)return;d.querySelectorAll('.sortbar button').forEach(x=>x.classList.remove('pick'));b.classList.add('pick');
+  if(b.dataset.k===n.a){ok=true;d.classList.remove('bad');d.classList.add('good');sortOk++;$('#scS').textContent=sortOk+' / 3 sorted';addXP(8);if(sortOk===3)addXP(10,'sort')}else{d.classList.add('bad');setTimeout(()=>d.classList.remove('bad'),700)}});
+ $('#notices').appendChild(d)});
+mc($('#mcR'),[
+ {q:"Why is Ms. Reyes’s appointment on hold?",o:["Her photo hasn’t been approved.","Her payment hasn’t been confirmed yet.","Her request has been rejected."],a:1},
+ {q:"What still needs to be done for order 4471?",o:["The invoice still needs to be attached.","The order still needs to be signed.","The budget still needs to be confirmed."],a:0},
+ {q:"True or false: the shipment for order 4471 has already been sent.",o:["True","False"],a:1,ok:"False — “hasn’t been sent yet”."}],$('#scR'),'mcR',3);
+
+/* ===== §5 Listening (LIS-09) ===== */
+const RX=/\[\[(\d)\|([^\]]*)\]\]/g;const L=DATA.LIS;
+const clean=t=>t.replace(RX,'$2');
+L.forEach(([n,k,name,acc,t])=>{const d=document.createElement('div');d.className='s07-call '+k;
+ d.innerHTML=`<span class="av">${name[0]}</span><button class="pb" aria-label="Play message ${+n} from ${name}">${SPK}<span>Message ${+n} · ${name}<br><small>${acc}</small></span></button>`;
+ d.querySelector('.pb').onclick=()=>clip(`L08-S07-listening-${n}-${k}.mp3`,clean(t),{voice:voiceFor(k==='tom'?'A':'B'),rate:k==='joy'?.88:.92});$('#calls').appendChild(d)});
+$('#stopBtn').onclick=stopAll;
+mc($('#mcL1'),[{q:"What is the call about?",o:["The status of three things at work","A new job in another city","A problem with a flight"],a:0}],$('#scL1'),'mcL1',4);
+const ANS={};let gcN=0,selChip=null,armGap=null;
+L.forEach(([n,k,name,acc,t])=>{if(!RX.test(t)){RX.lastIndex=0;return}RX.lastIndex=0;const d=document.createElement('div');d.className='s07-gl '+k;
+ d.innerHTML=`<span class="who">${name.toUpperCase()}</span><div>${esc(t).replace(/\[\[(\d)\|([^\]]*)\]\]/g,(m,g,a)=>{ANS[g]=a.replace(/&#39;/g,"'");return `<button class="s07-gap" data-g="${g}" aria-label="Gap ${g}">·&nbsp;·&nbsp;·</button>`})}</div>`;$('#gaps').appendChild(d)});
+const chipTexts=shuf([...Object.values(ANS),...DATA.DIST]);
+chipTexts.forEach(tx=>{const b=document.createElement('button');b.className='s07-chip';b.textContent=tx;b.setAttribute('aria-pressed','false');$('#chips').appendChild(b)});
+const fb=document.createElement('p');fb.className='hint';fb.id='gcFb';fb.setAttribute('aria-live','polite');$('#chips').after(fb);
+$('#bag').innerHTML=Object.keys(ANS).sort().map(g=>`<span data-g="${g}">?</span>`).join('');
+$('#useBag').innerHTML=Object.keys(ANS).sort().map(g=>`<button data-g="${g}" disabled aria-pressed="false">${esc(ANS[g])}</button>`).join('');
+function tryFill(chip,gap){const g=gap.dataset.g;if(chip.textContent===ANS[g]){gap.textContent=ANS[g];gap.classList.remove('arm');gap.classList.add('ok');gap.disabled=true;chip.disabled=true;chip.setAttribute('aria-pressed','false');selChip=null;armGap=null;gcN++;
+  const sl=$(`#bag [data-g="${g}"]`);sl.textContent=ANS[g];sl.classList.add('on');const ub=$(`#useBag [data-g="${g}"]`);ub.disabled=false;
+  $('#gcCount').textContent=gcN+' / 8 collected';fb.textContent='✓ Collected.';addXP(5);if(gcN===8){fb.textContent='All 8 chunks are in your bag. Now use two.';addXP(15,'gc');markDone(4)}}
+ else{gap.classList.add('shake');setTimeout(()=>gap.classList.remove('shake'),350);fb.textContent='✗ Not that one. Think about the meaning and the grammar. Listen again.';chip.setAttribute('aria-pressed','false');selChip=null;gap.classList.remove('arm');armGap=null}}
+$$('#chips .s07-chip').forEach(c=>c.onclick=()=>{if(c.disabled)return;if(selChip===c){c.setAttribute('aria-pressed','false');selChip=null;return}$$('#chips .s07-chip').forEach(x=>x.setAttribute('aria-pressed','false'));c.setAttribute('aria-pressed','true');selChip=c;if(armGap)tryFill(c,armGap)});
+$$('#gaps .s07-gap').forEach(g=>g.onclick=()=>{if(g.disabled)return;$$('#gaps .s07-gap').forEach(x=>x.classList.remove('arm'));g.classList.add('arm');armGap=g;if(selChip)tryFill(selChip,g)});
+mc($('#mcL2'),[
+ {q:"Which item is on hold?",o:["The vacation request","The purchase order for the gloves","The parking form"],a:1},
+ {q:"What does the parking form still need?",o:["To be completed and to have a receipt attached","To be signed by Mr. Cruz","To be rejected"],a:0},
+ {q:"When is the deadline for the parking form?",o:["Monday","Friday","Tomorrow"],a:1}],$('#scL2'),'mcL2',4);
+let useSel=[];
+$$('#useBag button').forEach(b=>b.onclick=()=>{if(b.disabled)return;const on=b.getAttribute('aria-pressed')==='true';if(!on&&useSel.length>=2)return;b.setAttribute('aria-pressed',!on);useSel=$$('#useBag button[aria-pressed=true]').map(x=>x.textContent);$('#useCount').textContent=useSel.length+' / 2 chosen';
+ const o=$('#useOut');if(useSel.length===2){o.hidden=false;o.textContent=`Say two true sentences about your life with “${useSel[0]}” and “${useSel[1]}”. Then declare: “I collected ${gcN} of 8 chunks.”`;addXP(10,'use')}else o.hidden=true});
+$('#scrBtn').onclick=()=>{const o=$('#script').hidden;$('#script').hidden=!o;$('#scrBtn').setAttribute('aria-expanded',o);$('#scrBtn').textContent=o?'Hide the script':'Show the script';
+ if(o)$('#script').innerHTML=L.map(([n,k,name,acc,t])=>`<p><b>${name}:</b> ${esc(clean(t))}</p>`).join('')};
+
+/* ===== §6 Speaking (B18-04) ===== */
+const TQ=[
+ ["WAITING","What are you waiting for right now?",["Has it been approved yet?","What still needs to be done?"]],
+ ["FORMS","What is harder for you: filling out a form or waiting for approval?",["Why?","How do you feel when something is on hold?"]],
+ ["REQUESTS","Think of a request you sent last month. Has it been answered yet?",["What did you ask for?","Who answered?"]],
+ ["LAST MINUTE","Which paperwork do you always do at the last minute?",["Why?"]],
+ ["SIGN-OFF","Who signs off on things at your work?",["How long does it take?","What happens when that person is away?"]],
+ ["PAPERWORK","Tell me about a form you filled out this year.",["Was it easy or difficult?"]],
+ ["MONEY AT WORK","What do you do when an invoice is overdue?",["Who do you follow up with?","What do you say?"]],
+ ["AT HOME","Is anything in your family life on hold right now?",["Why is it on hold?"]],
+ ["STATUS","How do you ask for the status of an order?",["Which phrase do you use?","What do you say when it hasn’t arrived yet?"]],
+ ["SPEED","Which approvals are fast where you work, and which are slow?",["Why?","What would make them faster?"]],
+ ["REJECTED","Has a request of yours ever been rejected?",["What was it?","What did you do next?"]],
+ ["TODAY","What is something that still needs to be done today?",["Who will do it?"]],
+ ["IN PROGRESS","What is in progress in your life right now?",["When will it be done?","What helps you finish?"]],
+ ["UPDATE","How do you tell your boss that something is delayed?",["What do you say first?","What do you promise?"]]];
+let tk=0;const tkSeen=new Set();
+TQ.forEach((_,i)=>{const b=document.createElement('button');b.setAttribute('aria-label','Ticket '+(i+1));b.onclick=()=>{tk=i;drawTk()};$('#tkDots').appendChild(b)});
+function drawTk(){const q=TQ[tk];tkSeen.add(tk);$('#tkNo').textContent=String(tk+1).padStart(2,'0');$('#tkOf').textContent='of '+TQ.length;$('#tkTag').textContent=q[0];$('#tkQ').textContent=q[1];$('#tkF').innerHTML=q[2].map(f=>`<span>${esc(f)}</span>`).join('');
+ [...$('#tkDots').children].forEach((d,i)=>{d.setAttribute('aria-current',i===tk);d.classList.toggle('seen',tkSeen.has(i)&&i!==tk)});$('#tkP').disabled=tk===0;$('#tkN').textContent=tk===TQ.length-1?'Last ticket ✓':'Next ticket →';if(tkSeen.size>=5)addXP(10,'tk')}
+$('#tkP').onclick=()=>{if(tk>0){tk--;drawTk()}};$('#tkN').onclick=()=>{if(tk<TQ.length-1){tk++;drawTk()}};drawTk();
+const CL=[
+ {n:"The Stuck Request",ty:"WORK",f:["You sent a vacation request 12 days ago.","Your manager is away until Monday.","You must book flights by Friday.","The HR form has been completed, but your manager hasn’t signed off yet."]},
+ {n:"The Late Refund",ty:"LIFE",f:["You returned a pair of shoes online 10 days ago.","The store confirmed that it received them.","The refund hasn’t been approved yet.","Your card bill is due next week."]},
+ {n:"The Overdue Invoice",ty:"WORK",f:["A supplier invoice is 5 days overdue.","The purchase order has been signed.","The payment is on hold because the budget code is missing.","The supplier may stop shipments on Monday."]},
+ {n:"The Unsigned School Form",ty:"LIFE",f:["Your child’s trip form hasn’t been signed yet.","The other parent is traveling until Thursday.","The fee has been paid.","The deadline is tomorrow at noon."]}];
+let clC=0,clR=1,clTot=0;
+const pips=(el,n)=>{el.innerHTML='';for(let i=1;i<=n;i++){const b=document.createElement('button');b.textContent=i;b.setAttribute('aria-pressed','false');b.onclick=()=>{b.setAttribute('aria-pressed',b.getAttribute('aria-pressed')!=='true');clUp()};el.appendChild(b)}};
+pips($('#clQ'),5);pips($('#clS'),2);pips($('#clA'),3);
+function clPts(){return $$('#clQ [aria-pressed=true]').length+$$('#clS [aria-pressed=true]').length+$$('#clA [aria-pressed=true]').length}
+function clUp(){const p=clPts();$('#clScore').textContent='Round points: '+p;if(p>=1)addXP(1,'cl'+clR+'p'+p)}
+function clReset(){$$('#clQ button,#clS button,#clA button').forEach(b=>b.setAttribute('aria-pressed','false'));$('#clScore').textContent='Round points: 0';$('#clFacts').hidden=true;$('#clHide').hidden=true;$('#clCover').hidden=false;$('#clOpen').setAttribute('aria-expanded','false');$('#clBest').value='';$('#clOut').hidden=true}
+CL.forEach((c,i)=>{const b=document.createElement('button');b.setAttribute('role','tab');b.setAttribute('aria-selected',i===0);b.textContent=`${i+1} · ${c.n}`;b.onclick=()=>{clC=i;$$('#clCases button').forEach((x,k)=>x.setAttribute('aria-selected',k===i));clReset()};$('#clCases').appendChild(b)});
+$('#clOpen').onclick=()=>{const c=CL[clC];$('#clFacts').innerHTML=`<h6>${c.n} · ${c.ty}</h6>`+c.f.map(x=>`<p>${esc(x)}</p>`).join('');$('#clFacts').hidden=false;$('#clCover').hidden=true;$('#clHide').hidden=false;$('#clOpen').setAttribute('aria-expanded','true')};
+$('#clHide').onclick=()=>{$('#clFacts').hidden=true;$('#clCover').hidden=false;$('#clHide').hidden=true;$('#clOpen').setAttribute('aria-expanded','false')};
+$$('#clRounds button').forEach(b=>b.onclick=()=>{clR=+b.dataset.r;$$('#clRounds button').forEach(x=>x.setAttribute('aria-pressed',x===b));if(clR===2){clC=(clC+1)%CL.length;$$('#clCases button').forEach((x,k)=>x.setAttribute('aria-selected',k===clC))}clReset()});
+let clDone=new Set();
+$('#clDone').onclick=()=>{const v=$('#clBest').value.trim();const o=$('#clOut');o.hidden=false;
+ if(!v){o.textContent='Say it first: “The best solution is ___ because ___.” Then type a short version.';return}
+ o.textContent=`Declared: “${v}” · Round ${clR} points: ${clPts()} of 10.`;if(!clDone.has(clR)){clDone.add(clR);clTot+=clPts();addXP(15,'clr'+clR)}if(clDone.size===2){o.textContent+=` Both rounds: ${clTot} points.`;markDone(5)}};
+
+/* ===== §7 Mission ===== */
+const MS=[
+ {n:"1 · Moving day",ty:"LIFE",cards:[["Truck booking","d"],["Landlord approval","a"],["Lease form","a"],["Electricity transfer","p",["prog","in progress"]],["Internet installation","p",["hold","on hold"]],["Deposit payment","p",["","overdue"]]],
+  model:["The truck booking has been done. The landlord’s approval has been confirmed and the lease form has been signed.","The internet installation hasn’t been scheduled yet.","The electricity transfer still needs to be completed.","The deposit payment is overdue, and the internet is on hold.","Has the deposit been paid yet? I will follow up with the landlord today."]},
+ {n:"2 · Team lunch",ty:"WORK",cards:[["Venue booking","d"],["Invitations","d"],["Budget","a"],["Speaker confirmation","p",["prog","in progress"]],["Manager sign-off","p",["hold","on hold"]],["Catering invoice","p",["","overdue"]]],
+  model:["The venue booking has been confirmed and the invitations have been sent. The budget has been approved.","The speaker hasn’t been confirmed yet.","The manager’s sign-off still needs to be done.","The catering invoice is overdue, and the sign-off is on hold.","Has the invoice been paid yet? I will follow up with Finance today and send an update tomorrow."]},
+ {n:"3 · Safety gloves",ty:"WORK",cards:[["Supplier quote","d"],["Purchase order","a"],["Budget","a"],["Shipment","p",["prog","in progress"]],["Payment","p",["hold","on hold"]],["Safety checklist","p",["","overdue"]]],
+  model:["The supplier quote has been completed and the purchase order has been approved. The budget has been confirmed.","The payment hasn’t been made yet.","The safety checklist still needs to be completed.","The checklist is overdue, and the payment is on hold. The shipment is in progress.","Has the payment been approved yet? I will follow up and make sure we have it by Friday."]}];
+const MVL=[["DONE","What has been done or approved?"],["NOT YET","What hasn’t been … yet?"],["STILL NEEDED","What still needs to be …?"],["PROBLEM","Overdue or on hold? Say why."],["ASK + NEXT","Has … been … yet? + next step"]];
+const mvS=MS.map(()=>MVL.map(()=>false));let msI=0;
+function msDraw(){const c=MS[msI];const bd=$('#msBoard');bd.innerHTML=['p','a','d'].map(k=>`<div class="s07-col ${k}" data-col="${k}"><h4><i></i>${COLN[k]}</h4><div class="cb"></div></div>`).join('');
+ c.cards.forEach(([t,col,fl],i)=>{bd.querySelector(`[data-col=${col}] .cb`).appendChild(mkCard({id:'m'+i,t,ty:c.ty,flag:fl},true))});
+ $('#msMoves').innerHTML='';MVL.forEach(([a,b],i)=>{const m=document.createElement('button');m.className='s07-mv';m.setAttribute('aria-pressed',mvS[msI][i]);m.innerHTML=`<b>${i+1} · ${a}</b>${b}`;m.onclick=()=>{mvS[msI][i]=!mvS[msI][i];m.setAttribute('aria-pressed',mvS[msI][i]);mvUp()};$('#msMoves').appendChild(m)});
+ $$('#msTabs button').forEach((x,k)=>x.setAttribute('aria-selected',k===msI));
+ $('#msModelBox').hidden=true;$('#msModel').setAttribute('aria-expanded','false');$('#msModel').textContent='Show a model after speaking'}
+function mvTot(){return mvS.flat().filter(Boolean).length}
+function mvUp(){const n=mvTot();$('#mvN').textContent=n;$('#mvBar').style.width=n/15*100+'%';if(n>=12)addXP(30,'mission')}
+MS.forEach((c,i)=>{const b=document.createElement('button');b.setAttribute('role','tab');b.textContent='Board '+c.n;b.onclick=()=>{msI=i;msDraw()};$('#msTabs').appendChild(b)});
+$('#mvRe').onclick=()=>{mvS.forEach(r=>r.fill(false));msDraw();mvUp()};
+$('#msModel').onclick=()=>{const o=$('#msModelBox').hidden;$('#msModelBox').hidden=!o;$('#msModel').setAttribute('aria-expanded',o);$('#msModel').textContent=o?'Hide the model':'Show a model after speaking';if(o)$('#msModelBox').innerHTML=`<p class="hint">Model — ${esc(MS[msI].n)}</p>`+MS[msI].model.map((x,i)=>`<p><b>${i+1}.</b> ${esc(x)}</p>`).join('')};
+$('#signBtn').onclick=()=>{const n=mvTot();if(n>=12){$('#signNote').innerHTML=`<span class="s07-stampbig">APPROVED</span> Mission signed: ${n} of 15 moves.`;addXP(20,'sign');markDone(6)}else $('#signNote').textContent=`Not yet: ${n} of 15. You need 12. Brief one more board.`};
+msDraw();
+
+/* ===== §8 Wrap-up ===== */
+mc($('#mcQ'),[
+ {q:"The request ___ yet.",o:["hasn’t been approved","hasn’t approved","wasn’t been approved"],a:0},
+ {q:"The documents ___ signed. We can send them.",o:["has been","have been","are"],a:1},
+ {q:"The invoice still needs to be ___.",o:["send","sended","sent"],a:2},
+ {q:"The order is ___ until the payment arrives.",o:["on hold","overdue","in progress"],a:0},
+ {q:"Which question is correct?",o:["Has been the form completed yet?","Has the form been completed yet?","Has the form completed been yet?"],a:1}],$('#scQ'),'mcQ',7);
+["I can say what has been approved or done.","I can say what hasn’t been done yet.","I can say what still needs to be done.","I can ask: Has … been … yet?"].forEach(t=>{const b=document.createElement('button');b.className='s07-cd';b.setAttribute('aria-pressed','false');b.innerHTML=`<span class="st">DONE</span><span>${t}</span>`;b.onclick=()=>{const on=b.getAttribute('aria-pressed')!=='true';b.setAttribute('aria-pressed',on);if(on)addXP(3)};$('#cando').appendChild(b)});
+$('#coBtn').onclick=()=>{const c=$$('#cando [aria-pressed=true]').length;const o=$('#coOut');o.hidden=false;o.textContent=`Today I stamped ${c} of 4 can-dos, I did ${mvTot()} of 15 mission moves, we eliminated ${bnEl} of ${bnTot} errors and my ink bank is ${swBank}. Say it out loud.`;addXP(10,'co')};
+function showDone(){$('#doneBtn').textContent='✓ Session complete';$('#doneBtn').disabled=true}
+if(st.get('gt08-s07-done'))showDone();
+$('#doneBtn').onclick=()=>{st.set('gt08-s07-done','1');addXP(50,'done');markDone(7);showDone()};
+})();
+
+</script>
+</body>
+</html>

@@ -1,0 +1,648 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Intermedio 3 · S09 · Two Options, One Deadline</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
+<style>:root{
+  --navy:#16213E; --navy2:#22305A; --cream:#F3FAF6; --paper:#FFFFFF; --ink:#1B1B2F; --mut:#5E6275; --line:#D5EBDF;
+  --coral:#0B8457; --coral-d:#065F3C; --coral-t:#E1F5EC;
+  --sun:#FFC233; --sun-t:#FFF3D1; --teal:#0A6FA8; --teal-t:#DCEEF9; --pink:#C71F5E; --pink-t:#FBE3EC; --violet:#6B4DF0; --violet-t:#ECE7FF;
+  --ok:#15A34A; --ok-t:#E3F7EA; --err:#E5484D; --err-t:#FDE8E8;
+  --r:18px; --r-sm:12px; --sh:0 6px 22px rgba(27,27,47,.08); --sh-lg:0 18px 44px rgba(27,27,47,.16);
+  color-scheme:light;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+[hidden]{display:none!important}
+html{scroll-behavior:smooth;scroll-padding-top:150px}
+body{background:var(--cream);color:var(--ink);font-family:"DM Sans","Segoe UI",system-ui,sans-serif;font-size:17px;line-height:1.55;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4,.nun{font-family:Nunito,"Segoe UI",system-ui,sans-serif;letter-spacing:-.01em;line-height:1.15;text-wrap:balance}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+button:focus-visible,a:focus-visible,textarea:focus-visible,input:focus-visible{outline:3px solid var(--violet);outline-offset:2px}
+img{max-width:100%;display:block}
+.wrap{max-width:1100px;margin:0 auto;padding-inline:16px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+/* ---------- top bar ---------- */
+.topbar{background:var(--navy);color:#fff}
+.topbar .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding-block:10px}
+.brand{display:flex;align-items:center;gap:10px;font-family:Nunito;font-weight:900;font-size:14px;letter-spacing:.08em}
+.brand i{width:10px;height:10px;border-radius:50%;background:var(--coral);box-shadow:0 0 0 4px rgba(11,132,87,.3)}
+.brand a{color:#fff;text-decoration:none}
+.brand small{font-family:"DM Sans";font-weight:500;letter-spacing:0;opacity:.7;font-size:13px}
+.toggles{display:flex;gap:8px;flex-wrap:wrap}
+.tg{border:1.5px solid rgba(255,255,255,.3);color:#fff;border-radius:99px;padding:6px 14px;font-size:13px;font-weight:700}
+.tg[aria-pressed="true"]{background:var(--sun);border-color:var(--sun);color:var(--navy)}
+
+/* ---------- hero ---------- */
+.hero{position:relative;background:var(--navy);color:#fff;overflow:hidden}
+.hero .bg{position:absolute;inset:0;background:url(img/b9s09_fork.jpg) center/cover}
+.hero .bg::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(15,30,70,.97) 0%,rgba(15,30,70,.87) 45%,rgba(15,30,70,.28) 100%)}
+.hero .wrap{position:relative;padding-block:44px 40px}
+.kick{font-family:Nunito;font-weight:900;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--sun)}
+.hero h1{font-size:clamp(40px,6.5vw,72px);font-weight:900;margin:8px 0 10px;max-width:16ch}
+.hero h1 span{color:var(--coral);text-shadow:0 0 0 transparent}
+.hero p.obj{max-width:56ch;font-size:18px;opacity:.94}
+.pills{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.pill{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.28);border-radius:99px;padding:5px 13px;font-size:14px;font-weight:700}
+.pill.sun{background:var(--sun);border-color:var(--sun);color:var(--navy)}
+.coach{display:inline-flex;align-items:center;gap:12px;margin-top:20px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);border-radius:99px;padding:6px 18px 6px 6px}
+.coach .cav{width:44px;height:44px;border-radius:50%;background:var(--coral);display:grid;place-items:center;font-family:Nunito;font-weight:900;font-size:16px;letter-spacing:.02em}
+.coach b{display:block;font-family:Nunito;font-weight:900;font-size:17px;line-height:1.1}
+.coach small{font-size:13px;color:var(--sun);font-weight:700;letter-spacing:.04em}
+
+/* ---------- sticky nav ---------- */
+.nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:40;background:rgba(243,250,246,.96);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.nav .wrap{padding-block:10px 8px}
+.prog{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+.bar{flex:1;height:10px;background:#DDEEE5;border-radius:99px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--coral),var(--sun));border-radius:99px;transition:width .4s}
+.xp{font-family:Nunito;font-weight:900;font-size:15px;color:var(--coral-d);white-space:nowrap}
+.clock{font-family:Nunito;font-weight:900;font-size:15px;background:var(--navy);color:#fff;border-radius:99px;padding:5px 12px;font-variant-numeric:tabular-nums}
+.steps{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}
+.steps::-webkit-scrollbar{display:none}
+.steps a{flex:1 0 auto;text-decoration:none;color:var(--mut);background:#EAF0FB;border-radius:10px;padding:8px 12px;font-weight:700;font-size:14px;white-space:nowrap;text-align:center;border:1.5px solid transparent}
+.steps a b{font-family:Nunito;margin-right:4px}
+.steps a.on{background:var(--c,var(--coral));color:#fff}
+.steps a.done{border-color:var(--ok);color:var(--ok)}
+.steps a.done.on{color:#fff}
+
+/* ---------- sections ---------- */
+main{padding-block:26px 80px}
+.sec{background:var(--paper);border-radius:24px;box-shadow:var(--sh);margin-bottom:26px;overflow:hidden;border-top:8px solid var(--c)}
+.shead{display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between;padding:22px 26px 6px}
+.snum{display:flex;align-items:center;gap:14px}
+.snum .n{width:54px;height:54px;border-radius:16px;background:var(--c);color:#fff;display:grid;place-items:center;font-family:Nunito;font-weight:900;font-size:22px;flex:none}
+.snum h2{font-size:clamp(26px,3.4vw,36px);font-weight:900}
+.snum .sub{font-size:14px;color:var(--mut);font-weight:500}
+.meta{display:flex;gap:8px;flex-wrap:wrap}
+.chip{border-radius:99px;padding:5px 12px;font-size:13px;font-weight:700;background:var(--ct);color:var(--ink)}
+.chip.dark{background:var(--navy);color:#fff}
+.sbody{padding:14px 26px 28px;display:grid;gap:22px}
+.block{display:grid;gap:12px}
+.bt{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.bt h3{font-size:22px;font-weight:900}
+.bt .tag{font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--c)}
+.hint{color:var(--mut);font-size:15px}
+.card{background:var(--paper);border:1.5px solid var(--line);border-radius:var(--r);padding:18px}
+.tint{background:var(--ct);border-color:transparent}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+@media (max-width:820px){.g2,.g3{grid-template-columns:1fr}}
+.btn{border-radius:99px;padding:10px 18px;font-weight:700;font-size:15px;background:var(--paper);border:1.5px solid var(--line)}
+.btn.main{background:var(--c,var(--coral));border-color:var(--c,var(--coral));color:#fff}
+.btn.dark{background:var(--navy);border-color:var(--navy);color:#fff}
+.btn.sm{padding:6px 12px;font-size:14px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.say{width:40px;height:40px;border-radius:50%;background:var(--c,var(--coral));color:#fff;display:inline-grid;place-items:center;flex:none;font-size:16px}
+.say svg{width:18px;height:18px;fill:#fff}
+
+/* teacher notes */
+.tn{border-radius:var(--r);background:#FFFBEA;border:1.5px dashed #E9C46A}
+.tn summary{list-style:none;padding:12px 16px;font-weight:800;font-family:Nunito;cursor:pointer;display:flex;justify-content:space-between;color:#7A5A00}
+.tn summary::-webkit-details-marker{display:none}
+.tn summary::after{content:"＋";font-weight:900}
+.tn[open] summary::after{content:"－"}
+.tn .layers{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;padding:0 16px 16px}
+@media (max-width:820px){.tn .layers{grid-template-columns:1fr}}
+.tn .ly{background:#fff;border-radius:12px;padding:12px 14px;font-size:15px}
+.tn .ly h4{font-size:13px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px}
+.tn .ly:nth-child(1) h4{color:var(--violet)} .tn .ly:nth-child(2) h4{color:var(--coral-d)} .tn .ly:nth-child(3) h4{color:var(--teal)}
+.tn ul{padding-left:18px} .tn li{margin-bottom:4px}
+body.student .tn, body.student .key{display:none!important}
+
+/* ---------- §1 warm-up ---------- */
+.scene{display:grid;grid-template-columns:1.1fr 1fr;border-radius:var(--r);overflow:hidden;background:var(--navy);color:#fff}
+@media (max-width:820px){.scene{grid-template-columns:1fr}}
+.scene img{height:100%;min-height:260px;object-fit:cover}
+.scene .txt{padding:26px;display:grid;gap:12px;align-content:center}
+.bubble{background:#fff;color:var(--ink);border-radius:18px 18px 18px 4px;padding:12px 16px;font-size:20px;font-weight:700;max-width:28ch;position:relative}
+.bubble.me{background:var(--coral);color:#fff;border-radius:18px 18px 4px 18px;justify-self:end}
+.poll{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+@media (max-width:900px){.poll{grid-template-columns:repeat(3,1fr)}}
+@media (max-width:520px){.poll{grid-template-columns:repeat(2,1fr)}}
+.pc{border-radius:var(--r);overflow:hidden;background:var(--paper);border:2px solid var(--line);display:grid;transition:transform .15s,border-color .15s}
+.pc .em{aspect-ratio:4/3;display:grid;place-items:center;font-size:40px;background:var(--pc-bg,var(--ct))}
+.pc .pb{padding:10px 12px;display:grid;gap:8px}
+.pc .nm{font-family:Nunito;font-weight:900;font-size:16px;line-height:1.15;min-height:2.3em}
+.pc .vt{display:flex;align-items:center;justify-content:space-between}
+.pc .vt button{width:34px;height:34px;border-radius:50%;background:var(--ct);font-weight:900;font-size:18px}
+.pc .vt output{font-family:Nunito;font-weight:900;font-size:22px;font-variant-numeric:tabular-nums}
+.pc .pbar{height:8px;border-radius:99px;background:#EDF1FB;overflow:hidden}
+.pc .pbar i{display:block;height:100%;width:0;background:var(--c);transition:width .3s}
+.pc.win{border-color:var(--c);transform:translateY(-3px)}
+.result{font-family:Nunito;font-weight:900;font-size:20px}
+.fq{display:grid;gap:8px}
+.fq div{background:var(--ct);border-radius:12px;padding:10px 14px;font-weight:700}
+.fq div span{color:var(--mut);font-weight:500}
+
+/* ---------- §2 vocab ---------- */
+.flips{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media (max-width:900px){.flips{grid-template-columns:repeat(3,1fr)}}
+@media (max-width:520px){.flips{grid-template-columns:repeat(2,1fr)}}
+.flip{perspective:900px;height:170px}
+.flip .in{position:relative;width:100%;height:100%;transition:transform .5s;transform-style:preserve-3d}
+.flip.on .in{transform:rotateY(180deg)}
+.flip .f,.flip .b{position:absolute;inset:0;border-radius:var(--r);backface-visibility:hidden;padding:14px;display:grid;align-content:space-between}
+.flip .f{background:var(--fc);color:#fff}
+.flip .b{background:#fff;border:2px solid var(--fc);transform:rotateY(180deg)}
+.flip .num{font-family:Nunito;font-weight:900;font-size:13px;opacity:.8}
+.flip .w{font-family:Nunito;font-weight:900;font-size:19px;line-height:1.15}
+.flip .es{font-weight:700;color:var(--mut);font-size:14px}
+.flip .ex{font-size:14px}
+.flip .fb{display:flex;justify-content:space-between;align-items:end}
+.flip .fb .say{background:rgba(255,255,255,.25)}
+.flip .tap{font-size:12px;font-weight:700;opacity:.85}
+.flip .seen{position:absolute;top:10px;right:10px;background:var(--ok);color:#fff;border-radius:99px;font-size:11px;font-weight:800;padding:2px 8px}
+.match{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.match .col{display:grid;gap:10px}
+.mi{border:2px solid var(--line);background:#fff;border-radius:14px;padding:12px 14px;font-weight:700;text-align:left;transition:.15s}
+.mi.sel{border-color:var(--c);background:var(--ct)}
+.mi.ok{border-color:var(--ok);background:var(--ok-t);color:var(--ok);cursor:default}
+.mi.bad{border-color:var(--err);background:var(--err-t);animation:shake .3s}
+@keyframes shake{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+.board{display:flex;flex-wrap:wrap;gap:10px}
+.dw{border-radius:12px;padding:10px 14px;font-family:Nunito;font-weight:900;font-size:17px;background:var(--navy);color:#fff}
+.dw[aria-pressed="true"]{background:#E4E9F9;color:#9FA9C2;text-decoration:line-through}
+.timer{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.timer output{font-family:Nunito;font-weight:900;font-size:34px;font-variant-numeric:tabular-nums;min-width:4.5ch}
+.timer.end output{color:var(--err)}
+.closeout{background:var(--navy);color:#fff;border-radius:14px;padding:12px 16px;font-family:Nunito;font-weight:900;font-size:19px}
+.stat{font-family:Nunito;font-weight:900}
+.stat b{color:var(--c);font-size:26px}
+
+/* ---------- §3 grammar ---------- */
+.disc{display:grid;grid-template-columns:1fr 1.2fr;gap:0;border-radius:var(--r);overflow:hidden;border:1.5px solid var(--line)}
+@media (max-width:820px){.disc{grid-template-columns:1fr}}
+.disc img{height:100%;min-height:240px;object-fit:cover}
+.disc .chat{padding:20px;display:grid;gap:10px;align-content:center;background:var(--violet-t)}
+.disc .chat p{background:#fff;border-radius:14px;padding:10px 14px;font-size:18px;font-weight:500;max-width:34ch}
+.disc .chat p:nth-child(even){justify-self:end;background:var(--violet);color:#fff}
+mark.hl{background:transparent;color:inherit;border-radius:4px;transition:.2s}
+.show-hl mark.hl{background:var(--sun);color:var(--ink);padding:0 3px;font-weight:800}
+.tool{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media (max-width:820px){.tool{grid-template-columns:1fr}}
+.tool .card h4{font-size:14px;letter-spacing:.08em;text-transform:uppercase;color:var(--violet);margin-bottom:6px}
+.tool .big{font-family:Nunito;font-weight:900;font-size:24px}
+.tool .big em{font-style:normal;color:var(--violet)}
+.forms{border-radius:var(--r);overflow:hidden;border:1.5px solid var(--line)}
+.forms table{width:100%;border-collapse:collapse;font-size:16px}
+.forms th{background:var(--violet);color:#fff;font-family:Nunito;text-align:left;padding:10px 14px}
+.forms td{padding:10px 14px;border-top:1px solid var(--line);background:#fff}
+.forms td:first-child{font-family:Nunito;font-weight:900;font-size:22px;color:var(--violet);width:56px;text-align:center}
+.forms b{color:var(--violet)}
+.es-box{background:#fff;border:2px dashed var(--violet);border-radius:var(--r);padding:16px 18px;display:grid;gap:8px}
+.answerbox{background:var(--navy);color:#fff;border-radius:var(--r);padding:16px 18px;font-family:Nunito;font-weight:900;font-size:19px;display:flex;align-items:center;gap:12px}
+.answerbox .tagi{background:var(--sun);color:var(--navy);border-radius:8px;padding:3px 10px;font-size:12px;letter-spacing:.06em}
+.mc{display:grid;gap:12px}
+.mcq{background:#fff;border:1.5px solid var(--line);border-radius:14px;padding:14px 16px;display:grid;gap:10px}
+.mcq .q{font-weight:700;font-size:18px}
+.mcq .q .n{font-family:Nunito;font-weight:900;color:var(--c);margin-right:6px}
+.opts{display:flex;gap:8px;flex-wrap:wrap}
+.opt{border:2px solid var(--line);border-radius:99px;padding:7px 16px;font-weight:700;background:#fff}
+.opt:hover{border-color:var(--c)}
+.opt.ok{background:var(--ok);border-color:var(--ok);color:#fff}
+.opt.no{background:var(--err-t);border-color:var(--err);color:var(--err)}
+.mcq .fb{font-size:15px;font-weight:700}
+.mcq .fb.ok{color:var(--ok)} .mcq .fb.no{color:var(--err)}
+.score{font-family:Nunito;font-weight:900;font-size:18px}
+.builder .dst,.builder .src{display:flex;flex-wrap:wrap;gap:8px;min-height:56px;padding:10px;border-radius:14px}
+.builder .dst{border:2.5px dashed var(--c);background:var(--ct)}
+.wchip{background:#fff;border:2px solid var(--line);border-radius:12px;padding:8px 14px;font-family:Nunito;font-weight:900;font-size:18px;box-shadow:0 3px 0 var(--line)}
+.dst .wchip{border-color:var(--c);box-shadow:0 3px 0 var(--c)}
+.errs{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media (max-width:820px){.errs{grid-template-columns:1fr}}
+.err{border-radius:14px;padding:14px;background:#fff;border:1.5px solid var(--line);display:grid;gap:4px}
+.err s{color:var(--err);font-weight:700}
+.err b{color:var(--ok)}
+
+/* ---------- §4 reading ---------- */
+.phone{max-width:420px;margin:0 auto;background:#fff;border-radius:34px;border:10px solid var(--navy);box-shadow:var(--sh-lg);overflow:hidden}
+.phone .ph{background:var(--teal);color:#fff;padding:14px 16px;display:flex;align-items:center;gap:10px}
+.phone .ph b{font-family:Nunito;font-weight:900}
+.phone .ph small{display:block;opacity:.9;font-size:12px}
+.phone .ms{background:#EFE9E1;padding:14px 12px;display:grid;gap:10px}
+.msg{display:grid;grid-template-columns:36px 1fr;gap:8px;align-items:start}
+.msg img,.msg .av{width:36px;height:36px;border-radius:50%;object-fit:cover}
+.msg .av{color:#fff;display:grid;place-items:center;font-family:Nunito;font-weight:900}
+.msg .bb{background:#fff;border-radius:4px 14px 14px 14px;padding:8px 12px;font-size:16px}
+.msg .bb .who{font-family:Nunito;font-weight:900;font-size:13px;color:var(--teal)}
+
+/* ---------- §5 listening ---------- */
+.player{display:grid;grid-template-columns:260px 1fr;gap:0;border-radius:var(--r);overflow:hidden;background:var(--navy);color:#fff}
+@media (max-width:820px){.player{grid-template-columns:1fr}}
+.player img{height:100%;min-height:200px;object-fit:cover}
+.player .pp{padding:22px;display:grid;gap:12px;align-content:center}
+.predict{display:grid;gap:10px}
+.pbet{background:#fff;border:1.5px solid var(--line);border-radius:14px;padding:12px 14px;display:grid;gap:8px}
+.pbet .st{font-weight:700;font-size:16px}
+.pbet .row2{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.tf{display:flex;gap:6px}
+.tf button{border:2px solid var(--line);border-radius:99px;padding:5px 14px;font-weight:800;font-size:13px}
+.tf button[aria-pressed="true"].t{background:var(--ok);border-color:var(--ok);color:#fff}
+.tf button[aria-pressed="true"].f{background:var(--err);border-color:var(--err);color:#fff}
+.pts{display:flex;align-items:center;gap:8px}
+.pts button{width:28px;height:28px;border-radius:50%;background:var(--pink-t);color:var(--pink);font-weight:900}
+.pts output{font-family:Nunito;font-weight:900;min-width:2ch;text-align:center}
+.pbet.rev.right{border-color:var(--ok);background:var(--ok-t)}
+.pbet.rev.wrong{border-color:var(--err);background:var(--err-t)}
+.play{background:var(--pink);color:#fff;border-radius:99px;padding:12px 22px;font-family:Nunito;font-weight:900;font-size:18px;display:inline-flex;gap:10px;align-items:center}
+.script{background:#fff;border-radius:var(--r);border:1.5px solid var(--line);padding:16px 18px;font-size:17px;display:grid;gap:6px}
+.script p b{color:var(--pink);font-family:Nunito}
+.rec{display:inline-block;background:var(--navy);color:#fff;font-size:11px;font-weight:800;letter-spacing:.1em;padding:3px 8px;border-radius:4px}
+.pron{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media (max-width:820px){.pron{grid-template-columns:1fr 1fr}}
+.pr{background:var(--pink-t);border-radius:14px;padding:14px;display:grid;gap:8px;justify-items:start}
+.pr .w{font-family:Nunito;font-weight:900;font-size:21px}
+.pr .ipa{color:var(--mut);font-size:14px}
+
+/* ---------- §6 speaking ---------- */
+.rounds{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media (max-width:820px){.rounds{grid-template-columns:1fr}}
+.rd{border-radius:var(--r);overflow:hidden;border:2.5px solid var(--line);background:#fff;text-align:left;display:grid}
+.rd img{aspect-ratio:16/10;object-fit:cover;width:100%}
+.rd .initcard{aspect-ratio:16/10;width:100%;display:grid;place-items:center;font-family:Nunito;font-weight:900;font-size:44px;color:#fff}
+.rd .rb{padding:14px;display:grid;gap:6px}
+.rd h4{font-size:20px;font-weight:900}
+.rd .who{font-size:14px;font-weight:700;color:var(--coral-d)}
+.rd ul{padding-left:18px;font-size:15px}
+.rd[aria-pressed="true"]{border-color:var(--c);box-shadow:0 0 0 4px var(--ct)}
+.deck{display:grid;grid-template-columns:1fr 1.3fr;border-radius:var(--r);overflow:hidden;background:var(--c);color:#fff}
+@media (max-width:820px){.deck{grid-template-columns:1fr}}
+.deck img{height:100%;min-height:260px;object-fit:cover}
+.deck .dq{padding:26px;display:grid;gap:14px;align-content:center}
+.deck .qn{font-family:Nunito;font-weight:900;letter-spacing:.12em;font-size:13px;opacity:.9}
+.deck .qt{font-family:Nunito;font-weight:900;font-size:clamp(26px,3.4vw,40px);line-height:1.1}
+.deck .fu{display:grid;gap:6px;font-size:18px;font-weight:500}
+.deck .fu span::before{content:"→ ";font-weight:900;color:var(--sun)}
+.deck .row .btn{background:rgba(255,255,255,.18);border-color:rgba(255,255,255,.35);color:#fff}
+.dots{display:flex;gap:6px}
+.dots button{width:11px;height:11px;border-radius:50%;background:rgba(255,255,255,.35)}
+.dots button[aria-current="true"]{background:#fff}
+.help{display:flex;flex-wrap:wrap;gap:8px}
+.help span{background:var(--navy);color:#fff;border-radius:99px;padding:6px 14px;font-weight:700;font-size:15px}
+
+/* ---------- §7 mission ---------- */
+.mission{position:relative;border-radius:var(--r);overflow:hidden;color:#fff;background:var(--navy)}
+.mission img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.32}
+.mission .mt{position:relative;padding:28px;display:grid;gap:10px;max-width:70ch}
+.mission h3{font-size:30px;font-weight:900}
+.guest{background:#fff;border-radius:var(--r);border:1.5px solid var(--line);overflow:hidden;display:grid}
+.guest .gh{display:flex;gap:12px;align-items:center;padding:14px;background:var(--ct)}
+.guest .gh img{width:72px;height:72px;border-radius:50%;object-fit:cover;border:3px solid #fff}
+.guest .gh .initcircle{width:72px;height:72px;border-radius:50%;display:grid;place-items:center;font-family:Nunito;font-weight:900;color:#fff;border:3px solid #fff;flex:none;font-size:26px}
+.guest h4{font-size:20px;font-weight:900}
+.guest .gh small{color:var(--mut);font-weight:700}
+.guest .line{padding:10px 14px 0;font-style:italic;color:var(--mut);font-size:15px}
+.moves{display:grid;gap:8px;padding:14px}
+.mv{display:flex;align-items:center;gap:10px;border:1.5px solid var(--line);border-radius:12px;padding:9px 12px;font-weight:700;font-size:15px;text-align:left;background:#fff}
+.mv i{width:22px;height:22px;border-radius:7px;border:2px solid var(--line);display:grid;place-items:center;flex:none;font-style:normal;color:#fff;font-size:13px}
+.mv[aria-pressed="true"]{background:var(--ok-t);border-color:var(--ok)}
+.mv[aria-pressed="true"] i{background:var(--ok);border-color:var(--ok)}
+
+/* ---------- §8 wrap ---------- */
+.sur{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media (max-width:900px){.sur{grid-template-columns:1fr 1fr}}
+@media (max-width:520px){.sur{grid-template-columns:1fr}}
+.sur .card h4{font-size:18px;font-weight:900;margin-bottom:6px}
+.sur .card:nth-child(1){border-top:5px solid var(--ok)} .sur .card:nth-child(2){border-top:5px solid var(--sun)} .sur .card:nth-child(3){border-top:5px solid var(--err)} .sur .card:nth-child(4){border-top:5px solid var(--violet)}
+textarea{width:100%;min-height:92px;border:1.5px solid var(--line);border-radius:12px;padding:10px 12px;font:inherit;font-size:15px;resize:vertical;background:#fff;color:var(--ink)}
+.selfev{display:flex;flex-wrap:wrap;gap:8px}
+.selfev button{border:2px solid var(--line);border-radius:99px;padding:8px 14px;font-weight:700;background:#fff}
+.selfev button[aria-pressed="true"]{background:var(--navy);border-color:var(--navy);color:#fff}
+.badge{display:flex;gap:18px;align-items:center;background:linear-gradient(120deg,var(--navy),var(--navy2));color:#fff;border-radius:var(--r);padding:22px}
+.badge .medal{width:84px;height:84px;border-radius:50%;background:var(--sun);color:var(--navy);display:grid;place-items:center;font-family:Nunito;font-weight:900;font-size:28px;flex:none;border:6px solid rgba(255,255,255,.3)}
+footer{color:var(--mut);font-size:13px;text-align:center;padding:10px 16px 40px}
+footer a{color:var(--mut)}
+
+
+/* ---------- Intermedio 3 · S01 additions ---------- */
+.band{position:relative;border-radius:var(--r);overflow:hidden;min-height:150px;background:var(--navy)}
+.band img{width:100%;height:170px;object-fit:cover;opacity:.55}
+.band .bc{position:absolute;inset:0;display:flex;align-items:flex-end;padding:16px 20px;color:#fff;font-family:Nunito;font-weight:900;font-size:clamp(20px,3vw,28px);text-wrap:balance}
+.pc .em{font-family:Nunito;font-weight:900;font-size:46px;color:var(--c)}
+.wbank{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.wlist{display:grid;gap:10px}
+.wrow{display:grid;grid-template-columns:1.3fr auto auto;gap:12px;align-items:center;background:#fff;border:1.5px solid var(--line);border-radius:14px;padding:10px 14px}
+@media (max-width:620px){.wrow{grid-template-columns:1fr}}
+.wrow b{font-family:Nunito;font-weight:900;font-size:19px}
+.wres{display:flex;gap:8px;flex-wrap:wrap}
+.wrow.won{border-color:var(--ok);background:var(--ok-t)}
+.wrow.lost{border-color:var(--err);background:var(--err-t)}
+.priv .wrow:not(.won):not(.lost) .pts output{filter:blur(6px)}
+.pts button{background:var(--ct);color:var(--ink)}
+.wrow.won .pts button,.wrow.lost .pts button{opacity:.4}
+.ladder{display:grid;gap:10px}
+.lrow{display:grid;grid-template-columns:44px 1fr;gap:12px;align-items:start;background:#fff;border:1.5px solid var(--line);border-radius:14px;padding:10px 12px}
+.lrow .ln{width:44px;height:44px;border-radius:12px;background:#E1EAE5;color:var(--mut);display:grid;place-items:center;font-family:Nunito;font-weight:900}
+.lrow.done .ln{background:var(--c);color:#fff}
+.lrow .lt{font-weight:700;min-width:0}
+.lrow .lt small{display:block;color:var(--mut);font-weight:500}
+.lopts{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.lopts .opt{border-radius:12px;text-align:left}
+.sbox{background:var(--navy);color:#fff;border-radius:var(--r);padding:16px 18px;font-family:Nunito;font-weight:800;font-size:19px;line-height:1.35;min-height:60px}
+.sbox mark{background:var(--sun);color:var(--navy);border-radius:4px;padding:0 4px}
+.tabs{display:flex;gap:8px;flex-wrap:wrap}
+.tabs button{border:2px solid var(--line);border-radius:99px;padding:7px 16px;font-weight:800;background:#fff}
+.tabs button[aria-pressed="true"]{background:var(--c);border-color:var(--c);color:#fff}
+.mail{background:#fff;border:1.5px solid var(--line);border-radius:var(--r);overflow:hidden;box-shadow:var(--sh)}
+.mail .mh{background:#F2F5F3;padding:12px 16px;border-bottom:1px solid var(--line);display:grid;gap:2px;font-size:14px;color:var(--mut)}
+.mail .mh b{font-family:Nunito;font-size:18px;color:var(--ink)}
+.mail .mb{padding:16px 18px;display:grid;gap:10px;font-size:17px}
+.rank{display:grid;gap:8px}
+.rk{display:grid;grid-template-columns:38px 1fr auto;gap:10px;align-items:center;background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:8px 12px}
+.rk .rn{width:34px;height:34px;border-radius:10px;background:var(--c);color:#fff;display:grid;place-items:center;font-family:Nunito;font-weight:900}
+.rk .rt{font-weight:700;font-size:16px;min-width:0}
+.rk .rt small{display:block;color:var(--mut);font-weight:500;font-size:13px}
+.rk .mv2{display:flex;gap:6px}
+.rk .mv2 button{width:32px;height:32px;border-radius:50%;background:var(--ct);font-weight:900}
+.rk .mv2 button:disabled{opacity:.3;cursor:default}
+.rk.locked{background:#F4F7F5}
+.scn{background:#fff;border:1.5px solid var(--line);border-radius:var(--r);overflow:hidden;display:grid;align-content:start}
+.scn img{aspect-ratio:16/9;width:100%;object-fit:cover}
+.scn .sh{padding:12px 14px 0;display:grid;gap:4px}
+.scn .sh small{color:var(--mut);font-weight:700;letter-spacing:.08em}
+.scn h4{font-size:20px;font-weight:900}
+.scn ul{padding:6px 14px 0 32px;font-size:15px}
+.scn .task{padding:8px 14px 0;font-style:italic;color:var(--mut);font-size:15px}
+.cols2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media (max-width:820px){.cols2{grid-template-columns:1fr}}
+.vcard{background:#fff;border:1.5px solid var(--line);border-radius:var(--r);padding:14px 16px;display:grid;gap:6px;min-width:0}
+.vcard h4{font-size:18px;font-weight:900;color:var(--pink)}
+.vcard .who{font-size:13px;font-weight:700;color:var(--mut)}
+.script p{overflow-wrap:anywhere}
+.qimg-cap{font-size:12px;opacity:.8}
+.tn-note{font-size:14px;color:var(--mut)}
+
+/* ---------- visual upgrade v2: vivid photos, colour accents, stage icons ---------- */
+.hero .bg{filter:saturate(1.25) contrast(1.05) brightness(1.1)}
+.hero .bg::after{background:linear-gradient(90deg,rgba(11,58,120,.93) 0%,rgba(15,40,90,.72) 42%,rgba(15,30,70,.04) 100%)}
+.hero::after{content:"";position:absolute;left:0;right:0;bottom:0;height:7px;background:linear-gradient(90deg,#FF6B4A,#FFC93C,#0B8457,#6B4DF0,#E0357E)}
+.shead{background:linear-gradient(120deg,var(--ct) 0%,rgba(255,255,255,0) 72%)}
+.snum .n{box-shadow:0 10px 20px -8px var(--c)}
+.snum .ico{font-size:34px;line-height:1;filter:drop-shadow(0 4px 6px rgba(0,0,0,.18))}
+@media (max-width:520px){.snum .ico{display:none}}
+.band img{opacity:1;filter:saturate(1.2) contrast(1.03);height:190px}
+.band::after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(15,30,70,.82) 0%,rgba(15,30,70,0) 68%);pointer-events:none}
+.band .bc{z-index:2;text-shadow:0 2px 10px rgba(0,0,0,.45)}
+.scene img{filter:saturate(1.18) contrast(1.03)}
+.mission img,.scn img,.deck img,.player img{filter:saturate(1.12)}
+.card12.in{background:var(--ok-t)}
+/* hero accent legible over vivid photos */
+.hero h1{text-shadow:0 2px 14px rgba(8,20,50,.55)}
+.hero h1 span{color:#FFD23F;text-shadow:0 2px 14px rgba(8,20,50,.6)}
+
+/* ---------- S2-S5 shared additions ---------- */
+.auction{display:grid;gap:12px}
+.lot{display:grid;grid-template-columns:1fr auto auto;gap:12px;align-items:center;background:#fff;border:2px solid var(--line);border-radius:14px;padding:12px 14px}
+@media (max-width:700px){.lot{grid-template-columns:1fr}}
+.lot .st{font-weight:700;font-size:18px;min-width:0}
+.lot .bid{display:flex;align-items:center;gap:8px}
+.lot .bid button{width:30px;height:30px;border-radius:50%;background:var(--ct);font-weight:900}
+.lot .bid output{font-family:Nunito;font-weight:900;font-size:20px;min-width:3ch;text-align:center;font-variant-numeric:tabular-nums}
+.lot .act{display:flex;gap:8px}
+.lot.good{border-color:var(--ok);background:var(--ok-t)}
+.lot.bad{border-color:var(--err);background:var(--err-t)}
+.lot.pass{border-color:var(--line);background:#F4F7F5;color:var(--mut)}
+.lot .why{grid-column:1/-1;font-size:15px;font-weight:700}
+.imp{display:grid;gap:10px}
+.impr{background:#fff;border:2px solid var(--line);border-radius:var(--r);padding:12px 14px;display:grid;gap:10px}
+.impr .cs{display:flex;flex-wrap:wrap;gap:8px}
+.impr .cs button{border:2px solid var(--line);border-radius:12px;padding:8px 14px;font-family:Nunito;font-weight:900;font-size:17px;background:#fff}
+.impr .cs button.ok{background:var(--ok);border-color:var(--ok);color:#fff}
+.impr .cs button.no{background:var(--err-t);border-color:var(--err);color:var(--err)}
+.impr .fb{font-weight:700;font-size:15px}
+.draw{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (max-width:820px){.draw{grid-template-columns:1fr}}
+.slip{background:var(--navy);color:#fff;border-radius:var(--r);padding:20px;display:grid;gap:10px;align-content:start;min-height:170px}
+.slip .big{font-family:Nunito;font-weight:900;font-size:clamp(22px,3vw,30px);line-height:1.15}
+.slip small{font-weight:800;letter-spacing:.1em;color:var(--sun);text-transform:uppercase}
+.setgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media (max-width:820px){.setgrid{grid-template-columns:1fr}}
+.setbox{background:#fff;border:2px dashed var(--c);border-radius:var(--r);padding:12px;display:grid;gap:8px;align-content:start;min-height:150px}
+.setbox h4{font-size:17px;font-weight:900;color:var(--c)}
+.setbox .got{display:flex;flex-wrap:wrap;gap:6px}
+.setbox.full{border-style:solid;background:var(--ok-t);border-color:var(--ok)}
+.pile{display:flex;flex-wrap:wrap;gap:8px;padding:12px;background:var(--ct);border-radius:var(--r)}
+.card12{border:2px solid var(--line);border-radius:12px;padding:9px 14px;font-family:Nunito;font-weight:900;font-size:17px;background:#fff;box-shadow:0 3px 0 var(--line)}
+.card12.sel{border-color:var(--c);box-shadow:0 3px 0 var(--c);background:var(--ct)}
+.card12.in{border-color:var(--ok);box-shadow:0 3px 0 var(--ok);cursor:default}
+.chips3{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.chip3{width:46px;height:46px;border-radius:50%;background:var(--sun);color:var(--navy);font-family:Nunito;font-weight:900;font-size:18px;border:3px solid var(--navy);display:grid;place-items:center}
+.chip3.spent{background:#E1EAE5;border-style:dashed;color:#9AA7A0}
+.pl{background:#fff;border:2px solid var(--line);border-radius:var(--r);padding:12px 14px;display:grid;gap:10px}
+.pl h4{font-size:18px;font-weight:900}
+.sixcards{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+@media (max-width:820px){.sixcards{grid-template-columns:1fr 1fr}}
+@media (max-width:520px){.sixcards{grid-template-columns:1fr}}
+.tcard{border:2px solid var(--line);border-radius:14px;background:#fff;padding:12px;display:grid;gap:6px;align-content:start;font-weight:700;font-size:16px;text-align:left}
+.tcard b{font-family:Nunito;color:var(--c);font-size:20px}
+.tcard[aria-pressed="true"]{border-color:var(--c);background:var(--ct)}
+.objw{display:grid;gap:10px}
+.objc{background:var(--navy);color:#fff;border-radius:var(--r);padding:18px 20px;font-family:Nunito;font-weight:900;font-size:clamp(20px,2.6vw,26px);min-height:84px;display:flex;align-items:center}
+.wall{display:flex;gap:6px;flex-wrap:wrap}
+.wall i{width:34px;height:20px;border-radius:4px;background:#C9D6CF;display:block}
+.wall i.ok{background:var(--ok)}
+.wall i.no{background:var(--err)}
+.wall i.cur{background:var(--sun);outline:2px solid var(--navy)}
+.ldr{display:grid;gap:8px}
+.lrr{display:grid;grid-template-columns:34px 1fr auto;gap:10px;align-items:center;background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:8px 12px}
+.lrr .rn{width:32px;height:32px;border-radius:10px;background:var(--c);color:#fff;display:grid;place-items:center;font-family:Nunito;font-weight:900}
+.lrr .mv2{display:flex;gap:6px}.lrr .mv2 button{width:30px;height:30px;border-radius:50%;background:var(--ct);font-weight:900}
+.lrr .mv2 button:disabled{opacity:.3;cursor:default}
+.dlg{display:grid;gap:8px}
+.dlg p{background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:8px 12px;font-size:16px}
+.dlg p b{font-family:Nunito;color:var(--pink)}
+.clue{border:2px solid var(--line);border-radius:12px;background:#fff;padding:10px 14px;text-align:left;font-weight:700}
+.clue[aria-pressed="true"]{border-color:var(--c);background:var(--ct)}
+.clue.hid{color:var(--mut)}
+select{border:2px solid var(--line);border-radius:10px;padding:6px 10px;font:inherit;background:#fff;color:var(--ink);max-width:100%}
+.tboard{display:grid;gap:8px}
+.trow{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:8px 12px;font-weight:700}
+.trow.set{border-color:var(--ok);background:var(--ok-t)}
+.tcard.static{cursor:default}
+</style></head><body data-sid="09">
+<div class="topbar"><div class="wrap"><div class="brand"><i></i><a href="./">GABRIEL TURNER · YOUR BUSINESS COACH</a><small>Intermedio 3 · Level 09 of 12</small></div><div class="toggles"><button class="tg" id="tgTeacher" aria-pressed="true">Teacher view</button><button class="tg" id="tgStudent" aria-pressed="false">Student view</button><button class="tg" id="tgGroup" aria-pressed="true">Group</button><button class="tg" id="tgOne" aria-pressed="false">1:1</button></div></div></div>
+<header class="hero"><div class="bg" role="img" aria-label="Two Options, One Deadline"></div><div class="wrap"><div class="kick">Intermedio 3 · Block 2 · Compare · Session 9 of 32</div><h1>Two Options, <span>One Deadline</span></h1><p class="obj">By the end of this class you can compare two options with numbers, say the trade-off, and make a decision.</p><div class="pills"><span class="pill sun">60 min · live online</span><span class="pill">7 stages</span><span class="pill">cheaper than · more … than · the most</span><span class="pill">Speaking first</span></div><div class="coach"><span class="cav">GT</span><span><b>Gabriel Turner</b><small>Your Business Coach</small></span></div></div></header>
+<nav class="nav" aria-label="Session stages"><div class="wrap"><div class="prog"><div class="bar"><i id="pbar"></i></div><span class="xp" id="xp">0 XP</span><button class="clock" id="clock" title="Start / pause class clock">00:00</button></div><div class="steps" id="steps"></div></div></nav>
+<main class="wrap" id="main">
+<section class="sec" id="s1" data-role="warm" style="--c:var(--coral);--ct:var(--coral-t)" data-name="Warm-up" data-min="0–5">
+<div class="shead"><div class="snum"><span class="n">1</span><span class="ico" aria-hidden="true">🔥</span><div><h2>Warm-up · Which door do you open?</h2><div class="sub">0–5 min · Two suppliers · one choice</div></div></div><div class="meta"><span class="chip">Poll</span><span class="chip dark">Speaking from minute 1</span></div></div>
+<div class="sbody">
+<div class="scene"><img src="img/b9s09_doors.jpg" alt="A red door and a yellow door side by side"><div class="txt"><div class="kick">Block 2 · Compare · Door A or Door B?</div><div class="bubble">Supplier A: $100 a box, 5 days. Supplier B: $140 a box, 2 days.</div><p style="font-size:19px;font-weight:700">Today you do not only describe. You compare two options and decide.</p></div></div>
+<div class="block"><div class="bt"><span class="tag">Warm-up</span><h3>Which door do you open?</h3><span class="score" id="scW"></span></div><div class="mc" id="mcW"></div>
+<div class="closeout" id="wOut" hidden>Now say it: “A is cheaper, but B is faster. I choose … because …”</div></div><details class="tn"><summary>Teacher notes · §1 Warm-up</summary><div class="layers"><div class="ly"><h4>Pedagógica</h4><ul><li>Presenta las dos puertas (A y B) con los números en pantalla. El alumno responde con <i>cheaper / faster</i> sin explicación previa: es la primera exposición natural a los comparativos (Block 2).</li><li>Si dice <i>more cheap</i> o <i>more fast</i>, haz recast: "A is cheaper." Sin corregir en público. Máximo 5 minutos.</li><li>Idea fuerza: decidir = comparar + elegir + justificar.</li></ul></div><div class="ly"><h4>Engagement</h4><ul><li>"Block 1 fue entender. Block 2 es comparar y decidir."</li><li>Pregunta final: "Which do you choose? Why?"</li></ul></div><div class="ly"><h4>Crecimiento</h4><ul><li>Registra qué comparativos produce el alumno sin ayuda (cheaper, faster).</li><li>Riesgo: Seguro. Temperatura: Mild.</li></ul></div></div></details></div></section>
+<section class="sec" id="s2" data-role="vocab" style="--c:var(--teal);--ct:var(--teal-t)" data-name="Vocabulary" data-min="5–14">
+<div class="shead"><div class="snum"><span class="n">2</span><span class="ico" aria-hidden="true">📚</span><div><h2>Vocabulary · 12 words for comparing</h2><div class="sub">5–14 min · Hear it · Kill the words</div></div></div><div class="meta"><span class="chip">Flip cards</span><span class="chip dark">VOC-04 Dead Words</span></div></div>
+<div class="sbody"><div class="band"><img src="img/b9s09_scale.jpg" alt="A team decides in front of a blue board covered with yellow sticky notes"><div class="bc">To decide, you compare.</div></div><div class="block"><div class="bt"><span class="tag">Step A</span><h3>Tap to flip · listen to the word and the example</h3><span class="hint" id="flipCount">0 / 12 flipped</span></div><div class="flips" id="flips"></div></div>
+<div class="block"><div class="bt"><span class="tag">Step B · Game · VOC-04</span><h3>Dead Words on the Board</h3><span class="stat">Dead <b id="dwN">0</b> / 10</span></div>
+ <div class="card tint"><div class="row" style="justify-content:space-between;align-items:flex-start"><p style="font-weight:700;max-width:66ch">1. Talk with your partner for 4 minutes about the topic. &nbsp;2. Every time someone says a board word correctly in a complete spoken sentence, tap it: it dies. &nbsp;3. Goal: kill all 10 words as a team.</p><div class="timer" id="tDw" data-sec="240"><output>04:00</output><button class="btn main sm" data-a="go">Start</button><button class="btn sm" data-a="re">Reset</button></div></div></div>
+ <div class="draw"><div class="slip"><small>Talk about</small><div class="big" id="dwTopic">Tap “Next topic”.</div><div class="row"><button class="btn" id="dwNext" style="background:var(--sun);border-color:var(--sun);color:var(--navy)">Next topic</button></div></div>
+ <div class="pl"><h4>The board</h4><div class="pile" id="dwPile"></div></div></div>
+ <div class="closeout" id="dwOut" hidden></div></div><details class="tn"><summary>Teacher notes · §2 Vocabulary</summary><div class="layers"><div class="ly"><h4>Pedagógica</h4><ul><li>Voltea cada tarjeta: tú dices la palabra, el alumno repite y da su ejemplo. Palabras difíciles: <i>trade-off</i> y <i>worth it</i>.</li><li><b>VOC-04 Dead Words on the Board (ELIMINACIÓN):</b> 10 palabras en el tablero; se "borran" cuando alguien las usa correctamente HABLANDO, en una oración completa. Meta colectiva: tablero vacío. Grupo: parejas y una meta del grupo. 1:1: tú también hablas y puedes borrar palabras tuyas.</li><li>Si una palabra no muere en 3 minutos, pregunta: "What is a sentence with this word?" Sin comparativos aún en este bloque: aparecen en §3.</li><li>La puntuación premia producir inglés, no la velocidad.</li></ul></div><div class="ly"><h4>Engagement</h4><ul><li>"¡Mata esa palabra!" cada vez que cae una.</li><li>Si el tablero queda vacío antes del tiempo, el grupo elige un tema nuevo.</li></ul></div><div class="ly"><h4>Crecimiento</h4><ul><li>Anota las palabras más resistentes: son las que no pasaron a producción activa.</li><li>Venta: el tablero de palabras muertas es un formato fácil de mostrar en una demo.</li></ul></div></div></details></div></section>
+<section class="sec" id="s3" data-role="grammar" style="--c:var(--violet);--ct:var(--violet-t)" data-name="Grammar" data-min="14–27">
+<div class="shead"><div class="snum"><span class="n">3</span><span class="ico" aria-hidden="true">🧩</span><div><h2>Grammar · Compare two options</h2><div class="sub">14–27 min · Discover → practice → three frames</div></div></div><div class="meta"><span class="chip">cheaper than · more … than</span><span class="chip dark">GRM-12 Three Frames</span></div></div>
+<div class="sbody"><div class="block"><div class="bt"><span class="tag">Discover</span><h3>Read the chat. Which four patterns compare?</h3></div>
+ <div class="disc" id="disc"><img src="img/b9s09_shelf.jpg" alt="Two mugs side by side"><div class="chat"><p>Mug A is <mark class="hl">cheaper than</mark> Mug B.</p><p>Mug B is <mark class="hl">more durable than</mark> Mug A.</p><p>Mug B is <mark class="hl">not as cheap as</mark> Mug A.</p><p>Mug A is <mark class="hl">the cheapest</mark>. Mug B is <mark class="hl">the most durable</mark>.</p></div></div>
+ <div class="row"><button class="btn main" id="hlBtn" aria-pressed="false">Show the key words</button><span class="hint">Count them. How many do you see?</span><span class="key hint">(Respuesta: 4 · cheaper than · more … than · not as … as · the + superlativo)</span></div></div><div class="block"><div class="bt"><span class="tag">The tool</span><h3>Compare two options</h3></div>
+ <div class="tool"><div class="card"><h4>1 · Short words</h4><div class="big">adjective + <em>-er than</em></div><p class="hint">Supplier A is cheaper than Supplier B.</p></div><div class="card"><h4>2 · Long words</h4><div class="big"><em>more</em> + adjective + <em>than</em></div><p class="hint">Supplier B is more reliable than Supplier A.</p></div><div class="card"><h4>3 · The top one</h4><div class="big"><em>not as … as</em> · <em>the</em> + <em>-est / most</em></div><p class="hint">A is not as fast as B. B is the fastest.</p></div></div>
+ <div class="forms"><table><tr><th></th><th>Statement, negative, question</th><th>Notice</th></tr><tr><td>+</td><td>A is <b>cheaper than</b> B. B is <b>more reliable than</b> A.</td><td>Short: -er. Long: more. Always than.</td></tr><tr><td>−</td><td>A is <b>not as fast as</b> B. A isn't <b>more reliable than</b> B.</td><td>not as + adjective + as.</td></tr><tr><td>?</td><td><b>Which</b> option is <b>cheaper</b>? Is A <b>faster than</b> B? What is <b>the most important</b> factor?</td><td>Which / Is + comparative.</td></tr></table></div>
+ <p class="hint">Irregular: good → better → the best. bad → worse → the worst. Hypothetical advice (should, could) comes later.</p>
+ <div><button class="btn" id="esBtn" aria-expanded="false" aria-controls="esBox">🇲🇽 Ver explicación en español</button></div>
+ <div class="es-box" id="esBox" hidden><p><b>¿Qué es?</b> La forma de comparar dos opciones: <b>adjetivo + -er than</b> (cheaper than), <b>more + adjetivo + than</b> (more reliable than), <b>not as … as</b> y el superlativo <b>the cheapest / the most reliable</b>.</p><p><b>¿Cómo se usa?</b> <i>Supplier A is cheaper than Supplier B. Supplier B is more reliable than A. A is not as fast as B. B is the fastest.</i></p><p><b>¿Para qué hoy?</b> Para decidir entre dos opciones con números: precio, tiempo y calidad.</p><p><b>Cuidado:</b> no se mezclan: <s>more cheaper</s>, <s>more faster</s> → <i>cheaper</i>, <i>faster</i>. Y se dice <b>than</b>, no <s>that</s>.</p></div></div><div class="block builder"><div class="bt"><span class="tag">Practice A · Mechanical</span><h3>Choose the missing word</h3><span class="score" id="scA"></span></div><div class="mc" id="mcA"></div></div>
+<div class="block builder"><div class="bt"><span class="tag">Practice B · GRM-12</span><h3>Same Fact, Three Frames</h3><span class="stat">Context <b id="sfN">0</b> / 4</span><span class="stat">Points <b id="sfP">0</b></span></div>
+ <div class="card tint"><p style="font-weight:700;max-width:72ch">The fact is always the same: Supplier A $100 and 5 days. Supplier B $140 and 2 days. &nbsp;1. Read the context. &nbsp;2. Choose the frame that fits it. &nbsp;3. Say WHY with because.</p></div>
+ <div class="sixcards" style="grid-template-columns:repeat(3,1fr)"><div class="tcard static"><b>Frame 1</b>A is cheaper than B.</div><div class="tcard static"><b>Frame 2</b>B is faster than A.</div><div class="tcard static"><b>Frame 3</b>A is cheaper, but B is faster.</div></div>
+ <div class="imp" id="sf"></div><div class="closeout" id="sfOut" hidden></div></div><div class="block"><div class="bt"><span class="tag">Watch out</span><h3>Mistakes at this level</h3></div><div class="errs"><div class="err"><s>A is more cheap than B.</s><b>A is cheaper than B.</b><span class="hint">Short adjective: -er, no more.</span></div><div class="err"><s>B is more faster than A.</s><b>B is faster than A.</b><span class="hint">Do not use more with -er.</span></div><div class="err"><s>A is cheaper that B.</s><b>A is cheaper than B.</b><span class="hint">than, not that.</span></div></div></div><details class="tn"><summary>Teacher notes · §3 Grammar</summary><div class="layers"><div class="ly"><h4>Pedagógica</h4><ul><li>Un solo punto de lengua: comparar dos opciones (<i>-er than / more … than / not as … as / the -est, the most</i>). Explicación continua ≤5 min; el botón en español está oculto por defecto.</li><li>Practice A es mecánica (≤1/3 del bloque). <b>GRM-12 Same Fact, Three Frames (RANKING):</b> un mismo hecho dicho de tres formas; el grupo decide cuál corresponde al contexto y DEFIENDE el orden con <i>because</i>. Claves: contexto 1 → Frame 2 · contexto 2 → Frame 1 · contexto 3 → Frame 3 · contexto 4 → Frame 2.</li><li>Errores prioritarios: <i>more cheaper</i> y <i>that</i> en lugar de <i>than</i>. Márcalos en voz alta cada vez.</li><li>Límite de nivel: sin <i>should / could / would</i> (Block 3).</li></ul></div><div class="ly"><h4>Engagement</h4><ul><li>"El hecho es el mismo; el marco cambia con el contexto."</li><li>Pide una oración propia con <i>the most</i> de su trabajo.</li></ul></div><div class="ly"><h4>Crecimiento</h4><ul><li>Registra qué comparativos irregulares (better, worse) produce el alumno sin ayuda.</li><li>Venta: este formato (mismo dato, tres marcos) funciona muy bien en cursos de negociación.</li></ul></div></div></details></div></section>
+<section class="sec" id="s4" data-role="reading" style="--c:#E5A100;--ct:var(--sun-t)" data-name="Reading" data-min="27–30">
+<div class="shead"><div class="snum"><span class="n">4</span><span class="ico" aria-hidden="true">📖</span><div><h2>Reading · Two offers, one email</h2><div class="sub">27–30 min · Read to find information</div></div></div><div class="meta"><span class="chip">Real-life text</span><span class="chip dark">Scan for comparisons</span></div></div>
+<div class="sbody">
+<div class="g2" style="align-items:start">
+ <div class="card tint"><div class="row" style="justify-content:space-between"><b class="nun" style="font-size:20px">Luis compares two offers</b><span class="chip dark">80 words</span></div>
+ <p style="font-size:19px;line-height:1.6;max-width:62ch;margin-top:10px" id="rdTxt"></p></div>
+ <div class="block"><div class="bt"><span class="tag">Read &amp; answer</span><h3>Find the facts</h3><span class="score" id="scR"></span></div><div class="mc" id="mcR"></div></div>
+</div><details class="tn"><summary>Teacher notes · §4 Reading</summary><div class="layers"><div class="ly"><h4>Pedagógica</h4><ul><li>Primera lectura en silencio (1 min) para identificar CUÁL proveedor es más barato y CUÁL más rápido. Segunda: subrayar mentalmente <i>cheaper than</i>, <i>not as reliable as</i> y <i>the most important</i>.</li><li>Texto de 80 palabras, nivel B2 (tope 100). Reutiliza <i>reliable</i>, <i>quality</i> y <i>recommend</i>.</li><li>Pregunta oral extra: "Do you agree with Luis? Why or why not?" (sin should).</li></ul></div><div class="ly"><h4>Engagement</h4><ul><li>"¿Qué eligió Luis? ¿Y tú?"</li></ul></div><div class="ly"><h4>Crecimiento</h4><ul><li>Tarea opcional: escribir un correo de 5 líneas comparando dos opciones reales.</li></ul></div></div></details></div></section>
+<section class="sec" id="s5" data-role="speaking" style="--c:var(--coral);--ct:var(--coral-t)" data-name="Speaking" data-min="30–44">
+<div class="shead"><div class="snum"><span class="n">5</span><span class="ico" aria-hidden="true">🗣️</span><div><h2>Speaking · The escalation debate</h2><div class="sub">30–44 min · Opinion → evidence → concession</div></div></div><div class="meta"><span class="chip">Pairs / teams</span><span class="chip dark">SPK-05 Escalation</span></div></div>
+<div class="sbody"><div class="band"><img src="img/b9s09_clock.jpg" alt="A large analog wall clock"><div class="bc">Two minutes per round. The clock decides when you speak.</div></div>
+<div class="card tint"><div class="row" style="justify-content:space-between;align-items:flex-start"><div style="max-width:68ch"><b class="nun" style="font-size:20px">The Escalation Debate</b>
+ <p style="margin-top:6px;font-weight:700">Topic: Supplier A ($100, 5 days) or Supplier B ($140, 2 days)? &nbsp;1. Draw your side. &nbsp;2. Three rounds on the SAME topic: opinion, evidence, concession. &nbsp;3. Only Round 3 scores. &nbsp;4. Points come from producing English, not from speed.</p></div><div class="timer" id="tSd" data-sec="120"><output>02:00</output><button class="btn main sm" data-a="go">Start</button><button class="btn sm" data-a="re">Reset</button></div></div></div>
+<div class="draw"><div class="slip"><small id="sdRound">Round 1 · Opinion</small><div class="big" id="sdTask">Say what you think and why.</div><div class="hint" style="color:#fff" id="sdStart">I think … because …</div>
+ <div class="row"><button class="btn" id="sdDraw" style="background:var(--sun);border-color:var(--sun);color:var(--navy)">Draw my side</button><button class="btn" id="sdNext" style="background:transparent;color:#fff;border-color:rgba(255,255,255,.5)">Next round →</button></div><div class="hint" style="color:#fff" id="sdSide" aria-live="polite"></div></div>
+ <div class="pl"><h4>Round 3 score</h4><p class="hint" id="sdHint">Rounds 1 and 2 do not score. Round 3 does.</p><div class="selfev" id="sdChk" hidden></div><div class="stat">Points <b id="sdPts">0</b></div></div></div>
+<div class="closeout" id="sdOut" hidden></div>
+<div class="help"><span>I think … because …</span><span>… is cheaper than …</span><span>… is more reliable than …</span><span>You are right that …, but …</span><span>The trade-off is …</span></div><div class="block"><div class="bt"><span class="tag">Between rounds</span><h3>12 questions · always 2 follow-ups</h3></div><div class="deck"><img id="qImg" src="" alt=""><div class="dq"><div class="row" style="justify-content:space-between"><span class="qn" id="qN"></span><div class="dots" id="dots"></div></div><div class="qt" id="qT"></div><div class="fu" id="qF"></div><div class="row"><button class="btn" id="qP">← Back</button><button class="btn" id="qX" style="background:#fff;color:var(--coral-d);border-color:#fff">Next question →</button><button class="btn" id="qS" aria-label="Listen to the question">🔊</button></div></div></div></div><details class="tn"><summary>Teacher notes · §5 Speaking</summary><div class="layers"><div class="ly"><h4>Pedagógica</h4><ul><li><b>SPK-05 Escalation Debate (ESCALADA):</b> tres rondas sobre lo MISMO. R1 opinión (<i>I think… because…</i>) · R2 opinión con evidencia (números: precio, días, cajas) · R3 opinión con concesión (<i>You are right that…, but…</i>). Solo puntúa la ronda 3.</li><li>Grupo: parejas con lados sorteados (A barato / B rápido). 1:1: tú tomas el lado contrario. 2 minutos por ronda. Sin notas.</li><li>Marca 2 aciertos y 3 errores repetidos (<i>more cheaper</i>, <i>that</i> por <i>than</i>). Feedback en §7.</li><li>Límite de nivel: la concesión usa <i>You are right that…, but…</i>; sin hipótesis ni <i>should</i>.</li></ul></div><div class="ly"><h4>Engagement</h4><ul><li>"Cada ronda sube un escalón: opinión, evidencia, concesión."</li><li>Pide el cambio de lado en la última ronda si hay tiempo.</li></ul></div><div class="ly"><h4>Crecimiento</h4><ul><li>Registra puntos de la ronda 3: indicador de argumentación con concesión.</li><li>Venta: la concesión explícita es una habilidad de negociación vendible por sí sola.</li></ul></div></div></details></div></section>
+<section class="sec" id="s6" data-role="mission" style="--c:var(--teal);--ct:var(--teal-t)" data-name="Mission" data-min="44–55">
+<div class="shead"><div class="snum"><span class="n">6</span><span class="ico" aria-hidden="true">🎯</span><div><h2>Mission · The supplier decision</h2><div class="sub">44–55 min · 3 decisions · 4 moves each</div></div></div><div class="meta"><span class="chip">Real-life task</span><span class="chip dark">Evidence</span><div class="timer" id="tMis" data-sec="660"><output>11:00</output><button class="btn main sm" data-a="go">Start</button><button class="btn sm" data-a="re">Reset</button></div></div></div>
+<div class="sbody"><div class="mission"><img src="img/b9s09_calc.jpg" alt=""><div class="mt"><div class="kick">Your mission</div><h3>The Supplier Decision</h3><p style="font-size:18px">You are the buyer. Three decisions are on your desk today. For each one, compare the two options with numbers, say the trade-off, and decide.</p><p data-m="group" style="font-weight:700">Group: each case goes to one student in a breakout room. Your partner asks “Is it worth it?” once per case. Rotate every 3 minutes.</p><p data-m="one" style="font-weight:700">1:1: you brief the teacher. The teacher asks “What is the trade-off?” once per case.</p></div></div>
+<div class="g3" id="cases"></div>
+<div class="card tint"><div class="row" style="justify-content:space-between"><span class="stat">Moves <b id="mvN">0</b> / 12</span><button class="btn sm" id="mvRe">Reset</button></div><div class="bar" style="margin-top:10px"><i id="mvBar" style="background:var(--teal)"></i></div><p class="hint" style="margin-top:8px">Success: 3 decisions, each with a comparative, numbers, a trade-off and a reason.</p></div><details class="tn"><summary>Teacher notes · §6 Mission</summary><div class="layers"><div class="ly"><h4>Pedagógica</h4><ul><li>Marca cada movimiento solo cuando el alumno lo dice sin leer la tarjeta.</li><li>Evidencia observable: comparativo con <i>than</i>, números como evidencia, trade-off con <i>but</i> y decisión con <i>because</i>. Clave visible solo en Teacher view.</li><li>No interrumpas: el feedback va en §7.</li></ul></div><div class="ly"><h4>Engagement</h4><ul><li>Anuncia en voz alta: "__ of 12 moves. Decision made!"</li></ul></div><div class="ly"><h4>Crecimiento</h4><ul><li>"In Session 10 you decide: is faster always better?"</li><li>Conecta con la tarea final: una recomendación de compra de 3–4 minutos.</li></ul></div></div></details></div></section>
+<section class="sec" id="s7" data-role="wrap" style="--c:var(--navy);--ct:#E6E9F2" data-name="Wrap-up" data-min="55–60">
+<div class="shead"><div class="snum"><span class="n">7</span><span class="ico" aria-hidden="true">🏁</span><div><h2>Wrap-up · Better the second time</h2><div class="sub">55–60 min · Compare · 2nd try · Exit quiz</div></div></div><div class="meta"><span class="chip">Success → Upgrade → Repair → 2nd try</span></div></div>
+<div class="sbody"><div class="sur"><div class="card"><h4>✓ Success</h4><textarea id="fS" aria-label="Success">I compared two options.
+I used numbers and made a decision.</textarea></div><div class="card"><h4>↑ Upgrade</h4><textarea id="fU" aria-label="Upgrade">"A is more cheap than B." → "A is cheaper than B."</textarea></div><div class="card"><h4>✎ Repair</h4><textarea id="fR" aria-label="Repair">"B is more faster." → "B is faster than A."</textarea></div><div class="card"><h4>↻ 2nd try</h4><p class="hint">Repeat one briefing with the teacher. Use the upgrades. Same task, better English.</p></div></div>
+<div class="block"><div class="bt"><span class="tag">Exit quiz</span><h3>60 seconds · 5 questions</h3><span class="score" id="scQ"></span></div><div class="mc" id="mcQ"></div></div>
+<div class="block"><div class="bt"><span class="tag">Say it out loud</span><h3>My second try is better because…</h3></div><div class="selfev" id="selfev"></div></div>
+<div class="badge"><div class="medal">09</div><div><div class="kick">Session complete</div><h3 style="font-size:26px;font-weight:900">You can compare two options and decide.</h3><p style="opacity:.9">Homework: compare two real options you have (two suppliers, tools or routes) in 5 sentences. Use numbers and make one decision. Next: <b>Session 10</b>.</p><div class="row" style="margin-top:10px"><button class="btn" id="doneBtn" style="background:var(--sun);border-color:var(--sun);color:var(--navy)">Mark session as complete</button><a class="btn" href="./" style="text-decoration:none;color:var(--navy)">Back to Intermedio 3</a></div></div></div><details class="tn"><summary>Teacher notes · §7 Wrap-up</summary><div class="layers"><div class="ly"><h4>Pedagógica</h4><ul><li>Máximo 2 aciertos y 3 correcciones de alto valor, anónimas. Luego segundo intento de una decisión contigo.</li><li>Exit quiz en voz alta.</li></ul></div><div class="ly"><h4>Engagement</h4><ul><li>Compara con el §1: "Minute 1: cheaper and faster. Minute 58: a decision with numbers and a trade-off."</li></ul></div><div class="ly"><h4>Crecimiento</h4><ul><li>Registra: palabras muertas, puntos de la ronda 3 y comparativos irregulares usados.</li><li>Antes de S10: pide un ejemplo real de 'rápido vs. calidad'.</li></ul></div></div></details></div></section>
+</main>
+<footer>Gabriel Turner · Your Business Coach · Intermedio 3 · Session 09 of 32 · v1.0 · Photos: Unsplash (Paymo, FORTYTWO, Rauf Alvi, Aaron Lefler, Ocean Ng, Robert Anasch)</footer>
+<script>(function(){
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const SID=document.body.dataset.sid;
+const st={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
+const fmt=s=>String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');
+const SPK='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4z"/></svg>';
+const shuf=a=>{const b=a.slice();for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]]}return b};
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+const plain=s=>s.replace(' / ',', ').replace(/…/g,'');
+const TTS='speechSynthesis' in window; let voices=[];
+function loadV(){try{voices=speechSynthesis.getVoices().filter(v=>/^en/i.test(v.lang))}catch(e){}}
+if(TTS){loadV();try{speechSynthesis.onvoiceschanged=loadV}catch(e){}}
+function pick(pref){return voices.find(v=>pref.test(v.name+' '+v.lang))||voices[0]}
+function speak(t,o={}){if(!TTS)return;try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang=o.lang||'en-US';u.rate=o.rate||.9;if(o.pitch)u.pitch=o.pitch;const v=o.voice||pick(/US|United States/i);if(v)u.voice=v;speechSynthesis.speak(u)}catch(e){}}
+const say=(t,o)=>speak(t,Object.assign({rate:.85},o||{}));
+function speakQueue(lines){if(!TTS)return;try{speechSynthesis.cancel();lines.forEach(([t,o])=>{o=o||{};const u=new SpeechSynthesisUtterance(t);u.lang=o.lang||'en-US';u.rate=o.rate||.9;if(o.pitch)u.pitch=o.pitch;const v=o.voice||pick(/US/i);if(v)u.voice=v;speechSynthesis.speak(u)})}catch(e){}}
+const stopSpeech=()=>{try{speechSynthesis.cancel()}catch(e){}};
+if(!TTS&&$('#ttsNote'))$('#ttsNote').textContent='This browser has no voice. Read the script aloud or play the recorded MP3.';
+function setView(student){document.body.classList.toggle('student',student);$('#tgStudent').setAttribute('aria-pressed',student);$('#tgTeacher').setAttribute('aria-pressed',!student)}
+$('#tgStudent').onclick=()=>setView(true);$('#tgTeacher').onclick=()=>setView(false);
+function setMode(m){$$('[data-m]').forEach(e=>e.hidden=e.dataset.m!==m);$('#tgGroup').setAttribute('aria-pressed',m==='group');$('#tgOne').setAttribute('aria-pressed',m==='one');st.set('gt09-mode',m);document.body.dataset.mode=m;document.dispatchEvent(new Event('modechange'))}
+$('#tgGroup').onclick=()=>setMode('group');$('#tgOne').onclick=()=>setMode('one');
+let xp=0;const done=new Set();
+function addXP(n,key){if(key){if(done.has(key))return;done.add(key)}xp+=n;$('#xp').textContent=xp+' XP'}
+const secs=$$('.sec');const steps=$('#steps');
+secs.forEach((s,i)=>{const a=document.createElement('a');a.href='#'+s.id;a.innerHTML=`<b>${i+1}</b>${s.dataset.name}`;a.style.setProperty('--c',getComputedStyle(s).getPropertyValue('--c'));steps.appendChild(a)});
+const links=[...steps.children];
+function onScroll(){let cur=0;secs.forEach((s,i)=>{if(s.getBoundingClientRect().top<200)cur=i});links.forEach((a,i)=>a.classList.toggle('on',i===cur));$('#pbar').style.width=((cur+1)/secs.length*100)+'%';const on=links[cur];if(on&&steps.scrollWidth>steps.clientWidth){steps.scrollLeft=on.offsetLeft-40}}
+addEventListener('scroll',onScroll,{passive:true});onScroll();
+function markDone(role){const i=secs.findIndex(s=>s.dataset.role===role);if(i>=0)links[i].classList.add('done')}
+let cs=0,cId=null;$('#clock').onclick=()=>{if(cId){clearInterval(cId);cId=null}else cId=setInterval(()=>{cs++;$('#clock').textContent=fmt(cs)},1000)};
+function timer(el,onEnd){const tot=+el.dataset.sec;let left=tot,id=null;const o=el.querySelector('output'),g=el.querySelector('[data-a=go]');const lab=g.textContent;
+ const draw=()=>{o.textContent=fmt(left);el.classList.toggle('end',left===0)};const stop=()=>{clearInterval(id);id=null;g.textContent=lab};
+ g.onclick=()=>{if(id){stop();return}if(!left)left=tot;g.textContent='Pause';id=setInterval(()=>{left--;draw();if(left<=0){stop();onEnd&&onEnd()}},1000)};
+ el.querySelector('[data-a=re]').onclick=()=>{stop();left=tot;draw()};return{reset(){stop();left=tot;draw()},used(){return tot-left},stop,start(){if(!id)g.onclick()},running(){return !!id}}}
+const smix=it=>{if(it.keep||it.o.length<3||it.o.some(t=>/^[A-C](\b|$)|^“?[A-C]:/.test(t)))return it;const ix=shuf(it.o.map((t,i)=>i));return Object.assign({},it,{o:ix.map(i=>it.o[i]),a:ix.indexOf(it.a)})};
+function mc(box,items,scoreEl,xpKey,role){let right=0,answered=0;items=items.map(smix);
+ items.forEach((it,i)=>{const d=document.createElement('div');d.className='mcq';d.innerHTML=`<div class="q"><span class="n">${i+1}</span>${it.q}</div><div class="opts"></div><div class="fb" aria-live="polite"></div>`;
+  const os=d.querySelector('.opts'),fb=d.querySelector('.fb');let locked=false;
+  it.o.forEach((t,k)=>{const b=document.createElement('button');b.className='opt';b.textContent=t;b.onclick=()=>{if(locked)return;
+    if(k===it.a){b.classList.add('ok');locked=true;answered++;if(!d.dataset.miss)right++;fb.className='fb ok';fb.textContent='✓ '+(it.ok||'Correct!');addXP(10);
+      if(answered===items.length){scoreEl.textContent=`${right} / ${items.length} first try`;addXP(0,xpKey);role&&markDone(role)}}
+    else{b.classList.add('no');d.dataset.miss=1;fb.className='fb no';fb.textContent='✗ '+(it.no||'Try again.')}};os.appendChild(b)});box.appendChild(d)})}
+function initFlips(V,FC,total){let flipped=0;
+ V.forEach(([w,es,ex],i)=>{const f=document.createElement('div');f.className='flip';f.style.setProperty('--fc',FC[i%FC.length]);f.tabIndex=0;f.setAttribute('role','button');f.setAttribute('aria-label','Flip card: '+w);
+ f.innerHTML=`<div class="in"><div class="f"><span class="num">${String(i+1).padStart(2,'0')}</span><div class="w">${esc(w)}</div><div class="fb"><span class="tap">Tap to flip</span>${TTS?`<button class="say" aria-label="Listen">${SPK}</button>`:''}</div></div><div class="b"><span class="es">${es}</span><div class="ex">"${esc(ex)}"</div>${TTS?`<button class="say" style="background:${FC[i%FC.length]}" aria-label="Listen to the example">${SPK}</button>`:''}</div></div>`;
+ const flip=()=>{f.classList.toggle('on');if(!f.dataset.seen){f.dataset.seen=1;flipped++;$('#flipCount').textContent=flipped+' / '+total+' flipped';addXP(3)}};
+ f.addEventListener('click',e=>{if(e.target.closest('.say'))return;flip()});f.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();flip()}});
+ const b=f.querySelectorAll('.say');if(b[0])b[0].onclick=e=>{e.stopPropagation();say(plain(w))};if(b[1])b[1].onclick=e=>{e.stopPropagation();say(ex)};$('#flips').appendChild(f)})}
+function initMatch(M,total){let selL=null,pairs=0;
+ M.forEach(([l],i)=>{const b=document.createElement('button');b.className='mi';b.textContent=l;b.dataset.i=i;b.onclick=()=>{if(b.classList.contains('ok'))return;$$('#mL .mi').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');selL=b};$('#mL').appendChild(b)});
+ shuf(M.map((p,i)=>[p[1],i])).forEach(([r,i])=>{const b=document.createElement('button');b.className='mi';b.textContent=r;b.onclick=()=>{if(!selL||b.classList.contains('ok'))return;
+ if(+selL.dataset.i===i){b.classList.add('ok');selL.classList.remove('sel');selL.classList.add('ok');selL=null;pairs++;$('#matchCount').textContent=pairs+' / '+total+' pairs';addXP(5);say(M[i][0]+' '+M[i][1])}
+ else{b.classList.add('bad');setTimeout(()=>b.classList.remove('bad'),350)}};$('#mR').appendChild(b)})}
+function initPron(list,color){list.forEach(([w,ip])=>{const d=document.createElement('div');d.className='pr';d.innerHTML=`<span class="w">${w}</span><span class="ipa">${ip}</span>${TTS?`<button class="say" style="background:${color||'var(--pink)'}" aria-label="Listen: ${w}">${SPK}</button>`:''}`;const b=d.querySelector('.say');if(b)b.onclick=()=>say(w);$('#pron').appendChild(d)})}
+function initScriptToggle(){const b=$('#scrBtn');if(!b)return;b.onclick=()=>{const o=$('#script').hidden;$('#script').hidden=!o;b.setAttribute('aria-expanded',o);b.textContent=o?'Hide the scripts':'Show the scripts'}}
+const hiC=(s,re)=>esc(s).replace(re||/\b(because|so|That's why|That&#39;s why)\b/g,'<b>$1</b>').replace(/&#39;/g,"'");
+function initDeck(Q,IMGS,roleName){let qi=0;const n=Q.length;
+ Q.forEach((_,i)=>{const d=document.createElement('button');d.setAttribute('aria-label','Question '+(i+1));d.onclick=()=>{qi=i;drawQ()};$('#dots').appendChild(d)});
+ function drawQ(){const q=Q[qi],im=IMGS[qi%IMGS.length];$('#qImg').src='img/'+im[0];$('#qImg').alt=im[1];$('#qN').textContent=`QUESTION ${qi+1} OF ${n}`;$('#qT').textContent=q[0];$('#qF').innerHTML=`<span>${esc(q[1])}</span><span>${esc(q[2])}</span>`;[...$('#dots').children].forEach((d,i)=>d.setAttribute('aria-current',i===qi));$('#qP').disabled=qi===0;$('#qX').textContent=qi===n-1?'Done ✓':'Next question →'}
+ $('#qP').onclick=()=>{if(qi>0){qi--;drawQ()}};$('#qX').onclick=()=>{if(qi<n-1){qi++;drawQ()}else addXP(10,'deck')};$('#qS').onclick=()=>say(Q[qi][0]);drawQ()}
+function initCases(CASES,MV,secTime){
+ CASES.forEach(c=>{const d=document.createElement('div');d.className='scn';
+ d.innerHTML=`<img src="img/${c.img}" alt="${esc(c.alt)}"><div class="sh"><small>${c.n}</small><h4>${c.h}</h4></div><ul>${c.f.map(x=>`<li>${x}</li>`).join('')}</ul><p class="task">${c.t}</p>${c.k?`<details class="key" style="padding:6px 14px 0"><summary style="font-weight:800;cursor:pointer">Answer key</summary><p class="hint">${c.k}</p></details>`:''}<div class="moves" style="padding:10px 14px 14px;display:grid;gap:6px">${MV.map(m=>`<button class="mv" aria-pressed="false"><i>✓</i>${m}</button>`).join('')}</div>`;$('#cases').appendChild(d)});
+ const tot=CASES.length*MV.length;
+ function drawMv(){const n=$$('.mv[aria-pressed=true]').length;$('#mvN').textContent=n;$('#mvBar').style.width=n/tot*100+'%';if(n===tot){addXP(30,'mission');markDone('mission')}}
+ $$('.mv').forEach(b=>b.onclick=()=>{b.setAttribute('aria-pressed',b.getAttribute('aria-pressed')!=='true');drawMv()});
+ $('#mvRe').onclick=()=>{$$('.mv').forEach(b=>b.setAttribute('aria-pressed','false'));drawMv()};
+ timer($('#tMis'))}
+function initWrap(quiz,selfList){
+ mc($('#mcQ'),quiz,$('#scQ'),'mcQ','wrap');
+ selfList.forEach(t=>{const b=document.createElement('button');b.textContent=t;b.setAttribute('aria-pressed','false');b.onclick=()=>b.setAttribute('aria-pressed',b.getAttribute('aria-pressed')!=='true');$('#selfev').appendChild(b)});
+ const key='gt09-s'+SID+'-done';
+ function showDone(){$('#doneBtn').textContent='✓ Session complete';$('#doneBtn').disabled=true}
+ if(st.get(key))showDone();
+ $('#doneBtn').onclick=()=>{st.set(key,'1');addXP(50,'done');markDone('wrap');showDone()}}
+setMode(st.get('gt09-mode')||'group');
+
+
+const selfev=(id,list,cb)=>{list.forEach(t=>{const b=document.createElement('button');b.textContent=t;b.setAttribute('aria-pressed','false');b.onclick=()=>{const on=b.getAttribute('aria-pressed')!=='true';b.setAttribute('aria-pressed',on);if(on)addXP(3);cb&&cb(on,t,b)};$(id).appendChild(b)})};
+const resetEv=id=>$$(id+' button').forEach(b=>b.setAttribute('aria-pressed','false'));
+if($('#hlBtn'))$('#hlBtn').onclick=()=>{const on=!$('#disc').classList.contains('show-hl');$('#disc').classList.toggle('show-hl',on);$('#hlBtn').setAttribute('aria-pressed',on);$('#hlBtn').textContent=on?'Hide the key words':'Show the key words'};
+if($('#esBtn'))$('#esBtn').onclick=()=>{const open=$('#esBox').hidden;$('#esBox').hidden=!open;$('#esBtn').setAttribute('aria-expanded',open);$('#esBtn').textContent=open?'🇲🇽 Ocultar explicación en español':'🇲🇽 Ver explicación en español'};
+
+/* §1 */
+mc($('#mcW'),[{q:"Supplier A: $100, 5 days. Supplier B: $140, 2 days. Which supplier is cheaper?",o:["Supplier A","Supplier B","They are the same"],a:0,ok:"A costs $100. B costs $140.",no:"Look at the price."},{q:"Which supplier is faster?",o:["Supplier B","Supplier A","They are the same"],a:0,ok:"B needs two days. A needs five.",no:"Look at the days."},{q:"The client needs the parts tomorrow. Which supplier do you call?",o:["Supplier B, because it is faster","Supplier A, because it is cheaper","Neither"],a:0,ok:"Speed is the most important thing here.",no:"What does the client need?"}],$('#scW'),'mcW','warm');
+$('#mcW').addEventListener('click',()=>{if($$('#mcW .mcq').every(d=>d.querySelector('.fb.ok')))$('#wOut').hidden=false});
+/* §2 */
+const V=[["option","opción","Option A has one advantage."],["compare","comparar","I compare two offers."],["advantage","ventaja","The advantage is the price."],["disadvantage","desventaja","The disadvantage is the delivery time."],["cost","costo / costar","The cost is one hundred dollars."],["quality","calidad","The quality is good."],["reliable","confiable","This supplier is reliable."],["lead time","tiempo de entrega","The lead time is five days."],["trade-off","algo a cambio de algo","The trade-off is price for speed."],["worth it","vale la pena","Is it worth it?"],["supplier","proveedor","Our supplier is in Ohio."],["decide","decidir","We decide on Friday."]];
+initFlips(V,['#0A6FA8','#0B8457','#6B4DF0','#C71F5E','#B07800','#16213E'],12);
+const DW=["option","compare","advantage","cost","quality","reliable","lead time","trade-off","worth it","decide"],DT=["How you choose a supplier.","How you choose a tool or a machine.","How you choose a route to work."];let dwN=0,dti=-1;const tDw=timer($('#tDw'));
+DW.forEach(w=>{const b=document.createElement('button');b.className='card12';b.textContent=w;b.onclick=()=>{if(b.classList.contains('in'))return;b.classList.add('in');b.style.textDecoration='line-through';b.style.opacity='.55';dwN++;$('#dwN').textContent=dwN;addXP(4);say(w);
+ if(dwN===DW.length){const o=$('#dwOut');o.hidden=false;o.textContent='All 10 words are dead. Say one sentence with the hardest one.';addXP(15,'dw');markDone('vocab')}};$('#dwPile').appendChild(b)});
+$('#dwNext').onclick=()=>{dti=(dti+1)%DT.length;$('#dwTopic').textContent=DT[dti]};
+/* §3 */
+mc($('#mcA'),[{q:"Supplier A is ___ than Supplier B.",o:["cheaper","more cheap","cheapest"],a:0},{q:"Option B is ___ reliable than A.",o:["more","most","as"],a:0},{q:"A is not ___ fast as B.",o:["as","than","more"],a:0},{q:"This is ___ expensive option.",o:["the most","more","most of"],a:0},{q:"B is ___ than A. (good)",o:["better","gooder","more good"],a:0}],$('#scA'),'mcA',null);
+const SF=[["The client needs the parts on Friday.",1,"Speed matters most: B is faster than A."],["The budget for this month is closed.",0,"Price matters most: A is cheaper than B."],["The client says: price and time are both important.",2,"Both matter: A is cheaper, but B is faster."],["The machine is stopped. Every day costs money.",1,"Time matters most: B is faster than A."]];
+const FR=["A is cheaper than B.","B is faster than A.","A is cheaper, but B is faster."];let sfN=0,sfP=0;
+SF.forEach(([ctx,ok,why])=>{const d=document.createElement('div');d.className='impr';let miss=0;d.innerHTML=`<div style="font-weight:800">${esc(ctx)}</div><div class="cs"></div><div class="fb"></div>`;
+ FR.forEach((t,i)=>{const b=document.createElement('button');b.textContent='Frame '+(i+1);b.onclick=()=>{if(d.dataset.done||b.classList.contains('no'))return;const fb=d.querySelector('.fb');
+  if(i===ok){d.dataset.done=1;b.classList.add('ok');const p=Math.max(2,10-4*miss);sfP+=p;sfN++;fb.textContent=`✓ +${p} · ${why} Now say: because …`;addXP(p);$('#sfN').textContent=sfN;$('#sfP').textContent=sfP;say(t);
+   if(sfN===SF.length){const o=$('#sfOut');o.hidden=false;o.textContent=`Four contexts done: ${sfP} points. Same fact, different frame.`;addXP(15,'sf');markDone('grammar')}}
+  else{b.classList.add('no');miss++;fb.textContent='✗ Not that frame. Think about what the context needs.'}};d.querySelector('.cs').appendChild(b)});$('#sf').appendChild(d)});
+/* §4 */
+const RDT="Subject: Two offers for the packaging. Hi Carla, I compared the two offers. Supplier A is cheaper than Supplier B: $100 a box, not $140. But Supplier B is faster. B delivers in two days, and A needs five. Supplier A is not as reliable as B: last year it was late twice. B also has the best quality, and the most important thing for the client is the date. I recommend Supplier B. Can we talk at four? Luis";$('#rdTxt').textContent=RDT;
+mc($('#mcR'),[{q:"Which supplier is cheaper?",o:["Supplier A","Supplier B","They cost the same"],a:0},{q:"Which supplier is faster?",o:["Supplier B","Supplier A","They are the same"],a:0},{q:"Is Supplier A as reliable as Supplier B?",o:["No, it was late twice","Yes, it is the same","The email does not say"],a:0},{q:"Which supplier does Luis recommend?",o:["Supplier B","Supplier A","Neither"],a:0},{q:"Why?",o:["The date is the most important thing for the client","The price is the most important thing","Supplier A has no quality"],a:0}],$('#scR'),'mcR','reading');
+/* §5 */
+const RN=[["Round 1 · Opinion","Say what you think and why.","I think … because …"],["Round 2 · Evidence","Add numbers: price, days, boxes.","The numbers show that …"],["Round 3 · Concession","Admit one point for the other side, then defend yours.","You are right that …, but …"]];let rni=0,sdp=0;const tSd=timer($('#tSd'));
+selfev('#sdChk',["I gave an opinion with because.","I used a comparative with numbers.","I made a concession: You are right that…, but…","My partner could answer me."],(on)=>{sdp+=on?5:-5;$('#sdPts').textContent=sdp});
+$('#sdDraw').onclick=()=>{const a=Math.random()<.5;$('#sdSide').textContent=a?'Your side: Supplier A. Defend the lower price.':'Your side: Supplier B. Defend the faster delivery.'};
+$('#sdNext').onclick=()=>{if(rni<2){rni++;const r=RN[rni];$('#sdRound').textContent=r[0];$('#sdTask').textContent=r[1];$('#sdStart').textContent=r[2];tSd.reset();if(rni===2){$('#sdChk').hidden=false;$('#sdHint').textContent='Round 3 scores. Tap what you did.';$('#sdNext').textContent='Finish ✓'}}
+ else{const o=$('#sdOut');o.hidden=false;o.textContent=`Debate done. Round 3 points: ${sdp}. My concession was: You are right that…, but…`;$('#sdNext').disabled=true;addXP(15,'sd');markDone('speaking')}};
+initDeck([["Do you compare options before you decide? How?","What do you compare first?","What is hardest?"],["What is the cheapest option you chose once?","What happened?","Was it worth it?"],["What is more important for you: price or quality?","Why?","Does your boss agree?"],["Which is faster at work: email or a call?","When is each one better?","What is the risk?"],["Which supplier or tool is the most reliable in your job?","How do you know?","What is the evidence?"],["What is the trade-off of working overtime?","Is it worth it?","Who decides?"],["What is an advantage of your plant?","What is a disadvantage?","What can you do?"],["Which is longer in your job: the lead time or the setup time?","Why?","What helps?"],["Is online training cheaper than in-person?","What is the disadvantage?","Which do you prefer?"],["What decision was difficult last month?","What options did you have?","How did you decide?"],["What is the most expensive mistake in your area?","What caused it?","How do you prevent it?"],["What is a good question to ask a new supplier?","Why that question?","What answer do you want?"]],
+ [["b9s09_fork.jpg","A team in a decision meeting around a table with laptops in an orange glass office"],["b9s09_scale.jpg","A team decides in front of a blue board covered with yellow sticky notes"],["b9s09_shelf.jpg","Two mugs side by side"],["b9s09_calc.jpg","A calculator and a pencil on notes"],["b9s09_clock.jpg","A large analog wall clock"],["b9s09_doors.jpg","A red door and a yellow door side by side"]]);
+/* §6 */
+initCases([{img:"b9s09_calc.jpg",alt:"A calculator and a pencil on notes",n:"DECISION 1",h:"The packaging offer",f:["Supplier A: $100 a box, 5 days.","Supplier B: $140 a box, 2 days.","The order is 400 boxes."],t:"Compare, say the trade-off and decide.",k:"Supplier A is cheaper than B: $100, not $140. B is faster than A: two days, not five. For 400 boxes, B costs $16,000 more. The most important thing is the date, so I choose B. The trade-off is the price."},{img:"b9s09_doors.jpg",alt:"A red door and a yellow door side by side",n:"DECISION 2",h:"The training room",f:["Room A: near the plant, 10 seats, free.","Room B: in the city, 30 seats, $200.","The group has 24 people."],t:"Compare, say the trade-off and decide.",k:"Room A is closer than Room B, and it is free. Room B is bigger than A: 30 seats, not 10. It is not as cheap as Room A. We are 24 people, so I choose Room B. The trade-off is the $200."},{img:"b9s09_clock.jpg",alt:"A large analog wall clock",n:"DECISION 3",h:"The two trucks",f:["Truck A arrives at 8:00 and costs $300.","Truck B arrives at 14:00 and costs $180.","The client's line starts at 9:00."],t:"Compare, say the trade-off and decide.",k:"Truck A is more expensive than Truck B, but it arrives before the line starts. Truck B is not as expensive as A, but it arrives too late. A is the most reliable option for the client's schedule, so I choose A. The trade-off is $120."}],["Compare both options","Use numbers as evidence","Say the trade-off with but","Decide and say why"]);
+/* §7 */
+initWrap([{q:"Supplier A is ___ than Supplier B.",o:["cheaper","more cheap","cheapest"],a:0},{q:"B is ___ reliable than A.",o:["more","most","as"],a:0},{q:"A is not as fast ___ B.",o:["as","than","that"],a:0},{q:"A trade-off means…",o:["you give one thing to get another","a free option","a fast decision"],a:0},{q:"Which sentence is correct?",o:["B is the most reliable option.","B is most reliable option.","B is the more reliable option."],a:0}],["I used cheaper than / more … than.","I used numbers as evidence.","I said the trade-off.","I decided with because.","My second try is clearer."]);
+
+})();</script>
+</body></html>

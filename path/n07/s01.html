@@ -1,0 +1,985 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Intermedio 1 · S01 · The Notification Pile-Up</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap">
+<style>
+
+:root{
+  --navy:#16213E; --navy2:#22305A; --cream:#F3FAF6; --paper:#FFFFFF; --ink:#1B1B2F; --mut:#5E6275; --line:#D5EBDF;
+  --pri:#087F57; --pri-d:#05563B; --pri-t:#E1F6EC;
+  --sun:#FFC233; --sun-t:#FFF3D1; --teal:#0E7490; --teal-t:#DDF1F6; --pink:#C71F5E; --pink-t:#FBE3EC; --violet:#6B4DF0; --violet-t:#ECE7FF;
+  --ok:#15A34A; --ok-t:#E3F7EA; --err:#E5484D; --err-t:#FDE8E8;
+  --r:18px; --r-sm:12px; --sh:0 6px 22px rgba(27,27,47,.08); --sh-lg:0 18px 44px rgba(27,27,47,.16);
+  color-scheme:light;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+[hidden]{display:none!important}
+html{scroll-behavior:smooth;scroll-padding-top:150px}
+body{background:var(--cream);color:var(--ink);font-family:"DM Sans","Segoe UI",system-ui,sans-serif;font-size:17px;line-height:1.55;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4,.nun{font-family:Nunito,"Segoe UI",system-ui,sans-serif;letter-spacing:-.01em;line-height:1.15;text-wrap:balance}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+button:focus-visible,a:focus-visible,textarea:focus-visible,input:focus-visible{outline:3px solid var(--violet);outline-offset:2px}
+img{max-width:100%;display:block}
+.wrap{max-width:1100px;margin:0 auto;padding-inline:16px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+/* ---------- top bar ---------- */
+.topbar{background:var(--navy);color:#fff}
+.topbar .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding-block:10px}
+.brand{display:flex;align-items:center;gap:10px;font-family:Nunito,"Segoe UI",system-ui,sans-serif;font-weight:900;font-size:14px;letter-spacing:.08em}
+.brand i{width:10px;height:10px;border-radius:50%;background:var(--pri);box-shadow:0 0 0 4px rgba(8,127,87,.35)}
+.brand a{color:#fff;text-decoration:none}
+.brand small{font-family:"DM Sans","Segoe UI",system-ui,sans-serif;font-weight:500;letter-spacing:0;opacity:.7;font-size:13px}
+.toggles{display:flex;gap:8px;flex-wrap:wrap}
+.tg{border:1.5px solid rgba(255,255,255,.3);color:#fff;border-radius:99px;padding:6px 14px;font-size:13px;font-weight:700}
+.tg[aria-pressed="true"]{background:var(--sun);border-color:var(--sun);color:var(--navy)}
+
+/* ---------- hero ---------- */
+.hero{position:relative;background:var(--navy);color:#fff;overflow:hidden}
+.hero .bg{position:absolute;inset:0;background:url(img/l07s01_hero.jpg) center/cover}
+.hero .bg::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(15,30,70,.97) 0%,rgba(15,30,70,.87) 45%,rgba(15,30,70,.28) 100%)}
+.hero .wrap{position:relative;padding-block:44px 40px}
+.kick{font-family:Nunito,"Segoe UI",system-ui,sans-serif;font-weight:900;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--sun)}
+.hero h1{font-size:clamp(40px,6.5vw,72px);font-weight:900;margin:8px 0 10px;max-width:16ch}
+.hero h1 span{color:#4ADE9F;text-shadow:0 0 0 transparent}
+.hero p.obj{max-width:56ch;font-size:18px;opacity:.94}
+.pills{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.pill{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.28);border-radius:99px;padding:5px 13px;font-size:14px;font-weight:700}
+.pill.sun{background:var(--sun);border-color:var(--sun);color:var(--navy)}
+.coach{display:inline-flex;align-items:center;gap:12px;margin-top:20px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);border-radius:99px;padding:6px 18px 6px 6px}
+.coach .cav{width:44px;height:44px;border-radius:50%;background:var(--pri);display:grid;place-items:center;font-family:Nunito,"Segoe UI",system-ui,sans-serif;font-weight:900;font-size:16px;letter-spacing:.02em}
+.coach b{display:block;font-family:Nunito,"Segoe UI",system-ui,sans-serif;font-weight:900;font-size:17px;line-height:1.1}
+.coach small{font-size:13px;color:var(--sun);font-weight:700;letter-spacing:.04em}
+
+/* ---------- sticky nav ---------- */
+.nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:40;background:rgba(243,250,246,.96);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.nav .wrap{padding-block:10px 8px}
+.prog{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+.bar{flex:1;height:10px;background:#DCEFE5;border-radius:99px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--pri),var(--sun));border-radius:99px;transition:width .4s}
+.xp{font-family:Nunito,"Segoe UI",system-ui,sans-serif;font-weight:900;font-size:15px;color:var(--pri-d);white-space:nowrap}
+.clock{font-family:Nunito,"Segoe UI",system-ui,sans-serif;font-weight:900;font-size:15px;background:var(--navy);color:#fff;border-radius:99px;padding:5px 12px;font-variant-numeric:tabular-nums}
+.steps{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}
+.steps::-webkit-scrollbar{display:none}
+.steps a{flex:1 0 auto;text-decoration:none;color:var(--mut);background:#E4F3EB;border-radius:10px;padding:8px 12px;font-weight:700;font-size:14px;white-space:nowrap;text-align:center;border:1.5px solid transparent}
+.steps a b{font-family:Nunito,"Segoe UI",system-ui,sans-serif;margin-right:4px}
+.steps a.on{background:var(--c,var(--pri));color:#fff}
+.steps a.done{border-color:var(--ok);color:var(--ok)}
+.steps a.done.on{color:#fff}
+
+/* ---------- sections ---------- */
+main{padding-block:26px 80px}
+.sec{background:var(--paper);border-radius:24px;box-shadow:var(--sh);margin-bottom:26px;overflow:hidden;border-top:8px solid var(--c)}
+.shead{display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between;padding:22px 26px 6px}
+.snum{display:flex;align-items:center;gap:14px}
+.snum .n{width:54px;height:54px;border-radius:16px;background:var(--c);color:#fff;display:grid;place-items:center;font-family:Nunito,"Segoe UI",system-ui,sans-serif;font-weight:900;font-size:22px;flex:none}
+.snum h2{font-size:clamp(26px,3.4vw,36px);font-weight:900}
+.snum .sub{font-size:14px;color:var(--mut);font-weight:500}
+.meta{display:flex;gap:8px;flex-wrap:wrap}
+.chip{border-radius:99px;padding:5px 12px;font-size:13px;font-weight:700;background:var(--ct);color:var(--ink)}
+.chip.dark{background:var(--navy);color:#fff}
+.sbody{padding:14px 26px 28px;display:grid;gap:22px}
+.block{display:grid;gap:12px}
+.bt{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.bt h3{font-size:22px;font-weight:900}
+.bt .tag{font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--c)}
+.hint{color:var(--mut);font-size:15px}
+.card{background:var(--paper);border:1.5px solid var(--line);border-radius:var(--r);padding:18px}
+.tint{background:var(--ct);border-color:transparent}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+@media (max-width:820px){.g2,.g3{grid-template-columns:1fr}}
+.btn{border-radius:99px;padding:10px 18px;font-weight:700;font-size:15px;background:var(--paper);border:1.5px solid var(--line)}
+.btn.main{background:var(--c,var(--pri));border-color:var(--c,var(--pri));color:#fff}
+.btn.dark{background:var(--navy);border-color:var(--navy);color:#fff}
+.btn.sm{padding:6px 12px;font-size:14px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.say{width:40px;height:40px;border-radius:50%;background:var(--c,var(--pri));color:#fff;display:inline-grid;place-items:center;flex:none;font-size:16px}
+.say svg{width:18px;height:18px;fill:#fff}
+
+/* teacher notes */
+.tn{border-radius:var(--r);background:#FFFBEA;border:1.5px dashed #E9C46A}
+.tn summary{list-style:none;padding:12px 16px;font-weight:800;font-family:Nunito,"Segoe UI",system-ui,sans-serif;cursor:pointer;display:flex;justify-content:space-between;color:#7A5A00}
+.tn summary::-webkit-details-marker{display:none}
+.tn summary::after{content:"＋";font-weight:900}
+.tn[open] summary::after{content:"－"}
+.tn .layers{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;padding:0 16px 16px}
+@media (max-width:820px){.tn .layers{grid-template-columns:1fr}}
+.tn .ly{background:#fff;border-radius:12px;padding:12px 14px;font-size:15px}
+.tn .ly h4{font-size:13px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px}
+.tn .ly:nth-child(1) h4{color:var(--violet)} .tn .ly:nth-child(2) h4{color:var(--pri-d)} .tn .ly:nth-child(3) h4{color:var(--teal)}
+.tn ul{padding-left:18px} .tn li{margin-bottom:4px}
+body.student .tn, body.student .key{display:none!important}
+
+/* ---------- §1 warm-up ---------- */
+.scene{display:grid;grid-template-columns:1.1fr 1fr;border-radius:var(--r);overflow:hidden;background:var(--navy);color:#fff}
+@media (max-width:820px){.scene{grid-template-columns:1fr}}
+.scene img{height:100%;min-height:260px;object-fit:cover}
+.scene .txt{padding:26px;display:grid;gap:12px;align-content:center}
+.bubble{background:#fff;color:var(--ink);border-radius:18px 18px 18px 4px;padding:12px 16px;font-size:20px;font-weight:700;max-width:28ch;position:relative}
+.bubble.me{background:var(--pri);color:#fff;border-radius:18px 18px 4px 18px;justify-self:end}
+.poll{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+@media (max-width:900px){.poll{grid-template-columns:repeat(3,1fr)}}
+@media (max-width:520px){.poll{grid-template-columns:repeat(2,1fr)}}
+.pc{border-radius:var(--r);overflow:hidden;background:var(--paper);border:2px solid var(--line);display:grid;transition:transform .15s,border-color .15s}
+.pc .em{aspect-ratio:4/3;display:grid;place-items:center;font-size:40px;background:var(--pc-bg,var(--ct))}
+.pc .pb{padding:10px 12px;display:grid;gap:8px}
+.pc .nm{font-family:Nunito,"Segoe UI",system-ui,sans-serif;font-weight:900;font-size:16px;line-height:1.15;min-height:2.3em}
+.pc .vt{display:flex;align-items:center;justify-content:space-between}
+.pc .vt button{width:34px;height:34px;border-radius:50%;background:var(--ct);font-weight:900;font-size:18px}
+.pc .vt output{font-family:Nunito,"Segoe UI",system-ui,sans-serif;font-weight:900;font-size:22px;font-variant-numeric:tabular-nums}
+.pc .pbar{height:8px;border-radius:99px;background:#EDF1FB;overflow:hidden}
+.pc .pbar i{display:block;height:100%;width:0;background:var(--c);transition:width .3s}
+.pc.win{border-color:var(--c);transform:translateY(-3px)}
+.result{font-family:Nunito,"Segoe UI",system-ui,sans-serif;font-weight:900;font-size:20px}
+.fq{display:grid;gap:8px}
+.fq div{background:var(--ct);border-radius:12px;padding:10px 14px;font-weight:700}
+.fq div span{color:var(--mut);font-weight:500}
+
+/* ---------- §2 vocab ---------- */
+.flips{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+@media (max-width:900px){.flips{grid-template-columns:repeat(3,1fr)}}
+@media (max-width:520px){.flips{grid-template-columns:repeat(2,1fr)}}
+.flip{perspective:900px;height:170px}
+.flip .in{position:relative;width:100%;height:100%;transition:transform .5s;transform-style:preserve-3d}
+.flip.on .in{transform:rotateY(180deg)}
+.flip .f,.flip .b{position:absolute;inset:0;border-radius:var(--r);backface-visibility:hidden;padding:14px;display:grid;align-content:space-between}
+.flip .f{background:var(--fc);color:#fff}
+.flip .b{background:#fff;border:2px solid var(--fc);transform:rotateY(180deg)}
+.flip .num{font-family:Nunito,"Segoe UI",system-ui,sans-serif;font-weight:900;font-size:13px;opacity:.8}
+.flip .w{font-family:Nunito,"Segoe UI",system-ui,sans-serif;font-weight:900;font-size:19px;line-height:1.15}
+.flip .es{font-weight:700;color:var(--mut);font-size:14px}
+.flip .ex{font-size:14px}
+.flip .fb{display:flex;justify-content:space-between;align-items:end}
+.flip .fb .say{background:rgba(255,255,255,.25)}
+.flip .tap{font-size:12px;font-weight:700;opacity:.85}
+.flip .seen{position:absolute;top:10px;right:10px;background:var(--ok);color:#fff;border-radius:99px;font-size:11px;font-weight:800;padding:2px 8px}
+.match{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.match .col{display:grid;gap:10px}
+.mi{border:2px solid var(--line);background:#fff;border-radius:14px;padding:12px 14px;font-weight:700;text-align:left;transition:.15s}
+.mi.sel{border-color:var(--c);background:var(--ct)}
+.mi.ok{border-color:var(--ok);background:var(--ok-t);color:var(--ok);cursor:default}
+.mi.bad{border-color:var(--err);background:var(--err-t);animation:shake .3s}
+@keyframes shake{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+.board{display:flex;flex-wrap:wrap;gap:10px}
+.dw{border-radius:12px;padding:10px 14px;font-family:Nunito,"Segoe UI",system-ui,sans-serif;font-weight:900;font-size:17px;background:var(--navy);color:#fff}
+.dw[aria-pressed="true"]{background:#E4E9F9;color:#9FA9C2;text-decoration:line-through}
+.timer{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.timer output{font-family:Nunito,"Segoe UI",system-ui,sans-serif;font-weight:900;font-size:34px;font-variant-numeric:tabular-nums;min-width:4.5ch}
+.timer.end output{color:var(--err)}
+.closeout{background:var(--navy);color:#fff;border-radius:14px;padding:12px 16px;font-family:Nunito,"Segoe UI",system-ui,sans-serif;font-weight:900;font-size:19px}
+.stat{font-family:Nunito,"Segoe UI",system-ui,sans-serif;font-weight:900}
+.stat b{color:var(--c);font-size:26px}
+
+/* ---------- §3 grammar ---------- */
+.disc{display:grid;grid-template-columns:1fr 1.2fr;gap:0;border-radius:var(--r);overflow:hidden;border:1.5px solid var(--line)}
+@media (max-width:820px){.disc{grid-template-columns:1fr}}
+.disc img{height:100%;min-height:240px;object-fit:cover}
+.disc .chat{padding:20px;display:grid;gap:10px;align-content:center;background:var(--violet-t)}
+.disc .chat p{background:#fff;border-radius:14px;padding:10px 14px;font-size:18px;font-weight:500;max-width:34ch}
+.disc .chat p:nth-child(even){justify-self:end;background:var(--violet);color:#fff}
+mark.hl{background:transparent;color:inherit;border-radius:4px;transition:.2s}
+.show-hl mark.hl{background:var(--sun);color:var(--ink);padding:0 3px;font-weight:800}
+.tool{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media (max-width:820px){.tool{grid-template-columns:1fr}}
+.tool .card h4{font-size:14px;letter-spacing:.08em;text-transform:uppercase;color:var(--violet);margin-bottom:6px}
+.tool .big{font-family:Nunito,"Segoe UI",system-ui,sans-serif;font-weight:900;font-size:24px}
+.tool .big em{font-style:normal;color:var(--violet)}
+.forms{border-radius:var(--r);overflow:hidden;border:1.5px solid var(--line)}
+.forms table{width:100%;border-collapse:collapse;font-size:16px}
+.forms th{background:var(--violet);color:#fff;font-family:Nunito,"Segoe UI",system-ui,sans-serif;text-align:left;padding:10px 14px}
+.forms td{padding:10px 14px;border-top:1px solid var(--line);background:#fff}
+.forms td:first-child{font-family:Nunito,"Segoe UI",system-ui,sans-serif;font-weight:900;font-size:22px;color:var(--violet);width:56px;text-align:center}
+.forms b{color:var(--violet)}
+.es-box{background:#fff;border:2px dashed var(--violet);border-radius:var(--r);padding:16px 18px;display:grid;gap:8px}
+.answerbox{background:var(--navy);color:#fff;border-radius:var(--r);padding:16px 18px;font-family:Nunito,"Segoe UI",system-ui,sans-serif;font-weight:900;font-size:19px;display:flex;align-items:center;gap:12px}
+.answerbox .tagi{background:var(--sun);color:var(--navy);border-radius:8px;padding:3px 10px;font-size:12px;letter-spacing:.06em}
+.mc{display:grid;gap:12px}
+.mcq{background:#fff;border:1.5px solid var(--line);border-radius:14px;padding:14px 16px;display:grid;gap:10px}
+.mcq .q{font-weight:700;font-size:18px}
+.mcq .q .n{font-family:Nunito,"Segoe UI",system-ui,sans-serif;font-weight:900;color:var(--c);margin-right:6px}
+.opts{display:flex;gap:8px;flex-wrap:wrap}
+.opt{border:2px solid var(--line);border-radius:99px;padding:7px 16px;font-weight:700;background:#fff}
+.opt:hover{border-color:var(--c)}
+.opt.ok{background:var(--ok);border-color:var(--ok);color:#fff}
+.opt.no{background:var(--err-t);border-color:var(--err);color:var(--err)}
+.mcq .fb{font-size:15px;font-weight:700}
+.mcq .fb.ok{color:var(--ok)} .mcq .fb.no{color:var(--err)}
+.score{font-family:Nunito,"Segoe UI",system-ui,sans-serif;font-weight:900;font-size:18px}
+.builder .dst,.builder .src{display:flex;flex-wrap:wrap;gap:8px;min-height:56px;padding:10px;border-radius:14px}
+.builder .dst{border:2.5px dashed var(--c);background:var(--ct)}
+.wchip{background:#fff;border:2px solid var(--line);border-radius:12px;padding:8px 14px;font-family:Nunito,"Segoe UI",system-ui,sans-serif;font-weight:900;font-size:18px;box-shadow:0 3px 0 var(--line)}
+.dst .wchip{border-color:var(--c);box-shadow:0 3px 0 var(--c)}
+.errs{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media (max-width:820px){.errs{grid-template-columns:1fr}}
+.err{border-radius:14px;padding:14px;background:#fff;border:1.5px solid var(--line);display:grid;gap:4px}
+.err s{color:var(--err);font-weight:700}
+.err b{color:var(--ok)}
+
+/* ---------- §4 reading ---------- */
+.phone{max-width:420px;margin:0 auto;background:#fff;border-radius:34px;border:10px solid var(--navy);box-shadow:var(--sh-lg);overflow:hidden}
+.phone .ph{background:var(--teal);color:#fff;padding:14px 16px;display:flex;align-items:center;gap:10px}
+.phone .ph b{font-family:Nunito,"Segoe UI",system-ui,sans-serif;font-weight:900}
+.phone .ph small{display:block;opacity:.9;font-size:12px}
+.phone .ms{background:#EFE9E1;padding:14px 12px;display:grid;gap:10px}
+.msg{display:grid;grid-template-columns:36px 1fr;gap:8px;align-items:start}
+.msg img,.msg .av{width:36px;height:36px;border-radius:50%;object-fit:cover}
+.msg .av{color:#fff;display:grid;place-items:center;font-family:Nunito,"Segoe UI",system-ui,sans-serif;font-weight:900}
+.msg .bb{background:#fff;border-radius:4px 14px 14px 14px;padding:8px 12px;font-size:16px}
+.msg .bb .who{font-family:Nunito,"Segoe UI",system-ui,sans-serif;font-weight:900;font-size:13px;color:var(--teal)}
+
+/* ---------- §5 listening ---------- */
+.player{display:grid;grid-template-columns:260px 1fr;gap:0;border-radius:var(--r);overflow:hidden;background:var(--navy);color:#fff}
+@media (max-width:820px){.player{grid-template-columns:1fr}}
+.player img{height:100%;min-height:200px;object-fit:cover}
+.player .pp{padding:22px;display:grid;gap:12px;align-content:center}
+.predict{display:grid;gap:10px}
+.pbet{background:#fff;border:1.5px solid var(--line);border-radius:14px;padding:12px 14px;display:grid;gap:8px}
+.pbet .st{font-weight:700;font-size:16px}
+.pbet .row2{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.tf{display:flex;gap:6px}
+.tf button{border:2px solid var(--line);border-radius:99px;padding:5px 14px;font-weight:800;font-size:13px}
+.tf button[aria-pressed="true"].t{background:var(--ok);border-color:var(--ok);color:#fff}
+.tf button[aria-pressed="true"].f{background:var(--err);border-color:var(--err);color:#fff}
+.pts{display:flex;align-items:center;gap:8px}
+.pts button{width:28px;height:28px;border-radius:50%;background:var(--pink-t);color:var(--pink);font-weight:900}
+.pts output{font-family:Nunito,"Segoe UI",system-ui,sans-serif;font-weight:900;min-width:2ch;text-align:center}
+.pbet.rev.right{border-color:var(--ok);background:var(--ok-t)}
+.pbet.rev.wrong{border-color:var(--err);background:var(--err-t)}
+.play{background:var(--pink);color:#fff;border-radius:99px;padding:12px 22px;font-family:Nunito,"Segoe UI",system-ui,sans-serif;font-weight:900;font-size:18px;display:inline-flex;gap:10px;align-items:center}
+.script{background:#fff;border-radius:var(--r);border:1.5px solid var(--line);padding:16px 18px;font-size:17px;display:grid;gap:6px}
+.script p b{color:var(--pink);font-family:Nunito,"Segoe UI",system-ui,sans-serif}
+.rec{display:inline-block;background:var(--navy);color:#fff;font-size:11px;font-weight:800;letter-spacing:.1em;padding:3px 8px;border-radius:4px}
+.pron{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media (max-width:820px){.pron{grid-template-columns:1fr 1fr}}
+.pr{background:var(--pink-t);border-radius:14px;padding:14px;display:grid;gap:8px;justify-items:start}
+.pr .w{font-family:Nunito,"Segoe UI",system-ui,sans-serif;font-weight:900;font-size:21px}
+.pr .ipa{color:var(--mut);font-size:14px}
+
+/* ---------- §6 speaking ---------- */
+.rounds{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media (max-width:820px){.rounds{grid-template-columns:1fr}}
+.rd{border-radius:var(--r);overflow:hidden;border:2.5px solid var(--line);background:#fff;text-align:left;display:grid}
+.rd img{aspect-ratio:16/10;object-fit:cover;width:100%}
+.rd .initcard{aspect-ratio:16/10;width:100%;display:grid;place-items:center;font-family:Nunito,"Segoe UI",system-ui,sans-serif;font-weight:900;font-size:44px;color:#fff}
+.rd .rb{padding:14px;display:grid;gap:6px}
+.rd h4{font-size:20px;font-weight:900}
+.rd .who{font-size:14px;font-weight:700;color:var(--pri-d)}
+.rd ul{padding-left:18px;font-size:15px}
+.rd[aria-pressed="true"]{border-color:var(--c);box-shadow:0 0 0 4px var(--ct)}
+.deck{display:grid;grid-template-columns:1fr 1.3fr;border-radius:var(--r);overflow:hidden;background:var(--c);color:#fff}
+@media (max-width:820px){.deck{grid-template-columns:1fr}}
+.deck img{height:100%;min-height:260px;object-fit:cover}
+.deck .dq{padding:26px;display:grid;gap:14px;align-content:center}
+.deck .qn{font-family:Nunito,"Segoe UI",system-ui,sans-serif;font-weight:900;letter-spacing:.12em;font-size:13px;opacity:.9}
+.deck .qt{font-family:Nunito,"Segoe UI",system-ui,sans-serif;font-weight:900;font-size:clamp(26px,3.4vw,40px);line-height:1.1}
+.deck .fu{display:grid;gap:6px;font-size:18px;font-weight:500}
+.deck .fu span::before{content:"→ ";font-weight:900;color:var(--sun)}
+.deck .row .btn{background:rgba(255,255,255,.18);border-color:rgba(255,255,255,.35);color:#fff}
+.dots{display:flex;gap:6px}
+.dots button{width:11px;height:11px;border-radius:50%;background:rgba(255,255,255,.35)}
+.dots button[aria-current="true"]{background:#fff}
+.help{display:flex;flex-wrap:wrap;gap:8px}
+.help span{background:var(--navy);color:#fff;border-radius:99px;padding:6px 14px;font-weight:700;font-size:15px}
+
+/* ---------- §7 mission ---------- */
+.mission{position:relative;border-radius:var(--r);overflow:hidden;color:#fff;background:var(--navy)}
+.mission img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.32}
+.mission .mt{position:relative;padding:28px;display:grid;gap:10px;max-width:70ch}
+.mission h3{font-size:30px;font-weight:900}
+.guest{background:#fff;border-radius:var(--r);border:1.5px solid var(--line);overflow:hidden;display:grid}
+.guest .gh{display:flex;gap:12px;align-items:center;padding:14px;background:var(--ct)}
+.guest .gh img{width:72px;height:72px;border-radius:50%;object-fit:cover;border:3px solid #fff}
+.guest .gh .initcircle{width:72px;height:72px;border-radius:50%;display:grid;place-items:center;font-family:Nunito,"Segoe UI",system-ui,sans-serif;font-weight:900;color:#fff;border:3px solid #fff;flex:none;font-size:26px}
+.guest h4{font-size:20px;font-weight:900}
+.guest .gh small{color:var(--mut);font-weight:700}
+.guest .line{padding:10px 14px 0;font-style:italic;color:var(--mut);font-size:15px}
+.moves{display:grid;gap:8px;padding:14px}
+.mv{display:flex;align-items:center;gap:10px;border:1.5px solid var(--line);border-radius:12px;padding:9px 12px;font-weight:700;font-size:15px;text-align:left;background:#fff}
+.mv i{width:22px;height:22px;border-radius:7px;border:2px solid var(--line);display:grid;place-items:center;flex:none;font-style:normal;color:#fff;font-size:13px}
+.mv[aria-pressed="true"]{background:var(--ok-t);border-color:var(--ok)}
+.mv[aria-pressed="true"] i{background:var(--ok);border-color:var(--ok)}
+
+/* ---------- §8 wrap ---------- */
+.sur{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media (max-width:900px){.sur{grid-template-columns:1fr 1fr}}
+@media (max-width:520px){.sur{grid-template-columns:1fr}}
+.sur .card h4{font-size:18px;font-weight:900;margin-bottom:6px}
+.sur .card:nth-child(1){border-top:5px solid var(--ok)} .sur .card:nth-child(2){border-top:5px solid var(--sun)} .sur .card:nth-child(3){border-top:5px solid var(--err)} .sur .card:nth-child(4){border-top:5px solid var(--violet)}
+textarea{width:100%;min-height:92px;border:1.5px solid var(--line);border-radius:12px;padding:10px 12px;font:inherit;font-size:15px;resize:vertical;background:#fff;color:var(--ink)}
+.selfev{display:flex;flex-wrap:wrap;gap:8px}
+.selfev button{border:2px solid var(--line);border-radius:99px;padding:8px 14px;font-weight:700;background:#fff}
+.selfev button[aria-pressed="true"]{background:var(--navy);border-color:var(--navy);color:#fff}
+.badge{display:flex;gap:18px;align-items:center;background:linear-gradient(120deg,var(--navy),var(--navy2));color:#fff;border-radius:var(--r);padding:22px}
+.badge .medal{width:84px;height:84px;border-radius:50%;background:var(--sun);color:var(--navy);display:grid;place-items:center;font-family:Nunito,"Segoe UI",system-ui,sans-serif;font-weight:900;font-size:28px;flex:none;border:6px solid rgba(255,255,255,.3)}
+footer{color:var(--mut);font-size:13px;text-align:center;padding:10px 16px 40px}
+footer a{color:var(--mut)}
+
+/* ================= Intermedio 1 · componentes nuevos ================= */
+.lockwrap{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:18px;align-items:stretch}
+@media(max-width:820px){.lockwrap{grid-template-columns:1fr}}
+.lockpic{position:relative;border-radius:var(--r);overflow:hidden;min-height:260px;box-shadow:var(--sh)}
+.lockpic img{width:100%;height:100%;object-fit:cover;object-position:50% 18%;position:absolute;inset:0}
+.lockpic .cap{position:absolute;left:0;right:0;bottom:0;padding:18px;color:#fff;background:linear-gradient(0deg,rgba(5,30,22,.92),rgba(5,30,22,0))}
+.lockpic .cap b{font-family:Nunito,"Segoe UI",system-ui,sans-serif;font-weight:900;font-size:22px;display:block;line-height:1.15}
+.phoneL{background:linear-gradient(160deg,#0B2B22,#16213E);border-radius:28px;padding:16px 14px 18px;box-shadow:var(--sh-lg);color:#fff}
+.phoneL .clk{text-align:center;font-family:Nunito,"Segoe UI",system-ui,sans-serif;font-weight:900;font-size:46px;line-height:1;letter-spacing:-.02em}
+.phoneL .clk small{display:block;font-family:"DM Sans","Segoe UI",system-ui,sans-serif;font-weight:500;font-size:13px;opacity:.7;margin-top:4px;letter-spacing:0}
+.nts{display:grid;gap:8px;margin-top:12px}
+.nt{position:relative;display:grid;grid-template-columns:44px 1fr auto;gap:10px;align-items:center;text-align:left;background:rgba(255,255,255,.94);color:var(--ink);border-radius:16px;padding:10px 12px;border:2.5px solid transparent;width:100%;transition:transform .15s,border-color .15s}
+.nt:hover{transform:translateY(-2px)}
+.nt .ic{width:44px;height:44px;border-radius:12px;background:var(--pri-t);display:grid;place-items:center;font-size:23px;overflow:hidden}
+.nt .ic img{width:100%;height:100%;object-fit:cover}
+.nt .tx b{display:block;font-family:Nunito,"Segoe UI",system-ui,sans-serif;font-weight:900;font-size:14px;color:var(--pri-d)}
+.nt .tx span{display:block;font-size:15px;line-height:1.3}
+.nt .tm{font-size:12px;color:var(--mut);font-weight:700}
+.nt .ord{position:absolute;right:-6px;top:-8px;width:28px;height:28px;border-radius:50%;background:var(--sun);color:var(--navy);font-family:Nunito,"Segoe UI",system-ui,sans-serif;font-weight:900;display:none;place-items:center;border:2px solid #fff}
+.nt[aria-pressed="true"]{border-color:var(--sun)}
+.nt[aria-pressed="true"] .ord{display:grid}
+.nt .inf{grid-column:1/-1;display:none;flex-wrap:wrap;gap:6px;padding-top:4px}
+.nt[aria-pressed="true"] .inf{display:flex}
+.inf i{font-style:normal;background:var(--pri);color:#fff;border-radius:99px;padding:3px 10px;font-size:13px;font-weight:700}
+.inf i.act{background:var(--sun);color:var(--navy)}
+
+/* sell (VOC-10) */
+.sellgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+@media(max-width:700px){.sellgrid{grid-template-columns:1fr}}
+.sell{background:#fff;border:1.5px solid var(--line);border-radius:var(--r);padding:14px;display:grid;gap:10px;box-shadow:var(--sh)}
+.sell .ctx{font-weight:700;font-size:16px}
+.sell .ctx small{display:block;color:var(--pri-d);font-family:Nunito,"Segoe UI",system-ui,sans-serif;font-weight:900;letter-spacing:.1em;font-size:12px;margin-bottom:2px}
+.sell .vs{display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:center}
+.sell .vs b{text-align:center;color:var(--mut);font-family:Nunito,"Segoe UI",system-ui,sans-serif}
+.sell .pick{border:2px solid var(--line);border-radius:12px;padding:10px;font-family:Nunito,"Segoe UI",system-ui,sans-serif;font-weight:900;font-size:18px;background:var(--cream)}
+.sell .pick[aria-pressed="true"]{background:var(--pri);border-color:var(--pri);color:#fff}
+.sell .pick.good{background:var(--ok);border-color:var(--ok);color:#fff}
+.sell .pick.bad{background:var(--err-t);border-color:var(--err);color:var(--err)}
+.sell .why{background:var(--sun-t);border-radius:10px;padding:8px 10px;font-size:15px}
+.sell .stem{font-style:italic;color:var(--mut);font-size:15px}
+.sell .tm{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+
+/* auction (GRM-03) */
+.bank{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:10px}
+.bank .coin{font-family:Nunito,"Segoe UI",system-ui,sans-serif;font-weight:900;font-size:26px;color:var(--pri-d);background:var(--sun);border-radius:99px;padding:4px 18px}
+.auc{display:grid;gap:10px}
+.lot{display:grid;grid-template-columns:34px 1fr auto;gap:12px;align-items:center;background:#fff;border:1.5px solid var(--line);border-radius:14px;padding:10px 12px}
+@media(max-width:700px){.lot{grid-template-columns:30px 1fr}.lot .ctl{grid-column:1/-1}}
+.lot .no{width:34px;height:34px;border-radius:50%;background:var(--navy);color:#fff;display:grid;place-items:center;font-family:Nunito,"Segoe UI",system-ui,sans-serif;font-weight:900}
+.lot .s{font-size:18px;font-weight:700}
+.lot .ctl{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.lot .ctl button{border:2px solid var(--line);background:var(--cream);border-radius:99px;padding:5px 12px;font-weight:800;font-size:14px}
+.lot .ctl button[aria-pressed="true"]{background:var(--pri);color:#fff;border-color:var(--pri)}
+.lot .ctl .say-fix[aria-pressed="true"]{background:var(--sun);color:var(--navy);border-color:var(--sun)}
+.lot .res{grid-column:2/-1;font-size:15px;font-weight:700}
+.lot.rg{border-color:var(--ok);background:var(--ok-t)}
+.lot.rw{border-color:var(--err);background:var(--err-t)}
+.lot.rp{background:#F4F4F8}
+.bidv{font-family:Nunito,"Segoe UI",system-ui,sans-serif;font-weight:900;min-width:20px;text-align:center}
+
+/* versions (LIS-03) */
+.vers{display:grid;gap:8px}
+.vrow{display:grid;grid-template-columns:1.1fr 1fr 1fr 1.3fr;gap:8px;align-items:center;background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:8px 10px}
+@media(max-width:700px){.vrow{grid-template-columns:1fr 1fr}.vrow .lab{grid-column:1/-1}}
+.vrow.head{background:transparent;border:0;font-family:Nunito,"Segoe UI",system-ui,sans-serif;font-weight:900;font-size:13px;letter-spacing:.08em;color:var(--mut)}
+.vrow .lab{font-weight:800}
+.vrow .val{font-size:15px;color:var(--mut)}
+.vrow .val span{display:none}
+.vers.rev .val span{display:inline;color:var(--ink);font-weight:800}
+.vrow .jd{display:flex;gap:6px}
+.vrow .jd button{flex:1;border:2px solid var(--line);background:var(--cream);border-radius:10px;padding:6px 4px;font-weight:800;font-size:14px}
+.vrow .jd button[aria-pressed="true"]{background:var(--violet);border-color:var(--violet);color:#fff}
+.vrow.ok{border-color:var(--ok);background:var(--ok-t)}
+.vrow.no{border-color:var(--err);background:var(--err-t)}
+.voices{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:700px){.voices{grid-template-columns:1fr}}
+.voice{background:#fff;border-radius:var(--r);border:1.5px solid var(--line);box-shadow:var(--sh);overflow:hidden}
+.voice .vh{display:flex;gap:12px;align-items:center;padding:12px 14px;background:var(--pink-t)}
+.voice .vh .cav{width:46px;height:46px;border-radius:50%;background:var(--pink);color:#fff;display:grid;place-items:center;font-family:Nunito,"Segoe UI",system-ui,sans-serif;font-weight:900;font-size:20px}
+.voice.r .vh{background:var(--teal-t)}
+.voice.r .vh .cav{background:var(--teal)}
+.voice .vh small{display:block;color:var(--mut);font-size:13px}
+.voice .vb{padding:12px 14px;display:grid;gap:10px}
+.wave{display:flex;gap:3px;align-items:center;height:34px}
+.wave i{display:block;width:5px;border-radius:3px;background:var(--pink);opacity:.5}
+.voice.r .wave i{background:var(--teal)}
+.voice.playing .wave i{opacity:1;animation:wv .8s infinite ease-in-out}
+@keyframes wv{50%{transform:scaleY(.4)}}
+.astat{font-size:13px;color:var(--mut)}
+.astat.miss{color:#9A5B00;font-weight:700}
+
+/* rank (SPK-10) */
+.rk{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:760px){.rk{grid-template-columns:1fr}}
+.rkcol h4{font-family:Nunito,"Segoe UI",system-ui,sans-serif;font-weight:900;margin-bottom:8px}
+.rkl{display:grid;gap:7px}
+.rki{display:grid;grid-template-columns:30px 1fr auto;gap:8px;align-items:center;background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:8px 10px}
+.rki .pos{width:28px;height:28px;border-radius:50%;background:var(--navy);color:#fff;display:grid;place-items:center;font-family:Nunito,"Segoe UI",system-ui,sans-serif;font-weight:900;font-size:14px}
+.rki .nm{font-size:15px;line-height:1.25}
+.rki .nm b{font-family:Nunito,"Segoe UI",system-ui,sans-serif}
+.rki .mv2{display:flex;gap:4px}
+.rki .mv2 button{width:30px;height:30px;border-radius:8px;border:1.5px solid var(--line);background:var(--cream);font-weight:900}
+.rki .mv2 button:disabled{opacity:.3;cursor:default}
+.stem2{background:var(--sun-t);border-radius:12px;padding:10px 14px;font-weight:700;margin-top:10px}
+
+/* mission sets */
+.tabs{display:flex;gap:8px;margin-bottom:10px}
+.tabs button{border:2px solid var(--line);background:#fff;border-radius:99px;padding:8px 18px;font-family:Nunito,"Segoe UI",system-ui,sans-serif;font-weight:900}
+.tabs button[aria-pressed="true"]{background:var(--teal);border-color:var(--teal);color:#fff}
+.mset{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+@media(max-width:760px){.mset{grid-template-columns:1fr}}
+.mcard{background:#fff;border:1.5px solid var(--line);border-radius:var(--r);padding:12px;display:grid;gap:8px;box-shadow:var(--sh)}
+.mcard .mh{display:flex;gap:10px;align-items:center;font-family:Nunito,"Segoe UI",system-ui,sans-serif;font-weight:900}
+.mcard .mh .ic{width:38px;height:38px;border-radius:10px;background:var(--teal-t);display:grid;place-items:center;font-size:20px}
+.mcard .secret{background:var(--navy);color:#fff;border-radius:12px;padding:10px 12px;font-size:16px;line-height:1.35}
+.mcard .secret[hidden]{display:none}
+.mcard .rv{justify-self:start}
+.mcard .tip{font-size:14px;color:var(--mut)}
+.mcard .moves{display:grid;gap:6px}
+.privacy{background:var(--err-t);border:1.5px dashed var(--err);border-radius:12px;padding:8px 12px;font-weight:700;font-size:15px}
+
+/* ficha docente */
+.ficha{background:#fff;border:2px dashed var(--pri);border-radius:var(--r);padding:0;margin:0 0 22px}
+.ficha summary{cursor:pointer;padding:14px 18px;font-family:Nunito,"Segoe UI",system-ui,sans-serif;font-weight:900;color:var(--pri-d);list-style:none}
+.ficha summary::-webkit-details-marker{display:none}
+.ficha summary::after{content:"+";float:right;font-size:22px}
+.ficha[open] summary::after{content:"–"}
+.ficha .fg{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;padding:0 18px 18px}
+@media(max-width:760px){.ficha .fg{grid-template-columns:1fr}}
+.ficha .fi{background:var(--pri-t);border-radius:12px;padding:10px 12px;font-size:15px}
+.ficha .fi b{display:block;font-family:Nunito,"Segoe UI",system-ui,sans-serif;font-size:12px;letter-spacing:.1em;color:var(--pri-d);text-transform:uppercase;margin-bottom:2px}
+.ficha table{width:100%;border-collapse:collapse;font-size:15px}
+.ficha td,.ficha th{padding:4px 6px;border-bottom:1px solid var(--line);text-align:left}
+body.student .ficha{display:none}
+.toast{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);background:var(--navy);color:#fff;border-radius:99px;padding:8px 16px;font-size:14px;font-weight:700;z-index:90;opacity:0;pointer-events:none;transition:opacity .25s;max-width:92vw;text-align:center}
+.toast.on{opacity:.96}
+.hl2{background:var(--sun-t);padding:0 4px;border-radius:4px}
+.chatL{display:grid;gap:8px}
+.cfoot{font-size:13px;color:var(--mut)}
+.sec .sbody>.fq{margin-top:4px}
+
+.banner{position:relative;border-radius:var(--r);overflow:hidden;height:150px;box-shadow:var(--sh);margin:0}
+.banner img{width:100%;height:100%;object-fit:cover;object-position:center 30%}
+.banner figcaption{position:absolute;left:0;right:0;bottom:0;padding:26px 16px 10px;color:#fff;font-family:Nunito,"Segoe UI",system-ui,sans-serif;font-weight:900;font-size:18px;background:linear-gradient(0deg,rgba(5,30,22,.88),rgba(5,30,22,0))}
+
+/* ---------- hero colorido (split) ---------- */
+.hero.hsplit .bg{background:radial-gradient(circle at 82% 42%,var(--g1) 0,var(--g2) 40%,#16213E 82%)}
+.hero.hsplit .bg::after{display:none}
+.hero.hsplit .wrap{display:grid;grid-template-columns:1.25fr 1fr;gap:30px;align-items:center}
+.hero.hsplit h1{max-width:13ch}
+.hero.hsplit h1 span{color:var(--sun)}
+.hphoto{position:relative;justify-self:center;max-width:420px;width:100%}
+.hphoto img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:26px;border:6px solid #fff;box-shadow:var(--sh-lg);transform:rotate(2.2deg);display:block;background:#fff}
+.hnote{position:absolute;background:#fff;color:var(--ink);border-radius:12px;padding:8px 12px;font-family:Nunito,"Segoe UI",system-ui,sans-serif;font-weight:900;font-size:14px;box-shadow:var(--sh-lg);line-height:1.2}
+.hnote small{display:block;font:600 12px "DM Sans",system-ui,sans-serif;color:var(--mut)}
+.hnote.a{left:-16px;top:12px;border-left:6px solid var(--pink);transform:rotate(-4deg)}
+.hnote.b{right:-8px;bottom:14px;border-left:6px solid var(--pri);transform:rotate(3deg)}
+.hkey{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.tagk{border-radius:99px;padding:5px 13px;font-size:13px;font-weight:800;color:#fff;background:#444}
+.tagk.safe{background:var(--ok)}.tagk.trust{background:var(--teal)}.tagk.hier{background:var(--err)}
+.tagk.t-mild{background:var(--sun);color:var(--navy)}.tagk.t-eng{background:var(--violet)}.tagk.t-spy{background:var(--err)}
+.tagk.kind{background:var(--pink)}
+@media (max-width:820px){.hero.hsplit .wrap{grid-template-columns:1fr}.hphoto{max-width:340px}.hnote.a{left:-4px}.hnote.b{right:-4px}}
+</style>
+</head>
+<body>
+<div class="topbar"><div class="wrap">
+  <div class="brand"><i></i><a href="./">GABRIEL TURNER · YOUR BUSINESS COACH</a><small>Intermedio 1 · B1.1</small></div>
+  <div class="toggles">
+    <button class="tg" id="tgTeacher" aria-pressed="true">Teacher view</button>
+    <button class="tg" id="tgStudent" aria-pressed="false">Student view</button>
+    <button class="tg" id="tgGroup" aria-pressed="true">Group</button>
+    <button class="tg" id="tgOne" aria-pressed="false">1:1</button>
+  </div>
+</div></div>
+
+<header class="hero hsplit" style="--g1:#4ADE9F;--g2:#087F57">
+  <div class="bg" role="img" aria-label="Colour background"></div>
+  <div class="wrap"><div>
+    <div class="kick">Intermedio 1 · Block 1 · Receive · Session 1 of 32</div>
+    <h1>The Notification <span>Pile-Up</span></h1>
+    <p class="obj">By the end of this class you can read a short update, find the important information, say where it comes from, and pass it on to another person — in English, in real time.</p>
+    <div class="pills"><span class="pill sun">60 min · live online</span><span class="pill">7 stages</span><span class="pill">says / said / doesn't say</span><span class="pill">Speaking first</span></div>
+    <div class="hkey"><span class="tagk safe">Riesgo: Seguro</span><span class="tagk t-mild">Temperatura: Mild</span><span class="tagk kind">says / said</span></div>
+    <div class="coach"><span class="cav">GT</span><span><b>Gabriel Turner</b><small>Your Business Coach</small></span></div></div>
+    <div class="hphoto"><img src="img/l07s01_hero.jpg" alt="A woman in an office checking her phone"><div class="hnote a">NOTIFICATION<small>who says it?</small></div><div class="hnote b">PASS IT ON<small>say it in English</small></div></div>
+  </div>
+</header>
+
+<nav class="nav" aria-label="Session stages"><div class="wrap">
+  <div class="prog"><div class="bar"><i id="pbar"></i></div><span class="xp" id="xp">0 XP</span><button class="clock" id="clock" title="Start / pause class clock">00:00</button></div>
+  <div class="steps" id="steps"></div>
+</div></nav>
+
+<main class="wrap" id="main">
+
+<details class="ficha" id="ficha"><summary>Ficha de sesión · S01 · solo docente</summary>
+  <div class="fg">
+    <div class="fi"><b>Objetivo funcional</b>Leer una actualización breve, identificar el dato importante, decir de dónde viene la información (says / said) y pasarla a otra persona.</div>
+    <div class="fi"><b>Nivel · bloque</b>Intermedio 1 (B1.1 → B1.2) · Bloque 1 «Receive» · apertura del curso (sesión Segura, tono Mild/Engaging).</div>
+    <div class="fi"><b>Punto de lengua (uno solo)</b>The message <i>says</i> / Marta <i>said</i> (that) · <i>doesn't say</i> · <i>Does it say…?</i> · <i>asked us to</i> como chunk.</div>
+    <div class="fi"><b>Léxico (12 chunks)</b>update · reminder · deadline · detail · summary · reply · forward · confirm · follow-up · next step · delay · asked us to.</div>
+    <div class="fi"><b>Dinámicas · familia</b>VOC-10 Sixty-Second Sell (CONTRARRELOJ) · GRM-03 Sentence Auction (SUBASTA) · LIS-03 Two Versions (IMPOSTOR) · SPK-10 Blind Ranking (RANKING) · Misión: adaptación en pares de SPK-06 The Interpreter (OCULTAMIENTO).</div>
+    <div class="fi"><b>Filtros de nivel (B1)</b>Ninguna dinámica pide pasiva, relativas, preguntas reportadas ni cambios extensos de tiempo · tarjetas ≤ 60 palabras (máx. real: 25) · 30 s de preparación en silencio y luego se produce sin notas.</div>
+    <div class="fi"><b>Reglas 3-3-3 · puntaje · cierre</b>Cada dinámica se explica en ≤3 frases, ≤3 reglas, ≤3 min · el punto se gana por producir lengua, no por rapidez · cada juego termina con el resultado dicho en voz alta.</div>
+    <div class="fi"><b>Evidencia observable</b>Misión: 24 movimientos (decir la info con says/said · aclarar un dato · confirmar la acción) · aciertos de Auction · discrepancias encontradas · orden de ranking justificado.</div>
+    <div class="fi"><b>Riesgo corporativo</b>Seguro. Mensajes cotidianos (app, familia, trabajo general); sin datos reales de empresas ni personas.</div>
+    <div class="fi"><b>Conexión con el objetivo final del programa</b>Comprender una actualización → identificar la información importante → comunicarla → aclarar un dato → confirmar una acción sencilla. S1 entrena las cinco partes en versión corta.</div>
+    <div class="fi" style="grid-column:1/-1"><b>Tiempos (suman 60 min)</b>
+      <table><tr><th>§</th><th>Bloque</th><th>Min</th></tr>
+      <tr><td>1</td><td>Warm-up · lock screen</td><td>4</td></tr>
+      <tr><td>2</td><td>Vocabulary · Sixty-Second Sell</td><td>8</td></tr>
+      <tr><td>3</td><td>Grammar · Sentence Auction</td><td>12</td></tr>
+      <tr><td>4</td><td>Listening · Two Versions</td><td>8</td></tr>
+      <tr><td>5</td><td>Speaking · Blind Ranking + 12 preguntas</td><td>13</td></tr>
+      <tr><td>6</td><td>Mission · Relay the Message</td><td>10</td></tr>
+      <tr><td>7</td><td>Wrap-up</td><td>5</td></tr>
+      <tr><td></td><td><b>Total</b></td><td><b>60</b></td></tr></table></div>
+  </div>
+</details>
+
+<!-- §1 WARM-UP -->
+<section class="sec" id="s1" style="--c:var(--pri);--ct:var(--pri-t)" data-name="Warm-up" data-min="0–4">
+  <div class="shead"><div class="snum"><span class="n">1</span><div><h2>Warm-up · Your phone just exploded</h2><div class="sub">0–4 min · Open them in YOUR order</div></div></div>
+    <div class="meta"><span class="chip">Lock screen</span><span class="chip dark">Speaking from minute 1</span></div></div>
+  <div class="sbody">
+    <div class="lockwrap">
+      <div class="lockpic"><img src="img/l07s01_warm.jpg" alt="A woman standing in an open office reading her phone"><div class="cap"><div class="kick">Monday · 11:05 a.m.</div><b>Six notifications in 23 minutes. Which one do you open first?</b></div></div>
+      <div class="phoneL"><div class="clk">11:05<small>Monday · 6 new notifications</small></div><div class="nts" id="nts"></div></div>
+    </div>
+    <div class="card tint"><div class="result" id="ntRes">Tap the notifications in the order you would open them. Each one shows the important information.</div></div>
+    <div class="fq"><div>Why that one first? <span>— Is it the most important or the easiest?</span></div><div>Which one can wait until tonight? <span>— What happens if you wait?</span></div></div>
+    <details class="tn"><summary>Teacher notes · §1 Warm-up</summary><div class="layers">
+      <div class="ly"><h4>Pedagógica</h4><ul><li>Pide que cada persona toque las notificaciones en SU orden. Al tocar, aparecen los chips de «información importante»: es la primera vez que ven la habilidad central del curso (leer → sacar el dato).</li><li>Habla desde el minuto 1: «Which one first? Why?». Acepta cualquier inglés; recast suave de errores, sin gramática todavía.</li><li>Grupo: cada quien dice su primera en voz alta y se cuenta cuántos coinciden. 1:1: tú eliges otra primera para provocar «Why?».</li><li>Máx. 4 min. No expliques says/said aquí; solo deja que lo escuchen en tu voz.</li></ul></div>
+      <div class="ly"><h4>Engagement</h4><ul><li>Pregunta real: «¿Cuál notificación contestaste mal alguna vez por leer rápido?»</li><li>Declaración de cierre: «Today I can find the important information in a message.»</li></ul></div>
+      <div class="ly"><h4>Crecimiento</h4><ul><li>«In 56 minutes you'll pass these messages to a partner — and your partner will act on them.»</li><li>Anota cuál abrió primero cada alumno: se compara con el ranking del §5.</li></ul></div>
+    </div></details>
+  </div>
+</section>
+
+<!-- §2 VOCABULARY -->
+<section class="sec" id="s2" style="--c:var(--teal);--ct:var(--teal-t)" data-name="Vocabulary" data-min="4–12">
+  <div class="shead"><div class="snum"><span class="n">2</span><div><h2>Vocabulary · 12 chunks for messages</h2><div class="sub">4–12 min · Hear it · Match it · Sell it</div></div></div>
+    <div class="meta"><span class="chip">Flip cards</span><span class="chip">Match</span><span class="chip dark">VOC-10 Sixty-Second Sell</span></div></div>
+  <div class="sbody">
+    <figure class="banner"><img src="img/l07s01_chat.jpg" alt="Four friends laughing at a phone in a café"><figcaption>One message. Six people. Everybody understands something different.</figcaption></figure>
+    <div class="block">
+      <div class="bt"><span class="tag">Step A · 2 min</span><h3>Tap to flip · 🔊 to listen</h3><span class="hint" id="flipCount">0 / 12 flipped</span></div>
+      <div class="flips" id="flips"></div>
+    </div>
+    <div class="block">
+      <div class="bt"><span class="tag">Step B · 1.5 min</span><h3>Match the word with its meaning</h3><span class="hint" id="matchCount">0 / 6 pairs</span></div>
+      <div class="match"><div class="col" id="mL"></div><div class="col" id="mR"></div></div>
+    </div>
+    <div class="block">
+      <div class="bt"><span class="tag">Step C · 4 min · Game</span><h3>Sixty-Second Sell — why THIS word and not that one?</h3><span class="stat">Sold <b id="soldN">0</b> / 4</span></div>
+      <div class="card tint"><p style="font-weight:700">1. Read the situation. &nbsp;2. Choose the better word. &nbsp;3. You have 60 seconds to defend it out loud — start with “I choose… because…”. The group votes: sold or not sold.</p></div>
+      <div class="sellgrid" id="sells"></div>
+      <div class="closeout" id="sellOut" hidden></div>
+    </div>
+    <details class="tn"><summary>Teacher notes · §2 Vocabulary</summary><div class="layers">
+      <div class="ly"><h4>Pedagógica</h4><ul><li>Flips: tú dices el chunk, el alumno repite 2 veces y da su propio ejemplo con un dato real. Pronunciación clave: <i>deadline</i> /ˈdedlaɪn/, <i>detail</i> (acento en la 1.ª sílaba en inglés americano), <i>asked us to</i> ligado /æskt əs tə/.</li><li>Match: respuesta en voz alta antes del clic.</li><li><b>Sixty-Second Sell (CONTRARRELOJ):</b> el alumno lee la situación (≤25 palabras), prepara 30 s EN SILENCIO y luego defiende hablando 60 s sin notas. El punto lo gana quien PRODUCE una razón en inglés, no quien elige más rápido. El grupo vota «sold / not sold».</li><li>Explica la dinámica en 3 frases (ya están en pantalla). No más de 3 min de setup.</li></ul></div>
+      <div class="ly"><h4>Engagement</h4><ul><li>Cierra en voz alta: «We sold __ of 4 words.»</li><li>Pregunta: «¿Cuál de estas palabras usas más en el trabajo… y cuál nunca dices en inglés?»</li></ul></div>
+      <div class="ly"><h4>Crecimiento</h4><ul><li>Estos 12 chunks sostienen todo el Bloque 1 (Receive). <i>Confirm</i>, <i>forward</i> y <i>follow-up</i> vuelven en el Bloque 2 (Clarify).</li><li>Tarea derivada: usa 3 chunks en mensajes reales esta semana.</li></ul></div>
+    </div></details>
+  </div>
+</section>
+
+<!-- §3 GRAMMAR -->
+<section class="sec" id="s3" style="--c:var(--violet);--ct:var(--violet-t)" data-name="Grammar" data-min="12–24">
+  <div class="shead"><div class="snum"><span class="n">3</span><div><h2>Grammar · The message says… Marta said…</h2><div class="sub">12–24 min · Discover → understand → practice → auction</div></div></div>
+    <div class="meta"><span class="chip">Punto de lengua único</span><span class="chip dark">GRM-03 Sentence Auction</span></div></div>
+  <div class="sbody">
+    <div class="block">
+      <div class="bt"><span class="tag">Discover · 2 min</span><h3>Read the chat. Which words show where the information comes from?</h3></div>
+      <div class="disc" id="disc">
+        <img src="img/l07s01_work.jpg" alt="A man and a woman reading a laptop screen together">
+        <div class="chat">
+          <p>The message <mark class="hl">says</mark> the call is at 11:30.</p>
+          <p>Does it <mark class="hl">say</mark> the room?</p>
+          <p>No, it <mark class="hl">doesn't say</mark> the room. Marta <mark class="hl">said</mark> she will send it.</p>
+          <p>OK. She <mark class="hl">asked us to</mark> bring the new numbers, right?</p>
+        </div>
+      </div>
+      <div class="row"><button class="btn main" id="hlBtn" aria-pressed="false">Show the key words</button><span class="hint">Count them. How many do you see?</span><span class="key hint">(Respuesta: 5 · says, say, doesn't say, said, asked us to)</span></div>
+    </div>
+    <div class="block">
+      <div class="bt"><span class="tag">The tool · 3 min</span><h3>Say WHERE the information comes from</h3></div>
+      <div class="tool">
+        <div class="card"><h4>1 · A source says</h4><div class="big">The message <em>says</em> (that)…</div><p class="hint">The app says the gate is B7. · The email says the order arrives Monday.</p></div>
+        <div class="card"><h4>2 · A person said</h4><div class="big">Marta <em>said</em> (that)…</div><p class="hint">Marta said the call is at 11:30. · Marta asked us <b>to</b> bring the numbers.</p></div>
+        <div class="card"><h4>3 · Keep the key info the same</h4><div class="big">same day · same time · same number</div><p class="hint">Don't change the details. Opinion goes separately: <i>I think…</i></p></div>
+      </div>
+      <div class="forms"><table>
+        <tr><th></th><th>Source (now)</th><th>Person (before)</th></tr>
+        <tr><td>+</td><td>The message <b>says</b> the room is 3.</td><td>Marta <b>said</b> the room is 3.</td></tr>
+        <tr><td>−</td><td>The message <b>doesn't say</b> the room.</td><td>Marta <b>didn't say</b> the room.</td></tr>
+        <tr><td>?</td><td><b>Does</b> the message <b>say</b> the room?</td><td><b>Did</b> Marta <b>say</b> the room?</td></tr>
+      </table></div>
+      <p class="hint">Today you only use <b>says / said / doesn't say / didn't say</b>. Nothing else changes: the information stays in the same tense as the message.</p>
+      <div><button class="btn" id="esBtn" aria-expanded="false" aria-controls="esBox">🇲🇽 Ver explicación en español</button></div>
+      <div class="es-box" id="esBox" hidden>
+        <p><b>¿Qué es?</b> Es la forma de decir DE DÓNDE sale un dato: <i>The message says…</i> (la fuente habla ahora) o <i>Marta said…</i> (una persona lo dijo antes).</p>
+        <p><b>¿Cómo se usa?</b> <i>says</i> lleva -s porque «the message / the app» es tercera persona. En negativo y pregunta el verbo vuelve a forma base: <i>doesn't say</i>, <i>Does it say…?</i>, <i>didn't say</i>.</p>
+        <p><b>¿Para qué hoy?</b> Para pasar una actualización a otra persona sin cambiar el dato y sin inventar lo que el mensaje no dice.</p>
+        <p><b>Cuidado:</b> <i>said</i> se pronuncia /sed/ (como «bed»). Y <i>asked us <u>to</u> bring</i> lleva «to», no «Marta asked us bring».</p>
+      </div>
+    </div>
+    <div class="block builder">
+      <div class="bt"><span class="tag">Practice A · mecánica · 2 min</span><h3>Choose the correct form</h3><span class="score" id="scA"></span></div>
+      <div class="mc" id="mcA"></div>
+    </div>
+    <div class="block">
+      <div class="bt"><span class="tag">Practice B · 4 min · Game</span><h3>Sentence Auction — buy only the CORRECT sentences</h3><span class="stat">Bank <b id="bankN">10</b> pts</span></div>
+      <div class="card tint"><p style="font-weight:700">1. You start with 10 points. &nbsp;2. Buy a sentence (bid 1–3) only if it is correct. A correct buy pays double; a wrong buy costs your bid. &nbsp;3. Pass on a wrong sentence and say the fixed version out loud: +1 point.</p></div>
+      <div class="auc" id="auc"></div>
+      <div class="row"><button class="btn main" id="aucCheck">Close the auction</button><span class="hint" id="aucHint">Decide on all 8 sentences first.</span></div>
+      <div class="closeout" id="aucOut" hidden></div>
+    </div>
+    <div class="block">
+      <div class="bt"><span class="tag">Watch out</span><h3>Mistakes at this level</h3></div>
+      <div class="errs">
+        <div class="err"><s>The message say the room is 3.</s><b>The message says the room is 3.</b><span class="hint">Source = he/she/it → says.</span></div>
+        <div class="err"><s>Marta didn't says the time.</s><b>Marta didn't say the time.</b><span class="hint">After didn't / doesn't → base verb.</span></div>
+        <div class="err"><s>Marta said me to bring it.</s><b>Marta asked us to bring it.</b><span class="hint">asked us to + verb. (said me ✗)</span></div>
+      </div>
+    </div>
+    <details class="tn"><summary>Teacher notes · §3 Grammar</summary><div class="layers">
+      <div class="ly"><h4>Pedagógica</h4><ul><li>UN solo punto: says / said / doesn't say. Explicación docente ≤5 min (Discover + Tool). Practice A es la única parte mecánica (≤1/3 del bloque).</li><li>Límite del nivel: NO enseñes cambios de tiempo («said it was…»), ni preguntas reportadas, ni pasiva. La información queda tal cual en presente: «Marta said the call is at 11:30».</li><li>Auction: setup en 3 frases (en pantalla). El punto se gana por PRODUCIR la frase corregida en voz alta, no por rapidez. Grupo: equipos de 2–3 con un banco común; 1:1: tú subastas y el alumno compra.</li><li>Error prioritario: <i>says</i> sin -s con «the message». Márcalo en voz alta cada vez que aparezca durante §4–§6.</li></ul></div>
+      <div class="ly"><h4>Engagement</h4><ul><li>«Every time you pass information, ask yourself: who said it?»</li><li>Cierra en voz alta: «My bank is __ points.»</li></ul></div>
+      <div class="ly"><h4>Crecimiento</h4><ul><li>«Today the information stays the same. Block 2 adds confirm, clarify and ask again.»</li><li>Anota los 3 errores más repetidos para la sección de repair en §7.</li></ul></div>
+    </div></details>
+  </div>
+</section>
+
+<!-- §4 LISTENING -->
+<section class="sec" id="s4" style="--c:var(--pink);--ct:var(--pink-t)" data-name="Listening" data-min="24–32">
+  <div class="shead"><div class="snum"><span class="n">4</span><div><h2>Listening · Two voice notes, one training</h2><div class="sub">24–32 min · Same message, two versions</div></div></div>
+    <div class="meta"><span class="chip">Find 3 differences</span><span class="chip dark">LIS-03 Two Versions</span></div></div>
+  <div class="sbody">
+    <div class="player">
+      <img src="img/l07s01_listen.jpg" alt="Two women at a café table looking at a phone">
+      <div class="pp">
+        <p style="font-size:18px;font-weight:700">Alex missed the HR meeting about a safety training. Two coworkers leave a voice note. They tell the same story — but not the same details. Find the 3 differences.</p>
+        <p class="hint" style="color:#F3D6E2" id="ttsNote">Listen twice if you need to. Final audio: MP3 recorded with ElevenLabs.</p>
+      </div>
+    </div>
+    <div class="voices" id="voices"></div>
+    <div class="block">
+      <div class="bt"><span class="tag">Compare · same or different?</span><h3>Decide for each detail</h3><span class="score" id="scV"></span></div>
+      <div class="vers" id="vers"></div>
+      <div class="row"><button class="btn main" id="vCheck">Check my answers</button><span class="hint" id="vHint">Mark all 6 details first.</span></div>
+    </div>
+    <div class="block"><div class="bt"><span class="tag">Decide</span><h3>Which version do you trust?</h3><span class="score" id="scL"></span></div><div class="mc" id="mcL"></div></div>
+    <div class="block">
+      <div class="row"><button class="btn" id="scrBtn" aria-expanded="false">Show both scripts</button><span class="rec">[PARA GRABAR]</span></div>
+      <div class="script" id="script" hidden></div>
+    </div>
+    <div class="block">
+      <div class="bt"><span class="tag">Pronunciation lab</span><h3>Listen · repeat · record your best</h3></div>
+      <div class="pron" id="pron"></div>
+    </div>
+    <details class="tn"><summary>Teacher notes · §4 Listening</summary><div class="layers">
+      <div class="ly"><h4>Pedagógica</h4><ul><li><b>Dos versiones (LIS-03):</b> Emma (inglés canadiense, 128 palabras) lee el mensaje de RH y dice «The message says…». Rahul (inglés indio, hablante no nativo, 136 palabras) NO leyó el mensaje y repite lo que le dijo Priya («Priya said…»). Hay 3 discrepancias: día (Thursday/Friday), qué traer (badge/laptop) y comida (not included/included).</li><li>Ciclo: (1) escuchan Emma y anotan; (2) escuchan Rahul; (3) marcan same/different; (4) deciden en qué versión confiar y POR QUÉ — la que cita la fuente. Esa decisión es la habilidad objetivo de la sesión.</li><li><b>Answer key:</b> Day = different · Time (nine) = same · Room (Four) = same · Bring = different · Deadline (Wednesday) = same · Lunch = different. Más fiable: Emma. Siguiente paso de Alex: confirm with HR today.</li><li>Cumple B1: 120–200 palabras por guion, 2 hablantes, 1 de 2 con acento no nativo (≥1/3). Marca <b>[PARA GRABAR]</b>: audio pendiente, mientras tanto suena la voz del navegador.</li></ul></div>
+      <div class="ly"><h4>Engagement</h4><ul><li>«Who do you trust: the person who read it, or the person who heard it?» — pide un ejemplo real de chisme de oficina.</li><li>Cierra en voz alta: «I found __ of 3 differences.»</li></ul></div>
+      <div class="ly"><h4>Crecimiento</h4><ul><li>Este patrón (revisar la fuente antes de actuar) es la base del Bloque 2 (Clarify) y del checkpoint de S12.</li></ul></div>
+    </div></details>
+  </div>
+</section>
+
+<!-- §5 SPEAKING -->
+<section class="sec" id="s5" style="--c:#D98E00;--ct:var(--sun-t)" data-name="Speaking" data-min="32–45">
+  <div class="shead"><div class="snum"><span class="n">5</span><div><h2>Speaking · Rank the pile, then talk about it</h2><div class="sub">32–45 min · Blind ranking · 12 questions</div></div></div>
+    <div class="meta"><span class="chip">Pares / equipos</span><span class="chip dark">SPK-10 Blind Ranking</span></div></div>
+  <div class="sbody">
+    <div class="block">
+      <div class="bt"><span class="tag">Step A · 6 min</span><h3>Which notification do you answer FIRST today?</h3></div>
+      <div class="card tint"><p style="font-weight:700">1. Alone (30 s, silent): order the 6 notifications from “answer first” to “can wait”. &nbsp;2. In pairs or teams: say your order, defend it, and agree on ONE order. &nbsp;3. Only the team order counts — and it must have a reason.</p></div>
+      <div class="rk">
+        <div class="rkcol"><h4>1 · My private order</h4><div class="rkl" id="rkMine"></div></div>
+        <div class="rkcol"><h4>2 · Our team order</h4><div class="rkl" id="rkTeam"></div></div>
+      </div>
+      <div class="stem2">Say it like this: “I put <i>the gym</i> last because the message <b>says</b> the 7:30 class is open.” · “Marta <b>said</b> the call changed, so…”</div>
+      <div class="row" style="margin-top:10px"><div class="timer" id="tRk" data-sec="240"><output>04:00</output><button class="btn main sm" data-a="go">Start</button><button class="btn sm" data-a="re">Reset</button></div><button class="btn" id="rkCopy">Copy my order to the team list</button><button class="btn main" id="rkDone">We agree ✓</button></div>
+      <div class="closeout" id="rkOut" hidden></div>
+    </div>
+    <div class="block">
+      <div class="bt"><span class="tag">Step B · 7 min</span><h3>12 questions · always 2 follow-ups</h3></div>
+      <div class="deck">
+        <img id="qImg" src="img/l07s01_speak.jpg" alt="Two women chatting by a window">
+        <div class="dq">
+          <div class="row" style="justify-content:space-between"><span class="qn" id="qN">QUESTION 1 OF 12</span><div class="dots" id="dots"></div></div>
+          <div class="qt" id="qT"></div>
+          <div class="fu" id="qF"></div>
+          <div class="row"><button class="btn" id="qP">← Back</button><button class="btn" id="qX" style="background:#fff;color:var(--coral-d,#05563B);border-color:#fff">Next question →</button></div>
+        </div>
+      </div>
+      <div class="help"><span>The message says…</span><span>Marta said…</span><span>It doesn't say…</span><span>Sorry, can you repeat that?</span><span>So I need to…, right?</span></div>
+    </div>
+    <details class="tn"><summary>Teacher notes · §5 Speaking</summary><div class="layers">
+      <div class="ly"><h4>Pedagógica</h4><ul><li><b>Blind Ranking (RANKING):</b> 30 s de preparación en silencio y luego se habla sin notas. Solo cuenta el orden de EQUIPO; obliga a justificar y a ceder. Grupo: pares/equipos de 3 en salas; 1:1: ordena el alumno, tú defiendes un orden distinto.</li><li>Cada razón debe incluir «says» o «said» (ver la frase modelo). Premia con puntos la razón, no el orden «correcto» — no hay orden correcto.</li><li>12 preguntas, todas con 2 follow-ups (≥6 exigido por el nivel). Se eligen 6–7 según el ritmo; nunca aceptes respuesta de una palabra. Anota 2 aciertos y 3 errores repetidos para §7.</li><li>Cierre obligatorio: el equipo anuncia su orden final en voz alta.</li></ul></div>
+      <div class="ly"><h4>Engagement</h4><ul><li>«Your team order is a real decision: that's what you do with your phone every day.»</li><li>Las preguntas 3, 10 y 12 abren debate de interés general (silenciar el teléfono, mensajes fuera de horario, semana sin notificaciones).</li></ul></div>
+      <div class="ly"><h4>Crecimiento</h4><ul><li>Compara con el orden que cada quien eligió en §1: ¿cambió? ¿por qué?</li><li>Cuenta los segundos que habla seguido sin español: marca personal desde S1 (SPK-08 más adelante).</li></ul></div>
+    </div></details>
+  </div>
+</section>
+
+<!-- §6 MISSION -->
+<section class="sec" id="s6" style="--c:var(--teal);--ct:var(--teal-t)" data-name="Mission" data-min="45–55">
+  <div class="shead"><div class="snum"><span class="n">6</span><div><h2>Mission · Relay the Message</h2><div class="sub">45–55 min · Tell · Clarify · Confirm</div></div></div>
+    <div class="meta"><span class="chip">Real-life task</span><span class="chip dark">Info gap · SPK-06 (pares)</span></div></div>
+  <div class="sbody">
+    <div class="mission"><img src="img/l07s01_mission.jpg" alt="A meeting room with a presentation on a screen"><div class="mt">
+      <div class="kick">Your mission</div>
+      <h3>Your partner didn't see these messages. Make sure they can ACT on them.</h3>
+      <p style="font-size:18px">For each message: <b>1 · Tell</b> the important information and where it comes from. <b>2 · Clarify</b>: your partner asks one question about a detail. <b>3 · Confirm</b>: your partner says the action — “So I need to…, right?”</p>
+      <p data-m="group" style="font-weight:700">Group: pairs. Student A uses Set A, Student B uses Set B. Don't show your screen!</p>
+      <p data-m="one" style="font-weight:700">1:1: you tell Set A, the teacher tells Set B. Same three moves.</p>
+    </div></div>
+    <div class="privacy">🔒 Only the owner of the set sees it. Your partner must work from what you SAY — not from what they read.</div>
+    <div class="tabs" id="mtabs"><button aria-pressed="true" data-k="A">Set A</button><button aria-pressed="false" data-k="B">Set B</button></div>
+    <div class="mset" id="mset"></div>
+    <div class="card tint"><div class="row" style="justify-content:space-between"><span class="stat">Moves <b id="mvN">0</b> / 24</span><button class="btn sm" id="mvRe">Reset</button></div><div class="bar" style="margin-top:10px"><i id="mvBar" style="background:var(--teal)"></i></div><p class="hint" style="margin-top:8px">Success: 8 messages × 3 moves. Mark a move only when it is said aloud without reading.</p></div>
+    <div class="closeout" id="mvOut" hidden></div>
+    <details class="tn"><summary>Teacher notes · §6 Mission</summary><div class="layers">
+      <div class="ly"><h4>Pedagógica</h4><ul><li><b>OCULTAMIENTO:</b> cada alumno tiene su set oculto; el compañero solo tiene lo que escucha. Esto cumple el objetivo final del programa en miniatura: comprender → identificar lo importante → comunicar → aclarar un dato → confirmar una acción.</li><li>Tarjetas de ≤25 palabras. 30 s de lectura en silencio por mensaje, luego se habla sin mirar.</li><li>Marca cada movimiento SOLO si se dijo en voz alta. «Tell» debe incluir says/said o una fuente; «Clarify» puede ser una de las preguntas sugeridas o propia; «Confirm» usa «So I need to…, right?».</li><li>Si el mensaje no contiene el dato pedido, el alumno debe decir «It doesn't say» (no inventar). Ej. A4 y B1.</li><li>No interrumpas: el feedback va en §7. Tiempo: 10 min en total (≈2.5 min por mensaje por set, 2 sets en paralelo en pares).</li></ul></div>
+      <div class="ly"><h4>Engagement</h4><ul><li>Anuncia el resultado: «__ of 24 moves. Mission complete!»</li><li>«If your partner acts correctly, the message worked.»</li></ul></div>
+      <div class="ly"><h4>Crecimiento</h4><ul><li>S4 (Update Hunt) y S12 (Information Gap) repiten esta estructura con mensajes más largos y fuentes que se contradicen.</li><li>Registra en el portal: movimientos hechos, cuántas veces dijo «doesn't say» correctamente.</li></ul></div>
+    </div></details>
+  </div>
+</section>
+
+<!-- §7 WRAP-UP -->
+<section class="sec" id="s7" style="--c:var(--navy);--ct:#E6E9F2" data-name="Wrap-up" data-min="55–60">
+  <div class="shead"><div class="snum"><span class="n">7</span><div><h2>Wrap-up · Better the second time</h2><div class="sub">55–60 min · Feedback · Exit quiz · Self-check</div></div></div>
+    <div class="meta"><span class="chip">Success → Upgrade → Repair → Next use</span></div></div>
+  <div class="sbody">
+    <div class="sur">
+      <div class="card"><h4>✓ Success</h4><textarea id="fS" aria-label="Success">Clear “The message says…”
+Good clarifying question</textarea></div>
+      <div class="card"><h4>↑ Upgrade</h4><textarea id="fU" aria-label="Upgrade">“Marta say 11:30.” → “Marta said the call is at 11:30.”</textarea></div>
+      <div class="card"><h4>✎ Repair</h4><textarea id="fR" aria-label="Repair">“The message doesn't says.” → “The message doesn't say.”</textarea></div>
+      <div class="card"><h4>↻ Next use</h4><p class="hint">Use “The message says…” once today in a real message — work, family or an app.</p></div>
+    </div>
+    <div class="block"><div class="bt"><span class="tag">Exit quiz</span><h3>60 seconds · 5 questions</h3><span class="score" id="scQ"></span></div><div class="mc" id="mcQ"></div></div>
+    <div class="block"><div class="bt"><span class="tag">Say it out loud</span><h3>Today I can…</h3></div>
+      <div class="selfev" id="selfev"></div></div>
+    <figure class="banner"><img src="img/l07s01_wrap.jpg" alt="A man and a woman laughing at a phone outdoors"><figcaption>Good news travels fast — when you pass it on correctly.</figcaption></figure>
+    <div class="badge"><div class="medal">01</div><div><div class="kick">Session complete</div><h3 style="font-size:26px;font-weight:900">You can pass on an update and say where it comes from.</h3><p style="opacity:.9">Homework: take 3 REAL notifications from your phone and write 3 sentences: “The app says… / The message says… / [Name] said…”. Next: <b>Session 2</b>.</p><div class="row" style="margin-top:10px"><button class="btn" id="doneBtn" style="background:var(--sun);border-color:var(--sun);color:var(--navy)">Mark session as complete</button><a class="btn" href="./" style="text-decoration:none;color:var(--navy)">Back to Intermedio 1</a></div></div></div>
+    <details class="tn"><summary>Teacher notes · §7 Wrap-up</summary><div class="layers">
+      <div class="ly"><h4>Pedagógica</h4><ul><li>Máx. 2 aciertos y 3 correcciones de alto valor (usa tus anotaciones de §3–§6). Exit quiz en voz alta antes del clic.</li><li>Tarea: 3 notificaciones REALES → 3 oraciones. Se revisa al inicio de S2. (Pide que no compartan datos personales sensibles.)</li></ul></div>
+      <div class="ly"><h4>Engagement</h4><ul><li>Declaración final: «Today I can pass on an update, ask about a detail and confirm what to do.»</li><li>Compara con §1: «Minute 1: you opened by instinct. Minute 58: you read, check and pass it on.»</li></ul></div>
+      <div class="ly"><h4>Crecimiento</h4><ul><li>Registra: récord de Auction, discrepancias halladas, movimientos de misión, orden de ranking.</li><li>«Next session: 2 messages that disagree — which one do you follow?»</li></ul></div>
+    </div></details>
+  </div>
+</section>
+
+</main>
+<footer>Gabriel Turner · Your Business Coach · Intermedio 1 · Session 01 of 32 · v1.0 · Photos: Unsplash (Vitaly Gariev, The Jopwell Collection, Matthew Smith, Markus Spiske, Brooke Cagle, Christina @ wocintechchat.com M, Karthik Balakrishnan)</footer>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+const D={"notifs": [{"id": "n1", "app": "Team chat", "who": "Marta", "t": "10:42", "ico": "💬", "img": null, "text": "The client call is now at 11:30, not 10:00. Please bring the new numbers.", "tts": "The client call is now at eleven thirty, not ten o'clock. Please bring the new numbers.", "info": ["⏰ 11:30 (not 10:00)", "📊 bring the new numbers"], "act": "Bring the new numbers to the 11:30 call.", "clip": "L07-S01-warmup-001-narrator"}, {"id": "n2", "app": "Airline app", "who": "Flight 214", "t": "10:44", "ico": "✈️", "img": "l07s01_airport.jpg", "text": "Flight 214 to Monterrey: new gate B7. Boarding starts at 6:40 p.m.", "tts": "Flight two fourteen to Monterrey: new gate B seven. Boarding starts at six forty p.m.", "info": ["🚪 gate B7", "🕕 boarding 6:40 p.m."], "act": "Go to gate B7 before 6:40 p.m.", "clip": "L07-S01-warmup-002-narrator"}, {"id": "n3", "app": "Delivery app", "who": "Luis · courier", "t": "10:51", "ico": "📦", "img": "l07s01_delivery.jpg", "text": "Your order has a delay of 20 minutes. Luis, your courier, is on his way.", "tts": "Your order has a delay of twenty minutes. Luis, your courier, is on his way.", "info": ["⏱ delay: 20 minutes", "🛵 Luis is coming"], "act": "Wait 20 more minutes.", "clip": "L07-S01-warmup-003-narrator"}, {"id": "n4", "app": "Family group", "who": "Mom", "t": "10:55", "ico": "👩", "img": null, "text": "Dinner is at my house on Sunday. Can you bring dessert?", "tts": "Dinner is at my house on Sunday. Can you bring dessert?", "info": ["📅 Sunday dinner", "🍰 bring dessert?"], "act": "Reply: yes or no.", "clip": "L07-S01-warmup-004-narrator"}, {"id": "n5", "app": "AI assistant", "who": "Summary", "t": "11:02", "ico": "🤖", "img": null, "text": "Summary of 3 emails. The important one: Gómez Supplies says the order arrives Monday. Please confirm the address.", "tts": "Summary of three emails. The important one: Gomez Supplies says the order arrives Monday. Please confirm the address.", "info": ["📦 arrives Monday", "✅ confirm the address"], "act": "Confirm the address.", "clip": "L07-S01-warmup-005-narrator"}, {"id": "n6", "app": "Gym app", "who": "Class alert", "t": "11:05", "ico": "🏋️", "img": null, "text": "Your 7:00 class is full. The next class is at 7:30.", "tts": "Your seven o'clock class is full. The next class is at seven thirty.", "info": ["❌ 7:00 is full", "🕢 next: 7:30"], "act": "Choose the 7:30 class.", "clip": "L07-S01-warmup-006-narrator"}], "voc": [["update", "actualización / novedad", "Quick update: the call is at 11:30."], ["reminder", "recordatorio", "I got a reminder about the meeting."], ["deadline", "fecha límite", "The deadline is Wednesday."], ["detail", "detalle / dato", "One more detail: lunch is included."], ["summary", "resumen", "The app sends me a summary of my emails."], ["reply", "responder / respuesta", "Please reply before 5 p.m."], ["forward", "reenviar", "Can you forward me the email?"], ["confirm", "confirmar", "Please confirm the address."], ["follow-up", "mensaje de seguimiento", "I'll send you a follow-up this afternoon."], ["next step", "siguiente paso", "The next step is to confirm with HR."], ["delay", "retraso", "There is a delay of 20 minutes."], ["asked us to", "nos pidió que", "Marta asked us to bring the numbers."]], "vocClips": [["L07-S01-vocab-001-narrator", "L07-S01-vocab-013-narrator"], ["L07-S01-vocab-002-narrator", "L07-S01-vocab-014-narrator"], ["L07-S01-vocab-003-narrator", "L07-S01-vocab-015-narrator"], ["L07-S01-vocab-004-narrator", "L07-S01-vocab-016-narrator"], ["L07-S01-vocab-005-narrator", "L07-S01-vocab-017-narrator"], ["L07-S01-vocab-006-narrator", "L07-S01-vocab-018-narrator"], ["L07-S01-vocab-007-narrator", "L07-S01-vocab-019-narrator"], ["L07-S01-vocab-008-narrator", "L07-S01-vocab-020-narrator"], ["L07-S01-vocab-009-narrator", "L07-S01-vocab-021-narrator"], ["L07-S01-vocab-010-narrator", "L07-S01-vocab-022-narrator"], ["L07-S01-vocab-011-narrator", "L07-S01-vocab-023-narrator"], ["L07-S01-vocab-012-narrator", "L07-S01-vocab-024-narrator"]], "match": [["deadline", "the last day or time to do something"], ["reminder", "a message that helps you remember"], ["delay", "when something happens later than planned"], ["summary", "a short version of a long text"], ["forward", "send a message you received to another person"], ["follow-up", "a later message about the same topic"]], "sell": [{"ctx": "Airline app: “New gate B7.” You tell your colleague what you got.", "a": "update", "b": "news", "best": "a", "why": "An update is new information about something already planned. “News” is more general (a big event, a story)."}, {"ctx": "Your gym app writes: “Your class starts in 30 minutes.”", "a": "reminder", "b": "warning", "best": "a", "why": "A reminder helps you remember a normal plan. A warning means danger or a problem."}, {"ctx": "Gómez Supplies writes: “Is this the right address?” You answer: “Yes, it is.”", "a": "confirm", "b": "check", "best": "a", "why": "To confirm is to say “yes, that is correct.” To check is to look at it yourself first."}, {"ctx": "A client emails you. Marta also needs to see that email.", "a": "forward", "b": "reply", "best": "a", "why": "You forward the email to Marta. You reply to the client."}], "practiceA": [{"q": "The app ___ the gate is B7.", "o": ["say", "says", "said", "saying"], "a": 1, "ok": "Third person + present: says."}, {"q": "Marta ___ the call is at 11:30. (She told us this morning.)", "o": ["say", "says", "said", "saying"], "a": 2, "ok": "Past action: she said it."}, {"q": "The message ___ the room. We don't know it.", "o": ["doesn't say", "don't say", "doesn't says", "not say"], "a": 0, "ok": "doesn't + base verb: doesn't say."}, {"q": "___ the email say the address?", "o": ["Does", "Do", "Is", "Says"], "a": 0, "ok": "Does + subject + say?"}, {"q": "Marta ___ say the time yesterday. Can you ask her?", "o": ["doesn't", "don't", "didn't", "isn't"], "a": 2, "ok": "Past: didn't say."}, {"q": "Marta ___ us to bring the numbers.", "o": ["asked", "said", "says", "saying"], "a": 0, "ok": "asked us to + verb."}], "auction": [{"s": "The app says the class is full.", "ok": true}, {"s": "The message say the order arrives Monday.", "ok": false, "fix": "The message says the order arrives Monday."}, {"s": "Marta said the call is at 11:30.", "ok": true}, {"s": "Mom didn't says the time.", "ok": false, "fix": "Mom didn't say the time."}, {"s": "Does the email say the address?", "ok": true}, {"s": "Marta asked us bring the numbers.", "ok": false, "fix": "Marta asked us to bring the numbers."}, {"s": "The assistant says the order has a delay.", "ok": true}, {"s": "The message doesn't says the room.", "ok": false, "fix": "The message doesn't say the room."}], "aucClips": ["L07-S01-grammar-001-narrator", "L07-S01-grammar-002-narrator", "L07-S01-grammar-003-narrator", "L07-S01-grammar-004-narrator", "L07-S01-grammar-005-narrator", "L07-S01-grammar-006-narrator", "L07-S01-grammar-007-narrator", "L07-S01-grammar-008-narrator"], "emmaClip": "L07-S01-listening-001-emma", "rahulClip": "L07-S01-listening-002-rahul", "emma": "Hey Alex, it's Emma. Quick update from HR, because I know you missed the meeting. The message says the safety training is on Thursday at nine, in Room Four. It also says we need to bring our badge. Please don't be late, because the message says the door closes at nine. The deadline to confirm is Wednesday, so please answer HR before then, okay? One more detail: the message says lunch is not included, so bring something to eat. Marco said he can drive us, but he didn't say the time. I know it's a lot of information, but these details are important. I will ask him and send you a follow-up this afternoon. The next step for you is simple: confirm with HR today. Talk soon!", "rahul": "Hi Alex, this is Rahul. Sorry, I missed the HR meeting too, but Priya told me the details, so here is my update. Priya said the safety training is on Friday at nine, in Room Four. She also said we need to bring our laptop. Please don't be late, because Priya said the door closes at nine. The deadline to confirm is Wednesday, so please answer HR before then. One more thing: Priya said lunch is included, so you don't need to bring food. I didn't read the message myself, so I'm not sure about all the details. I know it's a lot of information, but I want to help. I will ask Priya to send us a photo of it this afternoon. The next step for you is simple: confirm with HR today. Talk soon!", "disc": [["Day of the training", "Thursday", "Friday", false], ["Time", "nine", "nine", true], ["Room", "Room Four", "Room Four", true], ["What to bring", "a badge", "a laptop", false], ["Deadline to confirm", "Wednesday", "Wednesday", true], ["Lunch", "not included", "included", false]], "listenMc": [{"q": "Whose version is more reliable?", "o": ["Emma — she read the message", "Rahul — he sounds sure", "Both are the same"], "a": 0, "ok": "Emma read the message (“The message says…”). Rahul only heard it from Priya."}, {"q": "What is the next step for Alex?", "o": ["Bring a laptop on Friday", "Confirm with HR today", "Wait for Marco"], "a": 1, "ok": "Both voice notes end with the same action: confirm with HR."}, {"q": "What does Emma say Marco did NOT say?", "o": ["The day", "The time", "The room"], "a": 1, "ok": "Marco said he can drive them, but he didn't say the time."}, {"q": "Why does Rahul say he is not sure?", "o": ["He didn't read the message himself", "He lost his phone", "He doesn't like the training"], "a": 0, "ok": "“I didn't read the message myself.” Second-hand information = check the source."}], "questions": [["Which notification do you open first when your phone lights up?", "What does that say about your priorities?", "Which one do you always ignore?"], ["Do you read the whole message or only the first line?", "When did that cause a problem?", "How do you check the important details?"], ["Do you mute your phone at work?", "Which apps do you never mute?", "What does your boss say about it?"], ["Which app sends you too many notifications?", "Why do you keep it?", "What did you do the last time it happened?"], ["Do you use an AI assistant to summarize messages?", "What does it do well?", "What do you still check yourself?"], ["Who sends you the most important messages: family, work, or an app?", "Which one is hardest to answer?", "Who waits longest for your reply?"], ["What was the last reminder you got?", "Did you do what it said?", "What was the deadline?"], ["When a message has a delay or a change, who do you tell?", "How do you tell them?", "Do you confirm that they understood?"], ["Do you prefer voice notes or written messages?", "When is a voice note a bad idea?", "Which one is clearer for details?"], ["Is it OK to send a work message at 10 p.m.?", "Do you reply right away?", "What does your team expect?"], ["Someone says: “The concert is cancelled.” How do you check it?", "Which source do you trust: a friend, an app, or the official page?", "What do you say to your friend?"], ["Can you live one week without notifications?", "What would be the first problem?", "What would be better?"]], "pron": [["The message says the call is at eleven thirty.", "The message says the call is at 11:30.", "Stress: MES-sage, SAYS, CALL, eleven THIR-ty."], ["Marta said she will send the room.", "Marta said she will send the room.", "said = /sed/ (like “bed”). Not /sayd/."], ["The message doesn't say the room.", "The message doesn't say the room.", "doesn't say: DUH-zent SAY, two strong beats."], ["So I need to confirm the address, right?", "So I need to confirm the address, right?", "Rising tone on “right?” = a real check."]], "pronClips": ["L07-S01-pron-001-coach", "L07-S01-pron-002-coach", "L07-S01-pron-003-coach", "L07-S01-pron-004-coach"], "mission": {"A": [{"id": "a1", "app": "Team chat · Daniel", "ico": "💬", "text": "Meeting moved to Room 3. Same time, 2:00 p.m.", "tts": "Meeting moved to Room three. Same time, two o'clock p.m.", "ask": "Is it still at two?", "act": "Go to Room 3 at 2:00.", "clip": "L07-S01-mission-001-coach"}, {"id": "a2", "app": "Clinic app", "ico": "🏥", "text": "Your appointment is on Tuesday at 4:15. Please arrive 10 minutes early.", "tts": "Your appointment is on Tuesday at four fifteen. Please arrive ten minutes early.", "ask": "How early?", "act": "Arrive at 4:05 on Tuesday.", "clip": "L07-S01-mission-002-coach"}, {"id": "a3", "app": "Train app", "ico": "🚆", "text": "Delay of 15 minutes on your 7:10 train. New time: 7:25.", "tts": "Delay of fifteen minutes on your seven ten train. New time: seven twenty-five.", "ask": "What is the new time?", "act": "Take the 7:25 train.", "clip": "L07-S01-mission-003-coach"}, {"id": "a4", "app": "Building chat", "ico": "🏢", "text": "Water cut on Saturday, 9:00 a.m. to 1:00 p.m. Please store water.", "tts": "Water cut on Saturday, nine a.m. to one p.m. Please store water.", "ask": "Does it say when the water comes back?", "act": "Store water before Saturday 9:00 a.m.", "clip": "L07-S01-mission-004-coach"}], "B": [{"id": "b1", "app": "Course platform", "ico": "🎧", "text": "Your English class is on Thursday at 6:30 p.m. Bring your headset.", "tts": "Your English class is on Thursday at six thirty p.m. Bring your headset.", "ask": "Does it say the room?", "act": "Bring a headset on Thursday at 6:30 p.m.", "clip": "L07-S01-mission-005-coach"}, {"id": "b2", "app": "Supplier email", "ico": "📧", "text": "We have a delay. The parts arrive on Friday, not Wednesday. Please confirm the invoice by Monday.", "tts": "We have a delay. The parts arrive on Friday, not Wednesday. Please confirm the invoice by Monday.", "ask": "Which day is the deadline?", "act": "Confirm the invoice by Monday.", "clip": "L07-S01-mission-006-coach"}, {"id": "b3", "app": "Concert app", "ico": "🎤", "text": "The doors open at 7:00. The show starts at 8:30.", "tts": "The doors open at seven o'clock. The show starts at eight thirty.", "ask": "When does the show start?", "act": "Arrive at 7:00 or later; the show is at 8:30.", "clip": "L07-S01-mission-007-coach"}, {"id": "b4", "app": "Family chat · Dad", "ico": "👨", "text": "I can't pick up Lily. Can you go at 3:30?", "tts": "I can't pick up Lily. Can you go at three thirty?", "ask": "Does he say where?", "act": "Pick up Lily at 3:30.", "clip": "L07-S01-mission-008-coach"}]}, "exit": [{"q": "The airline app ___ the gate is B7.", "o": ["say", "says", "said to"], "a": 1}, {"q": "Marta ___ the call is at 11:30. (Yesterday)", "o": ["says", "said", "doesn't say"], "a": 1}, {"q": "You want to check if the email gives the address. You ask:", "o": ["Does the email say the address?", "The email says the address?", "Do the email says the address?"], "a": 0}, {"q": "The message gives no time. You say:", "o": ["The message doesn't say the time.", "The message doesn't says the time.", "The message not say the time."], "a": 0}, {"q": "You tell a colleague an update. Best first words:", "o": ["Quick update: the message says…", "I think maybe…", "Whatever…"], "a": 0}], "selfev": ["I can say where the information comes from.", "I keep the day, time and numbers the same.", "I ask one clear question to check a detail.", "I confirm the action: “So I need to…, right?”", "“doesn't say” feels easier now."], "clips": [{"id": "L07-S01-warmup-001-narrator", "file": "L07-S01-warmup-001-narrator.mp3", "spk": "narrator", "tts": "The client call is now at eleven thirty, not ten o'clock. Please bring the new numbers."}, {"id": "L07-S01-warmup-002-narrator", "file": "L07-S01-warmup-002-narrator.mp3", "spk": "narrator", "tts": "Flight two fourteen to Monterrey: new gate B seven. Boarding starts at six forty p.m."}, {"id": "L07-S01-warmup-003-narrator", "file": "L07-S01-warmup-003-narrator.mp3", "spk": "narrator", "tts": "Your order has a delay of twenty minutes. Luis, your courier, is on his way."}, {"id": "L07-S01-warmup-004-narrator", "file": "L07-S01-warmup-004-narrator.mp3", "spk": "narrator", "tts": "Dinner is at my house on Sunday. Can you bring dessert?"}, {"id": "L07-S01-warmup-005-narrator", "file": "L07-S01-warmup-005-narrator.mp3", "spk": "narrator", "tts": "Summary of three emails. The important one: Gomez Supplies says the order arrives Monday. Please confirm the address."}, {"id": "L07-S01-warmup-006-narrator", "file": "L07-S01-warmup-006-narrator.mp3", "spk": "narrator", "tts": "Your seven o'clock class is full. The next class is at seven thirty."}, {"id": "L07-S01-vocab-001-narrator", "file": "L07-S01-vocab-001-narrator.mp3", "spk": "narrator", "tts": "update"}, {"id": "L07-S01-vocab-002-narrator", "file": "L07-S01-vocab-002-narrator.mp3", "spk": "narrator", "tts": "reminder"}, {"id": "L07-S01-vocab-003-narrator", "file": "L07-S01-vocab-003-narrator.mp3", "spk": "narrator", "tts": "deadline"}, {"id": "L07-S01-vocab-004-narrator", "file": "L07-S01-vocab-004-narrator.mp3", "spk": "narrator", "tts": "detail"}, {"id": "L07-S01-vocab-005-narrator", "file": "L07-S01-vocab-005-narrator.mp3", "spk": "narrator", "tts": "summary"}, {"id": "L07-S01-vocab-006-narrator", "file": "L07-S01-vocab-006-narrator.mp3", "spk": "narrator", "tts": "reply"}, {"id": "L07-S01-vocab-007-narrator", "file": "L07-S01-vocab-007-narrator.mp3", "spk": "narrator", "tts": "forward"}, {"id": "L07-S01-vocab-008-narrator", "file": "L07-S01-vocab-008-narrator.mp3", "spk": "narrator", "tts": "confirm"}, {"id": "L07-S01-vocab-009-narrator", "file": "L07-S01-vocab-009-narrator.mp3", "spk": "narrator", "tts": "follow-up"}, {"id": "L07-S01-vocab-010-narrator", "file": "L07-S01-vocab-010-narrator.mp3", "spk": "narrator", "tts": "next step"}, {"id": "L07-S01-vocab-011-narrator", "file": "L07-S01-vocab-011-narrator.mp3", "spk": "narrator", "tts": "delay"}, {"id": "L07-S01-vocab-012-narrator", "file": "L07-S01-vocab-012-narrator.mp3", "spk": "narrator", "tts": "asked us to"}, {"id": "L07-S01-vocab-013-narrator", "file": "L07-S01-vocab-013-narrator.mp3", "spk": "narrator", "tts": "Quick update: the call is at eleven thirty."}, {"id": "L07-S01-vocab-014-narrator", "file": "L07-S01-vocab-014-narrator.mp3", "spk": "narrator", "tts": "I got a reminder about the meeting."}, {"id": "L07-S01-vocab-015-narrator", "file": "L07-S01-vocab-015-narrator.mp3", "spk": "narrator", "tts": "The deadline is Wednesday."}, {"id": "L07-S01-vocab-016-narrator", "file": "L07-S01-vocab-016-narrator.mp3", "spk": "narrator", "tts": "One more detail: lunch is included."}, {"id": "L07-S01-vocab-017-narrator", "file": "L07-S01-vocab-017-narrator.mp3", "spk": "narrator", "tts": "The app sends me a summary of my emails."}, {"id": "L07-S01-vocab-018-narrator", "file": "L07-S01-vocab-018-narrator.mp3", "spk": "narrator", "tts": "Please reply before five p.m."}, {"id": "L07-S01-vocab-019-narrator", "file": "L07-S01-vocab-019-narrator.mp3", "spk": "narrator", "tts": "Can you forward me the email?"}, {"id": "L07-S01-vocab-020-narrator", "file": "L07-S01-vocab-020-narrator.mp3", "spk": "narrator", "tts": "Please confirm the address."}, {"id": "L07-S01-vocab-021-narrator", "file": "L07-S01-vocab-021-narrator.mp3", "spk": "narrator", "tts": "I'll send you a follow-up this afternoon."}, {"id": "L07-S01-vocab-022-narrator", "file": "L07-S01-vocab-022-narrator.mp3", "spk": "narrator", "tts": "The next step is to confirm with HR."}, {"id": "L07-S01-vocab-023-narrator", "file": "L07-S01-vocab-023-narrator.mp3", "spk": "narrator", "tts": "There is a delay of twenty minutes."}, {"id": "L07-S01-vocab-024-narrator", "file": "L07-S01-vocab-024-narrator.mp3", "spk": "narrator", "tts": "Marta asked us to bring the numbers."}, {"id": "L07-S01-grammar-001-narrator", "file": "L07-S01-grammar-001-narrator.mp3", "spk": "narrator", "tts": "The app says the class is full."}, {"id": "L07-S01-grammar-002-narrator", "file": "L07-S01-grammar-002-narrator.mp3", "spk": "narrator", "tts": "The message say the order arrives Monday."}, {"id": "L07-S01-grammar-003-narrator", "file": "L07-S01-grammar-003-narrator.mp3", "spk": "narrator", "tts": "Marta said the call is at 11:30."}, {"id": "L07-S01-grammar-004-narrator", "file": "L07-S01-grammar-004-narrator.mp3", "spk": "narrator", "tts": "Mom didn't says the time."}, {"id": "L07-S01-grammar-005-narrator", "file": "L07-S01-grammar-005-narrator.mp3", "spk": "narrator", "tts": "Does the email say the address?"}, {"id": "L07-S01-grammar-006-narrator", "file": "L07-S01-grammar-006-narrator.mp3", "spk": "narrator", "tts": "Marta asked us bring the numbers."}, {"id": "L07-S01-grammar-007-narrator", "file": "L07-S01-grammar-007-narrator.mp3", "spk": "narrator", "tts": "The assistant says the order has a delay."}, {"id": "L07-S01-grammar-008-narrator", "file": "L07-S01-grammar-008-narrator.mp3", "spk": "narrator", "tts": "The message doesn't says the room."}, {"id": "L07-S01-listening-001-emma", "file": "L07-S01-listening-001-emma.mp3", "spk": "emma", "tts": "Hey Alex, it's Emma. Quick update from HR, because I know you missed the meeting. The message says the safety training is on Thursday at nine, in Room Four. It also says we need to bring our badge. Please don't be late, because the message says the door closes at nine. The deadline to confirm is Wednesday, so please answer HR before then, okay? One more detail: the message says lunch is not included, so bring something to eat. Marco said he can drive us, but he didn't say the time. I know it's a lot of information, but these details are important. I will ask him and send you a follow-up this afternoon. The next step for you is simple: confirm with HR today. Talk soon!"}, {"id": "L07-S01-listening-002-rahul", "file": "L07-S01-listening-002-rahul.mp3", "spk": "rahul", "tts": "Hi Alex, this is Rahul. Sorry, I missed the HR meeting too, but Priya told me the details, so here is my update. Priya said the safety training is on Friday at nine, in Room Four. She also said we need to bring our laptop. Please don't be late, because Priya said the door closes at nine. The deadline to confirm is Wednesday, so please answer HR before then. One more thing: Priya said lunch is included, so you don't need to bring food. I didn't read the message myself, so I'm not sure about all the details. I know it's a lot of information, but I want to help. I will ask Priya to send us a photo of it this afternoon. The next step for you is simple: confirm with HR today. Talk soon!"}, {"id": "L07-S01-pron-001-coach", "file": "L07-S01-pron-001-coach.mp3", "spk": "coach", "tts": "The message says the call is at eleven thirty."}, {"id": "L07-S01-pron-002-coach", "file": "L07-S01-pron-002-coach.mp3", "spk": "coach", "tts": "Marta said she will send the room."}, {"id": "L07-S01-pron-003-coach", "file": "L07-S01-pron-003-coach.mp3", "spk": "coach", "tts": "The message doesn't say the room."}, {"id": "L07-S01-pron-004-coach", "file": "L07-S01-pron-004-coach.mp3", "spk": "coach", "tts": "So I need to confirm the address, right?"}, {"id": "L07-S01-mission-001-coach", "file": "L07-S01-mission-001-coach.mp3", "spk": "coach", "tts": "Meeting moved to Room three. Same time, two o'clock p.m."}, {"id": "L07-S01-mission-002-coach", "file": "L07-S01-mission-002-coach.mp3", "spk": "coach", "tts": "Your appointment is on Tuesday at four fifteen. Please arrive ten minutes early."}, {"id": "L07-S01-mission-003-coach", "file": "L07-S01-mission-003-coach.mp3", "spk": "coach", "tts": "Delay of fifteen minutes on your seven ten train. New time: seven twenty-five."}, {"id": "L07-S01-mission-004-coach", "file": "L07-S01-mission-004-coach.mp3", "spk": "coach", "tts": "Water cut on Saturday, nine a.m. to one p.m. Please store water."}, {"id": "L07-S01-mission-005-coach", "file": "L07-S01-mission-005-coach.mp3", "spk": "coach", "tts": "Your English class is on Thursday at six thirty p.m. Bring your headset."}, {"id": "L07-S01-mission-006-coach", "file": "L07-S01-mission-006-coach.mp3", "spk": "coach", "tts": "We have a delay. The parts arrive on Friday, not Wednesday. Please confirm the invoice by Monday."}, {"id": "L07-S01-mission-007-coach", "file": "L07-S01-mission-007-coach.mp3", "spk": "coach", "tts": "The doors open at seven o'clock. The show starts at eight thirty."}, {"id": "L07-S01-mission-008-coach", "file": "L07-S01-mission-008-coach.mp3", "spk": "coach", "tts": "I can't pick up Lily. Can you go at three thirty?"}]};
+(function(){
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const st={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
+const fmt=s=>String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');
+const SPK='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4z"/></svg>';
+const shuf=a=>{const b=a.slice();for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]]}return b};
+const esc=t=>String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+/* ---- toast ---- */
+let toastT=null;
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('on'),2600)}
+
+/* ---- audio: MP3 primero, voz del navegador como respaldo ---- */
+const CL={};D.clips.forEach(c=>CL[c.id]=c);
+const TTS='speechSynthesis' in window;let voices=[];
+function loadV(){try{voices=speechSynthesis.getVoices().filter(v=>/^en/i.test(v.lang))}catch(e){}}
+if(TTS){loadV();try{speechSynthesis.onvoiceschanged=loadV}catch(e){}}
+function pickV(re){return voices.find(v=>re.test(v.name+' '+v.lang))||voices[0]}
+let curAudio=null,missNoted=false;
+function stopAll(){try{if(TTS)speechSynthesis.cancel()}catch(e){}if(curAudio){try{curAudio.pause()}catch(e){}curAudio=null}$$('.voice.playing').forEach(v=>v.classList.remove('playing'))}
+function sayT(text,spk,onEnd){if(!TTS){toast('This browser has no voice. Read it aloud yourself.');onEnd&&onEnd();return}
+ try{const u=new SpeechSynthesisUtterance(text);u.lang='en-US';u.rate=spk==='emma'||spk==='rahul'?.9:.85;
+  let v;if(spk==='rahul'){v=pickV(/en[-_]IN|India/i);u.lang='en-IN'}else if(spk==='emma'){v=pickV(/en[-_]CA|Canada|female|Samantha|Zira|Jenny|Aria/i);u.lang='en-CA'}else if(spk==='coach'){v=pickV(/male|David|Guy|Daniel|Alex|en[-_]US/i)}else v=pickV(/female|Zira|Samantha|Jenny|Aria|en[-_]US/i);
+  if(v){u.voice=v;u.lang=v.lang}u.onend=()=>onEnd&&onEnd();u.onerror=()=>onEnd&&onEnd();speechSynthesis.speak(u)}catch(e){onEnd&&onEnd()}}
+function play(id,onEnd,onFallback){const c=CL[id];if(!c)return;stopAll();let fell=false;
+ const fb=()=>{if(fell)return;fell=true;if(!missNoted){missNoted=true;toast('Audio no disponible aún (MP3 pendiente) · usando la voz del navegador')}onFallback&&onFallback();sayT(c.tts,c.spk,onEnd)};
+ try{const a=new Audio('audio/'+c.file);curAudio=a;a.addEventListener('error',fb);a.addEventListener('ended',()=>onEnd&&onEnd());const p=a.play();if(p&&p.catch)p.catch(fb)}catch(e){fb()}}
+function chain(ids,done){let i=0;const nx=()=>{if(i>=ids.length){done&&done();return}play(ids[i++],nx)};nx()}
+
+/* ---- modes ---- */
+function setView(student){document.body.classList.toggle('student',student);$('#tgStudent').setAttribute('aria-pressed',student);$('#tgTeacher').setAttribute('aria-pressed',!student)}
+$('#tgStudent').onclick=()=>setView(true);$('#tgTeacher').onclick=()=>setView(false);
+function setMode(m){$$('[data-m]').forEach(e=>e.hidden=e.dataset.m!==m);$('#tgGroup').setAttribute('aria-pressed',m==='group');$('#tgOne').setAttribute('aria-pressed',m==='one');st.set('gt07-mode',m)}
+$('#tgGroup').onclick=()=>setMode('group');$('#tgOne').onclick=()=>setMode('one');setMode(st.get('gt07-mode')||'group');
+
+/* ---- XP + nav ---- */
+let xp=0;const done=new Set();
+function addXP(n,key){if(key){if(done.has(key))return;done.add(key)}xp+=n;$('#xp').textContent=xp+' XP'}
+const secs=$$('.sec');const steps=$('#steps');
+secs.forEach((s,i)=>{const a=document.createElement('a');a.href='#'+s.id;a.innerHTML=`<b>${i+1}</b>${s.dataset.name}`;a.style.setProperty('--c',getComputedStyle(s).getPropertyValue('--c'));steps.appendChild(a)});
+const links=[...steps.children];
+function onScroll(){let cur=0;secs.forEach((s,i)=>{if(s.getBoundingClientRect().top<200)cur=i});links.forEach((a,i)=>a.classList.toggle('on',i===cur));$('#pbar').style.width=((cur+1)/secs.length*100)+'%';const on=links[cur];if(on&&steps.scrollWidth>steps.clientWidth){steps.scrollLeft=on.offsetLeft-40}}
+addEventListener('scroll',onScroll,{passive:true});onScroll();
+function markDone(i){links[i]&&links[i].classList.add('done')}
+
+/* ---- class clock ---- */
+let cs=0,cId=null;$('#clock').onclick=()=>{if(cId){clearInterval(cId);cId=null}else cId=setInterval(()=>{cs++;$('#clock').textContent=fmt(cs)},1000)};
+
+/* ---- timers ---- */
+function timer(el,onEnd){const tot=+el.dataset.sec;let left=tot,id=null;const o=el.querySelector('output'),g=el.querySelector('[data-a=go]');
+ const draw=()=>{o.textContent=fmt(left);el.classList.toggle('end',left===0)};const stop=()=>{clearInterval(id);id=null;g.textContent='Start'};
+ g.onclick=()=>{if(id){stop();return}if(!left)left=tot;g.textContent='Pause';id=setInterval(()=>{left--;draw();if(left<=0){stop();onEnd&&onEnd()}},1000)};
+ el.querySelector('[data-a=re]').onclick=()=>{stop();left=tot;draw()};return{reset(){stop();left=tot;draw()},used(){return tot-left},stop}}
+const TIMER_HTML=s=>`<div class="timer" data-sec="${s}"><output>${fmt(s)}</output><button class="btn main sm" data-a="go">Start</button><button class="btn sm" data-a="re">Reset</button></div>`;
+
+/* ---- MC engine ---- */
+function mc(box,items,scoreEl,xpKey,sec){let right=0,answered=0;
+ items.forEach((it,i)=>{const d=document.createElement('div');d.className='mcq';d.innerHTML=`<div class="q"><span class="n">${i+1}</span>${esc(it.q)}</div><div class="opts"></div><div class="fb" aria-live="polite"></div>`;
+  const os=d.querySelector('.opts'),fb=d.querySelector('.fb');let locked=false;
+  it.o.forEach((t,k)=>{const b=document.createElement('button');b.className='opt';b.textContent=t;b.onclick=()=>{if(locked)return;
+    if(k===it.a){b.classList.add('ok');locked=true;answered++;if(!d.dataset.miss)right++;fb.className='fb ok';fb.textContent='✓ '+(it.ok||'Correct!');addXP(10);
+      if(answered===items.length){scoreEl.textContent=`${right} / ${items.length} first try`;addXP(0,xpKey);if(sec!=null)markDone(sec)}}
+    else{b.classList.add('no');d.dataset.miss=1;fb.className='fb no';fb.textContent='✗ '+(it.no||'Try again.')}};os.appendChild(b)});box.appendChild(d)})}
+
+/* ===== §1 lock screen ===== */
+const order=[];
+D.notifs.forEach(n=>{const b=document.createElement('button');b.className='nt';b.setAttribute('aria-pressed','false');
+ const ic=n.img?`<img src="img/${n.img}" alt="">`:n.ico;
+ b.innerHTML=`<span class="ic">${ic}</span><span class="tx"><b>${esc(n.app)} · ${esc(n.who)}</b><span>${esc(n.text)}</span></span><span class="tm">${n.t}</span><span class="ord"></span><span class="inf">${n.info.map(i=>`<i>${esc(i)}</i>`).join('')}<i class="act">→ ${esc(n.act)}</i></span>`;
+ b.onclick=()=>{const k=order.indexOf(n.id);if(k>=0){order.splice(k,1)}else{order.push(n.id);addXP(2,'nt'+n.id)}
+  $$('.nt').forEach(x=>{const j=order.indexOf(x.dataset.id);x.setAttribute('aria-pressed',j>=0);x.querySelector('.ord').textContent=j>=0?j+1:''});drawNt()};
+ b.dataset.id=n.id;$('#nts').appendChild(b)});
+const rd=document.createElement('div');rd.className='row';rd.style.marginTop='8px';rd.innerHTML=`<button class="btn sm" id="ntRead" style="background:rgba(255,255,255,.14);color:#fff;border-color:rgba(255,255,255,.4)">🔊 Read them aloud</button>`;$('.phoneL').appendChild(rd);
+$('#ntRead').onclick=()=>chain(D.notifs.map(n=>n.clip));
+function drawNt(){const r=$('#ntRes');if(!order.length){r.textContent='Tap the notifications in the order you would open them. Each one shows the important information.';return}
+ const f=D.notifs.find(n=>n.id===order[0]);r.textContent=order.length<3?`First: ${f.app}. Keep going — what is the important information?`:`Your first: ${f.app}. ${order.length} opened. What did you find? Say it in one sentence.`;if(order.length>=3)markDone(0)}
+
+/* ===== §2 flips ===== */
+const FC=['#0E7490','#087F57','#6B4DF0','#C71F5E','#D98E00','#16213E'];let flipped=0;const NV=D.voc.length;
+D.voc.forEach(([w,es,ex],i)=>{const f=document.createElement('div');f.className='flip';f.style.setProperty('--fc',FC[i%FC.length]);f.tabIndex=0;f.setAttribute('role','button');f.setAttribute('aria-label','Flip card: '+w);
+ f.innerHTML=`<div class="in"><div class="f"><span class="num">${String(i+1).padStart(2,'0')}</span><div class="w">${esc(w)}</div><div class="fb"><span class="tap">Tap to flip</span><button class="say" aria-label="Listen">${SPK}</button></div></div><div class="b"><span class="es">${esc(es)}</span><div class="ex">“${esc(ex)}”</div><button class="say" style="background:${FC[i%FC.length]}" aria-label="Listen to the example">${SPK}</button></div></div>`;
+ const flip=()=>{f.classList.toggle('on');if(!f.dataset.seen){f.dataset.seen=1;flipped++;$('#flipCount').textContent=flipped+' / '+NV+' flipped';addXP(3);if(flipped===NV)markDone(1)}};
+ f.addEventListener('click',e=>{if(e.target.closest('.say'))return;flip()});f.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();flip()}});
+ const b=f.querySelectorAll('.say');b[0].onclick=e=>{e.stopPropagation();play(D.vocClips[i][0])};b[1].onclick=e=>{e.stopPropagation();play(D.vocClips[i][1])};$('#flips').appendChild(f)});
+
+/* ===== §2 match ===== */
+let selL=null,pairs=0;
+D.match.forEach(([l],i)=>{const b=document.createElement('button');b.className='mi';b.textContent=l;b.dataset.i=i;b.onclick=()=>{if(b.classList.contains('ok'))return;$$('#mL .mi').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');selL=b};$('#mL').appendChild(b)});
+shuf(D.match.map((p,i)=>[p[1],i])).forEach(([r,i])=>{const b=document.createElement('button');b.className='mi';b.textContent=r;b.onclick=()=>{if(!selL||b.classList.contains('ok'))return;
+ if(+selL.dataset.i===i){b.classList.add('ok');selL.classList.remove('sel');selL.classList.add('ok');selL=null;pairs++;$('#matchCount').textContent=pairs+' / 6 pairs';addXP(5)}
+ else{b.classList.add('bad');setTimeout(()=>b.classList.remove('bad'),350)}};$('#mR').appendChild(b)});
+
+/* ===== §2 Sixty-Second Sell (VOC-10) ===== */
+let sold=0,decided=0;
+D.sell.forEach((s,i)=>{const d=document.createElement('div');d.className='sell';
+ d.innerHTML=`<div class="ctx"><small>SITUATION ${i+1}</small>${esc(s.ctx)}</div>
+ <div class="vs"><button class="pick" data-k="a" aria-pressed="false">${esc(s.a)}</button><b>or</b><button class="pick" data-k="b" aria-pressed="false">${esc(s.b)}</button></div>
+ <div class="stem">Start with: “I choose ___ because ___.” (30 s silent prep → 60 s speaking)</div>
+ <div class="tm">${TIMER_HTML(60)}</div>
+ <div class="why" hidden></div>
+ <div class="row"><button class="btn sm" data-v="1">Sold ✓</button><button class="btn sm" data-v="0">Not sold</button></div>`;
+ const why=d.querySelector('.why'),picks=d.querySelectorAll('.pick');
+ picks.forEach(p=>p.onclick=()=>{picks.forEach(x=>x.classList.remove('good','bad'));p.setAttribute('aria-pressed','true');picks.forEach(x=>{if(x!==p)x.setAttribute('aria-pressed','false')});
+  p.classList.add(p.dataset.k===s.best?'good':'bad');why.hidden=false;why.innerHTML=`<b>${p.dataset.k===s.best?'✓ ':'Hmm — '}Best: ${esc(s[s.best])}.</b> ${esc(s.why)}`;addXP(3,'sellpick'+i)});
+ let vote=null;d.querySelectorAll('[data-v]').forEach(b=>b.onclick=()=>{if(vote!==null)return;vote=+b.dataset.v;b.style.background=vote?'var(--ok)':'var(--err-t)';b.style.color=vote?'#fff':'var(--err)';decided++;if(vote){sold++;addXP(8,'sold'+i)}$('#soldN').textContent=sold;
+  if(decided===D.sell.length){const o=$('#sellOut');o.hidden=false;o.textContent=`We sold ${sold} of ${D.sell.length} words. Say it out loud!`;markDone(1)}});
+ timer(d.querySelector('.timer'));$('#sells').appendChild(d)});
+
+/* ===== §3 grammar ===== */
+$('#hlBtn').onclick=()=>{const on=!$('#disc').classList.contains('show-hl');$('#disc').classList.toggle('show-hl',on);$('#hlBtn').setAttribute('aria-pressed',on);$('#hlBtn').textContent=on?'Hide the key words':'Show the key words'};
+$('#esBtn').onclick=()=>{const open=$('#esBox').hidden;$('#esBox').hidden=!open;$('#esBtn').setAttribute('aria-expanded',open);$('#esBtn').textContent=open?'🇲🇽 Ocultar explicación en español':'🇲🇽 Ver explicación en español'};
+mc($('#mcA'),D.practiceA,$('#scA'),'mcA',null);
+
+/* Sentence Auction (GRM-03) */
+const lots=[];let aucClosed=false;
+D.auction.forEach((a,i)=>{const d=document.createElement('div');d.className='lot';
+ d.innerHTML=`<span class="no">${i+1}</span><span class="s">${esc(a.s)}</span><span class="ctl"><button class="lsay" aria-label="Listen to sentence ${i+1}">🔊</button><button class="buy" aria-pressed="false">Buy</button><button class="pass" aria-pressed="false">Pass</button><span class="bidbox"><button class="bm" aria-label="Lower bid">−</button><span class="bidv">1</span><button class="bp" aria-label="Raise bid">+</button></span><button class="say-fix" aria-pressed="false" hidden>I said the fix ✓</button></span><span class="res" hidden></span>`;
+ const L={ok:a.ok,fix:a.fix,choice:null,bid:1,fixed:false,el:d};lots.push(L);
+ const buy=d.querySelector('.buy'),pass=d.querySelector('.pass'),sf=d.querySelector('.say-fix'),bv=d.querySelector('.bidv'),bb=d.querySelector('.bidbox');
+ const ref=()=>{buy.setAttribute('aria-pressed',L.choice==='buy');pass.setAttribute('aria-pressed',L.choice==='pass');sf.hidden=L.choice!=='pass';bb.style.display=L.choice==='buy'?'inline-flex':'none';bv.textContent=L.bid;sf.setAttribute('aria-pressed',L.fixed);
+  const n=lots.filter(x=>x.choice).length;$('#aucHint').textContent=n<lots.length?`Decided ${n} of ${lots.length}.`:'Ready — close the auction.'};
+ bb.style.display='none';bb.style.alignItems='center';bb.style.gap='4px';
+ d.querySelector('.lsay').onclick=()=>play(D.aucClips[i]);
+ buy.onclick=()=>{if(aucClosed)return;L.choice='buy';L.fixed=false;ref()};pass.onclick=()=>{if(aucClosed)return;L.choice='pass';ref()};
+ d.querySelector('.bm').onclick=()=>{if(aucClosed)return;L.bid=Math.max(1,L.bid-1);ref()};d.querySelector('.bp').onclick=()=>{if(aucClosed)return;L.bid=Math.min(3,L.bid+1);ref()};
+ sf.onclick=()=>{if(aucClosed)return;L.fixed=!L.fixed;ref()};$('#auc').appendChild(d)});
+$('#aucCheck').onclick=()=>{if(aucClosed)return;if(lots.some(l=>!l.choice)){$('#aucHint').textContent='Decide on all 8 sentences first (Buy or Pass).';return}
+ aucClosed=true;let bank=10;
+ lots.forEach(l=>{const r=l.el.querySelector('.res');r.hidden=false;
+  if(l.choice==='buy'){if(l.ok){bank+=2*l.bid;l.el.classList.add('rg');r.textContent=`✓ Correct buy: +${2*l.bid}`}else{bank-=l.bid;l.el.classList.add('rw');r.textContent=`✗ Wrong buy: −${l.bid}. Fix: ${l.fix}`}}
+  else{if(l.ok){l.el.classList.add('rp');r.textContent='This one was correct — you could have bought it. 0'}else{l.el.classList.add('rg');if(l.fixed){bank+=1;r.textContent=`✓ Good pass + fix said aloud: +1 · ${l.fix}`}else{r.textContent=`✓ Good pass. Say the fix for +1 next time: ${l.fix}`}}}});
+ $('#bankN').textContent=bank;const o=$('#aucOut');o.hidden=false;o.textContent=`Auction closed. Final bank: ${bank} points. Say it out loud!`;addXP(Math.max(5,bank),'auction');markDone(2)};
+
+/* ===== §4 listening (LIS-03) ===== */
+[['emma','E','Emma','Canadian English · she read the message',D.emmaClip,''],['rahul','R','Rahul','Indian English · he heard it from Priya',D.rahulClip,' r']].forEach(([k,ini,nm,sub,cid,cls])=>{
+ const v=document.createElement('div');v.className='voice'+cls;
+ const bars=Array.from({length:28},(_,i)=>`<i style="height:${8+Math.abs(Math.sin(i*1.7)*22)}px;animation-delay:${(i%7)*.08}s"></i>`).join('');
+ v.innerHTML=`<div class="vh"><span class="cav">${ini}</span><div><b class="nun" style="font-size:20px">Voice note · ${nm}</b><small>${sub}</small></div></div><div class="vb"><div class="wave" aria-hidden="true">${bars}</div><div class="row"><button class="play" data-a="p">▶ Play</button><button class="btn sm" data-a="s">■ Stop</button></div><div class="astat" aria-live="polite">Audio: MP3 · ElevenLabs</div></div>`;
+ const stat=v.querySelector('.astat');
+ v.querySelector('[data-a=p]').onclick=()=>{play(cid,()=>v.classList.remove('playing'),()=>{stat.textContent='Audio MP3 pendiente · usando la voz del navegador';stat.classList.add('miss')});v.classList.add('playing')};
+ v.querySelector('[data-a=s]').onclick=()=>stopAll();$('#voices').appendChild(v)});
+
+const vers=$('#vers');
+vers.innerHTML=`<div class="vrow head"><span>DETAIL</span><span>EMMA</span><span>RAHUL</span><span>YOUR CALL</span></div>`;
+const vrows=[];
+D.disc.forEach(([lab,e,r,same],i)=>{const d=document.createElement('div');d.className='vrow';
+ d.innerHTML=`<span class="lab">${esc(lab)}</span><span class="val">🔒<span>${esc(e)}</span></span><span class="val">🔒<span>${esc(r)}</span></span><span class="jd"><button data-v="1" aria-pressed="false">Same</button><button data-v="0" aria-pressed="false">Different</button></span>`;
+ const R={same,pick:null,el:d};vrows.push(R);
+ d.querySelectorAll('.jd button').forEach(b=>b.onclick=()=>{if(vers.classList.contains('rev'))return;R.pick=b.dataset.v==='1';d.querySelectorAll('.jd button').forEach(x=>x.setAttribute('aria-pressed',x===b));
+  const n=vrows.filter(x=>x.pick!==null).length;$('#vHint').textContent=n<vrows.length?`Marked ${n} of ${vrows.length}.`:'Ready — check your answers.'});vers.appendChild(d)});
+$('#vCheck').onclick=()=>{if(vers.classList.contains('rev'))return;if(vrows.some(r=>r.pick===null)){$('#vHint').textContent='Mark all 6 details first.';return}
+ vers.classList.add('rev');let ok=0,diffFound=0;vrows.forEach(r=>{const right=r.pick===r.same;r.el.classList.add(right?'ok':'no');if(right){ok++;if(!r.same)diffFound++}});
+ $('#scV').textContent=`${ok} / 6 · ${diffFound} of 3 differences found`;$('#vHint').textContent='Now decide which version to trust.';addXP(ok*3,'vers');markDone(3)};
+mc($('#mcL'),D.listenMc,$('#scL'),'mcL',null);
+$('#script').innerHTML=`<p><b>EMMA</b> <i>(Canadian English)</i></p><p>${esc(D.emma)}</p><p style="margin-top:12px"><b>RAHUL</b> <i>(Indian English)</i></p><p>${esc(D.rahul)}</p>`;
+$('#scrBtn').onclick=()=>{const o=$('#script').hidden;$('#script').hidden=!o;$('#scrBtn').setAttribute('aria-expanded',o);$('#scrBtn').textContent=o?'Hide the scripts':'Show both scripts'};
+D.pron.forEach(([t,sc,tip],i)=>{const d=document.createElement('div');d.className='pr';d.innerHTML=`<span class="w">${esc(sc)}</span><span class="ipa">${esc(tip)}</span><button class="say" style="background:var(--pink)" aria-label="Listen: ${esc(t)}">${SPK}</button>`;d.querySelector('.say').onclick=()=>play(D.pronClips[i]);$('#pron').appendChild(d)});
+
+/* ===== §5 Blind Ranking (SPK-10) ===== */
+let mine=D.notifs.map(n=>n.id),team=D.notifs.map(n=>n.id);const NID={};D.notifs.forEach(n=>NID[n.id]=n);
+function drawList(box,arr,isTeam){box.innerHTML='';arr.forEach((id,i)=>{const n=NID[id];const d=document.createElement('div');d.className='rki';
+ d.innerHTML=`<span class="pos">${i+1}</span><span class="nm"><b>${esc(n.app)}</b> · ${esc(n.info[0])}</span><span class="mv2"><button aria-label="Move up" ${i===0?'disabled':''}>▲</button><button aria-label="Move down" ${i===arr.length-1?'disabled':''}>▼</button></span>`;
+ const [u,dn]=d.querySelectorAll('button');u.onclick=()=>{[arr[i-1],arr[i]]=[arr[i],arr[i-1]];drawList(box,arr,isTeam)};dn.onclick=()=>{[arr[i+1],arr[i]]=[arr[i],arr[i+1]];drawList(box,arr,isTeam)};box.appendChild(d)})}
+mine=shuf(mine);drawList($('#rkMine'),mine);drawList($('#rkTeam'),team);
+$('#rkCopy').onclick=()=>{team=mine.slice();drawList($('#rkTeam'),team)};
+timer($('#tRk'));
+$('#rkDone').onclick=()=>{const diff=team.filter((id,i)=>id!==mine[i]).length;const o=$('#rkOut');o.hidden=false;
+ o.textContent=`Team order: ${team.map((id,i)=>`${i+1}. ${NID[id].app}`).join(' · ')}. Positions changed from your private order: ${diff}. Announce it out loud with a reason for #1 and #6.`;addXP(15,'rank');markDone(4)};
+let qi=0;const NQ=D.questions.length;
+D.questions.forEach((_,i)=>{const d=document.createElement('button');d.setAttribute('aria-label','Question '+(i+1));d.onclick=()=>{qi=i;drawQ()};$('#dots').appendChild(d)});
+function drawQ(){const q=D.questions[qi];$('#qN').textContent=`QUESTION ${qi+1} OF ${NQ}`;$('#qT').textContent=q[0];$('#qF').innerHTML=`<span>${esc(q[1])}</span><span>${esc(q[2])}</span>`;[...$('#dots').children].forEach((d,i)=>d.setAttribute('aria-current',i===qi));$('#qP').disabled=qi===0;$('#qX').textContent=qi===NQ-1?'Done ✓':'Next question →';if(qi>=6)markDone(4)}
+$('#qP').onclick=()=>{if(qi>0){qi--;drawQ()}};$('#qX').onclick=()=>{if(qi<NQ-1){qi++;drawQ()}};drawQ();
+
+/* ===== §6 Mission ===== */
+const MV=['1 · Tell the info + source','2 · Partner clarifies one detail','3 · Partner confirms the action'];
+['A','B'].forEach(k=>{D.mission[k].forEach((m,i)=>{const d=document.createElement('div');d.className='mcard';d.dataset.k=k;d.hidden=k!=='A';
+ d.innerHTML=`<div class="mh"><span class="ic">${m.ico}</span><span>Set ${k} · Message ${i+1} · ${esc(m.app)}</span></div>
+ <button class="btn sm rv" aria-expanded="false">👁 Reveal my message</button>
+ <div class="secret" hidden>${esc(m.text)}</div>
+ <div class="tip">Partner can ask: “${esc(m.ask)}” · or: “So I need to…, right?”</div>
+ <div class="key tip"><b>Action (key):</b> ${esc(m.act)}</div>
+ <div class="moves">${MV.map(t=>`<button class="mv" aria-pressed="false"><i>✓</i>${t}</button>`).join('')}</div>`;
+ const rv=d.querySelector('.rv'),sc=d.querySelector('.secret');rv.onclick=()=>{const o=sc.hidden;sc.hidden=!o;rv.setAttribute('aria-expanded',o);rv.textContent=o?'🙈 Hide my message':'👁 Reveal my message'};
+ d.querySelectorAll('.mv').forEach(b=>b.onclick=()=>{b.setAttribute('aria-pressed',b.getAttribute('aria-pressed')!=='true');drawMv()});$('#mset').appendChild(d)})});
+$$('#mtabs button').forEach(b=>b.onclick=()=>{$$('#mtabs button').forEach(x=>x.setAttribute('aria-pressed',x===b));$$('.mcard').forEach(c=>c.hidden=c.dataset.k!==b.dataset.k)});
+function drawMv(){const n=$$('.mv[aria-pressed=true]').length;$('#mvN').textContent=n;$('#mvBar').style.width=n/24*100+'%';const o=$('#mvOut');
+ if(n>=1)markDone(5);if(n===24){addXP(30,'mission');o.hidden=false;o.textContent='24 of 24 moves. Mission complete! Say it out loud.'}else o.hidden=true}
+$('#mvRe').onclick=()=>{$$('.mv').forEach(b=>b.setAttribute('aria-pressed','false'));drawMv()};
+
+/* ===== §7 wrap ===== */
+mc($('#mcQ'),D.exit,$('#scQ'),'mcQ',6);
+D.selfev.forEach(t=>{const b=document.createElement('button');b.textContent=t;b.setAttribute('aria-pressed','false');b.onclick=()=>b.setAttribute('aria-pressed',b.getAttribute('aria-pressed')!=='true');$('#selfev').appendChild(b)});
+function showDone(){$('#doneBtn').textContent='✓ Session complete';$('#doneBtn').disabled=true}
+if(st.get('gt07-s01-done'))showDone();
+$('#doneBtn').onclick=()=>{st.set('gt07-s01-done','1');addXP(50,'done');markDone(6);showDone()};
+})();
+
+</script>
+</body>
+</html>

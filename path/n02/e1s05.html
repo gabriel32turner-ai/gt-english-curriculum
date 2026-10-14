@@ -1,0 +1,1149 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Básico 2 · S05 · How Often, Really?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap">
+<style>
+:root{
+  --navy:#16213E; --navy2:#22305A; --cream:#FFF8F0; --paper:#FFFFFF; --ink:#1B1B2F; --mut:#5E6275; --line:#F0E4D4;
+  --coral:#F2A200; --coral-d:#B87400; --coral-t:#FDECC7;
+  --sun:#FFC233; --sun-t:#FFF3D1; --teal:#12B5A6; --teal-t:#D9F5F2; --pink:#FF3D7F; --pink-t:#FFE1EC; --violet:#5733CC; --violet-t:#ECE7FF;
+  --ok:#15A34A; --ok-t:#E3F7EA; --err:#E5484D; --err-t:#FDE8E8;
+  --r:18px; --r-sm:12px; --sh:0 6px 22px rgba(27,27,47,.08); --sh-lg:0 18px 44px rgba(27,27,47,.16);
+  color-scheme:light;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+[hidden]{display:none!important}
+html{scroll-behavior:smooth;scroll-padding-top:150px}
+body{background:var(--cream);color:var(--ink);font-family:"DM Sans","Segoe UI",system-ui,sans-serif;font-size:17px;line-height:1.55;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4,.nun{font-family:Nunito,"Segoe UI",system-ui,sans-serif;letter-spacing:-.01em;line-height:1.15;text-wrap:balance}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+button:focus-visible,a:focus-visible,textarea:focus-visible,input:focus-visible{outline:3px solid var(--violet);outline-offset:2px}
+img{max-width:100%;display:block}
+.wrap{max-width:1100px;margin:0 auto;padding-inline:16px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+/* ---------- top bar ---------- */
+.topbar{background:var(--navy);color:#fff}
+.topbar .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding-block:10px}
+.brand{display:flex;align-items:center;gap:10px;font-family:Nunito;font-weight:900;font-size:14px;letter-spacing:.08em}
+.brand i{width:10px;height:10px;border-radius:50%;background:var(--coral);box-shadow:0 0 0 4px rgba(242,162,0,.25)}
+.brand a{color:#fff;text-decoration:none}
+.brand small{font-family:"DM Sans";font-weight:500;letter-spacing:0;opacity:.7;font-size:13px}
+.toggles{display:flex;gap:8px;flex-wrap:wrap}
+.tg{border:1.5px solid rgba(255,255,255,.3);color:#fff;border-radius:99px;padding:6px 14px;font-size:13px;font-weight:700}
+.tg[aria-pressed="true"]{background:var(--sun);border-color:var(--sun);color:var(--navy)}
+
+/* ---------- hero ---------- */
+.hero{position:relative;background:var(--navy);color:#fff;overflow:hidden}
+.hero .bg{position:absolute;inset:0;background:url(img/b1s07_hero.jpg) 70% 30%/cover}
+.hero .bg::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(22,33,62,.97) 0%,rgba(22,33,62,.86) 45%,rgba(22,33,62,.25) 100%)}
+.hero .wrap{position:relative;padding-block:44px 40px}
+.kick{font-family:Nunito;font-weight:900;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--sun)}
+.hero h1{font-size:clamp(40px,6.5vw,72px);font-weight:900;margin:8px 0 10px;max-width:14ch}
+.hero h1 span{color:var(--coral)}
+.hero p.obj{max-width:56ch;font-size:18px;opacity:.94}
+.pills{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.pill{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.28);border-radius:99px;padding:5px 13px;font-size:14px;font-weight:700}
+.pill.sun{background:var(--sun);border-color:var(--sun);color:var(--navy)}
+.coach{display:inline-flex;align-items:center;gap:12px;margin-top:20px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);border-radius:99px;padding:6px 18px 6px 6px}
+.coach .cav{width:44px;height:44px;border-radius:50%;background:var(--coral);display:grid;place-items:center;font-family:Nunito;font-weight:900;font-size:16px;letter-spacing:.02em}
+.coach b{display:block;font-family:Nunito;font-weight:900;font-size:17px;line-height:1.1}
+.coach small{font-size:13px;color:var(--sun);font-weight:700;letter-spacing:.04em}
+
+/* ---------- sticky nav ---------- */
+.nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:40;background:rgba(255,248,240,.96);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.nav .wrap{padding-block:10px 8px}
+.prog{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+.bar{flex:1;height:10px;background:#F1E6D7;border-radius:99px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--coral),var(--sun));border-radius:99px;transition:width .4s}
+.xp{font-family:Nunito;font-weight:900;font-size:15px;color:var(--coral-d);white-space:nowrap}
+.clock{font-family:Nunito;font-weight:900;font-size:15px;background:var(--navy);color:#fff;border-radius:99px;padding:5px 12px;font-variant-numeric:tabular-nums}
+.steps{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}
+.steps::-webkit-scrollbar{display:none}
+.steps a{flex:1 0 auto;text-decoration:none;color:var(--mut);background:#F6EDE1;border-radius:10px;padding:8px 12px;font-weight:700;font-size:14px;white-space:nowrap;text-align:center;border:1.5px solid transparent}
+.steps a b{font-family:Nunito;margin-right:4px}
+.steps a.on{background:var(--c,var(--coral));color:#fff}
+.steps a.done{border-color:var(--ok);color:var(--ok)}
+.steps a.done.on{color:#fff}
+
+/* ---------- sections ---------- */
+main{padding-block:26px 80px}
+.sec{background:var(--paper);border-radius:24px;box-shadow:var(--sh);margin-bottom:26px;overflow:hidden;border-top:8px solid var(--c)}
+.shead{display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between;padding:22px 26px 6px}
+.snum{display:flex;align-items:center;gap:14px}
+.snum .n{width:54px;height:54px;border-radius:16px;background:var(--c);color:#fff;display:grid;place-items:center;font-family:Nunito;font-weight:900;font-size:22px;flex:none}
+.snum h2{font-size:clamp(26px,3.4vw,36px);font-weight:900}
+.snum .sub{font-size:14px;color:var(--mut);font-weight:500}
+.meta{display:flex;gap:8px;flex-wrap:wrap}
+.chip{border-radius:99px;padding:5px 12px;font-size:13px;font-weight:700;background:var(--ct);color:var(--ink)}
+.chip.dark{background:var(--navy);color:#fff}
+.sbody{padding:14px 26px 28px;display:grid;gap:22px}
+.block{display:grid;gap:12px}
+.bt{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.bt h3{font-size:22px;font-weight:900}
+.bt .tag{font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--c)}
+.hint{color:var(--mut);font-size:15px}
+.card{background:var(--paper);border:1.5px solid var(--line);border-radius:var(--r);padding:18px}
+.tint{background:var(--ct);border-color:transparent}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+@media (max-width:820px){.g2,.g3{grid-template-columns:1fr}}
+.btn{border-radius:99px;padding:10px 18px;font-weight:700;font-size:15px;background:var(--paper);border:1.5px solid var(--line)}
+.btn.main{background:var(--c,var(--coral));border-color:var(--c,var(--coral));color:#fff}
+.btn.dark{background:var(--navy);border-color:var(--navy);color:#fff}
+.btn.sm{padding:6px 12px;font-size:14px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.say{width:40px;height:40px;border-radius:50%;background:var(--c,var(--coral));color:#fff;display:inline-grid;place-items:center;flex:none;font-size:16px}
+.say svg{width:18px;height:18px;fill:#fff}
+
+/* teacher notes */
+.tn{border-radius:var(--r);background:#FFFBEA;border:1.5px dashed #E9C46A}
+.tn summary{list-style:none;padding:12px 16px;font-weight:800;font-family:Nunito;cursor:pointer;display:flex;justify-content:space-between;color:#7A5A00}
+.tn summary::-webkit-details-marker{display:none}
+.tn summary::after{content:"＋";font-weight:900}
+.tn[open] summary::after{content:"－"}
+.tn .layers{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;padding:0 16px 16px}
+@media (max-width:820px){.tn .layers{grid-template-columns:1fr}}
+.tn .ly{background:#fff;border-radius:12px;padding:12px 14px;font-size:15px}
+.tn .ly h4{font-size:13px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px}
+.tn .ly:nth-child(1) h4{color:var(--violet)} .tn .ly:nth-child(2) h4{color:var(--coral-d)} .tn .ly:nth-child(3) h4{color:var(--teal)}
+.tn ul{padding-left:18px} .tn li{margin-bottom:4px}
+body.student .tn, body.student .key{display:none!important}
+
+/* ---------- §1 warm-up ---------- */
+.scene{display:grid;grid-template-columns:1.1fr 1fr;border-radius:var(--r);overflow:hidden;background:var(--navy);color:#fff}
+@media (max-width:820px){.scene{grid-template-columns:1fr}}
+.scene img{height:100%;min-height:260px;object-fit:cover}
+.scene .txt{padding:26px;display:grid;gap:12px;align-content:center}
+.bubble{background:#fff;color:var(--ink);border-radius:18px 18px 18px 4px;padding:12px 16px;font-size:20px;font-weight:700;max-width:28ch;position:relative}
+.bubble.me{background:var(--coral);color:#fff;border-radius:18px 18px 4px 18px;justify-self:end}
+.poll{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+@media (max-width:900px){.poll{grid-template-columns:repeat(3,1fr)}}
+@media (max-width:520px){.poll{grid-template-columns:repeat(2,1fr)}}
+.pc{border-radius:var(--r);overflow:hidden;background:var(--paper);border:2px solid var(--line);display:grid;transition:transform .15s,border-color .15s}
+.pc img{aspect-ratio:4/3;object-fit:cover;width:100%}
+.pc .pb{padding:10px 12px;display:grid;gap:8px}
+.pc .nm{font-family:Nunito;font-weight:900;font-size:18px}
+.pc .vt{display:flex;align-items:center;justify-content:space-between}
+.pc .vt button{width:34px;height:34px;border-radius:50%;background:var(--ct);font-weight:900;font-size:18px}
+.pc .vt output{font-family:Nunito;font-weight:900;font-size:22px;font-variant-numeric:tabular-nums}
+.pc .pbar{height:8px;border-radius:99px;background:#F4ECE0;overflow:hidden}
+.pc .pbar i{display:block;height:100%;width:0;background:var(--c);transition:width .3s}
+.pc.win{border-color:var(--c);transform:translateY(-3px)}
+.result{font-family:Nunito;font-weight:900;font-size:20px}
+.fq{display:grid;gap:8px}
+.fq div{background:var(--ct);border-radius:12px;padding:10px 14px;font-weight:700}
+.fq div span{color:var(--mut);font-weight:500}
+
+/* ---------- §2 vocab ---------- */
+.flips{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+@media (max-width:900px){.flips{grid-template-columns:repeat(3,1fr)}}
+@media (max-width:520px){.flips{grid-template-columns:repeat(2,1fr)}}
+.flip{perspective:900px;height:170px}
+.flip .in{position:relative;width:100%;height:100%;transition:transform .5s;transform-style:preserve-3d}
+.flip.on .in{transform:rotateY(180deg)}
+.flip .f,.flip .b{position:absolute;inset:0;border-radius:var(--r);backface-visibility:hidden;padding:14px;display:grid;align-content:space-between}
+.flip .f{background:var(--fc);color:#fff}
+.flip .b{background:#fff;border:2px solid var(--fc);transform:rotateY(180deg)}
+.flip .num{font-family:Nunito;font-weight:900;font-size:13px;opacity:.8}
+.flip .w{font-family:Nunito;font-weight:900;font-size:19px;line-height:1.15}
+.flip .es{font-weight:700;color:var(--mut);font-size:14px}
+.flip .ex{font-size:13px}
+.flip .fb{display:flex;justify-content:space-between;align-items:end}
+.flip .fb .say{background:rgba(255,255,255,.25)}
+.flip .tap{font-size:12px;font-weight:700;opacity:.85}
+@media (max-width:520px){.flip{height:220px}.flip .ex{font-size:14px}.flip .b{padding:12px}}
+.flip .seen{position:absolute;top:10px;right:10px;background:var(--ok);color:#fff;border-radius:99px;font-size:11px;font-weight:800;padding:2px 8px}
+.match{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.match .col{display:grid;gap:10px}
+.mi{border:2px solid var(--line);background:#fff;border-radius:14px;padding:12px 14px;font-weight:700;text-align:left;transition:.15s}
+.mi.sel{border-color:var(--c);background:var(--ct)}
+.mi.ok{border-color:var(--ok);background:var(--ok-t);color:var(--ok);cursor:default}
+.mi.bad{border-color:var(--err);background:var(--err-t);animation:shake .3s}
+@keyframes shake{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+
+/* ---------- §2 mystery zoom ---------- */
+.zoomr{position:relative;border-radius:var(--r);overflow:hidden;height:280px;background:var(--navy)}
+.zimg{position:absolute;inset:0;background-size:cover;background-position:center;transition:transform .6s ease}
+.zlabel{position:absolute;inset:auto 0 0 0;background:linear-gradient(0deg,rgba(22,33,62,.94),transparent);color:#fff;padding:18px 16px 14px;font-family:Nunito;font-weight:900;font-size:18px}
+.zstep{position:absolute;top:12px;left:12px;background:rgba(255,255,255,.92);color:var(--navy);border-radius:99px;padding:5px 12px;font-family:Nunito;font-weight:900;font-size:13px}
+
+/* ---------- §3 grammar ---------- */
+.disc{display:grid;grid-template-columns:1fr 1.2fr;gap:0;border-radius:var(--r);overflow:hidden;border:1.5px solid var(--line)}
+@media (max-width:820px){.disc{grid-template-columns:1fr}}
+.disc img{height:100%;min-height:240px;object-fit:cover}
+.disc .chat{padding:20px;display:grid;gap:10px;align-content:center;background:var(--violet-t)}
+.disc .chat p{background:#fff;border-radius:14px;padding:10px 14px;font-size:17px;font-weight:500;max-width:36ch}
+.disc .chat p.h{background:var(--violet);color:#fff;justify-self:start;max-width:34ch}
+mark.hl{background:transparent;color:inherit;border-radius:4px;transition:.2s}
+.show-hl mark.hl{background:var(--sun);color:var(--ink);padding:0 3px;font-weight:800}
+.tool{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media (max-width:820px){.tool{grid-template-columns:1fr}}
+.tool .card h4{font-size:14px;letter-spacing:.08em;text-transform:uppercase;color:var(--violet);margin-bottom:6px}
+.tool .big{font-family:Nunito;font-weight:900;font-size:22px}
+.tool .big em{font-style:normal;color:var(--violet)}
+.forms{border-radius:var(--r);overflow:hidden;border:1.5px solid var(--line)}
+.forms table{width:100%;border-collapse:collapse;font-size:16px}
+.forms th{background:var(--violet);color:#fff;font-family:Nunito;text-align:left;padding:10px 14px}
+.forms td{padding:9px 14px;border-top:1px solid var(--line);background:#fff}
+.forms td:first-child{font-family:Nunito;font-weight:900;font-size:15px;color:var(--violet)}
+.forms b{color:var(--violet)}
+.es-box{background:#fff;border:2px dashed var(--violet);border-radius:var(--r);padding:16px 18px;display:grid;gap:8px}
+.machine{display:flex;align-items:center;gap:14px;flex-wrap:wrap;justify-content:center;background:var(--navy);color:#fff;border-radius:var(--r);padding:22px}
+.machine .from{font-family:Nunito;font-weight:900;font-size:26px}
+.machine .arrow{font-size:30px;color:var(--sun)}
+.machine .to{font-family:Nunito;font-weight:900;font-size:30px;color:var(--sun);min-width:5ch;text-align:center}
+.mc{display:grid;gap:12px}
+.mcq{background:#fff;border:1.5px solid var(--line);border-radius:14px;padding:14px 16px;display:grid;gap:10px}
+.mcq .q{font-weight:700;font-size:18px}
+.mcq .q .n{font-family:Nunito;font-weight:900;color:var(--c);margin-right:6px}
+.opts{display:flex;gap:8px;flex-wrap:wrap}
+.opt{border:2px solid var(--line);border-radius:99px;padding:7px 16px;font-weight:700;background:#fff}
+.opt:hover{border-color:var(--c)}
+.opt.ok{background:var(--ok);border-color:var(--ok);color:#fff}
+.opt.no{background:var(--err-t);border-color:var(--err);color:var(--err)}
+.mcq .fb{font-size:15px;font-weight:700}
+.mcq .fb.ok{color:var(--ok)} .mcq .fb.no{color:var(--err)}
+.score{font-family:Nunito;font-weight:900;font-size:18px}
+.pron{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media (max-width:820px){.pron{grid-template-columns:1fr 1fr}}
+.pr{background:var(--violet-t);border-radius:14px;padding:14px;display:grid;gap:8px;justify-items:start}
+.pr .w{font-family:Nunito;font-weight:900;font-size:18px}
+.pr .ipa{color:var(--mut);font-size:14px}
+.errs{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media (max-width:820px){.errs{grid-template-columns:1fr}}
+.err{border-radius:14px;padding:14px;background:#fff;border:1.5px solid var(--line);display:grid;gap:4px}
+.err s{color:var(--err);font-weight:700}
+.err b{color:var(--ok)}
+.ttt{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.tc{border:2px solid var(--line);background:#fff;border-radius:14px;padding:14px;font-weight:700;font-size:15px;text-align:left;transition:.15s;min-height:84px;display:grid;align-content:center;gap:2px}
+.tc{position:relative}
+.tc .mk{position:absolute;top:6px;right:10px;font-family:Nunito;font-weight:900;font-size:26px;line-height:1}
+.tc.x{background:var(--violet);border-color:var(--violet);color:#fff}
+.tc.o{background:var(--coral);border-color:var(--coral);color:#fff}
+.tc.win{box-shadow:0 0 0 4px var(--sun);transform:translateY(-2px)}
+.tc:disabled{cursor:default}
+.board-bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
+.turn{font-family:Nunito;font-weight:900;font-size:18px;border-radius:99px;padding:6px 14px;color:#fff;background:var(--violet)}
+.turn.o{background:var(--coral)}
+.sboard{display:flex;gap:8px;flex-wrap:wrap}
+.sboard span{font-family:Nunito;font-weight:900;font-size:15px;border-radius:99px;padding:6px 12px;background:#fff;border:2px solid var(--line)}
+.sboard span.on{border-color:var(--c);background:var(--ct)}
+.closeout{background:var(--navy);color:#fff;border-radius:14px;padding:12px 16px;font-family:Nunito;font-weight:900;font-size:19px}
+@media (max-width:520px){.tc{font-size:14px;padding:12px 8px;min-height:92px}.tc .mk{font-size:20px;right:6px}}
+
+/* ---------- §4 reading ---------- */
+.phone{max-width:420px;margin:0 auto;background:#fff;border-radius:34px;border:10px solid var(--navy);box-shadow:var(--sh-lg);overflow:hidden}
+.phone .ph{background:var(--sun-t);color:var(--coral-d);padding:14px 16px;display:flex;align-items:center;gap:10px}
+.phone .ph b{font-family:Nunito;font-weight:900}
+.phone .ph small{display:block;opacity:.85;font-size:12px}
+.phone .ms{background:#EFE9E1;padding:14px 12px;display:grid;gap:10px}
+.msg{display:grid;grid-template-columns:40px 1fr;gap:8px;align-items:start}
+.msg img,.msg .av{width:40px;height:40px;border-radius:50%;object-fit:cover}
+.msg .av{background:var(--coral);color:#fff;display:grid;place-items:center;font-family:Nunito;font-weight:900}
+.msg .bb{background:#fff;border-radius:4px 14px 14px 14px;padding:8px 12px;font-size:16px}
+.msg .bb .who{font-family:Nunito;font-weight:900;font-size:13px;color:var(--coral-d)}
+
+/* ---------- §5 speaking ---------- */
+.rounds{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media (max-width:820px){.rounds{grid-template-columns:1fr}}
+.rd{border-radius:var(--r);overflow:hidden;border:2.5px solid var(--line);background:#fff;text-align:left;display:grid}
+.rd img{aspect-ratio:16/10;object-fit:cover;width:100%}
+.rd .rb{padding:14px;display:grid;gap:6px}
+.rd h4{font-size:20px;font-weight:900}
+.rd .who{font-size:14px;font-weight:700;color:var(--coral-d)}
+.rd[aria-pressed="true"]{border-color:var(--c);box-shadow:0 0 0 4px var(--ct)}
+.deck{display:grid;grid-template-columns:1fr 1.3fr;border-radius:var(--r);overflow:hidden;background:var(--c);color:#fff}
+@media (max-width:820px){.deck{grid-template-columns:1fr}}
+.deck img{height:100%;min-height:260px;object-fit:cover}
+.deck .dq{padding:26px;display:grid;gap:14px;align-content:center}
+.deck .qn{font-family:Nunito;font-weight:900;letter-spacing:.12em;font-size:13px;opacity:.9}
+.deck .qt{font-family:Nunito;font-weight:900;font-size:clamp(26px,3.4vw,38px);line-height:1.1}
+.deck .fu{display:grid;gap:6px;font-size:18px;font-weight:500}
+.deck .fu span::before{content:"→ ";font-weight:900;color:var(--sun)}
+.deck .row .btn{background:rgba(255,255,255,.18);border-color:rgba(255,255,255,.35);color:#fff}
+.dots{display:flex;gap:6px}
+.dots button{width:11px;height:11px;border-radius:50%;background:rgba(255,255,255,.35)}
+.dots button[aria-current="true"]{background:#fff}
+.help{display:flex;flex-wrap:wrap;gap:8px}
+.help span{background:var(--navy);color:#fff;border-radius:99px;padding:6px 14px;font-weight:700;font-size:15px}
+.choice{display:flex;flex-wrap:wrap;gap:10px}
+.choice button{border:2px solid var(--line);border-radius:99px;padding:9px 18px;font-weight:800;background:#fff}
+.choice button[aria-pressed="true"]{background:var(--c);border-color:var(--c);color:#fff}
+.timer{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.timer output{font-family:Nunito;font-weight:900;font-size:34px;font-variant-numeric:tabular-nums;min-width:4.5ch}
+.timer.end output{color:var(--err)}
+
+/* ---------- §6 mission ---------- */
+.mission{position:relative;border-radius:var(--r);overflow:hidden;color:#fff;background:var(--navy)}
+.mission img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.35}
+.mission .mt{position:relative;padding:28px;display:grid;gap:10px;max-width:70ch}
+.mission h3{font-size:28px;font-weight:900}
+.advtrack{display:flex;flex-wrap:wrap;gap:10px}
+.advchip{border:2px solid var(--line);border-radius:99px;padding:9px 18px;font-weight:800;background:#fff;font-family:Nunito}
+.advchip[aria-pressed="true"]{background:var(--ok);border-color:var(--ok);color:#fff}
+.stat{font-family:Nunito;font-weight:900}
+.stat b{color:var(--c);font-size:26px}
+
+/* ---------- §7 wrap ---------- */
+.sur{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media (max-width:900px){.sur{grid-template-columns:1fr 1fr}}
+@media (max-width:520px){.sur{grid-template-columns:1fr}}
+.sur .card h4{font-size:18px;font-weight:900;margin-bottom:6px}
+.sur .card:nth-child(1){border-top:5px solid var(--ok)} .sur .card:nth-child(2){border-top:5px solid var(--sun)} .sur .card:nth-child(3){border-top:5px solid var(--err)} .sur .card:nth-child(4){border-top:5px solid var(--violet)}
+textarea{width:100%;min-height:110px;border:1.5px solid var(--line);border-radius:12px;padding:10px 12px;font:inherit;font-size:15px;resize:vertical;background:#fff;color:var(--ink)}
+.selfev{display:flex;flex-wrap:wrap;gap:8px}
+.selfev button{border:2px solid var(--line);border-radius:99px;padding:8px 14px;font-weight:700;background:#fff}
+.selfev button[aria-pressed="true"]{background:var(--navy);border-color:var(--navy);color:#fff}
+.badge{display:flex;gap:18px;align-items:center;background:linear-gradient(120deg,var(--navy),var(--navy2));color:#fff;border-radius:var(--r);padding:22px}
+.badge .medal{width:84px;height:84px;border-radius:50%;background:var(--sun);color:var(--navy);display:grid;place-items:center;font-family:Nunito;font-weight:900;font-size:30px;flex:none;border:6px solid rgba(255,255,255,.3)}
+@media (max-width:520px){.badge{flex-direction:column;align-items:flex-start;gap:12px}.badge .medal{width:64px;height:64px;font-size:24px}}
+footer{color:var(--mut);font-size:13px;text-align:center;padding:10px 16px 40px}
+footer a{color:var(--mut)}
+</style>
+<style id="gt-premium">
+/* ===== GT premium layer · Básico 2 · loaded after each session's own styles ===== */
+:root{
+  --teal:#0A7F75;--ok:#0F7A37;--err:#C9343C;--pink:#DD1F6E;--violet:#5733CC;--coral-d:#8F5C00;
+  --ink-navy:#16213E;--hair:rgba(27,27,47,.08);
+  --sh:0 1px 0 rgba(27,27,47,.04),0 10px 30px -10px rgba(27,27,47,.16);
+  --sh-lg:0 24px 60px -18px rgba(27,27,47,.35);
+  --r:20px;--r-sm:14px;
+  --ease:cubic-bezier(.2,.7,.2,1);
+}
+html{scroll-padding-top:168px}
+body{background:radial-gradient(900px 420px at 92% -4%,var(--sun-t) 0,rgba(255,243,209,0) 70%),var(--cream);-webkit-text-size-adjust:100%}
+h1,h2,h3,h4{text-wrap:balance}
+.wrap{max-width:1120px}
+::selection{background:var(--sun);color:var(--navy)}
+button,.btn,.opt,.mi,.imp,.mv,.tg,.steps a,a.sq,a.cta2{-webkit-tap-highlight-color:transparent}
+button:disabled{cursor:not-allowed}
+
+/* ---------- top bar ---------- */
+.topbar{background:linear-gradient(180deg,#18244A,#121B36);border-bottom:1px solid rgba(255,255,255,.07)}
+.topbar .wrap{padding-block:8px;gap:8px 16px}
+.brand a{letter-spacing:.09em}
+.brand small{opacity:.65}
+.toggles{gap:10px 12px;align-items:center}
+.seg{display:inline-flex;align-items:center;gap:2px;background:rgba(255,255,255,.09);border-radius:99px;padding:3px}
+.seg .tg{border:0;padding:6px 14px;border-radius:99px;color:rgba(255,255,255,.86);font-weight:700;font-size:13px;min-height:32px;transition:background .15s,color .15s}
+.seg .tg:hover{background:rgba(255,255,255,.12)}
+.seg .tg[aria-pressed="true"]{background:var(--sun);color:var(--navy);box-shadow:0 2px 8px rgba(0,0,0,.25)}
+
+/* ---------- hero ---------- */
+.hero{isolation:isolate}
+.hero .wrap{padding-block:30px 52px}
+.hero .wrap>*{position:relative;z-index:1}
+.hero .wrap::after{content:attr(data-n);position:absolute;right:16px;bottom:-26px;z-index:0;font-family:Nunito,sans-serif;font-weight:900;font-size:clamp(130px,24vw,280px);line-height:.8;letter-spacing:-.04em;color:rgba(255,255,255,.07);pointer-events:none;user-select:none}
+.hero h1{font-size:clamp(42px,7vw,84px);letter-spacing:-.025em;line-height:1.02;margin:10px 0 14px}
+.hero p.obj{font-size:19px;line-height:1.5;max-width:58ch}
+.hero .kick{letter-spacing:.16em}
+.hero::after{content:"";position:absolute;left:0;right:0;bottom:0;height:5px;background:linear-gradient(90deg,var(--coral),var(--sun) 40%,var(--teal) 70%,var(--violet));z-index:2}
+.crumbs{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:18px;font-family:Nunito,sans-serif;font-weight:800;font-size:13px}
+.crumbs a{color:#fff;text-decoration:none;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.22);border-radius:99px;padding:5px 12px;transition:background .15s}
+.crumbs a:hover{background:rgba(255,255,255,.22)}
+.crumbs .sp{flex:1}
+.crumbs a[aria-disabled="true"]{opacity:.35;pointer-events:none}
+.hero .pills{margin-top:18px}
+.pill{backdrop-filter:blur(4px)}
+
+/* ---------- sticky nav ---------- */
+.nav{background:rgba(255,248,240,.9);backdrop-filter:saturate(1.5) blur(12px);-webkit-backdrop-filter:saturate(1.5) blur(12px);border-bottom:1px solid var(--hair);box-shadow:0 8px 22px -14px rgba(27,27,47,.3)}
+.nav .wrap{padding-block:9px 9px}
+.prog{gap:12px;margin-bottom:8px}
+.bar{height:8px;background:#EBDFCD}
+.bar i{background:linear-gradient(90deg,var(--coral),var(--sun))}
+.xp{background:var(--coral-t);color:var(--coral-d);border-radius:99px;padding:3px 12px;font-size:14px;font-variant-numeric:tabular-nums}
+.clock{display:inline-flex;align-items:center;gap:7px;min-height:32px;transition:background .15s}
+.clock::before{content:"";width:0;height:0;border-left:8px solid var(--sun);border-top:5px solid transparent;border-bottom:5px solid transparent}
+.clock.run::before{width:9px;height:10px;border:0;background:linear-gradient(90deg,var(--sun) 0 3px,transparent 3px 6px,var(--sun) 6px 9px)}
+.clock.run{background:#22305A}
+.steps{gap:6px;padding-bottom:1px}
+.steps a{display:flex;flex-direction:column;align-items:center;gap:1px;line-height:1.15;padding:6px 12px 5px;border-radius:12px;background:#F4EADC;transition:background .15s,color .15s,transform .15s}
+.steps a:hover{background:#EFE1CE}
+.steps a b{margin:0 4px 0 0}
+.steps a small{font-size:11px;font-weight:700;opacity:.72;font-variant-numeric:tabular-nums}
+.steps a.on{color:var(--on,#fff);box-shadow:0 6px 14px -6px rgba(27,27,47,.5)}
+.steps a.on:hover{background:var(--c)}
+.steps a.done{border-color:rgba(21,163,74,.55);color:#0F7A38}
+.steps a.done::after{content:"✓";font-size:10px;font-weight:900;line-height:1}
+.steps a.done.on{color:var(--on,#fff)}
+
+/* ---------- sections ---------- */
+main{padding-block:30px 40px}
+.sec{--cd:color-mix(in srgb,var(--c) 66%,#000);border-radius:28px;border-top-width:7px;box-shadow:var(--sh);margin-bottom:30px;scroll-margin-top:150px}
+.shead{padding:26px 32px 4px}
+.sbody{padding:14px 32px 34px;gap:28px}
+@media (max-width:620px){.shead{padding:20px 18px 2px}.sbody{padding:12px 18px 26px;gap:24px}}
+.snum{gap:16px}
+.snum .n{width:58px;height:58px;border-radius:18px;font-size:24px;color:var(--on,#fff);box-shadow:0 8px 18px -8px color-mix(in srgb,var(--c) 85%,#000)}
+.snum h2{letter-spacing:-.02em;line-height:1.08}
+.snum .sub{margin-top:3px;font-size:14px}
+.chip{font-weight:700;border:1px solid color-mix(in srgb,var(--c) 22%,transparent)}
+.chip.dark{border-color:transparent}
+.block{gap:14px}
+.bt{gap:6px 12px}
+.bt h3{letter-spacing:-.012em}
+.bt .tag{background:var(--ct,#eee);color:var(--cd);padding:3px 10px;border-radius:99px;font-size:11px;letter-spacing:.11em;border:1px solid color-mix(in srgb,var(--c) 25%,transparent)}
+.hint{line-height:1.45}
+.card{border-radius:var(--r);border-color:var(--hair);box-shadow:0 1px 0 rgba(27,27,47,.03)}
+.tint{box-shadow:none}
+
+/* buttons & choices */
+.btn{min-height:40px;transition:transform .14s var(--ease),box-shadow .14s var(--ease),background .14s,border-color .14s;border-color:#E6D8C4}
+.btn:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 8px 16px -8px rgba(27,27,47,.4)}
+.btn:active:not(:disabled){transform:translateY(0);box-shadow:none}
+.btn:disabled{opacity:.45}
+.btn.main{color:var(--on,#fff)}
+.btn.sm{min-height:34px}
+.say{color:var(--on,#fff);transition:transform .14s var(--ease),box-shadow .14s}
+.say svg{fill:currentColor}
+.say:hover{transform:scale(1.08);box-shadow:0 6px 14px -6px rgba(27,27,47,.5)}
+.opt,.mi,.imp,.mv,.choice button,.selfev button{transition:border-color .15s,background .15s,color .15s,transform .15s var(--ease),box-shadow .15s}
+.opt:hover:not(:disabled):not(.ok):not(.no){transform:translateY(-1px);box-shadow:0 6px 12px -8px rgba(27,27,47,.5)}
+.mi:hover:not(.ok),.imp:hover:not(.locked),.mv:hover{border-color:var(--c);box-shadow:0 6px 14px -10px rgba(27,27,47,.5)}
+.opt.ok{box-shadow:0 6px 14px -8px rgba(21,163,74,.7)}
+.mcq{border-radius:var(--r-sm);border-color:var(--hair);transition:border-color .2s,background .2s}
+.mcq .fb{min-height:1.2em}
+.mcq:has(.opt.ok){border-color:rgba(21,163,74,.35)}
+.mcq .q{line-height:1.35}
+.closeout{position:relative;border-radius:var(--r-sm);padding:13px 18px 13px 54px;box-shadow:0 10px 24px -14px rgba(22,33,62,.8);animation:rise .35s var(--ease)}
+.closeout::before{content:"✓";position:absolute;left:15px;top:50%;margin-top:-13px;width:26px;height:26px;border-radius:50%;background:var(--sun);color:var(--navy);display:grid;place-items:center;font-size:15px;font-weight:900}
+@keyframes rise{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+textarea{border-radius:var(--r-sm);line-height:1.45;transition:border-color .15s,box-shadow .15s}
+textarea:focus{border-color:var(--violet);box-shadow:0 0 0 4px rgba(106,75,230,.15);outline:0}
+.score{color:var(--cd)}
+.stat b{color:var(--cd)}
+
+/* flip cards */
+.flip{transition:transform .2s var(--ease)}
+.flip:not(.on):hover{transform:translateY(-3px)}
+.flip:focus-visible{outline:3px solid var(--violet);outline-offset:3px;border-radius:var(--r)}
+.flip .f,.flip .b{box-shadow:0 10px 24px -14px rgba(27,27,47,.5)}
+.flip[data-ink="dark"] .f{color:var(--navy)}
+.flip[data-ink="dark"] .fb .say{background:rgba(22,33,62,.18);color:var(--navy)}
+.flip .tap{letter-spacing:.02em}
+
+/* media blocks */
+.scene,.disc,.deck,.mission{box-shadow:0 14px 34px -18px rgba(27,27,47,.5)}
+.deck{color:var(--on,#fff)}
+.deck[data-ink="dark"] .qn{opacity:.8}
+.deck[data-ink="dark"] .row .btn{background:rgba(22,33,62,.12);border-color:rgba(22,33,62,.3);color:var(--navy)}
+.deck[data-ink="dark"] .fu span::before{color:var(--navy)}
+.deck[data-ink="dark"] .dots button{background:rgba(22,33,62,.3)}
+.deck[data-ink="dark"] .dots button[aria-current="true"]{background:var(--navy)}
+.phone{box-shadow:var(--sh-lg)}
+.pc,.rd,.guest{border-radius:var(--r);transition:transform .18s var(--ease),border-color .18s,box-shadow .18s}
+.rd:hover,.pc:hover{box-shadow:0 12px 26px -16px rgba(27,27,47,.55)}
+.forms{border-radius:var(--r);box-shadow:0 1px 0 rgba(27,27,47,.03)}
+.forms tr:nth-child(even) td{background:#FDFAF6}
+.forms th{letter-spacing:.02em}
+
+/* teacher notes */
+.tn{background:#FFFAEB;border:1.5px solid #F0DDA4;border-left:5px solid #E9B949}
+.tn summary{padding:13px 18px;color:#6E5000;letter-spacing:.01em;transition:background .15s;border-radius:var(--r)}
+.tn summary:hover{background:rgba(233,185,73,.14)}
+.tn summary::before{content:"Teacher only";font-size:10px;letter-spacing:.12em;text-transform:uppercase;background:#E9B949;color:#3E2D00;border-radius:6px;padding:2px 7px;margin-right:10px;align-self:center}
+.tn summary{justify-content:flex-start;align-items:center}
+.tn summary::after{margin-left:auto}
+
+/* end-of-session */
+.badge{border-radius:var(--r);box-shadow:var(--sh-lg);background:radial-gradient(circle at 94% -8%,rgba(255,194,51,.30),transparent 52%),linear-gradient(120deg,var(--navy),var(--navy2))}
+.badge .medal{box-shadow:0 0 0 6px rgba(255,194,51,.25),inset 0 -6px 0 rgba(0,0,0,.08)}
+body.is-done .badge .medal{background:#4ADE80}
+.seqnav{display:grid;grid-template-columns:1fr 1fr;gap:16px;padding-block:0 56px}
+@media (max-width:620px){.seqnav{grid-template-columns:1fr}}
+a.sq{display:grid;gap:4px;text-decoration:none;color:var(--ink);background:#fff;border:1.5px solid var(--hair);border-radius:var(--r);padding:16px 20px;box-shadow:var(--sh);transition:transform .16s var(--ease),border-color .16s,box-shadow .16s;min-width:0}
+a.sq:hover{transform:translateY(-2px);border-color:var(--coral);box-shadow:0 16px 30px -16px rgba(27,27,47,.5)}
+a.sq small{font-family:Nunito,sans-serif;font-weight:900;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--mut)}
+a.sq b{font-family:Nunito,sans-serif;font-weight:900;font-size:20px;line-height:1.2}
+a.sq.next{text-align:right;background:var(--navy);color:#fff;border-color:var(--navy)}
+a.sq.next small{color:var(--sun)}
+a.sq.next:hover{border-color:var(--sun)}
+a.sq.prev:only-child{grid-column:1}
+body.is-done a.sq.next{box-shadow:0 0 0 4px rgba(255,194,51,.35),var(--sh)}
+a.sq.ghost{visibility:hidden}
+@media (max-width:620px){a.sq.next{text-align:left}a.sq.ghost{display:none}}
+
+footer{max-width:820px;margin-inline:auto;padding:6px 16px 48px;line-height:1.5}
+footer details{margin-top:8px}
+footer summary{cursor:pointer;display:inline-block;font-weight:700}
+footer details p{margin-top:6px;font-size:12px}
+
+@media (max-width:520px){.steps a small{display:none}.hero .wrap::after{opacity:.6}}
+/* ---------- accessibility & motion ---------- */
+.sec[data-ink="dark"]{--on:#16213E}
+.steps a[data-ink="dark"]{--on:#16213E}
+button:focus-visible,a:focus-visible,summary:focus-visible,textarea:focus-visible,input:focus-visible{outline:3px solid var(--violet);outline-offset:2px;border-radius:10px}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important;animation:none!important}}
+body.student .seg:last-child{opacity:1}
+
+/* ---------- audit fixes: small targets, wrapping, contrast ---------- */
+.badge{flex-wrap:wrap}
+.badge>div:last-child{min-width:0;flex:1 1 230px}
+.coach .cav{color:var(--navy)}
+.flip .f{background:color-mix(in srgb,var(--fc) 86%,#16213E)}
+.flip[data-ink="dark"] .f{background:var(--fc)}
+.flip .num,.flip .tap{opacity:1}
+.dots button{position:relative;overflow:visible}
+.dots button::after{content:"";position:absolute;inset:-12px -6px}
+.dots{gap:10px}
+.choice button,.selfev button,.chips button,.judge button,.skillcard button,.rbtns button,.teams button,.agtabs button,.betchips button,.tm button,.gapbtns button{min-height:38px}
+summary{min-height:34px}
+
+/* ---------- rewards: restrained progress feedback (no confetti, no sound) ---------- */
+.gt-toasts{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);display:grid;gap:8px;z-index:90;pointer-events:none;width:min(92vw,360px)}
+.gt-toast{background:var(--navy);color:#fff;border-radius:14px;padding:11px 16px;box-shadow:0 14px 34px -10px rgba(0,0,0,.5);border-left:4px solid var(--sun);opacity:0;transform:translateY(8px);transition:opacity .25s,transform .25s}
+.gt-toast.in{opacity:1;transform:none}
+.gt-toast b{display:block;font-family:Nunito,sans-serif;font-weight:900;font-size:15px}
+.gt-toast small{display:block;opacity:.8;font-size:13px}
+.xp-float{position:fixed;z-index:95;font-family:Nunito,sans-serif;font-weight:900;font-size:15px;color:var(--navy);background:var(--sun);border-radius:99px;padding:2px 10px;pointer-events:none;animation:xpup 1s var(--ease) forwards;white-space:nowrap}
+@keyframes xpup{0%{opacity:0;transform:translate(-50%,6px)}15%{opacity:1}100%{opacity:0;transform:translate(-50%,-34px)}}
+.reward{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.reward .rw{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:14px;padding:8px 14px;min-width:112px}
+.reward .l{display:block;font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;opacity:.75}
+.reward b{display:block;font-family:Nunito,sans-serif;font-weight:900;font-size:22px;line-height:1.15;font-variant-numeric:tabular-nums}
+.reward small{display:block;font-size:12px;opacity:.8}
+.substeps{display:none;gap:6px;margin-top:8px;overflow-x:auto;scrollbar-width:none}
+.substeps::-webkit-scrollbar{display:none}
+.substeps.show{display:flex}
+.substeps a{flex:1 0 auto;text-decoration:none;text-align:center;border-radius:10px;padding:5px 12px;background:#F4EADC;color:var(--mut);font-size:13px;font-weight:700;display:grid;line-height:1.15;border:1.5px solid transparent;transition:background .15s,color .15s}
+.substeps a:hover{background:#EFE1CE}
+.substeps a.on{background:var(--navy);color:#fff}
+.substeps a small{font-size:11px;opacity:.75;font-variant-numeric:tabular-nums}
+@media (prefers-reduced-motion:reduce){.xp-float{animation:none;opacity:0}.gt-toast{transition:none}}
+
+/* ---------- small-screen safety for card grids and tables ---------- */
+.forms{overflow-x:auto}
+.guest,.pc{min-width:0;overflow-wrap:anywhere}
+.pc .pb{min-width:0}
+.pts button{width:36px;height:36px;min-width:36px}
+@media (max-width:520px){.roomies,.g4,.g3,.g2{grid-template-columns:1fr!important}}
+.pc{grid-template-columns:minmax(0,1fr)}
+.guest .answered button{min-height:36px}
+.block,.block>*,.sbody>*{min-width:0}
+.artpic{max-width:100%}
+@media (max-width:820px){.disc,.player,.scene,.deck,.g2,.g3,.tool,.errs{grid-template-columns:minmax(0,1fr)}}
+.ttt button .pr{background:none;padding:0;display:block}
+.gapc .chips{flex-wrap:wrap}
+.ttt{grid-template-columns:repeat(3,minmax(0,1fr))}
+.ttt button{min-width:0;overflow-wrap:anywhere;hyphens:auto}
+@media (max-width:520px){.ttt button{font-size:12.5px;padding:4px}.ttt .ic{font-size:24px}}
+.initcard,.rd,.rd .rb{max-width:100%;min-width:0}
+
+</style>
+</head>
+<body>
+<div style="background:#0B0E24;color:#fff;font:700 15px/1.45 system-ui,sans-serif;padding:10px 16px;text-align:center;position:relative;z-index:99">Edition 1 · 32-session program (archive). <a href="index.html" style="color:#FFC233">Go to the current 40-session program →</a></div>
+
+<div class="topbar"><div class="wrap">
+  <div class="brand"><i></i><a href="edition1.html">GABRIEL TURNER · YOUR BUSINESS COACH</a><small>Básico 2 · A1.2</small></div>
+  <div class="toggles">
+    <button class="tg" id="tgTeacher" aria-pressed="true">Teacher view</button>
+    <button class="tg" id="tgStudent" aria-pressed="false">Student view</button>
+    <button class="tg" id="tgGroup" aria-pressed="true">Group</button>
+    <button class="tg" id="tgOne" aria-pressed="false">1:1</button>
+  </div>
+</div></div>
+
+<header class="hero">
+  <div class="bg" role="img" aria-label="A young man with headphones checking his phone"></div>
+  <div class="wrap">
+    <div class="kick">Básico 2 · Block 1 · ROUTINE · Session 05 of 32</div>
+    <h1>How Often, <span>Really?</span></h1>
+    <p class="obj">By the end of this class you can describe your own habits honestly — what you always do, what you never do — using frequency adverbs like always, usually, and hardly ever.</p>
+    <div class="pills"><span class="pill sun">60 min · live online</span><span class="pill">7 stages</span><span class="pill">always · usually · often · sometimes · hardly ever · never</span><span class="pill">Confession time 🎙️</span></div>
+    <div class="coach"><span class="cav">GT</span><span><b>Gabriel Turner</b><small>Your Business Coach</small></span></div>
+  </div>
+</header>
+
+<nav class="nav" aria-label="Session stages"><div class="wrap">
+  <div class="prog"><div class="bar"><i id="pbar"></i></div><span class="xp" id="xp">0 XP</span><button class="clock" id="clock" title="Start / pause class clock">00:00</button></div>
+  <div class="steps" id="steps"></div>
+</div></nav>
+
+<main class="wrap" id="main">
+
+<!-- §1 WARM-UP -->
+<section class="sec" id="s1" style="--c:var(--coral);--ct:var(--coral-t)" data-name="Warm-up" data-min="0–4">
+  <div class="shead"><div class="snum"><span class="n">1</span><div><h2>Warm-up · Confession!</h2><div class="sub">0–4 min · Activate, no correction</div></div></div>
+    <div class="meta"><span class="chip">Photo poll</span><span class="chip dark">Speaking from minute 1</span></div></div>
+  <div class="sbody">
+    <div class="scene">
+      <img src="img/b2s02_check_phone.jpg" alt="Two friends on a sofa at night, looking at a phone">
+      <div class="txt">
+        <div class="kick">Scenario · Sunday night, 11:47 p.m.</div>
+        <div class="bubble">Your phone says: "Your screen time is up 40% this week."</div>
+        <div class="bubble me">…?</div>
+        <p style="font-size:19px;font-weight:700">Proud, or a little embarrassed? Say it out loud. Any words are OK.</p>
+      </div>
+    </div>
+    <div class="block">
+      <div class="bt"><span class="tag">Poll</span><h3>Confession: what's the habit EVERYONE secretly does?</h3></div>
+      <div class="poll" id="poll"></div>
+      <div class="card tint"><div class="result" id="pollRes">Vote with + and −. One vote per person.</div></div>
+      <div class="fq"><div>And which one do YOU do the most? <span>— Be honest, no judging here.</span></div><div>Is it different on weekdays vs. weekends? <span>— Usually worse on Sunday nights?</span></div></div>
+    </div>
+    <details class="tn"><summary>Teacher notes · §1 Warm-up</summary><div class="layers">
+      <div class="ly"><h4>Pedagógica</h4><ul><li>Lee la burbuja del teléfono con tono de "culpa compartida" — no juzgues, únete a la confesión.</li><li>Tema: Requiere confianza / Spicy — nada de salud ni finanzas, solo hábitos cotidianos con un poco de pena sana.</li><li>Poll: grupo vota en el chat o levantando la mano; en 1:1 el alumno elige y tú votas distinto para abrir conversación.</li><li>Máximo 4 minutos. Cero gramática — esto es puro engagement.</li></ul></div>
+      <div class="ly"><h4>Engagement</h4><ul><li>“Confession time — no one is perfect here.”</li><li>Pregunta la anécdota: “¿Cuál es tu hábito culpable número uno?”</li></ul></div>
+      <div class="ly"><h4>Crecimiento</h4><ul><li>“In 55 minutes you'll confess your real habits in English, like a podcast guest.”</li><li>Anota la frase exacta que dijo: se compara al final (antes / después).</li></ul></div>
+    </div></details>
+  </div>
+</section>
+
+<!-- §2 VOCABULARY -->
+<section class="sec" id="s2" style="--c:var(--teal);--ct:var(--teal-t)" data-name="Vocabulary" data-min="4–13">
+  <div class="shead"><div class="snum"><span class="n">2</span><div><h2>Vocabulary · 10 key phrases</h2><div class="sub">4–13 min · Hear it · Say it · Use it</div></div></div>
+    <div class="meta"><span class="chip">Flip cards</span><span class="chip">Match</span><span class="chip dark">VOC-14 Mystery Zoom</span></div></div>
+  <div class="sbody">
+    <div class="block">
+      <div class="bt"><span class="tag">Step A</span><h3>Tap to flip · 🔊 to listen</h3><span class="hint" id="flipCount">0 / 10 flipped</span></div>
+      <div class="flips" id="flips"></div>
+    </div>
+    <div class="block">
+      <div class="bt"><span class="tag">Step B</span><h3>Match the line with the best reaction</h3><span class="hint" id="matchCount">0 / 6 pairs</span></div>
+      <div class="match"><div class="col" id="mL"></div><div class="col" id="mR"></div></div>
+    </div>
+    <div class="block">
+      <div class="bt"><span class="tag">Step C · Game</span><h3>Mystery Zoom</h3></div>
+      <div class="card tint"><p style="font-weight:700">A habit is hidden in the photo. The team on turn guesses with a full sentence: "I think it's <u>cooking at home</u>. I <u>often</u> cook at home." Correct habit + correct sentence = 1 point. Not yet? Zoom out and the other team tries.</p></div>
+      <div class="board-bar"><span class="turn" id="zTurn">Team A's turn</span><div class="sboard" id="zScore"></div></div>
+      <div class="zoomr" id="zoomr"><div class="zimg" id="zimg" role="img" aria-label="Mystery photo, zoomed in"></div><span class="zstep" id="zstepLbl">Photo 1 / 5 · Zoom 1 / 4</span><div class="zlabel" id="zlabel" hidden></div></div>
+      <div class="row"><button class="btn main" id="zOk">✓ Correct sentence · +1</button><button class="btn" id="zBtn">✗ Not yet — zoom out, other team tries</button><button class="btn" id="zNext">Next mystery photo →</button><button class="btn sm" id="zReset">Reset game</button></div>
+      <div class="closeout" id="zOut" hidden aria-live="polite"></div>
+    </div>
+    <details class="tn"><summary>Teacher notes · §2 Vocabulary</summary><div class="layers">
+      <div class="ly"><h4>Pedagógica</h4><ul><li>Voltea cada tarjeta: tú la dices, el alumno repite 2 veces. Luego el alumno inicia y tú respondes.</li><li>Match: el grupo dice la reacción EN VOZ ALTA antes de hacer clic.</li><li>Mystery Zoom: 5 fotos, 4 niveles de zoom. El equipo en turno adivina el hábito con una oración completa ("I often cook at home"). Hábito + oración correctos → "✓ Correct sentence" (+1). Si no, "Not yet": se abre el zoom y pasa el turno al otro equipo. En 1:1: alumno vs maestro. El punto es por la oración, nunca por rapidez.</li><li>Pronunciación: stress marcado en los adverbios — ALways, USually, someTIMES, HARDly ever. Se retoma en §3.</li></ul></div>
+      <div class="ly"><h4>Engagement</h4><ul><li>“Ten phrases about honest habits — you'll use all of them today.”</li><li>Cierra cada foto en voz alta: “The real habit was: ___.”</li></ul></div>
+      <div class="ly"><h4>Crecimiento</h4><ul><li>Estas 10 frases sostienen toda la entrevista de podcast de §5 y §6.</li></ul></div>
+    </div></details>
+  </div>
+</section>
+
+<!-- §3 GRAMMAR -->
+<section class="sec" id="s3" style="--c:var(--violet);--ct:var(--violet-t)" data-name="Grammar" data-min="13–26">
+  <div class="shead"><div class="snum"><span class="n">3</span><div><h2>Grammar · I always… She never…</h2><div class="sub">13–26 min · Discover → understand → practice</div></div></div>
+    <div class="meta"><span class="chip">Frequency adverbs</span><span class="chip dark">GRM-15 Tic-Tac-Toe</span></div></div>
+  <div class="sbody">
+    <div class="block">
+      <div class="bt"><span class="tag">Discover</span><h3>Read the mini-interview. Where do these words go?</h3></div>
+      <div class="disc" id="disc">
+        <img src="img/b1s07_video.jpg" alt="A smiling woman with a coffee in a video interview on her laptop">
+        <div class="chat">
+          <p class="h">So, what's your morning routine?</p>
+          <p>I <mark class="hl">always</mark> check my phone first thing.</p>
+          <p class="h">Every single day?</p>
+          <p>Every day! But I'm <mark class="hl">hardly ever</mark> awake before 7.</p>
+          <p class="h">And at night?</p>
+          <p>I <mark class="hl">usually</mark> binge-watch a show. I'm <mark class="hl">never</mark> in bed before midnight!</p>
+        </div>
+      </div>
+      <div class="row"><button class="btn main" id="hlBtn" aria-pressed="false">Show the key words</button><span class="hint">Where do they go — before the verb, or after?</span><span class="key hint">(Respuesta: antes del verbo principal; después de "be" — I always check / I'm never in bed)</span></div>
+    </div>
+    <div class="block">
+      <div class="bt"><span class="tag">The tool</span><h3>Three ideas, that's all</h3></div>
+      <div class="tool">
+        <div class="card"><h4>1 · Before the verb</h4><div class="big">I <em>always</em> check.</div><p class="hint">Subject + adverb + main verb.</p></div>
+        <div class="card"><h4>2 · After "be"</h4><div class="big">She's <em>never</em> late.</div><p class="hint">Subject + be + adverb.</p></div>
+        <div class="card"><h4>3 · A scale, not a switch</h4><div class="big">always → … → never</div><p class="hint">From 100% of the time to 0%.</p></div>
+      </div>
+      <div class="forms"><table>
+        <tr><th>%</th><th>Adverb</th><th>Example</th></tr>
+        <tr><td>100%</td><td><b>always</b></td><td>I always check my phone.</td></tr>
+        <tr><td>~80%</td><td><b>usually</b></td><td>I usually work out in the morning.</td></tr>
+        <tr><td>~60%</td><td><b>often</b></td><td>We often order food on Fridays.</td></tr>
+        <tr><td>~40%</td><td><b>sometimes</b></td><td>I sometimes skip breakfast.</td></tr>
+        <tr><td>~10%</td><td><b>hardly ever</b></td><td>She hardly ever cleans the house.</td></tr>
+        <tr><td>0%</td><td><b>never</b></td><td>I never read before bed.</td></tr>
+      </table></div>
+      <div><button class="btn" id="esBtn" aria-expanded="false" aria-controls="esBox">🇲🇽 Explanation in Spanish</button></div>
+      <div class="es-box" id="esBox" hidden>
+        <p><b>¿Qué es?</b> Los adverbios de frecuencia dicen qué tan seguido pasa algo: always (siempre), usually (normalmente), often (seguido), sometimes (a veces), hardly ever (casi nunca), never (nunca).</p>
+        <p><b>¿Cómo se usa?</b> Van entre el sujeto y el verbo principal: <i>I always check.</i> Pero después de "be": <i>She is never late.</i></p>
+        <p><b>¿Para qué?</b> Para describir honestamente tus hábitos de hoy — solo estos 6, de más a menos frecuencia.</p>
+        <p><b>Ojo:</b> "How often…?" como pregunta formal llega hasta la Sesión 6. Hoy solo se usan en afirmaciones.</p>
+      </div>
+    </div>
+    <div class="block">
+      <div class="bt"><span class="tag">Sound it</span><h3>Stress the adverb</h3></div>
+      <div class="machine"><span class="from" id="mFrom">ALways</span><span class="arrow">🔊</span><span class="to" id="mTo">I ALways check my phone.</span><button class="say" id="mSay" aria-label="Listen" style="background:var(--violet)"></button><button class="btn" id="mGo" style="background:var(--sun);border-color:var(--sun);color:var(--navy)">Next adverb →</button></div>
+      <div class="pron" id="pron"></div>
+    </div>
+    <div class="block">
+      <div class="bt"><span class="tag">Practice A · Mechanical</span><h3>Choose the correct adverb</h3><span class="score" id="scA"></span></div>
+      <div class="mc" id="mcA"></div>
+    </div>
+    <div class="block">
+      <div class="bt"><span class="tag">Practice B · GRM-15</span><h3>Tic-Tac-Toe — claim every square</h3><span class="hint" id="tttCount">0 / 9 claimed</span></div>
+      <div class="card tint"><p style="font-weight:700">Two teams: X and O. On your turn, choose a square and say the full sentence out loud — adverb in the correct position ("I <u>always</u> check my phone."). Correct? Tap the square to claim it. Not correct? Tap "Pass" and the other team plays. Three in a row wins!</p></div>
+      <div class="board-bar"><span class="turn" id="tTurn">Team X's turn</span><div class="sboard" id="tScore"></div></div>
+      <div class="ttt" id="ttt"></div>
+      <div class="row"><button class="btn" id="tPass">✗ Not correct — pass the turn</button><button class="btn sm" id="tReset">New board</button></div>
+      <div class="closeout" id="tttOut" hidden aria-live="polite"></div>
+    </div>
+    <div class="block">
+      <div class="bt"><span class="tag">Watch out</span><h3>Mistakes Spanish speakers make</h3></div>
+      <div class="errs">
+        <div class="err"><s>I check always my phone.</s><b>I always check my phone.</b><span class="hint">Adverb before the main verb, not after.</span></div>
+        <div class="err"><s>She never is late.</s><b>She's never late.</b><span class="hint">With "be", the adverb goes AFTER.</span></div>
+        <div class="err"><s>Always I check my phone.</s><b>I always check my phone.</b><span class="hint">Never start the sentence with the adverb.</span></div>
+      </div>
+    </div>
+    <details class="tn"><summary>Teacher notes · §3 Grammar</summary><div class="layers">
+      <div class="ly"><h4>Pedagógica</h4><ul><li>Explicación máximo 5 minutos: descubrir (mini-interview) → herramienta (3 ideas) → escala de 6 adverbios.</li><li>Práctica A es mecánica (máx. 1/3 del bloque). Tic-Tac-Toe es meaningful: cada casilla exige una oración real antes de reclamarla.</li><li>Grupo: equipo X vs equipo O, turnos alternos; solo se reclama la casilla si la oración es correcta (si no, "Pass"). Tres en línea gana. 1:1: alumno (X) contra maestro (O); comete errores a propósito para que el alumno te corrija.</li><li>Error prioritario del nivel: posición del adverbio. Márcalo en voz alta cada vez que aparezca.</li></ul></div>
+      <div class="ly"><h4>Engagement</h4><ul><li>“Six words, one scale — from always to never.”</li><li>Cierra el tablero en voz alta: “Three in a row! Read your winning line out loud.”</li></ul></div>
+      <div class="ly"><h4>Crecimiento</h4><ul><li>“In Session 6, you'll ASK ‘How often…?’ — today you only answer.”</li><li>No fuerces la pregunta formal hoy: solo reconocimiento.</li></ul></div>
+    </div></details>
+  </div>
+</section>
+
+<!-- §4 READING -->
+<section class="sec" id="s4" style="--c:#E5A100;--ct:var(--sun-t)" data-name="Reading" data-min="26–32">
+  <div class="shead"><div class="snum"><span class="n">4</span><div><h2>Reading · Today's podcast guest</h2><div class="sub">26–32 min · Read to find information</div></div></div>
+    <div class="meta"><span class="chip">Real-life text</span><span class="chip dark">Scan for facts</span></div></div>
+  <div class="sbody">
+    <div class="g2" style="align-items:start">
+      <div class="phone">
+        <div class="ph"><img src="img/b1s05_p1.jpg" alt="" style="width:42px;height:42px;border-radius:50%;object-fit:cover;object-position:50% 20%;border:2px solid var(--coral)"><div><b>🎙️ The Habits Podcast</b><small>Guest profile · Rosa</small></div></div>
+        <div class="ms">
+          <div class="msg"><img src="img/b1s05_p1.jpg" alt="Rosa, today's podcast guest" style="object-position:50% 20%"><div class="bb"><div class="who">Rosa</div>Hi, I'm Rosa — today's podcast guest! I always check my phone first thing in the morning, before coffee even. I usually work out three times a week, but I hardly ever cook at home — I often order food instead. I sometimes skip breakfast on busy days, and honestly, I never read before bed. I always binge-watch a show instead! My real confession: I call my mom every single Sunday, without fail. That one, I'm proud of.</div></div>
+        </div>
+      </div>
+      <div class="block">
+        <div class="bt"><span class="tag">Read &amp; answer</span><h3>What does Rosa really do?</h3><span class="score" id="scR"></span></div>
+        <div class="mc" id="mcR"></div>
+      </div>
+    </div>
+    <details class="tn"><summary>Teacher notes · §4 Reading</summary><div class="layers">
+      <div class="ly"><h4>Pedagógica</h4><ul><li>Primera lectura en silencio (1 min) buscando SOLO los 6 adverbios usados. Segunda lectura en voz alta, turnándose por oración.</li><li>Las preguntas piden identificar el adverbio correcto, no producir preguntas con "How often" — eso es S06.</li><li>Trampa del ejercicio: Rosa SÍ tiene un hábito bueno (llamar a su mamá) — no todo es "malo".</li></ul></div>
+      <div class="ly"><h4>Engagement</h4><ul><li>“This is a real podcast intro — honest, a little funny, very human.”</li><li>Pregunta: “¿Cuál de las confesiones de Rosa se parece más a la tuya?”</li></ul></div>
+      <div class="ly"><h4>Crecimiento</h4><ul><li>Rosa es el modelo directo para la misión de §6: el alumno será el próximo invitado del podcast.</li></ul></div>
+    </div></details>
+  </div>
+</section>
+
+<!-- §5 SPEAKING -->
+<section class="sec" id="s5" style="--c:var(--coral);--ct:var(--coral-t)" data-name="Speaking" data-min="32–46">
+  <div class="shead"><div class="snum"><span class="n">5</span><div><h2>Speaking · The Expert Interview</h2><div class="sub">32–46 min · On air · Host asks, guest confesses</div></div></div>
+    <div class="meta"><span class="chip">Role play</span><span class="chip dark">B18-12 The Expert Interview</span></div></div>
+  <div class="sbody">
+    <div class="card tint"><div class="row" style="justify-content:space-between"><b class="nun" style="font-size:20px">🔴 On Air · 3 minutes</b><div class="timer" id="tRd" data-sec="180"><output>03:00</output><button class="btn main sm" data-a="go">Start</button><button class="btn sm" data-a="re">Reset</button></div></div>
+      <p class="hint" style="margin-top:8px">Roles: one student is the <b>host</b> (asks the questions), the other is the <b>guest</b> (answers with honesty and a frequency adverb). Swap roles halfway. In 1:1, the teacher is the host first.</p></div>
+    <div class="block">
+      <div class="bt"><span class="tag">Interview questions</span><h3>8 questions · always 2 follow-ups</h3></div>
+      <div class="deck">
+        <img id="qImg" src="img/b2s02_check_phone.jpg" alt="Two friends on a sofa looking at a phone">
+        <div class="dq">
+          <div class="row" style="justify-content:space-between"><span class="qn" id="qN">QUESTION 1 OF 8</span><div class="dots" id="dots"></div></div>
+          <div class="qt" id="qT"></div>
+          <div class="fu" id="qF"></div>
+          <div class="row"><button class="btn" id="qS">🔊 Listen</button><button class="btn" id="qP">← Back</button><button class="btn" id="qX" style="background:#fff;color:var(--coral-d);border-color:#fff">Next question →</button></div>
+        </div>
+      </div>
+      <div class="help"><span>Confession:…</span><span>Honestly,…</span><span>I know, right?!</span><span>Same here.</span><span>That's not great!</span></div>
+    </div>
+    <details class="tn"><summary>Teacher notes · §5 Speaking</summary><div class="layers">
+      <div class="ly"><h4>Pedagógica</h4><ul><li>Reglas en 3 frases: “You're on air. The host asks, the guest confesses honestly. Swap after 4 questions.”</li><li>Grupo: parejas en salas, host y guest rotan cada 4 preguntas. 1:1: tú eres el host primero, luego cambian.</li><li>Cada respuesta necesita un adverbio de frecuencia real, en posición correcta — no aceptes “yes/no” solo.</li><li>Usa siempre los 2 follow-ups de cada pregunta: nunca aceptes una respuesta de una palabra.</li></ul></div>
+      <div class="ly"><h4>Engagement</h4><ul><li>“Real confessions, real English — this is your moment on air.”</li><li>Cierre: cada alumno dice su confesión más honesta al grupo.</li></ul></div>
+      <div class="ly"><h4>Crecimiento</h4><ul><li>Cuenta cuántos adverbios DISTINTOS usa cada alumno durante la entrevista: es la base del éxito de la misión.</li></ul></div>
+    </div></details>
+  </div>
+</section>
+
+<!-- §6 MISSION -->
+<section class="sec" id="s6" style="--c:var(--teal);--ct:var(--teal-t)" data-name="Mission" data-min="46–54">
+  <div class="shead"><div class="snum"><span class="n">6</span><div><h2>Mission · The Habits Podcast</h2><div class="sub">46–54 min · You're the guest now</div></div></div>
+    <div class="meta"><span class="chip">Real-life task</span><span class="chip dark">Evidence</span></div></div>
+  <div class="sbody">
+    <div class="mission"><img src="img/b1s06_podcast.jpg" alt="A podcast studio with a host and a guest at the microphones"><div class="mt">
+      <div class="kick">Your mission</div>
+      <h3>You're the guest of "The Habits Podcast" today.</h3>
+      <p style="font-size:18px">The host (teacher or partner) interviews you with the 8 questions from §5. Answer with total honesty, using a different frequency adverb each time you can. Tap a chip below every time you use one during the interview.</p>
+      <p data-m="group" style="font-weight:700">Group: rotate host/guest in pairs; each guest gets a full round of questions.</p>
+      <p data-m="one" style="font-weight:700">1:1: the teacher hosts the full interview live.</p>
+    </div></div>
+    <div class="block">
+      <div class="bt"><span class="tag">Adverb tracker</span><h3>Tap every adverb you actually say</h3></div>
+      <div class="advtrack" id="advtrack"></div>
+    </div>
+    <div class="card tint"><div class="row" style="justify-content:space-between"><span class="stat">Adverbs used <b id="advN">0</b> / 6</span><button class="btn sm" id="advRe">Reset</button></div><div class="bar" style="margin-top:10px"><i id="advBar" style="background:var(--teal)"></i></div><p class="hint" style="margin-top:8px">Success: use ≥4 different frequency adverbs, in correct position, during the whole interview.</p></div>
+    <div class="block">
+      <div class="bt"><span class="tag">Your best confession</span><h3>Write your favorite sentence from the interview</h3></div>
+      <textarea id="confess" aria-label="Your confession">Confession: I ___ ___.</textarea>
+      <p class="hint">Say it out loud with your real habit before you write it.</p>
+    </div>
+    <details class="tn"><summary>Teacher notes · §6 Mission</summary><div class="layers">
+      <div class="ly"><h4>Pedagógica</h4><ul><li>Marca cada chip SOLO cuando el alumno lo dice sin leer, con la forma verbal y posición correctas.</li><li>Evidencia observable: conteo de adverbios distintos usados correctamente (meta ≥4). Se registra en el portal.</li><li>No interrumpas la entrevista: el feedback va en §7.</li></ul></div>
+      <div class="ly"><h4>Engagement</h4><ul><li>Anuncia el resultado en voz alta: “__ of 6 adverbs used. You're a real podcast guest!”</li></ul></div>
+      <div class="ly"><h4>Crecimiento</h4><ul><li>“In Session 6, you'll ask someone else ‘How often…?’ and expect a numeric answer.”</li></ul></div>
+    </div></details>
+  </div>
+</section>
+
+<!-- §7 WRAP-UP -->
+<section class="sec" id="s7" style="--c:var(--navy);--ct:#E6E9F2" data-name="Wrap-up" data-min="54–60">
+  <div class="shead"><div class="snum"><span class="n">7</span><div><h2>Wrap-up · Better the second time</h2><div class="sub">54–60 min · Feedback · 2nd try · Exit quiz</div></div></div>
+    <div class="meta"><span class="chip">Success → Upgrade → Repair → Next use</span></div></div>
+  <div class="sbody">
+    <div class="sur">
+      <div class="card"><h4>✓ Success</h4><textarea id="fS" aria-label="Success">Clear "Confession:…" opener.
+Correct adverb before the verb.</textarea></div>
+      <div class="card"><h4>↑ Upgrade</h4><textarea id="fU" aria-label="Upgrade">"I check always my phone." → "I always check my phone."</textarea></div>
+      <div class="card"><h4>✎ Repair</h4><textarea id="fR" aria-label="Repair">"She never is late." → "She's never late."</textarea></div>
+      <div class="card"><h4>↻ 2nd try</h4><p class="hint">Repeat your two favorite interview answers with the teacher. Use the upgrades. Same habits, better English.</p></div>
+    </div>
+    <div class="block"><div class="bt"><span class="tag">Exit quiz</span><h3>60 seconds · 5 questions</h3><span class="score" id="scQ"></span></div><div class="mc" id="mcQ"></div></div>
+    <div class="block"><div class="bt"><span class="tag">Say it out loud</span><h3>My honest interview is better because…</h3></div>
+      <div class="selfev" id="selfev"></div></div>
+    <div class="badge"><div class="medal">05</div><div><div class="kick">Session complete</div><h3 style="font-size:26px;font-weight:900">You can describe your real habits honestly, with the adverb in the right place.</h3><p style="opacity:.9">Homework: write 4 honest sentences about your habits — each with a different frequency adverb. Next: <b>Session 6 · Once a Week Is Enough</b>.</p><div class="row" style="margin-top:10px"><button class="btn" id="doneBtn" style="background:var(--sun);border-color:var(--sun);color:var(--navy)">Mark session as complete</button><a class="btn" href="edition1.html" style="text-decoration:none;color:var(--navy)">Back to Básico 2</a></div></div></div>
+    <details class="tn"><summary>Teacher notes · §7 Wrap-up</summary><div class="layers">
+      <div class="ly"><h4>Pedagógica</h4><ul><li>Máximo 2 aciertos y 3 correcciones de alto valor. Luego segundo intento de las 2 respuestas favoritas contigo.</li><li>Exit quiz en voz alta: el alumno dice la respuesta antes de hacer clic.</li></ul></div>
+      <div class="ly"><h4>Engagement</h4><ul><li>Compara con la frase que anotaste en §1: “Minute 1: a shy confession. Minute 58: a full podcast interview.”</li></ul></div>
+      <div class="ly"><h4>Crecimiento</h4><ul><li>Registra en el portal: conteo de adverbios distintos usados, resultado del tablero Tic-Tac-Toe y confesión final escrita.</li></ul></div>
+    </div></details>
+  </div>
+</section>
+
+</main>
+<footer>Gabriel Turner · Your Business Coach · Básico 2 · Session 05 of 32 · v2.0 · Photos: Unsplash — real photo bank of the Básico 1 and Básico 2 portals: Shubham Sharan, Alex Suprun, Nik, James Yarema, Annie Spratt, Anna Hecker, Helena Lopes, Jason Briscoe, Sincerely Media, Vitaly Gariev, Josue Michel, Douglas Fehr</footer>
+
+<script>
+(function(){
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const st={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
+const fmt=s=>String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');
+const SPK='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4z"/></svg>';
+
+/* ---- speech ---- */
+const TTS='speechSynthesis' in window; let voices=[];
+function loadV(){try{voices=speechSynthesis.getVoices().filter(v=>/^en/i.test(v.lang))}catch(e){}}
+if(TTS){loadV();try{speechSynthesis.onvoiceschanged=loadV}catch(e){}}
+function pick(pref){return voices.find(v=>pref.test(v.name+' '+v.lang))||voices[0]}
+const AUDIO={"check the phone":"s05_vocab_01","binge-watch (a show)":"s05_vocab_02","call (family)":"s05_vocab_03","skip (a meal)":"s05_vocab_04","work out / exercise":"s05_vocab_05","cook (at home)":"s05_vocab_06","order food (delivery)":"s05_vocab_07","clean the house":"s05_vocab_08","read (before bed)":"s05_vocab_09","Confession:…":"s05_vocab_10","I always check my phone in the morning.":"s05_vocabex_01","She binge-watches shows on weekends.":"s05_vocabex_02","I call my parents every week.":"s05_vocabex_03","He sometimes skips breakfast.":"s05_vocabex_04","I usually work out in the morning.":"s05_vocabex_05","We often cook at home on Sundays.":"s05_vocabex_06","They sometimes order food on Fridays.":"s05_vocabex_07","She hardly ever cleans the house alone.":"s05_vocabex_08","I never read before bed — I always check my phone!":"s05_vocabex_09","Confession: I binge-watch shows every night.":"s05_vocabex_10","I always check my phone first thing. Same here, every morning!":"s05_match_01","She hardly ever cleans the house. Her roommate must do it then.":"s05_match_02","We usually cook at home on Sundays. That sounds nice and relaxing.":"s05_match_03","He never reads before bed. He probably scrolls on his phone instead!":"s05_match_04","I sometimes skip breakfast. That's not the healthiest habit.":"s05_match_05","They often order food on Fridays. A little treat for the weekend!":"s05_match_06","always":"s05_adv_01","usually":"s05_adv_02","often":"s05_adv_03","sometimes":"s05_adv_04","hardly ever":"s05_adv_05","never":"s05_adv_06","Do you check your phone as soon as you wake up?":"s05_q_01","Do you binge-watch shows on weekends?":"s05_q_02","Do you call your parents or grandparents every week?":"s05_q_03","Do you cook at home, or do you order food?":"s05_q_04","Do you skip breakfast?":"s05_q_05","Do you clean the house on the same day every week?":"s05_q_06","Do you read before bed, or do you check your phone instead?":"s05_q_07","Is there a habit you do more than you want to admit?":"s05_q_08"};
+let curA=null;function stopAll(){try{if(curA){curA.pause();curA=null}speechSynthesis.cancel()}catch(e){}}
+const __HAVE=new Set([]);function clip(id){if(!__HAVE.has(id))return Promise.reject(0);return new Promise((res,rej)=>{const a=new Audio('audio/'+id+'.mp3');curA=a;a.onended=res;a.onerror=rej;a.play().catch(rej)})}
+function tts(t,opt={}){if(!TTS)return;try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t.replace(/ \/ /g,', '));u.lang='en-US';u.rate=opt.rate||.85;const v=opt.voice||pick(/US|United States/i);if(v)u.voice=v;speechSynthesis.speak(u)}catch(e){}}
+function say(t,opt={}){stopAll();const id=AUDIO[t];if(id){clip(id).catch(()=>tts(t,opt))}else tts(t,opt)}
+
+/* ---- modes ---- */
+function setView(student){document.body.classList.toggle('student',student);$('#tgStudent').setAttribute('aria-pressed',student);$('#tgTeacher').setAttribute('aria-pressed',!student)}
+$('#tgStudent').onclick=()=>setView(true);$('#tgTeacher').onclick=()=>setView(false);
+const modeHooks=[];const isOne=()=>$('#tgOne').getAttribute('aria-pressed')==='true';
+function setMode(m){$$('[data-m]').forEach(e=>e.hidden=e.dataset.m!==m);$('#tgGroup').setAttribute('aria-pressed',m==='group');$('#tgOne').setAttribute('aria-pressed',m==='one');st.set('gt02-mode',m);modeHooks.forEach(f=>f())}
+$('#tgGroup').onclick=()=>setMode('group');$('#tgOne').onclick=()=>setMode('one');setMode(st.get('gt02-mode')||'group');
+
+/* ---- XP + nav ---- */
+let xp=0;const done=new Set();
+function addXP(n,key){if(key){if(done.has(key))return;done.add(key)}xp+=n;$('#xp').textContent=xp+' XP'}
+const secs=$$('.sec');const steps=$('#steps');
+secs.forEach((s,i)=>{const a=document.createElement('a');a.href='#'+s.id;a.innerHTML=`<b>${i+1}</b>${s.dataset.name}`;a.style.setProperty('--c',getComputedStyle(s).getPropertyValue('--c'));steps.appendChild(a)});
+const links=[...steps.children];
+function onScroll(){let cur=0;secs.forEach((s,i)=>{if(s.getBoundingClientRect().top<200)cur=i});links.forEach((a,i)=>a.classList.toggle('on',i===cur));$('#pbar').style.width=((cur+1)/secs.length*100)+'%';const on=links[cur];if(on&&on.scrollIntoView&&steps.scrollWidth>steps.clientWidth){steps.scrollLeft=on.offsetLeft-40}}
+addEventListener('scroll',onScroll,{passive:true});onScroll();
+function markDone(i){links[i]&&links[i].classList.add('done')}
+
+/* ---- class clock ---- */
+let cs=0,cId=null;$('#clock').onclick=()=>{if(cId){clearInterval(cId);cId=null}else cId=setInterval(()=>{cs++;$('#clock').textContent=fmt(cs)},1000)};
+
+/* ---- timers ---- */
+function timer(el,onEnd){const tot=+el.dataset.sec;let left=tot,id=null;const o=el.querySelector('output'),g=el.querySelector('[data-a=go]');
+ const draw=()=>{o.textContent=fmt(left);el.classList.toggle('end',left===0)};const stop=()=>{clearInterval(id);id=null;g.textContent='Start'};
+ g.onclick=()=>{if(id){stop();return}if(!left)left=tot;g.textContent='Pause';id=setInterval(()=>{left--;draw();if(left<=0){stop();onEnd&&onEnd()}},1000)};
+ el.querySelector('[data-a=re]').onclick=()=>{stop();left=tot;draw()};return{reset(){stop();left=tot;draw()},used(){return tot-left},stop}}
+
+/* ---- MC engine ---- */
+function mc(box,items,scoreEl,xpKey,sec){let right=0,answered=0;
+ items.forEach((it,i)=>{const d=document.createElement('div');d.className='mcq';d.innerHTML=`<div class="q"><span class="n">${i+1}</span>${it.q}</div><div class="opts"></div><div class="fb" aria-live="polite"></div>`;
+  const os=d.querySelector('.opts'),fb=d.querySelector('.fb');let locked=false;
+  it.o.forEach((t,k)=>{const b=document.createElement('button');b.className='opt';b.textContent=t;b.onclick=()=>{if(locked)return;
+    if(k===it.a){b.classList.add('ok');locked=true;answered++;if(!d.dataset.miss)right++;fb.className='fb ok';fb.textContent='✓ '+(it.ok||'Correct!');addXP(10);
+      if(answered===items.length){if(scoreEl)scoreEl.textContent=`${right} / ${items.length} first try`;addXP(0,xpKey);markDone(sec)}}
+    else{b.classList.add('no');d.dataset.miss=1;fb.className='fb no';fb.textContent='✗ '+(it.no||'Try again.')}};os.appendChild(b)});box.appendChild(d)})}
+
+/* ===== §1 poll ===== */
+const pollD=[["Check the phone in bed","b2s02_hero.jpg"],["Binge-watch a show","b1s30_movies.jpg"],["Order food instead of cooking","b2s02_fastfood.jpg"],["Skip a workout","b1s20_hero.jpg"],["Leave cleaning for later","b2s02_cleaning.jpg"]];const votes=pollD.map(()=>0);
+pollD.forEach(([n,img],i)=>{const c=document.createElement('div');c.className='pc';c.innerHTML=`<img src="img/${img}" alt="${n}"><div class="pb"><div class="nm">${n}</div><div class="vt"><button aria-label="Remove a vote for ${n}">−</button><output>0</output><button aria-label="Add a vote for ${n}">+</button></div><div class="pbar"><i></i></div></div>`;
+ const [m,p]=c.querySelectorAll('button');m.onclick=()=>{votes[i]=Math.max(0,votes[i]-1);drawPoll()};p.onclick=()=>{votes[i]++;drawPoll();addXP(2,'poll'+i)};$('#poll').appendChild(c)});
+function drawPoll(){const t=votes.reduce((a,b)=>a+b,0),mx=Math.max(...votes);[...$('#poll').children].forEach((c,i)=>{c.querySelector('output').textContent=votes[i];c.querySelector('.pbar i').style.width=t?votes[i]/t*100+'%':0;c.classList.toggle('win',t>0&&votes[i]===mx)});
+ if(!t){$('#pollRes').textContent='Vote with + and −. One vote per person.';return}const w=pollD.filter((_,i)=>votes[i]===mx).map(x=>x[0]);
+ $('#pollRes').textContent=w.length>1?`It's a tie: ${w.join(' and ')}. Why?`:`The class confesses: ${w[0]} — ${mx} of ${t}. And you?`;markDone(0)}
+
+/* ===== §2 flips ===== */
+const V=[["check the phone","look at your phone for new messages","I always check my phone in the morning."],["binge-watch (a show)","watch many episodes, one after another","She binge-watches shows on weekends."],["call (family)","talk to your family on the phone","I call my parents every week."],["skip (a meal)","not eat a meal, like breakfast","He sometimes skips breakfast."],["work out / exercise","do sport or go to the gym","I usually work out in the morning."],["cook (at home)","make your own food at home","We often cook at home on Sundays."],["order food (delivery)","the food comes to your door","They sometimes order food on Fridays."],["clean the house","make your home clean and tidy","She hardly ever cleans the house alone."],["read (before bed)","read a book at night, in bed","I never read before bed — I always check my phone!"],["Confession:…","you tell a true, secret habit","Confession: I binge-watch shows every night."]];
+const FC=['#F2A200','#12B5A6','#5733CC','#FF3D7F','#E5A100','#16213E','#12B5A6','#F2A200','#5733CC','#FF3D7F'];let flipped=0;
+V.forEach(([w,mn,ex],i)=>{const f=document.createElement('div');f.className='flip';f.style.setProperty('--fc',FC[i]);f.tabIndex=0;f.setAttribute('role','button');f.setAttribute('aria-label','Flip card: '+w);
+ f.innerHTML=`<div class="in"><div class="f"><span class="num">${String(i+1).padStart(2,'0')}</span><div class="w">${w}</div><div class="fb"><span class="tap">Tap to flip</span>${TTS?`<button class="say" aria-label="Listen">${SPK}</button>`:''}</div></div><div class="b"><span class="es">${mn}</span><div class="ex">“${ex}”</div>${TTS?`<button class="say" style="background:${FC[i]}" aria-label="Listen to the example">${SPK}</button>`:''}</div></div>`;
+ const flip=()=>{f.classList.toggle('on');if(!f.dataset.seen){f.dataset.seen=1;flipped++;$('#flipCount').textContent=flipped+' / 10 flipped';addXP(3);if(flipped===10)markDone(1)}};
+ f.addEventListener('click',e=>{if(e.target.closest('.say'))return;flip()});f.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();flip()}});
+ const b=f.querySelectorAll('.say');if(b[0])b[0].onclick=e=>{e.stopPropagation();say(w)};if(b[1])b[1].onclick=e=>{e.stopPropagation();say(ex)};$('#flips').appendChild(f)});
+
+/* ===== §2 match ===== */
+const M=[["I always check my phone first thing.","Same here, every morning!"],["She hardly ever cleans the house.","Her roommate must do it then."],["We usually cook at home on Sundays.","That sounds nice and relaxing."],["He never reads before bed.","He probably scrolls on his phone instead!"],["I sometimes skip breakfast.","That's not the healthiest habit."],["They often order food on Fridays.","A little treat for the weekend!"]];
+let selL=null,pairs=0;const shuf=a=>{const b=a.slice();for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]]}return b};
+M.forEach(([l],i)=>{const b=document.createElement('button');b.className='mi';b.textContent=l;b.dataset.i=i;b.onclick=()=>{if(b.classList.contains('ok'))return;$$('#mL .mi').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');selL=b};$('#mL').appendChild(b)});
+shuf(M.map((p,i)=>[p[1],i])).forEach(([r,i])=>{const b=document.createElement('button');b.className='mi';b.textContent=r;b.onclick=()=>{if(!selL||b.classList.contains('ok'))return;
+ if(+selL.dataset.i===i){b.classList.add('ok');selL.classList.remove('sel');selL.classList.add('ok');selL=null;pairs++;$('#matchCount').textContent=pairs+' / 6 pairs';addXP(5);say(M[i][0]+' '+M[i][1])}
+ else{b.classList.add('bad');setTimeout(()=>b.classList.remove('bad'),350)}};$('#mR').appendChild(b)});
+
+/* ===== §2 mystery zoom (VOC-14) ===== */
+const ZP=[["b1s31_vcall.jpg","calling family","I ___ call my family."],["b2s02_cook_home.jpg","cooking at home","I ___ cook at home."],["b1s20_yoga.jpg","working out","I ___ work out."],["b2s02_reading_bed.jpg","reading before bed","I ___ read before bed."],["b2s02_cleaning.jpg","cleaning the house","I ___ clean the house."]];
+const ZSC=[2.8,2,1.4,1];let zi,zStep,zTurn,zSc,zDone;
+const zTeam=t=>isOne()?(t?'Teacher':'Student'):(t?'Team B':'Team A');
+function zReset(){zi=0;zStep=0;zTurn=0;zSc=[0,0];zDone=ZP.map(()=>null);drawZ()}
+function zFinished(){return zDone.every(d=>d!==null)}
+function drawZ(){const d=zDone[zi];$('#zimg').style.backgroundImage=`url(img/${ZP[zi][0]})`;$('#zimg').style.transform='scale('+ZSC[d!==null?3:zStep]+')';
+ $('#zstepLbl').textContent=`Photo ${zi+1} / ${ZP.length} · Zoom ${(d!==null?3:zStep)+1} / 4`;
+ const lab=$('#zlabel');if(d!==null){lab.hidden=false;lab.textContent=(d>=0?`✓ ${zTeam(d)} got it: `:'Nobody got it: ')+ZP[zi][1]+'. Now everyone: "'+ZP[zi][2]+'"';$('#zimg').setAttribute('aria-label','The habit: '+ZP[zi][1])}else{lab.hidden=true;$('#zimg').setAttribute('aria-label','Mystery photo, zoomed in')}
+ $('#zTurn').textContent=d!==null?'Photo finished':`${zTeam(zTurn)}'s turn`;$('#zTurn').classList.toggle('o',zTurn===1);
+ $('#zScore').innerHTML=[0,1].map(t=>`<span class="${t===zTurn&&d===null?'on':''}">${zTeam(t)}: ${zSc[t]}</span>`).join('');
+ $('#zOk').disabled=d!==null;$('#zBtn').disabled=d!==null;$('#zBtn').textContent=zStep===3?'✗ Nobody got it — show the answer':'✗ Not yet — zoom out, other team tries';
+ $('#zNext').disabled=zi===ZP.length-1||d===null;
+ const o=$('#zOut');if(zFinished()){const w=zSc[0]===zSc[1]?`It's a tie, ${zSc[0]}–${zSc[1]}!`:`${zTeam(zSc[0]>zSc[1]?0:1)} wins, ${Math.max(...zSc)}–${Math.min(...zSc)}!`;o.hidden=false;o.textContent=`Mystery Zoom complete: ${w} ${zSc[0]+zSc[1]} of ${ZP.length} habits guessed with a full sentence.`;addXP(10,'zoom');markDone(1)}else o.hidden=true}
+$('#zOk').onclick=()=>{if(zDone[zi]!==null)return;zSc[zTurn]++;zDone[zi]=zTurn;addXP(5,'zok'+zi);drawZ()};
+$('#zBtn').onclick=()=>{if(zDone[zi]!==null)return;if(zStep<3){zStep++;zTurn=1-zTurn}else{zDone[zi]=-1}drawZ()};
+$('#zNext').onclick=()=>{if(zDone[zi]===null||zi>=ZP.length-1)return;zi++;zStep=0;zTurn=zi%2;drawZ()};
+$('#zReset').onclick=zReset;zReset();modeHooks.push(drawZ);
+
+/* ===== §3 grammar ===== */
+$('#hlBtn').onclick=()=>{const on=!$('#disc').classList.contains('show-hl');$('#disc').classList.toggle('show-hl',on);$('#hlBtn').setAttribute('aria-pressed',on);$('#hlBtn').textContent=on?'Hide the key words':'Show the key words'};
+$('#esBtn').onclick=()=>{const open=$('#esBox').hidden;$('#esBox').hidden=!open;$('#esBtn').setAttribute('aria-expanded',open);$('#esBtn').textContent=open?'🇲🇽 Hide Spanish explanation':'🇲🇽 Explanation in Spanish'};
+const MA=[["ALways","I ALways check my phone."],["USually","I USually work out in the morning."],["OFten","We OFten order food."],["someTIMES","I someTIMES skip breakfast."],["HARDly ever","She HARDly ever cleans the house."],["NEVer","I NEVer read before bed."]];let mi=0;$('#mSay').innerHTML=SPK;
+const ADV_KEYS=["always","usually","often","sometimes","hardly ever","never"];
+$('#mGo').onclick=()=>{mi=(mi+1)%MA.length;const[a,b]=MA[mi];$('#mFrom').textContent=a;$('#mTo').textContent=b};
+$('#mSay').onclick=()=>say(ADV_KEYS[mi]);
+[["always","/ˈɔːlweɪz/ — stress: ALways"],["usually","/ˈjuːʒuəli/ — stress: USually"],["sometimes","/ˈsʌmtaɪmz/ — stress: someTIMES"],["hardly ever","/ˈhɑːrdli ˈevər/ — stress: HARDly ever"]].forEach(([w,ip])=>{const d=document.createElement('div');d.className='pr';d.innerHTML=`<span class="w">${w}</span><span class="ipa">${ip}</span>${TTS?`<button class="say" style="background:var(--violet)" aria-label="Listen: ${w}">${SPK}</button>`:''}`;const b=d.querySelector('.say');if(b)b.onclick=()=>say(w);$('#pron').appendChild(d)});
+mc($('#mcA'),[{q:"I ___ check my phone in the morning. (100% of mornings)",o:["always","sometimes"],a:0},{q:"She's ___ late for class. (0% of the time)",o:["always","never"],a:1},{q:"We ___ cook at home. (about 80%)",o:["hardly ever","usually"],a:1},{q:"He ___ skips breakfast. (rare, ~10%)",o:["hardly ever","often"],a:0},{q:"I ___ read before bed. (about 40%)",o:["always","sometimes"],a:1},{q:"They ___ order food on Fridays. (about 60%)",o:["often","never"],a:0}],$('#scA'),'mcA',2);
+/* Tic-Tac-Toe GRM-15 */
+const TTT=[["always","check the phone"],["usually","work out"],["often","order food"],["sometimes","skip breakfast"],["hardly ever","clean the house"],["never","read before bed"],["always","call family"],["usually","cook at home"],["sometimes","binge-watch a show"]];
+const LINES=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+let tB,tTurn,tOver,tWins=[0,0];
+const tTeam=t=>isOne()?(t?'Teacher (O)':'Student (X)'):(t?'Team O':'Team X');
+TTT.forEach(([a,act],i)=>{const b=document.createElement('button');b.className='tc';b.setAttribute('aria-pressed','false');b.innerHTML=`<span class="mk"></span><b>${a}</b><span>${act}</span>`;
+ b.onclick=()=>{if(tOver||tB[i]!==null)return;tB[i]=tTurn;addXP(3,'tc'+i);
+  const line=LINES.find(l=>l.every(k=>tB[k]===tTurn));
+  if(line){tOver=true;tWins[tTurn]++;line.forEach(k=>$('#ttt').children[k].classList.add('win'));
+   $('#tttOut').hidden=false;$('#tttOut').textContent=`${tTeam(tTurn)} wins! Three in a row: `+line.map(k=>`"${TTT[k][0]} ${TTT[k][1]}"`).join(' · ')+'.';addXP(20,'ttt');markDone(2)}
+  else if(tB.every(x=>x!==null)){tOver=true;$('#tttOut').hidden=false;$('#tttOut').textContent=`It's a draw! Nine squares, nine correct sentences. Play a new board?`;addXP(20,'ttt');markDone(2)}
+  else tTurn=1-tTurn;drawT()};$('#ttt').appendChild(b)});
+function drawT(){[...$('#ttt').children].forEach((b,i)=>{const v=tB[i];b.classList.toggle('x',v===0);b.classList.toggle('o',v===1);b.querySelector('.mk').textContent=v===null?'':(v?'O':'X');b.setAttribute('aria-pressed',v!==null);b.disabled=tOver&&v===null;b.setAttribute('aria-label',`${TTT[i][0]} ${TTT[i][1]}`+(v===null?'':' — claimed by '+tTeam(v)))});
+ const n=tB.filter(x=>x!==null).length;$('#tttCount').textContent=n+' / 9 claimed';
+ $('#tTurn').textContent=tOver?'Game over':`${tTeam(tTurn)}'s turn`;$('#tTurn').classList.toggle('o',tTurn===1);
+ $('#tScore').innerHTML=[0,1].map(t=>`<span class="${t===tTurn&&!tOver?'on':''}">${tTeam(t)} · boards won: ${tWins[t]}</span>`).join('');$('#tPass').disabled=tOver}
+function tReset(){tB=TTT.map(()=>null);tTurn=0;tOver=false;$$('#ttt .tc').forEach(b=>b.classList.remove('win'));$('#tttOut').hidden=true;drawT()}
+$('#tPass').onclick=()=>{if(tOver)return;tTurn=1-tTurn;drawT()};$('#tReset').onclick=tReset;tReset();modeHooks.push(drawT);
+
+/* ===== §4 reading ===== */
+mc($('#mcR'),[{q:"What does Rosa always do in the morning?",o:["Cook breakfast","Call her mom","Check her phone first thing"],a:2},{q:"How often does Rosa work out?",o:["Never","Usually, three times a week","Every single day"],a:1},{q:"Does Rosa cook at home often?",o:["Yes, always","No — she hardly ever cooks","No, she never eats at home"],a:1},{q:"True or false: Rosa never skips breakfast.",o:["True","False"],a:1,ok:"False — she sometimes skips it."},{q:"What does Rosa do instead of reading before bed?",o:["She calls her mom","She cleans the house","She always binge-watches a show"],a:2},{q:"What habit is Rosa proud of?",o:["Calling her mom every Sunday","Working out every day","Never checking her phone"],a:0}],$('#scR'),'mcR',3);
+
+/* ===== §5 speaking ===== */
+const tR=timer($('#tRd'));
+const Q=[["Do you check your phone as soon as you wake up?","Always, or just sometimes?","Does it help you start the day?","b2s02_check_phone.jpg","Two friends on a sofa looking at a phone"],["Do you binge-watch shows on weekends?","How many episodes, usually?","Do you feel tired after?","b1s30_movies.jpg","A big bowl of popcorn for a long TV night"],["Do you call your parents or grandparents every week?","Or only sometimes?","Who calls first, usually?","b1s31_vcall.jpg","Grandparents waving on a video call"],["Do you cook at home, or do you order food?","Which one is more often for you?","Is cooking relaxing or stressful?","b2s02_cook_home.jpg","A couple cooking together at home"],["Do you skip breakfast?","Is that often, or hardly ever?","What do you eat instead?","b1s19_bakery.jpg","Fresh bread and pastries for breakfast at a bakery"],["Do you clean the house on the same day every week?","Or is it random?","Who cleans the most at home?","b2s02_cleaning.jpg","A person sweeping the kitchen floor"],["Do you read before bed, or do you check your phone instead?","Which one, usually?","Does it help you sleep?","b2s02_reading_bed.jpg","An open book and glasses on a bed"],["Is there a habit you do more than you want to admit?","Confession: what is it?","Does anyone tease you about it?","b2s02_hero.jpg","A man looking at his phone in the dark"]];
+let qi=0;Q.forEach((_,i)=>{const d=document.createElement('button');d.setAttribute('aria-label','Question '+(i+1));d.onclick=()=>{qi=i;drawQ()};$('#dots').appendChild(d)});
+function drawQ(){const q=Q[qi];$('#qN').textContent=`QUESTION ${qi+1} OF 8`;$('#qT').textContent=q[0];$('#qF').innerHTML=`<span>${q[1]}</span><span>${q[2]}</span>`;$('#qImg').src='img/'+q[3];$('#qImg').alt=q[4];[...$('#dots').children].forEach((d,i)=>d.setAttribute('aria-current',i===qi));$('#qP').disabled=qi===0;$('#qX').textContent=qi===7?'Done ✓':'Next question →';if(qi===7)markDone(4)}
+$('#qS').onclick=()=>say(Q[qi][0]);$('#qP').onclick=()=>{if(qi>0){qi--;drawQ()}};$('#qX').onclick=()=>{if(qi<7){qi++;drawQ()}};drawQ();
+
+/* ===== §6 mission ===== */
+let advUsed=new Set();
+ADV_KEYS.forEach(a=>{const b=document.createElement('button');b.className='advchip';b.textContent=a;b.setAttribute('aria-pressed','false');
+ b.onclick=()=>{const on=b.getAttribute('aria-pressed')!=='true';b.setAttribute('aria-pressed',on);if(on)advUsed.add(a);else advUsed.delete(a);drawAdv()};$('#advtrack').appendChild(b)});
+function drawAdv(){const n=advUsed.size;$('#advN').textContent=n;$('#advBar').style.width=(n/6*100)+'%';if(n>=4){addXP(30,'mission');markDone(5)}}
+$('#advRe').onclick=()=>{advUsed.clear();$$('#advtrack .advchip').forEach(b=>b.setAttribute('aria-pressed','false'));drawAdv()};
+
+/* ===== §7 wrap ===== */
+mc($('#mcQ'),[{q:"I ___ check my phone in the morning. (100%)",o:["never","always"],a:1},{q:"She's ___ late. (0%)",o:["never","always"],a:0},{q:"We ___ cook at home. (about 80%)",o:["hardly ever","usually"],a:1},{q:"Which sentence is correct?",o:["I always check my phone.","I check my phone always."],a:0},{q:"Confession: I ___ read before bed. (0%)",o:["often","never"],a:1}],$('#scQ'),'mcQ',6);
+["I put the adverb before the main verb.","I put the adverb after \"be\".","I used ≥4 different adverbs.","I stress the adverb correctly.","I sound honest, not robotic."].forEach(t=>{const b=document.createElement('button');b.textContent=t;b.setAttribute('aria-pressed','false');b.onclick=()=>b.setAttribute('aria-pressed',b.getAttribute('aria-pressed')!=='true');$('#selfev').appendChild(b)});
+function showDone(){$('#doneBtn').textContent='✓ Session complete';$('#doneBtn').disabled=true}
+if(st.get('gt02-s05-done'))showDone();
+$('#doneBtn').onclick=()=>{st.set('gt02-s05-done','1');addXP(50,'done');markDone(6);showDone()};
+})();
+</script>
+<script>
+/* GT premium layer · runs after the session's own script */
+(function(){
+/* GT progress model: XP, rank, streak, badges. Pure functions over localStorage. Shared by the portal and the sessions. */
+var GTG=(function(){
+ var pad=function(n){return String(n).padStart(2,'0')};
+ var RANKS=[[0,'Starter'],[600,'Explorer'],[1800,'Speaker'],[3600,'Storyteller'],[5600,'Specialist'],[7600,'Master']];
+ var QUIZ=[8,16,24,32];
+ function make(LV,BLOCKS){
+  var get=function(k){try{return localStorage.getItem(k)}catch(e){return null}};
+  var set=function(k,v){try{localStorage.setItem(k,v)}catch(e){}};
+  var xp=function(n){return +get(LV+'-s'+pad(n)+'-xp')||0};
+  var done=function(n){return !!get(LV+'-s'+pad(n)+'-done')};
+  function days(){try{return JSON.parse(get(LV+'-days')||'[]')}catch(e){return []}}
+  function today(){var d=new Date();return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())}
+  function touch(){var a=days(),t=today();if(a.indexOf(t)<0){a.push(t);a=a.slice(-90);set(LV+'-days',JSON.stringify(a))}}
+  function streak(){var a=days().slice().sort(),set1={};a.forEach(function(x){set1[x]=1});var d=new Date(),n=0;
+   function key(dt){return dt.getFullYear()+'-'+pad(dt.getMonth()+1)+'-'+pad(dt.getDate())}
+   if(!set1[key(d)])d.setDate(d.getDate()-1);
+   while(set1[key(d)]){n++;d.setDate(d.getDate()-1)}return n}
+  function state(){
+   var total=0,dn=0,perBlock=[0,0,0,0],quiz=0;
+   for(var n=1;n<=32;n++){total+=xp(n);if(done(n)){dn++;perBlock[Math.floor((n-1)/8)]++;if(QUIZ.indexOf(n)>=0)quiz++}}
+   var ri=0;for(var i=0;i<RANKS.length;i++)if(total>=RANKS[i][0])ri=i;
+   var next=RANKS[ri+1]||null;
+   var st=streak();
+   var badges=[
+    {id:'first',name:'First step',desc:'Complete Session 1',ok:done(1)}
+   ].concat(BLOCKS.map(function(b,i){return {id:'b'+(i+1),name:b+' cleared',desc:'Complete all 8 sessions of Block '+(i+1),ok:perBlock[i]===8}}))
+    .concat([
+      {id:'quiz',name:'Checkpoint keeper',desc:'Complete all 4 quiz sessions',ok:quiz===4},
+     {id:'streak',name:'3-day rhythm',desc:'Study on 3 days in a row',ok:st>=3},
+     {id:'level',name:'Level complete',desc:'Complete all 32 sessions',ok:dn===32}]);
+   return {total:total,done:dn,perBlock:perBlock,quiz:quiz,rank:RANKS[ri][1],rankIdx:ri,rankFloor:RANKS[ri][0],next:next,streak:st,badges:badges};
+  }
+  return {get:get,set:set,xp:xp,done:done,touch:touch,state:state,today:today,RANKS:RANKS};
+ }
+ return {make:make,RANKS:RANKS,pad:pad};
+})();
+
+try{
+var TITLES=["Same City, New Faces","Not Anymore","Do You, Really?","The Weekly Schedule Swap","How Often, Really?","Once a Week Is Enough","Wait, Say That Again: About Your Week","Review Quiz 1 + Checkpoint","What Are You Doing Right Now?","Not Right Now","Are You Busy?","Normal Day vs. Today","Right Now vs. Every Day","I Don’t Want That (I Want This)","These Days, Everyone Is…","Review Quiz 2 + Checkpoint","What Can You Actually Do?","Can You Help Me With…?","Guilty Pleasures","Find Your Practice Partner","I Like It, She Hates Them","So Do I! / Me Neither","Ready for Saturday?","Review Quiz 3 + Checkpoint","This Weekend, I’m Going To…","Are You Going To…?","Would You Like To…?","This One or That One?","Which Is Really Better?","Pass the Plan","Countdown to the Final Mission","Final Quiz + Two Performances"],LV='gt02',BASE='Básico 2';
+var m=(document.title.match(/ S(\d\d) /)||[]);var n=+m[1];if(!n)return;
+var $=function(s,r){return (r||document).querySelector(s)},$$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
+var pad=function(k){return String(k).padStart(2,'0')};
+var store={get:function(k){try{return localStorage.getItem(k)}catch(e){return null}},set:function(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
+
+/* colour helpers: choose readable ink on any accent */
+function lum(hex){var h=(hex||'').trim();var r=/^#([0-9a-f]{6})$/i.exec(h);if(!r){r=/^#([0-9a-f]{3})$/i.exec(h);if(!r)return null;h='#'+r[1].split('').map(function(c){return c+c}).join('');r=/^#([0-9a-f]{6})$/i.exec(h)}
+  var v=parseInt(r[1],16),c=[v>>16&255,v>>8&255,v&255].map(function(x){x/=255;return x<=.03928?x/12.92:Math.pow((x+.055)/1.055,2.4)});return .2126*c[0]+.7152*c[1]+.0722*c[2]}
+function ink(el,prop){var v=getComputedStyle(el).getPropertyValue(prop);var L=lum(v);if(L!==null&&L>.24)el.setAttribute('data-ink','dark')}
+$$('.sec').forEach(function(s){ink(s,'--c')});
+$$('.flip').forEach(function(f){ink(f,'--fc')});
+$$('.deck').forEach(function(d){var s=d.closest('.sec');if(s&&s.getAttribute('data-ink'))d.setAttribute('data-ink','dark')});
+
+/* top bar: two labelled segmented controls */
+var tg=$('.toggles');
+if(tg){[['tgTeacher','tgStudent','Teacher or student view'],['tgGroup','tgOne','Group or one-to-one']].forEach(function(p){
+  var a=document.getElementById(p[0]),b=document.getElementById(p[1]);if(!a||!b)return;
+  var seg=document.createElement('div');seg.className='seg';seg.setAttribute('role','group');seg.setAttribute('aria-label',p[2]);tg.appendChild(seg);seg.appendChild(a);seg.appendChild(b)})}
+var ts=document.getElementById('tgStudent'),tt=document.getElementById('tgTeacher');
+if(ts&&tt){ts.addEventListener('click',function(){store.set(LV+'-view','student')});tt.addEventListener('click',function(){store.set(LV+'-view','teacher')});
+  if(store.get(LV+'-view')==='student')ts.click()}
+$$('.brand a').forEach(function(a){a.setAttribute('href','edition1.html')});
+$$('a[href="./"]').forEach(function(a){a.setAttribute('href','edition1.html')});
+
+/* hero: session number watermark + previous / next */
+var hw=$('.hero .wrap');
+if(hw){hw.setAttribute('data-n',pad(n));
+  var c=document.createElement('nav');c.className='crumbs';c.setAttribute('aria-label','Session navigation');
+  var prev=n>1?'<a href="e1s'+pad(n-1)+'.html" title="'+TITLES[n-2].replace(/"/g,'&quot;')+'">‹ Session '+(n-1)+'</a>':'<a href="#" aria-disabled="true" tabindex="-1">‹ Start</a>';
+  var next=n<32?'<a href="e1s'+pad(n+1)+'.html" title="'+TITLES[n].replace(/"/g,'&quot;')+'">Session '+(n+1)+' ›</a>':'<a href="#" aria-disabled="true" tabindex="-1">Final session</a>';
+  c.innerHTML='<a href="edition1.html">← All sessions</a><span class="sp"></span>'+prev+next;hw.insertBefore(c,hw.firstChild)}
+
+/* sticky nav: minutes under each stage, readable ink, clock state */
+var secs=$$('.sec'),links=$$('#steps a');
+links.forEach(function(a,i){var s=secs[i];if(!s)return;var mn=s.getAttribute('data-min');if(mn){var sm=document.createElement('small');sm.textContent=mn.replace('–','–')+'′';a.appendChild(sm)}
+  if(s.getAttribute('data-ink'))a.setAttribute('data-ink','dark');a.setAttribute('aria-label','Go to stage '+(i+1)+': '+s.getAttribute('data-name'))});
+var ck=document.getElementById('clock');if(ck){ck.addEventListener('click',function(){ck.classList.toggle('run')});ck.setAttribute('aria-label','Class clock: start or pause')}
+
+/* end of session: previous / next cards, completion state */
+var main=document.querySelector('main');
+if(main){var nav=document.createElement('nav');nav.className='seqnav wrap';nav.setAttribute('aria-label','Previous and next session');
+  var esc=function(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;')};
+  var p=n>1?'<a class="sq prev" href="e1s'+pad(n-1)+'.html"><small>‹ Previous · Session '+(n-1)+'</small><b>'+esc(TITLES[n-2])+'</b></a>':'<a class="sq prev" href="edition1.html"><small>‹ Portal</small><b>All 32 sessions</b></a>';
+  var x=n<32?'<a class="sq next" href="e1s'+pad(n+1)+'.html"><small>Next · Session '+(n+1)+' ›</small><b>'+esc(TITLES[n])+'</b></a>':'<a class="sq next" href="edition1.html"><small>Level complete ›</small><b>Back to Básico 2</b></a>';
+  nav.innerHTML=p+x;main.parentNode.insertBefore(nav,main.nextSibling)}
+var syncDone=function(){document.body.classList.toggle('is-done',!!store.get(LV+'-s'+pad(n)+'-done'))};
+syncDone();var db=document.getElementById('doneBtn');if(db)db.addEventListener('click',function(){setTimeout(syncDone,0)});
+
+/* footer: tidy photo credits */
+var ft=document.querySelector('footer');
+if(ft){var t=ft.textContent,i=t.indexOf('Photos:');if(i>0){var head=t.slice(0,i).replace(/[\s·]+$/,''),cr=t.slice(i);ft.innerHTML='<div>'+head.replace(/&/g,'&amp;')+'</div><details><summary>Photo credits</summary><p>'+cr.replace(/&/g,'&amp;')+'</p></details>'}}
+
+
+
+/* ---- level identity in the top bar ---- */
+(function(){var bs=$('.brand small');if(bs){bs.textContent='Básico 2 · Edition 1';bs.setAttribute('title','GT English Path · '+BASE)}})();
+
+/* ---- quiz sessions: show Parts A–D under the stage bar ---- */
+(function(){
+ var sec=null;secs.forEach(function(s){if(/^quiz/i.test(s.getAttribute('data-name')||''))sec=s});if(!sec)return;
+ var tags=$$('.tag',sec).filter(function(t){return /^Part [A-D]\b/.test(t.textContent.trim())});if(tags.length<3)return;
+ var mm=(sec.getAttribute('data-min')||'').match(/(\d+)\D+(\d+)/);var a=mm?+mm[1]:0,b=mm?+mm[2]:0,per=(b-a)/tags.length;
+ var bar=document.createElement('div');bar.className='substeps';bar.setAttribute('role','navigation');bar.setAttribute('aria-label','Quiz parts');
+ var blocks=[];
+ tags.forEach(function(t,i){var blk=t.closest('.block')||t.parentElement;if(!blk.id)blk.id='part-'+'abcd'.charAt(i);blocks.push(blk);
+  var l=document.createElement('a');l.href='#'+blk.id;
+  var label=t.textContent.trim().replace(/^Part /,'');
+  l.innerHTML='<b>'+label.replace(/\s*·\s*/,' · ')+'</b>'+(per?'<small>'+Math.round(a+i*per)+'–'+Math.round(a+(i+1)*per)+'′</small>':'');bar.appendChild(l)});
+ var wrap=$('.nav .wrap');if(wrap)wrap.appendChild(bar);
+ function spy(){var cur=-1;blocks.forEach(function(blk,i){if(blk.getBoundingClientRect().top<230)cur=i});var inQuiz=sec.getBoundingClientRect().top<230&&sec.getBoundingClientRect().bottom>230;
+  bar.classList.toggle('show',inQuiz);[].slice.call(bar.children).forEach(function(l,i){l.classList.toggle('on',i===cur)})}
+ addEventListener('scroll',spy,{passive:true});spy();
+})();
+
+/* ---- progress, XP and rewards (restrained: no confetti, no sounds) ---- */
+(function(){
+ var BLOCKS=["Routine","Right now","Connect","Decide"];
+ var G=GTG.make(LV,BLOCKS);G.touch();
+ var xpEl=document.getElementById('xp');
+ var key=LV+'-s'+pad(n)+'-xp';
+ var before=G.state();
+ function cur(){return xpEl?(parseInt(xpEl.textContent,10)||0):0}
+ function save(){var v=Math.max(+G.get(key)||0,cur());G.set(key,String(v))}
+ var layer=document.createElement('div');layer.className='gt-toasts';layer.setAttribute('aria-live','polite');document.body.appendChild(layer);
+ function toast(t,s){var d=document.createElement('div');d.className='gt-toast';d.innerHTML='<b>'+t+'</b>'+(s?'<small>'+s+'</small>':'');layer.appendChild(d);requestAnimationFrame(function(){d.classList.add('in')});setTimeout(function(){d.classList.remove('in');setTimeout(function(){d.remove()},320)},2800)}
+ function floatXP(d){if(!xpEl)return;var r=xpEl.getBoundingClientRect();if(!r.width)return;var s=document.createElement('span');s.className='xp-float';s.textContent='+'+d+' XP';s.style.left=(r.left+r.width/2)+'px';s.style.top=r.top+'px';document.body.appendChild(s);setTimeout(function(){s.remove()},1100)}
+ var last=cur();
+ if(xpEl){new MutationObserver(function(){var c=cur();if(c>last)floatXP(c-last);last=c;save()}).observe(xpEl,{childList:true,characterData:true,subtree:true})}
+ var stepsEl=document.getElementById('steps'),seen={};
+ if(stepsEl){new MutationObserver(function(){[].slice.call(stepsEl.children).forEach(function(a,i){if(a.classList.contains('done')&&!seen[i]){seen[i]=1;var nm=(secs[i]&&secs[i].getAttribute('data-name'))||'';toast('Stage '+(i+1)+' complete',nm)}})}).observe(stepsEl,{subtree:true,attributes:true,attributeFilter:['class']})}
+ var badge=document.querySelector('.badge'),db=document.getElementById('doneBtn');
+ function renderReward(S){
+  var host=badge&&badge.querySelector(':scope > div:last-child');if(!host)return;var old=host.querySelector('.reward');if(old)old.remove();
+  var x=+G.get(key)||0,blk=Math.floor((n-1)/8);
+  var d=document.createElement('div');d.className='reward';d.setAttribute('role','status');
+  d.innerHTML='<div class="rw"><span class="l">Session XP</span><b>'+x+'</b></div><div class="rw"><span class="l">Rank</span><b>'+S.rank+'</b>'+(S.next?'<small>'+(S.next[0]-S.total)+' XP to '+S.next[1]+'</small>':'<small>Top rank</small>')+'</div><div class="rw"><span class="l">'+BLOCKS[blk]+'</span><b>'+S.perBlock[blk]+' / 8</b><small>sessions done</small></div>';
+  var rowEl=host.querySelector('.row');if(rowEl)host.insertBefore(d,rowEl);else host.appendChild(d)}
+ function celebrate(){save();G.touch();var S=G.state();renderReward(S);
+  var nb=S.badges.filter(function(b,i){return b.ok&&!before.badges[i].ok});
+  nb.forEach(function(b,i){setTimeout(function(){toast('Badge unlocked',b.name)},500+i*900)});
+  if(S.rankIdx>before.rankIdx)setTimeout(function(){toast('New rank',S.rank)},300);
+  before=S}
+ if(db)db.addEventListener('click',function(){setTimeout(celebrate,60)});
+ if(G.done(n))renderReward(G.state());
+ save();
+})();
+
+/* runtime contrast guard: light text on a mid-tone solid fill becomes navy when navy reads better */
+(function(){
+ var NAVY=[22,33,62];
+ function parse(c){var m=(c||'').match(/[0-9.]+/g);if(!m||m.length<3)return null;return {r:+m[0],g:+m[1],b:+m[2],a:m[3]===undefined?1:+m[3]}}
+ function L(o){var v=[o.r,o.g,o.b].map(function(x){x/=255;return x<=.03928?x/12.92:Math.pow((x+.055)/1.055,2.4)});return .2126*v[0]+.7152*v[1]+.0722*v[2]}
+ function ratio(a,b){var x=L(a),y=L(b);return (Math.max(x,y)+.05)/(Math.min(x,y)+.05)}
+ function bgOf(el){while(el&&el.nodeType===1){var cs=getComputedStyle(el);if(cs.backgroundImage!=='none')return null;var p=parse(cs.backgroundColor);if(p&&p.a>.95)return p;el=el.parentElement}return {r:255,g:255,b:255,a:1}}
+ function pass(){
+  var fixed=document.querySelectorAll('[data-gtfix]');for(var i=0;i<fixed.length;i++){fixed[i].style.removeProperty('color');fixed[i].removeAttribute('data-gtfix')}
+  var els=document.body.querySelectorAll('*');
+  for(var k=0;k<els.length;k++){var e=els[k];var tn=e.tagName;if(tn==='SCRIPT'||tn==='STYLE'||tn==='SVG'||tn==='IMG')continue;
+   var own=false;for(var c=e.firstChild;c;c=c.nextSibling){if(c.nodeType===3&&c.textContent.trim().length>1){own=true;break}}if(!own)continue;
+   if(e.offsetWidth<2||e.offsetHeight<2)continue;
+   var cs=getComputedStyle(e);var fg=parse(cs.color);if(!fg||fg.a<.99)continue;var bg=bgOf(e);if(!bg)continue;
+   var big=parseFloat(cs.fontSize)>=24||(parseFloat(cs.fontSize)>=18.66&&+cs.fontWeight>=700);var need=big?3:4.5;
+   var r=ratio(fg,bg);if(r>=need||r<1.6)continue;
+   if(L(fg)>L(bg)){ /* light text on a fill: switch to navy when it reads better */
+    var rn=ratio({r:NAVY[0],g:NAVY[1],b:NAVY[2]},bg);if(rn>r&&rn>=need){e.style.setProperty('color','#16213E','important');e.setAttribute('data-gtfix','1')}
+   }else{ var fixedOne=false; /* coloured text on a light fill: deepen the same hue until it passes */
+    for(var t2=.12;t2<=.7;t2+=.08){var m2={r:fg.r*(1-t2)+NAVY[0]*t2,g:fg.g*(1-t2)+NAVY[1]*t2,b:fg.b*(1-t2)+NAVY[2]*t2};
+     if(ratio(m2,bg)>=need){e.style.setProperty('color','rgb('+Math.round(m2.r)+','+Math.round(m2.g)+','+Math.round(m2.b)+')','important');e.setAttribute('data-gtfix','1');fixedOne=true;break}}
+    if(!fixedOne&&ratio({r:255,g:255,b:255},bg)>=need){e.style.setProperty('color','#fff','important');e.setAttribute('data-gtfix','1')}
+   }}
+ }
+ var t=null;function later(){clearTimeout(t);t=setTimeout(pass,160)}
+ document.addEventListener('click',later,true);document.addEventListener('input',later,true);
+ setTimeout(pass,60);setTimeout(pass,700);window.addEventListener('load',function(){setTimeout(pass,120)});
+})();
+
+}catch(e){try{console.warn('premium layer',e)}catch(_){}}
+})();
+
+</script>
+</body>
+</html>
