@@ -1,44 +1,44 @@
 window.SESSION={
  "id": "s05",
  "n": 5,
- "title": "Why Did It Change?",
- "can": "I can explain a change with a reason and a result.",
- "focus": "because · but · so",
- "evidence": "3-sentence explanation",
- "talk": 37,
+ "title": "Is the Customer Always Right?",
+ "can": "I can ask questions to understand what happened and say who was right.",
+ "focus": "Wh- questions in the past",
+ "evidence": "Five past questions and a verdict",
+ "talk": 38,
  "photos": {
   "hero": {
    "src": "img/s05-hero.jpg",
-   "alt": "A speaker talks to a group of people in a training room"
+   "alt": "A smiling man at a shop counter talking to a customer"
   },
   "a": {
    "src": "img/s05-a.jpg",
-   "alt": "A courier carries boxes down a city street"
+   "alt": "A man with his hands on his head shouting in frustration"
   },
   "b": {
    "src": "img/s05-b.jpg",
-   "alt": "A notebook page with the word Planning"
+   "alt": "A waiter takes an order from two customers at a cafe table"
   },
   "c": {
    "src": "img/s05-c.jpg",
-   "alt": "A bus passes a bus stop with long light trails"
+   "alt": "A pile of printed receipts"
   }
  },
  "credits": "various photographers",
  "card": {
-  "situation": "A plan changed. You explain why.",
+  "situation": "A customer is angry. You find out what happened.",
   "phrases": [
-   "…, because …",
-   "…, but …",
-   "…, so …"
+   "What did he order?",
+   "What happened next?",
+   "I think … was right, because …"
   ],
-  "roles": "A serves a statement. B returns it with a reason, a contrast or a result.",
-  "finished": "You gave a change, a reason and a result."
+  "roles": "A is the detective. B knows the case.",
+  "finished": "You asked five past questions and gave your verdict."
  },
  "rescue": [
-  "Sorry, why?",
-  "Can you say it again?",
-  "I don't know the word."
+  "Sorry, can you repeat?",
+  "How do you say it?",
+  "Let me think."
  ],
  "warm": {
   "how": {
@@ -48,35 +48,35 @@ window.SESSION={
     "Switch after each question."
    ],
    "t": "Ask your partner. Listen to the full answer.",
-   "s": "Plans change because of traffic.",
+   "s": "I had a problem in a store. I asked for a refund.",
    "done": "each partner answered the 3 questions."
   },
   "qs": [
    {
-    "q": "What usually makes plans change?",
+    "q": "Did you ever have a problem as a customer?",
     "f": [
-     "Can you give an example?",
-     "How do you feel?"
+     "What was the problem?",
+     "Where did it happen?"
     ]
    },
    {
-    "q": "Is a reason always necessary when you cancel something?",
+    "q": "What did the staff do?",
+    "f": [
+     "Was he or she polite?",
+     "Did you get a refund?"
+    ]
+   },
+   {
+    "q": "Is the customer always right?",
     "f": [
      "Why or why not?",
-     "What do you say?"
-    ]
-   },
-   {
-    "q": "What change made your day easier recently?",
-    "f": [
-     "What changed?",
-     "What was the result?"
+     "Did you ever work with customers?"
     ]
    }
   ],
   "tn": [
-   "Pairs, 7 minutes. One question at a time. Ask for a follow-up after every answer.",
-   "Why? What was the result?",
+   "Pairs, 7 minutes. One question at a time. Ask a follow-up after every answer. Anyone who prefers not to share uses a story from a friend.",
+   "What did the staff do? Tell me more.",
    "Do not correct now. Note two repeated errors for minute 54."
   ]
  },
@@ -93,74 +93,74 @@ window.SESSION={
   },
   "words": [
    {
-    "w": "reason",
-    "def": "why something happens",
-    "es": "razón, motivo",
-    "ex": "My reason is simple."
+    "w": "customer",
+    "def": "a person who buys things",
+    "es": "cliente",
+    "ex": "The customer was angry."
    },
    {
-    "w": "traffic",
-    "def": "many vehicles moving slowly",
-    "es": "tráfico",
-    "ex": "There is traffic at six."
+    "w": "complaint",
+    "def": "saying you are not happy about something",
+    "es": "queja",
+    "ex": "He made a complaint."
    },
    {
-    "w": "weather",
-    "def": "rain, wind, heat, or other outside conditions",
-    "es": "clima",
-    "ex": "The weather is hot today."
+    "w": "refund",
+    "def": "money you get back",
+    "es": "reembolso",
+    "ex": "She asked for a refund."
    },
    {
-    "w": "problem",
-    "def": "something difficult that needs attention",
-    "es": "problema",
-    "ex": "I have a small problem."
+    "w": "mistake",
+    "def": "something wrong you did by accident",
+    "es": "error",
+    "ex": "It was my mistake."
    },
    {
-    "w": "change",
-    "def": "become different",
-    "es": "cambio, cambiar",
-    "ex": "My schedule changed."
+    "w": "angry",
+    "def": "very upset",
+    "es": "enojado",
+    "ex": "He got angry."
    },
    {
-    "w": "result",
-    "def": "what happens because of something",
-    "es": "resultado",
-    "ex": "The result was good."
+    "w": "polite",
+    "def": "with good manners",
+    "es": "educado",
+    "ex": "The waiter was polite."
    },
    {
-    "w": "plan",
-    "def": "an arrangement for the future",
-    "es": "plan",
-    "ex": "I have a plan for Friday."
+    "w": "receipt",
+    "def": "paper that shows what you bought",
+    "es": "recibo, ticket",
+    "ex": "I kept the receipt."
    },
    {
-    "w": "extra",
-    "def": "more than usual",
-    "es": "extra",
-    "ex": "I have extra work today."
+    "w": "right",
+    "def": "correct",
+    "es": "tener la razón",
+    "ex": "You are right."
    }
   ],
   "tn": [
-   "One meaning at a time. Say the word first, then check. After each match, one true sentence.",
+   "One meaning at a time. The learner says the word first, then checks. After each match, one true sentence.",
    "What is the word? Is it true for you?",
-   "Manual key: A-1, B-7, C-8, D-5, E-2, F-3, G-6, H-4."
+   "Key: 1-A, 2-B, 3-C, 4-D, 5-E, 6-F, 7-G, 8-H (same position)."
   ]
  },
  "gram": {
-  "lead": "Give a reason, a contrast or a result.",
+  "lead": "Ask about the past with a question word + did + subject + simple verb.",
   "rule": [
-   "because = the reason",
-   "but = the contrast",
-   "so = the result",
-   "The road was busy, so we arrived late."
+   "What did he order? Why did she get angry?",
+   "After did, the verb stays simple: order, say, get.",
+   "With happened and was, no did: What happened? Who was right?"
   ],
-  "es": "because = razón; but = contraste; so = resultado. Mantén una idea clara a cada lado: The road was busy, so we arrived late.",
+  "es": "Preguntas con wh- en pasado: What / Why / Where / When / Who + did + sujeto + verbo simple. Con happened y was no se usa did: What happened next? Who was right?",
   "useful": [
-   "because ...",
-   "but ...",
-   "so ...",
-   "The main reason is ..."
+   "What did he order?",
+   "What did she say?",
+   "Why did he get angry?",
+   "What happened next?",
+   "Who was right?"
   ],
   "how": {
    "steps": [
@@ -169,91 +169,91 @@ window.SESSION={
     "Say it aloud."
    ],
    "t": "Which sentence is correct? Say it.",
-   "s": "The road was busy, so we arrived late.",
+   "s": "What did he order? Who was right?",
    "done": "you chose and said 5 sentences."
   },
   "drill": [
    {
-    "sit": "Say the result. The road was busy.",
+    "sit": "Ask what he ordered.",
     "o": [
-     "The road was busy, so we arrived late.",
-     "The road was busy, because we arrived late."
+     "What did he order?",
+     "What he ordered?"
     ],
     "ans": 0,
-    "why": "so = the result."
+    "why": "Question word + did + subject + simple verb."
    },
    {
-    "sit": "Give the reason. You called early.",
+    "sit": "Ask why she got angry.",
     "o": [
-     "I called early so I needed an answer.",
-     "I called early because I needed an answer."
+     "Why she did get angry?",
+     "Why did she get angry?"
     ],
     "ans": 1,
-    "why": "because = the reason."
+    "why": "The order: Why + did + she + get."
    },
    {
-    "sit": "Show a contrast.",
+    "sit": "Ask what she said.",
     "o": [
-     "It was a short day, but it was useful.",
-     "It was a short day, so it was useful."
+     "What did she say?",
+     "What did she said?"
     ],
     "ans": 0,
-    "why": "but = the contrast."
+    "why": "After did, the simple verb: say."
    },
    {
-    "sit": "Say why the group started late.",
+    "sit": "Ask what happened next.",
     "o": [
-     "We started late so people arrived after nine.",
-     "We started late because people arrived after nine."
+     "What did happen next?",
+     "What happened next?"
     ],
     "ans": 1,
-    "why": "because gives the reason."
+    "why": "With happened, no did."
    },
    {
-    "sit": "Say the result of the change.",
+    "sit": "Ask who was right.",
     "o": [
-     "The organizer removed one activity, so the event finished earlier.",
-     "The organizer removed one activity, because the event finished earlier."
+     "Who was right?",
+     "Who did be right?"
     ],
     "ans": 0,
-    "why": "so gives the result."
+    "why": "With was, no did."
    }
   ],
   "say": {
    "title": "Say it your way",
    "items": [
     {
-     "t": "Join and say: The road was busy. We arrived late.",
-     "m": "The road was busy, so we arrived late."
+     "t": "Ask what the customer ordered.",
+     "m": "What did he order?"
     },
     {
-     "t": "Join and say: I called early. I needed an answer.",
-     "m": "I called early because I needed an answer."
+     "t": "Ask why the employee got angry.",
+     "m": "Why did she get angry?"
     },
     {
-     "t": "Explain one personal change with because, but or so.",
-     "m": "The meeting changed because my boss was away, so we met on Friday."
+     "t": "Say who you think was right.",
+     "m": "I think the customer was right."
     }
    ]
   },
   "turn": {
-   "prompt": "Say a true change. Add one reason or one result.",
+   "prompt": "Ask or say one true sentence about a customer problem.",
    "chips": [
-    "a change at work",
-    "a plan you cancelled",
-    "a late arrival",
-    "a new schedule",
-    "a change in the weather"
+    "what the customer ordered",
+    "what the employee said",
+    "why someone got angry",
+    "what happened next",
+    "who was right"
    ]
   },
   "tn": [
-   "Explain in 3 minutes. One clear idea on each side of the connector.",
+   "Explain in 3 minutes: question word + did + subject + simple verb; happened and was without did. One example each. Mechanical practice is only the first third.",
    "Which sentence is correct? Say it.",
-   "Do not require however or as a result; because, but and so are the target."
+   "Repair the order (What did he order). Accept small errors if the question is clear."
   ]
  },
  "read": {
-  "title": "The Shorter Training Day",
+  "title": "Two versions of one problem",
   "how": {
    "steps": [
     "Read the text once.",
@@ -264,37 +264,64 @@ window.SESSION={
    "s": "",
    "done": "you underlined two sentences and used one."
   },
+  "cards": [
+   {
+    "name": "Leo, the customer",
+    "sub": "His version",
+    "img": {
+     "src": "img/s05-a.jpg",
+     "alt": "A man with his hands on his head shouting in frustration"
+    },
+    "facts": [
+     "Leo ordered a large coffee.",
+     "The waiter brought a small one.",
+     "He got angry and asked for a refund."
+    ]
+   },
+   {
+    "name": "Marta, the waiter",
+    "sub": "Her version",
+    "img": {
+     "src": "img/s05-b.jpg",
+     "alt": "A waiter takes an order from two customers at a cafe table"
+    },
+    "facts": [
+     "Marta brought the coffee Leo ordered.",
+     "He said it was too small.",
+     "She asked for the receipt, but he didn't have it."
+    ]
+   }
+  ],
   "text": [
-   "A local training event changed its schedule last month.",
-   "The organizer planned a full-day program, but many participants had long travel times.",
-   "The group started later because several people arrived after nine.",
-   "The organizer removed one activity, so the event finished at four instead of six.",
-   "Some participants were disappointed, but most people liked the shorter day.",
-   "They had more time to return home, and the main activities were still useful.",
-   "The organizer sent a message before the next event and explained the new schedule clearly."
+   "Leo ordered a large coffee.",
+   "The waiter brought a small one.",
+   "He got angry and asked for a refund.",
+   "Marta brought the coffee Leo ordered.",
+   "He said it was too small.",
+   "She asked for the receipt, but he didn't have it."
   ],
   "idea": {
-   "q": "What is the text mostly about?",
+   "q": "What are the cards about?",
    "o": [
-    "A schedule changed for good reasons",
-    "A new training room",
-    "A long trip to another city"
+    "Two versions of the same problem",
+    "Two different restaurants",
+    "A job interview"
    ],
    "a": 0,
-   "why": "The event changed its schedule because of travel times, and most people liked it."
+   "why": "Leo and Marta tell the same coffee problem in different ways."
   },
-  "notice": "Find one reason (because), one contrast (but) and one result (so).",
-  "reuse": "Reuse one sentence in a true answer about a plan that changed.",
-  "retell": "Tell it in three sentences: change, reason, result.",
+  "notice": "Find one sentence with ordered and one with said.",
+  "reuse": "Say who you think was right and why.",
+  "retell": "Tell the case in three sentences: Leo ordered … Marta brought … The problem was …",
   "tn": [
-   "Read together once. One minute for the main idea.",
-   "Which sentence can you use? Say it about you.",
-   "Suggested examples: “…started later because several people arrived after nine.” and “…removed one activity, so the event finished…”"
+   "Read the two cards together once. One minute for the main idea. Then ask: who do you believe?",
+   "Which sentence can you use? Say it about a problem you know.",
+   "Suggested examples: “He got angry and asked for a refund.” and “He said it was too small.” No detail questions."
   ]
  },
  "listen": {
   "title": "Listen to a short conversation.",
-  "scene": "Two people talk about a training event.",
+  "scene": "Two coworkers talk about a store problem.",
   "how": {
    "steps": [
     "Listen once for the situation.",
@@ -308,104 +335,226 @@ window.SESSION={
   "lines": [
    {
     "sp": "A",
-    "t": "Why did the group start later?",
+    "t": "What happened at the store?",
     "file": "audio/L05-S05-listening-001-a.mp3"
    },
    {
     "sp": "B",
-    "t": "Because several people arrived after nine.",
+    "t": "A customer got angry because his new phone case broke.",
     "file": "audio/L05-S05-listening-002-b.mp3"
    },
    {
     "sp": "A",
-    "t": "What changed?",
+    "t": "Did he have the receipt?",
     "file": "audio/L05-S05-listening-003-a.mp3"
    },
    {
     "sp": "B",
-    "t": "The organizer removed one activity, so the event finished earlier.",
+    "t": "Yes, he did. He bought it two days ago.",
     "file": "audio/L05-S05-listening-004-b.mp3"
    },
    {
     "sp": "A",
-    "t": "Did people like it?",
+    "t": "What did the employee say?",
     "file": "audio/L05-S05-listening-005-a.mp3"
    },
    {
     "sp": "B",
-    "t": "Some were disappointed, but most people liked the shorter day.",
+    "t": "She was polite. She said sorry and gave him a refund.",
     "file": "audio/L05-S05-listening-006-b.mp3"
+   },
+   {
+    "sp": "A",
+    "t": "Did he say thank you?",
+    "file": "audio/L05-S05-listening-007-a.mp3"
+   },
+   {
+    "sp": "B",
+    "t": "Yes, he did, and he smiled. I think the customer was right this time.",
+    "file": "audio/L05-S05-listening-008-b.mp3"
+   },
+   {
+    "sp": "A",
+    "t": "Polite service makes a big difference.",
+    "file": "audio/L05-S05-listening-009-a.mp3"
+   },
+   {
+    "sp": "B",
+    "t": "Yes. He wasn't angry at the end.",
+    "file": "audio/L05-S05-listening-010-b.mp3"
    }
   ],
   "idea": {
    "q": "What is the situation?",
    "o": [
-    "People talk about a schedule change",
-    "People talk about a new customer",
-    "People talk about a trip to the beach"
+    "A customer asks for a refund and gets it",
+    "A customer loses his phone",
+    "A customer applies for a job"
    ],
    "a": 0,
-   "why": "They talk about why a training event changed."
+   "why": "The phone case broke, he had the receipt and the employee gave him a refund."
   },
   "acts": [
-   "Listen again. Say one reason, one contrast and one result.",
-   "Say what changed and why in one sentence.",
-   "Answer for your own work: Did people like the last change?"
+   "Ask one question with What did … or Why did …",
+   "Say who was right and why.",
+   "Say one thing a polite employee says."
   ],
   "key": [
-   "Situation: a training event changed.",
-   "Key detail: people arrived after nine; one activity was removed.",
-   "Next action: the event finished earlier."
+   "Situation: a customer asks for a refund in a store.",
+   "Key detail: the case broke, he had the receipt, the employee was polite.",
+   "Next action: the employee gave him a refund."
   ],
-  "watch": "Play twice. First for the situation. Second for the detail and the next action."
+  "watch": "Play twice. First for the situation. Second for the detail. Natural-slow speed. Planned accents: A American, B Indian English (non-native)."
  },
  "speak": {
-  "kind": "tennis",
-  "name": "Opinion Tennis",
-  "lead": "Return every statement with a reason, a contrast or a result.",
+  "kind": "detective",
+  "name": "The Case Detective",
+  "lead": "Ask questions until you can tell the whole case. Then say who was right.",
   "how": {
    "steps": [
-    "Serve a statement. Your partner answers.",
-    "Every answer needs because, but or so.",
-    "After every second answer, give a personal example."
+    "A asks questions. B gives a clue only after a clear question.",
+    "Fill the case: customer, order, problem, employee, receipt, result.",
+    "Report the case and give your verdict, with and without the cards."
    ],
-   "t": "I serve. You return with because, but or so.",
-   "s": "Short meetings are better, because people stay focused.",
-   "done": "you made at least 8 returns and served two statements."
+   "t": "Ask a clear question. What did he order?",
+   "s": "What did Tom order? He ordered two pizzas.",
+   "done": "you asked five past questions and gave a verdict."
   },
-  "model": "Short meetings are better because people stay focused. Long meetings are sometimes useful, but they are tiring, so I prefer short ones.",
-  "deck": [
-   "Short meetings are better than long meetings.",
-   "Messages are better than phone calls for changes.",
-   "A small problem can cause a big delay.",
-   "Traffic is the main reason people arrive late.",
-   "People like a clear schedule.",
-   "Cancelling a plan needs a good reason.",
-   "A shorter workday is more useful.",
-   "Good weather makes people happier at work.",
-   "It is easy to change a plan at work.",
-   "Extra work is a problem."
+  "model": "Tom ordered two pizzas for eight o'clock. They arrived at nine. He got angry. I think the driver was right, because the receipt showed eight thirty.",
+  "starters": [
+   "What did he / she order?",
+   "What did he / she say?",
+   "Why did … get angry?",
+   "What happened next?",
+   "What did the receipt show?",
+   "Who was right?"
   ],
-  "personal": "Now give a personal example from your own life.",
-  "serve": "Make two statements about plans, meetings or routines. Your partner returns each one with because, but or so.",
+  "cases": [
+   {
+    "title": "Case 1 · The late pizza",
+    "clues": [
+     {
+      "t": "Clue 1",
+      "text": "Two pizzas"
+     },
+     {
+      "t": "Clue 2",
+      "text": "An angry customer"
+     },
+     {
+      "t": "Clue 3",
+      "text": "A receipt"
+     }
+    ],
+    "facts": [
+     {
+      "cat": "Customer",
+      "q": "Who was angry?",
+      "a": "Tom was angry."
+     },
+     {
+      "cat": "Order",
+      "q": "What did he order?",
+      "a": "He ordered two pizzas for eight o'clock."
+     },
+     {
+      "cat": "Problem",
+      "q": "What was the problem?",
+      "a": "The pizzas arrived at nine."
+     },
+     {
+      "cat": "Employee",
+      "q": "What did the driver say?",
+      "a": "He said the traffic was terrible."
+     },
+     {
+      "cat": "Receipt",
+      "q": "What did the receipt show?",
+      "a": "It showed the order at eight thirty."
+     },
+     {
+      "cat": "Result",
+      "q": "What happened next?",
+      "a": "The manager gave him one pizza free."
+     }
+    ]
+   },
+   {
+    "title": "Case 2 · The broken headphones",
+    "clues": [
+     {
+      "t": "Clue 1",
+      "text": "Headphones"
+     },
+     {
+      "t": "Clue 2",
+      "text": "A refund"
+     },
+     {
+      "t": "Clue 3",
+      "text": "A guarantee"
+     }
+    ],
+    "facts": [
+     {
+      "cat": "Customer",
+      "q": "Who was upset?",
+      "a": "Nina was upset."
+     },
+     {
+      "cat": "Order",
+      "q": "What did she buy?",
+      "a": "She bought headphones last week."
+     },
+     {
+      "cat": "Problem",
+      "q": "What was the problem?",
+      "a": "One side stopped working."
+     },
+     {
+      "cat": "Employee",
+      "q": "What did the employee say?",
+      "a": "He said she dropped them."
+     },
+     {
+      "cat": "Receipt",
+      "q": "What did the receipt show?",
+      "a": "It showed a thirty-day guarantee."
+     },
+     {
+      "cat": "Result",
+      "q": "What happened next?",
+      "a": "The store gave her a refund."
+     }
+    ]
+   }
+  ],
+  "report": {
+   "title": "Give your verdict",
+   "lbl": "What happened + who was right + why"
+  },
   "twist": {
-   "title": "The original reason is no longer true!",
-   "text": "Give a new reason and update the result."
+   "title": "The receipt appears!",
+   "text": "It contradicts one person. Who was right now? Say it in three sentences.",
+   "img": {
+    "src": "img/s05-c.jpg",
+    "alt": "A pile of printed receipts"
+   }
   },
   "final": {
-   "say": "The event changed because people arrived late, so we removed one activity. Some people were sad, but most liked the shorter day.",
+   "say": "What did Tom order? He ordered two pizzas. What happened? They arrived late. Why did he get angry? What did the driver say? I think the driver was right, because the receipt showed eight thirty.",
    "check": [
-    "I said the change.",
-    "I gave a reason with because.",
-    "I gave a result with so.",
-    "I used but for a contrast."
+    "I asked five questions in the past.",
+    "I used did + simple verb.",
+    "I used What happened or Who was right.",
+    "I explained who was right in three sentences."
    ],
    "min": 2
   },
   "tn": [
-   "Serve statements from the deck (about 8 minutes). After every second return ask for a personal example. The learner serves two statements (3 min). Twist and final three-sentence explanation (4 min).",
-   "Why? What is the result? Can you give a personal example?",
-   "Expect one accurate connector per response. Do not require however or as a result."
+   "Case 1 with the cards visible (6 min). Hide the cards and report again (3 min). Case 2: switch roles (3 min). Twist and verdict (3 min).",
+   "Ask a clear question. Tell me the case without the cards.",
+   "Repair the question order first. Both verdicts are valid if the reason is clear."
   ]
  },
  "close": {
@@ -416,22 +565,22 @@ window.SESSION={
     "Tick what you can do."
    ],
    "t": "Say it again. Fewer notes.",
-   "s": "",
-   "done": "you repeated the explanation with fewer prompts."
+   "s": "What did he order?",
+   "done": "you repeated the case with fewer prompts."
   },
-  "second": "The event changed because people arrived late. We removed one activity, so we finished earlier. Some people were sad, but most liked it.",
+  "second": "What did the customer order? He ordered two pizzas. Why did he get angry? What happened next? I think the driver was right, because the receipt showed eight thirty.",
   "secondMin": 2,
   "check": [
-   "I can give a reason with because.",
-   "I can show a contrast with but.",
-   "I can show a result with so.",
-   "I can explain a change in three sentences."
+   "I can ask What / Why / Who questions in the past.",
+   "I can use did + simple verb.",
+   "I can tell a case in order.",
+   "I can say who was right and why."
   ],
-  "closeout": "Today I explained a change with a reason and a result.",
-  "transfer": "Send yourself a three-sentence note about one plan that changed: change, reason, result.",
+  "closeout": "Today I asked past questions to reconstruct a case and gave my verdict.",
+  "transfer": "Prepare three past questions about a real customer problem. Ask them in the next class.",
   "next": {
-   "title": "Session 6 · Tell Me the Important Part",
-   "text": "Ask clear detail questions after a short update.",
+   "title": "Session 6 · Subscription Fatigue: Keep It or Cancel It?",
+   "text": "Say when you signed up and last used each service, and decide what to cancel.",
    "href": "s06.html"
   },
   "tn": [

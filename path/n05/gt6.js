@@ -1,4 +1,4 @@
-/* GT English Path · Elemental 2 · engine v7 — route 7/8/8/9/7/15/6 (program 40). One marker: sentences said. */
+/* GT English Path · Elemental 2 · engine v8 — route 7/8/8/9/7/15/6 (program 40). One marker: sentences said. */
 (function(){
 'use strict';
 var D=window.SESSION,ID=D.id,P='gt05m-',$=function(s,r){return (r||document).querySelector(s)},$$=function(s,r){return [].slice.call((r||document).querySelectorAll(s))};
@@ -129,7 +129,7 @@ function twistBlock(K){var T=K.twist;return '<div class="twist"><button type="bu
 function finalBlock(K){return '<div class="sec2"><h3>Your final message <span class="lbl">Tick when you did it</span></h3><div class="model amber"><b>Say</b> '+esc(K.final.say)+' '+sayBtn(K.final.say)+'</div><div class="grid2">'+K.final.check.map(function(c,i){return '<label class="chk"><input type="checkbox" data-m="'+i+'"'+(S.flags['m'+i]?' checked':'')+'>'+esc(c)+'</label>'}).join('')+'</div><div class="row">'+timerHTML(K.final.min||2,true)+'</div></div>'}
 function wireFinal(el){wireSw(el);$$('[data-m]',el).forEach(function(c){c.onchange=function(){if(c.checked)once('m'+c.dataset.m,function(){said(1)})}});var t=$('#tw',el);if(t)t.onclick=function(){$('#twc').hidden=false;this.hidden=true};$$('[data-to]',el).forEach(function(b){b.onclick=function(){$$('[data-to]',el).forEach(function(x){x.classList.toggle('good',x===b)});$('#two').textContent=D.speak.twist.say[+b.dataset.to]}});$$('.timer',el).forEach(wireTimer)}
 function speak(el){var K=D.speak;var head='<p class="lead big">'+esc(K.lead)+'</p>'+how(K.how)+rescue()+'<div class="model"><b>Model</b> <span class="bubble">'+esc(K.model)+'</span>'+sayBtn(K.model)+'</div>';
- if(K.kind==='findwho')return findwho(el,K,head);if(K.kind==='choose')return choose(el,K,head);if(K.kind==='detective')return detective(el,K,head);if(K.kind==='map')return cmap(el,K,head);if(K.kind==='story')return story(el,K,head);if(K.kind==='tennis')return tennis(el,K,head);return gap(el,K,head)}
+ if(K.kind==='findwho')return findwho(el,K,head);if(K.kind==='bill')return bill(el,K,head);if(K.kind==='choose')return choose(el,K,head);if(K.kind==='detective')return detective(el,K,head);if(K.kind==='map')return cmap(el,K,head);if(K.kind==='story')return story(el,K,head);if(K.kind==='tennis')return tennis(el,K,head);if(K.kind==='budget')return budget(el,K,head);return gap(el,K,head)}
 /* find someone who (S01) */
 function findwho(el,K,head){
  el.innerHTML=head+'<div class="fwl">'+K.rows.map(function(r,i){return '<div class="fw"><div class="fwh"><i>'+(i+1)+'</i><b>'+esc(r.t)+'</b></div><div class="qt">'+esc(r.q)+' '+sayBtn(r.q)+'</div><div class="fu">'+r.f.map(function(f){return '<span>'+esc(f)+'</span>'}).join('')+'</div><div class="row"><label class="nm">Name <input type="text" class="nmi" data-nm="'+i+'" placeholder="Who?" maxlength="24" value="'+esc(S.flags['nm'+i]||'')+'"></label>'+sw('I asked','fa'+i)+sw('I asked a follow-up','ff'+i)+'<button type="button" class="btn ghost sm" data-card="'+i+'">Prefer not to share? Use a profile</button></div><div class="fwc" hidden><b>'+esc(r.card[0])+'</b> '+esc(r.card[1])+' '+sayBtn(r.card[1])+'</div></div>'}).join('')+'</div>'+
@@ -208,4 +208,47 @@ function renderClose(){var C=D.close,el=$('#p-close .mount'),nextHref=C.next&&C.
  function capn(){var n=0;$$('[data-c]',el).forEach(function(c){if(c.checked)n++});var e=$('#capn',el);if(e)e.textContent=n}
  $$('[data-c]',el).forEach(function(c){c.onchange=function(){if(c.checked)S.flags['c'+c.dataset.c]=1;else delete S.flags['c'+c.dataset.c];save();capn()}});capn()}
 window.addEventListener('DOMContentLoaded',function(){toggles();build();said(0);var h=parseInt((location.hash||'#1').slice(1),10)||1;go(h-1,false)});
+
+/* secret-objective bill (S04) */
+function bill(el,K,head){var role=S.flags.brole===undefined?-1:S.flags.brole,rev=S.flags.brev||{},ag=S.flags.bag===undefined?-1:S.flags.bag;
+ function cost(n){var t=0;K.ticket.forEach(function(x){if(x.who===n)t+=x.price;else if(x.who==='All')t+=x.price/K.diners.length});return t}
+ function money(v){return '$'+(Math.round(v*100)/100).toString().replace(/\.(\d)$/,'.$10')}
+ el.innerHTML=head+'<div class="sec2"><h3>Pick your secret card <span class="lbl">Do not show it</span></h3><div class="vs3" id="br">'+K.diners.map(function(d,i){return '<button type="button" class="opt o'+(i%2)+'" data-r="'+i+'"><b>'+esc(d.n)+'</b><span>Secret objective</span></button>'}).join('')+'</div><div id="bs"></div></div>'+
+ '<div class="sec2"><h3>The ticket · '+esc(K.venue)+' <span class="lbl">Ask first. Then tap.</span></h3><div class="starters"><b>Ask:</b>'+K.starters.map(function(s){return '<span>'+esc(s)+'</span>'}).join('')+'</div><div class="facts" id="bt"></div><div class="row"><span class="stat">Answered <b id="bn">0</b>/'+K.ticket.length+'</span><span class="note">Partner: tap a line only after a clear Did question.</span></div><div id="bx"></div></div>'+
+ '<div class="sec2"><h3>Agree how to pay <span class="lbl">Use your secret goal</span></h3><div class="vs3" id="ba">'+K.agree.map(function(a,i){return '<button type="button" class="opt o'+(i%2)+'" data-a="'+i+'"><b>'+esc(a.t)+'</b></button>'}).join('')+'</div><div id="bsay"></div></div>'+twistBlock(K)+finalBlock(K)+tn(K.tn);
+ function drawRole(){$$('#br .opt').forEach(function(b){b.classList.toggle('on',+b.dataset.r===role)});
+  $('#bs').innerHTML=role<0?'<p class="note">Tap your name. Read the card. Keep it secret.</p>':'<div class="qd" id="bq"><div class="kicker">Secret objective · '+esc(K.diners[role].n)+'</div><div class="q big">'+esc(K.diners[role].obj)+'</div><button type="button" class="btn ghost sm" id="bh">Hide the card</button></div>';
+  var h=$('#bh');if(h)h.onclick=function(){var q=$('#bq');q.classList.toggle('off');h.textContent=q.classList.contains('off')?'Show the card':'Hide the card'}}
+ function drawTicket(){$('#bt').innerHTML=K.ticket.map(function(t,i){var o=rev[i];return '<button type="button" class="fact'+(o?' open':'')+'" data-i="'+i+'"><span class="cat">'+esc(t.item)+' · '+money(t.price)+'</span><span class="ans">'+(o?esc(t.who==='All'?'All three shared it.':t.who+' ordered it.'):'?')+'</span><span class="ct">Example question: '+esc(t.q)+'</span></button>'}).join('');
+  var n=Object.keys(rev).length;$('#bn').textContent=n;
+  $('#bx').innerHTML=n>=4?'<div class="tots">'+K.diners.map(function(d){return '<div><span>'+esc(d.n)+'</span><b>'+money(cost(d.n))+'</b></div>'}).join('')+'<div class="eq"><span>Equal split</span><b>'+money(K.ticket.reduce(function(s,x){return s+x.price},0)/K.diners.length)+'</b></div></div><p class="note">Compare the totals. Is an equal split fair?</p>':'';
+  $$('#bt .fact').forEach(function(b){b.onclick=function(){var i=+b.dataset.i;if(rev[i])return;rev[i]=1;S.flags.brev=rev;save();said(1);drawTicket()}})}
+ function drawAgree(){$$('#ba .opt').forEach(function(b){b.classList.toggle('on',+b.dataset.a===ag)});
+  $('#bsay').innerHTML=ag<0?'':'<div class="sayline"><b>Say:</b> '+esc(K.agree[ag].say)+' '+sayBtn(K.agree[ag].say)+'</div><div class="row" style="margin-top:10px">'+sw('We agreed','bagree')+'</div>';if(ag>=0)wireSw($('#bsay'))}
+ $$('#br .opt').forEach(function(b){b.onclick=function(){role=+b.dataset.r;S.flags.brole=role;save();drawRole()}});
+ $$('#ba .opt').forEach(function(b){b.onclick=function(){ag=+b.dataset.a;S.flags.bag=ag;save();drawAgree()}});
+ drawRole();drawTicket();drawAgree();wireFinal(el)}
+/* budget challenge (S06): cut a monthly bill by asking when each service was started and last used */
+function budget(el,K,head){var rev=S.flags.bgv||{},dec=S.flags.bgd||{},bump=false;
+ function price(i){return bump&&K.twist.bump&&K.twist.bump.i===i?K.twist.bump.price:K.subs[i].price}
+ function total(){var t=0;K.subs.forEach(function(s,i){if(dec[i]!=='c')t+=price(i)});return t}
+ function start(){var t=0;K.subs.forEach(function(s,i){t+=price(i)});return t}
+ el.innerHTML=head+'<div class="sec2"><h3>'+esc(K.profile.name)+' <span class="lbl">Ask first. Then tap.</span></h3><p class="note">'+esc(K.profile.text)+'</p><div class="tots" id="bgm"></div><div class="starters"><b>Ask:</b>'+K.starters.map(function(s){return '<span>'+esc(s)+'</span>'}).join('')+'</div><div class="bgrid" id="bgg"></div></div>'+
+ '<div class="sec2"><h3>Say your plan <span class="lbl">Decide on three services or more</span></h3><div id="bgs"></div></div>'+twistBlock(K)+finalBlock(K)+tn(K.tn);
+ function drawMeter(){var t=total(),g=K.profile.goal,left=t-g;
+  $('#bgm').innerHTML='<div><span>Now</span><b>$'+t+'</b></div><div><span>Goal</span><b>$'+g+'</b></div><div class="eq"><span>'+(left>0?'Still to cut':'Goal reached')+'</span><b>'+(left>0?'$'+left:'OK')+'</b></div>'}
+ function drawCards(){$('#bgg').innerHTML=K.subs.map(function(s,i){var a=rev[i+'s'],b=rev[i+'l'],both=a&&b,d=dec[i];
+  return '<div class="bgc'+(d==='c'?' off':'')+'" style="--c:'+s.c+'"><div class="bgh"><b>'+esc(s.n)+'</b><span class="bgp">$'+price(i)+' a month</span></div>'+
+  '<button type="button" class="gf bgf'+(a?' open':'')+'" data-i="'+i+'" data-k="s"><b>Signed up</b><span>'+(a?esc(s.su):'?')+'</span><em class="ct">Example question: '+esc(s.qs)+'</em></button>'+
+  '<button type="button" class="gf bgf'+(b?' open':'')+'" data-i="'+i+'" data-k="l"><b>Last used</b><span>'+(b?esc(s.lu):'?')+'</span><em class="ct">Example question: '+esc(s.ql)+'</em></button>'+
+  '<div class="bgd"><button type="button" class="keep'+(d==='k'?' on':'')+'" data-i="'+i+'" data-d="k"'+(both?'':' disabled')+'>Keep</button><button type="button" class="cancel'+(d==='c'?' on':'')+'" data-i="'+i+'" data-d="c"'+(both?'':' disabled')+'>Cancel</button></div>'+
+  (d?'<div class="sayline"><b>Say:</b> '+esc(d==='k'?s.keep:s.cancel)+' '+sayBtn(d==='k'?s.keep:s.cancel)+'</div>':(both?'<p class="note">Decide: keep it or cancel it?</p>':''))+'</div>'}).join('');
+  $$('#bgg .bgf').forEach(function(b){b.onclick=function(){var k=b.dataset.i+b.dataset.k;if(rev[k])return;rev[k]=1;S.flags.bgv=rev;save();said(1);drawAll()}});
+  $$('#bgg [data-d]').forEach(function(b){b.onclick=function(){dec[b.dataset.i]=b.dataset.d;S.flags.bgd=dec;save();said(1);drawAll()}})}
+ function drawPlan(){var n=Object.keys(dec).length,c=[];K.subs.forEach(function(s,i){if(dec[i]==='c')c.push(s.n)});
+  if(n<3){$('#bgs').innerHTML='<p class="note">Decide on three services. Then say your plan.</p>';return}
+  var line=(c.length?'I cancel '+c.join(' and ')+'. ':'I keep everything. ')+'Now I pay $'+total()+' a month.';
+  $('#bgs').innerHTML='<div class="sayline"><b>Say:</b> '+esc(line)+' '+sayBtn(line)+'</div><div class="row" style="margin-top:10px">'+sw('We agreed on a plan','bgplan')+'</div>';wireSw($('#bgs'))}
+ function drawAll(){drawMeter();drawCards();drawPlan()}
+ drawAll();wireFinal(el);var t=$('#tw',el);if(t)t.addEventListener('click',function(){bump=true;drawAll()})}
 })();

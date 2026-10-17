@@ -1,44 +1,56 @@
 window.SESSION={
  "id": "s04",
  "n": 4,
- "title": "What Were You Doing?",
- "can": "I can say what I was doing when something happened.",
- "focus": "Past continuous · when",
- "evidence": "Short incident report",
- "talk": 37,
+ "title": "Splitting the Bill: Fair or Awkward?",
+ "can": "I can ask who ordered what and agree how to pay.",
+ "focus": "Did…? questions · short answers",
+ "evidence": "Five Did questions and an agreement",
+ "talk": 38,
  "photos": {
   "hero": {
    "src": "img/s04-hero.jpg",
-   "alt": "A hand holds a phone to an ear"
+   "alt": "Friends talking and eating at a long restaurant table"
   },
   "a": {
    "src": "img/s04-a.jpg",
-   "alt": "A smiling woman talks on the phone at her desk"
+   "alt": "A hand holds a card next to a payment terminal"
+  },
+  "p1": {
+   "src": "img/s04-p1.jpg",
+   "alt": "A plate with salad and rice and a glass bottle of water"
+  },
+  "p2": {
+   "src": "img/s04-p2.jpg",
+   "alt": "A plate of meat and vegetables with a glass of red wine"
+  },
+  "p3": {
+   "src": "img/s04-p3.jpg",
+   "alt": "A pizza with salad leaves and sausage on a plate"
   },
   "b": {
-   "src": "img/s04-b.jpg",
-   "alt": "A team meeting around a long table in a bright office"
+   "src": "img/s04-p2.jpg",
+   "alt": "A plate of meat and vegetables with a glass of red wine"
   },
   "c": {
-   "src": "img/s04-c.jpg",
-   "alt": "A modern lobby with sofas and a big sign"
+   "src": "img/s04-p3.jpg",
+   "alt": "A pizza with salad leaves and sausage on a plate"
   }
  },
  "credits": "various photographers",
  "card": {
-  "situation": "Something interrupted your work. You report it.",
+  "situation": "The bill arrives and nobody remembers who ordered what.",
   "phrases": [
-   "I was … when …",
-   "They were … while …",
-   "What were you doing?"
+   "Did you order …?",
+   "Yes, I did. / No, I didn't.",
+   "Let's split it."
   ],
-  "roles": "A is the detective. B knows the case.",
-  "finished": "You told the incident with was / were + -ing and when."
+  "roles": "A asks. B answers with a secret card. Then switch.",
+  "finished": "You asked five Did questions and agreed how to pay."
  },
  "rescue": [
-  "Sorry, what were you doing?",
-  "Can you say it again?",
-  "I don't know the word."
+  "Sorry, can you repeat?",
+  "How do you say it?",
+  "Let me think."
  ],
  "warm": {
   "how": {
@@ -48,35 +60,35 @@ window.SESSION={
     "Switch after each question."
    ],
    "t": "Ask your partner. Listen to the full answer.",
-   "s": "I was driving when my boss called.",
+   "s": "I ate at a taco place. I ordered tacos.",
    "done": "each partner answered the 3 questions."
   },
   "qs": [
    {
-    "q": "What were you doing at eight o'clock last night?",
+    "q": "Did you eat out last week?",
     "f": [
-     "Who were you with?",
-     "Were you busy?"
+     "Where did you go?",
+     "Who did you go with?"
     ]
    },
    {
-    "q": "Do calls or messages interrupt your work often?",
+    "q": "Did you order a lot or a little?",
     "f": [
-     "Who calls you?",
-     "What do you do?"
+     "What did you order?",
+     "Did you share anything?"
     ]
    },
    {
-    "q": "What usually happens when you are busy?",
+    "q": "Is splitting the bill fair for everyone?",
     "f": [
-     "How do you feel?",
-     "Who helps you?"
+     "Why or why not?",
+     "What do you usually do?"
     ]
    }
   ],
   "tn": [
-   "Pairs, 7 minutes. One question at a time. Ask for a follow-up after every answer.",
-   "What were you doing? What happened?",
+   "Pairs, 7 minutes. One question at a time. Ask a follow-up after every answer. Accept present or past answers.",
+   "Did you eat out? What did you order?",
    "Do not correct now. Note two repeated errors for minute 54."
   ]
  },
@@ -93,73 +105,74 @@ window.SESSION={
   },
   "words": [
    {
-    "w": "interrupt",
-    "def": "stop an activity for a short time",
-    "es": "interrumpir",
-    "ex": "Calls interrupt my work."
+    "w": "order",
+    "def": "ask for food or a drink",
+    "es": "pedir",
+    "ex": "I ordered a salad."
    },
    {
-    "w": "call",
-    "def": "phone someone",
-    "es": "llamar",
-    "ex": "I call my team at nine."
+    "w": "bill",
+    "def": "the paper that shows how much to pay",
+    "es": "cuenta",
+    "ex": "The bill is on the table."
    },
    {
-    "w": "wait",
-    "def": "stay until someone or something arrives",
-    "es": "esperar",
-    "ex": "I wait for the bus."
+    "w": "split",
+    "def": "divide the cost in equal parts",
+    "es": "dividir",
+    "ex": "Let's split the bill."
    },
    {
-    "w": "drive",
-    "def": "control a car",
-    "es": "manejar",
-    "ex": "I drive to work."
+    "w": "share",
+    "def": "use or eat something together",
+    "es": "compartir",
+    "ex": "We shared a pizza."
    },
    {
-    "w": "during",
-    "def": "at a time inside an activity or period",
-    "es": "durante",
-    "ex": "I talk to customers during the morning."
+    "w": "tip",
+    "def": "extra money for good service",
+    "es": "propina",
+    "ex": "I left a ten percent tip."
    },
    {
-    "w": "while",
-    "def": "at the same time as another activity",
-    "es": "mientras",
-    "ex": "I listen to music while I work."
+    "w": "expensive",
+    "def": "costs a lot of money",
+    "es": "caro",
+    "ex": "The steak was expensive."
    },
    {
-    "w": "happen",
-    "def": "take place",
-    "es": "ocurrir, pasar",
-    "ex": "Something happened today."
+    "w": "fair",
+    "def": "correct for everyone",
+    "es": "justo",
+    "ex": "Paying your part is fair."
    },
    {
-    "w": "busy",
-    "def": "having many things to do",
-    "es": "ocupado",
-    "ex": "I am busy on Mondays."
+    "w": "each",
+    "def": "every one of the people",
+    "es": "cada uno",
+    "ex": "Each person pays twenty pesos."
    }
   ],
   "tn": [
-   "One meaning at a time. Say the word first, then check. After each match, one true sentence.",
+   "One meaning at a time. The learner says the word first, then checks. After each match, one true sentence.",
    "What is the word? Is it true for you?",
-   "Manual key: A-4, B-5, C-7, D-2, E-3, F-8, G-6, H-1."
+   "Key: 1-A, 2-B, 3-C, 4-D, 5-E, 6-F, 7-G, 8-H (same position)."
   ]
  },
  "gram": {
-  "lead": "Give the background action, then the event.",
+  "lead": "Ask about the past with Did + subject + simple verb. Answer with did or didn't.",
   "rule": [
-   "The activity in progress: was / were + -ing. I was driving.",
-   "The event: past simple. My manager called.",
-   "Join them with when: I was driving when my manager called."
+   "Question: Did you order the wine?",
+   "Answer: Yes, I did. / No, I didn't. I had water.",
+   "After did, the verb stays simple: order, not ordered."
   ],
-  "es": "Pasado continuo (was/were + -ing) para la acción en progreso y pasado simple para el evento que la interrumpe. Se unen con when.",
+  "es": "Preguntas en pasado: Did + sujeto + verbo simple (Did you order…?). Respuesta corta: Yes, I did. / No, I didn't. Después de did el verbo no lleva -ed. Puedes agregar un dato: No, I didn't. I had water.",
   "useful": [
-   "I was ... when ...",
-   "They were ... while ...",
-   "There was a problem with ...",
-   "What were you doing?"
+   "Did you order the wine?",
+   "Yes, I did.",
+   "No, I didn't. I had water.",
+   "Did we ask for dessert?",
+   "Let's split it."
   ],
   "how": {
    "steps": [
@@ -168,91 +181,91 @@ window.SESSION={
     "Say it aloud."
    ],
    "t": "Which sentence is correct? Say it.",
-   "s": "I was driving when my manager called.",
+   "s": "Did you order the wine? No, I didn't.",
    "done": "you chose and said 5 sentences."
   },
   "drill": [
    {
-    "sit": "Say what you were doing.",
+    "sit": "Ask if he ordered the wine.",
     "o": [
-     "I was driving.",
-     "I was drive."
+     "Did you order the wine?",
+     "Did you ordered the wine?"
     ],
     "ans": 0,
-    "why": "was + -ing."
+    "why": "After did, the simple verb: order."
    },
    {
-    "sit": "Say the interruption.",
+    "sit": "Say yes to a Did question.",
     "o": [
-     "My manager was call.",
-     "My manager called."
+     "Yes, I do.",
+     "Yes, I did."
     ],
     "ans": 1,
-    "why": "The event: past simple."
+    "why": "The answer uses did, like the question."
    },
    {
-    "sit": "Join the two ideas.",
+    "sit": "Say no and add one detail.",
     "o": [
-     "I was driving when my manager called.",
-     "I was driving when my manager was calling."
+     "No, I didn't. I had water.",
+     "No, I didn't had water."
     ],
     "ans": 0,
-    "why": "The interrupting event is past simple."
+    "why": "didn't + simple verb. For the detail, a new sentence."
    },
    {
-    "sit": "Ask about the past activity.",
+    "sit": "Ask if we asked for dessert.",
     "o": [
-     "What did you doing?",
-     "What were you doing?"
+     "Do we asked for dessert?",
+     "Did we ask for dessert?"
     ],
     "ans": 1,
-    "why": "What + were + you + -ing."
+    "why": "Did + we + simple verb."
    },
    {
-    "sit": "Say it about two people.",
+    "sit": "Suggest dividing the bill equally.",
     "o": [
-     "They were waiting when the visitor arrived.",
-     "They was waiting when the visitor arrived."
+     "Let's split it.",
+     "Let's to split it."
     ],
     "ans": 0,
-    "why": "They → were."
+    "why": "Let's + simple verb."
    }
   ],
   "say": {
    "title": "Say it your way",
    "items": [
     {
-     "t": "Say what you were doing at eight last night.",
-     "m": "I was watching a program at eight."
+     "t": "Ask about the wine.",
+     "m": "Did you order the wine?"
     },
     {
-     "t": "Join two ideas with when: you were working. The phone rang.",
-     "m": "I was working when the phone rang."
+     "t": "Say you did not order dessert.",
+     "m": "No, I didn't. I had water."
     },
     {
-     "t": "Say it about two people: they were waiting. The visitor arrived.",
-     "m": "They were waiting when the visitor arrived."
+     "t": "Suggest what to do with the bill.",
+     "m": "Let's split it."
     }
    ]
   },
   "turn": {
-   "prompt": "Say one interrupted activity from your life. Use when.",
+   "prompt": "Ask or answer one Did question about a meal.",
    "chips": [
-    "a call during a meeting",
-    "a message while you were driving",
-    "a visitor while you were busy",
-    "the internet stopped",
-    "someone knocked at the door"
+    "a drink",
+    "a main dish",
+    "dessert",
+    "a shared dish",
+    "the tip"
    ]
   },
   "tn": [
-   "Explain in 3 minutes. Keep the contrast simple; do not teach long tense rules.",
+   "Explain in 3 minutes: Did + subject + simple verb; short answers Yes, I did / No, I didn't; add one detail. One example each. Mechanical practice is only the first third.",
    "Which sentence is correct? Say it.",
-   "Repair the form was/were + -ing first."
+   "Repair did + simple verb first (Did you order, not Did you ordered). Accept small errors if the message is clear."
   ]
  },
  "read": {
-  "title": "A Call During the Meeting",
+  "title": "Three friends at dinner",
   "how": {
    "steps": [
     "Read the text once.",
@@ -263,38 +276,80 @@ window.SESSION={
    "s": "",
    "done": "you underlined two sentences and used one."
   },
+  "cards": [
+   {
+    "name": "Ana",
+    "sub": "Salad and water",
+    "img": {
+     "src": "img/s04-p1.jpg",
+     "alt": "A plate with salad and rice and a glass bottle of water"
+    },
+    "facts": [
+     "Ana ordered a salad and water.",
+     "She didn't order dessert.",
+     "She shared the bread."
+    ]
+   },
+   {
+    "name": "Ben",
+    "sub": "Steak and wine",
+    "img": {
+     "src": "img/s04-p2.jpg",
+     "alt": "A plate of meat and vegetables with a glass of red wine"
+    },
+    "facts": [
+     "Ben ordered a steak and a glass of wine.",
+     "He had dessert too.",
+     "He didn't share anything."
+    ]
+   },
+   {
+    "name": "Carla",
+    "sub": "A pizza",
+    "img": {
+     "src": "img/s04-p3.jpg",
+     "alt": "A pizza with salad leaves and sausage on a plate"
+    },
+    "facts": [
+     "Carla ordered a pizza.",
+     "She shared it with Ana.",
+     "She didn't drink wine."
+    ]
+   }
+  ],
   "text": [
-   "Yesterday afternoon, Daniel was leading a short meeting with two coworkers.",
-   "They were discussing a new customer request when Daniel's phone rang.",
-   "He did not answer immediately because the meeting was important.",
-   "A minute later, his assistant sent a message: a visitor was waiting at reception.",
-   "Daniel stopped the meeting, went downstairs, and spoke to the visitor.",
-   "The visitor had the wrong time in the calendar.",
-   "Daniel explained the mistake, offered coffee, and moved the meeting to three o'clock.",
-   "The two coworkers continued their discussion while Daniel was helping the visitor."
+   "Ana ordered a salad and water.",
+   "She didn't order dessert.",
+   "She shared the bread.",
+   "Ben ordered a steak and a glass of wine.",
+   "He had dessert too.",
+   "He didn't share anything.",
+   "Carla ordered a pizza.",
+   "She shared it with Ana.",
+   "She didn't drink wine."
   ],
   "idea": {
-   "q": "What is the text mostly about?",
+   "q": "What are the cards about?",
    "o": [
-    "A meeting interrupted by a visitor problem",
-    "A new customer request",
-    "A coffee break"
+    "What three friends ordered at dinner",
+    "A cooking class",
+    "A new restaurant menu"
    ],
    "a": 0,
-   "why": "A call and a visitor interrupted Daniel's meeting, and he solved the problem."
+   "why": "Each card shows what one friend ordered."
   },
-  "notice": "Find was / were + -ing and the event that interrupted it.",
-  "reuse": "Reuse one sentence in a true answer about an interruption in your day.",
-  "retell": "Report it in three sentences: background action, interruption, solution.",
+  "notice": "Find one sentence with ordered and one with didn't.",
+  "reuse": "Say what you ordered the last time you ate out.",
+  "retell": "Tell what each friend ordered in three sentences.",
   "tn": [
-   "Read together once. One minute for the main idea.",
+   "Read the three cards together once. One minute for the main idea. Then ask: who ordered the most?",
    "Which sentence can you use? Say it about you.",
-   "Suggested examples: “They were discussing a new customer request when Daniel's phone rang.”"
+   "Suggested examples: “Ana ordered a salad and water.” and “She didn't order dessert.” No detail questions."
   ]
  },
  "listen": {
   "title": "Listen to a short conversation.",
-  "scene": "Two coworkers talk about a meeting.",
+  "scene": "Two friends look at the bill.",
   "how": {
    "steps": [
     "Listen once for the situation.",
@@ -308,202 +363,195 @@ window.SESSION={
   "lines": [
    {
     "sp": "A",
-    "t": "What was Daniel doing when his phone rang?",
+    "t": "The bill is here. Did you order the wine?",
     "file": "audio/L05-S04-listening-001-a.mp3"
    },
    {
     "sp": "B",
-    "t": "He was leading a meeting.",
+    "t": "No, I didn't. I had water.",
     "file": "audio/L05-S04-listening-002-b.mp3"
    },
    {
     "sp": "A",
-    "t": "What happened after the message?",
+    "t": "Did we ask for dessert?",
     "file": "audio/L05-S04-listening-003-a.mp3"
    },
    {
     "sp": "B",
-    "t": "He went downstairs because a visitor was waiting.",
+    "t": "Yes, we did. We shared one cake.",
     "file": "audio/L05-S04-listening-004-b.mp3"
    },
    {
     "sp": "A",
-    "t": "Why was the visitor there?",
+    "t": "So, who ordered the expensive steak?",
     "file": "audio/L05-S04-listening-005-a.mp3"
    },
    {
     "sp": "B",
-    "t": "The calendar had the wrong time.",
+    "t": "Ben did. He ordered it, and he had wine too.",
     "file": "audio/L05-S04-listening-006-b.mp3"
+   },
+   {
+    "sp": "A",
+    "t": "Hmm. Let's not split it equally. That isn't fair.",
+    "file": "audio/L05-S04-listening-007-a.mp3"
+   },
+   {
+    "sp": "B",
+    "t": "I agree. Each person pays for their own food, and we share the cake.",
+    "file": "audio/L05-S04-listening-008-b.mp3"
+   },
+   {
+    "sp": "A",
+    "t": "Great. I will leave the tip.",
+    "file": "audio/L05-S04-listening-009-a.mp3"
+   },
+   {
+    "sp": "B",
+    "t": "Thanks! It was a nice dinner.",
+    "file": "audio/L05-S04-listening-010-b.mp3"
    }
   ],
   "idea": {
    "q": "What is the situation?",
    "o": [
-    "A meeting interrupted by a visitor with the wrong time",
-    "A manager arrived late to work",
-    "A phone stopped working"
+    "Two friends decide how to pay the bill",
+    "Two friends choose a restaurant",
+    "Two friends cook dinner"
    ],
    "a": 0,
-   "why": "The visitor had the wrong time in the calendar, so Daniel stopped the meeting."
+   "why": "They check who ordered what and decide that each person pays their own food."
   },
   "acts": [
-   "Change the main event and tell the new incident.",
-   "Say what Daniel was doing when the phone rang.",
-   "Say one thing you do when a visitor arrives early."
+   "Answer one Did question with Yes, I did or No, I didn't.",
+   "Say one fair way to pay the bill.",
+   "Ask your partner: Did you eat out last weekend?"
   ],
   "key": [
-   "Situation: a meeting interrupted by a visitor.",
-   "Key detail: the calendar had the wrong time.",
-   "Next action: Daniel helped the visitor and moved the meeting."
+   "Situation: friends at the end of a dinner.",
+   "Key detail: Ben ordered the expensive steak and wine; they shared one cake.",
+   "Next action: each person pays their own food and they share the cake."
   ],
-  "watch": "Play twice. First for the situation. Second for the detail and the next action."
+  "watch": "Play twice. First for the situation. Second for the detail. Natural-slow speed. Planned accents: A American, B German English (non-native)."
  },
  "speak": {
-  "kind": "detective",
-  "name": "The Case Detective · Timeline",
-  "lead": "Find what happened. Report it as a timeline.",
+  "kind": "bill",
+  "name": "Role Play with a Secret Objective",
+  "lead": "The bill arrives. Ask who ordered what, then agree how to pay. Keep your secret goal.",
   "how": {
    "steps": [
-    "A asks questions. B gives a clue only after a clear question.",
-    "Fill the timeline: background action, interruption, solution.",
-    "Report twice: with the cards, then without the cards."
+    "Pick a secret card. Do not show it.",
+    "Ask Did questions. Tap the ticket after a clear question.",
+    "Agree how to pay. Use your secret goal."
    ],
-   "t": "Ask a clear question. What were they doing?",
-   "s": "What was Rita doing when the internet stopped?",
-   "done": "you reported the incident twice."
+   "t": "Ask a clear question. Did you order the steak?",
+   "s": "Did you order the steak? Yes, I did.",
+   "done": "you asked five Did questions and agreed how to pay."
   },
-  "model": "Rita was finishing a report when the internet stopped. She used her phone and sent the report at five.",
+  "model": "Did you order the wine? No, I didn't. I had water. Let's pay our own food and share the cake.",
+  "venue": "Casa Luna",
   "starters": [
-   "What were you / they doing…?",
-   "What happened…?",
-   "When did…?",
-   "Who was…?",
-   "Why…?",
-   "What did … do?"
+   "Did you order …?",
+   "Did you have …?",
+   "Did we share …?",
+   "Who ordered …?"
   ],
-  "cases": [
+  "ticket": [
    {
-    "title": "Case 1 · The report",
-    "clues": [
-     {
-      "t": "Clue 1",
-      "text": "A report"
-     },
-     {
-      "t": "Clue 2",
-      "text": "The internet"
-     },
-     {
-      "t": "Clue 3",
-      "text": "A deadline"
-     }
-    ],
-    "facts": [
-     {
-      "cat": "Background",
-      "q": "What was Rita doing?",
-      "a": "Rita was finishing a report."
-     },
-     {
-      "cat": "Time",
-      "q": "When did this happen?",
-      "a": "It happened at four o'clock on Thursday."
-     },
-     {
-      "cat": "Interruption",
-      "q": "What happened?",
-      "a": "The internet stopped."
-     },
-     {
-      "cat": "Problem",
-      "q": "What was the problem?",
-      "a": "The report was late for the customer."
-     },
-     {
-      "cat": "Solution",
-      "q": "What did she do?",
-      "a": "She used her phone and sent the report."
-     },
-     {
-      "cat": "Result",
-      "q": "What happened next?",
-      "a": "The customer got the report at five."
-     }
-    ]
+    "item": "Steak",
+    "price": 22,
+    "who": "Dan",
+    "q": "Did you order the steak?"
    },
    {
-    "title": "Case 2 · The driver",
-    "clues": [
-     {
-      "t": "Clue 1",
-      "text": "A car"
-     },
-     {
-      "t": "Clue 2",
-      "text": "A phone call"
-     },
-     {
-      "t": "Clue 3",
-      "text": "A meeting"
-     }
-    ],
-    "facts": [
-     {
-      "cat": "Background",
-      "q": "What was Tom doing?",
-      "a": "Tom was driving to a meeting."
-     },
-     {
-      "cat": "Time",
-      "q": "When did it happen?",
-      "a": "It happened on Monday morning."
-     },
-     {
-      "cat": "Interruption",
-      "q": "What happened?",
-      "a": "His manager called."
-     },
-     {
-      "cat": "Problem",
-      "q": "What did the manager say?",
-      "a": "The meeting was now in another office."
-     },
-     {
-      "cat": "Solution",
-      "q": "What did Tom do?",
-      "a": "He stopped and checked the address."
-     },
-     {
-      "cat": "Result",
-      "q": "What happened next?",
-      "a": "He arrived ten minutes late."
-     }
-    ]
+    "item": "Red wine",
+    "price": 8,
+    "who": "Dan",
+    "q": "Did you have the wine?"
+   },
+   {
+    "item": "Salad",
+    "price": 9,
+    "who": "Eva",
+    "q": "Did you order the salad?"
+   },
+   {
+    "item": "Water",
+    "price": 2,
+    "who": "Eva",
+    "q": "Did you have the water?"
+   },
+   {
+    "item": "Pizza",
+    "price": 14,
+    "who": "Fred",
+    "q": "Did you order the pizza?"
+   },
+   {
+    "item": "Chocolate cake",
+    "price": 6,
+    "who": "All",
+    "q": "Did we share the cake?"
    }
   ],
-  "report": {
-   "title": "Report the incident",
-   "lbl": "Background action + interruption + solution"
-  },
+  "diners": [
+   {
+    "n": "Dan",
+    "obj": "You ordered a lot. You want to split the bill equally. Do not say it too fast!"
+   },
+   {
+    "n": "Eva",
+    "obj": "You had a salad and water. You want to pay only your part."
+   },
+   {
+    "n": "Fred",
+    "obj": "You had a pizza and shared the cake. You want a fair mix: pay your own and share the cake."
+   }
+  ],
+  "agree": [
+   {
+    "t": "Split equally",
+    "say": "Let's split it equally, because it is simple."
+   },
+   {
+    "t": "Each pays their own",
+    "say": "I think each person pays their own, because it is fair."
+   },
+   {
+    "t": "A mix",
+    "say": "Let's share the cake and pay our own food."
+   }
+  ],
   "twist": {
-   "title": "A second visitor arrives!",
-   "text": "Keep explaining the first problem. Then say what you were doing when the second visitor arrived."
+   "title": "Fred forgot his wallet!",
+   "text": "Or the restaurant doesn't split bills. Change your plan. What do you say now?",
+   "img": {
+    "src": "img/s04-a.jpg",
+    "alt": "A hand holds a card next to a payment terminal"
+   },
+   "opts": [
+    "Someone pays for Fred",
+    "Everyone pays by app"
+   ],
+   "say": [
+    "Say: I can pay for Fred, but he pays me back.",
+    "Say: Let's pay by app. Each person sends their part."
+   ]
   },
   "final": {
-   "say": "I was finishing a report when the internet stopped. I used my phone and sent it at five. What were you doing at four?",
+   "say": "Did you order the wine? No, I didn't. I had water. Did we ask for dessert? Yes, we did. Let's pay our own food and share the cake.",
    "check": [
-    "I used was or were + -ing.",
-    "I used when with a past simple event.",
-    "I told the solution.",
-    "I reported it again with fewer prompts."
+    "I asked five Did questions.",
+    "I answered with Yes, I did or No, I didn't.",
+    "I added one detail (I had …).",
+    "We agreed how to pay."
    ],
    "min": 2
   },
   "tn": [
-   "Case 1 with the cards visible (6 min). Hide the cards and report again (3 min). Case 2: switch roles (3 min). Twist and final report (3 min).",
-   "Ask a clear question. Report it again without the cards.",
-   "Keep the contrast simple; do not teach long tense rules."
+   "Pick a secret card (1 min). Ticket: the partner or the teacher taps a line only after a clear Did question (6 min). Agree how to pay with the secret goal (3 min). Twist and final (4 min). Individual and group both work: in 1 to 1 the teacher takes another diner.",
+   "Did you order …? What did you have? Let's …",
+   "Repair did + simple verb. The agreement may be any of the three options: the language is the goal, not the money."
   ]
  },
  "close": {
@@ -514,22 +562,22 @@ window.SESSION={
     "Tick what you can do."
    ],
    "t": "Say it again. Fewer notes.",
-   "s": "",
-   "done": "you repeated the report with fewer prompts."
+   "s": "Did you order …?",
+   "done": "you repeated the questions with fewer prompts."
   },
-  "second": "I was finishing a report when the internet stopped. I used my phone. I sent it at five.",
+  "second": "Did you order the wine? No, I didn't. I had water. Did we ask for dessert? Yes, we did. Let's pay our own food and share the cake.",
   "secondMin": 2,
   "check": [
-   "I can say what I was doing when something happened.",
-   "I can connect two actions with when.",
-   "I can report an incident in order.",
-   "I can ask What were you doing?"
+   "I can ask Did you …? about the past.",
+   "I can answer Yes, I did or No, I didn't.",
+   "I can add a detail with I had …",
+   "I can suggest how to pay with Let's …"
   ],
-  "closeout": "Today I explained an interrupted action and the event that changed the situation.",
-  "transfer": "Prepare one sentence with “I was … when …” about a real or invented situation.",
+  "closeout": "Today I asked five Did questions and agreed how to pay.",
+  "transfer": "Ask someone at home five Did questions about their day. Write one answer.",
   "next": {
-   "title": "Session 5 · Why Did It Change?",
-   "text": "Explain a change with because, but and so.",
+   "title": "Session 5 · Is the Customer Always Right?",
+   "text": "Ask what happened and decide who was right.",
    "href": "s05.html"
   },
   "tn": [

@@ -1,44 +1,56 @@
 window.SESSION={
  "id": "s06",
  "n": 6,
- "title": "Tell Me the Important Part",
- "can": "I can ask five clear questions and summarize the answers.",
- "focus": "Wh- questions · past and present",
- "evidence": "5-question interview + summary",
+ "title": "Subscription Fatigue: Keep It or Cancel It?",
+ "can": "I can say when I signed up and last used a service, and decide what to cancel.",
+ "focus": "ago / last · past simple",
+ "evidence": "Three services with ago and last, and what to cancel",
  "talk": 37,
  "photos": {
   "hero": {
    "src": "img/s06-hero.jpg",
-   "alt": "A reception window in a clean waiting room"
+   "alt": "A hand holds a card next to a payment terminal"
   },
   "a": {
    "src": "img/s06-a.jpg",
-   "alt": "A woman checks a tablet at a reception desk"
+   "alt": "A hand writes a check list in a notebook"
   },
   "b": {
    "src": "img/s06-b.jpg",
-   "alt": "A blank notebook with a pen"
+   "alt": "A smiling cashier and a customer paying with a phone"
   },
   "c": {
    "src": "img/s06-c.jpg",
-   "alt": "A black office desk phone"
+   "alt": "A pile of printed receipts"
+  },
+  "p1": {
+   "src": "img/s06-p1.jpg",
+   "alt": "A woman looks at a tablet at home"
+  },
+  "p2": {
+   "src": "img/s06-p2.jpg",
+   "alt": "A woman works on a laptop on a bed"
+  },
+  "p3": {
+   "src": "img/s06-p3.jpg",
+   "alt": "A notebook with a pen on a gray table"
   }
  },
  "credits": "various photographers",
  "card": {
-  "situation": "You need details about an appointment.",
+  "situation": "Maya pays too much every month. You help her cut the bill.",
   "phrases": [
-   "Where / When / Who / Why …?",
-   "Could you tell me …?",
-   "So, the plan is …"
+   "I signed up … ago.",
+   "I used it last …",
+   "I cancel …, because …"
   ],
-  "roles": "A asks. B answers only clear questions.",
-  "finished": "You asked five questions and summarized without looking."
+  "roles": "A asks. B knows the cards. Then switch.",
+  "finished": "You said when you signed up and last used three services, and you canceled with a reason."
  },
  "rescue": [
-  "Sorry, could you repeat?",
-  "Could you tell me the time?",
-  "I don't know the word."
+  "Sorry, can you repeat?",
+  "How do you say it?",
+  "Let me think."
  ],
  "warm": {
   "how": {
@@ -48,35 +60,35 @@ window.SESSION={
     "Switch after each question."
    ],
    "t": "Ask your partner. Listen to the full answer.",
-   "s": "Where is it? What time does it start?",
+   "s": "I have three subscriptions. I use two.",
    "done": "each partner answered the 3 questions."
   },
   "qs": [
    {
-    "q": "What question helps you understand a problem quickly?",
+    "q": "How many subscriptions do you have?",
     "f": [
-     "Why is it useful?",
-     "When do you use it?"
+     "Which ones do you pay for every month?",
+     "Which one is your favorite?"
     ]
    },
    {
-    "q": "Do you prefer messages with many details or only the important facts?",
+    "q": "When did you last use all of them?",
     "f": [
-     "Why?",
-     "Give an example."
+     "Which one did you use yesterday?",
+     "Which one did you forget?"
     ]
    },
    {
-    "q": "When do you ask people to repeat information?",
+    "q": "Which ones are worth the money?",
     "f": [
-     "What do you say?",
-     "Is it polite?"
+     "Why is it worth it?",
+     "Which one is a waste of money?"
     ]
    }
   ],
   "tn": [
-   "Pairs, 7 minutes. One question at a time. Ask for a follow-up after every answer.",
-   "What is the important part?",
+   "Pairs, 7 minutes. One question at a time. Ask a follow-up after every answer. Accept present or past: ago and last come next. Anyone who prefers not to share uses a friend's subscriptions.",
+   "How many subscriptions? Tell me more.",
    "Do not correct now. Note two repeated errors for minute 54."
   ]
  },
@@ -93,73 +105,74 @@ window.SESSION={
   },
   "words": [
    {
-    "w": "detail",
-    "def": "a small but important piece of information",
-    "es": "detalle",
-    "ex": "I need one more detail."
+    "w": "subscription",
+    "def": "a service you pay for every month",
+    "es": "suscripción",
+    "ex": "I have three subscriptions."
    },
    {
-    "w": "person",
-    "def": "someone involved in a situation",
-    "es": "persona",
-    "ex": "A new person joined my team."
+    "w": "sign up",
+    "def": "start to use a service with your name",
+    "es": "registrarse",
+    "ex": "I signed up two years ago."
    },
    {
-    "w": "place",
-    "def": "where something happens",
-    "es": "lugar",
-    "ex": "The place is near the park."
+    "w": "cancel",
+    "def": "stop a service you pay for",
+    "es": "cancelar",
+    "ex": "I canceled the gym last year."
    },
    {
-    "w": "date",
-    "def": "the day, month, or year of an event",
-    "es": "fecha",
-    "ex": "The date is October tenth."
+    "w": "monthly",
+    "def": "every month",
+    "es": "mensual",
+    "ex": "The monthly price is ten dollars."
    },
    {
-    "w": "time",
-    "def": "the hour when something happens",
-    "es": "hora",
-    "ex": "The time is ten o'clock."
+    "w": "charge",
+    "def": "money a company takes from your card",
+    "es": "cargo, cobro",
+    "ex": "I saw a charge on my card."
    },
    {
-    "w": "reason",
-    "def": "why something happens",
-    "es": "razón, motivo",
-    "ex": "The reason is traffic."
+    "w": "trial",
+    "def": "a short time to try a service for free",
+    "es": "prueba gratuita",
+    "ex": "The trial was free for seven days."
    },
    {
-    "w": "answer",
-    "def": "information given after a question",
-    "es": "respuesta",
-    "ex": "I have an answer."
+    "w": "worth it",
+    "def": "good enough for the money",
+    "es": "vale la pena",
+    "ex": "Music is worth it for me."
    },
    {
-    "w": "question",
-    "def": "words for asking for information",
-    "es": "pregunta",
-    "ex": "I have a question."
+    "w": "waste",
+    "def": "using money or time for nothing",
+    "es": "desperdicio",
+    "ex": "The gym was a waste of money."
    }
   ],
   "tn": [
-   "One meaning at a time. Say the word first, then check. After each match, one true sentence.",
+   "One meaning at a time. The learner says the word first, then checks. After each match, one true sentence.",
    "What is the word? Is it true for you?",
-   "Manual key: A-6, B-5, C-1, D-8, E-2, F-7, G-3, H-4."
+   "Key: 1-A, 2-B, 3-C, 4-D, 5-E, 6-F, 7-G, 8-H (same position)."
   ]
  },
  "gram": {
-  "lead": "Question word first, then the helper.",
+  "lead": "Say when something happened with ago and last. Use the past.",
   "rule": [
-   "Question word first: Where did it happen?",
-   "Then the helper: Why is it changing?",
-   "After was / were, do not use do: Where were you?"
+   "ago goes after the time: two years ago, three days ago.",
+   "last goes before the time: last week, last month, last year.",
+   "for = how long: I didn't use it for six months. Question: When did you last use it?"
   ],
-  "es": "Primero la palabra de pregunta y luego el auxiliar. Con was/were no se usa do: Where were you?",
+  "es": "ago va después del tiempo (two years ago = hace dos años). last va antes (last month = el mes pasado, sin the). for = durante (for six months). Pregunta: When did you last use it? Después de did y didn't, el verbo no lleva -ed: I didn't use it.",
   "useful": [
-   "Could you tell me ...?",
-   "What time does ...?",
-   "Who is ...?",
-   "So, the plan is ..."
+   "I signed up two years ago.",
+   "I used it last month.",
+   "I didn't use it for six months.",
+   "When did you last use it?",
+   "I canceled it last week."
   ],
   "how": {
    "steps": [
@@ -168,91 +181,91 @@ window.SESSION={
     "Say it aloud."
    ],
    "t": "Which sentence is correct? Say it.",
-   "s": "Where did it happen? Why is it changing?",
+   "s": "I signed up two years ago. I used it last week.",
    "done": "you chose and said 5 sentences."
   },
   "drill": [
    {
-    "sit": "Ask about the place.",
+    "sit": "Say that you signed up two years ago.",
     "o": [
-     "Where did it happen?",
-     "Where it happened?"
+     "I signed up two years ago.",
+     "I signed up since two years."
     ],
     "ans": 0,
-    "why": "Question word + helper + subject."
+    "why": "Time + ago: two years ago."
    },
    {
-    "sit": "Ask about the reason now.",
+    "sit": "Say that you used it last month.",
     "o": [
-     "Why it is changing?",
-     "Why is it changing?"
+     "I used it the last month.",
+     "I used it last month."
     ],
     "ans": 1,
-    "why": "Question word + is + subject + -ing."
+    "why": "last + time, without the."
    },
    {
-    "sit": "Ask where your partner was.",
+    "sit": "Say that you did not use it for six months.",
     "o": [
-     "Where were you?",
-     "Where did you were?"
+     "I didn't use it for six months.",
+     "I didn't used it for six months."
     ],
     "ans": 0,
-    "why": "After was / were, do not use do."
+    "why": "After didn't, the simple verb: use."
    },
    {
-    "sit": "Ask about the time.",
+    "sit": "Ask when your partner last used it.",
     "o": [
-     "What time it starts?",
-     "What time does it start?"
+     "When you last used it?",
+     "When did you last use it?"
     ],
     "ans": 1,
-    "why": "What time + does + subject + base verb."
+    "why": "Question word + did + subject + simple verb."
    },
    {
-    "sit": "Ask politely for information.",
+    "sit": "Say that you canceled it last week.",
     "o": [
-     "Could you tell me the address?",
-     "Could you tell me what is the address?"
+     "I canceled it last week.",
+     "I cancel it last week."
     ],
     "ans": 0,
-    "why": "Could you tell me + the information."
+    "why": "With last week, the past: canceled."
    }
   ],
   "say": {
    "title": "Say it your way",
    "items": [
     {
-     "t": "The answer is “In a new building.” Say the question.",
-     "m": "Where is the appointment?"
+     "t": "Say when you signed up for a service.",
+     "m": "I signed up two years ago."
     },
     {
-     "t": "The answer is “At ten.” Say the question.",
-     "m": "What time does it start?"
+     "t": "Say when you last used it.",
+     "m": "I used it last week."
     },
     {
-     "t": "The answer is “Mr. Diaz.” Say the question.",
-     "m": "Who do I need to meet?"
+     "t": "Ask your partner about a service.",
+     "m": "When did you last use it?"
     }
    ]
   },
   "turn": {
-   "prompt": "Ask your partner one real question about this topic.",
+   "prompt": "Say a true sentence about a subscription.",
    "chips": [
-    "an appointment",
-    "a meeting",
-    "a delivery",
-    "a trip",
-    "a class"
+    "when you signed up",
+    "when you last used it",
+    "how long you didn't use it",
+    "a question for your partner",
+    "something you canceled"
    ]
   },
   "tn": [
-   "Explain in 3 minutes. Question word first, then the helper. Do not use do after was / were.",
-   "Which question is correct? Say it.",
-   "Repair question order selectively."
+   "Explain in 3 minutes: ago after the time, last before the time, for + a period, and the past after them. One example each. Mechanical practice is only the first third.",
+   "Which sentence is correct? Say it.",
+   "Repair ago/last position first (two years ago, last week). Accept small errors if the message is clear."
   ]
  },
  "read": {
-  "title": "A Problem with the Appointment",
+  "title": "Maya's monthly bill",
   "how": {
    "steps": [
     "Read the text once.",
@@ -263,37 +276,80 @@ window.SESSION={
    "s": "",
    "done": "you underlined two sentences and used one."
   },
+  "cards": [
+   {
+    "name": "StreamBox",
+    "sub": "Video app",
+    "img": {
+     "src": "img/s06-p1.jpg",
+     "alt": "A woman looks at a tablet at home"
+    },
+    "facts": [
+     "Maya signed up two years ago.",
+     "She used it last night.",
+     "She pays twelve dollars a month."
+    ]
+   },
+   {
+    "name": "LinguaGo",
+    "sub": "Language app",
+    "img": {
+     "src": "img/s06-p2.jpg",
+     "alt": "A woman works on a laptop on a bed"
+    },
+    "facts": [
+     "She signed up three months ago.",
+     "She used it only one week.",
+     "She didn't use it after the trial."
+    ]
+   },
+   {
+    "name": "Maya's notebook",
+    "sub": "Her monthly bill",
+    "img": {
+     "src": "img/s06-p3.jpg",
+     "alt": "A notebook with a pen on a gray table"
+    },
+    "facts": [
+     "Maya writes her monthly charges.",
+     "The total is eighty dollars.",
+     "She wants to pay less."
+    ]
+   }
+  ],
   "text": [
-   "Marta received a message about an appointment on Thursday, but the message did not include the exact location.",
-   "She called the office to ask for details.",
-   "The receptionist explained that the appointment was in a new building near the park.",
-   "Marta also asked what time she needed to arrive and who she needed to meet.",
-   "The receptionist said she should arrive ten minutes early and ask for Mr. Diaz at reception.",
-   "Marta repeated the information to check it.",
-   "She then sent the main details to her coworker because they were going together."
+   "Maya signed up two years ago.",
+   "She used it last night.",
+   "She pays twelve dollars a month.",
+   "She signed up three months ago.",
+   "She used it only one week.",
+   "She didn't use it after the trial.",
+   "Maya writes her monthly charges.",
+   "The total is eighty dollars.",
+   "She wants to pay less."
   ],
   "idea": {
-   "q": "What is the text mostly about?",
+   "q": "What are the cards about?",
    "o": [
-    "Marta asked questions to get missing details",
-    "A new office building",
-    "A holiday trip"
+    "A person checks her monthly subscriptions",
+    "A person plans a trip",
+    "A person looks for a job"
    ],
    "a": 0,
-   "why": "Marta called to get the missing details about her appointment."
+   "why": "Maya writes her monthly charges and wants to pay less."
   },
-  "notice": "Find how Marta asked for details and how she checked the information.",
-  "reuse": "Reuse one sentence in a true answer about asking for details.",
-  "retell": "Tell it in three sentences: the problem, the questions, the summary.",
+  "notice": "Find one sentence with ago and one with didn't.",
+  "reuse": "Say when you signed up for one of your own services.",
+  "retell": "Tell about two services in three sentences: She signed up … ago. She used it … She …",
   "tn": [
-   "Read together once. One minute for the main idea.",
+   "Read the three cards together once. One minute for the main idea. Then ask: which service is the most useful for Maya?",
    "Which sentence can you use? Say it about you.",
-   "Suggested examples: “She called the office to ask for details.” and “Marta repeated the information to check it.”"
+   "Suggested examples: “Maya signed up two years ago.” and “She didn't use it after the trial.” No detail questions."
   ]
  },
  "listen": {
   "title": "Listen to a short conversation.",
-  "scene": "Two people talk about Marta's appointment.",
+  "scene": "Two coworkers check their monthly charges.",
   "how": {
    "steps": [
     "Listen once for the situation.",
@@ -307,180 +363,205 @@ window.SESSION={
   "lines": [
    {
     "sp": "A",
-    "t": "Where is the appointment?",
+    "t": "Look at my monthly charges. I pay for six subscriptions!",
     "file": "audio/L05-S06-listening-001-a.mp3"
    },
    {
     "sp": "B",
-    "t": "It is in a new building near the park.",
+    "t": "Six? When did you sign up for the gym?",
     "file": "audio/L05-S06-listening-002-b.mp3"
    },
    {
     "sp": "A",
-    "t": "Who does Marta need to meet?",
+    "t": "Two years ago. But I didn't use it for six months.",
     "file": "audio/L05-S06-listening-003-a.mp3"
    },
    {
     "sp": "B",
-    "t": "Mr. Diaz.",
+    "t": "Then it's a waste of money. Cancel it.",
     "file": "audio/L05-S06-listening-004-b.mp3"
    },
    {
     "sp": "A",
-    "t": "Why did she call?",
+    "t": "You're right. I canceled it today.",
     "file": "audio/L05-S06-listening-005-a.mp3"
    },
    {
     "sp": "B",
-    "t": "Because the message did not include the location.",
+    "t": "What about the language app?",
     "file": "audio/L05-S06-listening-006-b.mp3"
+   },
+   {
+    "sp": "A",
+    "t": "I signed up for the free trial last week, and I used it only one day.",
+    "file": "audio/L05-S06-listening-007-a.mp3"
+   },
+   {
+    "sp": "B",
+    "t": "Cancel it before the first charge.",
+    "file": "audio/L05-S06-listening-008-b.mp3"
+   },
+   {
+    "sp": "A",
+    "t": "Okay. But the music app is worth it. I used it yesterday.",
+    "file": "audio/L05-S06-listening-009-a.mp3"
+   },
+   {
+    "sp": "B",
+    "t": "Good. Keep that one.",
+    "file": "audio/L05-S06-listening-010-b.mp3"
    }
   ],
   "idea": {
    "q": "What is the situation?",
    "o": [
-    "Someone checks missing details for an appointment",
-    "Someone cancels a trip",
-    "Someone orders lunch"
+    "Two people decide which subscriptions to cancel",
+    "Two people plan a gym class",
+    "Two people choose a new phone"
    ],
    "a": 0,
-   "why": "Marta needs the place, the person and the reason for her appointment."
+   "why": "They check the monthly charges and cancel the gym and the language app."
   },
   "acts": [
-   "Listen again. Say the place, the person and the reason.",
-   "Ask three new questions about the appointment.",
-   "Say what Marta did to check the information."
+   "Ask your partner: When did you last use your favorite app?",
+   "Say one service you canceled and when.",
+   "Say one service that is worth it and why."
   ],
   "key": [
-   "Situation: Marta needs details about an appointment.",
-   "Key detail: a new building near the park; Mr. Diaz; the message had no location.",
-   "Next action: she sends the details to her coworker."
+   "Situation: two coworkers check their subscriptions.",
+   "Key detail: the gym was a waste of money; the language app was only a trial; the music app is worth it.",
+   "Next action: cancel the gym and the language app, keep the music app."
   ],
-  "watch": "Play twice. First for the situation. Second for the detail and the next action."
+  "watch": "Play twice. First for the situation. Second for the detail. Natural-slow speed. Planned accents: A American, B Brazilian English (non-native)."
  },
  "speak": {
-  "kind": "gap",
-  "name": "The Information Gap",
-  "lead": "Ask only questions to complete the plan. Do not show the card.",
+  "kind": "budget",
+  "name": "Budget Challenge",
+  "lead": "Maya pays $80 a month. Cut the bill to $45. Ask when she signed up and when she last used each service.",
   "how": {
    "steps": [
-    "A asks. B answers only clear questions.",
-    "Do not show the card.",
-    "Summarize the whole appointment without looking."
+    "Ask two questions about a service. Tap its boxes only after a clear question.",
+    "Decide: keep it or cancel it. Watch the total.",
+    "Say your plan with a reason."
    ],
-   "t": "Ask a clear question. I only answer questions.",
-   "s": "Where is the appointment? What time does it start?",
-   "done": "you asked five questions and summarized the card."
+   "t": "Ask a clear question. When did she sign up?",
+   "s": "When did she last use it?",
+   "done": "you asked about each service, cut the bill and gave reasons."
   },
-  "model": "Where is the appointment? What time does it start? Who do I need to meet? Why is it important?",
+  "model": "Maya signed up for the gym one year ago. She used it six months ago. I cancel it, because it is a waste of money.",
+  "profile": {
+   "name": "Maya's monthly subscriptions",
+   "text": "Partner or teacher: tap a box only after a clear question. Do not show the answer first.",
+   "goal": 45
+  },
   "starters": [
-   "Where…?",
-   "What time…?",
-   "Who…?",
-   "Why…?",
-   "Could you tell me…?",
-   "So, the plan is…"
+   "When did she sign up?",
+   "When did she last use it?",
+   "Did she use it last month?",
+   "Is it worth it?"
   ],
-  "cards": [
+  "subs": [
    {
-    "title": "Card 1 · Customer visit",
-    "known": [
-     {
-      "l": "What",
-      "v": "A customer visit"
-     },
-     {
-      "l": "Day",
-      "v": "Thursday"
-     }
-    ],
-    "hidden": [
-     {
-      "l": "Place",
-      "v": "Office 4, new building",
-      "q": "Where is the visit?"
-     },
-     {
-      "l": "Time",
-      "v": "Ten fifteen",
-      "q": "What time does it start?"
-     },
-     {
-      "l": "Person",
-      "v": "Ms. Lopez, at reception",
-      "q": "Who do I meet?"
-     },
-     {
-      "l": "Reason",
-      "v": "To see a new machine",
-      "q": "Why is the visit important?"
-     },
-     {
-      "l": "Detail",
-      "v": "Bring a notebook",
-      "q": "What do I bring?"
-     }
-    ]
+    "n": "StreamBox",
+    "price": 12,
+    "c": "#7A4FB5",
+    "su": "She signed up two years ago.",
+    "lu": "She used it last night.",
+    "qs": "When did she sign up?",
+    "ql": "When did she last use it?",
+    "keep": "I keep StreamBox, because she used it last night.",
+    "cancel": "I cancel StreamBox, because it is a waste of money."
    },
    {
-    "title": "Card 2 · Training session",
-    "known": [
-     {
-      "l": "What",
-      "v": "A short training"
-     },
-     {
-      "l": "Day",
-      "v": "Friday"
-     }
-    ],
-    "hidden": [
-     {
-      "l": "Place",
-      "v": "Room 3, next to the cafe",
-      "q": "Where is the training?"
-     },
-     {
-      "l": "Time",
-      "v": "Nine thirty",
-      "q": "What time does it start?"
-     },
-     {
-      "l": "Person",
-      "v": "Mr. Diaz",
-      "q": "Who gives the training?"
-     },
-     {
-      "l": "Reason",
-      "v": "To learn a new form",
-      "q": "Why is it important?"
-     },
-     {
-      "l": "Detail",
-      "v": "Arrive ten minutes early",
-      "q": "When do I arrive?"
-     }
-    ]
+    "n": "TunePlay",
+    "price": 10,
+    "c": "#0B7A75",
+    "su": "She signed up three years ago.",
+    "lu": "She used it yesterday.",
+    "qs": "When did she sign up?",
+    "ql": "When did she last use it?",
+    "keep": "I keep TunePlay, because she used it yesterday.",
+    "cancel": "I cancel TunePlay, because it is not worth it."
+   },
+   {
+    "n": "FitZone Gym",
+    "price": 30,
+    "c": "#C26A12",
+    "su": "She signed up one year ago.",
+    "lu": "She used it six months ago.",
+    "qs": "When did she sign up?",
+    "ql": "When did she last use it?",
+    "keep": "I keep FitZone Gym, because she wants to exercise.",
+    "cancel": "I cancel FitZone Gym, because she didn't use it for six months."
+   },
+   {
+    "n": "DailyNews",
+    "price": 8,
+    "c": "#2F6FDE",
+    "su": "She signed up four months ago.",
+    "lu": "She used it two months ago.",
+    "qs": "When did she sign up?",
+    "ql": "When did she last use it?",
+    "keep": "I keep DailyNews, because she likes the news.",
+    "cancel": "I cancel DailyNews, because she didn't use it last month."
+   },
+   {
+    "n": "CloudBox",
+    "price": 5,
+    "c": "#475569",
+    "su": "She signed up five years ago.",
+    "lu": "She used it last week.",
+    "qs": "When did she sign up?",
+    "ql": "When did she last use it?",
+    "keep": "I keep CloudBox, because she used it last week.",
+    "cancel": "I cancel CloudBox, because it is not worth it."
+   },
+   {
+    "n": "LinguaGo",
+    "price": 15,
+    "c": "#D6336C",
+    "su": "She signed up three months ago.",
+    "lu": "She last used it three months ago.",
+    "qs": "When did she sign up?",
+    "ql": "When did she last use it?",
+    "keep": "I keep LinguaGo, because she wants to learn.",
+    "cancel": "I cancel LinguaGo, because she didn't use it for three months."
    }
   ],
   "twist": {
-   "title": "Everything changes a little!",
-   "text": "The appointment now starts thirty minutes earlier and has a different contact person. Ask new questions. Then confirm: So, the plan is…"
+   "title": "TunePlay now costs $18 a month!",
+   "text": "It is Maya's favorite service. Keep it or cancel it? Change your plan and say why.",
+   "img": {
+    "src": "img/s06-c.jpg",
+    "alt": "A pile of printed receipts"
+   },
+   "opts": [
+    "Keep TunePlay",
+    "Cancel TunePlay"
+   ],
+   "say": [
+    "Say: I keep TunePlay, because I use it every day.",
+    "Say: I cancel TunePlay, because $18 is too much."
+   ],
+   "bump": {
+    "i": 1,
+    "price": 18
+   }
   },
   "final": {
-   "say": "So, the plan is: Thursday at ten fifteen, Office 4 in the new building. I meet Ms. Lopez because we are looking at a new machine.",
+   "say": "I signed up for TunePlay three years ago. I used it yesterday. I didn't use FitZone Gym for six months. I canceled it last week. Now I pay less, and the rest is worth it.",
    "check": [
-    "I asked at least five questions.",
-    "I used the question word first.",
-    "I summarized place, time, person and reason.",
-    "I confirmed the changed detail."
+    "I said when I signed up for three services.",
+    "I said when I last used two services.",
+    "I used one sentence with didn't.",
+    "I said what I cancel and why."
    ],
    "min": 2
   },
   "tn": [
-   "Card 1 (6 min). Switch roles for Card 2 (5 min). Twist and new confirmation (2 min). Final summary (2 min). Do not let learners show the cards.",
-   "Ask a question. Say the plan: So, the plan is…",
-   "Repair question order selectively. Expect five intelligible questions and a summary with place, time, person and reason."
+   "Ask and tap (6 min): the learner asks two questions per service; the partner or the teacher taps only after a clear question. Decide and watch the total (3 min). Twist (2 min). Say the plan with reasons, then again without the cards (4 min). In 1 to 1 the teacher holds the cards.",
+   "When did she sign up? When did she last use it? Keep it or cancel it? Why?",
+   "Repair ago/last first. Several plans reach $45: the reason matters, not the plan. Do not force personal subscriptions: Maya's list is enough."
   ]
  },
  "close": {
@@ -491,22 +572,23 @@ window.SESSION={
     "Tick what you can do."
    ],
    "t": "Say it again. Fewer notes.",
-   "s": "",
-   "done": "you repeated the summary with fewer prompts."
+   "s": "I signed up … ago.",
+   "done": "you repeated the plan with fewer prompts."
   },
-  "second": "So, the plan is: Thursday at ten fifteen at Office 4. I meet Ms. Lopez because we are looking at a new machine.",
+  "second": "I signed up for the gym one year ago. I didn't use it for six months. I canceled it last week. It was a waste of money. I kept my music app, because it is worth it. When did you last use your apps?",
   "secondMin": 2,
   "check": [
-   "I can ask Where, What time, Who and Why questions.",
-   "I can use the question word first.",
-   "I can summarize the information.",
-   "I can check a changed detail."
+   "I can say when I signed up with ago.",
+   "I can say when I last used something with last.",
+   "I can ask When did you last use it?",
+   "I can say what I cancel and why."
   ],
-  "closeout": "Today I asked clear detail questions and summarized the information.",
-  "transfer": "Before the next class, write four questions you would ask before a first meeting or appointment.",
+  "closeout": "Today I said when I signed up for and last used three services, and I canceled with a reason.",
+  "transfer": "Look at your phone. Record a 45-second voice note about three services: when you signed up, when you last used them, and what you cancel.",
   "next": {
-   "title": "Session 7 · Can You Check the Details?",
-   "text": "Check details politely before you act."
+   "title": "Session 7 · Which Generation Had It Easier?",
+   "text": "Compare life in two eras and give your opinion.",
+   "href": "s07.html"
   },
   "tn": [
    "Minute 54: name two successes. Repair up to three high-value errors. Second attempt: 2 minutes.",

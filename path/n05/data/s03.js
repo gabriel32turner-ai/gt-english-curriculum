@@ -1,48 +1,60 @@
 window.SESSION={
  "id": "s03",
  "n": 3,
- "title": "What Happened First?",
- "can": "I can tell a short story in order with first, then, after that and finally.",
- "focus": "Past simple · first, then, finally",
- "evidence": "60–75 second story",
+ "title": "Family Vacations: Relaxing or Exhausting?",
+ "can": "I can tell about a family trip and decide if it was relaxing or exhausting.",
+ "focus": "Irregular past · went, drove, had",
+ "evidence": "Six sentences about a trip and a verdict",
  "talk": 37,
  "photos": {
   "hero": {
    "src": "img/s03-hero.jpg",
-   "alt": "A cafe table with a laptop, a bag and a phone cable"
+   "alt": "A child waves from a car window while the mother drives"
   },
   "a": {
    "src": "img/s03-a.jpg",
-   "alt": "A hand holds a phone on a wooden cafe table"
+   "alt": "A car trunk full of suitcases and a teddy bear"
   },
   "b": {
    "src": "img/s03-b.jpg",
-   "alt": "A person with an umbrella walks on a rainy night street"
+   "alt": "A driver on a country road seen from the back seat"
   },
   "c": {
    "src": "img/s03-c.jpg",
-   "alt": "A calendar on a screen showing April"
+   "alt": "A sandy beach with umbrellas and many people"
   },
   "d": {
    "src": "img/s03-d.jpg",
-   "alt": "An empty bus stop with a map"
+   "alt": "Two children lying on a bed with cucumber slices on their eyes"
+  },
+  "p1": {
+   "src": "img/s03-p1.jpg",
+   "alt": "A mother and her daughter at the shore at sunset"
+  },
+  "p2": {
+   "src": "img/s03-p2.jpg",
+   "alt": "A wooden cabin in a pine forest"
+  },
+  "p3": {
+   "src": "img/s03-p3.jpg",
+   "alt": "Two children lean out of a car window while a father takes photos"
   }
  },
  "credits": "various photographers",
  "card": {
-  "situation": "A small problem happened. You tell it in order.",
+  "situation": "You come back from a family trip. You tell your story.",
   "phrases": [
-   "First, … Then, …",
-   "After that, …",
-   "Finally, …"
+   "We went to …",
+   "We drove … hours.",
+   "The best part was …"
   ],
-  "roles": "A builds the story from pictures. B listens and asks one question.",
-  "finished": "You told four ordered events and a clear ending."
+  "roles": "A tells. B asks one question. Then switch.",
+  "finished": "You told a trip in six sentences with five irregular verbs and gave a verdict."
  },
  "rescue": [
-  "Sorry, what happened first?",
-  "Can you say it again?",
-  "I don't know the word."
+  "Sorry, can you repeat?",
+  "How do you say it?",
+  "Let me think."
  ],
  "warm": {
   "how": {
@@ -52,35 +64,35 @@ window.SESSION={
     "Switch after each question."
    ],
    "t": "Ask your partner. Listen to the full answer.",
-   "s": "First, I lost my keys. Then, I called my friend.",
+   "s": "We went to the beach. It was crowded.",
    "done": "each partner answered the 3 questions."
   },
   "qs": [
    {
-    "q": "What was the last small problem you had outside work?",
+    "q": "Where did you go on your last trip?",
     "f": [
-     "What happened?",
-     "How did you solve it?"
+     "Who did you go with?",
+     "How did you get there?"
     ]
    },
    {
-    "q": "Do you like telling stories or giving short facts?",
+    "q": "Did you travel with family or friends?",
+    "f": [
+     "Did you have a good time?",
+     "What did you do together?"
+    ]
+   },
+   {
+    "q": "Is a family vacation relaxing or exhausting?",
     "f": [
      "Why?",
-     "Tell me one example."
-    ]
-   },
-   {
-    "q": "What makes a story easy to follow?",
-    "f": [
-     "Which words help?",
-     "What is confusing?"
+     "What was the best part?"
     ]
    }
   ],
   "tn": [
-   "Pairs, 7 minutes. One question at a time. Ask for a follow-up after every answer.",
-   "Tell me more. And then?",
+   "Pairs, 7 minutes. One question at a time. Ask a follow-up after every answer. Accept present or past: the irregular past comes next.",
+   "Where did you go? Tell me more.",
    "Do not correct now. Note two repeated errors for minute 54."
   ]
  },
@@ -97,72 +109,74 @@ window.SESSION={
   },
   "words": [
    {
-    "w": "first",
-    "def": "at the beginning",
-    "es": "primero",
-    "ex": "First, I check my messages."
+    "w": "drive",
+    "def": "control a car on the road",
+    "es": "conducir",
+    "ex": "We drive to the beach."
    },
    {
-    "w": "then",
-    "def": "after the first action",
-    "es": "luego, entonces",
-    "ex": "Then I make a coffee."
+    "w": "trip",
+    "def": "a journey to a place",
+    "es": "viaje",
+    "ex": "It was a short trip."
    },
    {
-    "w": "after that",
-    "def": "next in the sequence",
-    "es": "después de eso",
-    "ex": "After that I call a friend."
+    "w": "pack",
+    "def": "put things in a bag or a suitcase",
+    "es": "empacar",
+    "ex": "I pack on Friday night."
    },
    {
-    "w": "finally",
-    "def": "at the end",
-    "es": "finalmente",
-    "ex": "Finally I go home."
+    "w": "beach",
+    "def": "sand next to the sea",
+    "es": "playa",
+    "ex": "The beach was beautiful."
    },
    {
-    "w": "wait",
-    "def": "stay until something happens",
-    "es": "esperar",
-    "ex": "I wait ten minutes for the bus."
+    "w": "crowded",
+    "def": "full of people",
+    "es": "lleno de gente",
+    "ex": "The beach was crowded."
    },
    {
-    "w": "message",
-    "def": "a short written communication",
-    "es": "mensaje",
-    "ex": "I sent a message to my boss."
+    "w": "relaxing",
+    "def": "makes you feel calm",
+    "es": "relajante",
+    "ex": "The weekend was relaxing."
    },
    {
-    "w": "check",
-    "def": "look at something to make sure it is correct",
-    "es": "revisar, verificar",
-    "ex": "I checked the address."
+    "w": "exhausting",
+    "def": "makes you very tired",
+    "es": "agotador",
+    "ex": "The trip was exhausting."
    },
    {
-    "w": "return",
-    "def": "go back or give something back",
-    "es": "regresar, devolver",
-    "ex": "I returned to the cafe."
+    "w": "worth it",
+    "def": "good enough for the time or money",
+    "es": "valió la pena",
+    "ex": "The trip was worth it."
    }
   ],
   "tn": [
-   "One meaning at a time. Say the word first, then check. After each match, one true sentence.",
+   "One meaning at a time. The learner says the word first, then checks. After each match, one true sentence.",
    "What is the word? Is it true for you?",
-   "Manual key: A-4, B-3, C-2, D-1, E-5, F-7, G-6, H-8."
+   "Key: each meaning matches the word in the same position: 1-A, 2-B, 3-C, 4-D, 5-E, 6-F, 7-G, 8-H."
   ]
  },
  "gram": {
-  "lead": "Tell the story in order.",
+  "lead": "Some verbs have a special past form. Learn the ones you need for a trip.",
   "rule": [
-   "One finished verb in each step.",
-   "First, I called. Then, I checked the address. Finally, I found the place."
+   "go → went, drive → drove, have → had: We went to the beach.",
+   "sleep → slept, eat → ate: We ate in the car.",
+   "Not: didn't + the simple verb. I didn't sleep well."
   ],
-  "es": "Un verbo en pasado en cada paso. Las palabras first, then, after that y finally ayudan a que otra persona siga la historia.",
+  "es": "Verbos irregulares en pasado: go → went, drive → drove, have → had, sleep → slept, eat → ate. No terminan en -ed. Negativo: didn't + verbo simple (didn't sleep, no didn't slept). Nunca: goed, drived, haved.",
   "useful": [
-   "First, ...",
-   "Then, ...",
-   "After that, ...",
-   "Finally, ..."
+   "We went to …",
+   "We drove … hours.",
+   "We had a great time, but …",
+   "I didn't sleep well.",
+   "The best part was …"
   ],
   "how": {
    "steps": [
@@ -171,91 +185,91 @@ window.SESSION={
     "Say it aloud."
    ],
    "t": "Which sentence is correct? Say it.",
-   "s": "First, I called. Then, I checked the address.",
+   "s": "We went to the beach. We didn't sleep well.",
    "done": "you chose and said 5 sentences."
   },
   "drill": [
    {
-    "sit": "You start the story. Which sentence?",
+    "sit": "Say that you went to the beach.",
     "o": [
-     "First, I left work late.",
-     "First, I leave work late."
+     "We went to the beach.",
+     "We goed to the beach."
     ],
     "ans": 0,
-    "why": "A finished story: past simple."
+    "why": "go → went. No -ed."
    },
    {
-    "sit": "Say the next step.",
+    "sit": "Say that you drove six hours.",
     "o": [
-     "Then, I calling a friend.",
-     "Then, I called a friend."
+     "We drived six hours.",
+     "We drove six hours."
     ],
     "ans": 1,
-    "why": "One finished verb: called."
+    "why": "drive → drove."
    },
    {
-    "sit": "Add the third step.",
+    "sit": "Say that you did not sleep well.",
     "o": [
-     "After that, I checked the address.",
-     "After that, I check the address."
+     "I didn't sleep well.",
+     "I didn't slept well."
     ],
     "ans": 0,
-    "why": "Past simple in every step."
+    "why": "After didn't, the simple verb: sleep."
    },
    {
-    "sit": "End the story.",
+    "sit": "Say that you had a great time.",
     "o": [
-     "Finally, I finded the place.",
-     "Finally, I found the place."
+     "We haved a great time.",
+     "We had a great time."
     ],
     "ans": 1,
-    "why": "find → found."
+    "why": "have → had."
    },
    {
-    "sit": "Ask what happened first.",
+    "sit": "Say that you ate in the car.",
     "o": [
-     "What happened first?",
-     "What did first happen?"
+     "We ate in the car.",
+     "We eated in the car."
     ],
     "ans": 0,
-    "why": "Use: What happened first?"
+    "why": "eat → ate."
    }
   ],
   "say": {
    "title": "Say it your way",
    "items": [
     {
-     "t": "Put the events in order and say the story: returned to the cafe / left work late / found the charger / called a friend.",
-     "m": "First, I left work late. Then, a friend called. After that, I returned to the cafe. Finally, I found the charger."
+     "t": "Say where your family went.",
+     "m": "We went to the beach."
     },
     {
-     "t": "Say a four-step story about a small problem. Use all four sequence words.",
-     "m": "First, I lost my keys. Then, I called a friend. After that, I checked my bag. Finally, I found them."
+     "t": "Say one thing you didn't do well on the trip.",
+     "m": "I didn't sleep well."
     },
     {
-     "t": "Ask your partner what happened first and what happened after that.",
-     "m": "What happened first? What did you do after that?"
+     "t": "Say the best part of the trip.",
+     "m": "The best part was the food."
     }
    ]
   },
   "turn": {
-   "prompt": "Tell a true four-step story. Use first, then, after that, finally.",
+   "prompt": "Say a true sentence about a trip.",
    "chips": [
-    "a lost thing",
-    "a late bus",
-    "a call you made",
-    "a message you sent",
-    "a place you returned to"
+    "where you went",
+    "how you got there",
+    "what you had or ate",
+    "something you didn't do",
+    "the best part"
    ]
   },
   "tn": [
-   "Explain in 3 minutes. Show the model sentence, then the choices.",
-   "Which sentence is better? Say it.",
-   "Repair word order only when it blocks the sequence."
+   "Explain in 3 minutes: five irregular verbs (went, drove, had, slept, ate) and didn't + simple verb. One example each. Mechanical practice is only the first third.",
+   "Which sentence is correct? Say it.",
+   "Repair irregular forms first (went, not goed). Accept small errors if the message is clear."
   ]
  },
  "read": {
-  "title": "The Missing Phone Charger",
+  "title": "Three family vacations",
   "how": {
    "steps": [
     "Read the text once.",
@@ -266,38 +280,80 @@ window.SESSION={
    "s": "",
    "done": "you underlined two sentences and used one."
   },
+  "cards": [
+   {
+    "name": "The Lopez family",
+    "sub": "Beach week",
+    "img": {
+     "src": "img/s03-p1.jpg",
+     "alt": "A mother and her daughter at the shore at sunset"
+    },
+    "facts": [
+     "The Lopez family went to the beach for a week.",
+     "The beach was crowded.",
+     "They didn't sleep well in the small hotel."
+    ]
+   },
+   {
+    "name": "The Chen family",
+    "sub": "Mountain cabin",
+    "img": {
+     "src": "img/s03-p2.jpg",
+     "alt": "A wooden cabin in a pine forest"
+    },
+    "facts": [
+     "The Chens drove six hours to a cabin.",
+     "They didn't have Wi-Fi.",
+     "They had a great time. The best part was the quiet."
+    ]
+   },
+   {
+    "name": "The Brown family",
+    "sub": "Road trip",
+    "img": {
+     "src": "img/s03-p3.jpg",
+     "alt": "Two children lean out of a car window while a father takes photos"
+    },
+    "facts": [
+     "The Browns drove from city to city.",
+     "They ate in the car every day.",
+     "The kids were tired, but they had fun."
+    ]
+   }
+  ],
   "text": [
-   "Last Friday, Carla left work late and went to a small cafe before going home.",
-   "First, she ordered a coffee and checked her phone.",
-   "Then, she put her charger on the table near her bag.",
-   "After that, a friend called, so Carla moved to a quieter place inside the cafe.",
-   "When she arrived home, she could not find her charger.",
-   "She returned to the cafe, explained the problem, and asked the staff to check the table.",
-   "Finally, a waiter found the charger near a chair.",
-   "Carla thanked him and went home."
+   "The Lopez family went to the beach for a week.",
+   "The beach was crowded.",
+   "They didn't sleep well in the small hotel.",
+   "The Chens drove six hours to a cabin.",
+   "They didn't have Wi-Fi.",
+   "They had a great time. The best part was the quiet.",
+   "The Browns drove from city to city.",
+   "They ate in the car every day.",
+   "The kids were tired, but they had fun."
   ],
   "idea": {
-   "q": "What is the text mostly about?",
+   "q": "What are the cards about?",
    "o": [
-    "A lost charger and how Carla found it",
-    "A new cafe in the city",
-    "A friend's birthday"
+    "Three different family trips",
+    "One school day",
+    "A restaurant menu"
    ],
    "a": 0,
-   "why": "Carla lost her charger, returned to the cafe and found it."
+   "why": "Each card tells a different family vacation."
   },
-  "notice": "Find the four sequence words: first, then, after that, finally.",
-  "reuse": "Reuse one sequence sentence in a true story about a small problem.",
-  "retell": "Retell it in four steps with first, then, after that and finally.",
+  "notice": "Find one irregular verb and one sentence with didn't.",
+  "reuse": "Which trip is like yours? Say one sentence: “My trip was like the … family's trip, because …”.",
+  "retell": "Tell one trip in three sentences: We went … We had … The best part was …",
   "tn": [
-   "Read together once. One minute for the main idea.",
-   "Which sentence can you use? Say it about you.",
-   "Suggested examples: “First, she ordered a coffee…” and “Finally, a waiter found the charger…”"
+   "Read the three cards together once. One minute for the main idea. Then ask: which trip is closest to yours?",
+   "Which sentence can you use? Say it about your trip.",
+   "Suggested examples: “They didn't sleep well in the small hotel.” and “The best part was the quiet.” No detail questions."
   ]
  },
  "listen": {
   "title": "Listen to a short conversation.",
-  "scene": "Two people talk about a lost charger.",
+  "scene": "Two coworkers talk about a family trip.",
   "how": {
    "steps": [
     "Listen once for the situation.",
@@ -311,92 +367,102 @@ window.SESSION={
   "lines": [
    {
     "sp": "A",
-    "t": "What happened first?",
+    "t": "Where did you go on your last trip?",
     "file": "audio/L05-S03-listening-001-a.mp3"
    },
    {
     "sp": "B",
-    "t": "Carla ordered a coffee and checked her phone.",
+    "t": "We went to the beach with my family.",
     "file": "audio/L05-S03-listening-002-b.mp3"
    },
    {
     "sp": "A",
-    "t": "What did she do after that?",
+    "t": "Did you have a good time?",
     "file": "audio/L05-S03-listening-003-a.mp3"
    },
    {
     "sp": "B",
-    "t": "She moved inside because her friend called.",
+    "t": "We had a great time, but it was exhausting. We drove six hours, and the beach was crowded.",
     "file": "audio/L05-S03-listening-004-b.mp3"
    },
    {
     "sp": "A",
-    "t": "Did she find the charger?",
+    "t": "Did you sleep well?",
     "file": "audio/L05-S03-listening-005-a.mp3"
    },
    {
     "sp": "B",
-    "t": "Yes. A waiter found it near a chair.",
+    "t": "No, I didn't. The hotel was noisy, but the food was excellent.",
     "file": "audio/L05-S03-listening-006-b.mp3"
+   },
+   {
+    "sp": "A",
+    "t": "So, was it worth it?",
+    "file": "audio/L05-S03-listening-007-a.mp3"
+   },
+   {
+    "sp": "B",
+    "t": "Yes! The best part was the sunset with the kids.",
+    "file": "audio/L05-S03-listening-008-b.mp3"
    }
   ],
   "idea": {
    "q": "What is the situation?",
    "o": [
-    "Someone lost a charger and found it",
-    "Someone missed a bus",
-    "Someone lost a phone forever"
+    "A person tells about a tiring family trip",
+    "A person plans a work meeting",
+    "A person looks for a hotel"
    ],
    "a": 0,
-   "why": "Carla lost her charger in a cafe and a waiter found it."
+   "why": "The speaker went to the beach with the family and says it was exhausting but worth it."
   },
   "acts": [
-   "Listen again and add one sequence word to each event.",
-   "Say the story in four steps.",
-   "Ask your partner: What was the last thing you lost?"
+   "Ask your partner one Did you …? question about a trip.",
+   "Say one thing that was exhausting and one that was relaxing.",
+   "Say if your last trip was worth it."
   ],
   "key": [
-   "Situation: a lost charger in a cafe.",
-   "Key detail: a waiter found it near a chair.",
-   "Next action: Carla got the charger back."
+   "Situation: a family trip to the beach.",
+   "Key detail: a six-hour drive, a crowded beach, bad sleep, great food.",
+   "Next action: none; the speaker says the trip was worth it."
   ],
-  "watch": "Play twice. First for the situation. Second for the detail and the next action."
+  "watch": "Play twice. First only for the situation. Second for the detail. Natural-slow speed. Planned accents: A American, B Filipino English (non-native)."
  },
  "speak": {
   "kind": "story",
   "name": "Story Builder: Picture + Twist",
-  "lead": "Build one story from four pictures. Then tell it without the pictures.",
+  "lead": "Build one family trip from four pictures. Then tell it without the pictures.",
   "how": {
    "steps": [
-    "Choose the first picture. Start the story.",
+    "Choose the first picture. Start the trip.",
     "Add one picture at a time. Use first, then, after that, finally.",
-    "Hide the pictures. Retell the story."
+    "Hide the pictures. Retell the trip and give your verdict."
    ],
    "t": "Choose a picture. What happened first?",
-   "s": "First, my phone rang.",
-   "done": "you told a story with four ordered events."
+   "s": "First, we packed the car.",
+   "done": "you told a trip with four ordered events and a verdict."
   },
-  "model": "First, I was waiting for the bus in the rain. Then, my phone rang. After that, I missed my appointment. Finally, I called the office and moved it.",
+  "model": "First, we packed the car. Then, we drove six hours. After that, we went to a crowded beach. Finally, we slept in a small hotel. It was exhausting, but worth it.",
   "pics": [
    {
     "src": "img/s03-a.jpg",
-    "alt": "A hand holds a phone on a wooden cafe table",
-    "label": "A phone"
+    "alt": "A car trunk full of suitcases and a teddy bear",
+    "label": "Packed car"
    },
    {
     "src": "img/s03-b.jpg",
-    "alt": "A person with an umbrella in the rain at night",
-    "label": "Rain"
+    "alt": "A driver on a country road seen from the back seat",
+    "label": "The drive"
    },
    {
     "src": "img/s03-c.jpg",
-    "alt": "A calendar on a screen",
-    "label": "An appointment"
+    "alt": "A sandy beach with umbrellas and many people",
+    "label": "The beach"
    },
    {
     "src": "img/s03-d.jpg",
-    "alt": "An empty bus stop",
-    "label": "A late bus"
+    "alt": "Two children lying on a bed with cucumber slices on their eyes",
+    "label": "The hotel"
    }
   ],
   "seqw": [
@@ -406,23 +472,23 @@ window.SESSION={
    "Finally"
   ],
   "twist": {
-   "title": "The cafe closes in five minutes!",
-   "text": "Solve the problem quickly. Say what you do now."
+   "title": "A surprise! The car breaks down.",
+   "text": "Or your uncle arrives with his dog. Choose one. Say what happened next and how you solved it."
   },
   "final": {
-   "say": "First, I left work late. Then, I went to a cafe. After that, I lost my charger. Finally, I returned and found it.",
+   "say": "First, we packed the car. Then, we drove six hours. After that, we went to the beach. We had a great time, but the beach was crowded. I didn't sleep well. It was exhausting, but worth it.",
    "check": [
-    "I used four sequence words.",
-    "I used finished past verbs.",
-    "I told the events in the right order.",
-    "I gave a clear ending."
+    "I said six sentences.",
+    "I used five irregular verbs (went, drove, had, ate, slept…).",
+    "I used one sentence with didn't.",
+    "I gave my verdict: relaxing or exhausting."
    ],
    "min": 2
   },
   "tn": [
-   "The learner chooses the first picture and starts (3 min). Add pictures one at a time (5 min). Twist (2 min). Retell without pictures (3 min). Learner talk is the goal.",
-   "What happened first? And then? How did it end?",
-   "Repair word order only when it blocks the sequence."
+   "The learner chooses the first picture and starts (3 min). Add pictures one at a time (5 min). Twist (2 min). Retell without pictures and give the verdict (3 min). Group: vote relaxing or exhausting. Learner talk is the goal.",
+   "What happened first? And then? Was it relaxing or exhausting?",
+   "Repair irregular forms first. Do not force personal stories: the pictures are enough."
   ]
  },
  "close": {
@@ -433,22 +499,22 @@ window.SESSION={
     "Tick what you can do."
    ],
    "t": "Say it again. Fewer notes.",
-   "s": "First, I left work late. Then, I went to a cafe.",
-   "done": "you retold the story with fewer prompts."
+   "s": "We went to …",
+   "done": "you retold the trip with fewer prompts."
   },
-  "second": "First, I left work late. Then, I went to a cafe. After that, I lost my charger. Finally, I returned and found it.",
+  "second": "We went to the beach with my family. We drove six hours. We had a great time, but it was exhausting. The best part was the food. It was worth it. Was your last trip relaxing?",
   "secondMin": 2,
   "check": [
-   "I can tell four events in order.",
-   "I can use first, then, after that and finally.",
-   "I can use past simple verbs in a story.",
-   "I can solve a small problem in my story."
+   "I can tell a trip with went, drove and had.",
+   "I can say what I didn't do with didn't.",
+   "I can put events in order.",
+   "I can say if a trip was relaxing or exhausting."
   ],
-  "closeout": "Today I told a short story in order.",
-  "transfer": "Write four keywords about a real small problem. Tell the story next class without full sentences.",
+  "closeout": "Today I told a family trip in six sentences and gave my verdict.",
+  "transfer": "Record a 45-second voice note about a trip: where you went, one thing you did, one thing you didn't, and your verdict.",
   "next": {
-   "title": "Session 4 · What Were You Doing?",
-   "text": "Say what you were doing when something happened.",
+   "title": "Session 4 · Splitting the Bill: Fair or Awkward?",
+   "text": "Ask who ordered what and agree how to pay.",
    "href": "s04.html"
   },
   "tn": [
